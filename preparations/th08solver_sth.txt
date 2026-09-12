@@ -1,0 +1,24 @@
+th08的还原的源码：https://github.com/N0zoM1z0/th08/
+
+之前让gpt6pro分析的对话/artifacts/算法/文档/结果之类的：
+/home/yann/yann/touhou/th08-solver/preparations
+
+游戏文件：/home/yann/yann/touhou/th08-solver/game_data_donottrack
+
+goal:
+我们现在：先不用运行起来游戏。因为无论是用wine模拟还是Linux版本都很耗时间
+我们想做的：
+就是来根据这个th08.dat和我们还原的源码，来认真的对all cases的这些弹幕，
+spellcard，几何等来进行逐个的分析，建模，求解实现，和优化。
+
+我们先把算法能优化到极致，相当于先把component/solver这些做好，后面再接入
+真正的游戏来打，再考虑输入控制，延迟之类的
+
+
+sudo可用，gh可用, gh创建一个 public的 N0zoM1z0/th08-solver
+
+然后/home/yann/yann/touhou/th08-solver/preparations 要track，/home/yann/yann/touhou/th08-solver/game_data_donottrack 不track
+
+整个repo的目录来认真组织，方便后续阅读，review，和扩展
+
+来认真做～

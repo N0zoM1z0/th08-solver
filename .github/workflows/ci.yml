@@ -1,0 +1,16 @@
+name: Native checks
+on: [push, pull_request]
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        sanitizer: ["OFF", "ON"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DTH08_SANITIZERS=${{ matrix.sanitizer }}
+      - name: Build
+        run: cmake --build build --parallel 2
+      - name: Test without private game data
+        run: ctest --test-dir build --output-on-failure

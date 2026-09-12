@@ -1,0 +1,4 @@
+* text=auto
+*.zip -text
+*.dat -text
+preparations/** -text

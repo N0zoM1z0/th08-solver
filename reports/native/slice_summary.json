@@ -1,0 +1,11 @@
+{
+  "status": "PASSED",
+  "attempts": 21735,
+  "scope": "restricted native scalar scheduler, no complete worlds or spell solutions",
+  "status_counts": {
+    "RETURNED_SLICE": 171,
+    "BOUNDED_PREFIX": 873,
+    "UNSUPPORTED": 18066,
+    "REQUIRES_CONTEXT": 2625
+  }
+}

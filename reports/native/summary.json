@@ -1,0 +1,17 @@
+{
+  "status": "PASSED",
+  "implementation": "C++17",
+  "dat_sha256": "9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb",
+  "scope": "all-member decoding and structural ECL audit; not world execution",
+  "resources": 317,
+  "ecl_files": 24,
+  "subprograms": 1449,
+  "nonterminal_instructions": 36661,
+  "jump_targets_checked": 2182,
+  "spell_sites": 431,
+  "unique_spell_ids": 222,
+  "ex_ids": 32,
+  "offline_full_spell_solutions_verified": 0,
+  "decoded_bytes": 112516076,
+  "wall_seconds_including_hashing_and_reports": 0.443860467
+}

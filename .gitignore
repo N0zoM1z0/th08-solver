@@ -1,0 +1,8 @@
+/game_data_donottrack/
+/.cache/
+/build*/
+/reports/local/
+**/private_resources/
+__pycache__/
+*.py[cod]
+.venv/
