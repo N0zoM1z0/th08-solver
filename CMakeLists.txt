@@ -72,6 +72,21 @@ if(TH08_REFERENCE_SOURCE)
     # intentional switch fallthrough, and retail bitcast-through-pointer expressions.
     target_compile_options(source_oracle PRIVATE -Wno-unused-parameter -Wno-unused-label -Wno-implicit-fallthrough -Wno-return-type -fno-strict-aliasing)
   endif()
+  # Explicit targets replace ad-hoc drivers formerly kept in ignored build trees.
+  # Reuse the hash-checked generator and unchanged test headers, not generated TUs.
+  foreach(component IN ITEMS enemy_motion world_motion camera_particle)
+    set(component_source ${CMAKE_CURRENT_BINARY_DIR}/source_${component}.cpp)
+    add_custom_command(OUTPUT ${component_source}
+      COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${component_source} ${component}
+      DEPENDS th08_source_probe ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
+      VERBATIM)
+    add_executable(source_${component} EXCLUDE_FROM_ALL ${component_source})
+    target_link_libraries(source_${component} PRIVATE th08_resources)
+    target_include_directories(source_${component} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+    if(NOT MSVC)
+      target_compile_options(source_${component} PRIVATE -Wno-unused-parameter -Wno-unused-label -Wno-implicit-fallthrough -Wno-return-type -fno-strict-aliasing)
+    endif()
+  endforeach()
 endif()
 include(CTest)
 if(BUILD_TESTING)
