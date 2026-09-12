@@ -55,6 +55,22 @@ Shot records do not execute random spread, aimed direction, distance suppression
 rank adjustment, deferred dispatch, or pool allocation. Reusing a resulting model
 still requires dependency evidence from the world layer.
 
+An optional caller-owned RNG enables isolated scalar execution, including random
+integer/unit/signed-unit/angle selectors and random-sign assignments. Calls use the
+same stream; context return never restores it. The current verified instruction
+domain permits at most one RNG-consuming expression: two random operands, or a
+random sign combined with a random operand, stop as unsupported because expression
+evaluation order is not yet established. On a blocked instruction the RNG returns
+to that instruction's entry state; completed instructions retain their draws.
+Workspace output is diagnostic and is not a resumable VM snapshot.
+
+RNG-enabled execution stops before every shot request, including deterministic aim
+modes, because the missing allocation/callback world could consume additional draws.
+This mode assumes no external actor advances the shared stream during the isolated
+slice. The default no-RNG mode and its all-entry matrix remain unchanged. The source
+oracle preserves the original random selector blocks and assignment bodies, with
+narrow local-storage adapters, for 720896 additional bitwise value/seed comparisons.
+
 ## Launch kinematics and numerical profile
 
 `random::Rng` owns an explicit 16-bit seed, unsigned draw counter, and optional

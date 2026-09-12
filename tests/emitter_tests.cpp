@@ -115,11 +115,85 @@ void call_tests(vm::Workspace &workspace) {
     check(vm::run(module, 2, workspace, 8).status == vm::Status::invalid,
           "invalid module entry accepted");
 }
+void random_tests(vm::Workspace &workspace) {
+    using th08::random::Rng;
+    vm::Program program;
+    program.code = {op(6, {10000, 10032}, 3),
+                    op(7, {bits(10016.0f), bits(10033.75f)}, 3),
+                    op(6, {10001, 10034}, 3),
+                    op(7, {bits(10017.0f), bits(10035.0f)}, 3),
+                    op(7, {bits(10018.0f), bits(10082.0f)}, 3),
+                    op(8, {10002, 13}, 1),
+                    op(9, {bits(10019.0f), bits(2.5f)}, 1),
+                    op(53, {})};
+    check(vm::run(program, workspace, 8).status == vm::Status::missing_context,
+          "random operands invented an initial seed");
+    for (unsigned seed = 0; seed < 65536; ++seed) {
+        Rng actual{std::uint16_t(seed)}, reference{std::uint16_t(seed)};
+        const auto nonnegative = reference.next_u32() & 0x7fffffffU;
+        const auto unit = reference.unit();
+        const auto raw = reference.next_u32();
+        std::int32_t signed_raw;
+        std::memcpy(&signed_raw, &raw, sizeof(raw));
+        const auto signed_unit = reference.signed_unit();
+        const auto angle = reference.range_float(6.2831855f) - 3.1415927f;
+        const int signed_integer = (reference.next_u16() & 1U ? 1 : -1) * 13;
+        const float signed_float = (reference.next_u16() & 1U ? 1.0f : -1.0f) * 2.5f;
+        check(vm::run(program, workspace, 8, 400, 100000, &actual).status == vm::Status::returned &&
+                  workspace.registers[0] == nonnegative && workspace.registers[16] == unit &&
+                  workspace.registers[1] == signed_raw && workspace.registers[17] == signed_unit &&
+                  workspace.registers[18] == angle && workspace.registers[2] == signed_integer &&
+                  workspace.registers[19] == signed_float && actual.seed() == reference.seed() &&
+                  actual.generation_count() == 12,
+              "random scalar values, typed selectors or draw ordering changed");
+    }
+    Rng stream(123);
+    program.code = {op(6, {10000, 10082}, 3), op(53, {})};
+    check(vm::run(program, workspace, 8, 400, 100000, &stream).status == vm::Status::returned &&
+              workspace.registers[0] == 10082 && stream.generation_count() == 0,
+          "integer selector hole incorrectly consumed random angle");
+    program.code = {op(6, {10000, 10032}, 3), op(21, {10001, 10032, 10032}, 7), op(53, {})};
+    Rng prefix(123);
+    prefix.next_u32();
+    check(vm::run(program, workspace, 8, 400, 100000, &stream).status == vm::Status::unsupported &&
+              stream.seed() == prefix.seed() && stream.generation_count() == 2,
+          "ambiguous RNG expression order accepted or failed instruction consumed draws");
+    program.code = {op(8, {10000, 10032}, 3), op(53, {})};
+    check(vm::run(program, workspace, 8, 400, 100000, &stream).status == vm::Status::unsupported &&
+              stream.seed() == prefix.seed() && stream.generation_count() == 2,
+          "random-sign and random-value expression order silently chosen");
+    program.code = {op(7, {bits(10000.0f), bits(10033.0f)}, 3), op(53, {})};
+    check(vm::run(program, workspace, 8, 400, 100000, &stream).status == vm::Status::unsupported &&
+              stream.seed() == prefix.seed() && stream.generation_count() == 2,
+          "invalid random destination corrupted RNG checkpoint");
+    program.code = {op(96, {0, 1, 1, 0, 0, 0, 0, 0}), op(53, {})};
+    check(vm::run(program, workspace, 8, 400, 100000, &stream).status ==
+                  vm::Status::missing_context &&
+              workspace.emissions.empty() && stream.seed() == prefix.seed(),
+          "RNG-enabled execution crossed unresolved shot side effects");
+    vm::Module module;
+    module.subs.resize(2);
+    module.subs[0].code = {op(6, {10008, 10032}, 3), op(52, {1}), op(6, {10010, 10032}, 3),
+                           op(53, {})};
+    module.subs[1].code = {op(6, {10009, 10032}, 3), op(53, {})};
+    stream.set_seed(123);
+    stream.reset_generation_count();
+    Rng expected(123);
+    const auto first = expected.next_u32() & 0x7fffffffU;
+    const auto second = expected.next_u32() & 0x7fffffffU;
+    const auto third = expected.next_u32() & 0x7fffffffU;
+    check(vm::run(module, 0, workspace, 8, 400, 100000, &stream).status == vm::Status::returned &&
+              workspace.registers[8] == first && workspace.registers[9] == second &&
+              workspace.registers[10] == third && stream.seed() == expected.seed() &&
+              stream.generation_count() == 6,
+          "call/return restored or duplicated shared RNG state");
+}
 int main() {
     vm::Program program;
     vm::Workspace workspace;
     scalar_tests(workspace);
     call_tests(workspace);
+    random_tests(workspace);
     program.code = {{0, 63, 0, 8, 255, 76, 0, {}}};
     check(vm::run(program, workspace, 8).status == vm::Status::unsupported,
           "movement silently ignored");

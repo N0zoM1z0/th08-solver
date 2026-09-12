@@ -1,5 +1,6 @@
 // Materialize a native test TU from the exact pinned reconstruction functions.
 // Only generated build files are written; the source checkout remains untouched.
+#include "ecl_source_probe.hpp"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -37,6 +38,7 @@ constexpr const char *prefix = R"CPP(
 #include <th08/bullet_motion.hpp>
 #include <th08/laser_motion.hpp>
 #include <th08/rng.hpp>
+#include <th08/emitter.hpp>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -152,6 +154,7 @@ struct LaserRecorder {
 )CPP";
 constexpr const char *suffix = R"CPP(
 int main(int argc,char** argv) {
+    const auto ecl_random=ecl_reference::compare();
     std::mt19937 rng(20260912);
     auto uniform=[&](float low,float high) {
         return std::uniform_real_distribution<float>(low,high)(rng);
@@ -339,8 +342,10 @@ int main(int argc,char** argv) {
         << ",\"direction_frames\":" << turn_frames << ",\"direction_mismatches\":" << turn_mismatches
         << ",\"laser_frames\":" << laser_frames << ",\"laser_mismatches\":" << laser_mismatches
         << ",\"rng_operations\":" << rng_operations << ",\"rng_mismatches\":" << rng_mismatches
+        << ",\"ecl_random_operations\":" << ecl_random.operations
+        << ",\"ecl_random_mismatches\":" << ecl_random.mismatches
         << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
-    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches?1:0;
+    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -409,7 +414,7 @@ int main(int argc, char **argv) try {
         << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'
         << function(player, "u32 Player::CalcLaserHitbox(") << '\n'
-        << suffix;
+        << ecl_reference(repo) << suffix;
 } catch (const std::exception &error) {
     std::cerr << error.what() << '\n';
     return 1;

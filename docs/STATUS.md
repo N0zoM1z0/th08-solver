@@ -40,6 +40,11 @@ The game is not launched in this phase.
 13. Explicit shared RNG state, seed backup, draw counter and integer/float range helpers.
     All 65536 seeds pass 524288 native source comparisons with no mismatches. This
     does not establish original executable evaluation order or whole-world draw order.
+14. Optional shared RNG for isolated ECL scalar execution, random selectors and sign
+    assignments. Another 720896 source-backed assignment comparisons pass. Multiple
+    RNG expressions per instruction remain unsupported; RNG-enabled execution stops
+    before unresolved shot effects. The original matrix and both particle fixtures pass
+    unchanged. Completed-prefix and failed-instruction RNG ownership are tested.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the

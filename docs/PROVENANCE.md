@@ -21,11 +21,16 @@ unchanged. Their code is not automatically promoted into a verified component.
 | ECL structure | EclManager.hpp and historical audit | 24 files, 1449 subs, 36661 instructions, 2182 jumps, 431 spell starts | Complete VM execution |
 | Boxes and lasers | Pinned Player.cpp function bodies | 300000 scenes, 600000 predicate comparisons, alive/death side-effect checks | Game loop and x87 equivalence |
 | RNG state | Pinned Global.cpp / Global.hpp bodies | All 65536 seeds, 524288 integer/float operations, bitwise outputs and final seeds | Original executable evaluation order; complete world draw ordering |
+| ECL random assignments | Pinned operand case blocks and EclRunLow assignment bodies | 720896 assignments over all seeds, typed conversion and final seed checks | Multiple RNG expressions in one instruction; external RNG consumers |
 | Spatial index | Unindexed hazard scan | Random scenes, cell boundaries, exact contact, snapshot ownership, invalid arguments | Formal proof for all float inputs |
 | Wriggle scheduling | Actual DAT and historical event digests | sub40/41 ordered digests, 360 ticks, 160 commands, 840 requests; sub42 alignment variants | Successful allocation, bullet motion, complete spells |
 | Planning | Explicit collision-restoration fixture | Legal actions, terminal region, unindexed replay, budget failure without a route | Reisen gameplay or complete search |
 
 Reference functions are extracted only into the optional test build directory.
+The scalar adapter also pins `EclManager.hpp`, `EclOperandsInt.cpp`,
+`EclOperandsFloat.cpp` and `EclRunLow.inl`; their hashes are enforced in
+`tools/ecl_source_probe.cpp`. Only selected random cases and assignment bodies are
+extracted. Local-storage adapters are fixture scaffolding, not complete enemy layouts.
 The reference checkout is not modified. Competing laser interpretations differ on
 whether player extents also rotate; production function output supports center-only
 rotation. Snapshot ownership tests distinguish a stable owned index from a borrowed
