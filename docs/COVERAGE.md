@@ -59,7 +59,11 @@ effect-51 camera-dependent lifetime affects successful later allocations and RNG
 so step 3 is required to validate step 1's real practice prelude. Source-oracle
 expansion and numerical checks accompany each step rather than waiting until the end.
 
-## First complete world: Wriggle IDs 2..5
+## First complete world: ID2 Easy, then Wriggle IDs 3..5
+
+The [first-spell execution plan](FIRST_SPELL.md) selects one case before expanding
+the family. Implement its reachable dependencies end to end; the layer table above
+is not an instruction to finish a universal engine before attempting a route.
 
 Use the exact [Wriggle world contract](WRIGGLE_WORLD_CONTRACT.md), starting with
 `ecldata1sp.ecl` timeline 0. Current building blocks do **not** cross these milestones:

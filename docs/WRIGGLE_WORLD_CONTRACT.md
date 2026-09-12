@@ -9,7 +9,8 @@ for the dependency-ordered, still-unfinished integration milestones.
 The next integration target is the **complete first stage-one boss spell family,
 IDs 2, 3, 4 and 5**, including its familiars, player-dependent behavior, shared
 random stream and termination. Start with its actual spell-practice entry, then
-verify its ordinary-stage entry separately. This is an implementation order, not
+verify its ordinary-stage entry separately. The [execution plan](FIRST_SPELL.md)
+now selects ID2 Easy first, before expanding the family. This is an implementation order, not
 a replacement for the all-spell objective. No complete world or solution is
 claimed by this document.
 

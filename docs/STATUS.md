@@ -71,8 +71,10 @@ is 304 bytes and a workspace 5520 bytes. Timing results are scoped samples in
 
 ## Next required integration
 
-The first complete-world target remains the actual **ID2..5 spell-practice entry**,
-not a longer fixed sub40/41 fixture. The immediate missing boundary is timeline
+The first complete-world target is now one actual **ID2 Easy spell-practice entry**,
+then the rest of IDs2..5, not a longer fixed sub40/41 fixture. The
+[first-spell execution plan](FIRST_SPELL.md) records selection, three end-to-end
+acceptance gates and the rule to follow this case's first blocker. The immediate missing boundary is timeline
 spawn ownership: template copy, pool selection, immediate resumable ECL, its complete
 frame tail, then post-spawn bookkeeping. That path also requires the sub0 effect-51
 prelude, wrapper EX19, actual player/ANM state and shared RNG consumers.

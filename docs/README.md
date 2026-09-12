@@ -17,6 +17,7 @@ four documents; specialized evidence is linked from them.
 |---|---|
 | [Provenance](PROVENANCE.md) | Pinned source/data identities, independent comparison chain and numerical limits |
 | [Performance](PERFORMANCE.md) | Implemented optimizations, current benchmark samples and excluded costs |
+| [First spell execution plan](FIRST_SPELL.md) | One selected ID2 Easy practice case, three end-to-end acceptance gates, then expansion |
 | [Wriggle world contract](WRIGGLE_WORLD_CONTRACT.md) | Source-derived first integration target: actual practice/stage entry, familiars, RNG and endings |
 | [Motion fixtures](MOTION_FIXTURES.md) | Exact assumptions behind the two replayed 600-frame routes |
 | [ECL context storage](ECL_CONTEXT_STORAGE.md) | Thirty context slots, entity/global ownership and compact stack layout |
