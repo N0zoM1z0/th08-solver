@@ -126,6 +126,10 @@ Timeline control adds 200,000 source frames, including waits and event-slot upda
 Camera-particle callbacks add 65,536 initializations and 328,503 updates.
 This does not launch the game or establish original x87/Windows bitwise equivalence.
 
+For independent enemy-motion, world-motion, and camera-particle comparison targets,
+see [Reusable probes and build artifacts](docs/BUILD_ARTIFACTS.md). Their drivers,
+generators, and cases are tracked; generated `build*/` sources remain disposable.
+
 ## Development checks
 
 ```sh

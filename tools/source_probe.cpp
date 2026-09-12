@@ -434,9 +434,32 @@ int main(int argc,char** argv) {
 }
 )CPP";
 int main(int argc, char **argv) try {
-    if (argc != 3)
-        throw std::runtime_error("Usage: th08_source_probe reference-repo output.cpp");
+    if (argc != 3 && argc != 4)
+        throw std::runtime_error("Usage: th08_source_probe reference-repo output.cpp "
+                                 "[all|enemy_motion|world_motion|camera_particle]");
+    const std::string component = argc == 4 ? argv[3] : "all";
+    if (component != "all" && component != "enemy_motion" && component != "world_motion" &&
+        component != "camera_particle")
+        throw std::runtime_error("unknown source-oracle component: " + component);
     const std::filesystem::path repo = argv[1];
+    // The standalone camera adapter owns its prerequisites. The motion adapters
+    // share the scalar/vector/timer preamble below; never splice an old build TU.
+    if (component == "camera_particle") {
+        const auto reference = camera_particle_reference(repo);
+        std::ofstream out(argv[2]);
+        out.exceptions(std::ios::badbit | std::ios::failbit);
+        out << reference << R"CPP(
+#include "source_camera_particle_cases.hpp"
+int main() {
+    const auto result = compare_camera_particles();
+    std::cout << "initializations=" << result.initializations << " updates=" << result.updates
+              << " atomic_checks=" << result.atomic_failures
+              << " mismatches=" << result.mismatches << '\n';
+    return result.mismatches ? 1 : 0;
+}
+)CPP";
+        return 0;
+    }
     const auto player = source(repo / "src/Player.cpp",
                                "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
     const auto global = source(repo / "src/Global.cpp",
@@ -514,8 +537,31 @@ int main(int argc, char **argv) try {
         << function(global, "void Rotate(Float3 *") << '\n'
         << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'
-        << function(player, "u32 Player::CalcLaserHitbox(") << '\n'
-        << ecl_reference(repo) << transform_reference(repo) << slots_reference(bullet)
+        << function(player, "u32 Player::CalcLaserHitbox(") << '\n';
+    if (component == "enemy_motion") {
+        out << enemy_motion_reference(repo) << R"CPP(
+#include "source_enemy_motion_cases.hpp"
+int main() {
+    const auto result = compare_enemy_motion();
+    std::cout << "phases=" << result.phases << " mismatches=" << result.mismatches << '\n';
+    return result.mismatches ? 1 : 0;
+}
+)CPP";
+        return 0;
+    }
+    if (component == "world_motion") {
+        out << enemy_motion_reference(repo) << world_motion_reference(repo) << R"CPP(
+#include "source_world_motion_cases.hpp"
+int main() {
+    const auto result = compare_world_motion();
+    std::cout << "effects=" << result.effects << " atomic_checks=" << result.atomic_failures
+              << " mismatches=" << result.mismatches << '\n';
+    return result.mismatches ? 1 : 0;
+}
+)CPP";
+        return 0;
+    }
+    out << ecl_reference(repo) << transform_reference(repo) << slots_reference(bullet)
         << animation_reference(repo) << enemy_motion_reference(repo) << world_motion_reference(repo)
         << timeline_reference(repo) << camera_particle_reference(repo)
         << "\n#include \"source_acceleration_cases.hpp\"\n#include \"source_transform_cases.hpp\"\n"

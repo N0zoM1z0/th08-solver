@@ -4,6 +4,13 @@
 There is no Python dependency. Verified complete offline spell solutions: 0.
 The game is not launched in this phase.
 
+Reusable scratch drivers are now maintained through opt-in `source_enemy_motion`,
+`source_world_motion`, and `source_camera_particle` CMake targets. Their generators
+and cases are tracked; ignored build translation units remain generated outputs.
+Fresh Release and ASan/UBSan builds reproduce the existing comparisons with zero
+mismatches. See [BUILD_ARTIFACTS.md](BUILD_ARTIFACTS.md) for the local-file audit and
+reproduction commands. This packaging change adds no world-execution coverage.
+
 ## Completed
 
 1. Preserve original preparation materials; exclude game data and local caches from Git.
