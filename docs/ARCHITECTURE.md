@@ -102,11 +102,11 @@ effect. The default rejects multiple random expressions. `source_ordered_fields`
 is valid only when separate source statements establish that order, not when C++
 leaves operand order unspecified.
 
-`world::apply_motion_effect` handles pending ECL instructions 63..76 except 67.
+`world::apply_motion_effect` handles pending ECL instructions 63..76 and 178.
 Motion, scalar storage, RNG and the execution acknowledgement commit together only
 after every operation succeeds. Missing player/RNG/register input, invalid state,
 and unsupported evaluation order leave the instruction pending and all inputs
-unchanged. Opcode 67 and other unhandled effects remain explicit `not_handled`.
+unchanged. Other unhandled effects remain explicit `not_handled`.
 This rollback is the native interface contract, not a claim that the source engine
 rolls back failed instructions.
 
@@ -120,6 +120,15 @@ pi/2, including signed zero. `publish_motion` uses the caller's phase-correct wo
 position, preserves unrelated registers and invalidates player-derived slots when
 no player is supplied. Applying an effect is not velocity update or displacement.
 The owning world still schedules actors, child contexts, callbacks, shots and ANM.
+
+Random movement (67/178) shares the caller's RNG and depends on the current player,
+not a cached emitter trajectory. Opcode 67 applies independent left/right/top/bottom
+corrections using strict source margins, even when clamping is disabled; its positive
+right-wall branch uses the previous movement angle and does not normalize afterward.
+Opcode 178 chooses the source's wrapped horizontal bias, preserving the original
+float operations and distance tie-breaking. Its zero-roll branch never reads the
+player. Both timed random helpers omit the ordinary polar helper's mirror operation
+and repeat speed/duration reads; a missing later input rolls back all provisional draws.
 
 ## Launch kinematics and numerical profile
 
@@ -228,8 +237,8 @@ ECL world-position refresh retains z, while the manager integration phase zeros
 published world z. Both phases are allocation-free and failure-atomic.
 
 The oracle compares 580000 configuration/update/integration phases with pinned
-methods and manager code. The effect bridge separately compares 109860 instruction
-effects, with four native rollback checks. These checks do not supply enemy creation,
+methods and manager code. The effect bridge separately compares 420868 instruction
+effects, with twelve native rollback checks. These checks do not supply enemy creation,
 pause/death/alignment gates, callbacks, shot/ANM scheduling or a complete world loop.
 
 ### Bullet and laser motion

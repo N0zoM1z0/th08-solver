@@ -137,10 +137,70 @@ int main() {
               motion.interpolation_delta.y == 0 * second * 3 && rng.generation_count() == 4 &&
               rng.seed() == expected.seed(),
           "finite polar motion cached the source's repeated random speed reads");
-    pending(op(67, {3, 0, bits(0), bits(1)}));
+    // Choose a deterministic sample in the right-wall branch that uses the old
+    // angle. The oracle is the pinned branch equation, not a second move helper.
+    std::uint16_t positive_seed = 0;
+    for (unsigned seed = 0; seed < 65536; ++seed) {
+        th08::random::Rng sample{std::uint16_t(seed)};
+        if (sample.range_float(1.5707964f) - .78539819f >= 0) {
+            positive_seed = std::uint16_t(seed);
+            break;
+        }
+    }
+    motion = {};
+    motion.position = {350, 200, 0};
+    motion.position_offset = {10, 20, 0};
+    motion.bounds = {{0, 0, 0}, {384, 448, 0}};
+    motion.angle = 1.2f;
+    player = {360, 300, 0};
+    pending(op(67, {0, 0, bits(10069.0f)}, 4));
+    rng = th08::random::Rng(positive_seed);
+    check(world::apply_motion_effect(execution, storage, motion, &rng, &player) ==
+                  world::EffectStatus::applied &&
+              motion.angle == th08::kinematics::pi - 1.2f && motion.speed == motion.angle &&
+              rng.generation_count() == 2,
+          "right boundary did not read previous angle before resolving the new speed");
+    const auto random_initial = motion;
+    pending(op(67, {12, 1, bits(2)}));
+    rng = th08::random::Rng(positive_seed);
+    check(world::apply_motion_effect(execution, storage, motion, &rng, &player) ==
+              world::EffectStatus::applied,
+          "timed boundary-aware move failed");
+    const auto random_delta = motion.interpolation_delta;
+    motion = random_initial;
+    motion.mirror_x = true;
+    pending(op(67, {12, 1, bits(2)}));
+    rng = th08::random::Rng(positive_seed);
+    check(world::apply_motion_effect(execution, storage, motion, &rng, &player) ==
+                  world::EffectStatus::applied &&
+              motion.interpolation_delta.x == random_delta.x &&
+              motion.interpolation_delta.y == random_delta.y &&
+              motion.interpolation_origin.x == 360,
+          "random timed motion incorrectly mirrored its delta or used a local origin");
+    // The unbiased roll of opcode 178 requires no player context. Other rolls do.
+    for (bool needs_player : {false, true}) {
+        unsigned seed = 0;
+        for (; seed < 65536; ++seed) {
+            th08::random::Rng sample{std::uint16_t(seed)};
+            if ((sample.range_u32(4) != 0) == needs_player)
+                break;
+        }
+        check(seed < 65536, "biased-movement branch seed was not found");
+        pending(op(178, {0, 0, bits(2)}));
+        rng = th08::random::Rng(std::uint16_t(seed));
+        const auto result = world::apply_motion_effect(execution, storage, motion, &rng);
+        if (needs_player)
+            check(result == world::EffectStatus::missing_context && execution.pending_effect &&
+                      rng.generation_count() == 0,
+                  "missing biased-move target leaked the provisional RNG draw");
+        else
+            check(result == world::EffectStatus::applied && rng.generation_count() == 4,
+                  "unbiased random-move branch invented a player dependency");
+    }
+    pending(op(77, {bits(24), bits(24)}));
     check(world::apply_motion_effect(execution, storage, motion, &rng) ==
                   world::EffectStatus::not_handled &&
               execution.pending_effect,
-          "unimplemented random movement was acknowledged as a NOP");
+          "unimplemented hitbox effect was acknowledged as a NOP");
     std::cout << "ECL movement effects, typed operands and shared-world transactions: passed\n";
 }

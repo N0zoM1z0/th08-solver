@@ -86,12 +86,14 @@ The game is not launched in this phase.
     local/world coordinates, mirroring, clamping, parent offsets and fractional clocks.
     Velocity update and position integration remain separate around the shot/ANM phase.
     Another 580000 source phases pass bitwise comparisons, including changing rates.
-21. Thirteen ECL movement effects (63..76 except random-in-bounds opcode 67) now apply
+21. Fifteen ECL movement effects (63..76 and 178) now apply
     transactionally to the same enemy and scalar storage used by resumable execution.
     Typed packed/cold operands share the scalar resolver. Source-ordered assignments,
     live computed-field reads and repeated RNG reads are preserved; ambiguous pairs
     of random factors still stop explicitly. The pinned effect/operand blocks match
-    across 109860 effects, with four additional native atomic-failure checks. Coincident
+    across 420868 effects, with twelve additional native atomic-failure checks. Random
+    boundary/bias movement includes all seeds, strict/overlapping margins, previous-angle
+    reads, wrapped-distance ties and the no-player branch of opcode 178. Coincident
     player aiming has a minimized fail-before/pass-after regression. Missing context
     leaves enemy, workspace, pending instruction and RNG unchanged. This does not
     implement the enemy manager, timeline, spawning, shot dispatch or ending lifecycle.
@@ -130,8 +132,8 @@ The ANM instruction blockers in the previous baseline are resolved within the co
 projection. The remaining 11 unseeded entries require the actual shared RNG context,
 not arbitrary seeds. Next connect resource identity and lifecycle consumers without
 discarding visual state that those consumers read. The first complete-world path
-also needs real timeline gates, spawning/child contexts, effect RNG consumers, dynamic
-movement opcode 67, damage and callbacks. Do not infer world completion from this queue.
+also needs real timeline gates, spawning/child contexts, effect RNG consumers, damage
+and callbacks. Do not infer world completion from this queue.
 
 The indices define the all-case work queue; each item still requires behavior
 implementation and verification. Online input control, game launch, and latency

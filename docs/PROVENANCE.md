@@ -27,7 +27,7 @@ unchanged. Their code is not automatically promoted into a verified component.
 | Bullet slot selection | Unchanged selection loop and final cursor-update block from SpawnSingleBullet | 300000 reservation/release/completion operations, including nested cursor completion | Launch RNG, storage initialization, cancellation and complete pool lifecycle |
 | ANM lifecycle/scalars | Pinned ExecuteScript control/scalar blocks, all four typed accessors, opcode/variable enumerations, actual RNG and ZunTimer | 48224 control frames and 228669 scalar calls; 1151-script unseeded and explicit-seed audits; 42 timing certificates | Bytecode-writing destinations, visual interpolation/rendering, resource-loading effects and world lifecycles |
 | Enemy motion phases | Pinned movement/configuration methods and manager integration block | 580000 configuration/velocity/integration phases, fractional clocks, easing, mirrored/inverted bounds and parent coordinates | Actor creation, lifecycle gates and intervening shot/ANM execution |
-| ECL movement effects | Pinned movement opcode blocks, helpers, typed motion/player/RNG selectors, world publication and player-angle/vector-length bodies | 109860 effects, including repeated RNG reads, self-reading fields and coincident-position aiming; four separate native rollback checks | Opcode 67, multiple random factors in one unsequenced product, complete world scheduling |
+| ECL movement effects | Pinned movement opcode blocks, helpers, typed motion/player/RNG selectors, world publication and player-angle/vector-length bodies | 420868 effects, including all-seed random movement, repeated RNG reads, self-reading fields and coincident-position aiming; twelve separate native rollback checks | Multiple random factors in one unsequenced product, complete world scheduling |
 | Spatial index | Unindexed hazard scan | Random scenes, cell boundaries, exact contact, snapshot ownership, invalid arguments | Formal proof for all float inputs |
 | Wriggle scheduling | Actual DAT and historical event digests | sub40/41 ordered digests, 360 ticks, 160 commands, 840 requests; sub42 alignment variants | Successful allocation, bullet motion, complete spells |
 | Planning | Explicit collision-restoration fixture | Legal actions, terminal region, unindexed replay, budget failure without a route | Reisen gameplay or complete search |
@@ -58,7 +58,7 @@ It preserves the separate velocity and manager integration phases. Literal helpe
 adapters are fixture scaffolding; they do not establish ECL operand/RNG order.
 
 The movement-effect adapter covers that separate boundary using unchanged
-`EclRunLow.inl` instructions 63..66 and 68..76, configuration helpers and selected
+`EclRunLow.inl` instructions 63..76 and 178, configuration helpers and selected
 original integer/float operand cases. It also pins `EclRun.cpp`
 (`010049211263e47d8245c7335f56b17a8502ca0f84595c8b035926a495d90b57`) for world-position
 publication, and `modern/linux/d3dx8_compat.cpp`
@@ -67,7 +67,11 @@ The actual `Player::AngleToPoint` distinguishes coincident x/y from plain atan2;
 see [Regressions](REGRESSIONS.md). Repeated source operand evaluations remain
 repeated, including random speed reads for separate polar components. Tests exclude
 ambiguous multiple-random products rather than assert an unverified compiler order.
-The four failure-atomic checks enforce a native ownership contract, not source-engine
+The random movement helpers also pin `EclDependencies.cpp`
+(`019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4`).
+All 65536 seeds enter timed/untimed and boundary/bias comparisons; exact-margin,
+overlapping-boundary and missing-player branches distinguish source behavior.
+The twelve failure-atomic checks enforce a native ownership contract, not source-engine
 rollback semantics. No extracted test adapter implements the complete enemy layout.
 
 The reference checkout is not modified. Competing laser interpretations differ on
