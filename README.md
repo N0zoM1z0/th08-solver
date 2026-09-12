@@ -20,6 +20,7 @@ ctest --test-dir build --output-on-failure
 ./build/th08_slices game_data_donottrack/th08.dat reports/native
 ./build/th08_motion_cases game_data_donottrack/th08.dat reports/native
 ./build/th08_animation_cases game_data_donottrack/th08.dat reports/native
+./build/th08_timeline_cases game_data_donottrack/th08.dat reports/native
 ./build/geometry_bench reports/native/geometry_benchmark.json
 ./build/planner_bench reports/native/planner_benchmark.json
 ./build/bullet_slots_bench reports/native/bullet_slots_benchmark.json
@@ -71,6 +72,8 @@ This profile is not the shared RNG order of a complete game world.
   and position phases, explicit parent coordinates and source-ordered bounds.
 - Apply pending ECL movement effects transactionally across motion, scalar storage,
   execution and RNG; preserve repeated operand reads and same-frame resumption.
+- Schedule timeline clocks, masks, world gates and shared events with explicit
+  spawn/message/menu handoffs; preserve unknown world observations as blockers.
 
 Complete ECL worlds, enemy/bullet lifecycles, ANM rendering/resource integration,
 damage, world RNG consumption chains and complete spell routes remain unimplemented.
@@ -117,6 +120,7 @@ seed, ECL random assignments, acceleration frames, transform-program steps and
 bullet-slot selection/cursor operations. ANM adds 48,224 control frames and 228,669
 scalar calls; enemy motion adds 580,000 phases, and the movement-effect bridge adds
 420,868 source comparisons. Twelve separate checks enforce native transaction rollback.
+Timeline control adds 200,000 source frames, including waits and event-slot updates.
 This does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks

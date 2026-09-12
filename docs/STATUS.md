@@ -15,7 +15,7 @@ The game is not launched in this phase.
    candidate-independent models, and independent path replay.
 5. Actual sub40/41/42 regressions, source-function predicate comparisons,
    unit tests, and consistent clang-format formatting.
-6. Seventeen Release and sixteen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
+6. Eighteen Release and seventeen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
    native parsers, restricted-execution matrix and both 600-frame particle fixtures,
    including the latest signed-laser/fractional-clock changes.
 7. All observed ECL payload schemas; 32 timelines / 2003 instructions; eight SHT files
@@ -97,6 +97,14 @@ The game is not launched in this phase.
     player aiming has a minimized fail-before/pass-after regression. Missing context
     leaves enemy, workspace, pending instruction and RNG unchanged. This does not
     implement the enemy manager, timeline, spawning, shot dispatch or ending lifecycle.
+22. Source-faithful timeline control owns complete payloads, exact fractional clocks,
+    pending effect tokens and explicit gate/event context. All 32 timelines / 2003
+    payloads match the DAT. Another 200000 source frames cover masks, stale instructions,
+    boss/message/event waits, event broadcast/consume, ordered effect boundaries and
+    repeated sentinel ticks. The real ID2..5 practice timeline fixture yields sub0,
+    sub42 and retry-menu requests, with five explicitly synthetic boss-wait frames.
+    The 160-entry no-world-context baseline stops honestly at `REQUIRES_CONTEXT`;
+    no spawns or completed boss worlds are inferred from those requests.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the
@@ -132,8 +140,8 @@ The ANM instruction blockers in the previous baseline are resolved within the co
 projection. The remaining 11 unseeded entries require the actual shared RNG context,
 not arbitrary seeds. Next connect resource identity and lifecycle consumers without
 discarding visual state that those consumers read. The first complete-world path
-also needs real timeline gates, spawning/child contexts, effect RNG consumers, damage
-and callbacks. Do not infer world completion from this queue.
+also needs concrete world observations for timeline gates, spawning/child contexts,
+effect RNG consumers, damage and callbacks. Do not infer world completion from this queue.
 
 The indices define the all-case work queue; each item still requires behavior
 implementation and verification. Online input control, game launch, and latency

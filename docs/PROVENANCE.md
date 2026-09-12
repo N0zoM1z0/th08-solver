@@ -28,6 +28,7 @@ unchanged. Their code is not automatically promoted into a verified component.
 | ANM lifecycle/scalars | Pinned ExecuteScript control/scalar blocks, all four typed accessors, opcode/variable enumerations, actual RNG and ZunTimer | 48224 control frames and 228669 scalar calls; 1151-script unseeded and explicit-seed audits; 42 timing certificates | Bytecode-writing destinations, visual interpolation/rendering, resource-loading effects and world lifecycles |
 | Enemy motion phases | Pinned movement/configuration methods and manager integration block | 580000 configuration/velocity/integration phases, fractional clocks, easing, mirrored/inverted bounds and parent coordinates | Actor creation, lifecycle gates and intervening shot/ANM execution |
 | ECL movement effects | Pinned movement opcode blocks, helpers, typed motion/player/RNG selectors, world publication and player-angle/vector-length bodies | 420868 effects, including all-seed random movement, repeated RNG reads, self-reading fields and coincident-position aiming; twelve separate native rollback checks | Multiple random factors in one unsequenced product, complete world scheduling |
+| Timeline control | Complete pinned EclTimeline::Run, GUI predicates and actual ZunTimer | 200000 frames; all 32 timelines / 2003 owned DAT payloads; practice-entry handoff fixture | World effects, ungated random spawn execution, complete boss lifecycle |
 | Spatial index | Unindexed hazard scan | Random scenes, cell boundaries, exact contact, snapshot ownership, invalid arguments | Formal proof for all float inputs |
 | Wriggle scheduling | Actual DAT and historical event digests | sub40/41 ordered digests, 360 ticks, 160 commands, 840 requests; sub42 alignment variants | Successful allocation, bullet motion, complete spells |
 | Planning | Explicit collision-restoration fixture | Legal actions, terminal region, unindexed replay, budget failure without a route | Reisen gameplay or complete search |
@@ -73,6 +74,14 @@ All 65536 seeds enter timed/untimed and boundary/bias comparisons; exact-margin,
 overlapping-boundary and missing-player branches distinguish source behavior.
 The twelve failure-atomic checks enforce a native ownership contract, not source-engine
 rollback semantics. No extracted test adapter implements the complete enemy layout.
+
+The timeline generator pins `EnemyTimeline.cpp`
+(`920ee34725aa6aad9f113d43454731acadab456abddac73256b2ba9a29e8e94b`), `Gui.cpp`
+(`bd053c070d1ce136910e163898e6f97f4c00683558051d1a953967c6c5c89af8`) and
+`AsciiManagerScale.cpp` (`b439ca540148240df69319277721cad4638a5422d7f98efc7a873e2fdcda62df`),
+in addition to the existing enemy definitions and real timer. External method
+adapters record invocation order; ungated random spawn execution throws outside
+that comparison domain. No actual GUI or game loop is launched.
 
 The reference checkout is not modified. Competing laser interpretations differ on
 whether player extents also rotate; production function output supports center-only

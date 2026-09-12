@@ -130,6 +130,35 @@ float operations and distance tie-breaking. Its zero-roll branch never reads the
 player. Both timed random helpers omit the ordinary polar helper's mirror operation
 and repeat speed/duration reads; a missing later input rolls back all provisional draws.
 
+### Timeline control and world handoffs
+
+`timeline::Program` owns predecoded instructions and complete payload bytes. All
+32 DAT timelines and 2003 nonterminal payloads are compared against the input;
+program copies remain valid after decoded resource destruction. `State` owns the
+exact fractional clock, PC and a monotonically increasing pending-effect token.
+Copy it with `Context` to fork the four shared event slots and gate observations.
+
+Difficulty uses any-bit intersection, not enemy ECL's containment test. Only exact
+integer-time matches execute; stale instructions skip without reading context.
+Boss/message/event waits decrement the source clock before its frame-tail tick.
+The extra-step flag affects that decrement, not the tick. A negative-time sentinel
+still ticks on repeated calls; `at_end` is an observation, not a frozen stop latch.
+
+GUI boss presence, spawn suppression, message waits, boss activity and event slots
+must be known when the selected source branch reads them. Short-circuiting preserves
+unused unknowns. Event publication fills every negative slot; event waits consume
+every match. Calls failing on context, state or budget roll back both state and
+events. Selected unknown opcodes remain unsupported rather than becoming NOPs.
+
+Spawning, messages, pending boss subroutines, power changes and retry menus yield
+before operands or RNG are consumed. The world must perform the complete effect
+before acknowledging its token; only then can the same source frame resume.
+The 200000-frame source comparison records external calls but does not implement
+their world effects. The real practice timeline fixture observes sub0/sub42/retry
+boundaries and five synthetic boss-wait frames; its supplied boss observations do
+not represent an actual defeated boss. The all-mask baseline supplies no world
+observations, so all 160 attempts correctly stop with `REQUIRES_CONTEXT`.
+
 ## Launch kinematics and numerical profile
 
 `random::Rng` owns an explicit 16-bit seed, unsigned draw counter, and optional
