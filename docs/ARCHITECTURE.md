@@ -34,6 +34,7 @@ The main choices are deliberate:
 | DAT/ECL and other resource structures | [resources.hpp](../include/th08/resources.hpp), [resources.cpp](../src/resources.cpp), [formats.cpp](../src/formats.cpp), [schema.cpp](../src/schema.cpp) | Native audit, parser tests, field/payload comparisons |
 | ECL scheduling and scalar ownership | [emitter.hpp](../include/th08/emitter.hpp), [emitter.cpp](../src/emitter.cpp) | Emitter/context tests, real-data slice matrix, selected source scalar comparisons |
 | Timeline/world handoff | [timeline.hpp](../include/th08/timeline.hpp), [timeline.cpp](../src/timeline.cpp) | Timeline unit/DAT tests and source frame comparisons |
+| Owned practice-entry prefix | [practice_entry.hpp](../include/th08/practice_entry.hpp), [practice_entry.cpp](../src/practice_entry.cpp), [first_spell.cpp](../tools/first_spell.cpp) | Pending-spawn/DAT regressions and opt-in source spawn-order comparison |
 | ANM control and certificates | [animation_control.cpp](../src/animation_control.cpp), [animation.cpp](../src/animation.cpp) | All-script audit, timing certificates, control/scalar oracle |
 | Enemy motion and effect bridge | [enemy_motion.hpp](../include/th08/enemy_motion.hpp), [world_motion.cpp](../src/world_motion.cpp) | Independent source phases/effects and rollback tests |
 | Effect-51 callbacks | [camera_particle.hpp](../include/th08/camera_particle.hpp) | All-seed initialization, update and rejection/cull comparisons |
@@ -42,7 +43,8 @@ The main choices are deliberate:
 | Collision and fixed-model planning | [geometry.hpp](../include/th08/geometry.hpp), [planner.hpp](../include/th08/planner.hpp) | Unindexed differential checks, reference planner and replay |
 | Bounded end-to-end fixtures | [motion_cases.cpp](../tools/motion_cases.cpp) | Source-driven sub40/41 frame/route reports |
 
-There is no complete `World` owner yet. Actor/effect/bullet lifetimes, player damage,
+There is no complete `World` owner yet. The practice-entry prefix owns actor slots
+and pending spawn state, not full actor/effect/bullet lifetimes. Player damage,
 shared state synchronization and terminal spell transitions cannot be inferred from
 this map. CMake's `th08_geometry` interface target exposes headers and numerical
 compiler flags; `th08_resources` compiles parsers/execution and links OpenSSL hashing.
@@ -211,6 +213,43 @@ their world effects. The real practice timeline fixture observes sub0/sub42/retr
 boundaries and five synthetic boss-wait frames; its supplied boss observations do
 not represent an actual defeated boss. The all-mask baseline supplies no world
 observations, so all 160 attempts correctly stop with `REQUIRES_CONTEXT`.
+
+### Owned practice-entry prefix
+
+`practice::Programs` shares immutable compiled timeline/ECL data. `SpawnPool` owns
+480 contiguous actors and an optional in-progress spawn transaction. Snapshot
+copies duplicate mutable actors, clocks and pending state; shared program ownership
+keeps every execution/call pointer valid after the original caller releases it.
+RNG and timeline observations remain caller-owned and must be copied separately.
+The pool owns the eight shared call parameters across its actors, separately from
+each thirty-slot context. Their initial validity is explicit; completed writes
+survive source initialization failure. Snapshot branches copy this shared storage
+instead of aliasing it. Other game globals are not implemented by this pool.
+
+Ordinary and inherited-context spawns preserve first-free selection, signed16 sub
+conversion, conditional life/score stores, signed8 drop conversion and failure
+identity. Inherited context is copied before immediate execution; its successful
+post-spawn life override differs from ordinary spawn. A selected but blocked actor
+stays active; it is neither a successful spawn nor a source failure. `lastSpawnFailed`
+is not updated until the source transaction finishes. Full capacity returns an
+explicit no-actor sentinel, never an out-of-bounds pointer.
+
+Immediate execution currently handles scalar ECL, motion and effects77..81/131.
+The source template's callback/interpolator/child pointers, periodic-shot interval
+and movement-ANM selector remain inactive throughout this accepted opcode closure.
+Its restricted frame tail therefore runs velocity update but no manager displacement.
+Adding any instruction that changes that closure requires implementing its tail
+consumer first. Main-context root return remains unsupported rather than interpreting
+source child-slot underflow as successful initialization. Unknown effect operands
+are not resolved and their RNG is not consumed.
+
+`practice::Entry` joins actual timeline packets0/1/15 to the pool, acknowledging the
+timeline token only after a complete restricted spawn, source initialization failure,
+or full-pool result. It does not execute an EnemyManager frame or the surrounding
+background/player/effect phases. `timeline_frame_complete` names only its timeline
+phase, not a world step. The `th08_first_spell` diagnostic supplies two explicit GUI
+gate observations and stops the real DAT prefix at sub0 PC1 offset260 opcode139.
+It leaves unknown RNG/player inputs null and does not claim a completed practice entry.
 
 ## Launch kinematics and numerical profile
 
@@ -460,7 +499,8 @@ Establish correctness comparisons, then reduce work through batching, shared str
 and data layout. Apply SIMD or further specialization only to measured bottlenecks.
 A fixed emitter slice can generate its schedule once and share it; repeated interpreter
 costs shown in microbenchmarks need not be paid per candidate when the dependency
-contract permits reuse. The next integration boundary is owned actor spawning and
-the complete practice-entry world, including candidate-dependent consumers; see
+contract permits reuse. The owned entry prefix now stops inside the first spawn at
+effect51; the next integration boundary is its ANM/camera/shared RNG ownership and
+the surrounding practice-entry world, including candidate-dependent consumers; see
 [Coverage](COVERAGE.md). Measurements and excluded costs are in
 [Performance](PERFORMANCE.md). Microbenchmark time is not complete solving time.

@@ -1,0 +1,27 @@
+{
+  "status": "UNSUPPORTED_WORLD_EFFECT",
+  "scope": "owned timeline-to-spawn prefix with supplied GUI gates; not a complete entry, world, or solution",
+  "dat_sha256": "9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb",
+  "member": "ecldata1sp.ecl",
+  "member_sha256": "aac506b4eaf8fdfaa90e876f74db711d3c0724f63798e7d62801b02bbb29e00e",
+  "reference_revision": "a45e99fb1942714e6edded20847e32a654d56f97",
+  "source_sha256": {
+    "src/EnemyTimeline.cpp": "920ee34725aa6aad9f113d43454731acadab456abddac73256b2ba9a29e8e94b",
+    "src/EnemyManager.cpp": "e8febe94a833472b33f732e83ee39ee48fdc5097c5d69ff094fd1f1bb8629a7d",
+    "src/EnemyManager.hpp": "e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256",
+    "src/EclManager.cpp": "18f06e5aa827b52eee16755b2fb07e780362b057426f6492050c13db1dd6e93d",
+    "src/EclRun.cpp": "010049211263e47d8245c7335f56b17a8502ca0f84595c8b035926a495d90b57",
+    "src/EclRunLow.inl": "8c6d23bf4e9daf8f96dbd344f4a03d3ed32d1d200483959682e962cd41ec0045",
+    "src/EclRunHigh.inl": "5e8c0b8ac1bd35f92cf2c3eb8792b2fb62d00feb97a21dc27e935101c5a45914",
+    "src/EclDependencies.cpp": "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4"
+  },
+  "selected_case": {"spell_id": 2, "difficulty": "Easy", "difficulty_mask": 1, "entry": "spell_practice", "timeline": 0, "wrapper_sub": 42, "spell_sub": 24, "spell_pc": 10, "spell_offset": 18116},
+  "input_state": {"provenance": "source manager template plus explicitly supplied GUI gate observations; surrounding world phases not executed", "gui_boss_present": false, "timeline_spawns_suppressed": false, "rng_seed": null, "rng_draw_counter": null, "player_state": null},
+  "numerical_profile": "native float32, no fast-math, unit-rate ECL/timeline",
+  "first_blocker": {"phase": "immediate_spawn_ecl", "timeline_pc": 0, "timeline_offset": 39684, "timeline_time": 1, "actor": 0, "sub": 0, "pc": 1, "offset": 260, "opcode": 139, "instruction_mask": 255, "execution_mask": 1, "local_time": 0, "reason": "effect51 allocation, ANM initialization and camera/shared-RNG ownership are not integrated"},
+  "pending_spawn": {"active_slots": 1, "life": 20, "score": 100, "item_drop": 0, "max_life": 0, "ecl_instructions_examined": 2, "post_spawn_stores_applied": false, "timeline_acknowledged": false},
+  "complete_worlds": 0,
+  "complete_spell_solutions": 0,
+  "acceptance_gates_passed": 0,
+  "blocked_resumptions_checked": 8
+}

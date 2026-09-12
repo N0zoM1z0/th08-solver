@@ -46,7 +46,7 @@ not establish impossibility; timeout survival does not establish normal capture.
 
 | Order | Deliverable | Existing building blocks | Acceptance before marking complete |
 |---|---|---|---|
-| 1 | Actor spawn ownership and entry | Timeline yields, resumable ECL, compact context snapshots, scalar template zeros | Source first-free 480-slot behavior, full/failing pool cases, template copy, immediate ECL and full frame tail, post-spawn stores and parent-link timing |
+| 1 | Actor spawn ownership and entry | Owned 480-slot restricted spawn transactions, timeline connection, resumable ECL and context snapshots | Extend the checked spawn prefix through effect51, ANM, complete frame tails and parent-link timing; derive all surrounding entry state |
 | 2 | Complete enemy/context lifecycle | Scalar calls/waits, motion handlers and separate integration phases | Main/child context order, same-frame installation/re-entry, callback and interpolation lifetime, form masks, pause/death/offscreen gates, destruction and inherited state |
 | 3 | ANM/effect/background world consumers | ANM scalar/control projection, parsed STD, effect-51 callbacks | Required visual/resource fields retained, camera evolution, effect allocation/ANM/freeze/retirement, correct shared RNG order under pool contention |
 | 4 | Shot dispatch and bullet/laser ownership | Launch, transforms, slot index, motion and geometry kernels | Distance/alignment/rank/deferred gates before the correct operand reads, successful allocations, child patterns, sprite changes, collision windows, cancellation and retirement |
@@ -76,9 +76,10 @@ Use the exact [Wriggle world contract](WRIGGLE_WORLD_CONTRACT.md), starting with
 | Genuine terminal transition and replay | Capture and timeout produce their distinct callbacks, cancellation, boss removal and remaining collision phases | Spell lifecycle, terminal ownership and independent full-world replay |
 | All four difficulties and stage entry | Each difficulty and relevant form/character state; separately derived ordinary-stage inheritance | The earlier nonspell, dialogue and stage state cannot be replaced by practice defaults |
 
-The first missing world boundary is the timeline's sub0 spawn request. Inside that
-entity, the first ECL command is interaction opcode80, followed by effect51 creation;
-the practice wrapper separately begins with EX136/19. Reporting only the wrapper's
+The timeline's sub0 spawn is now selected and retained by the owned prefix, but not
+completed. With explicitly supplied GUI gates, it executes interaction opcode80 and
+stops at effect51 creation (sub0 PC1 offset260); no world acceptance gate is passed.
+The practice wrapper separately begins with EX136/19. Reporting only the wrapper's
 restricted first blocker must not imply that the earlier prelude was executed.
 
 An ECL `frame_complete` signal is not successful spawn completion. Source spawn

@@ -34,17 +34,20 @@ With the pinned reference checkout prepared as described in [Validation](VALIDAT
 cmake -S . -B build-probes -DCMAKE_BUILD_TYPE=Release \
   -DTH08_REFERENCE_SOURCE="$PWD/.cache/th08"
 cmake --build build-probes --parallel 2 \
-  --target source_enemy_motion source_world_motion source_camera_particle
+  --target source_enemy_motion source_world_motion source_camera_particle source_spawn
 ./build-probes/source_enemy_motion
 ./build-probes/source_world_motion
 ./build-probes/source_camera_particle
+./build-probes/source_spawn
 ```
 
-These opt-in targets reuse the same source bodies and comparisons as the integrated
-`source_oracle` CTest. They do not add duplicate work to the default build or CTest
+The first three opt-in targets reuse the same source bodies and comparisons as the
+integrated `source_oracle` CTest. `source_spawn` separately checks6000 transactions
+against unchanged SpawnEnemy1/2 bodies, with a controlled immediate-ECL boundary.
+It does not compare full RunEcl or a full world. These targets add no work to the default CTest
 suite. Add `-DTH08_SANITIZERS=ON -DCMAKE_BUILD_TYPE=Debug` in a separate build directory
 to instrument them with ASan/UBSan. The source generator also accepts a final
-`enemy_motion`, `world_motion`, or `camera_particle` argument; omitting it generates
+`enemy_motion`, `world_motion`, `camera_particle`, or `spawn` argument; omitting it generates
 the unchanged integrated oracle. Unknown component names fail before opening output.
 
 Source hashes are checked on generation. These comparisons establish the documented
