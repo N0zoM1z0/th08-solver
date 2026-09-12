@@ -24,14 +24,15 @@ add_executable(th08_motion_cases tools/motion_cases.cpp)
 target_link_libraries(th08_motion_cases PRIVATE th08_resources)
 set(TH08_REFERENCE_SOURCE "" CACHE PATH "Optional pinned reconstruction checkout for source oracle")
 if(TH08_REFERENCE_SOURCE)
-  add_executable(th08_source_probe tools/source_probe.cpp)
+  add_executable(th08_source_probe tools/source_probe.cpp tools/ecl_source_probe.cpp)
   target_link_libraries(th08_source_probe PRIVATE th08_resources)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     DEPENDS th08_source_probe ${TH08_REFERENCE_SOURCE}/src/Player.cpp ${TH08_REFERENCE_SOURCE}/src/Global.cpp ${TH08_REFERENCE_SOURCE}/src/Global.hpp ${TH08_REFERENCE_SOURCE}/src/BulletManager.cpp ${TH08_REFERENCE_SOURCE}/src/ZunMath.hpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.cpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.hpp
+      ${TH08_REFERENCE_SOURCE}/src/EclManager.hpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsInt.cpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsFloat.cpp ${TH08_REFERENCE_SOURCE}/src/EclRunLow.inl
     VERBATIM)
   add_executable(source_oracle ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp)
-  target_link_libraries(source_oracle PRIVATE th08_geometry)
+  target_link_libraries(source_oracle PRIVATE th08_resources)
   if(NOT MSVC)
     # Unchanged pinned bodies include an unused ZunTimer operator with no return,
     # intentional switch fallthrough, and retail bitcast-through-pointer expressions.

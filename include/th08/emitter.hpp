@@ -1,5 +1,6 @@
 #pragma once
 #include "resources.hpp"
+#include "rng.hpp"
 #include <array>
 
 namespace th08::emitter {
@@ -57,8 +58,15 @@ struct Result {
 };
 // Restricted scalar scheduling only. No RNG defaults, movement, pool, ANM,
 // shot-distance gates, collision, damage or actual player targeting is executed.
+// An optional caller-owned RNG enables isolated scalar execution. Calls share it;
+// at most one RNG-consuming expression is accepted per instruction. Shot requests
+// stop before execution because their world-side RNG effects are not modeled.
+// On failure RNG rolls back only the failing instruction, not the completed prefix.
+// Workspace/Result are diagnostic outputs, not resumable execution snapshots.
 Result run(const Program &program, Workspace &workspace, std::uint8_t mask,
-           std::uint32_t horizon = 400, std::uint32_t instruction_limit = 100000);
+           std::uint32_t horizon = 400, std::uint32_t instruction_limit = 100000,
+           random::Rng *rng = nullptr);
 Result run(const Module &module, std::size_t sub, Workspace &workspace, std::uint8_t mask,
-           std::uint32_t horizon = 400, std::uint32_t instruction_limit = 100000);
+           std::uint32_t horizon = 400, std::uint32_t instruction_limit = 100000,
+           random::Rng *rng = nullptr);
 } // namespace th08::emitter

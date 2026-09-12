@@ -141,7 +141,8 @@ Module::Module(resources::View resource, const resources::Ecl &ecl) {
         subs.emplace_back(resource, ecl, sub);
 }
 static Result run_impl(const Program &program, const Module *module, Workspace &workspace,
-                       std::uint8_t mask, std::uint32_t horizon, std::uint32_t instruction_limit) {
+                       std::uint8_t mask, std::uint32_t horizon, std::uint32_t instruction_limit,
+                       random::Rng *rng) {
     Result result;
     workspace.initialized.fill(false);
     workspace.emissions.clear();
@@ -150,11 +151,21 @@ static Result run_impl(const Program &program, const Module *module, Workspace &
     const Program *active = &program;
     std::size_t depth = 0;
     std::int64_t local_time = 0, wait = 0;
+    random::State instruction_rng{};
+    bool rng_checkpoint_valid = false;
+    unsigned rng_expressions = 0;
     try {
         require(horizon > 0 && horizon <= 4096 && mask != 0 && instruction_limit > 0);
         auto selector = [](double value) {
             require(std::isfinite(value) && value >= 10000 && value < 10101, Status::unsupported);
             return std::size_t(value - 10000);
+        };
+        auto random_expression = [&]() -> random::Rng & {
+            require(rng != nullptr, Status::missing_context);
+            // Source operators/function arguments do not generally sequence
+            // multiple RNG consumers. Do not impose an unverified draw order.
+            require(++rng_expressions == 1, Status::unsupported);
+            return *rng;
         };
         auto operand = [&](const Operation &op, unsigned word, bool floating,
                            unsigned flag) -> double {
@@ -167,8 +178,28 @@ static Result run_impl(const Program &program, const Module *module, Workspace &
                 const bool resolved =
                     floating ? slot < 100 && slot != 98 : !(slot >= 79 && slot <= 82);
                 if (resolved) {
-                    require(workspace.initialized[slot], Status::missing_context);
-                    value = workspace.registers[slot];
+                    if (slot >= 32 && slot <= 35) {
+                        auto &stream = random_expression();
+                        switch (slot) {
+                        case 32:
+                            value = stream.next_u32() & 0x7fffffffU;
+                            break;
+                        case 33:
+                            value = stream.unit();
+                            break;
+                        case 34:
+                            value = as_int(stream.next_u32());
+                            break;
+                        case 35:
+                            value = stream.signed_unit();
+                            break;
+                        }
+                    } else if (floating && slot == 82) {
+                        value = random_expression().range_float(6.2831855f) - 3.1415927f;
+                    } else {
+                        require(workspace.initialized[slot], Status::missing_context);
+                        value = workspace.registers[slot];
+                    }
                 }
             }
             require(std::isfinite(value));
@@ -209,6 +240,11 @@ static Result run_impl(const Program &program, const Module *module, Workspace &
                 }
                 require(result.executed < instruction_limit, Status::instruction_limit);
                 ++result.executed;
+                rng_expressions = 0;
+                if (rng) {
+                    instruction_rng = rng->state();
+                    rng_checkpoint_valid = true;
+                }
                 auto next = pc + 1;
                 switch (op.opcode) {
                 case 0:
@@ -281,8 +317,13 @@ static Result run_impl(const Program &program, const Module *module, Workspace &
                     break;
                 }
                 case 8:
-                case 9:
-                    throw Blocked{Status::missing_context};
+                case 9: {
+                    const bool floating = op.opcode == 9;
+                    const int sign = random_expression().next_u16() & 1U ? 1 : -1;
+                    const auto value = operand(op, 1, floating, 1);
+                    write(op, 0, floating, sign * value);
+                    break;
+                }
                 case 10:
                 case 11:
                 case 12:
@@ -388,6 +429,10 @@ static Result run_impl(const Program &program, const Module *module, Workspace &
                 case 102:
                 case 103:
                 case 104: {
+                    // The emitter records requests, not allocation, suppression,
+                    // random spread or external callbacks. An RNG-enabled run
+                    // cannot cross this boundary and preserve its shared stream.
+                    require(rng == nullptr, Status::missing_context);
                     require(op.payload_size == 32);
                     auto words = op.words;
                     // Packed type/color are 16-bit operands 0/1; count1/count2
@@ -411,6 +456,7 @@ static Result run_impl(const Program &program, const Module *module, Workspace &
                     throw Blocked{Status::unsupported};
                 }
                 pc = next;
+                rng_checkpoint_valid = false;
                 // Secondary wait begins within this same scheduling tick.
                 if (wait > 0) {
                     --wait;
@@ -421,21 +467,23 @@ static Result run_impl(const Program &program, const Module *module, Workspace &
             require(pc < active->code.size(), Status::invalid);
         }
     } catch (const Blocked &blocked) {
+        if (rng_checkpoint_valid)
+            *rng = random::Rng(instruction_rng);
         result.status = blocked.status;
     }
     return result;
 }
 Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std::uint32_t horizon,
-           std::uint32_t instruction_limit) {
-    return run_impl(program, nullptr, workspace, mask, horizon, instruction_limit);
+           std::uint32_t instruction_limit, random::Rng *rng) {
+    return run_impl(program, nullptr, workspace, mask, horizon, instruction_limit, rng);
 }
 Result run(const Module &module, std::size_t sub, Workspace &workspace, std::uint8_t mask,
-           std::uint32_t horizon, std::uint32_t instruction_limit) {
+           std::uint32_t horizon, std::uint32_t instruction_limit, random::Rng *rng) {
     if (sub >= module.subs.size()) {
         Result result;
         result.status = Status::invalid;
         return result;
     }
-    return run_impl(module.subs[sub], &module, workspace, mask, horizon, instruction_limit);
+    return run_impl(module.subs[sub], &module, workspace, mask, horizon, instruction_limit, rng);
 }
 } // namespace th08::emitter
