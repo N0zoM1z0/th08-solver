@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <th08/emitter.hpp>
 namespace vm = th08::emitter;
@@ -8,9 +9,117 @@ void check(bool valid, const char *why) {
         std::exit(1);
     }
 }
+std::uint32_t bits(float value) {
+    std::uint32_t result;
+    std::memcpy(&result, &value, sizeof(result));
+    return result;
+}
+vm::Operation op(int opcode, std::initializer_list<std::uint32_t> words, std::uint16_t flags = 0) {
+    vm::Operation result{0, std::int16_t(opcode), flags, std::uint16_t(words.size() * 4), 255, 0, 0,
+                         {}};
+    std::copy(words.begin(), words.end(), result.words.begin());
+    return result;
+}
+void scalar_tests(vm::Workspace &workspace) {
+    vm::Program program;
+    program.code = {op(6, {10000, 4}, 1),
+                    op(30, {10000}, 1),
+                    op(31, {10000}, 1),
+                    op(32, {bits(10016.0f), bits(0.0f)}, 1),
+                    op(33, {bits(10017.0f), bits(0.0f)}, 1),
+                    op(39, {bits(10018.0f), bits(0.0f), bits(0.0f), bits(3.0f), bits(4.0f)}, 1),
+                    op(34, {bits(10019.0f), bits(0.0f), bits(0.0f), bits(1.0f), bits(0.0f)}, 1),
+                    op(38, {bits(10020.0f), bits(10021.0f), bits(0.0f), bits(2.0f)}, 3),
+                    op(37, {bits(10019.0f)}, 1),
+                    op(53, {})};
+    check(vm::run(program, workspace, 8).status == vm::Status::returned &&
+              workspace.registers[0] == 4 && workspace.registers[16] == 0 &&
+              workspace.registers[17] == 1 && workspace.registers[18] == 5 &&
+              workspace.registers[19] == 0 && workspace.registers[20] == 2 &&
+              workspace.registers[21] == 0,
+          "increment, trigonometry or geometric arithmetic mismatch");
+    const int expected[] = {10, 4, 21, 2, 1};
+    for (int opcode = 10; opcode <= 29; ++opcode) {
+        const bool floating = (opcode >= 15 && opcode <= 19) || opcode >= 25;
+        const auto dest = floating ? bits(10016.0f) : 10000U;
+        const auto seven = floating ? bits(7.0f) : 7U;
+        const auto three = floating ? bits(3.0f) : 3U;
+        program.code = {op(floating ? 7 : 6, {dest, seven}, 1),
+                        opcode < 20 ? op(opcode, {dest, three}, 1)
+                                    : op(opcode, {dest, seven, three}, 1),
+                        op(53, {})};
+        check(vm::run(program, workspace, 8).status == vm::Status::returned,
+              "arithmetic opcode rejected");
+        const double value =
+            floating && opcode % 5 == 3 ? double(7.0f / 3.0f) : expected[opcode % 5];
+        check(workspace.registers[floating ? 16 : 0] == value, "arithmetic value mismatch");
+    }
+    program.code = {op(7, {bits(10016.0f), bits(-3.75f)}, 1), op(6, {10000, 10016}, 3),
+                    op(7, {bits(10017.0f), bits(10016.5f)}, 3), op(53, {})};
+    check(vm::run(program, workspace, 8).status == vm::Status::returned &&
+              workspace.registers[0] == -3 && workspace.registers[17] == -3.75,
+          "typed operand truncation mismatch");
+    program.code = {op(6, {10000, 10079}, 3), op(7, {bits(10016.0f), bits(10098.5f)}, 3),
+                    op(53, {})};
+    check(vm::run(program, workspace, 8).status == vm::Status::returned &&
+              workspace.registers[0] == 10079 && workspace.registers[16] == 10098.5,
+          "raw selector default mismatch");
+    program.code = {op(7, {bits(10000.0f), bits(1.0f)}, 1), op(53, {})};
+    check(vm::run(program, workspace, 8).status == vm::Status::unsupported,
+          "wrong typed lvalue silently changed an integer register");
+    for (int opcode : {23, 24, 28, 29}) {
+        const bool floating = opcode >= 25;
+        program.code = {
+            op(opcode, {floating ? bits(10016.0f) : 10000U, floating ? bits(1.0f) : 1U, 0}, 1),
+            op(53, {})};
+        check(vm::run(program, workspace, 8).status == vm::Status::invalid,
+              "division by zero accepted");
+    }
+    program.code = {op(20, {10000, 0x7fffffffU, 1}, 1), op(53, {})};
+    check(vm::run(program, workspace, 8).status == vm::Status::invalid,
+          "unverified signed overflow accepted");
+    for (int opcode = 40; opcode <= 51; ++opcode)
+        for (int right : {2, 3, 4}) {
+            const bool floating = (opcode & 1) != 0;
+            const bool comparisons[] = {3 == right, 3 != right, 3 < right,
+                                        3 <= right, 3 > right,  3 >= right};
+            auto branch = op(opcode, {floating ? bits(3.0f) : 3U,
+                                      floating ? bits(float(right)) : unsigned(right), 0, 0});
+            branch.target = 2;
+            program.code = {branch, op(63, {0, 0}), op(53, {})};
+            check(vm::run(program, workspace, 8).status == (comparisons[(opcode - 40) / 2]
+                                                                ? vm::Status::returned
+                                                                : vm::Status::unsupported),
+                  "conditional branch mismatch");
+        }
+}
+void call_tests(vm::Workspace &workspace) {
+    vm::Module module;
+    module.subs.resize(2);
+    module.subs[0].code = {op(6, {10000, 7}, 1), op(6, {10008, 1}, 1),     op(6, {10061, 9}, 1),
+                           op(52, {1}),          op(6, {10001, 10008}, 3), op(53, {})};
+    module.subs[1].code = {op(6, {10000, 10053}, 3), op(6, {10008, 10000}, 3),
+                           op(6, {10061, 12}, 1), op(2, {3}), op(53, {})};
+    const auto result = vm::run(module, 0, workspace, 8);
+    check(result.status == vm::Status::returned && result.tick == 3,
+          "call scheduling or caller clock restoration mismatch");
+    check(workspace.registers[0] == 7 && workspace.registers[1] == 9 &&
+              workspace.registers[8] == 9 && workspace.registers[61] == 12 &&
+              !workspace.initialized[53],
+          "call parameters, context restore or persistent entity/shared storage mismatch");
+    check(vm::run(module.subs[0], workspace, 8).status == vm::Status::missing_context,
+          "isolated call invented a module");
+    module.subs[0].code = {op(52, {0})};
+    check(vm::run(module, 0, workspace, 8).status == vm::Status::unsupported,
+          "call stack overflow not stopped");
+    check(vm::run(module, 2, workspace, 8).status == vm::Status::invalid,
+          "invalid module entry accepted");
+}
 int main() {
     vm::Program program;
     vm::Workspace workspace;
+    scalar_tests(workspace);
+    call_tests(workspace);
     program.code = {{0, 63, 0, 8, 255, 76, 0, {}}};
     check(vm::run(program, workspace, 8).status == vm::Status::unsupported,
           "movement silently ignored");

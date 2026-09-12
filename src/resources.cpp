@@ -7,6 +7,7 @@
 #include <set>
 #include <stdexcept>
 #include <th08/resources.hpp>
+#include <th08/schema.hpp>
 
 namespace th08::resources {
 namespace {
@@ -34,6 +35,18 @@ std::int32_t i32(View b, std::size_t offset) {
     std::int32_t result;
     std::memcpy(&result, &v, 4);
     return result;
+}
+std::int16_t i16(View b, std::size_t offset) {
+    const auto bits = u16(b, offset);
+    std::int16_t value;
+    std::memcpy(&value, &bits, sizeof(value));
+    return value;
+}
+float f32(View b, std::size_t offset) {
+    const auto bits = u32(b, offset);
+    float value;
+    std::memcpy(&value, &bits, sizeof(value));
+    return value;
 }
 Bytes read_file(const std::filesystem::path &path) {
     std::ifstream f(path, std::ios::binary | std::ios::ate);
@@ -238,6 +251,15 @@ Ecl parse_ecl(View b) {
             demand(raw <= 184 || (raw == 0xffff && time == -1 && p + length == end),
                    "invalid ECL opcode or sentinel");
             const auto mask = b.data[p + 9];
+            if (opcode >= 0) {
+                const auto payload = check_payload(unsigned(opcode), length - 12);
+                if (payload == PayloadStatus::mismatch)
+                    throw std::runtime_error(
+                        "ECL payload schema mismatch: opcode=" + std::to_string(opcode) +
+                        " offset=" + std::to_string(p) +
+                        " payload_bytes=" + std::to_string(length - 12));
+                out.unknown_payloads += payload == PayloadStatus::unknown;
+            }
             out.instructions.push_back({p, time, opcode, length, flags, mask});
             if (opcode == 122) {
                 demand(length >= 116, "truncated spell metadata");
@@ -262,6 +284,31 @@ Ecl parse_ecl(View b) {
                 ++out.jump_targets_checked;
             }
         }
+    }
+    // Timeline records have a distinct eight-byte header and one-byte length.
+    // Their clocks can block on external events; timestamps are not wall time.
+    constexpr unsigned payload_sizes[] = {24, 24, 28, 20, 28, 20, 4,  0, 8,
+                                          4,  4,  28, 28, 4,  4,  24, 0};
+    for (unsigned id = 0; id < timelines; ++id) {
+        const auto start = u32(b, 8 + id * 4);
+        const auto end = *std::upper_bound(boundaries.begin(), boundaries.end(), start);
+        const auto first = std::uint32_t(out.timeline_instructions.size());
+        auto p = start;
+        for (;;) {
+            demand(p <= end && end - p >= 8, "unterminated ECL timeline");
+            const auto time = i32(b, p);
+            if (time < 0)
+                break;
+            const auto opcode = u16(b, p + 4);
+            const auto length = b.data[p + 6], mask = b.data[p + 7];
+            demand(opcode < 17 && length >= 8 && length <= end - p, "invalid ECL timeline record");
+            demand(unsigned(length - 8) == payload_sizes[opcode],
+                   "timeline payload schema mismatch");
+            out.timeline_instructions.push_back({p, time, opcode, length, mask});
+            p += length;
+        }
+        out.timelines.push_back(
+            {start, p, first, std::uint32_t(out.timeline_instructions.size()) - first});
     }
     return out;
 }

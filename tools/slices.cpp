@@ -100,14 +100,14 @@ int main(int argc, char **argv) try {
             continue;
         const auto decoded = archive.decode(index);
         const auto ecl = res::parse_ecl(res::view(decoded));
+        const vm::Module module(res::view(decoded), ecl);
         if (entry.name == "ecldata1.ecl")
             verify_examples(decoded, ecl, output);
         for (std::size_t sub = 0; sub < ecl.subs.size(); ++sub) {
-            const vm::Program program(res::view(decoded), ecl, sub);
             for (unsigned difficulty : {1, 2, 4, 8, 15})
                 for (unsigned alignment : {0, 32, 64}) {
                     const auto result =
-                        vm::run(program, workspace, std::uint8_t(difficulty | alignment), 360);
+                        vm::run(module, sub, workspace, std::uint8_t(difficulty | alignment), 360);
                     ++counts[result.status];
                     ++attempts;
                     matrix << entry.name << '\t' << sub << '\t' << difficulty << '\t' << alignment

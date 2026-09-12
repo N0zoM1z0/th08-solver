@@ -4,6 +4,7 @@
 #include <limits>
 #include <stdexcept>
 #include <th08/emitter.hpp>
+#include <th08/kinematics.hpp>
 
 namespace th08::emitter {
 namespace {
@@ -28,6 +29,62 @@ struct Blocked {
 void require(bool condition, Status status = Status::invalid) {
     if (!condition)
         throw Blocked{status};
+}
+// These are isolated scalar storage locations, not computed engine properties.
+bool writable_scalar(std::size_t slot, bool floating) {
+    if (floating)
+        return (slot >= 16 && slot < 32) || (slot >= 57 && slot <= 60) ||
+               (slot >= 65 && slot <= 68) || (slot >= 94 && slot <= 95);
+    return slot < 16 || (slot >= 36 && slot <= 39) || (slot >= 53 && slot <= 56) ||
+           (slot >= 61 && slot <= 64);
+}
+std::int32_t checked_integer(double value) {
+    require(std::isfinite(value) && value >= std::numeric_limits<std::int32_t>::min() &&
+            value <= std::numeric_limits<std::int32_t>::max());
+    return static_cast<std::int32_t>(value); // Retail float-to-int reads truncate toward zero.
+}
+double arithmetic(unsigned operation, bool floating, double left, double right) {
+    if (floating) {
+        const float a = float(left), b = float(right);
+        switch (operation) {
+        case 0:
+            return a + b;
+        case 1:
+            return a - b;
+        case 2:
+            return a * b;
+        case 3:
+            require(b != 0);
+            return a / b;
+        case 4:
+            require(b != 0);
+            return std::fmod(a, b);
+        }
+    } else {
+        const std::int64_t a = checked_integer(left), b = checked_integer(right);
+        std::int64_t value = 0;
+        switch (operation) {
+        case 0:
+            value = a + b;
+            break;
+        case 1:
+            value = a - b;
+            break;
+        case 2:
+            value = a * b;
+            break;
+        case 3:
+        case 4:
+            require(b != 0 && !(a == std::numeric_limits<std::int32_t>::min() && b == -1));
+            value = operation == 3 ? a / b : a % b;
+            break;
+        }
+        // Overflow behavior is outside this verified subset; never invoke signed UB.
+        require(value >= std::numeric_limits<std::int32_t>::min() &&
+                value <= std::numeric_limits<std::int32_t>::max());
+        return double(value);
+    }
+    throw Blocked{Status::invalid};
 }
 } // namespace
 const char *name(Status status) {
@@ -66,8 +123,9 @@ Program::Program(resources::View resource, const resources::Ecl &ecl, std::size_
         code.push_back(op);
     }
     for (auto &op : code)
-        if (op.opcode == 4 || op.opcode == 5) {
-            const auto offset = std::int64_t(op.offset) + as_int(op.words[1]);
+        if (op.opcode == 4 || op.opcode == 5 || (op.opcode >= 40 && op.opcode <= 51)) {
+            const unsigned displacement_word = op.opcode >= 40 ? 3 : 1;
+            const auto offset = std::int64_t(op.offset) + as_int(op.words[displacement_word]);
             const auto found = std::lower_bound(code.begin(), code.end(), offset,
                                                 [](const Operation &candidate, std::int64_t value) {
                                                     return candidate.offset < value;
@@ -77,20 +135,25 @@ Program::Program(resources::View resource, const resources::Ecl &ecl, std::size_
             op.target = std::uint32_t(found - code.begin());
         }
 }
-Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std::uint32_t horizon,
-           std::uint32_t instruction_limit) {
+Module::Module(resources::View resource, const resources::Ecl &ecl) {
+    subs.reserve(ecl.subs.size());
+    for (std::size_t sub = 0; sub < ecl.subs.size(); ++sub)
+        subs.emplace_back(resource, ecl, sub);
+}
+static Result run_impl(const Program &program, const Module *module, Workspace &workspace,
+                       std::uint8_t mask, std::uint32_t horizon, std::uint32_t instruction_limit) {
     Result result;
     workspace.initialized.fill(false);
     workspace.emissions.clear();
     workspace.transforms.clear();
     std::uint32_t pc = 0;
+    const Program *active = &program;
+    std::size_t depth = 0;
     std::int64_t local_time = 0, wait = 0;
     try {
         require(horizon > 0 && horizon <= 4096 && mask != 0 && instruction_limit > 0);
         auto selector = [](double value) {
-            require(std::isfinite(value) && value >= 10000 && value <= 10100 &&
-                        std::floor(value) == value,
-                    Status::unsupported);
+            require(std::isfinite(value) && value >= 10000 && value < 10101, Status::unsupported);
             return std::size_t(value - 10000);
         };
         auto operand = [&](const Operation &op, unsigned word, bool floating,
@@ -99,17 +162,17 @@ Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std:
             double value =
                 floating ? double(as_float(op.words[word])) : double(as_int(op.words[word]));
             require(std::isfinite(value));
-            if (op.flags & (1U << flag)) {
-                auto slot = selector(value);
-                require(workspace.initialized[slot], Status::missing_context);
-                value = workspace.registers[slot];
+            if ((op.flags & (1U << flag)) && value >= 10000 && value < 10101) {
+                const auto slot = selector(value);
+                const bool resolved =
+                    floating ? slot < 100 && slot != 98 : !(slot >= 79 && slot <= 82);
+                if (resolved) {
+                    require(workspace.initialized[slot], Status::missing_context);
+                    value = workspace.registers[slot];
+                }
             }
             require(std::isfinite(value));
-            if (!floating)
-                require(value >= std::numeric_limits<std::int32_t>::min() &&
-                        value <= std::numeric_limits<std::int32_t>::max() &&
-                        std::floor(value) == value);
-            return floating ? double(float(value)) : value;
+            return floating ? double(float(value)) : double(checked_integer(value));
         };
         auto write = [&](const Operation &op, unsigned word, bool floating, double value) {
             require((word + 1) * 4 <= op.payload_size && (op.flags & (1U << word)),
@@ -117,11 +180,9 @@ Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std:
             const double key =
                 floating ? double(as_float(op.words[word])) : double(as_int(op.words[word]));
             const auto slot = selector(key);
-            // Extra integer registers may be explicitly initialized by a slice
-            // (sub40 uses EXTRA_I0). Their entry values are never invented.
-            // Writes stay in this isolated context, not in an engine entity.
-            require(slot < 8 || (slot >= 16 && slot < 24) || (slot >= 36 && slot < 40),
-                    Status::unsupported);
+            // Unmapped lvalues mutate instruction bytes in retail. The immutable
+            // predecoded scheduler deliberately does not approximate that behavior.
+            require(writable_scalar(slot, floating), Status::unsupported);
             if (floating)
                 value = float(value);
             else
@@ -138,8 +199,8 @@ Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std:
                 --local_time;
                 continue;
             }
-            while (pc < program.code.size() && program.code[pc].time == local_time) {
-                const auto &op = program.code[pc];
+            while (pc < active->code.size() && active->code[pc].time == local_time) {
+                const auto &op = active->code[pc];
                 result.offset = op.offset;
                 result.opcode = op.opcode;
                 if ((op.mask & mask) != mask) {
@@ -154,9 +215,47 @@ Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std:
                 case 3:
                     break;
                 case 1:
-                case 53:
                     result.status = Status::returned;
                     return result;
+                case 52: {
+                    require(module != nullptr, Status::missing_context);
+                    require(op.payload_size == 4);
+                    const auto sub = as_int(op.words[0]);
+                    // Negative/truncated IDs and retail depth saturation need a
+                    // separate lifetime contract; do not treat them as normal calls.
+                    require(sub >= 0 && sub <= 32767 && std::size_t(sub) < module->subs.size());
+                    require(depth < workspace.calls.size(), Status::unsupported);
+                    workspace.calls[depth++] = {
+                        active, next, local_time, wait, workspace.registers, workspace.initialized};
+                    active = &module->subs[std::size_t(sub)];
+                    next = 0;
+                    local_time = wait = 0;
+                    for (std::size_t i = 0; i < 8; ++i) {
+                        workspace.registers[53 + i] = workspace.registers[61 + i];
+                        workspace.initialized[53 + i] = workspace.initialized[61 + i];
+                    }
+                    break;
+                }
+                case 53: {
+                    if (depth == 0) {
+                        result.status = Status::returned;
+                        return result;
+                    }
+                    const auto &frame = workspace.calls[--depth];
+                    active = frame.program;
+                    next = frame.pc;
+                    local_time = frame.time;
+                    wait = frame.wait;
+                    // Context storage rolls back, entity and shared scalar storage
+                    // survives. This distinction matters even for a one-tick call.
+                    for (std::size_t slot = 0; slot < workspace.registers.size(); ++slot)
+                        if (slot < 8 || (slot >= 16 && slot <= 23) || (slot >= 36 && slot <= 39) ||
+                            (slot >= 53 && slot <= 60) || (slot >= 94 && slot <= 95)) {
+                            workspace.registers[slot] = frame.registers[slot];
+                            workspace.initialized[slot] = frame.initialized[slot];
+                        }
+                    break;
+                }
                 case 2:
                     wait = std::int64_t(operand(op, 0, false, 0));
                     require(wait >= 0 && wait <= 4096);
@@ -181,15 +280,92 @@ Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std:
                     write(op, 0, floating, operand(op, 1, floating, 1));
                     break;
                 }
+                case 8:
+                case 9:
+                    throw Blocked{Status::missing_context};
+                case 10:
+                case 11:
+                case 12:
+                case 13:
+                case 14:
                 case 15:
                 case 16:
-                case 17: {
-                    const float left = float(operand(op, 0, true, 0)),
-                                right = float(operand(op, 1, true, 1));
-                    const float value = op.opcode == 15   ? left + right
-                                        : op.opcode == 16 ? left - right
-                                                          : left * right;
-                    write(op, 0, true, value);
+                case 17:
+                case 18:
+                case 19:
+                case 20:
+                case 21:
+                case 22:
+                case 23:
+                case 24:
+                case 25:
+                case 26:
+                case 27:
+                case 28:
+                case 29: {
+                    const bool floating = (op.opcode >= 15 && op.opcode <= 19) || op.opcode >= 25;
+                    const unsigned first = op.opcode < 20 ? 0 : 1;
+                    const auto left = operand(op, first, floating, first);
+                    const auto right = operand(op, first + 1, floating, first + 1);
+                    write(op, 0, floating, arithmetic((op.opcode - 10) % 5, floating, left, right));
+                    break;
+                }
+                case 30:
+                case 31:
+                    write(op, 0, false,
+                          arithmetic(op.opcode - 30, false, operand(op, 0, false, 0), 1));
+                    break;
+                case 32:
+                case 33: {
+                    const float value = float(operand(op, 1, true, 1));
+                    write(op, 0, true, op.opcode == 32 ? std::sin(value) : std::cos(value));
+                    break;
+                }
+                case 34:
+                case 39: {
+                    const float x1 = float(operand(op, 1, true, 1));
+                    const float y1 = float(operand(op, 2, true, 2));
+                    const float x2 = float(operand(op, 3, true, 3));
+                    const float y2 = float(operand(op, 4, true, 4));
+                    const float x = x1 - x2, y = y1 - y2;
+                    write(op, 0, true,
+                          op.opcode == 34 ? kinematics::point_angle(y2 - y1, x2 - x1)
+                                          : std::sqrt(x * x + y * y));
+                    break;
+                }
+                case 37:
+                    write(op, 0, true, kinematics::normalize_angle(float(operand(op, 0, true, 0))));
+                    break;
+                case 38: {
+                    const float angle = kinematics::normalize_angle(float(operand(op, 2, true, 2)));
+                    const float magnitude = float(operand(op, 3, true, 3));
+                    write(op, 0, true, std::cos(angle) * magnitude);
+                    write(op, 1, true, std::sin(angle) * magnitude);
+                    break;
+                }
+                case 40:
+                case 41:
+                case 42:
+                case 43:
+                case 44:
+                case 45:
+                case 46:
+                case 47:
+                case 48:
+                case 49:
+                case 50:
+                case 51: {
+                    const bool floating = (op.opcode & 1) != 0;
+                    const auto left = operand(op, 0, floating, 0);
+                    const auto right = operand(op, 1, floating, 1);
+                    const bool comparisons[] = {left == right, left != right,
+                                                left<right, left <= right, left> right,
+                                                left >= right};
+                    if (comparisons[(op.opcode - 40) / 2]) {
+                        require(op.payload_size == 16 && op.target < active->code.size());
+                        local_time = as_int(op.words[2]);
+                        next = op.target;
+                    }
                     break;
                 }
                 case 111: {
@@ -242,11 +418,24 @@ Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std:
                     break;
                 }
             }
-            require(pc < program.code.size(), Status::invalid);
+            require(pc < active->code.size(), Status::invalid);
         }
     } catch (const Blocked &blocked) {
         result.status = blocked.status;
     }
     return result;
+}
+Result run(const Program &program, Workspace &workspace, std::uint8_t mask, std::uint32_t horizon,
+           std::uint32_t instruction_limit) {
+    return run_impl(program, nullptr, workspace, mask, horizon, instruction_limit);
+}
+Result run(const Module &module, std::size_t sub, Workspace &workspace, std::uint8_t mask,
+           std::uint32_t horizon, std::uint32_t instruction_limit) {
+    if (sub >= module.subs.size()) {
+        Result result;
+        result.status = Status::invalid;
+        return result;
+    }
+    return run_impl(module.subs[sub], &module, workspace, mask, horizon, instruction_limit);
 }
 } // namespace th08::emitter

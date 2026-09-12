@@ -33,14 +33,33 @@ std::string function(const std::string &text, const std::string &signature) {
 }
 constexpr const char *prefix = R"CPP(
 #include <th08/geometry.hpp>
+#include <th08/kinematics.hpp>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
 #include <fstream>
 #include <random>
+#include <cstring>
 using f32=float;
 using i32=int32_t;
 using u32=uint32_t;
+constexpr float ZUN_PI=3.14159265358979323846f;
+constexpr float ZUN_2PI=ZUN_PI*2.0f;
+enum {BULLET_AIM_FAN_AIMED,BULLET_AIM_FAN,BULLET_AIM_CIRCLE_AIMED,BULLET_AIM_CIRCLE,
+      BULLET_AIM_OFFSET_CIRCLE_AIMED,BULLET_AIM_OFFSET_CIRCLE,BULLET_AIM_RANDOM_ANGLE,
+      BULLET_AIM_RANDOM_SPEED,BULLET_AIM_RANDOM};
+struct BulletSpawnDescriptor {
+    int aimMode,count1,count2;
+    float speed1,speed2,angle,angleStep;
+};
+struct RandomTrace {
+    float values[2];
+    unsigned index=0;
+    float GetRandomF32InRange(float range) {
+        if(index>=2) throw std::runtime_error("unexpected reference RNG consumption");
+        return values[index++]*range;
+    }
+} g_Rng;
 struct Float3 {
     float x=0,y=0,z=0;
     Float3()=default;
@@ -78,6 +97,31 @@ int main(int argc,char** argv) {
         return std::uniform_real_distribution<float>(low,high)(rng);
     };
     std::uint64_t mismatches=0;
+    std::uint64_t launch_mismatches=0;
+    for(int i=0;i<180000;++i) {
+        using namespace th08::kinematics;
+        const unsigned count_limit=i%2?1536:16;
+        const Pattern pattern{Aim(i%9),int(rng()%count_limit+1),int(rng()%count_limit+1),
+                              uniform(-5,20),uniform(-5,20),uniform(-200,200),uniform(-3,3)};
+        const int index1=int(rng()%unsigned(pattern.count1));
+        const int index2=int(rng()%unsigned(pattern.count2));
+        const float aim=uniform(-pi,pi), multiplier=uniform(.25f,2);
+        RandomPair random{uniform(0,1),uniform(0,1)};
+        g_Rng.index=0;
+        g_Rng.values[0]=pattern.aim==Aim::random_speed?random.speed:random.angle;
+        g_Rng.values[1]=random.speed;
+        BulletSpawnDescriptor descriptor{int(pattern.aim),pattern.count1,pattern.count2,
+                                         pattern.speed1,pattern.speed2,pattern.angle,pattern.angle_step};
+        const auto expected=reference_launch(&descriptor,index1,index2,aim,multiplier);
+        Launch actual{};
+        const unsigned draws=pattern.aim==Aim::random_angle_speed?2:unsigned(pattern.aim)>=6?1:0;
+        auto same=[](float a,float b){return std::memcmp(&a,&b,sizeof(float))==0;};
+        if(launch(pattern,index1,index2,aim,multiplier,random,actual)!=Status::ready ||
+           !same(actual.raw_angle,expected.raw_angle) || !same(actual.angle,expected.angle) ||
+           !same(actual.speed,expected.speed) || !same(actual.velocity_x,expected.velocity_x) ||
+           !same(actual.velocity_y,expected.velocity_y) || g_Rng.index!=draws)
+            ++launch_mismatches;
+    }
     for(int i=0;i<300000;++i) {
         Player player;
         player.position={uniform(-40,424),uniform(-40,488)};
@@ -114,8 +158,9 @@ int main(int argc,char** argv) {
     std::ostream& out=argc==2?file:std::cout;
     out << "{\"scope\":\"pinned reconstructed bodies versus maintained native predicates; not game execution\","
         << "\"random_cases\":300000,\"predicate_comparisons\":600000,\"mismatches\":"
-        << mismatches << "}\n";
-    return mismatches?1:0;
+        << mismatches << ",\"launch_cases\":180000,\"launch_mismatches\":" << launch_mismatches
+        << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
+    return mismatches||launch_mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -126,9 +171,24 @@ int main(int argc, char **argv) try {
                                "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
     const auto global = source(repo / "src/Global.cpp",
                                "8df17616c935d684b6636619d4726889e68f7d2d7000e27c25aebc4bc460b74b");
+    const auto bullet = source(repo / "src/BulletManager.cpp",
+                               "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
+    source(repo / "src/ZunMath.hpp",
+           "ba187178ec936c2492f3e311e8d6d634421c35bc5abd74ab4af77a4c81ddb3de");
+    const auto launch_start =
+        bullet.find("    angle = 0.0f;", bullet.find("i32 BulletManager::SpawnSingleBullet("));
+    const auto launch_end = bullet.find("    bullet->state = BULLET_STATE_FIRED;", launch_start);
+    if (launch_start == std::string::npos || launch_end == std::string::npos)
+        throw std::runtime_error("missing pinned launch block");
     std::ofstream out(argv[2]);
     out.exceptions(std::ios::badbit | std::ios::failbit);
-    out << prefix << function(global, "void Rotate(Float3 *") << '\n'
+    out << prefix << function(global, "f32 AddNormalizeAngle(") << '\n'
+        << "th08::kinematics::Launch reference_launch(BulletSpawnDescriptor* descriptor, "
+           "i32 index1,i32 index2,f32 angleToPlayer,float multiplier) { float angle,speed;\n"
+        << bullet.substr(launch_start, launch_end - launch_start)
+        << "return {angle,AddNormalizeAngle(angle,0),speed,cosf(angle)*(speed*multiplier),"
+           "sinf(angle)*(speed*multiplier)}; }\n"
+        << function(global, "void Rotate(Float3 *") << '\n'
         << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'
         << function(player, "u32 Player::CalcLaserHitbox(") << '\n'

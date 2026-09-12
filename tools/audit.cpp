@@ -1,3 +1,4 @@
+#include "resource_reports.hpp"
 #include <array>
 #include <chrono>
 #include <fstream>
@@ -5,6 +6,7 @@
 #include <iostream>
 #include <set>
 #include <th08/resources.hpp>
+#include <th08/schema.hpp>
 
 namespace res = th08::resources;
 namespace fs = std::filesystem;
@@ -29,6 +31,7 @@ int main(int argc, char **argv) try {
     res::Archive archive(std::move(bytes));
     fs::create_directories(destination);
     report(destination, "summary.json") << "{\"status\":\"INCOMPLETE\"}\n";
+    th08::audit::ResourceReports resource_reports(destination);
     auto members = report(destination, "members.tsv");
     auto spells = report(destination, "spell_sites.tsv");
     auto subs = report(destination, "subprograms.tsv");
@@ -47,9 +50,19 @@ int main(int argc, char **argv) try {
         const auto data = res::view(decoded);
         members << entry.name << '\t' << decoded.size() << '\t' << res::sha256(data) << '\n';
         decoded_bytes += decoded.size();
-        if (fs::path(entry.name).extension() != ".ecl")
+        const auto extension = fs::path(entry.name).extension();
+        if (extension == ".sht")
+            resource_reports.sht(entry.name, res::parse_sht(data));
+        if (extension == ".anm")
+            resource_reports.anm(entry.name, data, res::parse_anm(data));
+        if (extension == ".std")
+            resource_reports.stage(entry.name, res::parse_std(data));
+        if (extension != ".ecl")
             continue;
         const auto ecl = res::parse_ecl(data);
+        if (ecl.unknown_payloads)
+            throw std::runtime_error("unresolved observed ECL payload schema");
+        resource_reports.ecl(entry.name, data, ecl);
         ++ecl_count;
         sub_count += ecl.subs.size();
         jumps += ecl.jump_targets_checked;
@@ -92,9 +105,14 @@ int main(int argc, char **argv) try {
         ex_ids.size() != 32)
         throw std::runtime_error("native corpus counts disagree with the audited input contract");
     auto opcodes = report(destination, "opcodes.tsv");
-    opcodes << "opcode\tobserved_sites\truntime_semantics\n";
+    opcodes << "opcode\tname\tobserved_sites\tpayload_layout\truntime_semantics\n";
     for (std::size_t i = 0; i < opcode_counts.size(); ++i)
-        opcodes << i << '\t' << opcode_counts[i] << "\tNOT_IMPLEMENTED\n";
+        opcodes << i << '\t' << res::opcode_schema(unsigned(i)).name << '\t' << opcode_counts[i]
+                << '\t'
+                << (res::opcode_schema(unsigned(i)).fields ? res::opcode_schema(unsigned(i)).fields
+                                                           : "SPECIAL_OR_UNKNOWN")
+                << "\tSEE_SLICE_CONTRACT\n";
+    resource_reports.finish();
     const double elapsed =
         std::chrono::duration<double>(std::chrono::steady_clock::now() - started).count();
     auto summary = report(destination, "summary.json");
