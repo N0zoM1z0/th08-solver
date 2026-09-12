@@ -124,6 +124,33 @@ these two observables. The template has already executed time zero before it is 
 into a new bullet. The certificate requires a unit-rate clock and no external interrupts.
 The full resource audit currently certifies 42 scripts and rejects 1109 as unsupported.
 
+`animation::control` adds an allocation-free runtime projection for clocks, PC,
+sprite identity, visibility and stop/interrupt state. Immutable contiguous programs
+predecode jumps and stable-sort interrupt labels: the first exact match wins, while
+an unmatched interrupt uses the last default label. Runtime state owns all clocks
+and the single interrupt-return slot; failed calls leave it unchanged. An initial
+call executes template time zero. The zeroed wait timer and initialized main timer
+retain their distinct source initialization states.
+
+ANM executes instructions whose time is less than or equal to the current integer
+clock, unlike ECL equality scheduling. Static completion keeps visibility; delete
+and sentinel completion hide. Stop does not advance the PC. Wait compares integer
+timer fields, while decrement/tick preserve fractions; the explicit extra-step flag
+affects decrement but not the frame-tail tick. Missing interrupts clear the stop
+flag and hold the clock for that call. Interrupt return restores the saved full
+clock and PC without clearing the return slot, matching the source.
+
+Only literal control and an enumerated set of visual-only writes are accepted.
+Projected-out visual fields cannot feed the exposed control observables; their
+rendering, interpolations and effects on other consumers are not implemented here.
+Masked operands, arithmetic/RNG, player-shot hit-animation writes and unknown opcodes
+stop explicitly. Sprite resource loading, dimensions and external lifecycle gates
+remain the world's responsibility. The source oracle extracts unchanged control
+blocks with the real ZunTimer, excluding visual/scalar instructions from its input
+domain. The all-script matrix records a separate bounded baseline with no interrupts.
+Long frame-30000 timing certificates are checked separately, not relabeled as
+600-call completions.
+
 `bullet::advance_direction` models relative, absolute and aimed changes. Missing target
 angles block only a firing frame and leave state unchanged. Integer firing thresholds,
 fractional deceleration age and reset/increment order follow the original `ZunTimer`;
