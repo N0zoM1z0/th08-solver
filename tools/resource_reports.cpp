@@ -1,6 +1,7 @@
 #include "resource_reports.hpp"
 #include <iomanip>
 #include <stdexcept>
+#include <th08/animation.hpp>
 
 namespace th08::audit {
 namespace {
@@ -35,6 +36,10 @@ ResourceReports::ResourceReports(const std::filesystem::path &output) : output_(
                        "file\tindex\tentry\traw_id\toffset\tinstructions_including_end");
     anm_instruction_ = open(output, "anm_instructions.tsv",
                             "file\tscript\toffset\topcode\ttime\tsize\tmask\tpayload");
+    anm_timing_ =
+        open(output, "anm_timing.tsv",
+             "file\tscript\tstatus\tstopping_offset\topcode\tinspected\tsprite\tcompletion_"
+             "time\tcalls_after_template\thides_on_completion");
     stage_object_ =
         open(output, "std_objects.tsv",
              "file\tindex\tid\toffset\tz_level\tflags\tx\ty\tz\twidth\theight\tdepth\tquads");
@@ -106,6 +111,20 @@ void ResourceReports::anm(const std::string &file, resources::View bytes,
     }
     for (std::size_t id = 0; id < anm.scripts.size(); ++id) {
         const auto &script = anm.scripts[id];
+        const auto timing = animation::certify_timing(bytes, anm, id);
+        const char *status = timing.status == animation::Status::certified     ? "CERTIFIED_TIMING"
+                             : timing.status == animation::Status::unsupported ? "UNSUPPORTED"
+                                                                               : "INVALID";
+        anm_timing_ << file << '\t' << id << '\t' << status << '\t' << timing.stopping_offset
+                    << '\t' << timing.stopping_opcode << '\t' << timing.inspected << '\t'
+                    << timing.sprite << '\t' << timing.completion_time << '\t'
+                    << timing.calls_after_template << '\t' << timing.hides_on_completion << '\n';
+        if (file == "etama.anm" && (id == 21 || id == 22 || id == 23)) {
+            const auto expected = id == 21 ? 10 : id == 22 ? 15 : 30;
+            if (timing.status != animation::Status::certified || timing.sprite != 146 ||
+                timing.completion_time != expected || !timing.hides_on_completion)
+                throw std::runtime_error("bullet spawn timing contract mismatch");
+        }
         anm_script_ << file << '\t' << id << '\t' << script.entry << '\t' << script.raw_id << '\t'
                     << script.offset << '\t' << script.count << '\n';
         for (std::size_t i = script.first; i < script.first + script.count; ++i) {

@@ -18,6 +18,8 @@ Wine, a Linux game port, or an input controller as an implicit verification step
   without an independent correctness check and an explicit domain contract.
 - Keep raw game data and extracted assets in ignored directories. Track the
   user's original `preparations/` unchanged. Do not force-add ignored data.
+- Save verified progress in frequent, focused commits. New commit subjects use
+  `gpt-6-astra: <English summary>`; do not rewrite older subjects solely for this convention.
 
 ## Evidence
 

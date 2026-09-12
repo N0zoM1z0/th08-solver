@@ -1,7 +1,7 @@
 #pragma once
 #include "geometry.hpp"
 #include <array>
-#include <set>
+#include <cstring>
 #include <string>
 
 namespace th08::solver {
@@ -74,10 +74,31 @@ inline Result plan(const Model &model, Vec2 start, Movement speed, const Options
         Action action;
         double score;
     };
-    std::vector<std::vector<Node>> layers{{{start, 0, {}, 0}}};
+    std::vector<Node> nodes, next;
+    nodes.reserve(1 + model.frames.size() * options.beam);
+    next.reserve(options.beam * 9);
+    nodes.push_back({start, 0, {}, 0});
+    std::size_t first = 0, count = 1;
+    std::size_t table_size = 4;
+    while (table_size < options.beam * 4)
+        table_size *= 2;
+    std::vector<std::uint64_t> seen(table_size);
+    auto key = [](Vec2 p) {
+        std::uint32_t x, y;
+        std::memcpy(&x, &p.x, sizeof(x));
+        std::memcpy(&y, &p.y, sizeof(y));
+        return (std::uint64_t(x) << 32) | y;
+    };
+    auto hash = [](std::uint64_t value) {
+        value ^= value >> 30;
+        value *= 0xbf58476d1ce4e5b9ULL;
+        value ^= value >> 27;
+        value *= 0x94d049bb133111ebULL;
+        return value ^ (value >> 31);
+    };
     for (const auto &frame : model.frames) {
-        std::vector<Node> next;
-        for (std::size_t parent = 0; parent < layers.back().size(); ++parent)
+        next.clear();
+        for (std::size_t parent = first; parent < first + count; ++parent)
             for (int y = -1; y <= 1; ++y)
                 for (int x = -1; x <= 1; ++x) {
                     if (out.expansions >= options.expansions) {
@@ -85,42 +106,62 @@ inline Result plan(const Model &model, Vec2 start, Movement speed, const Options
                         return out;
                     }
                     ++out.expansions;
-                    Vec2 p = advance(layers.back()[parent].p, {x, y}, speed);
+                    Vec2 p = advance(nodes[parent].p, {x, y}, speed);
                     if (frame.query(p))
                         continue;
                     double dx = double(p.x) - options.terminal.center.x,
                            dy = double(p.y) - options.terminal.center.y;
                     next.push_back({p, parent, {x, y}, dx * dx + dy * dy});
                 }
-        std::stable_sort(next.begin(), next.end(),
-                         [](const Node &a, const Node &b) { return a.score < b.score; });
-        std::set<std::pair<float, float>> seen;
-        std::vector<Node> kept;
-        for (const auto &n : next)
-            if (seen.emplace(n.p.x, n.p.y).second) {
-                kept.push_back(n);
-                if (kept.size() == options.beam)
-                    break;
-            }
-        if (kept.empty()) {
+        // Pop only enough candidates to fill the beam. Explicit generation-order
+        // tie-breaks preserve the old stable_sort result without sorting the tail.
+        const auto better = [](const Node &a, const Node &b) {
+            if (a.score != b.score)
+                return a.score < b.score;
+            if (a.parent != b.parent)
+                return a.parent < b.parent;
+            if (a.action.y != b.action.y)
+                return a.action.y < b.action.y;
+            return a.action.x < b.action.x;
+        };
+        const auto worse = [&](const Node &a, const Node &b) { return better(b, a); };
+        std::make_heap(next.begin(), next.end(), worse);
+        std::fill(seen.begin(), seen.end(), 0);
+        first = nodes.size();
+        count = 0;
+        while (!next.empty() && count < options.beam) {
+            std::pop_heap(next.begin(), next.end(), worse);
+            const auto n = next.back();
+            next.pop_back();
+            // Clamped coordinates are positive and finite, so zero is an unused
+            // key and bitwise equality equals numeric position equality here.
+            const auto position = key(n.p);
+            auto slot = std::size_t(hash(position)) & (table_size - 1);
+            while (seen[slot] != 0 && seen[slot] != position)
+                slot = (slot + 1) & (table_size - 1);
+            if (seen[slot] == position)
+                continue;
+            seen[slot] = position;
+            nodes.push_back(n);
+            ++count;
+        }
+        if (count == 0) {
             out.status = Status::search_exhausted;
             return out;
         }
-        layers.push_back(std::move(kept));
     }
-    const auto &last = layers.back();
-    auto terminal = std::find_if(last.begin(), last.end(), [&](const Node &n) {
+    auto terminal = std::find_if(nodes.begin() + first, nodes.end(), [&](const Node &n) {
         return geometry::box_hit(n.p, {0, 0}, options.terminal);
     });
-    if (terminal == last.end()) {
+    if (terminal == nodes.end()) {
         out.status = Status::no_terminal_witness;
         return out;
     }
-    std::size_t parent = std::size_t(terminal - last.begin());
+    std::size_t parent = std::size_t(terminal - nodes.begin());
     out.actions.resize(model.frames.size());
     out.positions.resize(model.frames.size());
     for (std::size_t t = model.frames.size(); t > 0; --t) {
-        const auto &n = layers[t][parent];
+        const auto &n = nodes[parent];
         out.actions[t - 1] = n.action;
         out.positions[t - 1] = n.p;
         parent = n.parent;
