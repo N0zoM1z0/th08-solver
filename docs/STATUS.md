@@ -120,3 +120,9 @@ the verified runtime where necessary. Do not infer world completion from this qu
 The indices define the all-case work queue; each item still requires behavior
 implementation and verification. Online input control, game launch, and latency
 integration follow only after the offline components mature.
+
+The first complete-world integration target is the actual ID2..5 practice entry,
+not a longer fixed-emitter fixture. [WRIGGLE_WORLD_CONTRACT.md](WRIGGLE_WORLD_CONTRACT.md)
+records its source-derived wrapper, familiar/child-context closure, effect RNG,
+damage, callback and ending requirements. A native comparison confirmed 175 stage
+and practice records after explicit sub-ID remapping; their entry states differ.
