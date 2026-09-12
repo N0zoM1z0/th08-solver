@@ -1,5 +1,19 @@
 # Source-derived regression ledger
 
+## Tiny camera deltas follow the source normalization cutoff
+
+The modern D3DX normalization used by effect 51 zeros vectors with length at or
+below 1e-8. A nonzero vector is therefore not sufficient to justify normalization.
+With delta `(0, 0, 1e-9)` and forward `(0, 0, 1)`, the callback must cull before
+reading boss or tint state; normalizing every positive length would keep it alive.
+
+`camera_particle_tests` preserves this guard. A temporary fault-injected build
+using `length > 0` fails with `tiny camera delta bypassed the source normalization
+cutoff`; the maintained implementation passes native and sanitizer runs, including
+irrelevant visibility settings 0/1/0. The independent source callback suite also
+covers zero/signed-zero, exact cutoff, nextafter cutoff and alignment 0.94 boundaries.
+This protects the pinned modern profile, not an unverified retail D3DX implementation.
+
 ## Timeline events broadcast to every empty slot
 
 The pinned `EclTimeline::Run` opcode 14 visits all four shared slots and writes the

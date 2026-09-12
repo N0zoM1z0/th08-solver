@@ -15,7 +15,7 @@ The game is not launched in this phase.
    candidate-independent models, and independent path replay.
 5. Actual sub40/41/42 regressions, source-function predicate comparisons,
    unit tests, and consistent clang-format formatting.
-6. Eighteen Release and seventeen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
+6. Nineteen Release and eighteen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
    native parsers, restricted-execution matrix and both 600-frame particle fixtures,
    including the latest signed-laser/fractional-clock changes.
 7. All observed ECL payload schemas; 32 timelines / 2003 instructions; eight SHT files
@@ -105,6 +105,13 @@ The game is not launched in this phase.
     sub42 and retry-menu requests, with five explicitly synthetic boss-wait frames.
     The 160-entry no-world-context baseline stops honestly at `REQUIRES_CONTEXT`;
     no spawns or completed boss worlds are inferred from those requests.
+23. Effect 51 camera-particle callbacks preserve sixteen U16 initialization draws,
+    source-order motion/culling, explicit camera/boss/ANM fields and stage tint.
+    All 65536 seeds, 328503 updates and eight atomic-failure checks match extracted
+    source bodies. A fault-injected tiny-vector normalization regression fails as
+    expected and the maintained implementation passes. Successful culls commit motion
+    but skip later world reads. Allocation, surrounding ANM execution, camera evolution,
+    freeze scheduling and effect-pool retirement remain unimplemented world work.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the
@@ -129,7 +136,7 @@ can differ from these initial snapshots.
 | Order | Concrete work | Acceptance |
 |---|---|---|
 | 1 | Extend source-oracle coverage for scalar execution and exact numerical profiles | Independent per-opcode comparisons; distinguish modern float32 and retail x87 |
-| 2 | Timeline/ANM execution, callback and child-context lifetimes | Explicit ownership and clocks; no invented external defaults |
+| 2 | Connect timeline/ANM execution, callback and child-context lifetimes | Explicit ownership and clocks; no invented external defaults |
 | 3 | General transform-program execution and pool lifecycle | Extend the verified sub40/41 particle subset without inventing future state |
 | 4 | Stage-one sub0 feedback and familiar alignment/shot gates | Correct state transitions under different player trajectories |
 | 5 | Reisen collision windows, Double Spark, and three barriers | Separate visibility and collision, correct phases, independent predictions |
@@ -141,7 +148,8 @@ projection. The remaining 11 unseeded entries require the actual shared RNG cont
 not arbitrary seeds. Next connect resource identity and lifecycle consumers without
 discarding visual state that those consumers read. The first complete-world path
 also needs concrete world observations for timeline gates, spawning/child contexts,
-effect RNG consumers, damage and callbacks. Do not infer world completion from this queue.
+effect allocation/ANM/camera lifetimes, damage and callbacks. Do not infer world completion
+from this queue. Effect 51's callback projection supplies only one part of that lifecycle.
 
 The indices define the all-case work queue; each item still requires behavior
 implementation and verification. Online input control, game launch, and latency

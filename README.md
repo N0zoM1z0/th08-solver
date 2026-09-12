@@ -74,6 +74,8 @@ This profile is not the shared RNG order of a complete game world.
   execution and RNG; preserve repeated operand reads and same-frame resumption.
 - Schedule timeline clocks, masks, world gates and shared events with explicit
   spawn/message/menu handoffs; preserve unknown world observations as blockers.
+- Execute effect 51 camera-particle callbacks with explicit camera, boss and ANM
+  state; preserve shared RNG draws and source culling before lifecycle integration.
 
 Complete ECL worlds, enemy/bullet lifecycles, ANM rendering/resource integration,
 damage, world RNG consumption chains and complete spell routes remain unimplemented.
@@ -121,6 +123,7 @@ bullet-slot selection/cursor operations. ANM adds 48,224 control frames and 228,
 scalar calls; enemy motion adds 580,000 phases, and the movement-effect bridge adds
 420,868 source comparisons. Twelve separate checks enforce native transaction rollback.
 Timeline control adds 200,000 source frames, including waits and event-slot updates.
+Camera-particle callbacks add 65,536 initializations and 328,503 updates.
 This does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks

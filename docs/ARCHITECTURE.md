@@ -272,6 +272,31 @@ pause/death/alignment gates, callbacks, shot/ANM scheduling or a complete world 
 
 ### Bullet and laser motion
 
+### Camera-particle callbacks
+
+Effect table index 51 uses ANM script 73 and the tinted boss-tracking camera
+callbacks. `effect::camera_particle` owns only their position/velocity fields and
+the ANM fields they read or write; it does not replace the surrounding effect pool.
+Initialization requires the actual post-allocation, post-template-time-zero snapshot,
+camera and shared RNG. Its eight float random calls consume sixteen U16 draws;
+velocity and acceleration receive the frame multiplier only at initialization.
+
+Update advances velocity and position before testing camera alignment. Modern D3DX
+normalization zeros lengths at or below 1e-8; alignment below 0.94 returns `culled`.
+That is a successful callback result with the prior motion committed. It skips boss,
+tint and ANM-flag reads, so missing inputs for those later branches do not block culling.
+An alive callback needs explicit boss occupancy and stage tint; it preserves slot-zero
+local-position tracking and byte-product tint shifts. A nonempty boss set without
+slot zero is rejected because the source would dereference a null pointer.
+
+The callback does not read player position or visibility. Unknown/invalid required
+inputs roll back the call (and initialization RNG); successful culls do not. The
+65536-initialization / 328503-update source comparison includes all seeds, color
+byte products, tiny-vector and culling boundaries. Pool allocation, the ANM calls
+before/after callbacks, effect clocks, freeze gates, source camera evolution and
+retirement remain world responsibilities. These callbacks alone cannot determine
+how many effect 51 allocations succeed in the practice prelude.
+
 `bullet::advance_direction` models relative, absolute and aimed changes. Missing target
 angles block only a firing frame and leave state unchanged. Integer firing thresholds,
 fractional deceleration age and reset/increment order follow the original `ZunTimer`;
