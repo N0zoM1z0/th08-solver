@@ -28,7 +28,7 @@ if(TH08_REFERENCE_SOURCE)
   target_link_libraries(th08_source_probe PRIVATE th08_resources)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
-    DEPENDS th08_source_probe ${TH08_REFERENCE_SOURCE}/src/Player.cpp ${TH08_REFERENCE_SOURCE}/src/Global.cpp ${TH08_REFERENCE_SOURCE}/src/BulletManager.cpp ${TH08_REFERENCE_SOURCE}/src/ZunMath.hpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.cpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.hpp
+    DEPENDS th08_source_probe ${TH08_REFERENCE_SOURCE}/src/Player.cpp ${TH08_REFERENCE_SOURCE}/src/Global.cpp ${TH08_REFERENCE_SOURCE}/src/Global.hpp ${TH08_REFERENCE_SOURCE}/src/BulletManager.cpp ${TH08_REFERENCE_SOURCE}/src/ZunMath.hpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.cpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.hpp
     VERBATIM)
   add_executable(source_oracle ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp)
   target_link_libraries(source_oracle PRIVATE th08_geometry)
@@ -67,6 +67,9 @@ if(BUILD_TESTING)
   add_executable(laser_motion_tests tests/laser_motion_tests.cpp)
   target_link_libraries(laser_motion_tests PRIVATE th08_geometry)
   add_test(NAME laser_motion COMMAND laser_motion_tests)
+  add_executable(rng_tests tests/rng_tests.cpp)
+  target_link_libraries(rng_tests PRIVATE th08_geometry)
+  add_test(NAME rng COMMAND rng_tests)
   if(TARGET source_oracle)
     add_test(NAME source_oracle COMMAND source_oracle)
   endif()

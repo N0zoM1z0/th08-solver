@@ -57,6 +57,15 @@ still requires dependency evidence from the world layer.
 
 ## Launch kinematics and numerical profile
 
+`random::Rng` owns an explicit 16-bit seed, unsigned draw counter, and optional
+saved seed. Snapshot copies preserve all state; restoring the saved seed does not
+roll back the counter. Integer zero ranges consume no draws, while floating zero
+ranges consume two. A 32-bit draw takes the first 16-bit result as its high word.
+The oracle compares 524288 operations over all 65536 initial seeds against the
+pinned reconstructed bodies compiled locally. This establishes the native profile,
+not original executable evaluation order. No component invents an entry seed or
+assumes that independent entities own independent RNG streams.
+
 `kinematics::launch` implements all nine aim modes with caller-supplied random samples.
 It preserves fan order, the count2 (not count2-1) speed denominator, capped angle
 normalization, and the distinction between raw velocity angle and stored normalized

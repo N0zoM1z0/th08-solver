@@ -36,15 +36,18 @@ constexpr const char *prefix = R"CPP(
 #include <th08/kinematics.hpp>
 #include <th08/bullet_motion.hpp>
 #include <th08/laser_motion.hpp>
+#include <th08/rng.hpp>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
 #include <fstream>
 #include <random>
 #include <cstring>
+#include <climits>
 using f32=float;
 using i32=int32_t;
 using u32=uint32_t;
+using u16=uint16_t;
 using ZunBool=int;
 constexpr float ZUN_PI=3.14159265358979323846f;
 constexpr float ZUN_2PI=ZUN_PI*2.0f;
@@ -154,6 +157,31 @@ int main(int argc,char** argv) {
         return std::uniform_real_distribution<float>(low,high)(rng);
     };
     std::uint64_t mismatches=0;
+    std::uint64_t rng_mismatches=0,rng_operations=0;
+    for(unsigned seed=0;seed<65536;++seed) {
+        Rng reference;
+        reference.SetSeed(u16(seed));
+        reference.ResetGenerationCount();
+        th08::random::Rng actual{u16(seed)};
+        for(unsigned operation=0;operation<8;++operation) {
+            switch(operation%4) {
+            case 0: if(reference.GetRandomU16()!=actual.next_u16()) ++rng_mismatches; break;
+            case 1: if(reference.GetRandomU32()!=actual.next_u32()) ++rng_mismatches; break;
+            case 2: {
+                const float a=reference.GetRandomF32(),b=actual.unit();
+                if(std::memcmp(&a,&b,sizeof(float))) ++rng_mismatches;
+                break;
+            }
+            case 3: {
+                const float a=reference.GetRandomF32Signed(),b=actual.signed_unit();
+                if(std::memcmp(&a,&b,sizeof(float))) ++rng_mismatches;
+                break;
+            }
+            }
+            if(reference.GetSeed()!=actual.seed()) ++rng_mismatches;
+            ++rng_operations;
+        }
+    }
     std::uint64_t launch_mismatches=0;
     std::uint64_t turn_mismatches=0,turn_frames=0;
     std::uint64_t laser_mismatches=0,laser_frames=0;
@@ -310,8 +338,9 @@ int main(int argc,char** argv) {
         << mismatches << ",\"launch_cases\":180000,\"launch_mismatches\":" << launch_mismatches
         << ",\"direction_frames\":" << turn_frames << ",\"direction_mismatches\":" << turn_mismatches
         << ",\"laser_frames\":" << laser_frames << ",\"laser_mismatches\":" << laser_mismatches
+        << ",\"rng_operations\":" << rng_operations << ",\"rng_mismatches\":" << rng_mismatches
         << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
-    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches?1:0;
+    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -322,6 +351,9 @@ int main(int argc, char **argv) try {
                                "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
     const auto global = source(repo / "src/Global.cpp",
                                "8df17616c935d684b6636619d4726889e68f7d2d7000e27c25aebc4bc460b74b");
+    const auto global_header =
+        source(repo / "src/Global.hpp",
+               "ce49422a53e5ba33b63d803d17e7051ba2a5ad7a33ae531910c048a091f37592");
     const auto bullet = source(repo / "src/BulletManager.cpp",
                                "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
     source(repo / "src/ZunMath.hpp",
@@ -348,9 +380,18 @@ int main(int argc, char **argv) try {
     std::ofstream out(argv[2]);
     out.exceptions(std::ios::badbit | std::ios::failbit);
     std::string preamble = prefix;
+    preamble.insert(preamble.find("struct RandomTrace"),
+                    function(global_header, "class Rng") + ";\n");
     preamble.insert(preamble.find("struct SourceLaser"),
                     function(supervisor_header, "struct ZunTimer") + ";\n");
     out << preamble << function(supervisor, "void Supervisor::TickTimer(") << '\n'
+        << function(global, "void Rng::SetSeed(") << '\n'
+        << function(global, "void Rng::ResetGenerationCount(") << '\n'
+        << function(global, "u16 Rng::GetSeed(") << '\n'
+        << function(global, "u16 Rng::GetRandomU16(") << '\n'
+        << function(global, "u32 Rng::GetRandomU32(") << '\n'
+        << function(global, "f32 Rng::GetRandomF32(") << '\n'
+        << function(global, "f32 Rng::GetRandomF32Signed(") << '\n'
         << function(global, "f32 AddNormalizeAngle(") << '\n'
         << "th08::kinematics::Launch reference_launch(BulletSpawnDescriptor* descriptor, "
            "i32 index1,i32 index2,f32 angleToPlayer,float multiplier) { float angle,speed;\n"
