@@ -1,5 +1,48 @@
 # Source-derived regression ledger
 
+## Direction changes retain fractional clock age
+
+### Expectation, ranked probes, and independent oracle
+
+With a finite positive frame-rate multiplier, a direction transform must use the
+source `ZunTimer` integer part for firing comparisons and integer-plus-fraction for
+the deceleration ramp. Its increment follows `Supervisor::TickTimer`. The control
+uses multiplier 1; the highest-value variation changes only that value to 0.5.
+Rate changes retaining fractional carry and firing/reset boundaries rank next.
+All are reachable through the existing public motion API.
+
+Inspection found that the earlier direction oracle substituted an integer for
+`BulletExState::timer`, although the source methods themselves were unchanged.
+After replacing that adapter with the actual pinned `ZunTimer`, the unmodified
+motion kernel produced 189423 mismatches over its 447684-frame test sequence.
+Thus the previous zero-mismatch result did not establish non-unit clock behavior.
+The independent oracle now includes the original timer class and tick method.
+
+### Minimal counterexample and durable guard
+
+Initialize a relative turn with interval 2, one repetition, completed count and
+timer zero, turn angle 1, turn speed 3. The bullet starts with angle 0 and speed 4.
+One update with multiplier 0.5 must leave integer timer 0 and fraction 0.5, with
+x velocity 2. The old implementation returned timer 1. A second update must use
+age 0.5, producing x velocity 1.5 and integer timer 1 with zero fraction.
+
+`tests/bullet_motion_tests.cpp` first failed on the unfixed implementation with
+`half-rate direction clock incorrectly advanced a whole frame`. The fixed guard
+also checks a 0.5-to-1 rate change retaining fractional carry, then firing at the
+integer threshold and resetting the fraction before that frame's increment.
+It repeats with x positions 0, 100, and 0; position does not affect this relative
+turn contract. All setup is local and needs no external cleanup.
+The guard passes after the fix, and the updated source oracle passes 584936 direction
+frames with no mismatches. Both 600-frame unit-rate fixtures solve and replay again.
+
+### Scope and residual limits
+
+The maintained kernel now stores a fractional age, while the source oracle checks
+both timer components, velocity, angle, speed, completion count and active flag.
+The unit-rate particle fixtures remain regression controls. This does not verify
+retail x87 arithmetic, spawn ANM at non-unit rates, concurrent transforms sharing
+a state slot, or complete world timing. Those remain separate explicit boundaries.
+
 ## Signed terminal laser dimensions
 
 ### Expectation and independent oracle

@@ -103,7 +103,10 @@ into a new bullet. The certificate requires a unit-rate clock and no external in
 The full resource audit currently certifies 42 scripts and rejects 1109 as unsupported.
 
 `bullet::advance_direction` models relative, absolute and aimed changes. Missing target
-angles block only a firing frame and leave state unchanged. `bullet::advance` composes
+angles block only a firing frame and leave state unchanged. Integer firing thresholds,
+fractional deceleration age and reset/increment order follow the original `ZunTimer`;
+the source oracle retains that actual timer rather than substituting an integer.
+`bullet::advance` composes
 one installed direction transform with spawn displacement, same-frame activation,
 scripted freeze, cull delay, and offscreen lifetime. Its contract excludes cancellation,
 later transform records, pool contention and player interaction. Source-driven sub40/41
