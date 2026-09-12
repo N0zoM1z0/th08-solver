@@ -14,7 +14,15 @@ else()
     target_link_options(th08_geometry INTERFACE -fsanitize=address,undefined)
   endif()
 endif()
-add_library(th08_resources src/resources.cpp src/schema.cpp src/formats.cpp src/emitter.cpp src/animation.cpp src/animation_control.cpp src/world_motion.cpp src/timeline.cpp)
+add_library(th08_resources
+  src/resources.cpp
+  src/schema.cpp
+  src/formats.cpp
+  src/emitter.cpp
+  src/animation.cpp
+  src/animation_control.cpp
+  src/world_motion.cpp
+  src/timeline.cpp)
 target_link_libraries(th08_resources PUBLIC th08_geometry OpenSSL::Crypto)
 add_executable(th08_audit tools/audit.cpp tools/resource_reports.cpp)
 target_link_libraries(th08_audit PRIVATE th08_resources)
@@ -28,7 +36,15 @@ add_executable(th08_timeline_cases tools/timeline_cases.cpp)
 target_link_libraries(th08_timeline_cases PRIVATE th08_resources)
 set(TH08_REFERENCE_SOURCE "" CACHE PATH "Optional pinned reconstruction checkout for source oracle")
 if(TH08_REFERENCE_SOURCE)
-  add_executable(th08_source_probe tools/source_probe.cpp tools/ecl_source_probe.cpp tools/transform_source_probe.cpp tools/animation_source_probe.cpp tools/enemy_motion_source_probe.cpp tools/world_motion_source_probe.cpp tools/timeline_source_probe.cpp)
+  add_executable(th08_source_probe
+    tools/source_probe.cpp
+    tools/ecl_source_probe.cpp
+    tools/transform_source_probe.cpp
+    tools/animation_source_probe.cpp
+    tools/enemy_motion_source_probe.cpp
+    tools/world_motion_source_probe.cpp
+    tools/timeline_source_probe.cpp
+    tools/camera_particle_source_probe.cpp)
   target_link_libraries(th08_source_probe PRIVATE th08_resources)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
@@ -45,6 +61,8 @@ if(TH08_REFERENCE_SOURCE)
       ${TH08_REFERENCE_SOURCE}/src/EclDependencies.cpp
       ${TH08_REFERENCE_SOURCE}/src/EnemyTimeline.cpp ${TH08_REFERENCE_SOURCE}/src/Gui.cpp
       ${TH08_REFERENCE_SOURCE}/src/AsciiManagerScale.cpp
+      ${TH08_REFERENCE_SOURCE}/src/EffectManager.cpp ${TH08_REFERENCE_SOURCE}/src/Background.hpp
+      ${TH08_REFERENCE_SOURCE}/src/ZunColor.hpp ${TH08_REFERENCE_SOURCE}/src/modern/linux/include/d3dx8.h
     VERBATIM)
   add_executable(source_oracle ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp)
   target_link_libraries(source_oracle PRIVATE th08_resources)
@@ -81,6 +99,9 @@ if(BUILD_TESTING)
   add_executable(timeline_tests tests/timeline_tests.cpp)
   target_link_libraries(timeline_tests PRIVATE th08_resources)
   add_test(NAME timeline COMMAND timeline_tests)
+  add_executable(camera_particle_tests tests/camera_particle_tests.cpp)
+  target_link_libraries(camera_particle_tests PRIVATE th08_geometry)
+  add_test(NAME camera_particle COMMAND camera_particle_tests)
   add_executable(kinematics_tests tests/kinematics_tests.cpp)
   target_link_libraries(kinematics_tests PRIVATE th08_geometry)
   add_test(NAME kinematics COMMAND kinematics_tests)

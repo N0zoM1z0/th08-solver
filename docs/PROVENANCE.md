@@ -29,6 +29,7 @@ unchanged. Their code is not automatically promoted into a verified component.
 | Enemy motion phases | Pinned movement/configuration methods and manager integration block | 580000 configuration/velocity/integration phases, fractional clocks, easing, mirrored/inverted bounds and parent coordinates | Actor creation, lifecycle gates and intervening shot/ANM execution |
 | ECL movement effects | Pinned movement opcode blocks, helpers, typed motion/player/RNG selectors, world publication and player-angle/vector-length bodies | 420868 effects, including all-seed random movement, repeated RNG reads, self-reading fields and coincident-position aiming; twelve separate native rollback checks | Multiple random factors in one unsequenced product, complete world scheduling |
 | Timeline control | Complete pinned EclTimeline::Run, GUI predicates and actual ZunTimer | 200000 frames; all 32 timelines / 2003 owned DAT payloads; practice-entry handoff fixture | World effects, ungated random spawn execution, complete boss lifecycle |
+| Effect 51 camera callbacks | Unchanged initializer/update, source Float3 operators, HasBoss, color fields and modern D3DX math | 65536 initializations / 328503 updates / eight native rollback checks; all seeds, color byte products and culling thresholds | Allocation, surrounding ANM, camera evolution, freeze/pool lifecycle and retail Direct3D math |
 | Spatial index | Unindexed hazard scan | Random scenes, cell boundaries, exact contact, snapshot ownership, invalid arguments | Formal proof for all float inputs |
 | Wriggle scheduling | Actual DAT and historical event digests | sub40/41 ordered digests, 360 ticks, 160 commands, 840 requests; sub42 alignment variants | Successful allocation, bullet motion, complete spells |
 | Planning | Explicit collision-restoration fixture | Legal actions, terminal region, unindexed replay, budget failure without a route | Reisen gameplay or complete search |
@@ -82,6 +83,16 @@ The timeline generator pins `EnemyTimeline.cpp`
 in addition to the existing enemy definitions and real timer. External method
 adapters record invocation order; ungated random spawn execution throws outside
 that comparison domain. No actual GUI or game loop is launched.
+
+The camera-particle generator additionally pins `EffectManager.cpp`
+(`63d45a213956008b44874bc4707c971a7799a9c551b07e732bf1f55282c2209e`), `Background.hpp`
+(`bbfa9022f52c5b5332f8e690d42c7338ec97f062b43a3bfcd6dc33190484efe8`), `ZunColor.hpp`
+(`e8561d8b0f2770566bc0658b9ad2e8cb2dfbebc7fcea1cf72a59b80487503af2`) and
+`modern/linux/include/d3dx8.h`
+(`c9f5b34bf60903919726bfed0c2055b0c203ea630994a13bb5434925b56dd20e`).
+Its inputs are explicit callback-boundary snapshots, not invented allocation or
+camera defaults. The modern vector normalization threshold is independently guarded;
+it does not establish equivalence to the retail Direct3D implementation.
 
 The reference checkout is not modified. Competing laser interpretations differ on
 whether player extents also rotate; production function output supports center-only
