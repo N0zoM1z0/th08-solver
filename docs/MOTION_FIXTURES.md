@@ -3,6 +3,8 @@
 `th08_motion_cases` connects native ECL scheduling, launch kinematics, certified ANM
 timing, particle motion, indexed geometry, finite-horizon search, and unindexed replay.
 It deliberately reports `PASSED_COMPONENT_FIXTURES`, not a complete spell solution.
+Current generated records are indexed in [Reports](../reports/native/README.md);
+the [coverage roadmap](COVERAGE.md) describes the missing complete-world path.
 
 ## Exact scope
 

@@ -1,1 +1,1 @@
-{"scope":"synthetic geometry queries, no world or solver","queries":20000,"hazards":1536,"build_us":104.67,"scan_ms":163.644,"grid_ms":1.34522,"scan_checks":26709093,"grid_checks":72853,"scan_hits":4921,"grid_hits":4921}
+{"scope":"synthetic geometry queries, no world or solver","queries":20000,"hazards":1536,"build_us":105.54,"scan_ms":156.465,"grid_ms":1.3563,"scan_checks":26709093,"grid_checks":72853,"scan_hits":4921,"grid_hits":4921}

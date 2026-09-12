@@ -38,3 +38,6 @@ Run relevant CTest cases and native DAT checks for changed parser/runtime code.
 For geometry changes run brute-force differential tests and, when available,
 the pinned source oracle. Use sanitizers for binary parser/ownership changes.
 Update `docs/STATUS.md` with completed work and the next concrete missing behavior.
+Use `docs/README.md` as the documentation map. Keep implemented status separate from
+`docs/COVERAGE.md` acceptance criteria; refresh affected report generators and outputs
+together. Run the native documentation CTest after maintained documentation changes.

@@ -401,7 +401,7 @@ int main(int argc,char** argv) {
         if(!file) return 2;
     }
     std::ostream& out=argc==2?file:std::cout;
-    out << "{\"scope\":\"pinned reconstructed bodies versus maintained native predicates; not game execution\","
+    out << "{\"scope\":\"pinned reconstructed bodies versus maintained native component projections; not complete worlds or game execution\","
         << "\"random_cases\":300000,\"predicate_comparisons\":600000,\"mismatches\":"
         << mismatches << ",\"launch_cases\":180000,\"launch_mismatches\":" << launch_mismatches
         << ",\"direction_frames\":" << turn_frames << ",\"direction_mismatches\":" << turn_mismatches

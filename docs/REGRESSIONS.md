@@ -1,5 +1,10 @@
 # Source-derived regression ledger
 
+This ledger intentionally preserves historical counterexamples and fail-before
+observations. They explain current regression guards, not outstanding failures.
+Current suite totals and implemented coverage live in [Status](STATUS.md) and
+[Provenance](PROVENANCE.md); old intermediate mismatch counts are not current results.
+
 ## Tiny camera deltas follow the source normalization cutoff
 
 The modern D3DX normalization used by effect 51 zeros vectors with length at or
@@ -98,8 +103,10 @@ frames with no mismatches. Both 600-frame unit-rate fixtures solve and replay ag
 The maintained kernel now stores a fractional age, while the source oracle checks
 both timer components, velocity, angle, speed, completion count and active flag.
 The unit-rate particle fixtures remain regression controls. This does not verify
-retail x87 arithmetic, spawn ANM at non-unit rates, concurrent transforms sharing
-a state slot, or complete world timing. Those remain separate explicit boundaries.
+retail x87 arithmetic, spawn ANM at non-unit rates, or complete world timing.
+Concurrent supported transforms sharing a state slot are now covered separately
+by the transform-program oracle; this individual regression does not prove them.
+See the current [transform contract](ARCHITECTURE.md) and [comparison chain](PROVENANCE.md).
 
 ## Signed terminal laser dimensions
 

@@ -28,7 +28,7 @@ hash-pinned reference checkout. No previous build directory is needed.
 
 ## Independent component comparisons
 
-With the pinned reference checkout prepared as described in the README:
+With the pinned reference checkout prepared as described in [Validation](VALIDATION.md):
 
 ```sh
 cmake -S . -B build-probes -DCMAKE_BUILD_TYPE=Release \
