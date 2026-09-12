@@ -1,5 +1,7 @@
+#include "planner_reference.hpp"
 #include <cstdlib>
 #include <iostream>
+#include <random>
 #include <th08/planner.hpp>
 using namespace th08::solver;
 using namespace th08::geometry;
@@ -10,6 +12,35 @@ void check(bool value, const char *message) {
     }
 }
 int main() {
+    std::mt19937 rng(20260912);
+    for (unsigned test = 0; test < 80; ++test) {
+        Model model;
+        model.dependency = Dependency::fixture;
+        const Vec2 start{float(8 + rng() % 369), float(16 + rng() % 417)};
+        for (int tick = 0; tick < 24; ++tick) {
+            std::vector<Hazard> hazards;
+            for (int i = 0; i < 6; ++i)
+                hazards.push_back(Hazard::bullet({{start.x + float(int(rng() % 101) - 50),
+                                                   start.y + float(int(rng() % 101) - 50)},
+                                                  {float(rng() % 16), float(rng() % 16)}}));
+            model.frames.emplace_back(std::move(hazards), Vec2{.825f, .825f});
+        }
+        Options options;
+        options.beam = 1 + rng() % 128;
+        options.expansions = test % 5 ? 100000 : 30;
+        options.terminal = {{192, 224}, {368, 416}};
+        const auto actual = plan(model, start, {}, options);
+        const auto expected = reference_plan(model, start, {}, options);
+        check(actual.status == expected.status && actual.expansions == expected.expansions &&
+                  actual.actions.size() == expected.actions.size(),
+              "optimized search changed status, budget or route length");
+        for (std::size_t i = 0; i < actual.actions.size(); ++i)
+            check(actual.actions[i].x == expected.actions[i].x &&
+                      actual.actions[i].y == expected.actions[i].y &&
+                      actual.positions[i].x == expected.positions[i].x &&
+                      actual.positions[i].y == expected.positions[i].y,
+                  "optimized search changed deterministic tie-break or position merging");
+    }
     Model m;
     for (int t = 0; t < 24; ++t) {
         std::vector<Hazard> h;

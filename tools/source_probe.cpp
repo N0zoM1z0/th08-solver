@@ -34,6 +34,8 @@ std::string function(const std::string &text, const std::string &signature) {
 constexpr const char *prefix = R"CPP(
 #include <th08/geometry.hpp>
 #include <th08/kinematics.hpp>
+#include <th08/bullet_motion.hpp>
+#include <th08/laser_motion.hpp>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -43,6 +45,7 @@ constexpr const char *prefix = R"CPP(
 using f32=float;
 using i32=int32_t;
 using u32=uint32_t;
+using ZunBool=int;
 constexpr float ZUN_PI=3.14159265358979323846f;
 constexpr float ZUN_2PI=ZUN_PI*2.0f;
 enum {BULLET_AIM_FAN_AIMED,BULLET_AIM_FAN,BULLET_AIM_CIRCLE_AIMED,BULLET_AIM_CIRCLE,
@@ -67,7 +70,30 @@ struct Float3 {
     Float3 operator+(Float3 b)const{return {x+b.x,y+b.y,z+b.z};}
     Float3 operator-(Float3 b)const{return {x-b.x,y-b.y,z-b.z};}
     Float3 operator/(float s)const{return {x/s,y/s,z/s};}
+    void FromAngleMagnitude(float a,float m){x=cosf(a)*m;y=sinf(a)*m;}
 };
+constexpr unsigned BULLET_TRANSFORM_CHANGE_DIRECTION_RELATIVE=0x40;
+constexpr unsigned BULLET_TRANSFORM_CHANGE_DIRECTION_AIMED=0x80;
+constexpr unsigned BULLET_TRANSFORM_CHANGE_DIRECTION_ABSOLUTE=0x100;
+constexpr int BULLET_TRANSFORM_STATE_DIRECTION_CHANGE=0;
+using SoundIdx=int;
+struct Sound {void PlaySoundByIdx(int,int){}} g_SoundPlayer;
+struct Supervisor {float framerateMultiplier=1; void TickTimer(int*,float*);} g_Supervisor;
+struct TurnState {
+    int timer=0,directionChangeIntervalFrames=0,directionChangeRepeatCount=0,directionChangesCompleted=0;
+    float directionChangeAngle=0,directionChangeSpeed=0;
+};
+struct Bullet {
+    Float3 position,velocity;
+    float angle=0,speed=0;
+    int transformSound=-1;
+    unsigned activeTransformFlags=0;
+    TurnState exStates[1];
+    void UpdateRelativeDirectionChange();
+    void UpdateAbsoluteDirectionChange();
+    void UpdateAimedDirectionChange();
+};
+float supplied_target_angle=0;
 struct PlayerCollisionRegion {
     Float3 center,size;
     float radius=0,angle=0;
@@ -85,9 +111,40 @@ struct Player {
     int bulletCancelItemType=0,playerState=0,deaths=0,grazes=0;
     void Die(){++deaths;playerState=PLAYER_STATE_DYING;}
     void AwardGraze(Float3*,int){++grazes;}
+    float AngleToPoint(Float3*){return supplied_target_angle;}
     i32 CheckBulletCancelCollision(Float3*,Float3*);
     i32 CheckBulletCollision(Float3*,Float3*);
     u32 CalcLaserHitbox(Float3*,Float3*,Float3*,f32,i32);
+};
+Player g_Player;
+enum {LASER_STATE_STARTING,LASER_STATE_ACTIVE,LASER_STATE_DESPAWNING};
+struct DummySprite {float widthPx=16,heightPx=16;} dummy_sprite;
+struct LaserVm {
+    Float3 scale;
+    DummySprite* loadedSprite=&dummy_sprite;
+    struct {unsigned d3dColor=0;} color1;
+    void SetZRotation(float){}
+};
+struct SourceLaser {
+    Float3 position;
+    float angle=0,startOffset=0,endOffset=0,startLength=0,width=0,speed=0,currentWidth=0;
+    ZunTimer timer;
+    int startTime=0,duration=0,despawnDuration=0,hitboxStartTime=0,hitboxEndDelay=0,state=0;
+    bool inUse=true;
+    unsigned flags=0;
+    LaserVm bodyVm;
+};
+struct DummyAnm {int ExecuteScript(LaserVm*){return 0;}} dummy_anm;
+DummyAnm* g_AnmManager=&dummy_anm;
+#define FLOAT3_PTR(p) reinterpret_cast<Float3*>(p)
+struct LaserRecorder {
+    th08::laser::Result trace;
+    int CalcLaserHitbox(Float3* center,Float3* size,Float3* origin,float angle,int graze) {
+        if(trace.count>=3) throw std::runtime_error("reference exceeded laser call bound");
+        trace.calls[trace.count++]={{{{center->x,center->y},{size->x,size->y}},
+                                    {origin->x,origin->y},angle},graze!=0};
+        return 0;
+    }
 };
 )CPP";
 constexpr const char *suffix = R"CPP(
@@ -98,6 +155,95 @@ int main(int argc,char** argv) {
     };
     std::uint64_t mismatches=0;
     std::uint64_t launch_mismatches=0;
+    std::uint64_t turn_mismatches=0,turn_frames=0;
+    std::uint64_t laser_mismatches=0,laser_frames=0;
+    for(int scenario=0;scenario<5000;++scenario) {
+        th08::laser::State state;
+        state.position={uniform(-100,484),uniform(-100,548)};
+        state.angle=uniform(-3,3);
+        state.end_offset=uniform(10,100);
+        state.length=uniform(100,500);
+        state.width=uniform(1,80);
+        state.speed=uniform(0,8);
+        state.start_time=int(rng()%60+1);
+        state.duration=int(rng()%120);
+        state.despawn_duration=int(rng()%40);
+        state.hitbox_start_time=int(rng()%80);
+        state.hitbox_end_delay=int(rng()%50);
+        state.fade_alpha=(scenario&1)!=0;
+        state.phase=th08::laser::Phase::starting;
+        SourceLaser reference;
+        reference.position={state.position.x,state.position.y};
+        reference.angle=state.angle;
+        reference.endOffset=state.end_offset;
+        reference.startLength=state.length;
+        reference.width=state.width;
+        reference.speed=state.speed;
+        reference.startTime=state.start_time;
+        reference.duration=state.duration;
+        reference.despawnDuration=state.despawn_duration;
+        reference.hitboxStartTime=state.hitbox_start_time;
+        reference.hitboxEndDelay=state.hitbox_end_delay;
+        reference.flags=state.fade_alpha;
+        g_Supervisor.framerateMultiplier=uniform(.25f,2);
+        for(int frame=0;frame<300 && state.in_use;++frame) {
+            const auto before=state;
+            const auto expected=reference_laser(&reference);
+            const auto actual=th08::laser::advance(state,g_Supervisor.framerateMultiplier);
+            auto same=[](float a,float b){return std::memcmp(&a,&b,sizeof(float))==0;};
+            if(actual.status==th08::laser::Status::invalid || actual.count!=expected.count ||
+               !same(state.start_offset,reference.startOffset) || !same(state.end_offset,reference.endOffset) ||
+               state.timer!=int(reference.timer) || !same(state.subframe,reference.timer.subFrame) ||
+               int(state.phase)!=reference.state || state.in_use!=reference.inUse)
+            {
+                if(laser_mismatches<3)
+                    std::cerr << "laser divergence: scenario=" << scenario << " frame=" << frame
+                              << " phase=" << int(before.phase) << " timer=" << before.timer
+                              << " width=" << std::hexfloat << before.width << std::defaultfloat
+                              << " despawn=" << before.despawn_duration << " gate=" << before.hitbox_end_delay
+                              << " expected_calls=" << expected.count << " actual_calls=" << actual.count
+                              << " expected_x=" << (expected.count?expected.calls[0].geometry.box.size.x:0) << '\n';
+                ++laser_mismatches;
+            }
+            for(unsigned i=0;i<std::min(actual.count,expected.count);++i) {
+                const auto& a=actual.calls[i]; const auto& b=expected.calls[i];
+                if(!same(a.geometry.box.center.x,b.geometry.box.center.x) ||
+                   !same(a.geometry.box.center.y,b.geometry.box.center.y) ||
+                   !same(a.geometry.box.size.x,b.geometry.box.size.x) ||
+                   !same(a.geometry.box.size.y,b.geometry.box.size.y) || a.allow_graze!=b.allow_graze)
+                    ++laser_mismatches;
+            }
+            ++laser_frames;
+        }
+    }
+    for(int scenario=0;scenario<3000;++scenario) {
+        using namespace th08::bullet;
+        const auto mode=TurnMode(scenario%3);
+        DirectionChange turn{mode,true,int(rng()%100),int(rng()%5+1),0,0,
+                             uniform(-5,5),uniform(-2,8)};
+        Flight flight{0,0,0,0,uniform(-5,5),uniform(-2,8)};
+        Bullet reference;
+        reference.angle=flight.angle;
+        reference.speed=flight.speed;
+        reference.activeTransformFlags=mode==TurnMode::relative?0x40:mode==TurnMode::absolute?0x100:0x80;
+        reference.exStates[0]={0,turn.interval,turn.repeats,0,turn.angle,turn.speed};
+        g_Supervisor.framerateMultiplier=uniform(.25f,2);
+        for(int frame=0;frame<600 && turn.active;++frame) {
+            supplied_target_angle=uniform(-3,3);
+            if(mode==TurnMode::relative) reference.UpdateRelativeDirectionChange();
+            else if(mode==TurnMode::absolute) reference.UpdateAbsoluteDirectionChange();
+            else reference.UpdateAimedDirectionChange();
+            const auto status=advance_direction(flight,turn,g_Supervisor.framerateMultiplier,supplied_target_angle);
+            auto same=[](float a,float b){return std::memcmp(&a,&b,sizeof(float))==0;};
+            const auto& expected=reference.exStates[0];
+            if(status!=Status::advanced || !same(flight.angle,reference.angle) ||
+               !same(flight.speed,reference.speed) || !same(flight.velocity_x,reference.velocity.x) ||
+               !same(flight.velocity_y,reference.velocity.y) || turn.timer!=expected.timer ||
+               turn.completed!=expected.directionChangesCompleted ||
+               turn.active!=(reference.activeTransformFlags!=0)) ++turn_mismatches;
+            ++turn_frames;
+        }
+    }
     for(int i=0;i<180000;++i) {
         using namespace th08::kinematics;
         const unsigned count_limit=i%2?1536:16;
@@ -145,8 +291,11 @@ int main(int argc,char** argv) {
         player.playerState=state;
         player.deaths=0;
         replay.frameEventFlags=0;
-        player.CalcLaserHitbox(&center,&size,&origin,angle,0);
-        const bool laser_hit=th08::geometry::laser_hit(p,half,{box,{origin.x,origin.y},angle});
+        Float3 laser_size=size;
+        if(i%13==0) laser_size.x=-uniform(0,8);
+        player.CalcLaserHitbox(&center,&laser_size,&origin,angle,0);
+        const auto laser_box=th08::geometry::Box{{center.x,center.y},{laser_size.x,laser_size.y}};
+        const bool laser_hit=th08::geometry::laser_hit(p,half,{laser_box,{origin.x,origin.y},angle});
         if(laser_hit!=bool(replay.frameEventFlags&1)) ++mismatches;
         if((player.deaths!=0)!=(laser_hit && state==PLAYER_STATE_ALIVE)) ++mismatches;
     }
@@ -159,8 +308,10 @@ int main(int argc,char** argv) {
     out << "{\"scope\":\"pinned reconstructed bodies versus maintained native predicates; not game execution\","
         << "\"random_cases\":300000,\"predicate_comparisons\":600000,\"mismatches\":"
         << mismatches << ",\"launch_cases\":180000,\"launch_mismatches\":" << launch_mismatches
+        << ",\"direction_frames\":" << turn_frames << ",\"direction_mismatches\":" << turn_mismatches
+        << ",\"laser_frames\":" << laser_frames << ",\"laser_mismatches\":" << laser_mismatches
         << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
-    return mismatches||launch_mismatches?1:0;
+    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -175,19 +326,44 @@ int main(int argc, char **argv) try {
                                "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
     source(repo / "src/ZunMath.hpp",
            "ba187178ec936c2492f3e311e8d6d634421c35bc5abd74ab4af77a4c81ddb3de");
+    const auto supervisor =
+        source(repo / "src/Supervisor.cpp",
+               "67b761377ae38aec18581920ea07ff31fb4dd3c0de0d15acdd42530d19fa1a5e");
+    const auto supervisor_header =
+        source(repo / "src/Supervisor.hpp",
+               "985ed6b9c210ba4cc7e6c54e033df4e882ad46567e71ccd8c6fadcbe2efac976");
     const auto launch_start =
         bullet.find("    angle = 0.0f;", bullet.find("i32 BulletManager::SpawnSingleBullet("));
     const auto launch_end = bullet.find("    bullet->state = BULLET_STATE_FIRED;", launch_start);
     if (launch_start == std::string::npos || launch_end == std::string::npos)
         throw std::runtime_error("missing pinned launch block");
+    const auto laser_start =
+        bullet.find("            laser->endOffset +=",
+                    bullet.find("ChainCallbackResult BulletManager::OnUpdate("));
+    const auto laser_last =
+        bullet.find("            g_AnmManager->ExecuteScript(&laser->bodyVm);", laser_start);
+    if (laser_start == std::string::npos || laser_last == std::string::npos)
+        throw std::runtime_error("missing pinned laser update block");
+    const auto laser_end = bullet.find('\n', laser_last);
     std::ofstream out(argv[2]);
     out.exceptions(std::ios::badbit | std::ios::failbit);
-    out << prefix << function(global, "f32 AddNormalizeAngle(") << '\n'
+    std::string preamble = prefix;
+    preamble.insert(preamble.find("struct SourceLaser"),
+                    function(supervisor_header, "struct ZunTimer") + ";\n");
+    out << preamble << function(supervisor, "void Supervisor::TickTimer(") << '\n'
+        << function(global, "f32 AddNormalizeAngle(") << '\n'
         << "th08::kinematics::Launch reference_launch(BulletSpawnDescriptor* descriptor, "
            "i32 index1,i32 index2,f32 angleToPlayer,float multiplier) { float angle,speed;\n"
         << bullet.substr(launch_start, launch_end - launch_start)
         << "return {angle,AddNormalizeAngle(angle,0),speed,cosf(angle)*(speed*multiplier),"
            "sinf(angle)*(speed*multiplier)}; }\n"
+        << function(bullet, "void Bullet::UpdateRelativeDirectionChange()") << '\n'
+        << function(bullet, "void Bullet::UpdateAbsoluteDirectionChange()") << '\n'
+        << function(bullet, "void Bullet::UpdateAimedDirectionChange()") << '\n'
+        << "th08::laser::Result reference_laser(SourceLaser* laser) { LaserRecorder g_Player; "
+           "float laserSize[3],laserCenter[3],currentWidth; int alpha,rampWindow; "
+           "for(int once=0;once<1;++once) {\n"
+        << bullet.substr(laser_start, laser_end - laser_start) << "\n} return g_Player.trace; }\n"
         << function(global, "void Rotate(Float3 *") << '\n'
         << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'

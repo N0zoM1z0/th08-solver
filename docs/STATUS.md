@@ -1,6 +1,6 @@
 # Current status
 
-2026-09-12: native resource coverage, scalar execution, and launch kinematics expanded.
+2026-09-12: native particle integration, laser lifecycle, and search optimization expanded.
 There is no Python dependency. Verified complete offline spell solutions: 0.
 The game is not launched in this phase.
 
@@ -15,8 +15,9 @@ The game is not launched in this phase.
    candidate-independent models, and independent path replay.
 5. Actual sub40/41/42 regressions, source-function predicate comparisons,
    unit tests, and consistent clang-format formatting.
-6. Seven Release CTest cases pass. Six ASan/UBSan unit cases, actual DAT decoding,
-   and the complete restricted-execution matrix also pass under sanitizers.
+6. Ten Release and nine ASan/UBSan CTest cases pass. Sanitizer checks also cover the
+   native parsers, restricted-execution matrix and both 600-frame particle fixtures,
+   including the latest signed-laser/fractional-clock changes.
 7. All observed ECL payload schemas; 32 timelines / 2003 instructions; eight SHT files
    / 50 levels / 227 shot descriptors; 113 ANM files / 310 entries / 1151 scripts /
    1917 sprites / 15966 nonterminal instructions; 18 STD files / 68 objects / 552 quads /
@@ -27,6 +28,15 @@ The game is not launched in this phase.
    and normal call-stack restoration with explicit unknown-context propagation.
 9. Nine-mode launch kernel and 180000 source-comparison cases with no mismatches.
    This is the modern-port float32 velocity profile, not verified retail x87 equivalence.
+10. ANM lifetime certificates, spawning-to-fired motion, relative/absolute/aimed turns,
+    cull delay and offscreen lifetime. Two sub40/41 component fixtures each instantiate
+    840 bullets, generate 600 collision phases, and find independently replayed paths.
+11. Laser starting/active/despawning collision-call projection and fractional clocks.
+    The source oracle compares 447684 direction frames and 678369 laser frames without
+    mismatches. Signed terminal dimensions have a minimized fail-before/pass-after guard.
+12. Allocation-reusing deterministic heap search, with identical results against the
+    previous implementation on 80 scenes. A local alternating benchmark measured about
+    32.7 ms versus 22.1 ms median; this is a component workload, not maximum performance.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the
@@ -52,7 +62,7 @@ can differ from these initial snapshots.
 |---|---|---|
 | 1 | Extend source-oracle coverage for scalar execution and exact numerical profiles | Independent per-opcode comparisons; distinguish modern float32 and retail x87 |
 | 2 | Timeline/ANM execution, callback and child-context lifetimes | Explicit ownership and clocks; no invented external defaults |
-| 3 | sub40/41 emission expansion and frame-by-frame float32 bullet motion | Requests to actual batches to per-frame geometry, with fixed-input comparisons |
+| 3 | General transform-program execution and pool lifecycle | Extend the verified sub40/41 particle subset without inventing future state |
 | 4 | Stage-one sub0 feedback and familiar alignment/shot gates | Correct state transitions under different player trajectories |
 | 5 | Reisen collision windows, Double Spark, and three barriers | Separate visibility and collision, correct phases, independent predictions |
 | 6 | Rising and Hourai Jewel RNG, lifecycle, and asynchronous re-aiming | Actions may change the world; cached predictions invalidate correctly |

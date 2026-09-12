@@ -18,7 +18,9 @@ ctest --test-dir build --output-on-failure
 
 ./build/th08_audit game_data_donottrack/th08.dat reports/native
 ./build/th08_slices game_data_donottrack/th08.dat reports/native
+./build/th08_motion_cases game_data_donottrack/th08.dat reports/native
 ./build/geometry_bench reports/native/geometry_benchmark.json
+./build/planner_bench reports/native/planner_benchmark.json
 ```
 
 Supply your own DAT under the ignored `game_data_donottrack/` directory.
@@ -40,12 +42,16 @@ and execution statuses, without extracting game assets to disk.
   compare all nine launch modes against pinned source with explicit random samples.
 - Query bullet and laser geometry using an owned, contiguous spatial index;
   propose finite-horizon beam paths and replay them against an unindexed reference.
+- Solve and replay two 600-frame source-driven particle fixtures, including spawn
+  timing and relative turns; these are not complete Wriggle spell worlds.
+- Model ordered laser collision phases and fractional clocks; preserve signed
+  terminal hitbox dimensions revealed by the source oracle.
 
 Complete ECL worlds, enemy/bullet lifecycles, ANM, damage, RNG consumption chains,
 and complete spell routes remain unimplemented. `RETURNED_SLICE` means a restricted
 subprogram returned; `BOUNDED_PREFIX` means the requested horizon was reached.
 **Verified complete spell solutions: 0.** The planner currently uses synthetic
-collision-window fixtures, not a complete Reisen spell.
+collision-window and source-driven particle fixtures, not a complete Reisen spell.
 
 ## Repository map
 
@@ -79,7 +85,8 @@ ctest --test-dir build --output-on-failure
 
 The native generator verifies reference source hashes, then extracts unmodified
 collision functions, angle normalization, and the launch switch into the build directory.
-It checks 600,000 collision predicates and 180,000 launch cases. This comparison
+It checks 600,000 collision predicates, 180,000 launch cases, and hundreds of thousands
+of direction-transform and laser-lifecycle frames. This comparison
 does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks

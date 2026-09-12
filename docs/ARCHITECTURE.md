@@ -10,7 +10,8 @@ User DAT -> Archive decode -> Ecl instruction arena -> predecoded Program
 Validated hazard phases -> owned Snapshot -> bounded beam search -> reference replay
 ```
 
-These pipelines are not yet connected by a complete world executor.
+`th08_motion_cases` connects these pipelines for two explicitly configured,
+source-driven particle fixtures. They are not yet a complete world executor.
 An emission request cannot be treated directly as an active hazard.
 
 ## Resources and programs
@@ -67,12 +68,38 @@ compares all five output float fields bitwise and checks random draw counts.
 This kernel runs before transform installation, pool allocation effects, spawn animation,
 rank adjustment, suppression, and collision. It is not yet a complete bullet simulation.
 
+## Lifecycle projections
+
+`animation::certify_timing` proves completion time and one immutable sprite for a
+restricted straight-line ANM script. It explicitly rejects unsupported instructions,
+variable masks, and sprite replacement. Accepted visual-only writes cannot influence
+these two observables. The template has already executed time zero before it is copied
+into a new bullet. The certificate requires a unit-rate clock and no external interrupts.
+The full resource audit currently certifies 42 scripts and rejects 1109 as unsupported.
+
+`bullet::advance_direction` models relative, absolute and aimed changes. Missing target
+angles block only a firing frame and leave state unchanged. `bullet::advance` composes
+one installed direction transform with spawn displacement, same-frame activation,
+scripted freeze, cull delay, and offscreen lifetime. Its contract excludes cancellation,
+later transform records, pool contention and player interaction. Source-driven sub40/41
+fixtures explicitly establish those preconditions; see `MOTION_FIXTURES.md`.
+
+`laser::advance` emits up to three ordered collision calls while updating offsets,
+phase and lifetime. It preserves switch fallthrough, the source's ramp axis, graze
+flags, and collision calls emitted before retirement. `timing::tick` retains the
+original fractional-clock threshold and carry. The oracle uses the actual `ZunTimer`
+definition and `Supervisor::TickTimer`, not an integer-clock substitution.
+
 ## Geometry and planning
 
 Coordinates are local playfield coordinates. Box sizes store full dimensions;
 player dimensions are half sizes. Contact is lethal. As in the reference source,
 laser collision rotates only the player center, preserving the axis-aligned player
 half sizes. Upstream code must resolve gates, invulnerability, cancellation, and lifecycle.
+Laser dimensions retain their sign: terminal ramp roundoff can produce a negative
+dimension that still participates in the source predicate. Broad-phase radii are
+conservatively bounded without clamping narrow-phase dimensions. See `REGRESSIONS.md`.
+Bullet dimensions and player half sizes must remain nonnegative.
 
 `Snapshot` takes and owns hazard data. Caller mutation, temporary input destruction,
 and snapshot copy/move cannot invalidate its index. A 24-by-28 grid of 16-pixel cells
@@ -89,8 +116,10 @@ and actions use nine directions. Terminal bounds constrain the player center.
 Actual character speeds must come from the selected SHT; current defaults serve fixtures.
 
 Search is bounded by beam width and expansion count. Every successful path is replayed
-using an unindexed scan. The current proposal implementation still sorts candidates
-and uses a position set; it is neither complete nor optimal. Position merging applies
+using an unindexed scan. One contiguous node arena, reused candidate storage, a
+deterministic min-heap, and a bounded open-addressing position table replace per-frame
+tree allocation and full sorting. Explicit tie-breaks preserve the original reference
+routes. The search is neither complete nor optimal. Position merging applies
 only to this candidate-independent, fixed-movement model, not to worlds carrying
 different RNG, damage, alignment, or lifecycle state.
 

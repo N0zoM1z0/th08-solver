@@ -76,7 +76,10 @@ inline void validate(const Hazard &h) {
         throw std::invalid_argument("unknown hazard kind");
     const Box &b = h.kind == Hazard::Kind::bullet ? h.box : h.beam.box;
     coordinate(b.center);
-    size(b.size);
+    if (h.kind == Hazard::Kind::bullet)
+        size(b.size);
+    else
+        coordinate(b.size); // Source laser ramps can produce signed terminal dimensions.
     if (h.kind == Hazard::Kind::laser) {
         coordinate(h.beam.origin);
         if (!std::isfinite(h.beam.angle) || std::abs(h.beam.angle) > 16)
@@ -91,13 +94,15 @@ struct Bounds {
 };
 inline Bounds expanded(const Hazard &h, Vec2 half) {
     const Box &b = h.kind == Hazard::Kind::bullet ? h.box : h.beam.box;
-    float scale =
-        1 + half.x + half.y + std::abs(b.center.x) + std::abs(b.center.y) + b.size.x + b.size.y;
+    float scale = 1 + half.x + half.y + std::abs(b.center.x) + std::abs(b.center.y) +
+                  std::abs(b.size.x) + std::abs(b.size.y);
     if (h.kind == Hazard::Kind::laser)
         scale += std::abs(h.beam.origin.x) + std::abs(h.beam.origin.y);
     // Broad-phase allowance only. Narrow-phase predicate is unchanged.
     const float pad = .002f + 32 * std::numeric_limits<float>::epsilon() * scale;
-    Vec2 r{b.size.x / 2 + half.x + pad, b.size.y / 2 + half.y + pad}, c = b.center;
+    Vec2 r{std::max(0.0f, b.size.x / 2 + half.x) + pad,
+           std::max(0.0f, b.size.y / 2 + half.y) + pad},
+        c = b.center;
     if (h.kind == Hazard::Kind::laser) {
         c = rotate({c.x - h.beam.origin.x, c.y - h.beam.origin.y}, h.beam.angle);
         c = {c.x + h.beam.origin.x, c.y + h.beam.origin.y};

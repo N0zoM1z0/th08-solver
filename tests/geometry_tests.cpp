@@ -48,10 +48,12 @@ int main() {
         Vec2 half{u(.1f, 3), u(.1f, 3)};
         for (int i = 0; i < 256; ++i) {
             Box b{{u(-100, 484), u(-100, 548)}, {u(0, 20), u(0, 20)}};
-            if (i % 13 == 0)
+            if (i % 13 == 0) {
+                if (i % 26 == 0)
+                    b.size.x = -u(0, 8);
                 hazards.push_back(
                     Hazard::laser({b, {u(-500, 500), u(-500, 500)}, u(-3.15f, 3.15f)}));
-            else
+            } else
                 hazards.push_back(Hazard::bullet(b));
         }
         Snapshot s(hazards, half);
