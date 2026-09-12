@@ -90,6 +90,9 @@ std::string world_motion_reference(const std::filesystem::path &repo) {
                "010049211263e47d8245c7335f56b17a8502ca0f84595c8b035926a495d90b57");
     const auto helpers = source(repo / "src/EclHelpers.cpp",
                                 "64a9318a9a3b89d02f221b1837e618c027c3a7814ed43481a0ca78a5c0b77f73");
+    const auto dependencies =
+        source(repo / "src/EclDependencies.cpp",
+               "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4");
     const auto player = source(repo / "src/Player.cpp",
                                "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
     const auto d3dx = source(repo / "src/modern/linux/d3dx8_compat.cpp",
@@ -116,14 +119,25 @@ std::string world_motion_reference(const std::filesystem::path &repo) {
                  "namespace EclHelpers {\n" +
                  function(helpers, "void __fastcall ConfigurePolarMotion(") + '\n' +
                  function(helpers, "void __fastcall ConfigureRelativeMotion(") + "\n}\n";
+    generated += "namespace EclRunLow {\n" +
+                 section(dependencies, "#define DEP_READ_INT", "// FUNCTION: th08 0x4222b0") +
+                 function(dependencies, "void __fastcall StartTimedPolarDisplacement(") + '\n' +
+                 function(dependencies, "void __fastcall BeginBoundaryAwareMove(") + '\n' +
+                 function(dependencies, "void __fastcall ApplyRandomBiasedMove(") +
+                 "\n#undef DEP_READ_INT\n#undef DEP_READ_FLOAT\n}\n"
+                 "using EclRunLow::BeginBoundaryAwareMove;\n"
+                 "using EclRunLow::ApplyRandomBiasedMove;\n"
+                 "#define TH08_ECL_RUN_LOW_BODY\n"
+                 "#define TH08_ECL_CONTEXT_ENEMY(unused) enemy\n"
+                 "#define TH08_ECL_CONTEXT_INSTRUCTION(unused) instruction\n";
     const auto publication =
         section(scheduler, "        *D3DXVECTOR3_PTR(&enemy->worldPosition) =",
                 "        if ((int)enemy->activeEclContext->secondaryTime > 0)");
     generated +=
         "void execute(Enemy* enemy,EclRawInstruction* instruction,int opcode) {\n" + publication +
         "switch(opcode) {\n" +
-        section(dispatch,
-                "    case ECL_OPCODE_SET_POSITION:", "    case ECL_OPCODE_MOVE_RANDOM_IN_BOUNDS:") +
+        section(dispatch, "    case ECL_OPCODE_SET_POSITION:",
+                "    case ECL_OPCODE_SET_AIMED_DIRECTION_AND_SPEED:") +
         section(dispatch, "    case ECL_OPCODE_SET_AIMED_DIRECTION_AND_SPEED:",
                 "    case ECL_OPCODE_SET_HITBOX:") +
         "default:throw std::runtime_error(\"unsupported source movement instruction\");}\n" +
@@ -131,6 +145,8 @@ std::string world_motion_reference(const std::filesystem::path &repo) {
         "\n}\n"
         "#undef RawInt\n#undef RawFloat\n#undef ReadInt\n#undef ReadFloat\n"
         "#undef ReadFloatRawArg\n#undef WriteInt\n#undef WriteFloat\n"
+        "#undef TH08_ECL_RUN_LOW_BODY\n#undef TH08_ECL_CONTEXT_ENEMY\n"
+        "#undef TH08_ECL_CONTEXT_INSTRUCTION\n"
         "#undef __fastcall\n#undef D3DXVECTOR3_PTR\n}\n";
     return generated;
 }

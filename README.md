@@ -116,7 +116,7 @@ of direction-transform and laser-lifecycle frames. It also covers every 16-bit R
 seed, ECL random assignments, acceleration frames, transform-program steps and
 bullet-slot selection/cursor operations. ANM adds 48,224 control frames and 228,669
 scalar calls; enemy motion adds 580,000 phases, and the movement-effect bridge adds
-109,860 source comparisons. Four separate checks enforce native transaction rollback.
+420,868 source comparisons. Twelve separate checks enforce native transaction rollback.
 This does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks

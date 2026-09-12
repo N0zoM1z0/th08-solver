@@ -40,6 +40,7 @@ if(TH08_REFERENCE_SOURCE)
       ${TH08_REFERENCE_SOURCE}/src/EnemyManager.cpp ${TH08_REFERENCE_SOURCE}/src/EnemyManager.hpp
       ${TH08_REFERENCE_SOURCE}/src/EnemyManagerUpdate.cpp ${TH08_REFERENCE_SOURCE}/src/EclHelpers.cpp
       ${TH08_REFERENCE_SOURCE}/src/EclRun.cpp ${TH08_REFERENCE_SOURCE}/src/modern/linux/d3dx8_compat.cpp
+      ${TH08_REFERENCE_SOURCE}/src/EclDependencies.cpp
     VERBATIM)
   add_executable(source_oracle ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp)
   target_link_libraries(source_oracle PRIVATE th08_resources)

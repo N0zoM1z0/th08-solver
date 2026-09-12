@@ -72,7 +72,7 @@ EffectStatus apply_motion_effect(vm::Execution &execution, vm::Workspace &worksp
     const auto *op = vm::pending_operation(execution);
     if (!op || execution.finished)
         return EffectStatus::invalid;
-    if (op->opcode < 63 || op->opcode > 76 || op->opcode == 67)
+    if ((op->opcode < 63 || op->opcode > 76) && op->opcode != 178)
         return EffectStatus::not_handled;
     auto next = motion;
     vm::ScalarStorage storage = workspace;
@@ -99,13 +99,14 @@ EffectStatus apply_motion_effect(vm::Execution &execution, vm::Workspace &worksp
             require(player != nullptr, EffectStatus::missing_context);
             return angle_to(*player, next.position); // Source uses LOCAL position here.
         };
-        auto finite_polar = [&]() {
-            const float angle = kinematics::normalize_angle(floating(2));
+        auto timed_polar = [&](float angle, unsigned speed_word, bool mirror) {
             auto component = [&](float direction) {
                 // Speed and duration occur in one unsequenced C++ product. One
                 // random expression is supported; two require executable evidence.
                 publish_fields(next, storage);
-                const vm::OperandField fields[] = {{12, vm::OperandType::float32, 3},
+                const vm::OperandField fields[] = {{std::uint16_t(speed_word * 4),
+                                                    vm::OperandType::float32,
+                                                    std::int8_t(speed_word)},
                                                    {0, vm::OperandType::signed32, 0}};
                 double values[2];
                 const auto status =
@@ -121,11 +122,60 @@ EffectStatus apply_motion_effect(vm::Execution &execution, vm::Workspace &worksp
             timer(integer(0)); // The source resolves duration a third time here.
             next.easing = enemy::Easing(std::uint32_t(integer(1)) & 7U);
             next.mode = enemy::Mode::interpolated;
-            if (next.mirror_x)
+            if (mirror && next.mirror_x)
                 next.interpolation_delta.x = -next.interpolation_delta.x;
         };
-        const unsigned sizes[] = {8, 16, 8, 16, 0, 8, 16, 4, 4, 28, 16, 12, 16, 0};
-        require(op->payload_size == sizes[unsigned(op->opcode - 63)]);
+        auto random_direction = [&](bool biased) {
+            require(rng != nullptr, EffectStatus::missing_context);
+            constexpr float half_pi = 1.5707964f, quarter_pi = 0.78539819f;
+            constexpr float three_quarter_pi = 2.3561945f, pi = 3.1415927f;
+            float angle;
+            if (biased && stream.range_u32(4) == 0) {
+                // This branch never reads the player. Requiring one here would
+                // reject a source-defined execution with sufficient local input.
+                angle = stream.range_signed_float(pi);
+            } else {
+                require(player != nullptr, EffectStatus::missing_context);
+                bool left = player->x < next.position.x;
+                if (biased) {
+                    // Keep the source's separate wrapped-coordinate additions
+                    // and subtractions; algebraic simplification changes rounding.
+                    if (left) {
+                        const float wrapped_x = player->x + 384.0f;
+                        left = next.position.x - player->x < wrapped_x - next.position.x;
+                    } else {
+                        const float wrapped_x = player->x - 384.0f;
+                        left = !(player->x - next.position.x < next.position.x - wrapped_x);
+                    }
+                }
+                angle = stream.range_float(half_pi);
+                angle = left ? kinematics::normalize_angle(angle + three_quarter_pi)
+                             : angle - quarter_pi;
+            }
+            if (!biased) {
+                require(std::isfinite(next.bounds.lower.x) && std::isfinite(next.bounds.upper.x));
+                if (next.position.x < next.bounds.lower.x + 96.0f) {
+                    if (angle > half_pi)
+                        angle = pi - angle;
+                    else if (angle < -half_pi)
+                        angle = -pi - angle;
+                }
+                if (next.position.x > next.bounds.upper.x - 96.0f) {
+                    if (angle < half_pi && angle >= 0.0f)
+                        angle = pi - next.angle; // Source reads the PREVIOUS movement angle.
+                    else if (angle > -half_pi && angle <= 0.0f)
+                        angle = -pi - angle;
+                }
+            }
+            require(std::isfinite(next.bounds.lower.y) && std::isfinite(next.bounds.upper.y));
+            if (next.position.y < next.bounds.lower.y + 48.0f && angle < 0.0f)
+                angle = -angle;
+            if (next.position.y > next.bounds.upper.y - 48.0f && angle > 0.0f)
+                angle = -angle;
+            return angle; // The source does not normalize after boundary corrections.
+        };
+        const unsigned sizes[] = {8, 16, 8, 16, 12, 8, 16, 4, 4, 28, 16, 12, 16, 0};
+        require(op->payload_size == (op->opcode == 178 ? 12 : sizes[unsigned(op->opcode - 63)]));
         switch (op->opcode) {
         case 63: {
             const float x = floating(0), y = floating(1);
@@ -160,9 +210,23 @@ EffectStatus apply_motion_effect(vm::Execution &execution, vm::Workspace &worksp
                 next.mode = enemy::Mode::polar;
                 timer(op->opcode == 69 ? integer(0) : 0);
             } else {
-                finite_polar();
+                timed_polar(kinematics::normalize_angle(floating(2)), 3, true);
             }
             break;
+        case 67:
+        case 178: {
+            const float direction = random_direction(op->opcode == 178);
+            if (integer(0) <= 0) {
+                next.angle = direction;
+                next.speed = floating(2);
+                next.mode = enemy::Mode::polar;
+                timer(0);
+            } else {
+                // StartTimedPolarDisplacement omits ConfigurePolarMotion's mirror.
+                timed_polar(direction, 2, false);
+            }
+            break;
+        }
         case 68: {
             const float direction = floating(0);
             next.angle = kinematics::normalize_angle(direction, aimed());

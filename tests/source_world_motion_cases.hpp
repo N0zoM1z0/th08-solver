@@ -88,17 +88,19 @@ inline std::uint32_t bits(float value) {
     return result;
 }
 inline bool integer_field(unsigned opcode, unsigned word) {
-    return ((opcode == 64 || opcode == 66 || opcode == 69) && word < 2) ||
+    return ((opcode == 64 || opcode == 66 || opcode == 67 || opcode == 69 || opcode == 178) &&
+            word < 2) ||
            ((opcode == 72 || opcode == 73 || opcode == 74) && word == 0);
 }
 inline vm::Operation operation(unsigned opcode) {
-    static constexpr unsigned words[] = {2, 4, 2, 4, 0, 2, 4, 1, 1, 7, 4, 3, 4, 0};
+    static constexpr unsigned words[] = {2, 4, 2, 4, 3, 2, 4, 1, 1, 7, 4, 3, 4, 0};
     vm::Operation result{};
     result.opcode = std::int16_t(opcode);
     result.mask = 255;
     result.offset = 4096 + opcode * 4;
-    result.payload_size = std::uint16_t(words[opcode - 63] * 4);
-    for (unsigned word = 0; word < words[opcode - 63]; ++word)
+    const unsigned count = opcode == 178 ? 3 : words[opcode - 63];
+    result.payload_size = std::uint16_t(count * 4);
+    for (unsigned word = 0; word < count; ++word)
         result.words[word] = integer_field(opcode, word) ? (word ? 5 : 13) : bits(.375f + word);
     return result;
 }
@@ -137,7 +139,7 @@ inline WorldMotionComparison compare_world_motion() {
     program.code[1] = {0, 53, 0, 0, 255, 4100, 0, {}};
     vm::Workspace workspace;
     auto compare = [&](vm::Operation instruction, actual::State state, actual::Vec3 player,
-                       std::uint16_t seed, const char *label) {
+                       std::uint16_t seed, const char *label, bool has_player = true) {
         ++comparison.effects;
         program.code[0] = instruction;
         auto execution = vm::begin(program, workspace, 8);
@@ -154,7 +156,8 @@ inline WorldMotionComparison compare_world_motion() {
         reference::execute(&source, &raw, instruction.opcode);
         const auto stop =
             vm::advance(execution, workspace, &rng, 100000, vm::Effects::yield_to_world);
-        const auto result = world::apply_motion_effect(execution, workspace, state, &rng, &player);
+        const auto result = world::apply_motion_effect(execution, workspace, state, &rng,
+                                                       has_player ? &player : nullptr);
         bool equal =
             stop.status == vm::Status::external_effect && result == world::EffectStatus::applied &&
             same(state, source) && rng.seed() == reference::g_Rng.GetSeed() &&
@@ -164,10 +167,15 @@ inline WorldMotionComparison compare_world_motion() {
             workspace.initialized[0] && workspace.emissions.empty() && workspace.transforms.empty();
         constexpr unsigned published[] = {42, 43, 44, 45, 46, 47, 48, 50, 69, 70, 71, 72,
                                           73, 74, 75, 76, 77, 78, 79, 80, 81, 85, 86, 87};
-        for (unsigned slot : published)
+        for (unsigned slot : published) {
+            if (!has_player && ((slot >= 45 && slot <= 48) || slot == 50)) {
+                equal = equal && !workspace.initialized[slot];
+                continue;
+            }
             equal =
                 equal && workspace.initialized[slot] &&
                 same(float(workspace.registers[slot]), source.ResolveFloat(float(10000 + slot)));
+        }
         if (!equal) {
             if (comparison.mismatches < 6)
                 std::cerr << "World movement divergence label=" << label
@@ -295,21 +303,141 @@ inline WorldMotionComparison compare_world_motion() {
                 }
             }
     }
+    // Every seed reaches both random-movement helpers in timed and untimed form.
+    // Large local/world offsets distinguish which coordinate drives the bias.
+    for (unsigned seed = 0; seed < 65536; ++seed) {
+        Rng chooser;
+        chooser.SetSeed(std::uint16_t(seed));
+        chooser.ResetGenerationCount();
+        const bool no_player_needed = chooser.GetRandomU32InRange(4) == 0;
+        for (unsigned opcode : {67U, 178U})
+            for (unsigned timed = 0; timed < 2; ++timed) {
+                auto instruction = operation(opcode);
+                instruction.words[0] = timed ? 12 : 0;
+                auto state = initial_state();
+                state.position.x = seed % 2 ? 320.0f : 64.0f;
+                state.position.y = seed % 3 ? 224.0f : 16.0f;
+                state.position_offset.x = seed % 2 ? -512.0f : 512.0f;
+                state.mirror_x = seed % 5 != 0;
+                state.clamp = seed % 7 == 0;
+                compare(instruction, state, player, std::uint16_t(seed), "random_move_all_seeds");
+                if (opcode == 178 && no_player_needed)
+                    compare(instruction, state, player, std::uint16_t(seed),
+                            "unbiased_roll_without_player", false);
+            }
+    }
+    // Test adjacent representable coordinates around every strict margin. The
+    // narrow rectangle activates opposing corrections in the same instruction.
+    for (const actual::Bounds bounds :
+         {actual::Bounds{{8, 12, 0}, {376, 436, 0}}, actual::Bounds{{80, 120, 0}, {180, 160, 0}}}) {
+        const float left = bounds.lower.x + 96, right = bounds.upper.x - 96;
+        const float top = bounds.lower.y + 48, bottom = bounds.upper.y - 48;
+        const float infinity = std::numeric_limits<float>::infinity();
+        const float xs[] = {
+            std::nextafter(left, -infinity),      left,  std::nextafter(left, infinity),
+            std::nextafter(right, -infinity),     right, std::nextafter(right, infinity),
+            (bounds.lower.x + bounds.upper.x) / 2};
+        const float ys[] = {
+            std::nextafter(top, -infinity),       top,    std::nextafter(top, infinity),
+            std::nextafter(bottom, -infinity),    bottom, std::nextafter(bottom, infinity),
+            (bounds.lower.y + bounds.upper.y) / 2};
+        for (float x : xs)
+            for (float y : ys)
+                for (unsigned sample = 0; sample < 16; ++sample)
+                    for (unsigned opcode : {67U, 178U})
+                        for (unsigned timed = 0; timed < 2; ++timed) {
+                            auto state = initial_state();
+                            state.position = {x, y, 0};
+                            state.bounds = bounds;
+                            state.clamp = false; // Random corrections ignore this flag.
+                            state.mirror_x = sample % 2 == 0;
+                            state.angle = sample % 3 ? .25f : 8.0f;
+                            auto instruction = operation(opcode);
+                            instruction.words[0] = timed ? 12 : 0;
+                            compare(instruction, state, {sample % 2 ? x - 1 : x + 1, 300, 0},
+                                    std::uint16_t(sample * 3919), "strict_and_overlapping_margins");
+                        }
+    }
+    for (unsigned seed = 0; seed < 64; ++seed) {
+        for (float previous_angle : {-130.0f, -3.0f, -.5f, 0.0f, 2.0f, 130.0f}) {
+            auto state = initial_state();
+            state.position = {360, 224, 0};
+            state.angle = previous_angle;
+            auto instruction = operation(67);
+            instruction.words[0] = 0;
+            compare(instruction, state, {400, 400, 0}, std::uint16_t(seed), "right_wall_old_angle");
+        }
+        for (float enemy_x : {-400.0f, 0.0f, 192.0f, 384.0f, 800.0f})
+            for (float player_delta :
+                 {-385.0f, -193.0f, -192.0f, -191.0f, 0.0f, 191.0f, 192.0f, 193.0f, 385.0f}) {
+                auto state = initial_state();
+                state.position = {enemy_x, 224, 0};
+                auto instruction = operation(178);
+                instruction.words[0] = 0;
+                compare(instruction, state, {enemy_x + player_delta, 400, 0}, std::uint16_t(seed),
+                        "wrapped_bias_ties_and_noncanonical_positions");
+            }
+    }
+    for (unsigned opcode : {67U, 178U}) {
+        for (unsigned sample = 0; sample < 1024; ++sample) {
+            auto instruction = operation(opcode);
+            instruction.flags = 4;
+            instruction.words[2] = bits(10033.0f);
+            compare(instruction, initial_state(), player, std::uint16_t(sample * 61),
+                    "random_move_repeated_random_speed");
+            instruction.flags = 1;
+            instruction.words[0] = 10034;
+            instruction.words[2] = bits(2.5f);
+            compare(instruction, initial_state(), player, std::uint16_t(sample * 61),
+                    "random_move_duration_reread");
+        }
+        for (unsigned word = 0; word < 3; ++word)
+            for (unsigned sample = 0; sample < 16; ++sample) {
+                const bool is_integer = integer_field(opcode, word);
+                const auto *selectors = is_integer ? int_selectors : float_selectors;
+                const auto count =
+                    is_integer ? std::size(int_selectors) : std::size(float_selectors);
+                for (unsigned i = 0; i < count; ++i) {
+                    auto instruction = operation(opcode);
+                    instruction.flags = std::uint16_t(1U << word);
+                    instruction.words[word] = is_integer ? 10000 + selectors[i]
+                                                         : bits(float(10000 + selectors[i]) + .75f);
+                    auto state = initial_state();
+                    state.mirror_x = sample % 2 == 0;
+                    compare(instruction, state, player, std::uint16_t(sample * 3919),
+                            "random_move_masked_field_matrix");
+                }
+            }
+        for (unsigned sample = 0; sample < 64; ++sample) {
+            auto state = initial_state();
+            auto instruction = operation(opcode);
+            instruction.words[0] = 0;
+            instruction.flags = 4;
+            instruction.words[2] = bits(10069.0f);
+            compare(instruction, state, player, std::uint16_t(sample * 997),
+                    "random_speed_reads_new_angle");
+            instruction.words[0] = 10074;
+            instruction.flags = 5;
+            instruction.words[2] = bits(10079.0f);
+            compare(instruction, state, player, std::uint16_t(sample * 997),
+                    "random_timed_delta_and_origin_dependencies");
+        }
+    }
     // Failure atomicity is a native contract, not a claimed source rollback.
     auto failure = [&](vm::Operation instruction, world::EffectStatus expected, bool has_player,
-                       bool has_rng, const char *label) {
+                       bool has_rng, const char *label, std::uint16_t seed = 41) {
         ++comparison.atomic_failures;
         program.code[0] = instruction;
         auto execution = vm::begin(program, workspace, 8);
         auto state = initial_state();
-        th08::random::Rng rng(41);
+        th08::random::Rng rng(seed);
         vm::advance(execution, workspace, &rng, 100000, vm::Effects::yield_to_world);
         const auto before_execution = execution;
         const auto before_storage = static_cast<const vm::ScalarStorage &>(workspace);
         const auto before_state = source_state(state);
         const auto status = world::apply_motion_effect(
             execution, workspace, state, has_rng ? &rng : nullptr, has_player ? &player : nullptr);
-        const bool equal = status == expected && same(state, before_state) && rng.seed() == 41 &&
+        const bool equal = status == expected && same(state, before_state) && rng.seed() == seed &&
                            rng.generation_count() == 0 && execution.pc == before_execution.pc &&
                            execution.pending_effect == before_execution.pending_effect &&
                            execution.result.executed == before_execution.result.executed &&
@@ -339,5 +467,21 @@ inline WorldMotionComparison compare_world_motion() {
     instruction.words[1] = bits(10033.0f);
     instruction.words[3] = bits(10016.0f);
     failure(instruction, world::EffectStatus::missing_context, true, true, "missing_late_register");
+    for (unsigned opcode : {67U, 178U}) {
+        instruction = operation(opcode);
+        failure(instruction, world::EffectStatus::missing_context, false, true,
+                "random_direction_missing_player", 0); // Source roll is nonzero for seed 0.
+        failure(instruction, world::EffectStatus::missing_context, true, false,
+                "random_direction_missing_rng");
+        instruction.flags = 4;
+        instruction.words[2] = bits(10016.0f);
+        failure(instruction, world::EffectStatus::missing_context, true, true,
+                "random_direction_missing_late_speed");
+        instruction.flags = 5;
+        instruction.words[0] = 10032;
+        instruction.words[2] = bits(10033.0f);
+        failure(instruction, world::EffectStatus::unsupported, true, true,
+                "random_direction_ambiguous_product");
+    }
     return comparison;
 }

@@ -18,8 +18,9 @@ An independently extracted source-effect suite reproduced 12 mismatches against 
 saved pre-fix object: opcodes 65 (via operand 10048), 68 and 69, each with four signed-zero
 variants. The fix adds the source's zero-distance branch to the world aiming adapter;
 it does not change the general geometry kernel. The same tests pass afterward.
-The integrated source suite now passes 109860 effects plus four atomic-failure checks,
-and both native and ASan/UBSan builds pass.
+At introduction, the integrated source suite passed 109860 effects plus four
+atomic-failure checks in both native and ASan/UBSan builds. Later suite expansions
+retain the same minimized guard.
 
 The guard also checks repeated applications with changed speeds, preservation of
 opcode 68's mode/timer, and world-coordinate angle/distance publication. This verifies
