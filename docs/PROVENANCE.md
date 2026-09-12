@@ -1,5 +1,9 @@
 # Provenance and verification
 
+This is the evidence map for the current components. [Status](STATUS.md) separates
+those capabilities from complete worlds; [Validation](VALIDATION.md) gives the
+current commands and distinguishes public CI from private-DAT/source checks.
+
 ## Pinned inputs
 
 - DAT: 46,838,025 bytes; SHA-256 `9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb`.
@@ -22,6 +26,10 @@ unchanged. Their code is not automatically promoted into a verified component.
 | Boxes and lasers | Pinned Player.cpp function bodies | 300000 scenes, 600000 predicate comparisons, alive/death side-effect checks | Game loop and x87 equivalence |
 | RNG state | Pinned Global.cpp / Global.hpp bodies | All 65536 seeds, 524288 integer/float operations, bitwise outputs and final seeds | Original executable evaluation order; complete world draw ordering |
 | ECL random assignments | Pinned operand case blocks and EclRunLow assignment bodies | 720896 assignments over all seeds, typed conversion and final seed checks | Multiple RNG expressions in one instruction; external RNG consumers |
+| Context scalar ownership | Pinned context layout, spawn-template initialization and context call/copy rules, inspected statically | Native all-slot, source-order, unknown-validity, signed-zero and nested-call tests; unchanged real-data matrix | No new full-context source-function oracle, callbacks, actor allocation or spawn lifecycle |
+| Launch kinematics | Pinned launch switch and angle normalization | 180000 nine-mode cases with bitwise velocity and draw-count checks | Rank/gates, allocation and complete spawning |
+| Direction changes | Pinned Bullet methods and actual ZunTimer | 584936 frames, including fractional ramps and firing/reset boundaries | Full bullet lifecycle and retail x87 |
+| Laser collision/lifetime | Pinned laser update loop and actual ZunTimer | 678369 frames with ordered collision calls, signed dimensions and retirement | Rendering, world gates and complete spell context |
 | Acceleration updates | Pinned Bullet methods, Float3 operators, VectorAngle and ZunTimer | 256979 frames over three modes and changing frame rates | Retail x87; complete lifecycle |
 | Transform scheduling | Pinned payload layouts, AdvanceTransformProgram, fired dispatch block, update methods and playfield predicate | 120748 birth/update steps, including simultaneous effects, shared turns/wrap clocks, bounce thresholds, wait decrement and sound order | Sprites, child patterns and complete lifecycle |
 | Bullet slot selection | Unchanged selection loop and final cursor-update block from SpawnSingleBullet | 300000 reservation/release/completion operations, including nested cursor completion | Launch RNG, storage initialization, cancellation and complete pool lifecycle |
@@ -101,6 +109,13 @@ container that changes after construction, including copy/move cases.
 
 Any decoded member hash mismatch, source-predicate mismatch, or replay collision
 invalidates the corresponding model. An aggregate pass rate cannot hide such a failure.
+
+Compact context storage is a source-layout-guided implementation with native
+ownership/integration regressions, not an additional extracted full-context oracle.
+Its exact source hashes and excluded context fields are recorded in
+[ECL context storage](ECL_CONTEXT_STORAGE.md). The complete Wriggle
+[world contract](WRIGGLE_WORLD_CONTRACT.md) is static source evidence with a checked
+175-record structural prediction, not a runtime proof that its world executes.
 
 ## Attribution and distribution
 

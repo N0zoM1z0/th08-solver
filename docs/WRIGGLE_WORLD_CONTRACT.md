@@ -1,5 +1,9 @@
 # Wriggle complete offline world contract
 
+This is a source-derived target contract, not the current capability ledger.
+Use [Status](STATUS.md) for implemented components and [Coverage](COVERAGE.md)
+for the dependency-ordered, still-unfinished integration milestones.
+
 ## Target and evidence boundary
 
 The next integration target is the **complete first stage-one boss spell family,

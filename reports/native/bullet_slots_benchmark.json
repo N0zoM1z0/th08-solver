@@ -1,1 +1,1 @@
-{"scope":"selection-only near-full pools; compact bool scan baseline; excludes lifecycle and game execution","queries_per_batch":20000,"batches":21,"scan_median_ns":1117.7,"indexed_median_ns":18.979,"identical_selections":true,"checksum":312493125}
+{"scope":"selection-only near-full pools; compact bool scan baseline; excludes lifecycle and game execution","queries_per_batch":20000,"batches":21,"scan_median_ns":975.744,"indexed_median_ns":18.511,"identical_selections":true,"checksum":312493125}

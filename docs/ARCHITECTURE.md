@@ -1,5 +1,53 @@
 # Architecture and contracts
 
+This document describes current code and its domain boundaries. [Status](STATUS.md)
+owns the current capability ledger; [Coverage](COVERAGE.md) owns unfinished world
+integration and acceptance. A source-derived requirement is not an implemented phase.
+
+## Design method
+
+The implementation follows a reproducible chain: pin input identities, decode and
+retain exact instruction identity, reconstruct one source behavior, compare it with
+an independent native reference, then compose it behind explicit ownership boundaries.
+The two particle fixtures demonstrate composition through replay; they do not justify
+assuming that the remaining world phases exist.
+
+The main choices are deliberate:
+
+- Decode and compile immutable data once; share it across attempts. Keep mutable
+  execution, RNG and lifecycle state in caller-owned snapshots.
+- Use contiguous arenas, hot/cold operands, fixed scratch storage, bitsets and CSR
+  to reduce work without changing the numerical model.
+- Separate parsing, scalar execution, world effects, collision and search. A parsed
+  opcode, emitted shot request or returned slice is not a successful world action.
+- Preserve source phase and operand-read order. Pausing at a world boundary must
+  not consume its operands/RNG or acknowledge an effect that has not happened.
+- Make unknown context explicit. Native rollback contracts protect owned state;
+  they do not claim the original engine transactionally rolls back failures.
+- Optimize only within the proven input/numerical domain, retaining independent
+  comparisons and route replay. No fast-math or guessed world-independent future.
+
+## Implementation map
+
+| Responsibility | Current implementation | Main verification |
+|---|---|---|
+| DAT/ECL and other resource structures | [resources.hpp](../include/th08/resources.hpp), [resources.cpp](../src/resources.cpp), [formats.cpp](../src/formats.cpp), [schema.cpp](../src/schema.cpp) | Native audit, parser tests, field/payload comparisons |
+| ECL scheduling and scalar ownership | [emitter.hpp](../include/th08/emitter.hpp), [emitter.cpp](../src/emitter.cpp) | Emitter/context tests, real-data slice matrix, selected source scalar comparisons |
+| Timeline/world handoff | [timeline.hpp](../include/th08/timeline.hpp), [timeline.cpp](../src/timeline.cpp) | Timeline unit/DAT tests and source frame comparisons |
+| ANM control and certificates | [animation_control.cpp](../src/animation_control.cpp), [animation.cpp](../src/animation.cpp) | All-script audit, timing certificates, control/scalar oracle |
+| Enemy motion and effect bridge | [enemy_motion.hpp](../include/th08/enemy_motion.hpp), [world_motion.cpp](../src/world_motion.cpp) | Independent source phases/effects and rollback tests |
+| Effect-51 callbacks | [camera_particle.hpp](../include/th08/camera_particle.hpp) | All-seed initialization, update and rejection/cull comparisons |
+| Bullet/laser kernels and pool index | [kinematics.hpp](../include/th08/kinematics.hpp), [bullet_motion.hpp](../include/th08/bullet_motion.hpp), [acceleration.hpp](../include/th08/acceleration.hpp), [transform_program.hpp](../include/th08/transform_program.hpp), [laser_motion.hpp](../include/th08/laser_motion.hpp), [bullet_slots.hpp](../include/th08/bullet_slots.hpp) | Kernel unit tests and pinned native source comparisons |
+| Shared numerical helpers | [rng.hpp](../include/th08/rng.hpp), [timing.hpp](../include/th08/timing.hpp) | Seed/clock comparisons, including fractional rates |
+| Collision and fixed-model planning | [geometry.hpp](../include/th08/geometry.hpp), [planner.hpp](../include/th08/planner.hpp) | Unindexed differential checks, reference planner and replay |
+| Bounded end-to-end fixtures | [motion_cases.cpp](../tools/motion_cases.cpp) | Source-driven sub40/41 frame/route reports |
+
+There is no complete `World` owner yet. Actor/effect/bullet lifetimes, player damage,
+shared state synchronization and terminal spell transitions cannot be inferred from
+this map. CMake's `th08_geometry` interface target exposes headers and numerical
+compiler flags; `th08_resources` compiles parsers/execution and links OpenSSL hashing.
+The target names do not define a complete gameplay boundary.
+
 ## Data flow
 
 ```text
@@ -183,8 +231,9 @@ profile follows `TH08_MODERN_PORT` float32 sinf/cosf, not the original x87 fsinc
 The source oracle extracts the pinned launch switch and normalization function, then
 compares all five output float fields bitwise and checks random draw counts.
 
-This kernel runs before transform installation, pool allocation effects, spawn animation,
-rank adjustment, suppression, and collision. It is not yet a complete bullet simulation.
+The kernel owns neither slot reservation nor rank/suppression gates, allocation
+side effects, spawn animation or collision. The world must place it in source
+order with those phases; it is not a complete bullet simulation.
 
 ## Lifecycle projections
 
@@ -241,8 +290,7 @@ actual RNG and ZunTimer: 48224 control frames and 228669 scalar calls match.
 The 1151-script audit runs 600 unit-rate calls without interrupts: 340 complete this
 projection, 800 remain bounded and 11 require RNG context. Separately, explicit
 per-script seeds 0 and 65535 each yield 350 completions and 801 bounded prefixes;
-these independent streams do not establish world draw order. The original 13 columns
-of all 1065 previously supported rows are unchanged. The 42 timing certificates,
+these independent streams do not establish world draw order. The 42 timing certificates,
 including frame-30000 endings, are checked separately rather than relabeled as
 600-call completions.
 
@@ -275,8 +323,6 @@ methods and manager code. The effect bridge separately compares 420868 instructi
 effects, with twelve native rollback checks. These checks do not supply enemy creation,
 pause/death/alignment gates, callbacks, shot/ANM scheduling or a complete world loop.
 
-### Bullet and laser motion
-
 ### Camera-particle callbacks
 
 Effect table index 51 uses ANM script 73 and the tinted boss-tracking camera
@@ -301,6 +347,8 @@ byte products, tiny-vector and culling boundaries. Pool allocation, the ANM call
 before/after callbacks, effect clocks, freeze gates, source camera evolution and
 retirement remain world responsibilities. These callbacks alone cannot determine
 how many effect 51 allocations succeed in the practice prelude.
+
+### Bullet and laser motion
 
 `bullet::advance_direction` models relative, absolute and aimed changes. Missing target
 angles block only a firing frame and leave state unchanged. Integer firing thresholds,
@@ -411,6 +459,8 @@ different RNG, damage, alignment, or lifecycle state.
 Establish correctness comparisons, then reduce work through batching, shared structure,
 and data layout. Apply SIMD or further specialization only to measured bottlenecks.
 A fixed emitter slice can generate its schedule once and share it; repeated interpreter
-costs shown in microbenchmarks need not be paid per candidate. The next substantial
-task is connecting emission, bullet motion, and candidate dependencies correctly.
-Microbenchmark time is not complete solving time.
+costs shown in microbenchmarks need not be paid per candidate when the dependency
+contract permits reuse. The next integration boundary is owned actor spawning and
+the complete practice-entry world, including candidate-dependent consumers; see
+[Coverage](COVERAGE.md). Measurements and excluded costs are in
+[Performance](PERFORMANCE.md). Microbenchmark time is not complete solving time.

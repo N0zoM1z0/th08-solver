@@ -1,143 +1,69 @@
 # th08-solver
 
-Offline analysis, modeling, and solving components for Touhou 08: Imperishable Night 1.00d.
-The current phase does not launch the game. Maintained components, tools, and tests use
-**C++17**, with no Python build or runtime dependency. Performance and readability
-are both requirements: contiguous data, explicit ownership, reproducible benchmarks,
-and independent reference comparisons.
+Offline analysis, modeling and solving components for Touhou 08: Imperishable Night
+1.00d. Maintained code, tools and tests use **C++17**, with no Python dependency.
+Performance and readability are requirements; numerical shortcuts need independent
+correctness evidence. The current phase does not launch the game.
+
+**Complete offline spell solutions: 0.** All 317 DAT members are decoded and all
+222 original spell IDs are indexed, but complete worlds are not implemented.
+Two source-driven 600-frame particle fixtures have independently replayed routes;
+they are not complete spell solutions.
+
+## Read the project
+
+| Document | Purpose |
+|---|---|
+| [Current status](docs/STATUS.md) | Implemented layers, exact baselines and missing integration |
+| [Architecture and methods](docs/ARCHITECTURE.md) | Design rationale, code map, state ownership and algorithm contracts |
+| [Complete-coverage roadmap](docs/COVERAGE.md) | All-case acceptance, dependencies and the first complete-world target |
+| [Validation and reproduction](docs/VALIDATION.md) | Test profiles, pinned-source oracle, DAT audits and report refresh |
+| [Documentation guide](docs/README.md) | Specialized evidence, performance, regression and maintenance references |
+
+The first complete-world target is Wriggle IDs 2..5 through their actual practice
+entry, followed by separately verified stage inheritance. The all-spell objective
+also requires the remaining indexed families and their relevant entry/state variants.
 
 ## Build and run
 
-Requires CMake 3.16+, a C++17 compiler, and OpenSSL development libraries.
-Linux is tested; other platforms have not been verified.
+Requires CMake 3.16+, a C++17 compiler and OpenSSL development libraries. Linux is
+tested; other platforms and retail x87 numerical equivalence are not verified.
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel 2
 ctest --test-dir build --output-on-failure
 
-./build/th08_audit game_data_donottrack/th08.dat reports/native
-./build/th08_slices game_data_donottrack/th08.dat reports/native
-./build/th08_motion_cases game_data_donottrack/th08.dat reports/native
-./build/th08_animation_cases game_data_donottrack/th08.dat reports/native
-./build/th08_timeline_cases game_data_donottrack/th08.dat reports/native
-./build/geometry_bench reports/native/geometry_benchmark.json
-./build/planner_bench reports/native/planner_benchmark.json
-./build/bullet_slots_bench reports/native/bullet_slots_benchmark.json
+./build/th08_audit game_data_donottrack/th08.dat reports/local/review
+./build/th08_slices game_data_donottrack/th08.dat reports/local/review
+./build/th08_motion_cases game_data_donottrack/th08.dat reports/local/review
+./build/th08_animation_cases game_data_donottrack/th08.dat reports/local/review
+./build/th08_timeline_cases game_data_donottrack/th08.dat reports/local/review
 ```
 
-Supply your own DAT under the ignored `game_data_donottrack/` directory.
-Tools verify its SHA-256 before analysis. They write summaries, source indices,
-and execution statuses, without extracting game assets to disk.
+Supply your own DAT under the ignored `game_data_donottrack/` directory. Native
+tools verify its hash and write reports without extracting game assets to disk.
+The default ANM audit supplies no RNG; random instructions stop for missing context.
+Default CI uses neither private DAT nor the optional reconstruction checkout.
 
-The ANM audit supplies no RNG by default and stops when a script needs one. An
-optional explicit seed runs a separate component profile, reset for each script:
-
-```sh
-./build/th08_animation_cases game_data_donottrack/th08.dat reports/local/anm-seed0 0
-```
-
-This profile is not the shared RNG order of a complete game world.
-
-## Current capabilities
-
-- Decode all 317 archive members and hash each decoded payload.
-- Parse 24 ECL files, 1,449 subprograms, and 36,661 nonterminal instructions;
-  validate 2,182 jump targets.
-- Preserve 431 spell-start occurrences and all 222 original spell IDs without
-  merging main-game, practice, or difficulty sources.
-- Parse 32 timelines, 8 SHT, 113 ANM, and 18 STD resources with checked native schemas.
-- Attempt restricted scalar scheduling for every subprogram under five difficulty
-  masks and three alignment overrides: 21,735 combinations.
-- Verify real Wriggle sub40/41/42 scheduling, request counts, and ordered emission digests.
-- Execute scalar arithmetic, conditional branches, and context-preserving calls;
-  compare all nine launch modes against pinned source with explicit random samples.
-- Query bullet and laser geometry using an owned, contiguous spatial index;
-  propose finite-horizon beam paths and replay them against an unindexed reference.
-- Solve and replay two 600-frame source-driven particle fixtures, including spawn
-  timing and relative turns; these are not complete Wriggle spell worlds.
-- Model ordered laser collision phases and fractional clocks; preserve signed
-  terminal hitbox dimensions revealed by the source oracle.
-- Execute explicitly seeded, isolated random scalar slices, with source-backed
-  conversions and shared call-stream ownership; stop at unresolved world effects.
-- Project deceleration, vector and polar acceleration with fractional clocks and
-  source-ordered numerical operations. Execute a verified subset of eighteen-record
-  transform programs, including shared direction state and overlapping effects.
-- Select bullet slots with a compact bitset while preserving circular scan order
-  and parent/child cursor completion; full allocation lifecycles remain separate.
-- Execute ANM lifecycle control, typed scalar arithmetic, branches and hit-animation
-  metadata with optional caller-owned RNG and atomic failed calls. Audit all 1,151
-  scripts without inventing random state; rendering remains outside the projection.
-- Project enemy polar, interpolated and orbital movement with separate velocity
-  and position phases, explicit parent coordinates and source-ordered bounds.
-- Apply pending ECL movement effects transactionally across motion, scalar storage,
-  execution and RNG; preserve repeated operand reads and same-frame resumption.
-- Schedule timeline clocks, masks, world gates and shared events with explicit
-  spawn/message/menu handoffs; preserve unknown world observations as blockers.
-- Execute effect 51 camera-particle callbacks with explicit camera, boss and ANM
-  state; preserve shared RNG draws and source culling before lifecycle integration.
-
-Complete ECL worlds, enemy/bullet lifecycles, ANM rendering/resource integration,
-damage, world RNG consumption chains and complete spell routes remain unimplemented.
-`RETURNED_SLICE` means a restricted subprogram returned; `BOUNDED_PREFIX` means
-the requested horizon was reached.
-**Verified complete spell solutions: 0.** The planner currently uses synthetic
-collision-window and source-driven particle fixtures, not a complete Reisen spell.
+For ASan/UBSan, pinned reconstruction setup and independent component-oracle targets,
+follow [Validation](docs/VALIDATION.md) and [Build artifacts](docs/BUILD_ARTIFACTS.md).
+Do not enable fast-math. Use `reports/local/` for experiments; refresh tracked
+`reports/native/` intentionally using the documented verification procedure.
 
 ## Repository map
 
 | Path | Purpose |
 |---|---|
-| `include/th08/` | Resource, execution, motion, geometry, and planner interfaces |
-| `src/` | Native parsing, restricted scheduling, and world-effect bridges |
-| `tools/` | Native auditing, matrix execution, and source-oracle generation |
-| `tests/` | Boundary, ownership, differential, and planner contract tests |
-| `benchmarks/` | Repeatable performance experiments with explicit scope |
-| `reports/native/` | Generated indices, execution matrices, benchmarks, and oracle results |
-| `docs/` | Architecture, evidence, status, and implementation sequence |
-| `preparations/` | Original conversations, reports, and archives, tracked unchanged |
-| `.cache/` | Ignored local reference source and historical experiments |
+| `include/th08/`, `src/` | Current parsing, execution, motion, geometry and planner components |
+| `tools/` | Native audit/report tools and hash-checked source-oracle generators |
+| `tests/` | Unit, ownership, source-comparison, regression and documentation checks |
+| `benchmarks/` | Reproducible component performance comparisons |
+| [reports/native/](reports/native/README.md) | Current generated structural/execution baselines and scoped measurements |
+| [docs/](docs/README.md) | Current design, status, acceptance criteria and evidence |
+| `preparations/` | Original materials preserved unchanged; not current implementation status |
+| `.cache/`, `build*/`, `reports/local/` | Ignored reference checkout, generated build files and experiments |
 
-Start review with [Architecture](docs/ARCHITECTURE.md), [Status](docs/STATUS.md),
-and [Provenance](docs/PROVENANCE.md). Historical Python files remain inside the original
-preparation archives; maintained tools neither import nor invoke them. Maintained
-documentation and code are English. Original source materials retain their original language.
-
-## Optional reconstruction-source oracle
-
-```sh
-git clone --filter=blob:none --no-checkout https://github.com/N0zoM1z0/th08.git .cache/th08
-git -C .cache/th08 checkout --detach a45e99fb1942714e6edded20847e32a654d56f97
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DTH08_REFERENCE_SOURCE="$PWD/.cache/th08"
-cmake --build build --parallel 2
-ctest --test-dir build --output-on-failure
-./build/source_oracle reports/native/source_oracle.json
-```
-
-The native generator verifies reference source hashes, then extracts unmodified
-collision functions, angle normalization, and the launch switch into the build directory.
-It checks 600,000 collision predicates, 180,000 launch cases, and hundreds of thousands
-of direction-transform and laser-lifecycle frames. It also covers every 16-bit RNG
-seed, ECL random assignments, acceleration frames, transform-program steps and
-bullet-slot selection/cursor operations. ANM adds 48,224 control frames and 228,669
-scalar calls; enemy motion adds 580,000 phases, and the movement-effect bridge adds
-420,868 source comparisons. Twelve separate checks enforce native transaction rollback.
-Timeline control adds 200,000 source frames, including waits and event-slot updates.
-Camera-particle callbacks add 65,536 initializations and 328,503 updates.
-This does not launch the game or establish original x87/Windows bitwise equivalence.
-
-For independent enemy-motion, world-motion, and camera-particle comparison targets,
-see [Reusable probes and build artifacts](docs/BUILD_ARTIFACTS.md). Their drivers,
-generators, and cases are tracked; generated `build*/` sources remain disposable.
-
-## Development checks
-
-```sh
-clang-format --dry-run --Werror include/th08/*.hpp src/*.cpp tools/*.cpp tests/*.cpp tests/*.hpp benchmarks/*.cpp
-cmake -S . -B build-sanitize -DCMAKE_BUILD_TYPE=Debug -DTH08_SANITIZERS=ON
-cmake --build build-sanitize --parallel 2
-ctest --test-dir build-sanitize --output-on-failure
-```
-
-Do not enable `-ffast-math`: changing floating-point semantics has not been justified.
-Performance measurements do not replace correctness comparisons.
+Maintained documentation and code are English; original preparation artifacts retain
+their original language and attribution. See [Provenance](docs/PROVENANCE.md) and
+[Third-party notices](docs/THIRD_PARTY_NOTICES.md) for the evidence/distribution boundary.
