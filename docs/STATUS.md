@@ -52,10 +52,10 @@ The game is not launched in this phase.
     installation. The oracle compares 256979 acceleration frames at changing frame
     rates with the pinned methods, vector operators and real timer, without mismatches.
 16. Eighteen-record transform scheduling for acceleration, shared direction changes,
-    wait, cull delay, sound and despawn requests. Another 103841 source comparisons
+    bounce/wrap, wait, cull delay, sound and despawn requests. Another 120748 source comparisons
     cover installation, gates, overlapping effects, fractional wait clocks and sound
     order. Both particle fixtures now use this executor for birth-time installation,
-    with unchanged frame and route files. Bounce/wrap, sprite replacement, child
+    with unchanged frame and route files. Sprite replacement, child
     patterns, complete despawn lifecycle and pool ownership remain unsupported.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported

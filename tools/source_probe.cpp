@@ -429,7 +429,8 @@ int main(int argc, char **argv) try {
     preamble.insert(preamble.find("struct MotionState"),
                     function(supervisor_header, "struct ZunTimer") + ";\n");
     preamble.insert(preamble.find("    void FromAngleMagnitude"),
-                    function(math, "Float3 *operator+=") + "\n");
+                    function(math, "Float3 *operator+=") + "\n" +
+                        function(math, "operator float *()") + "\n");
     out << preamble << function(supervisor, "void Supervisor::TickTimer(") << '\n'
         << function(supervisor, "void ZunTimer::Increment(") << '\n'
         << function(supervisor, "void ZunTimer::Decrement(") << '\n'
