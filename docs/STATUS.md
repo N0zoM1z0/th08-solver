@@ -1,6 +1,6 @@
 # Current status
 
-2026-09-12: native particle integration, laser lifecycle, and search optimization expanded.
+2026-09-12: native particle integration, laser lifecycle, search optimization, and RNG expanded.
 There is no Python dependency. Verified complete offline spell solutions: 0.
 The game is not launched in this phase.
 
@@ -15,7 +15,7 @@ The game is not launched in this phase.
    candidate-independent models, and independent path replay.
 5. Actual sub40/41/42 regressions, source-function predicate comparisons,
    unit tests, and consistent clang-format formatting.
-6. Ten Release and nine ASan/UBSan CTest cases pass. Sanitizer checks also cover the
+6. Eleven Release and ten ASan/UBSan CTest cases pass. Sanitizer checks also cover the
    native parsers, restricted-execution matrix and both 600-frame particle fixtures,
    including the latest signed-laser/fractional-clock changes.
 7. All observed ECL payload schemas; 32 timelines / 2003 instructions; eight SHT files
@@ -37,6 +37,9 @@ The game is not launched in this phase.
 12. Allocation-reusing deterministic heap search, with identical results against the
     previous implementation on 80 scenes. A local alternating benchmark measured about
     32.7 ms versus 22.1 ms median; this is a component workload, not maximum performance.
+13. Explicit shared RNG state, seed backup, draw counter and integer/float range helpers.
+    All 65536 seeds pass 524288 native source comparisons with no mismatches. This
+    does not establish original executable evaluation order or whole-world draw order.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the

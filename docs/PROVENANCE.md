@@ -6,6 +6,7 @@
 - Reconstruction: [N0zoM1z0/th08](https://github.com/N0zoM1z0/th08), commit `a45e99fb1942714e6edded20847e32a654d56f97`.
 - `src/Player.cpp`: `80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c`.
 - `src/Global.cpp`: `8df17616c935d684b6636619d4726889e68f7d2d7000e27c25aebc4bc460b74b`.
+- `src/Global.hpp`: `ce49422a53e5ba33b63d803d17e7051ba2a5ad7a33ae531910c048a091f37592`.
 - `TH08_AllCase_20260911.zip`: `8913fffc96824c27b681ff1b1133a4385f7c7ca3e8e377fede17e552e535b199`.
 
 Older reports also refer to a dirty worktree near `af72ca9...`; that evidence must
@@ -19,6 +20,7 @@ unchanged. Their code is not automatically promoted into a verified component.
 | DAT decoding | PbgArchive, Lzss, FileSystem::Decrypt | All 317 decoded member hashes match the historical reproduction | Gameplay semantics |
 | ECL structure | EclManager.hpp and historical audit | 24 files, 1449 subs, 36661 instructions, 2182 jumps, 431 spell starts | Complete VM execution |
 | Boxes and lasers | Pinned Player.cpp function bodies | 300000 scenes, 600000 predicate comparisons, alive/death side-effect checks | Game loop and x87 equivalence |
+| RNG state | Pinned Global.cpp / Global.hpp bodies | All 65536 seeds, 524288 integer/float operations, bitwise outputs and final seeds | Original executable evaluation order; complete world draw ordering |
 | Spatial index | Unindexed hazard scan | Random scenes, cell boundaries, exact contact, snapshot ownership, invalid arguments | Formal proof for all float inputs |
 | Wriggle scheduling | Actual DAT and historical event digests | sub40/41 ordered digests, 360 ticks, 160 commands, 840 requests; sub42 alignment variants | Successful allocation, bullet motion, complete spells |
 | Planning | Explicit collision-restoration fixture | Legal actions, terminal region, unindexed replay, budget failure without a route | Reisen gameplay or complete search |
