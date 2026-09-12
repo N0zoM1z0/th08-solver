@@ -32,8 +32,11 @@ The game is not launched in this phase.
     cull delay and offscreen lifetime. Two sub40/41 component fixtures each instantiate
     840 bullets, generate 600 collision phases, and find independently replayed paths.
 11. Laser starting/active/despawning collision-call projection and fractional clocks.
-    The source oracle compares 447684 direction frames and 678369 laser frames without
+    The source oracle compares 584936 direction frames and 678369 laser frames without
     mismatches. Signed terminal dimensions have a minimized fail-before/pass-after guard.
+    Direction changes now use the actual fractional source clock in both implementation
+    and oracle; the previous integer adapter did not verify non-unit timing. A separate
+    half-rate fail-before/pass-after regression records that correction.
 12. Allocation-reusing deterministic heap search, with identical results against the
     previous implementation on 80 scenes. A local alternating benchmark measured about
     32.7 ms versus 22.1 ms median; this is a component workload, not maximum performance.

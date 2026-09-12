@@ -85,7 +85,8 @@ using SoundIdx=int;
 struct Sound {void PlaySoundByIdx(int,int){}} g_SoundPlayer;
 struct Supervisor {float framerateMultiplier=1; void TickTimer(int*,float*);} g_Supervisor;
 struct TurnState {
-    int timer=0,directionChangeIntervalFrames=0,directionChangeRepeatCount=0,directionChangesCompleted=0;
+    ZunTimer timer;
+    int directionChangeIntervalFrames=0,directionChangeRepeatCount=0,directionChangesCompleted=0;
     float directionChangeAngle=0,directionChangeSpeed=0;
 };
 struct Bullet {
@@ -257,7 +258,10 @@ int main(int argc,char** argv) {
         reference.angle=flight.angle;
         reference.speed=flight.speed;
         reference.activeTransformFlags=mode==TurnMode::relative?0x40:mode==TurnMode::absolute?0x100:0x80;
-        reference.exStates[0]={0,turn.interval,turn.repeats,0,turn.angle,turn.speed};
+        reference.exStates[0].directionChangeIntervalFrames=turn.interval;
+        reference.exStates[0].directionChangeRepeatCount=turn.repeats;
+        reference.exStates[0].directionChangeAngle=turn.angle;
+        reference.exStates[0].directionChangeSpeed=turn.speed;
         g_Supervisor.framerateMultiplier=uniform(.25f,2);
         for(int frame=0;frame<600 && turn.active;++frame) {
             supplied_target_angle=uniform(-3,3);
@@ -266,10 +270,11 @@ int main(int argc,char** argv) {
             else reference.UpdateAimedDirectionChange();
             const auto status=advance_direction(flight,turn,g_Supervisor.framerateMultiplier,supplied_target_angle);
             auto same=[](float a,float b){return std::memcmp(&a,&b,sizeof(float))==0;};
-            const auto& expected=reference.exStates[0];
+            auto& expected=reference.exStates[0];
             if(status!=Status::advanced || !same(flight.angle,reference.angle) ||
                !same(flight.speed,reference.speed) || !same(flight.velocity_x,reference.velocity.x) ||
-               !same(flight.velocity_y,reference.velocity.y) || turn.timer!=expected.timer ||
+               !same(flight.velocity_y,reference.velocity.y) || turn.timer!=int(expected.timer) ||
+               !same(turn.subframe,expected.timer.subFrame) ||
                turn.completed!=expected.directionChangesCompleted ||
                turn.active!=(reference.activeTransformFlags!=0)) ++turn_mismatches;
             ++turn_frames;
@@ -387,7 +392,7 @@ int main(int argc, char **argv) try {
     std::string preamble = prefix;
     preamble.insert(preamble.find("struct RandomTrace"),
                     function(global_header, "class Rng") + ";\n");
-    preamble.insert(preamble.find("struct SourceLaser"),
+    preamble.insert(preamble.find("struct TurnState"),
                     function(supervisor_header, "struct ZunTimer") + ";\n");
     out << preamble << function(supervisor, "void Supervisor::TickTimer(") << '\n'
         << function(global, "void Rng::SetSeed(") << '\n'

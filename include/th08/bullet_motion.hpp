@@ -1,5 +1,6 @@
 #pragma once
 #include "kinematics.hpp"
+#include "timing.hpp"
 #include <algorithm>
 #include <array>
 #include <limits>
@@ -15,6 +16,7 @@ struct DirectionChange {
     bool active = false;
     std::int32_t interval = 0, repeats = 0, completed = 0, timer = 0;
     float angle = 0, speed = 0;
+    float subframe = 0;
 };
 // One active direction-change transform. A target is required only on its firing
 // frame; callers must resolve it from the candidate-dependent current player state.
@@ -27,7 +29,8 @@ inline Status advance_direction(Flight &flight, DirectionChange &turn, float mul
         turn.timer == std::numeric_limits<std::int32_t>::max() || turn.completed < 0 ||
         turn.completed == std::numeric_limits<std::int32_t>::max() ||
         !std::isfinite(flight.speed) || !std::isfinite(flight.angle) ||
-        !std::isfinite(turn.speed) || !std::isfinite(turn.angle) || unsigned(turn.mode) > 2)
+        !std::isfinite(turn.speed) || !std::isfinite(turn.angle) || unsigned(turn.mode) > 2 ||
+        !std::isfinite(turn.subframe) || turn.subframe < 0 || turn.subframe >= 1)
         return Status::invalid;
     float angle = flight.angle, speed = flight.speed, magnitude;
     const bool fire = turn.timer >= turn.interval;
@@ -41,7 +44,7 @@ inline Status advance_direction(Flight &flight, DirectionChange &turn, float mul
         speed = turn.speed;
         magnitude = speed;
     } else {
-        magnitude = speed - (float(turn.timer) * speed) / float(turn.interval);
+        magnitude = speed - ((float(turn.timer) + turn.subframe) * speed) / float(turn.interval);
     }
     const float scaled = magnitude * multiplier;
     const float vx = std::cos(angle) * scaled, vy = std::sin(angle) * scaled;
@@ -56,8 +59,9 @@ inline Status advance_direction(Flight &flight, DirectionChange &turn, float mul
         if (turn.completed >= turn.repeats)
             turn.active = false;
         turn.timer = 0;
+        turn.subframe = 0;
     }
-    ++turn.timer;
+    timing::tick(turn.timer, turn.subframe, multiplier);
     return Status::advanced;
 }
 

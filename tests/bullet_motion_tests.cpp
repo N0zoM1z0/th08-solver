@@ -10,6 +10,27 @@ void check(bool valid, const char *message) {
     }
 }
 int main() {
+    for (float x : {0.0f, 100.0f, 0.0f}) {
+        bullet::Flight flight{x, 0, 4, 0, 0, 4};
+        bullet::DirectionChange turn{bullet::TurnMode::relative, true, 2, 1, 0, 0, 1, 3};
+        check(bullet::advance_direction(flight, turn, 0.5f) == bullet::Status::advanced &&
+                  turn.timer == 0 && turn.subframe == 0.5f && turn.completed == 0 &&
+                  flight.velocity_x == 2,
+              "half-rate direction clock incorrectly advanced a whole frame");
+        check(bullet::advance_direction(flight, turn, 0.5f) == bullet::Status::advanced &&
+                  turn.timer == 1 && turn.subframe == 0 && turn.completed == 0 &&
+                  flight.velocity_x == 1.5f,
+              "direction deceleration ignored fractional timer age");
+        check(bullet::advance_direction(flight, turn, 0.5f) == bullet::Status::advanced &&
+                  turn.timer == 1 && turn.subframe == 0.5f,
+              "half-rate direction clock failed a second fractional interval");
+        check(bullet::advance_direction(flight, turn, 1.0f) == bullet::Status::advanced &&
+                  turn.timer == 2 && turn.subframe == 0.5f && turn.completed == 0,
+              "normal-rate transition discarded direction fractional carry");
+        check(bullet::advance_direction(flight, turn, 0.5f) == bullet::Status::advanced &&
+                  turn.timer == 0 && turn.subframe == 0.5f && turn.completed == 1 && !turn.active,
+              "direction firing reset omitted the fractional clock");
+    }
     bullet::Particle particle;
     bullet::InitialState input{{0, 0, 2, 2, 0},
                                100,
