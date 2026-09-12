@@ -2,7 +2,9 @@
 // Only generated build files are written; the source checkout remains untouched.
 #include "animation_source_probe.hpp"
 #include "ecl_source_probe.hpp"
+#include "enemy_motion_source_probe.hpp"
 #include "transform_source_probe.hpp"
+#include "world_motion_source_probe.hpp"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -206,7 +208,10 @@ int main(int argc,char** argv) {
     const auto acceleration=compare_acceleration();
     const auto transforms=compare_transforms();
     const auto slots=compare_slots();
+    const auto enemy_motion=compare_enemy_motion();
+    const auto world_motion=compare_world_motion();
     const auto animation=compare_animation_control();
+    const auto animation_scalars=compare_animation_scalars();
     std::mt19937 rng(20260912);
     auto uniform=[&](float low,float high) {
         return std::uniform_real_distribution<float>(low,high)(rng);
@@ -405,10 +410,17 @@ int main(int argc,char** argv) {
         << ",\"transform_steps\":" << transforms.steps
         << ",\"transform_mismatches\":" << transforms.mismatches
         << ",\"slot_operations\":" << slots.operations << ",\"slot_mismatches\":" << slots.mismatches
+        << ",\"enemy_motion_phases\":" << enemy_motion.phases
+        << ",\"enemy_motion_mismatches\":" << enemy_motion.mismatches
+        << ",\"world_motion_effects\":" << world_motion.effects
+        << ",\"world_motion_atomic_failures\":" << world_motion.atomic_failures
+        << ",\"world_motion_mismatches\":" << world_motion.mismatches
         << ",\"animation_control_frames\":" << animation.frames
         << ",\"animation_control_mismatches\":" << animation.mismatches
+        << ",\"animation_scalar_calls\":" << animation_scalars.calls
+        << ",\"animation_scalar_mismatches\":" << animation_scalars.mismatches
         << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
-    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches||acceleration.mismatches||transforms.mismatches||slots.mismatches||animation.mismatches?1:0;
+    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches||acceleration.mismatches||transforms.mismatches||slots.mismatches||animation.mismatches||animation_scalars.mismatches||enemy_motion.mismatches||world_motion.mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -494,10 +506,12 @@ int main(int argc, char **argv) try {
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'
         << function(player, "u32 Player::CalcLaserHitbox(") << '\n'
         << ecl_reference(repo) << transform_reference(repo) << slots_reference(bullet)
-        << animation_reference(repo)
+        << animation_reference(repo) << enemy_motion_reference(repo) << world_motion_reference(repo)
         << "\n#include \"source_acceleration_cases.hpp\"\n#include \"source_transform_cases.hpp\"\n"
         << "#include \"source_slot_cases.hpp\"\n"
         << "#include \"source_animation_cases.hpp\"\n"
+        << "#include \"source_enemy_motion_cases.hpp\"\n"
+        << "#include \"source_world_motion_cases.hpp\"\n"
         << suffix;
 } catch (const std::exception &error) {
     std::cerr << error.what() << '\n';

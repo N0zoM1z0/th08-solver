@@ -43,6 +43,48 @@ std::int32_t checked_integer(double value) {
             value <= std::numeric_limits<std::int32_t>::max());
     return static_cast<std::int32_t>(value); // Retail float-to-int reads truncate toward zero.
 }
+random::Rng &random_expression(random::Rng *rng, unsigned &expressions) {
+    require(rng != nullptr, Status::missing_context);
+    require(++expressions == 1, Status::unsupported);
+    return *rng;
+}
+double resolve_value(double value, bool floating, bool resolve, const ScalarStorage &workspace,
+                     random::Rng *rng, unsigned &rng_expressions) {
+    require(std::isfinite(value));
+    if (resolve && value >= 10000 && value < 10101) {
+        const auto slot = std::size_t(value - 10000);
+        const bool mapped = floating ? slot < 100 && slot != 98 : !(slot >= 79 && slot <= 82);
+        if (mapped) {
+            if (slot >= 32 && slot <= 35) {
+                auto &stream = random_expression(rng, rng_expressions);
+                switch (slot) {
+                case 32:
+                    value = stream.next_u32() & 0x7fffffffU;
+                    break;
+                case 33:
+                    value = stream.unit();
+                    break;
+                case 34:
+                    value = as_int(stream.next_u32());
+                    break;
+                case 35:
+                    value = stream.signed_unit();
+                    break;
+                }
+            } else if (floating && slot == 82) {
+                value =
+                    random_expression(rng, rng_expressions).range_float(6.2831855f) - 3.1415927f;
+            } else {
+                require(workspace.initialized[slot], Status::missing_context);
+                value = workspace.registers[slot];
+            }
+        }
+    }
+    require(std::isfinite(value));
+    const double result = floating ? double(float(value)) : double(checked_integer(value));
+    require(std::isfinite(result));
+    return result;
+}
 double arithmetic(unsigned operation, bool floating, double left, double right) {
     if (floating) {
         const float a = float(left), b = float(right);
@@ -105,8 +147,53 @@ const char *name(Status status) {
         return "FRAME_COMPLETE";
     case Status::external_effect:
         return "EXTERNAL_EFFECT";
+    case Status::operands_decoded:
+        return "OPERANDS_DECODED";
     }
     return "INVALID";
+}
+Status decode_operands(const Operation &op, const ScalarStorage &workspace,
+                       const OperandField *fields, double *values, std::size_t count,
+                       random::Rng *rng, OperandOrder order, resources::View payload) {
+    std::array<double, 16> decoded{};
+    const auto original_rng = rng ? rng->state() : random::State{};
+    unsigned rng_expressions = 0;
+    try {
+        require(count <= decoded.size() && (count == 0 || (fields && values)) &&
+                unsigned(order) <= unsigned(OperandOrder::source_ordered_fields));
+        for (std::size_t i = 0; i < count; ++i) {
+            const auto &field = fields[i];
+            require(unsigned(field.type) <= unsigned(OperandType::float32) &&
+                    field.flag_index >= -1 && field.flag_index < 16);
+            const unsigned size = field.type == OperandType::signed16 ? 2 : 4;
+            require(field.byte_offset % size == 0 &&
+                    std::size_t(field.byte_offset) + size <= op.payload_size);
+            std::uint32_t bits;
+            if (std::size_t(field.byte_offset) + size <= op.words.size() * 4) {
+                bits = op.words[field.byte_offset / 4] >> ((field.byte_offset % 4) * 8);
+            } else {
+                require(payload.data && payload.size == op.payload_size);
+                bits = size == 2 ? resources::u16(payload, field.byte_offset)
+                                 : resources::u32(payload, field.byte_offset);
+            }
+            const bool floating = field.type == OperandType::float32;
+            const double raw = floating    ? double(as_float(bits))
+                               : size == 2 ? double((bits & 0x8000U) ? int(bits & 0xffffU) - 65536
+                                                                     : int(bits & 0xffffU))
+                                           : double(as_int(bits));
+            const bool resolve = field.flag_index >= 0 && (op.flags & (1U << field.flag_index));
+            if (order == OperandOrder::source_ordered_fields)
+                rng_expressions = 0;
+            decoded[i] = resolve_value(raw, floating, resolve, workspace, rng, rng_expressions);
+        }
+        if (count != 0)
+            std::copy_n(decoded.begin(), count, values);
+        return Status::operands_decoded;
+    } catch (const Blocked &blocked) {
+        if (rng)
+            *rng = random::Rng(original_rng);
+        return blocked.status;
+    }
 }
 Program::Program(resources::View resource, const resources::Ecl &ecl, std::size_t sub) {
     const auto &range = ecl.subs.at(sub);
@@ -237,50 +324,13 @@ Result advance(Execution &execution, Workspace &workspace, random::Rng *rng,
             require(std::isfinite(value) && value >= 10000 && value < 10101, Status::unsupported);
             return std::size_t(value - 10000);
         };
-        auto random_expression = [&]() -> random::Rng & {
-            require(rng != nullptr, Status::missing_context);
-            // Source operators/function arguments do not generally sequence
-            // multiple RNG consumers. Do not impose an unverified draw order.
-            require(++rng_expressions == 1, Status::unsupported);
-            return *rng;
-        };
         auto operand = [&](const Operation &op, unsigned word, bool floating,
                            unsigned flag) -> double {
-            require((word + 1) * 4 <= op.payload_size);
-            double value =
+            require(word < op.words.size() && (word + 1) * 4 <= op.payload_size && flag < 16);
+            const double value =
                 floating ? double(as_float(op.words[word])) : double(as_int(op.words[word]));
-            require(std::isfinite(value));
-            if ((op.flags & (1U << flag)) && value >= 10000 && value < 10101) {
-                const auto slot = selector(value);
-                const bool resolved =
-                    floating ? slot < 100 && slot != 98 : !(slot >= 79 && slot <= 82);
-                if (resolved) {
-                    if (slot >= 32 && slot <= 35) {
-                        auto &stream = random_expression();
-                        switch (slot) {
-                        case 32:
-                            value = stream.next_u32() & 0x7fffffffU;
-                            break;
-                        case 33:
-                            value = stream.unit();
-                            break;
-                        case 34:
-                            value = as_int(stream.next_u32());
-                            break;
-                        case 35:
-                            value = stream.signed_unit();
-                            break;
-                        }
-                    } else if (floating && slot == 82) {
-                        value = random_expression().range_float(6.2831855f) - 3.1415927f;
-                    } else {
-                        require(workspace.initialized[slot], Status::missing_context);
-                        value = workspace.registers[slot];
-                    }
-                }
-            }
-            require(std::isfinite(value));
-            return floating ? double(float(value)) : double(checked_integer(value));
+            return resolve_value(value, floating, (op.flags & (1U << flag)) != 0, workspace, rng,
+                                 rng_expressions);
         };
         auto write = [&](const Operation &op, unsigned word, bool floating, double value) {
             require((word + 1) * 4 <= op.payload_size && (op.flags & (1U << word)),
@@ -399,7 +449,7 @@ Result advance(Execution &execution, Workspace &workspace, random::Rng *rng,
             case 8:
             case 9: {
                 const bool floating = op.opcode == 9;
-                const int sign = random_expression().next_u16() & 1U ? 1 : -1;
+                const int sign = random_expression(rng, rng_expressions).next_u16() & 1U ? 1 : -1;
                 const auto value = operand(op, 1, floating, 1);
                 write(op, 0, floating, sign * value);
                 break;

@@ -1,5 +1,31 @@
 # Source-derived regression ledger
 
+## Coincident-player aiming is not a generic point angle
+
+The expected contract is bitwise agreement with the pinned `Player::AngleToPoint`
+inside movement opcodes 68/69 and computed operand 10048. That function explicitly
+returns pi/2 when both coordinate differences compare equal to zero. The general
+point-angle kernel returns zero at `(0, 0)` and is correct for its separate callers.
+
+The minimal counterexample places the enemy and player at the same local coordinates,
+applies opcode 68 with zero angle offset, and observes an incorrect zero movement
+angle. Nonzero position offsets distinguish local aimed motion from the world-position
+computed operand. Positive/negative zero variants hit the same source equality branch.
+
+`world_motion_tests` failed before the fix with
+`coincident player aim lost the source pi/2 rule or changed opcode68 mode/timer`.
+An independently extracted source-effect suite reproduced 12 mismatches against a
+saved pre-fix object: opcodes 65 (via operand 10048), 68 and 69, each with four signed-zero
+variants. The fix adds the source's zero-distance branch to the world aiming adapter;
+it does not change the general geometry kernel. The same tests pass afterward.
+The integrated source suite now passes 109860 effects plus four atomic-failure checks,
+and both native and ASan/UBSan builds pass.
+
+The guard also checks repeated applications with changed speeds, preservation of
+opcode 68's mode/timer, and world-coordinate angle/distance publication. This verifies
+the bounded movement effect; player lifecycle, complete enemy updates and retail x87
+equivalence remain outside its claim.
+
 ## Direction changes retain fractional clock age
 
 ### Expectation, ranked probes, and independent oracle

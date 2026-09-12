@@ -12,7 +12,8 @@ enum class Status {
     instruction_limit,
     invalid,
     frame_complete,
-    external_effect
+    external_effect,
+    operands_decoded
 };
 const char *name(Status status);
 struct Operation {
@@ -56,14 +57,35 @@ struct TransformWrite {
     std::uint32_t tick;
     std::array<std::uint32_t, 7> words;
 };
-struct Workspace {
-    // Reused across candidates/runs; no hash maps or per-event allocation.
+struct ScalarStorage {
     std::array<double, 101> registers{};
     std::array<bool, 101> initialized{};
+};
+struct Workspace : ScalarStorage {
+    // Reused across candidates/runs; no hash maps or per-event allocation.
     std::vector<Emission> emissions;
     std::vector<TransformWrite> transforms;
     std::array<CallFrame, 15> calls{};
 };
+enum class OperandType { signed16, signed32, float32 };
+struct OperandField {
+    std::uint16_t byte_offset;
+    OperandType type;
+    std::int8_t flag_index; // -1 means a raw field; 0..15 selects an operand flag.
+};
+enum class OperandOrder { single_random_expression, source_ordered_fields };
+// Decode up to sixteen explicitly ordered fields for a pending world instruction.
+// Uses the same typed selectors as scalar execution, including packed int16 fields.
+// Complete payload is needed only for fields beyond the eight hot operand words.
+// Output and caller RNG remain unchanged on failure. This does not execute or
+// acknowledge a world effect. A handler must checkpoint any later world mutation.
+// Only select source_ordered_fields when separate source statements establish
+// operand evaluation order; it is not permission to guess C++ expression ordering.
+Status decode_operands(const Operation &operation, const ScalarStorage &workspace,
+                       const OperandField *fields, double *values, std::size_t count,
+                       random::Rng *rng = nullptr,
+                       OperandOrder order = OperandOrder::single_random_expression,
+                       resources::View complete_payload = {});
 struct Result {
     Status status = Status::horizon;
     std::uint32_t tick = 0, offset = 0, executed = 0;

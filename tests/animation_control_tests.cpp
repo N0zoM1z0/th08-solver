@@ -1,4 +1,6 @@
+#include <cmath>
 #include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <th08/animation_control.hpp>
 namespace ac = th08::animation::control;
@@ -16,7 +18,99 @@ ac::Operation op(int opcode, int time = 0, std::initializer_list<std::int32_t> w
     std::copy(words.begin(), words.end(), result.words.begin());
     return result;
 }
+std::int32_t bits(float value) {
+    std::int32_t result;
+    std::memcpy(&result, &value, 4);
+    return result;
+}
+ac::Operation masked(int opcode, std::uint16_t mask, std::initializer_list<std::int32_t> words) {
+    auto result = op(opcode, 0, words);
+    result.mask = mask;
+    return result;
+}
+void scalar_tests() {
+    ac::Program program;
+    program.code = {masked(37, 1, {10000, -7}),
+                    masked(38, 3, {bits(10004.9f), bits(10000.5f)}),
+                    masked(39, 3, {10008, 10004}),
+                    masked(37, 3, {10001, 10008}),
+                    masked(83, 1, {10000}),
+                    op(2),
+                    op(-1)};
+    ac::State state;
+    check(ac::advance(program, state).status == ac::Status::completed && state.integers[0] == -7 &&
+              state.integers[1] == -7 && state.floats[0] == -7 && state.counters[0] == -7 &&
+              state.player_bullet_hit_animation_type == 10000,
+          "typed ANM accessors, float selector truncation or raw hit metadata changed");
+    program.code = {masked(37, 1, {10000, 3}), masked(5, 1, {10000, 0, 0}), masked(79, 1, {10000}),
+                    op(2), op(-1)};
+    program.code[1].target = 1;
+    state = {};
+    check(ac::advance(program, state).status == ac::Status::completed && state.integers[0] == 0,
+          "decrement jump failed to write the typed counter before testing it");
+    program.code = {masked(60, 1, {bits(10004.f), bits(0.f)}), masked(59, 1, {10000, 0}), op(2),
+                    op(-1)};
+    state = {};
+    check(ac::advance(program, state).status == ac::Status::requires_context && state.pc == 0,
+          "ANM invented an RNG stream for a zero-range random instruction");
+    th08::random::Rng rng(9183);
+    rng.save_seed();
+    check(ac::advance(program, state, 1, false, 100000, &rng).status == ac::Status::completed &&
+              rng.generation_count() == 2 && state.floats[0] == 0 && state.integers[0] == 0,
+          "floating and integer zero random ranges consumed identical draws");
+    const auto checkpoint = rng.state();
+    program.code = {masked(60, 1, {bits(10004.f), bits(3.f)}), masked(45, 1, {10000, 0}), op(-1)};
+    state = {};
+    const auto failure = ac::advance(program, state, 1, false, 100000, &rng);
+    check(failure.status == ac::Status::invalid && failure.pc == 1 && state.pc == 0 &&
+              state.floats[0] == 0 && rng.seed() == checkpoint.seed &&
+              rng.generation_count() == checkpoint.generation_count &&
+              rng.state().saved_seed == checkpoint.saved_seed && rng.state().saved_seed_valid,
+          "failed ANM frame leaked state or RNG draws");
+    program.code = {masked(60, 1, {bits(10004.f), bits(3.f)}), op(4, 0, {0, 0}), op(-1)};
+    program.code[1].target = 1;
+    check(ac::advance(program, state, 1, false, 9, &rng).status == ac::Status::instruction_limit &&
+              state.pc == 0 && rng.seed() == checkpoint.seed &&
+              rng.generation_count() == checkpoint.generation_count,
+          "ANM budget failure retained random draws from the abandoned call");
+    program.code = {masked(60, 1, {bits(10004.f), bits(1.f)}), op(79, 0, {1}),
+                    masked(60, 1, {bits(10005.f), bits(1.f)}), op(2), op(-1)};
+    auto expected_rng = rng;
+    const auto first_random = expected_rng.unit();
+    expected_rng.next_u32(); // A different world actor between animation calls.
+    const auto second_random = expected_rng.unit();
+    check(ac::advance(program, state, 1, false, 100000, &rng).status == ac::Status::advanced &&
+              state.floats[0] == first_random,
+          "ANM consumed draws beyond its wait boundary");
+    rng.next_u32();
+    check(ac::advance(program, state, 1, false, 100000, &rng).status == ac::Status::completed &&
+              state.floats[1] == second_random && rng.seed() == expected_rng.seed() &&
+              rng.generation_count() == expected_rng.generation_count(),
+          "ANM restored a private RNG stream over intervening world draws");
+    state = {};
+    for (auto destination : {37, 38}) {
+        program.code = {masked(destination, 1, {destination == 37 ? 10004 : bits(10000.f), 0}),
+                        op(-1)};
+        check(ac::advance(program, state).status == ac::Status::unsupported,
+              "cross-typed lvalue silently mutated bytecode or another variable bank");
+        program.code[0].mask = 0;
+        check(ac::advance(program, state).status == ac::Status::unsupported,
+              "literal lvalue silently mutated immutable bytecode");
+    }
+    program.code = {masked(49, 1, {10000, INT32_MAX, 1}), op(-1)};
+    check(ac::advance(program, state).status == ac::Status::invalid,
+          "integer arithmetic accepted signed overflow");
+    program.code = {masked(37, 3, {10000, 10004}), op(-1)};
+    state.floats[0] = std::numeric_limits<float>::infinity();
+    check(ac::advance(program, state).status == ac::Status::invalid,
+          "float-to-integer accessor accepted undefined conversion");
+    state = {};
+    program.code = {masked(64, 1, {bits(10004.f), bits(2.f)}), op(-1)};
+    check(ac::advance(program, state).status == ac::Status::invalid,
+          "arccosine domain error leaked NaN into ANM state");
+}
 int main() {
+    scalar_tests();
     namespace res = th08::resources;
     auto compiled = [] {
         res::Bytes bytes(28, 0);
@@ -41,6 +135,22 @@ int main() {
         rejected = true;
     }
     check(rejected, "compiled ANM accepted a jump into an operand");
+    for (const auto code : {5, 67, 78}) {
+        const auto count = code == 5 ? 3U : 4U;
+        res::Bytes payload(8 + 4 * count + 8, 0);
+        payload[8 + 4 * (count - 2)] = 9;
+        res::Anm branches;
+        branches.instructions = {{0, std::int16_t(code), 0, std::uint16_t(8 + 4 * count), 0},
+                                 {8 + 4 * count, -1, -1, 0, 0}};
+        branches.scripts = {{0, 0, 0, 0, 2}};
+        rejected = false;
+        try {
+            ac::Program bad(res::view(payload), branches, 0);
+        } catch (const std::exception &) {
+            rejected = true;
+        }
+        check(rejected, "compiled ANM accepted a conditional target inside an operand");
+    }
     ac::Program program;
     program.code = {op(3, 0, {4}), op(79, 0, {2}), op(3, 0, {9}), op(2), op(-1)};
     ac::State state;

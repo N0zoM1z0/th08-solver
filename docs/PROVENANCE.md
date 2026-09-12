@@ -25,7 +25,9 @@ unchanged. Their code is not automatically promoted into a verified component.
 | Acceleration updates | Pinned Bullet methods, Float3 operators, VectorAngle and ZunTimer | 256979 frames over three modes and changing frame rates | Retail x87; complete lifecycle |
 | Transform scheduling | Pinned payload layouts, AdvanceTransformProgram, fired dispatch block, update methods and playfield predicate | 120748 birth/update steps, including simultaneous effects, shared turns/wrap clocks, bounce thresholds, wait decrement and sound order | Sprites, child patterns and complete lifecycle |
 | Bullet slot selection | Unchanged selection loop and final cursor-update block from SpawnSingleBullet | 300000 reservation/release/completion operations, including nested cursor completion | Launch RNG, storage initialization, cancellation and complete pool lifecycle |
-| ANM lifecycle control | Pinned ExecuteScript control blocks, opcode enumeration and actual ZunTimer | 48224 frames with changing rates, waits, stop/hide, duplicate/default labels, interrupt return, freeze and extra timer steps; 1151-script DAT baseline and 42 timing certificates | Visual interpolation/rendering, scalar/RNG execution, resource-loading effects and world lifecycles |
+| ANM lifecycle/scalars | Pinned ExecuteScript control/scalar blocks, all four typed accessors, opcode/variable enumerations, actual RNG and ZunTimer | 48224 control frames and 228669 scalar calls; 1151-script unseeded and explicit-seed audits; 42 timing certificates | Bytecode-writing destinations, visual interpolation/rendering, resource-loading effects and world lifecycles |
+| Enemy motion phases | Pinned movement/configuration methods and manager integration block | 580000 configuration/velocity/integration phases, fractional clocks, easing, mirrored/inverted bounds and parent coordinates | Actor creation, lifecycle gates and intervening shot/ANM execution |
+| ECL movement effects | Pinned movement opcode blocks, helpers, typed motion/player/RNG selectors, world publication and player-angle/vector-length bodies | 109860 effects, including repeated RNG reads, self-reading fields and coincident-position aiming; four separate native rollback checks | Opcode 67, multiple random factors in one unsequenced product, complete world scheduling |
 | Spatial index | Unindexed hazard scan | Random scenes, cell boundaries, exact contact, snapshot ownership, invalid arguments | Formal proof for all float inputs |
 | Wriggle scheduling | Actual DAT and historical event digests | sub40/41 ordered digests, 360 ticks, 160 commands, 840 requests; sub42 alignment variants | Successful allocation, bullet motion, complete spells |
 | Planning | Explicit collision-restoration fixture | Legal actions, terminal region, unindexed replay, budget failure without a route | Reisen gameplay or complete search |
@@ -39,9 +41,35 @@ The ANM adapter pins `AnmManager.cpp` (`c82bb37c19af4ccaabfa4bf4606d92c72e180f5f
 `AnmManager.hpp` (`df96ae2abd43ffc64a5967451fcd3ca5b83b75f6ad6ed37ba852370855c7f582`),
 and base initialization in `AsciiManager.cpp`
 (`86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1`).
-It retains exact control blocks and the final script-clock tick, not the omitted
-render interpolation tail. Its sprite adapter records identity only. Unsupported
-reference inputs throw instead of pretending to execute scalar or visual commands.
+It retains exact control/scalar blocks, typed accessors and the final script-clock
+tick, not the omitted render interpolation tail. Its sprite adapter records identity
+only. Unsupported reference inputs throw instead of pretending to execute visual
+commands. The default 600-call DAT profile completes 340 scripts, bounds 800 and
+stops 11 for missing RNG; no seed is fabricated. Separately, explicit seeds 0 and
+65535, independently reset per script, each complete 350 and bound 801. Those
+profiles verify component execution, not world draw ordering or spell completion.
+
+The enemy adapter additionally pins `EnemyManager.cpp`
+(`e8febe94a833472b33f732e83ee39ee48fdc5097c5d69ff094fd1f1bb8629a7d`),
+`EnemyManager.hpp` (`e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256`),
+`EnemyManagerUpdate.cpp` (`5692ab3214e95873626e6ab896f867746217b0556b34737c2556e1b38a454e59`),
+and `EclHelpers.cpp` (`64a9318a9a3b89d02f221b1837e618c027c3a7814ed43481a0ca78a5c0b77f73`).
+It preserves the separate velocity and manager integration phases. Literal helper
+adapters are fixture scaffolding; they do not establish ECL operand/RNG order.
+
+The movement-effect adapter covers that separate boundary using unchanged
+`EclRunLow.inl` instructions 63..66 and 68..76, configuration helpers and selected
+original integer/float operand cases. It also pins `EclRun.cpp`
+(`010049211263e47d8245c7335f56b17a8502ca0f84595c8b035926a495d90b57`) for world-position
+publication, and `modern/linux/d3dx8_compat.cpp`
+(`8e9649ef554dcc2ac7d0218974a48d4583bae32591f4a7cd5b16ecdca3b62388`) for vector length.
+The actual `Player::AngleToPoint` distinguishes coincident x/y from plain atan2;
+see [Regressions](REGRESSIONS.md). Repeated source operand evaluations remain
+repeated, including random speed reads for separate polar components. Tests exclude
+ambiguous multiple-random products rather than assert an unverified compiler order.
+The four failure-atomic checks enforce a native ownership contract, not source-engine
+rollback semantics. No extracted test adapter implements the complete enemy layout.
+
 The reference checkout is not modified. Competing laser interpretations differ on
 whether player extents also rotate; production function output supports center-only
 rotation. Snapshot ownership tests distinguish a stable owned index from a borrowed
