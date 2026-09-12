@@ -21,6 +21,7 @@ ctest --test-dir build --output-on-failure
 ./build/th08_motion_cases game_data_donottrack/th08.dat reports/native
 ./build/geometry_bench reports/native/geometry_benchmark.json
 ./build/planner_bench reports/native/planner_benchmark.json
+./build/bullet_slots_bench reports/native/bullet_slots_benchmark.json
 ```
 
 Supply your own DAT under the ignored `game_data_donottrack/` directory.
@@ -51,6 +52,8 @@ and execution statuses, without extracting game assets to disk.
 - Project deceleration, vector and polar acceleration with fractional clocks and
   source-ordered numerical operations. Execute a verified subset of eighteen-record
   transform programs, including shared direction state and overlapping effects.
+- Select bullet slots with a compact bitset while preserving circular scan order
+  and parent/child cursor completion; full allocation lifecycles remain separate.
 
 Complete ECL worlds, enemy/bullet lifecycles, ANM, damage, RNG consumption chains,
 and complete spell routes remain unimplemented. `RETURNED_SLICE` means a restricted
@@ -92,7 +95,8 @@ The native generator verifies reference source hashes, then extracts unmodified
 collision functions, angle normalization, and the launch switch into the build directory.
 It checks 600,000 collision predicates, 180,000 launch cases, and hundreds of thousands
 of direction-transform and laser-lifecycle frames. It also covers every 16-bit RNG
-seed, ECL random assignments, acceleration frames and transform-program steps.
+seed, ECL random assignments, acceleration frames, transform-program steps and
+bullet-slot selection/cursor operations.
 This does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks

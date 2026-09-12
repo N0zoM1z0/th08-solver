@@ -33,6 +33,30 @@ std::string function(const std::string &text, const std::string &signature) {
         throw std::runtime_error("unterminated reference function");
     return text.substr(start, end - start);
 }
+std::string slots_reference(const std::string &bullet) {
+    const auto body = function(bullet, "i32 BulletManager::SpawnSingleBullet(");
+    const auto scan_begin = body.find("    i = 0;");
+    const auto scan_end = body.find("    angle = 0.0f;", scan_begin);
+    const auto finish_begin = body.rfind("    bullet++;");
+    const std::string returned = "    return 0;";
+    const auto finish_end = body.rfind(returned);
+    if (scan_begin == std::string::npos || scan_end == std::string::npos ||
+        finish_begin == std::string::npos || finish_end == std::string::npos)
+        throw std::runtime_error("missing pinned slot selection/cursor blocks");
+    return R"CPP(
+namespace slot_reference {
+enum {BULLET_STATE_UNUSED,BULLET_STATE_FIRED,BULLET_STATE_SENTINEL};
+struct Bullet {int state=BULLET_STATE_UNUSED;};
+struct BulletManager {
+    Bullet bullets[1537];
+    Bullet* bulletCursor=&bullets[0];
+    BulletManager(){bullets[1536].state=BULLET_STATE_SENTINEL;}
+    int select(unsigned& selected) {int i;Bullet* bullet;
+)CPP" + body.substr(scan_begin, scan_end - scan_begin) +
+           "selected=unsigned(bullet-bullets);return 0;}\nint finish(unsigned selected){Bullet* "
+           "bullet=&bullets[selected];\n" +
+           body.substr(finish_begin, finish_end + returned.size() - finish_begin) + "\n}\n};\n}\n";
+}
 constexpr const char *prefix = R"CPP(
 #include <th08/geometry.hpp>
 #include <th08/kinematics.hpp>
@@ -180,6 +204,7 @@ int main(int argc,char** argv) {
     const auto ecl_random=ecl_reference::compare();
     const auto acceleration=compare_acceleration();
     const auto transforms=compare_transforms();
+    const auto slots=compare_slots();
     std::mt19937 rng(20260912);
     auto uniform=[&](float low,float high) {
         return std::uniform_real_distribution<float>(low,high)(rng);
@@ -377,8 +402,9 @@ int main(int argc,char** argv) {
         << ",\"acceleration_mismatches\":" << acceleration.mismatches
         << ",\"transform_steps\":" << transforms.steps
         << ",\"transform_mismatches\":" << transforms.mismatches
+        << ",\"slot_operations\":" << slots.operations << ",\"slot_mismatches\":" << slots.mismatches
         << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
-    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches||acceleration.mismatches||transforms.mismatches?1:0;
+    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches||acceleration.mismatches||transforms.mismatches||slots.mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -463,8 +489,9 @@ int main(int argc, char **argv) try {
         << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'
         << function(player, "u32 Player::CalcLaserHitbox(") << '\n'
-        << ecl_reference(repo) << transform_reference(repo)
+        << ecl_reference(repo) << transform_reference(repo) << slots_reference(bullet)
         << "\n#include \"source_acceleration_cases.hpp\"\n#include \"source_transform_cases.hpp\"\n"
+        << "#include \"source_slot_cases.hpp\"\n"
         << suffix;
 } catch (const std::exception &error) {
     std::cerr << error.what() << '\n';

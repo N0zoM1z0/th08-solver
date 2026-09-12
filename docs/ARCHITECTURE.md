@@ -160,6 +160,21 @@ definition and `Supervisor::TickTimer`, not an integer-clock substitution.
 
 ## Geometry and planning
 
+`bullet::Slots` is an occupancy/cursor index, not bullet storage. Twenty-four 64-bit
+free masks replace the linear 1536-slot scan while preserving the first free slot
+in circular cursor order. A free count makes full-pool failure constant-time; other
+queries inspect at most 25 word fragments, allocate nothing, and leave state unchanged.
+Snapshot copies own their masks and cursor. All non-UNUSED phases stay occupied until
+the world actually deactivates them; animation or cancellation requests do not free them.
+
+Reservation and cursor completion are separate. The source selects before launch RNG,
+marks the bullet active before transform callbacks, then advances its cursor only after
+those callbacks return. Nested children may therefore move the cursor before their
+parent overwrites it with the position after its own slot. The caller must pair
+reservations/completions in that source order and synchronize actual deactivations.
+This index alone neither rolls back a failed initialization nor implements child
+lifecycles, full-pool RNG effects, sprite storage, cancellation or generation handles.
+
 Coordinates are local playfield coordinates. Box sizes store full dimensions;
 player dimensions are half sizes. Contact is lethal. As in the reference source,
 laser collision rotates only the player center, preserving the axis-aligned player
