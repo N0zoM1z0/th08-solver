@@ -112,6 +112,16 @@ scripted freeze, cull delay, and offscreen lifetime. Its contract excludes cance
 later transform records, pool contention and player interaction. Source-driven sub40/41
 fixtures explicitly establish those preconditions; see `MOTION_FIXTURES.md`.
 
+`bullet::advance_acceleration` projects one installed deceleration, vector or polar
+effect. It uses fractional timer age, preserves velocity on the expiry frame, and
+ticks even when that frame clears the active flag. Vector acceleration updates angle
+only outside the source's strict 0.0001 per-axis dead zone and leaves scalar speed
+unchanged. Its installed vector includes the installation frame multiplier; each
+update applies that update's multiplier again. Polar speed is signed, not clamped.
+Concurrent effects must run in source order: deceleration, vector, polar, then turns.
+Transform-program installation/scheduling and concurrent-state ownership remain
+separate from this allocation-free, failure-atomic kernel.
+
 `laser::advance` emits up to three ordered collision calls while updating offsets,
 phase and lifetime. It preserves switch fallthrough, the source's ramp axis, graze
 flags, and collision calls emitted before retirement. `timing::tick` retains the

@@ -30,9 +30,11 @@ if(TH08_REFERENCE_SOURCE)
     COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     DEPENDS th08_source_probe ${TH08_REFERENCE_SOURCE}/src/Player.cpp ${TH08_REFERENCE_SOURCE}/src/Global.cpp ${TH08_REFERENCE_SOURCE}/src/Global.hpp ${TH08_REFERENCE_SOURCE}/src/BulletManager.cpp ${TH08_REFERENCE_SOURCE}/src/ZunMath.hpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.cpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.hpp
       ${TH08_REFERENCE_SOURCE}/src/EclManager.hpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsInt.cpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsFloat.cpp ${TH08_REFERENCE_SOURCE}/src/EclRunLow.inl
+      ${TH08_REFERENCE_SOURCE}/src/PlayerBomb.cpp ${TH08_REFERENCE_SOURCE}/src/Background.cpp
     VERBATIM)
   add_executable(source_oracle ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp)
   target_link_libraries(source_oracle PRIVATE th08_resources)
+  target_include_directories(source_oracle PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
   if(NOT MSVC)
     # Unchanged pinned bodies include an unused ZunTimer operator with no return,
     # intentional switch fallthrough, and retail bitcast-through-pointer expressions.
@@ -65,6 +67,9 @@ if(BUILD_TESTING)
   add_executable(bullet_motion_tests tests/bullet_motion_tests.cpp)
   target_link_libraries(bullet_motion_tests PRIVATE th08_geometry)
   add_test(NAME bullet_motion COMMAND bullet_motion_tests)
+  add_executable(acceleration_tests tests/acceleration_tests.cpp)
+  target_link_libraries(acceleration_tests PRIVATE th08_geometry)
+  add_test(NAME acceleration COMMAND acceleration_tests)
   add_executable(laser_motion_tests tests/laser_motion_tests.cpp)
   target_link_libraries(laser_motion_tests PRIVATE th08_geometry)
   add_test(NAME laser_motion COMMAND laser_motion_tests)
