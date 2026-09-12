@@ -1,5 +1,22 @@
 # Source-derived regression ledger
 
+## Timeline events broadcast to every empty slot
+
+The pinned `EclTimeline::Run` opcode 14 visits all four shared slots and writes the
+event to every negative entry. A conventional first-empty queue interpretation is
+incorrect. Starting from `{-1, 3, -2, 7}`, publishing event 9 must produce
+`{9, 3, 9, 7}`; a subsequent wait for 9 consumes both copies. An external effect
+between publication and consumption makes the intermediate state observable.
+
+`timeline_tests` checks this contract, unknown context, rollback on instruction
+budget failure and independent copied state. A controlled fault-injected build
+that breaks after the first free slot fails the assertion
+`event publication fills all negative slots, not just the first`. The maintained
+implementation passes repeated native and sanitizer runs. This is a forged guard
+against a plausible incorrect rewrite, not a claim that the shipped source was buggy.
+The separate 200000-frame source oracle compares exact event slots and clocks;
+world-side spawn effects remain outside the timeline control projection.
+
 ## Coincident-player aiming is not a generic point angle
 
 The expected contract is bitwise agreement with the pinned `Player::AngleToPoint`

@@ -1,0 +1,11 @@
+{
+  "status": "PASSED",
+  "dat_sha256": "9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb",
+  "scope": "fresh timeline clocks, five difficulty masks, at most 600 frames; unknown world gates and unexecuted effects stop; not complete worlds",
+  "timelines": 32,
+  "payloads_checked": 2003,
+  "attempts": 160,
+  "status_counts": {
+    "REQUIRES_CONTEXT": 160
+  }
+}
