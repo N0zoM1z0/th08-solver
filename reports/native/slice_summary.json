@@ -1,6 +1,7 @@
 {
   "status": "PASSED",
   "attempts": 21735,
+  "verified_payloads": 38110,
   "scope": "restricted native scalar scheduler, no complete worlds or spell solutions",
   "status_counts": {
     "RETURNED_SLICE": 201,

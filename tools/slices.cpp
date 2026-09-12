@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <chrono>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -90,7 +91,7 @@ int main(int argc, char **argv) try {
     matrix << "file\tsub\tdifficulty_mask\talignment\tstatus\tlast_pc\topcode\texecuted\trequests_"
               "before_stop\n";
     std::map<vm::Status, std::size_t> counts;
-    std::size_t attempts = 0;
+    std::size_t attempts = 0, verified_payloads = 0;
     vm::Workspace workspace;
     workspace.emissions.reserve(1024);
     workspace.transforms.reserve(1024);
@@ -101,6 +102,17 @@ int main(int argc, char **argv) try {
         const auto decoded = archive.decode(index);
         const auto ecl = res::parse_ecl(res::view(decoded));
         const vm::Module module(res::view(decoded), ecl);
+        for (const auto &program : module.subs)
+            for (std::size_t pc = 0; pc < program.code.size(); ++pc) {
+                const auto &op = program.code[pc];
+                const auto actual = program.payload(std::uint32_t(pc));
+                const auto expected =
+                    res::view(decoded).sub(std::size_t(op.offset) + 12, op.payload_size);
+                if (actual.size != expected.size ||
+                    (actual.size && std::memcmp(actual.data, expected.data, actual.size) != 0))
+                    throw std::runtime_error("compiled ECL payload differs from DAT");
+                ++verified_payloads;
+            }
         if (entry.name == "ecldata1.ecl")
             verify_examples(decoded, ecl, output);
         for (std::size_t sub = 0; sub < ecl.subs.size(); ++sub) {
@@ -117,11 +129,13 @@ int main(int argc, char **argv) try {
                 }
         }
     }
-    if (attempts != 21735)
+    // Includes the 1449 terminal records as well as 36661 nonterminal instructions.
+    if (attempts != 21735 || verified_payloads != 38110)
         throw std::runtime_error("slice matrix coverage gap");
     std::ofstream summary(output / "slice_summary.json");
     summary.exceptions(std::ios::badbit | std::ios::failbit);
     summary << "{\n  \"status\": \"PASSED\",\n  \"attempts\": " << attempts
+            << ",\n  \"verified_payloads\": " << verified_payloads
             << ",\n  \"scope\": \"restricted native scalar scheduler, no complete worlds or spell "
                "solutions\",\n"
             << "  \"status_counts\": {";
