@@ -1,1 +1,1 @@
-{"scope":"pinned reconstructed bodies versus maintained native predicates; not game execution","random_cases":300000,"predicate_comparisons":600000,"mismatches":0}
+{"scope":"pinned reconstructed bodies versus maintained native predicates; not game execution","random_cases":300000,"predicate_comparisons":600000,"mismatches":0,"launch_cases":180000,"launch_mismatches":0,"velocity_profile":"TH08_MODERN_PORT float32; not retail x87"}

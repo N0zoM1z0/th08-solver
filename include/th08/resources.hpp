@@ -18,6 +18,8 @@ inline View view(const Bytes &b) {
 std::uint16_t u16(View b, std::size_t offset);
 std::uint32_t u32(View b, std::size_t offset);
 std::int32_t i32(View b, std::size_t offset);
+std::int16_t i16(View b, std::size_t offset);
+float f32(View b, std::size_t offset);
 Bytes read_file(const std::filesystem::path &path);
 std::string sha256(View bytes);
 void decrypt(Bytes &bytes, std::uint8_t key, std::uint8_t increment, std::size_t chunk,
@@ -57,13 +59,25 @@ struct SpellSite {
     std::uint32_t sub, offset;
     std::uint8_t mask;
 };
+struct TimelineInstruction {
+    std::uint32_t offset;
+    std::int32_t time;
+    std::uint16_t opcode;
+    std::uint8_t size, mask;
+};
+struct Timeline {
+    std::uint32_t offset, terminal, first, count;
+};
 struct Ecl {
     // Contiguous instruction arena; subs refer to ranges, operands remain in
     // the caller-owned decrypted resource. No per-instruction payload allocation.
     std::vector<Instruction> instructions;
     std::vector<Subprogram> subs;
     std::vector<SpellSite> spells;
+    std::vector<TimelineInstruction> timeline_instructions;
+    std::vector<Timeline> timelines;
     std::size_t jump_targets_checked = 0;
+    std::size_t unknown_payloads = 0;
     std::uint16_t timeline_count = 0;
 };
 Ecl parse_ecl(View input);

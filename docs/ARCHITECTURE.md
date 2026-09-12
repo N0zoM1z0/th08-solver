@@ -23,25 +23,49 @@ uninitialized dictionary reads, ECL instruction sizes, and jump boundaries are c
 
 `Ecl` stores one contiguous instruction arena; subprograms store ranges into it.
 Operands remain in the caller-owned decoded resource and use explicit little-endian
-reads rather than host structure layouts. The current parser validates timeline
-directory entries but does not implement timeline execution, complete opcode payload
-schemas, or ANM/SHT/STD semantics. These capabilities remain in the historical
-experiments and must be migrated with comparisons.
+reads rather than host structure layouts. Every observed opcode has a checked payload
+schema. Timeline instructions, SHT headers and descriptors, ANM v3 entries/sprites/scripts,
+and STD objects/quads/instances/instructions have native bounded parsers. Parsing does
+not execute those resource programs. Shared SHT descriptors retain their occurrences;
+ANM raw IDs and directory indices remain distinct.
 
 `Program` predecodes one subprogram into fixed-size records and resolves supported
-jumps to array indices. `Workspace` reuses register validity flags, emission records,
+jumps to array indices. `Module` owns all predecoded subprograms in a resource, reused
+across matrix entries. `Workspace` reuses register validity flags, emission records,
 and transform-write records across executions. Each emission references the number
 of preceding transform writes, avoiding a full transform-table copy per emission.
 
-Restricted execution supports NOP, return, secondary-clock waits, unconditional and
-decrement jumps, integer/float assignment, float add/subtract/multiply, transform
-descriptors, and shot requests. Uninitialized registers cannot be read. Only explicitly
-initialized scalar locals and EXTRA_I0-3 can be written in the isolated context.
-Other behavior returns a status and the first stopping instruction.
+Restricted execution supports scalar arithmetic, trigonometry, point geometry, all
+twelve conditional branches, normal calls/returns, secondary-clock waits, unconditional
+and decrement jumps, transform descriptors, and shot requests. Uninitialized registers
+cannot be read. Typed local, entity, extra, and call-parameter storage can be explicitly
+initialized. Computed engine fields are not fabricated. Float selectors truncate before
+dispatch; float-to-int reads truncate toward zero; unmapped rvalue selectors remain raw.
+Unmapped lvalues would modify bytecode and remain unsupported. Signed integer overflow,
+non-finite results, and division errors stop explicitly.
+
+Normal calls save the caller clock and context registers, inherit local storage, and
+load call parameters from shared slots. Return restores context storage but preserves
+entity/shared storage. Calls exceeding fifteen saved frames, disabled-stack behavior,
+negative/truncated subprogram IDs, child-context lifetimes, and callbacks remain outside
+the verified call subset. A standalone `Program` cannot resolve a call without a `Module`.
 
 Shot records do not execute random spread, aimed direction, distance suppression,
 rank adjustment, deferred dispatch, or pool allocation. Reusing a resulting model
 still requires dependency evidence from the world layer.
+
+## Launch kinematics and numerical profile
+
+`kinematics::launch` implements all nine aim modes with caller-supplied random samples.
+It preserves fan order, the count2 (not count2-1) speed denominator, capped angle
+normalization, and the distinction between raw velocity angle and stored normalized
+angle. It allocates nothing and does not consume an implicit RNG. Its current velocity
+profile follows `TH08_MODERN_PORT` float32 sinf/cosf, not the original x87 fsincos path.
+The source oracle extracts the pinned launch switch and normalization function, then
+compares all five output float fields bitwise and checks random draw counts.
+
+This kernel runs before transform installation, pool allocation effects, spawn animation,
+rank adjustment, suppression, and collision. It is not yet a complete bullet simulation.
 
 ## Geometry and planning
 

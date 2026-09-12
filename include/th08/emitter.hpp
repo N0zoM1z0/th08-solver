@@ -18,6 +18,18 @@ struct Program {
     Program() = default;
     Program(resources::View resource, const resources::Ecl &ecl, std::size_t sub);
 };
+struct Module {
+    std::vector<Program> subs;
+    Module() = default;
+    Module(resources::View resource, const resources::Ecl &ecl);
+};
+struct CallFrame {
+    const Program *program;
+    std::uint32_t pc;
+    std::int64_t time, wait;
+    std::array<double, 101> registers;
+    std::array<bool, 101> initialized;
+};
 struct Emission {
     std::uint32_t tick, offset;
     std::int16_t opcode;
@@ -35,6 +47,7 @@ struct Workspace {
     std::array<bool, 101> initialized{};
     std::vector<Emission> emissions;
     std::vector<TransformWrite> transforms;
+    std::array<CallFrame, 15> calls;
 };
 struct Result {
     Status status = Status::horizon;
@@ -45,5 +58,7 @@ struct Result {
 // Restricted scalar scheduling only. No RNG defaults, movement, pool, ANM,
 // shot-distance gates, collision, damage or actual player targeting is executed.
 Result run(const Program &program, Workspace &workspace, std::uint8_t mask,
+           std::uint32_t horizon = 400, std::uint32_t instruction_limit = 100000);
+Result run(const Module &module, std::size_t sub, Workspace &workspace, std::uint8_t mask,
            std::uint32_t horizon = 400, std::uint32_t instruction_limit = 100000);
 } // namespace th08::emitter

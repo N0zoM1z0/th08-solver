@@ -1,0 +1,19 @@
+{
+  "status": "PASSED",
+  "timelines": 32,
+  "timeline_instructions": 2003,
+  "sht_files": 8,
+  "sht_levels": 50,
+  "sht_descriptors": 227,
+  "anm_files": 113,
+  "anm_entries": 310,
+  "anm_scripts": 1151,
+  "anm_sprites": 1917,
+  "anm_instructions": 15966,
+  "std_files": 18,
+  "std_objects": 68,
+  "std_quads": 552,
+  "std_instances": 1332,
+  "std_instructions": 641,
+  "scope": "native structure and field parsing, not complete resource execution"
+}

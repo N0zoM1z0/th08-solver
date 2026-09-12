@@ -1,1 +1,1 @@
-{"scope":"real sub40 restricted scheduling; excludes decode/compile, world, collision and planning","batch_size":1000,"batches":41,"median_batch_average_ns":12869.3,"p95_batch_average_ns":13686.2,"checksum":1080}
+{"scope":"real sub40 restricted scheduling; excludes decode/compile, world, collision and planning","batch_size":1000,"batches":41,"median_batch_average_ns":18773.9,"p95_batch_average_ns":25170.5,"checksum":1080}

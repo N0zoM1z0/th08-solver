@@ -32,9 +32,12 @@ and execution statuses, without extracting game assets to disk.
   validate 2,182 jump targets.
 - Preserve 431 spell-start occurrences and all 222 original spell IDs without
   merging main-game, practice, or difficulty sources.
+- Parse 32 timelines, 8 SHT, 113 ANM, and 18 STD resources with checked native schemas.
 - Attempt restricted scalar scheduling for every subprogram under five difficulty
   masks and three alignment overrides: 21,735 combinations.
 - Verify real Wriggle sub40/41/42 scheduling, request counts, and ordered emission digests.
+- Execute scalar arithmetic, conditional branches, and context-preserving calls;
+  compare all nine launch modes against pinned source with explicit random samples.
 - Query bullet and laser geometry using an owned, contiguous spatial index;
   propose finite-horizon beam paths and replay them against an unindexed reference.
 
@@ -74,8 +77,9 @@ ctest --test-dir build --output-on-failure
 ./build/source_oracle reports/native/source_oracle.json
 ```
 
-The native generator verifies the complete hashes of two reference source files,
-then extracts unmodified collision functions into the build directory. This comparison
+The native generator verifies reference source hashes, then extracts unmodified
+collision functions, angle normalization, and the launch switch into the build directory.
+It checks 600,000 collision predicates and 180,000 launch cases. This comparison
 does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks
