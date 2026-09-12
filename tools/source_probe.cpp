@@ -1,6 +1,7 @@
 // Materialize a native test TU from the exact pinned reconstruction functions.
 // Only generated build files are written; the source checkout remains untouched.
 #include "ecl_source_probe.hpp"
+#include "transform_source_probe.hpp"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -39,6 +40,7 @@ constexpr const char *prefix = R"CPP(
 #include <th08/laser_motion.hpp>
 #include <th08/rng.hpp>
 #include <th08/emitter.hpp>
+#include <th08/transform_program.hpp>
 #include <cmath>
 #include <cstdint>
 #include <iostream>
@@ -50,6 +52,7 @@ using f32=float;
 using i32=int32_t;
 using u32=uint32_t;
 using u16=uint16_t;
+using i16=int16_t;
 using ZunBool=int;
 constexpr float ZUN_PI=3.14159265358979323846f;
 constexpr float ZUN_2PI=ZUN_PI*2.0f;
@@ -90,13 +93,19 @@ constexpr int BULLET_TRANSFORM_STATE_POLAR_ACCELERATION=2;
 constexpr int BULLET_TRANSFORM_STATE_DIRECTION_CHANGE=3;
 using SoundIdx=int;
 struct Sound {void PlaySoundByIdx(int,int){}} g_SoundPlayer;
-struct Supervisor {float framerateMultiplier=1; void TickTimer(int*,float*);} g_Supervisor;
+struct Supervisor {
+    float framerateMultiplier=1;
+    struct {bool forceExtraTimerStep=false;} flags;
+    void TickTimer(int*,float*);
+} g_Supervisor;
 struct MotionState {
     ZunTimer timer;
     int directionChangeIntervalFrames=0,directionChangeRepeatCount=0,directionChangesCompleted=0;
     float directionChangeAngle=0,directionChangeSpeed=0;
     int durationFrames=0;
     float speedDelta=0,angleDelta=0;
+    float accelerationMagnitude=0,accelerationAngle=0,bounceSpeed=0;
+    int bounceLimit=0,bouncesCompleted=0;
     Float3 vector;
 };
 struct Bullet {
@@ -170,6 +179,7 @@ constexpr const char *suffix = R"CPP(
 int main(int argc,char** argv) {
     const auto ecl_random=ecl_reference::compare();
     const auto acceleration=compare_acceleration();
+    const auto transforms=compare_transforms();
     std::mt19937 rng(20260912);
     auto uniform=[&](float low,float high) {
         return std::uniform_real_distribution<float>(low,high)(rng);
@@ -365,8 +375,10 @@ int main(int argc,char** argv) {
         << ",\"ecl_random_mismatches\":" << ecl_random.mismatches
         << ",\"acceleration_frames\":" << acceleration.frames
         << ",\"acceleration_mismatches\":" << acceleration.mismatches
+        << ",\"transform_steps\":" << transforms.steps
+        << ",\"transform_mismatches\":" << transforms.mismatches
         << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
-    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches||acceleration.mismatches?1:0;
+    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches||acceleration.mismatches||transforms.mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -419,6 +431,8 @@ int main(int argc, char **argv) try {
     preamble.insert(preamble.find("    void FromAngleMagnitude"),
                     function(math, "Float3 *operator+=") + "\n");
     out << preamble << function(supervisor, "void Supervisor::TickTimer(") << '\n'
+        << function(supervisor, "void ZunTimer::Increment(") << '\n'
+        << function(supervisor, "void ZunTimer::Decrement(") << '\n'
         << function(player_bomb, "f32 VectorAngle(") << '\n'
         << function(background, "Float3 Float3::operator*(") << '\n'
         << function(global, "void Rng::SetSeed(") << '\n'
@@ -448,7 +462,8 @@ int main(int argc, char **argv) try {
         << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'
         << function(player, "u32 Player::CalcLaserHitbox(") << '\n'
-        << ecl_reference(repo) << "\n#include \"source_acceleration_cases.hpp\"\n"
+        << ecl_reference(repo) << transform_reference(repo)
+        << "\n#include \"source_acceleration_cases.hpp\"\n#include \"source_transform_cases.hpp\"\n"
         << suffix;
 } catch (const std::exception &error) {
     std::cerr << error.what() << '\n';

@@ -15,7 +15,7 @@ The game is not launched in this phase.
    candidate-independent models, and independent path replay.
 5. Actual sub40/41/42 regressions, source-function predicate comparisons,
    unit tests, and consistent clang-format formatting.
-6. Twelve Release and eleven ASan/UBSan CTest cases pass. Sanitizer checks also cover the
+6. Thirteen Release and twelve ASan/UBSan CTest cases pass. Sanitizer checks also cover the
    native parsers, restricted-execution matrix and both 600-frame particle fixtures,
    including the latest signed-laser/fractional-clock changes.
 7. All observed ECL payload schemas; 32 timelines / 2003 instructions; eight SHT files
@@ -51,7 +51,12 @@ The game is not launched in this phase.
 15. Allocation-free deceleration, vector and polar acceleration kernels, plus vector
     installation. The oracle compares 256979 acceleration frames at changing frame
     rates with the pinned methods, vector operators and real timer, without mismatches.
-    General transform-table scheduling and overlapping effects remain separate work.
+16. Eighteen-record transform scheduling for acceleration, shared direction changes,
+    wait, cull delay, sound and despawn requests. Another 103841 source comparisons
+    cover installation, gates, overlapping effects, fractional wait clocks and sound
+    order. Both particle fixtures now use this executor for birth-time installation,
+    with unchanged frame and route files. Bounce/wrap, sprite replacement, child
+    patterns, complete despawn lifecycle and pool ownership remain unsupported.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the
