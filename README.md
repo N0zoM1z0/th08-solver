@@ -29,6 +29,15 @@ Supply your own DAT under the ignored `game_data_donottrack/` directory.
 Tools verify its SHA-256 before analysis. They write summaries, source indices,
 and execution statuses, without extracting game assets to disk.
 
+The ANM audit supplies no RNG by default and stops when a script needs one. An
+optional explicit seed runs a separate component profile, reset for each script:
+
+```sh
+./build/th08_animation_cases game_data_donottrack/th08.dat reports/local/anm-seed0 0
+```
+
+This profile is not the shared RNG order of a complete game world.
+
 ## Current capabilities
 
 - Decode all 317 archive members and hash each decoded payload.
@@ -55,10 +64,18 @@ and execution statuses, without extracting game assets to disk.
   transform programs, including shared direction state and overlapping effects.
 - Select bullet slots with a compact bitset while preserving circular scan order
   and parent/child cursor completion; full allocation lifecycles remain separate.
+- Execute ANM lifecycle control, typed scalar arithmetic, branches and hit-animation
+  metadata with optional caller-owned RNG and atomic failed calls. Audit all 1,151
+  scripts without inventing random state; rendering remains outside the projection.
+- Project enemy polar, interpolated and orbital movement with separate velocity
+  and position phases, explicit parent coordinates and source-ordered bounds.
+- Apply pending ECL movement effects transactionally across motion, scalar storage,
+  execution and RNG; preserve repeated operand reads and same-frame resumption.
 
-Complete ECL worlds, enemy/bullet lifecycles, ANM, damage, RNG consumption chains,
-and complete spell routes remain unimplemented. `RETURNED_SLICE` means a restricted
-subprogram returned; `BOUNDED_PREFIX` means the requested horizon was reached.
+Complete ECL worlds, enemy/bullet lifecycles, ANM rendering/resource integration,
+damage, world RNG consumption chains and complete spell routes remain unimplemented.
+`RETURNED_SLICE` means a restricted subprogram returned; `BOUNDED_PREFIX` means
+the requested horizon was reached.
 **Verified complete spell solutions: 0.** The planner currently uses synthetic
 collision-window and source-driven particle fixtures, not a complete Reisen spell.
 
@@ -66,8 +83,8 @@ collision-window and source-driven particle fixtures, not a complete Reisen spel
 
 | Path | Purpose |
 |---|---|
-| `include/th08/` | Resource, emitter, geometry, and planner interfaces |
-| `src/` | Native DAT/ECL parsing and restricted scheduling |
+| `include/th08/` | Resource, execution, motion, geometry, and planner interfaces |
+| `src/` | Native parsing, restricted scheduling, and world-effect bridges |
 | `tools/` | Native auditing, matrix execution, and source-oracle generation |
 | `tests/` | Boundary, ownership, differential, and planner contract tests |
 | `benchmarks/` | Repeatable performance experiments with explicit scope |
@@ -97,7 +114,9 @@ collision functions, angle normalization, and the launch switch into the build d
 It checks 600,000 collision predicates, 180,000 launch cases, and hundreds of thousands
 of direction-transform and laser-lifecycle frames. It also covers every 16-bit RNG
 seed, ECL random assignments, acceleration frames, transform-program steps and
-bullet-slot selection/cursor operations and ANM lifecycle control blocks.
+bullet-slot selection/cursor operations. ANM adds 48,224 control frames and 228,669
+scalar calls; enemy motion adds 580,000 phases, and the movement-effect bridge adds
+109,860 source comparisons. Four separate checks enforce native transaction rollback.
 This does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks

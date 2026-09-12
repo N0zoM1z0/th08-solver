@@ -1,6 +1,6 @@
 # Current status
 
-2026-09-12: native particle integration, laser lifecycle, search optimization, and RNG expanded.
+2026-09-12: source-verified ANM scalar control and enemy/world movement integration expanded.
 There is no Python dependency. Verified complete offline spell solutions: 0.
 The game is not launched in this phase.
 
@@ -15,7 +15,7 @@ The game is not launched in this phase.
    candidate-independent models, and independent path replay.
 5. Actual sub40/41/42 regressions, source-function predicate comparisons,
    unit tests, and consistent clang-format formatting.
-6. Fifteen Release and fourteen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
+6. Seventeen Release and sixteen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
    native parsers, restricted-execution matrix and both 600-frame particle fixtures,
    including the latest signed-laser/fractional-clock changes.
 7. All observed ECL payload schemas; 32 timelines / 2003 instructions; eight SHT files
@@ -69,17 +69,32 @@ The game is not launched in this phase.
     Complete owned instruction payloads retain long world commands; all 38110
     compiled payloads (including terminal records) match the DAT byte-for-byte.
     The 21735-entry legacy matrix and both particle fixtures remain unchanged.
-    This adds the execution boundary, not the still-missing world effect handlers,
-    fractional ECL clocks, child contexts, enemy movement or callback frame tail.
-19. ANM lifecycle control now executes literal jumps, waits, stop/hide/static/delete,
-    sprite replacement, visibility, interrupts and interrupt returns with fractional
-    clocks and explicit external freeze/extra-timer flags. The pinned control blocks
-    match across 48224 frames. All 1151 DAT scripts are audited for 600 calls: 309
-    complete this projection, 756 remain bounded prefixes, and 86 stop as unsupported;
-    none are invalid. All 42 earlier timing certificates independently agree, including
-    separate verification of frame-30000 endings. Arithmetic, masked operands, RNG,
-    player-shot hit-animation selection, rendering and world lifecycle integration
-    remain missing; an ANM completion is not a completed spell.
+    This adds the execution boundary, not fractional ECL clocks, child contexts or
+    the callback frame tail. Movement handlers now consume that boundary as below.
+19. ANM lifecycle control executes jumps, waits, stop/hide/static/delete, sprite
+    replacement, visibility, interrupts/returns, typed scalar arithmetic, comparisons,
+    masked operands, explicit RNG and player-shot hit-animation selection. The pinned
+    control blocks match across 48224 frames; scalar/accessor comparisons add 228669
+    calls without mismatches. All 1151 DAT scripts are audited for 600 calls: without
+    RNG, 340 complete the projection, 800 remain bounded and 11 require context;
+    none stop as unsupported or invalid. Independently seeded fixtures (0 and 65535
+    reset per script) each yield 350 completed / 801 bounded; these are not whole-world
+    draw-order claims. All 42 timing certificates independently agree, including
+    separate frame-30000 checks. Rendering, visual interpolation, sprite resources
+    and world lifecycle integration remain separate; ANM completion is not a spell.
+20. Allocation-free enemy polar, interpolated and orbital movement preserves source
+    local/world coordinates, mirroring, clamping, parent offsets and fractional clocks.
+    Velocity update and position integration remain separate around the shot/ANM phase.
+    Another 580000 source phases pass bitwise comparisons, including changing rates.
+21. Thirteen ECL movement effects (63..76 except random-in-bounds opcode 67) now apply
+    transactionally to the same enemy and scalar storage used by resumable execution.
+    Typed packed/cold operands share the scalar resolver. Source-ordered assignments,
+    live computed-field reads and repeated RNG reads are preserved; ambiguous pairs
+    of random factors still stop explicitly. The pinned effect/operand blocks match
+    across 109860 effects, with four additional native atomic-failure checks. Coincident
+    player aiming has a minimized fail-before/pass-after regression. Missing context
+    leaves enemy, workspace, pending instruction and RNG unchanged. This does not
+    implement the enemy manager, timeline, spawning, shot dispatch or ending lifecycle.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the
@@ -111,11 +126,12 @@ can differ from these initial snapshots.
 | 6 | Rising and Hourai Jewel RNG, lifecycle, and asynchronous re-aiming | Actions may change the world; cached predictions invalidate correctly |
 | 7 | Assemble complete offline phase worlds and solve routes | Cover source/difficulty/entry-state variants; preserve counterexamples and limits |
 
-The next ANM blockers are explicit: opcode 83 accounts for 56 scripts; integer
-assignment for 16, random float assignment for 10, masked waits for three and
-integer division for one. Extend those through the same shared-world RNG and
-operand ownership contract, then replace fixed bullet lifetime certificates with
-the verified runtime where necessary. Do not infer world completion from this queue.
+The ANM instruction blockers in the previous baseline are resolved within the control
+projection. The remaining 11 unseeded entries require the actual shared RNG context,
+not arbitrary seeds. Next connect resource identity and lifecycle consumers without
+discarding visual state that those consumers read. The first complete-world path
+also needs real timeline gates, spawning/child contexts, effect RNG consumers, dynamic
+movement opcode 67, damage and callbacks. Do not infer world completion from this queue.
 
 The indices define the all-case work queue; each item still requires behavior
 implementation and verification. Online input control, game launch, and latency

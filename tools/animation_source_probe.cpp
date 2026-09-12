@@ -18,12 +18,14 @@ std::string animation_reference(const std::filesystem::path &repo) {
             throw std::runtime_error("missing pinned ANM control block");
         return body.substr(begin, end - begin);
     };
-    return "\nnamespace anm_reference {\n" + function(header, "enum AnmOpcode") + R"CPP(;
+    return "\nnamespace anm_reference {\n" + function(header, "enum AnmOpcode") + ";\n" +
+           function(header, "enum AnmVariable") + R"CPP(;
 enum { FALSE=0, TRUE=1 };
 using u8=std::uint8_t;
+Rng g_Rng;
 struct AnmRawInstr {
     i16 opcode; u16 instructionSize; i16 time; u16 varMask;
-    i32 intArgs[5];
+    union { i32 intArgs[5]; f32 floatArgs[5]; u8 byteArgs[20]; };
 };
 struct AnmVm;
 struct AnmLoaded { void SetSprite(AnmVm*,int); };
@@ -33,21 +35,32 @@ struct AnmVm {
     AnmRawInstr* interruptReturnInstruction=nullptr;
     ZunTimer currentTimeInScript,waitTimer,interruptReturnTime;
     i32 sprite=-1,timeOfLastSpriteSet=0;
+    i32 intVar0=0,intVar1=0,intVar2=0,intVar3=0,counterVar0=0,counterVar1=0;
+    f32 floatVar0=0,floatVar1=0,floatVar2=0,floatVar3=0;
+    i32 playerBulletHitAnimationType=0;
     i16 pendingInterrupt=0;
     u32 visible:1; u32 stopped:1;
     bool flag19=false;
     AnmLoaded* anmFile=nullptr;
     // Initialize zeroes the base, then initializes only currentTimeInScript.
     AnmVm():visible(0),stopped(0){waitTimer.previous=0;}
-    int GetIntVar(int) { throw std::runtime_error("ANM oracle variable outside control scope"); }
+    i32 GetIntVar(i32);
+    f32 GetFloatVar(f32);
+    i32* GetIntVarPtr(i32*,u16,u32);
+    f32* GetFloatVarPtr(f32*,u16,u32);
 };
 void AnmLoaded::SetSprite(AnmVm* vm,int sprite) {vm->sprite=sprite;}
 struct AnmManager { ZunBool ExecuteScript(AnmVm*); };
-)CPP" + section("ZunBool AnmManager::ExecuteScript(", "        case AnmOpcode_Scale:") +
-           section("        case AnmOpcode_Jmp:", "        case AnmOpcode_JmpDec:") +
+)CPP" + function(text, "f32 AnmVm::GetFloatVar(") +
+           "\n" + function(text, "i32 AnmVm::GetIntVar(") + "\n" +
+           function(text, "f32 *AnmVm::GetFloatVarPtr(") + "\n" +
+           function(text, "i32 *AnmVm::GetIntVarPtr(") + "\n" +
+           section("ZunBool AnmManager::ExecuteScript(", "        case AnmOpcode_Scale:") +
+           section("        case AnmOpcode_Jmp:", "        case AnmOpcode_FlipX:") +
            section("        case AnmOpcode_Wait:", "        case AnmOpcode_AnchorTopLeft:") +
-           // Visual writes and scalar instructions are deliberately outside this
-           // oracle's control-only input domain, not silently accepted stubs.
+           section("        case AnmOpcode_Ins83:", "        case AnmOpcode_Ins88:") +
+           section("        jump:", "        default:") +
+           // Visual writes are outside this oracle's input domain, not stubs.
            "        case AnmOpcode_Nop:\n        case AnmOpcode_InterruptLabel: break;\n"
            "        default: throw std::runtime_error(\"ANM oracle opcode outside control "
            "scope\");\n"

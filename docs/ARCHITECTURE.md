@@ -61,8 +61,8 @@ still requires dependency evidence from the world layer.
 
 An optional caller-owned RNG enables isolated scalar execution, including random
 integer/unit/signed-unit/angle selectors and random-sign assignments. Calls use the
-same stream; context return never restores it. The current verified instruction
-domain permits at most one RNG-consuming expression: two random operands, or a
+same stream; context return never restores it. This isolated scalar domain
+permits at most one RNG-consuming expression: two random operands, or a
 random sign combined with a random operand, stop as unsupported because expression
 evaluation order is not yet established. On a blocked instruction the RNG returns
 to that instruction's entry state; completed instructions retain their draws.
@@ -93,6 +93,34 @@ slice. The default no-RNG mode and its all-entry matrix remain unchanged. The so
 oracle preserves the original random selector blocks and assignment bodies, with
 narrow local-storage adapters, for 720896 additional bitwise value/seed comparisons.
 
+`decode_operands` exposes the same typed selectors to world handlers. Each field
+declares its byte offset, signed16/signed32/float32 type and independent flag index;
+raw fields ignore flags. Up to sixteen fields use fixed scratch storage, including
+checked access to complete payloads beyond the eight inline words. Output and RNG
+remain unchanged on failure; decoding alone neither mutates nor acknowledges a world
+effect. The default rejects multiple random expressions. `source_ordered_fields`
+is valid only when separate source statements establish that order, not when C++
+leaves operand order unspecified.
+
+`world::apply_motion_effect` handles pending ECL instructions 63..76 except 67.
+Motion, scalar storage, RNG and the execution acknowledgement commit together only
+after every operation succeeds. Missing player/RNG/register input, invalid state,
+and unsupported evaluation order leave the instruction pending and all inputs
+unchanged. Opcode 67 and other unhandled effects remain explicit `not_handled`.
+This rollback is the native interface contract, not a claim that the source engine
+rolls back failed instructions.
+
+The handler reads operands at their source statement boundaries. Later operands
+can observe an angle or interpolation field written earlier in the same instruction.
+Finite polar setup rereads speed for x and y, and rereads duration at its original
+sites; caching those values would change RNG consumption and state-dependent reads.
+Two random factors in the same product remain unsupported. Aimed opcodes use local
+position, while player-angle selectors use world position; coincident x/y returns
+pi/2, including signed zero. `publish_motion` uses the caller's phase-correct world
+position, preserves unrelated registers and invalidates player-derived slots when
+no player is supplied. Applying an effect is not velocity update or displacement.
+The owning world still schedules actors, child contexts, callbacks, shots and ANM.
+
 ## Launch kinematics and numerical profile
 
 `random::Rng` owns an explicit 16-bit seed, unsigned draw counter, and optional
@@ -117,6 +145,8 @@ rank adjustment, suppression, and collision. It is not yet a complete bullet sim
 
 ## Lifecycle projections
 
+### ANM execution
+
 `animation::certify_timing` proves completion time and one immutable sprite for a
 restricted straight-line ANM script. It explicitly rejects unsupported instructions,
 variable masks, and sprite replacement. Accepted visual-only writes cannot influence
@@ -125,11 +155,12 @@ into a new bullet. The certificate requires a unit-rate clock and no external in
 The full resource audit currently certifies 42 scripts and rejects 1109 as unsupported.
 
 `animation::control` adds an allocation-free runtime projection for clocks, PC,
-sprite identity, visibility and stop/interrupt state. Immutable contiguous programs
-predecode jumps and stable-sort interrupt labels: the first exact match wins, while
+sprite identity, visibility, stop/interrupt state, typed variables and player-shot
+hit-animation metadata. Immutable contiguous programs predecode jumps and
+stable-sort interrupt labels: the first exact match wins, while
 an unmatched interrupt uses the last default label. Runtime state owns all clocks
-and the single interrupt-return slot; failed calls leave it unchanged. An initial
-call executes template time zero. The zeroed wait timer and initialized main timer
+and the single interrupt-return slot. An initial call executes template time zero.
+The zeroed wait timer and initialized main timer
 retain their distinct source initialization states.
 
 ANM executes instructions whose time is less than or equal to the current integer
@@ -140,16 +171,68 @@ affects decrement but not the frame-tail tick. Missing interrupts clear the stop
 flag and hold the clock for that call. Interrupt return restores the saved full
 clock and PC without clearing the return slot, matching the source.
 
-Only literal control and an enumerated set of visual-only writes are accepted.
-Projected-out visual fields cannot feed the exposed control observables; their
-rendering, interpolations and effects on other consumers are not implemented here.
-Masked operands, arithmetic/RNG, player-shot hit-animation writes and unknown opcodes
-stop explicitly. Sprite resource loading, dimensions and external lifecycle gates
-remain the world's responsibility. The source oracle extracts unchanged control
-blocks with the real ZunTimer, excluding visual/scalar instructions from its input
-domain. The all-script matrix records a separate bounded baseline with no interrupts.
-Long frame-30000 timing certificates are checked separately, not relabeled as
+Four integer variables, four float variables and two integer counters are owned and
+zero-initialized as in the source initialization. Masked reads support cross-type
+conversion; float selectors truncate before dispatch. Writes stay strictly typed:
+literal or unmapped destinations would modify bytecode and remain unsupported.
+Arithmetic, trigonometry, decrement jumps and twelve comparisons preserve native
+float32 behavior within the finite, defined-arithmetic domain. Overflow, invalid
+conversions and division/domain errors stop explicitly. Opcode 83 stores its raw
+hit-animation selector even when masked; it does not execute a player-hit effect.
+
+The final optional argument to `control::advance` is `random::Rng*`. No stream is
+invented when it is null: random instructions return `requires_context`. Failed calls
+roll back the entire State and RNG, including earlier instructions in that call;
+`Result.pc` still identifies the failing instruction. Successful prior calls retain
+their draws. The caller may advance the same stream
+for other world actors between ANM calls. Integer zero ranges consume no draws,
+while float zero ranges still consume two.
+
+Enumerated visual writes are projected out after typed operand checks; those fields
+cannot feed the exposed scalar/control observables. Their rendering, interpolation
+and effects on other consumers remain unimplemented. Unknown opcodes, sprite resource
+loading, dimensions and external lifecycle gates remain explicit boundaries. The
+source oracle retains unchanged control/scalar blocks, all four typed accessors,
+actual RNG and ZunTimer: 48224 control frames and 228669 scalar calls match.
+
+The 1151-script audit runs 600 unit-rate calls without interrupts: 340 complete this
+projection, 800 remain bounded and 11 require RNG context. Separately, explicit
+per-script seeds 0 and 65535 each yield 350 completions and 801 bounded prefixes;
+these independent streams do not establish world draw order. The original 13 columns
+of all 1065 previously supported rows are unchanged. The 42 timing certificates,
+including frame-30000 endings, are checked separately rather than relabeled as
 600-call completions.
+
+### Enemy movement phases
+
+`enemy::State` owns local position, offset, published world position, velocity,
+interpolation/orbit fields, fractional clock, bounds and motion flags. None, polar,
+interpolated and orbital modes preserve their different expiry and z behavior.
+Resolved configuration helpers do not evaluate ECL operands or consume RNG.
+Zero-duration interpolation is invalid; source-representable negative relative
+durations expire on the first update. Easing is a three-bit source field, including
+the unnamed value 7 that follows the linear default.
+
+The source phase order is part of the API contract:
+
+```text
+all ECL contexts -> update_velocity -> shot/ANM phase -> integrate_position
+```
+
+Velocity update must not be fused with displacement: shots and ANM observe the
+intervening state. Integration preserves pre/post movement clamping, mirrored x,
+the prior-displacement sample and skip-movement behavior. Bounds use the source's
+ordered branches even when inverted. Parent inheritance takes the parent's local
+position; an unresolved existing parent blocks instead of becoming a zero offset.
+ECL world-position refresh retains z, while the manager integration phase zeros
+published world z. Both phases are allocation-free and failure-atomic.
+
+The oracle compares 580000 configuration/update/integration phases with pinned
+methods and manager code. The effect bridge separately compares 109860 instruction
+effects, with four native rollback checks. These checks do not supply enemy creation,
+pause/death/alignment gates, callbacks, shot/ANM scheduling or a complete world loop.
+
+### Bullet and laser motion
 
 `bullet::advance_direction` models relative, absolute and aimed changes. Missing target
 angles block only a firing frame and leave state unchanged. Integer firing thresholds,

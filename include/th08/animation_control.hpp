@@ -1,10 +1,18 @@
 #pragma once
 #include "formats.hpp"
+#include "rng.hpp"
 #include <array>
 #include <limits>
 
 namespace th08::animation::control {
-enum class Status { advanced, completed, unsupported, invalid, instruction_limit };
+enum class Status {
+    advanced,
+    completed,
+    unsupported,
+    invalid,
+    instruction_limit,
+    requires_context
+};
 const char *name(Status status);
 struct Operation {
     std::uint32_t offset = 0, target = 0;
@@ -34,18 +42,23 @@ struct State {
     std::int16_t pending_interrupt = 0;
     bool active = true, visible = false, stopped = false, frozen = false;
     bool has_return = false;
+    std::array<std::int32_t, 4> integers{};
+    std::array<float, 4> floats{};
+    std::array<std::int32_t, 2> counters{};
+    std::int32_t player_bullet_hit_animation_type = 0;
 };
 struct Result {
     Status status = Status::advanced;
     std::uint32_t pc = 0, executed = 0;
 };
-// Lifecycle projection only: control clocks, visibility and sprite identity.
-// Literal visual-only writes cannot feed these observables and are projected out.
-// Variable masks, arithmetic/RNG, mutable bytecode and unknown opcodes stop.
+// Lifecycle/scalar projection: clocks, sprite identity, typed variables and hit metadata.
+// Visual writes cannot feed these observables and are projected out after operand checks.
+// Mutable bytecode and unknown opcodes stop; RNG requires a caller-owned stream.
 // Programs are immutable shared data; State owns every mutable projected field.
 // A fresh State needs one advance for SetAndExecuteScript's time-zero execution.
 // The caller resolves sprite resources and gates external interrupts/freezes.
-// Failure is atomic. Budget is per call, including an initial interrupt dispatch.
+// State and RNG failure are atomic. Budget is per call, including interrupt dispatch.
 Result advance(const Program &program, State &state, float multiplier = 1,
-               bool force_extra_timer_step = false, std::uint32_t instruction_limit = 100000);
+               bool force_extra_timer_step = false, std::uint32_t instruction_limit = 100000,
+               random::Rng *rng = nullptr);
 } // namespace th08::animation::control
