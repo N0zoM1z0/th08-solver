@@ -1,0 +1,13 @@
+{
+  "status": "PASSED",
+  "dat_sha256": "9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb",
+  "scope": "600 unit-rate calls from fresh lifecycle projection; no external interrupts, renderer or complete spell worlds",
+  "scripts": 1151,
+  "certificates_checked": 42,
+  "status_counts": {
+    "BOUNDED_PREFIX": 756,
+    "COMPLETED": 309,
+    "UNSUPPORTED": 86,
+    "INVALID": 0
+  }
+}

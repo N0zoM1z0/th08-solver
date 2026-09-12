@@ -19,6 +19,7 @@ ctest --test-dir build --output-on-failure
 ./build/th08_audit game_data_donottrack/th08.dat reports/native
 ./build/th08_slices game_data_donottrack/th08.dat reports/native
 ./build/th08_motion_cases game_data_donottrack/th08.dat reports/native
+./build/th08_animation_cases game_data_donottrack/th08.dat reports/native
 ./build/geometry_bench reports/native/geometry_benchmark.json
 ./build/planner_bench reports/native/planner_benchmark.json
 ./build/bullet_slots_bench reports/native/bullet_slots_benchmark.json
@@ -96,7 +97,7 @@ collision functions, angle normalization, and the launch switch into the build d
 It checks 600,000 collision predicates, 180,000 launch cases, and hundreds of thousands
 of direction-transform and laser-lifecycle frames. It also covers every 16-bit RNG
 seed, ECL random assignments, acceleration frames, transform-program steps and
-bullet-slot selection/cursor operations.
+bullet-slot selection/cursor operations and ANM lifecycle control blocks.
 This does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks

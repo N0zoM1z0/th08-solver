@@ -25,6 +25,7 @@ unchanged. Their code is not automatically promoted into a verified component.
 | Acceleration updates | Pinned Bullet methods, Float3 operators, VectorAngle and ZunTimer | 256979 frames over three modes and changing frame rates | Retail x87; complete lifecycle |
 | Transform scheduling | Pinned payload layouts, AdvanceTransformProgram, fired dispatch block, update methods and playfield predicate | 120748 birth/update steps, including simultaneous effects, shared turns/wrap clocks, bounce thresholds, wait decrement and sound order | Sprites, child patterns and complete lifecycle |
 | Bullet slot selection | Unchanged selection loop and final cursor-update block from SpawnSingleBullet | 300000 reservation/release/completion operations, including nested cursor completion | Launch RNG, storage initialization, cancellation and complete pool lifecycle |
+| ANM lifecycle control | Pinned ExecuteScript control blocks, opcode enumeration and actual ZunTimer | 48224 frames with changing rates, waits, stop/hide, duplicate/default labels, interrupt return, freeze and extra timer steps; 1151-script DAT baseline and 42 timing certificates | Visual interpolation/rendering, scalar/RNG execution, resource-loading effects and world lifecycles |
 | Spatial index | Unindexed hazard scan | Random scenes, cell boundaries, exact contact, snapshot ownership, invalid arguments | Formal proof for all float inputs |
 | Wriggle scheduling | Actual DAT and historical event digests | sub40/41 ordered digests, 360 ticks, 160 commands, 840 requests; sub42 alignment variants | Successful allocation, bullet motion, complete spells |
 | Planning | Explicit collision-restoration fixture | Legal actions, terminal region, unindexed replay, budget failure without a route | Reisen gameplay or complete search |
@@ -34,6 +35,13 @@ The scalar adapter also pins `EclManager.hpp`, `EclOperandsInt.cpp`,
 `EclOperandsFloat.cpp` and `EclRunLow.inl`; their hashes are enforced in
 `tools/ecl_source_probe.cpp`. Only selected random cases and assignment bodies are
 extracted. Local-storage adapters are fixture scaffolding, not complete enemy layouts.
+The ANM adapter pins `AnmManager.cpp` (`c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce`),
+`AnmManager.hpp` (`df96ae2abd43ffc64a5967451fcd3ca5b83b75f6ad6ed37ba852370855c7f582`),
+and base initialization in `AsciiManager.cpp`
+(`86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1`).
+It retains exact control blocks and the final script-clock tick, not the omitted
+render interpolation tail. Its sprite adapter records identity only. Unsupported
+reference inputs throw instead of pretending to execute scalar or visual commands.
 The reference checkout is not modified. Competing laser interpretations differ on
 whether player extents also rotate; production function output supports center-only
 rotation. Snapshot ownership tests distinguish a stable owned index from a borrowed
