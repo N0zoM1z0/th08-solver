@@ -74,27 +74,40 @@ struct Float3 {
     Float3(float a,float b,float c=0):x(a),y(b),z(c){}
     Float3 operator+(Float3 b)const{return {x+b.x,y+b.y,z+b.z};}
     Float3 operator-(Float3 b)const{return {x-b.x,y-b.y,z-b.z};}
+    Float3 operator*(f32 scalar)const;
     Float3 operator/(float s)const{return {x/s,y/s,z/s};}
     void FromAngleMagnitude(float a,float m){x=cosf(a)*m;y=sinf(a)*m;}
 };
 constexpr unsigned BULLET_TRANSFORM_CHANGE_DIRECTION_RELATIVE=0x40;
 constexpr unsigned BULLET_TRANSFORM_CHANGE_DIRECTION_AIMED=0x80;
 constexpr unsigned BULLET_TRANSFORM_CHANGE_DIRECTION_ABSOLUTE=0x100;
-constexpr int BULLET_TRANSFORM_STATE_DIRECTION_CHANGE=0;
+constexpr unsigned BULLET_TRANSFORM_DECELERATE=1;
+constexpr unsigned BULLET_TRANSFORM_ACCELERATE_VECTOR=0x10;
+constexpr unsigned BULLET_TRANSFORM_ACCELERATE_POLAR=0x20;
+constexpr int BULLET_TRANSFORM_STATE_DECELERATION=0;
+constexpr int BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION=1;
+constexpr int BULLET_TRANSFORM_STATE_POLAR_ACCELERATION=2;
+constexpr int BULLET_TRANSFORM_STATE_DIRECTION_CHANGE=3;
 using SoundIdx=int;
 struct Sound {void PlaySoundByIdx(int,int){}} g_SoundPlayer;
 struct Supervisor {float framerateMultiplier=1; void TickTimer(int*,float*);} g_Supervisor;
-struct TurnState {
+struct MotionState {
     ZunTimer timer;
     int directionChangeIntervalFrames=0,directionChangeRepeatCount=0,directionChangesCompleted=0;
     float directionChangeAngle=0,directionChangeSpeed=0;
+    int durationFrames=0;
+    float speedDelta=0,angleDelta=0;
+    Float3 vector;
 };
 struct Bullet {
     Float3 position,velocity;
     float angle=0,speed=0;
     int transformSound=-1;
     unsigned activeTransformFlags=0;
-    TurnState exStates[1];
+    MotionState exStates[4];
+    void UpdateDeceleration();
+    void UpdateVectorAcceleration();
+    void UpdatePolarAcceleration();
     void UpdateRelativeDirectionChange();
     void UpdateAbsoluteDirectionChange();
     void UpdateAimedDirectionChange();
@@ -156,6 +169,7 @@ struct LaserRecorder {
 constexpr const char *suffix = R"CPP(
 int main(int argc,char** argv) {
     const auto ecl_random=ecl_reference::compare();
+    const auto acceleration=compare_acceleration();
     std::mt19937 rng(20260912);
     auto uniform=[&](float low,float high) {
         return std::uniform_real_distribution<float>(low,high)(rng);
@@ -258,10 +272,10 @@ int main(int argc,char** argv) {
         reference.angle=flight.angle;
         reference.speed=flight.speed;
         reference.activeTransformFlags=mode==TurnMode::relative?0x40:mode==TurnMode::absolute?0x100:0x80;
-        reference.exStates[0].directionChangeIntervalFrames=turn.interval;
-        reference.exStates[0].directionChangeRepeatCount=turn.repeats;
-        reference.exStates[0].directionChangeAngle=turn.angle;
-        reference.exStates[0].directionChangeSpeed=turn.speed;
+        reference.exStates[3].directionChangeIntervalFrames=turn.interval;
+        reference.exStates[3].directionChangeRepeatCount=turn.repeats;
+        reference.exStates[3].directionChangeAngle=turn.angle;
+        reference.exStates[3].directionChangeSpeed=turn.speed;
         g_Supervisor.framerateMultiplier=uniform(.25f,2);
         for(int frame=0;frame<600 && turn.active;++frame) {
             supplied_target_angle=uniform(-3,3);
@@ -270,7 +284,7 @@ int main(int argc,char** argv) {
             else reference.UpdateAimedDirectionChange();
             const auto status=advance_direction(flight,turn,g_Supervisor.framerateMultiplier,supplied_target_angle);
             auto same=[](float a,float b){return std::memcmp(&a,&b,sizeof(float))==0;};
-            auto& expected=reference.exStates[0];
+            auto& expected=reference.exStates[3];
             if(status!=Status::advanced || !same(flight.angle,reference.angle) ||
                !same(flight.speed,reference.speed) || !same(flight.velocity_x,reference.velocity.x) ||
                !same(flight.velocity_y,reference.velocity.y) || turn.timer!=int(expected.timer) ||
@@ -349,8 +363,10 @@ int main(int argc,char** argv) {
         << ",\"rng_operations\":" << rng_operations << ",\"rng_mismatches\":" << rng_mismatches
         << ",\"ecl_random_operations\":" << ecl_random.operations
         << ",\"ecl_random_mismatches\":" << ecl_random.mismatches
+        << ",\"acceleration_frames\":" << acceleration.frames
+        << ",\"acceleration_mismatches\":" << acceleration.mismatches
         << ",\"velocity_profile\":\"TH08_MODERN_PORT float32; not retail x87\"}\n";
-    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches?1:0;
+    return mismatches||launch_mismatches||turn_mismatches||laser_mismatches||rng_mismatches||ecl_random.mismatches||acceleration.mismatches?1:0;
 }
 )CPP";
 int main(int argc, char **argv) try {
@@ -366,8 +382,14 @@ int main(int argc, char **argv) try {
                "ce49422a53e5ba33b63d803d17e7051ba2a5ad7a33ae531910c048a091f37592");
     const auto bullet = source(repo / "src/BulletManager.cpp",
                                "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
-    source(repo / "src/ZunMath.hpp",
-           "ba187178ec936c2492f3e311e8d6d634421c35bc5abd74ab4af77a4c81ddb3de");
+    const auto math = source(repo / "src/ZunMath.hpp",
+                             "ba187178ec936c2492f3e311e8d6d634421c35bc5abd74ab4af77a4c81ddb3de");
+    const auto player_bomb =
+        source(repo / "src/PlayerBomb.cpp",
+               "914cb85ebf128678427a4243c071a4b30385ea7eb688571940f5ec06d3dfa75d");
+    const auto background =
+        source(repo / "src/Background.cpp",
+               "36889a17a6f0c314eaf3751a2238e778c82d13bffd3a18e55051b49f3d8fd285");
     const auto supervisor =
         source(repo / "src/Supervisor.cpp",
                "67b761377ae38aec18581920ea07ff31fb4dd3c0de0d15acdd42530d19fa1a5e");
@@ -392,9 +414,13 @@ int main(int argc, char **argv) try {
     std::string preamble = prefix;
     preamble.insert(preamble.find("struct RandomTrace"),
                     function(global_header, "class Rng") + ";\n");
-    preamble.insert(preamble.find("struct TurnState"),
+    preamble.insert(preamble.find("struct MotionState"),
                     function(supervisor_header, "struct ZunTimer") + ";\n");
+    preamble.insert(preamble.find("    void FromAngleMagnitude"),
+                    function(math, "Float3 *operator+=") + "\n");
     out << preamble << function(supervisor, "void Supervisor::TickTimer(") << '\n'
+        << function(player_bomb, "f32 VectorAngle(") << '\n'
+        << function(background, "Float3 Float3::operator*(") << '\n'
         << function(global, "void Rng::SetSeed(") << '\n'
         << function(global, "void Rng::ResetGenerationCount(") << '\n'
         << function(global, "u16 Rng::GetSeed(") << '\n'
@@ -411,6 +437,9 @@ int main(int argc, char **argv) try {
         << function(bullet, "void Bullet::UpdateRelativeDirectionChange()") << '\n'
         << function(bullet, "void Bullet::UpdateAbsoluteDirectionChange()") << '\n'
         << function(bullet, "void Bullet::UpdateAimedDirectionChange()") << '\n'
+        << function(bullet, "void Bullet::UpdateDeceleration()") << '\n'
+        << function(bullet, "void Bullet::UpdateVectorAcceleration()") << '\n'
+        << function(bullet, "void Bullet::UpdatePolarAcceleration()") << '\n'
         << "th08::laser::Result reference_laser(SourceLaser* laser) { LaserRecorder g_Player; "
            "float laserSize[3],laserCenter[3],currentWidth; int alpha,rampWindow; "
            "for(int once=0;once<1;++once) {\n"
@@ -419,7 +448,8 @@ int main(int argc, char **argv) try {
         << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
         << function(player, "i32 Player::CheckBulletCollision(") << '\n'
         << function(player, "u32 Player::CalcLaserHitbox(") << '\n'
-        << ecl_reference(repo) << suffix;
+        << ecl_reference(repo) << "\n#include \"source_acceleration_cases.hpp\"\n"
+        << suffix;
 } catch (const std::exception &error) {
     std::cerr << error.what() << '\n';
     return 1;

@@ -46,6 +46,10 @@ and execution statuses, without extracting game assets to disk.
   timing and relative turns; these are not complete Wriggle spell worlds.
 - Model ordered laser collision phases and fractional clocks; preserve signed
   terminal hitbox dimensions revealed by the source oracle.
+- Execute explicitly seeded, isolated random scalar slices, with source-backed
+  conversions and shared call-stream ownership; stop at unresolved world effects.
+- Project deceleration, vector and polar acceleration with fractional clocks and
+  source-ordered numerical operations; general transform scheduling remains separate.
 
 Complete ECL worlds, enemy/bullet lifecycles, ANM, damage, RNG consumption chains,
 and complete spell routes remain unimplemented. `RETURNED_SLICE` means a restricted
@@ -87,12 +91,14 @@ The native generator verifies reference source hashes, then extracts unmodified
 collision functions, angle normalization, and the launch switch into the build directory.
 It checks 600,000 collision predicates, 180,000 launch cases, and hundreds of thousands
 of direction-transform and laser-lifecycle frames. This comparison
+also covers every 16-bit RNG seed, ECL random assignments, and acceleration frames.
+It
 does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks
 
 ```sh
-clang-format --dry-run --Werror include/th08/*.hpp src/*.cpp tools/*.cpp tests/*.cpp benchmarks/*.cpp
+clang-format --dry-run --Werror include/th08/*.hpp src/*.cpp tools/*.cpp tests/*.cpp tests/*.hpp benchmarks/*.cpp
 cmake -S . -B build-sanitize -DCMAKE_BUILD_TYPE=Debug -DTH08_SANITIZERS=ON
 cmake --build build-sanitize --parallel 2
 ctest --test-dir build-sanitize --output-on-failure
