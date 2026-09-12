@@ -10,13 +10,18 @@ enum Kind : std::uint32_t {
     relative = 0x40,
     aimed = 0x80,
     absolute = 0x100,
+    bounce_all = 0x400,
+    bounce_except_bottom = 0x800,
     cull_delay = 0x2000,
     wait = 0x20000,
     despawn = 0x40000,
-    sound = 0x80000
+    sound = 0x80000,
+    wrap_x = 0x400000,
+    wrap_y = 0x800000
 };
-inline constexpr std::uint32_t motion_flags =
-    decelerate | vector | polar | relative | aimed | absolute | wait;
+inline constexpr std::uint32_t motion_flags = decelerate | vector | polar | relative | aimed |
+                                              absolute | bounce_all | bounce_except_bottom | wait |
+                                              wrap_x | wrap_y;
 struct Record {
     float float0 = 0, float1 = 0;
     std::int32_t int0 = 0, int1 = 0;
@@ -36,6 +41,11 @@ struct State {
     std::uint32_t enabled_flags = 0, active_flags = 0, pc = 0;
     std::int32_t offscreen_cull_delay = 0, transform_sound = -1, wait_timer = 0;
     float wait_subframe = 0;
+    std::int32_t wrap_timer = 0, bounce_count = 0, bounce_limit = 0;
+    float wrap_subframe = 0, bounce_speed = 0;
+    // Bounce depends on resource-derived sprite dimensions, not collision size.
+    float sprite_width = std::numeric_limits<float>::quiet_NaN();
+    float sprite_height = std::numeric_limits<float>::quiet_NaN();
     bool despawning = false;
 };
 struct SoundEvent {
@@ -46,8 +56,8 @@ struct SoundEvent {
 struct Result {
     Status status = Status::advanced;
     std::uint32_t pc = 0;
-    // Eighteen immediate records plus three overlapping direction firings.
-    std::array<SoundEvent, 21> sounds{};
+    // Eighteen immediate records, three direction firings and one boundary bounce.
+    std::array<SoundEvent, 22> sounds{};
     unsigned sound_count = 0;
 };
 namespace detail {
@@ -108,6 +118,19 @@ inline Status install(const Program &program, State &state, float multiplier, Re
             state.wait_timer = record.int0;
             state.wait_subframe = 0;
             break;
+        case bounce_all:
+        case bounce_except_bottom:
+            if (!std::isfinite(record.float0))
+                return Status::invalid;
+            state.bounce_speed = record.float0 >= 0 ? record.float0 : state.flight.speed;
+            state.bounce_count = 0;
+            state.bounce_limit = record.int0;
+            break;
+        case wrap_x:
+        case wrap_y:
+            state.wrap_timer = record.int0;
+            state.wrap_subframe = 0;
+            break;
         case cull_delay:
             state.offscreen_cull_delay = record.int0;
             ++state.pc;
@@ -121,7 +144,7 @@ inline Status install(const Program &program, State &state, float multiplier, Re
             ++state.pc;
             return Status::advanced;
         default:
-            // Sprite replacement, bounce/wrap, child patterns and unverified
+            // Sprite replacement, child patterns and unverified
             // default cases require their own state and side-effect contracts.
             return Status::unsupported;
         }
@@ -132,6 +155,56 @@ inline Status install(const Program &program, State &state, float multiplier, Re
         ++state.pc;
         return Status::advanced; // At most one non-immediate installation per call.
     }
+    return Status::advanced;
+}
+inline Status countdown(std::int32_t &timer, float &fraction, float multiplier, bool force_extra,
+                        std::uint32_t flag, std::uint32_t &active) {
+    if (!std::isfinite(fraction) || fraction < 0 || fraction >= 1)
+        return Status::invalid;
+    if (timer <= 0) {
+        active &= ~flag;
+    } else {
+        if (force_extra) {
+            --timer;
+            fraction = 0;
+        }
+        if (multiplier > .99f) {
+            --timer;
+        } else {
+            fraction -= multiplier;
+            if (fraction < 0) {
+                --timer;
+                fraction += 1;
+            }
+        }
+    }
+    return Status::advanced;
+}
+inline Status bounce(State &state, float multiplier, Result &result) {
+    if (!std::isfinite(state.sprite_width) || !std::isfinite(state.sprite_height))
+        return Status::unsupported; // The current sprite must be resolved first.
+    if (state.sprite_width < 0 || state.sprite_height < 0 || !std::isfinite(state.bounce_speed) ||
+        state.bounce_count < 0 || state.bounce_count == std::numeric_limits<std::int32_t>::max())
+        return Status::invalid;
+    auto &flight = state.flight;
+    if (!(state.sprite_width / 2 + flight.x < 0 || flight.x - state.sprite_width / 2 > 384 ||
+          state.sprite_height / 2 + flight.y < 0 || flight.y - state.sprite_height / 2 > 448))
+        return Status::advanced;
+    if (state.transform_sound >= 0)
+        result.sounds[result.sound_count++] = {state.transform_sound, false, 0};
+    if (flight.x < 0 || flight.x >= 384)
+        flight.angle = kinematics::normalize_angle(-flight.angle - kinematics::pi);
+    if (flight.y < 0 || (flight.y >= 448 && (state.active_flags & bounce_all) != 0))
+        flight.angle = -flight.angle;
+    // Even an excluded bottom exit resets speed and consumes a bounce count.
+    flight.speed = state.bounce_speed;
+    const float magnitude = flight.speed * multiplier;
+    flight.velocity_x = std::cos(flight.angle) * magnitude;
+    flight.velocity_y = std::sin(flight.angle) * magnitude;
+    if (!std::isfinite(flight.velocity_x) || !std::isfinite(flight.velocity_y))
+        return Status::invalid;
+    if (++state.bounce_count >= state.bounce_limit)
+        state.active_flags &= ~(bounce_all | bounce_except_bottom);
     return Status::advanced;
 }
 } // namespace detail
@@ -153,7 +226,7 @@ inline Result advance_program(const Program &program, State &state, float multip
 }
 
 // Fired pre-displacement phase only, with no cancellation or external mutations.
-// force_extra_timer_step is explicit because WAIT uses ZunTimer::Decrement,
+// force_extra_timer_step is explicit because WAIT/WRAP use ZunTimer::Decrement,
 // whereas acceleration/direction use TickTimer and ignore that flag.
 inline Result step(const Program &program, State &state, float multiplier,
                    bool force_extra_timer_step,
@@ -195,28 +268,26 @@ inline Result step(const Program &program, State &state, float multiplier,
         if (!next.turn.active)
             next.active_flags &= ~direction_flags[i];
     }
-    if (result.status == Status::advanced && (next.active_flags & wait) != 0) {
-        if (!std::isfinite(next.wait_subframe) || next.wait_subframe < 0 ||
-            next.wait_subframe >= 1) {
-            result.status = Status::invalid;
-        } else if (next.wait_timer <= 0) {
-            next.active_flags &= ~wait;
-        } else {
-            if (force_extra_timer_step) {
-                --next.wait_timer;
-                next.wait_subframe = 0;
-            }
-            if (multiplier > .99f) {
-                --next.wait_timer;
-            } else {
-                next.wait_subframe -= multiplier;
-                if (next.wait_subframe < 0) {
-                    --next.wait_timer;
-                    next.wait_subframe += 1;
-                }
-            }
-        }
+    if (result.status == Status::advanced &&
+        (next.active_flags & (bounce_all | bounce_except_bottom)) != 0)
+        result.status = detail::bounce(next, multiplier, result);
+    constexpr std::uint32_t wrap_flags[] = {wrap_x, wrap_y};
+    for (unsigned axis = 0; axis < 2 && result.status == Status::advanced; ++axis) {
+        if ((next.active_flags & wrap_flags[axis]) == 0)
+            continue;
+        float &position = axis == 0 ? next.flight.x : next.flight.y;
+        const float extent = axis == 0 ? 384.0f : 448.0f;
+        if (position < 0)
+            position += extent;
+        else if (position > extent)
+            position -= extent;
+        result.status =
+            detail::countdown(next.wrap_timer, next.wrap_subframe, multiplier,
+                              force_extra_timer_step, wrap_flags[axis], next.active_flags);
     }
+    if (result.status == Status::advanced && (next.active_flags & wait) != 0)
+        result.status = detail::countdown(next.wait_timer, next.wait_subframe, multiplier,
+                                          force_extra_timer_step, wait, next.active_flags);
     if (result.status == Status::advanced)
         state = next;
     else

@@ -19,7 +19,13 @@ struct BulletSpawnDescriptor {
     unsigned transformFlags=0;
     BulletTransformRecord transforms[18]{};
 };
-struct Sprites {struct Vm {int activeSpriteIndex=0;} bulletVm;};
+struct SpriteDimensions {float widthPx=16,heightPx=16;};
+struct Sprites {
+    SpriteDimensions size;
+    struct Vm {int activeSpriteIndex;SpriteDimensions* loadedSprite;} bulletVm{0,&size};
+};
+constexpr int FALSE=0,TRUE=1;
+struct GameManager {ZunBool IsWithinPlayfield(f32,f32,f32,f32);} g_GameManager;
 struct Anm {
     void SetSprite(Sprites::Vm*,int) {throw std::runtime_error("unexpected source sprite replacement");}
 };
@@ -29,7 +35,7 @@ struct BulletManager {
     void SpawnBulletPattern(BulletSpawnDescriptor*) {throw std::runtime_error("unexpected source child pattern");}
 } g_BulletManager;
 struct SoundRecorder {
-    std::array<th08::bullet::transform::SoundEvent,21> events;
+    std::array<th08::bullet::transform::SoundEvent,22> events;
     unsigned count=0;
     void emit(int id,bool positioned,float x) {
         if(count==events.size()) throw std::runtime_error("source exceeded sound trace bound");
@@ -54,13 +60,15 @@ struct Bullet {
     void UpdateRelativeDirectionChange();
     void UpdateAbsoluteDirectionChange();
     void UpdateAimedDirectionChange();
-    void UpdateBoundaryBounce(){throw std::runtime_error("unexpected source bounce");}
-    void UpdateHorizontalWrap(){throw std::runtime_error("unexpected source horizontal wrap");}
-    void UpdateVerticalWrap(){throw std::runtime_error("unexpected source vertical wrap");}
+    void UpdateBoundaryBounce();
+    void UpdateHorizontalWrap();
+    void UpdateVerticalWrap();
 };
 )CPP";
 } // namespace
 std::string transform_reference(const std::filesystem::path &repo) {
+    const auto game = source(repo / "src/GameManager.cpp",
+                             "4d042171aa200c72c8fbf4cac9debfdb51289e2ff68d0e63751e3fd438ad735e");
     const auto header = source(repo / "src/BulletManager.hpp",
                                "583e9b9e89d49a358dafffaa9f123d817e4784afef114c33c464b906c8e7f596");
     const auto implementation =
@@ -69,13 +77,15 @@ std::string transform_reference(const std::filesystem::path &repo) {
     std::string generated =
         "namespace transform_reference {\n#define C_ASSERT(x) static_assert(x)\n" +
         section(header, "struct BulletTransformRawPayload", "enum BulletAimMode") +
-        "#undef C_ASSERT\n" + function(header, "enum BulletTransformStateSlot") + ";\n" + adapter;
+        "#undef C_ASSERT\n" + function(header, "enum BulletTransformStateSlot") + ";\n" + adapter +
+        function(game, "ZunBool GameManager::IsWithinPlayfield(") + "\n";
     for (const char *name :
          {"void Bullet::AdvanceTransformProgram()", "void Bullet::UpdateDeceleration()",
           "void Bullet::UpdateVectorAcceleration()", "void Bullet::UpdatePolarAcceleration()",
           "void Bullet::UpdateRelativeDirectionChange()",
           "void Bullet::UpdateAbsoluteDirectionChange()",
-          "void Bullet::UpdateAimedDirectionChange()"})
+          "void Bullet::UpdateAimedDirectionChange()", "void Bullet::UpdateBoundaryBounce()",
+          "void Bullet::UpdateHorizontalWrap()", "void Bullet::UpdateVerticalWrap()"})
         generated += function(implementation, name) + '\n';
     generated += "void step(Bullet* bullet) {bullet->AdvanceTransformProgram();\n" +
                  section(implementation, "            if (bullet->activeTransformFlags != 0)",

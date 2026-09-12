@@ -32,6 +32,7 @@ if(TH08_REFERENCE_SOURCE)
       ${TH08_REFERENCE_SOURCE}/src/EclManager.hpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsInt.cpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsFloat.cpp ${TH08_REFERENCE_SOURCE}/src/EclRunLow.inl
       ${TH08_REFERENCE_SOURCE}/src/PlayerBomb.cpp ${TH08_REFERENCE_SOURCE}/src/Background.cpp
       ${TH08_REFERENCE_SOURCE}/src/BulletManager.hpp
+      ${TH08_REFERENCE_SOURCE}/src/GameManager.cpp
     VERBATIM)
   add_executable(source_oracle ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp)
   target_link_libraries(source_oracle PRIVATE th08_resources)

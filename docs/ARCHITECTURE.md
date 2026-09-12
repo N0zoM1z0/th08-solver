@@ -123,7 +123,7 @@ This kernel remains allocation-free and failure-atomic.
 
 `transform::Program` contains eighteen immutable records that particles may share;
 `transform::State` owns the program cursor, enabled/active flags, scalar motion,
-three acceleration slots, one shared direction slot, and a wait clock. `advance_program`
+three acceleration slots, one shared direction slot, bounce state and wait/wrap clocks. `advance_program`
 performs birth-time installation without ticking. `step` projects the fired phase
 through transform updates, before displacement, culling, ANM or collision.
 
@@ -131,17 +131,26 @@ The active-effect gate precedes the enabled-kind mask test. Cull-delay and sound
 records continue immediately, while at most one timed effect is installed per call.
 A zero-kind record halts the table. Relative, absolute and aimed flags run in that
 order against the same direction state, potentially advancing/resetting it several
-times per frame. WAIT uses the original decrement semantics and an explicit extra-timer
+times per frame. WAIT and WRAP use the original decrement semantics and an explicit extra-timer
 step flag; the acceleration/direction clocks ignore that flag, as the source does.
 
-The bounded result records up to 21 ordered sound requests: eighteen table records
-plus three overlapping direction firings. Failed projection leaves the state unchanged
+The bounded result records up to 22 ordered sound requests: eighteen table records,
+three overlapping direction firings and one bounce. Failed projection leaves the state unchanged
 and exposes no sound events. Despawn is a phase-transition request, not immediate
 deallocation; a later call requires the still-unimplemented despawn ANM/world layer.
-Sprite replacement, bounce/wrap, child patterns, external EX mutation and other
+Sprite replacement, child patterns, external EX mutation and other
 unverified record kinds remain unsupported. Unknown active flags also stop execution.
 The source oracle retains `AdvanceTransformProgram`, its payload layouts and the
-fired transform-dispatch block, comparing 103841 steps including simultaneous effects.
+fired transform-dispatch block, comparing 120748 steps including simultaneous effects.
+
+Bounce waits until the complete resource-derived sprite box leaves the playfield;
+unresolved dimensions stop the projection. It preserves source reflection order,
+does not reposition the particle, and even an excluded bottom exit resets speed and
+consumes a bounce count. Horizontal and vertical wrapping each translate at most once,
+keep exact far-edge coordinates unchanged, and share a countdown. Both axes may
+therefore decrement that clock in one frame; wrapping precedes its expiry check.
+The source comparison supplies displacement between isolated transform phases to
+exercise repeated crossings, without treating that fixture as a complete lifecycle.
 
 `laser::advance` emits up to three ordered collision calls while updating offsets,
 phase and lifetime. It preserves switch fallthrough, the source's ramp axis, graze

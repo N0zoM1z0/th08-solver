@@ -10,7 +10,78 @@ void check(bool valid, const char *message) {
         std::exit(1);
     }
 }
+void boundary_tests() {
+    transform::Program empty;
+    transform::State state;
+    state.flight.x = -8;
+    state.active_flags = transform::bounce_all;
+    state.bounce_speed = 3;
+    state.bounce_limit = 2;
+    check(transform::step(empty, state, 1, false).status == Status::unsupported &&
+              state.bounce_count == 0,
+          "bounce invented an unresolved sprite size");
+    state.sprite_width = state.sprite_height = 16;
+    check(transform::step(empty, state, 1, false).status == Status::advanced &&
+              state.bounce_count == 0,
+          "bounce ignored inclusive sprite contact with playfield edge");
+    state.flight.x = -9;
+    check(transform::step(empty, state, 1, false).status == Status::advanced &&
+              state.bounce_count == 1 && state.flight.angle == -th08::kinematics::pi &&
+              state.flight.speed == 3 && state.flight.x == -9,
+          "bounce threshold, reflection, speed or position changed");
+    state.active_flags = transform::bounce_except_bottom;
+    state.flight.x = 100;
+    state.flight.y = 457;
+    state.flight.angle = 1;
+    state.flight.speed = 1;
+    state.bounce_count = 0;
+    check(transform::step(empty, state, 1, false).status == Status::advanced &&
+              state.bounce_count == 1 && state.flight.angle == 1 && state.flight.speed == 3,
+          "excluded bottom edge skipped the source speed/count side effects");
+
+    state = {};
+    state.active_flags = transform::wrap_x | transform::wrap_y;
+    state.wrap_timer = 1;
+    state.flight.x = -1;
+    state.flight.y = -2;
+    check(transform::step(empty, state, 1, false).status == Status::advanced &&
+              state.flight.x == 383 && state.flight.y == 446 && state.wrap_timer == 0 &&
+              state.active_flags == transform::wrap_x,
+          "two-axis wrap lost shared countdown or wrapped after the expiry check");
+    state.flight.x = 384;
+    state.flight.y = 448;
+    state.active_flags = transform::wrap_x | transform::wrap_y;
+    check(transform::step(empty, state, 1, false).status == Status::advanced &&
+              state.flight.x == 384 && state.flight.y == 448 && state.active_flags == 0,
+          "exact far edge wrapped or expired axes stayed active");
+    state.active_flags = transform::wrap_x;
+    state.flight.x = 900;
+    check(transform::step(empty, state, 1, false).status == Status::advanced &&
+              state.flight.x == 516 && state.active_flags == 0,
+          "wrap used modulo instead of one source translation");
+
+    for (auto &record : empty.records)
+        record = {0, 0, 4, 0, transform::sound, 1};
+    state = {};
+    state.enabled_flags = 0xffffffffU;
+    state.active_flags =
+        transform::relative | transform::absolute | transform::aimed | transform::bounce_all;
+    state.flight.x = 500;
+    state.turn.interval = 0;
+    state.turn.repeats = 1;
+    state.turn.speed = 2;
+    state.transform_sound = 17;
+    state.sprite_width = state.sprite_height = 16;
+    state.bounce_speed = 3;
+    state.bounce_limit = 1;
+    const auto result = transform::step(empty, state, 1, false, 0);
+    check(result.status == Status::advanced && result.sound_count == 22 &&
+              result.sounds[21].id == 17 && !result.sounds[21].positioned &&
+              state.active_flags == 0 && state.bounce_count == 1,
+          "maximum overlapping turn/bounce sound trace exceeded its bound or lost source order");
+}
 int main() {
+    boundary_tests();
     transform::Program program;
     transform::State state;
     state.flight.speed = 2;

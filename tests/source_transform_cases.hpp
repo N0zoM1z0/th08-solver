@@ -14,10 +14,21 @@ inline TransformComparison compare_transforms() {
         return std::uniform_real_distribution<float>(low, high)(random);
     };
     auto same = [](float a, float b) { return std::memcmp(&a, &b, sizeof(a)) == 0; };
-    constexpr unsigned kinds[] = {actual::decelerate, actual::vector,     actual::polar,
-                                  actual::relative,   actual::absolute,   actual::aimed,
-                                  actual::wait,       actual::cull_delay, actual::sound,
-                                  actual::despawn,    actual::none};
+    constexpr unsigned kinds[] = {actual::decelerate,
+                                  actual::vector,
+                                  actual::polar,
+                                  actual::relative,
+                                  actual::absolute,
+                                  actual::aimed,
+                                  actual::wait,
+                                  actual::cull_delay,
+                                  actual::sound,
+                                  actual::despawn,
+                                  actual::none,
+                                  actual::bounce_all,
+                                  actual::bounce_except_bottom,
+                                  actual::wrap_x,
+                                  actual::wrap_y};
     constexpr float rates[] = {.25f, .5f, .99f, 1.0f, 1.2f};
     for (unsigned scenario = 0; scenario < 2000; ++scenario) {
         actual::Program program;
@@ -27,8 +38,10 @@ inline TransformComparison compare_transforms() {
         if (scenario % 5 == 0)
             state.enabled_flags ^= actual::vector | actual::aimed;
         state.transform_sound = scenario % 3 ? 5 : -1;
-        state.flight = {uniform(0, 384), 100,           uniform(-3, 3), uniform(-3, 3),
-                        uniform(-3, 3),  uniform(-2, 5)};
+        state.flight = {uniform(-24, 408), uniform(-24, 472), uniform(-3, 3),
+                        uniform(-3, 3),    uniform(-3, 3),    uniform(-2, 5)};
+        state.sprite_width = source.sprites.size.widthPx = float((random() % 4) * 8);
+        state.sprite_height = source.sprites.size.heightPx = float((random() % 4) * 8);
         source.position = {state.flight.x, state.flight.y};
         source.velocity = {state.flight.velocity_x, state.flight.velocity_y};
         source.angle = state.flight.angle;
@@ -98,7 +111,14 @@ inline TransformComparison compare_transforms() {
                     same(state.turn.angle, turn.directionChangeAngle) &&
                     same(state.turn.speed, turn.directionChangeSpeed) &&
                     state.wait_timer == source.exStates[5].timer.current &&
-                    same(state.wait_subframe, source.exStates[5].timer.subFrame);
+                    same(state.wait_subframe, source.exStates[5].timer.subFrame) &&
+                    same(state.flight.x, source.position.x) &&
+                    same(state.flight.y, source.position.y) &&
+                    state.wrap_timer == source.exStates[6].timer.current &&
+                    same(state.wrap_subframe, source.exStates[6].timer.subFrame) &&
+                    state.bounce_count == source.exStates[4].bouncesCompleted &&
+                    state.bounce_limit == source.exStates[4].bounceLimit &&
+                    same(state.bounce_speed, source.exStates[4].bounceSpeed);
             if (!equal) {
                 if (comparison.mismatches < 3)
                     std::cerr << "Transform divergence scenario=" << scenario << " phase=" << phase
@@ -109,6 +129,13 @@ inline TransformComparison compare_transforms() {
                 break;
             }
             ++comparison.steps;
+            // Supply displacement between isolated pre-displacement phases.
+            // This drives repeated boundary crossings without inventing culling.
+            if (phase != 0) {
+                state.flight.x += state.flight.velocity_x;
+                state.flight.y += state.flight.velocity_y;
+                source.position += source.velocity;
+            }
         }
     }
     g_Supervisor.flags.forceExtraTimerStep = false;
