@@ -4,6 +4,7 @@
 #include "camera_particle_source_probe.hpp"
 #include "ecl_source_probe.hpp"
 #include "enemy_motion_source_probe.hpp"
+#include "spawn_source_probe.hpp"
 #include "timeline_source_probe.hpp"
 #include "transform_source_probe.hpp"
 #include "world_motion_source_probe.hpp"
@@ -436,12 +437,29 @@ int main(int argc,char** argv) {
 int main(int argc, char **argv) try {
     if (argc != 3 && argc != 4)
         throw std::runtime_error("Usage: th08_source_probe reference-repo output.cpp "
-                                 "[all|enemy_motion|world_motion|camera_particle]");
+                                 "[all|enemy_motion|world_motion|camera_particle|spawn]");
     const std::string component = argc == 4 ? argv[3] : "all";
     if (component != "all" && component != "enemy_motion" && component != "world_motion" &&
-        component != "camera_particle")
+        component != "camera_particle" && component != "spawn")
         throw std::runtime_error("unknown source-oracle component: " + component);
     const std::filesystem::path repo = argv[1];
+    if (component == "spawn") {
+        const auto reference = spawn_reference(repo);
+        std::ofstream out(argv[2]);
+        out.exceptions(std::ios::badbit | std::ios::failbit);
+        out << reference << R"CPP(
+#include "source_spawn_cases.hpp"
+int main() try {
+    const auto cases = compare_spawn_order();
+    std::cout << "source spawn-order cases=" << cases << " mismatches=0; controlled immediate-ECL boundary, not a world\n";
+    return 0;
+} catch(const std::exception& error) {
+    std::cerr << error.what() << '\n';
+    return 1;
+}
+)CPP";
+        return 0;
+    }
     // The standalone camera adapter owns its prerequisites. The motion adapters
     // share the scalar/vector/timer preamble below; never splice an old build TU.
     if (component == "camera_particle") {

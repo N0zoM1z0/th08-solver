@@ -73,8 +73,22 @@ pool lifetimes and RNG draws must stop the run rather than becoming NOPs.
 The starting boundary is timeline offset39684: spawn sub0, position(30,-16),
 life20, drop-2, score1000. Its immediate ECL sets interaction flags at offset244,
 then requests sixteen effect51 particles at offset260. The initial implementation
-must retain the selected actor and pending spawn while blocked there, without
+retains the selected actor and pending spawn while blocked there, without
 advancing the timeline or applying the post-spawn metadata.
+
+Run the same diagnostic as implementation advances:
+
+```sh
+./build/th08_first_spell game_data_donottrack/th08.dat .cache/th08 reports/native
+./build/practice_entry_tests game_data_donottrack/th08.dat
+```
+
+The [current report](../reports/native/first_spell_summary.json) is explicitly
+`UNSUPPORTED_WORLD_EFFECT` at effect51, with supplied GUI gates and unknown RNG/player
+state. The first empty timeline phase and the suspended immediate-ECL boundary are
+recorded in [the trace](../reports/native/first_spell_trace.tsv). This is not a
+per-frame world replay; all three acceptance gates remain unpassed. Successful
+diagnostic process exit means the report was produced, not that the spell was solved.
 
 No universal renderer, all-opcode engine or all-spell optimizer is a prerequisite.
 However, a visual consumer cannot be projected out unless RNG, allocation,

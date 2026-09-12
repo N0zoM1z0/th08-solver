@@ -1,0 +1,3 @@
+phase	timeline_time	timeline_pc	timeline_offset	actor	sub	pc	offset	opcode	instruction_mask	execution_mask	local_time	status
+timeline_control	1	0	39684	-1	-1	-1	-1	-1	255	1	-1	TIMELINE_FRAME_COMPLETE
+immediate_spawn_ecl	1	0	39684	0	0	1	260	139	255	1	0	UNSUPPORTED_WORLD_EFFECT

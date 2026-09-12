@@ -22,6 +22,7 @@ add_library(th08_resources
   src/animation.cpp
   src/animation_control.cpp
   src/world_motion.cpp
+  src/practice_entry.cpp
   src/timeline.cpp)
 target_link_libraries(th08_resources PUBLIC th08_geometry OpenSSL::Crypto)
 add_executable(th08_audit tools/audit.cpp tools/resource_reports.cpp)
@@ -34,6 +35,8 @@ add_executable(th08_animation_cases tools/animation_cases.cpp)
 target_link_libraries(th08_animation_cases PRIVATE th08_resources)
 add_executable(th08_timeline_cases tools/timeline_cases.cpp)
 target_link_libraries(th08_timeline_cases PRIVATE th08_resources)
+add_executable(th08_first_spell tools/first_spell.cpp)
+target_link_libraries(th08_first_spell PRIVATE th08_resources)
 set(TH08_REFERENCE_SOURCE "" CACHE PATH "Optional pinned reconstruction checkout for source oracle")
 if(TH08_REFERENCE_SOURCE)
   add_executable(th08_source_probe
@@ -42,6 +45,7 @@ if(TH08_REFERENCE_SOURCE)
     tools/transform_source_probe.cpp
     tools/animation_source_probe.cpp
     tools/enemy_motion_source_probe.cpp
+    tools/spawn_source_probe.cpp
     tools/world_motion_source_probe.cpp
     tools/timeline_source_probe.cpp
     tools/camera_particle_source_probe.cpp)
@@ -74,7 +78,7 @@ if(TH08_REFERENCE_SOURCE)
   endif()
   # Explicit targets replace ad-hoc drivers formerly kept in ignored build trees.
   # Reuse the hash-checked generator and unchanged test headers, not generated TUs.
-  foreach(component IN ITEMS enemy_motion world_motion camera_particle)
+  foreach(component IN ITEMS enemy_motion world_motion camera_particle spawn)
     set(component_source ${CMAKE_CURRENT_BINARY_DIR}/source_${component}.cpp)
     add_custom_command(OUTPUT ${component_source}
       COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${component_source} ${component}
@@ -117,6 +121,9 @@ if(BUILD_TESTING)
   add_executable(timeline_tests tests/timeline_tests.cpp)
   target_link_libraries(timeline_tests PRIVATE th08_resources)
   add_test(NAME timeline COMMAND timeline_tests)
+  add_executable(practice_entry_tests tests/practice_entry_tests.cpp)
+  target_link_libraries(practice_entry_tests PRIVATE th08_resources)
+  add_test(NAME practice_entry COMMAND practice_entry_tests)
   add_executable(camera_particle_tests tests/camera_particle_tests.cpp)
   target_link_libraries(camera_particle_tests PRIVATE th08_geometry)
   add_test(NAME camera_particle COMMAND camera_particle_tests)

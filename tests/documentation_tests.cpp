@@ -140,6 +140,11 @@ int main(int argc, char **argv) try {
     require(solutions ==
                 count(root / "reports/native/motion_summary.json", "complete_spell_solutions"),
             "audit and particle reports disagree on complete spell solutions");
+    require(
+        count(root / "reports/native/first_spell_summary.json", "acceptance_gates_passed") == "0" &&
+            count(root / "reports/native/first_spell_summary.json", "complete_spell_solutions") ==
+                "0",
+        "first entry-prefix evidence changed; review its completion contract and documentation");
     contains(read(root / "README.md"), "Complete offline spell solutions: " + solutions + ".",
              "README.md");
     contains(status, "There are " + core_tests + " core CTests", "STATUS.md");
