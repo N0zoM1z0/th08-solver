@@ -24,13 +24,14 @@ add_executable(th08_motion_cases tools/motion_cases.cpp)
 target_link_libraries(th08_motion_cases PRIVATE th08_resources)
 set(TH08_REFERENCE_SOURCE "" CACHE PATH "Optional pinned reconstruction checkout for source oracle")
 if(TH08_REFERENCE_SOURCE)
-  add_executable(th08_source_probe tools/source_probe.cpp tools/ecl_source_probe.cpp)
+  add_executable(th08_source_probe tools/source_probe.cpp tools/ecl_source_probe.cpp tools/transform_source_probe.cpp)
   target_link_libraries(th08_source_probe PRIVATE th08_resources)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     DEPENDS th08_source_probe ${TH08_REFERENCE_SOURCE}/src/Player.cpp ${TH08_REFERENCE_SOURCE}/src/Global.cpp ${TH08_REFERENCE_SOURCE}/src/Global.hpp ${TH08_REFERENCE_SOURCE}/src/BulletManager.cpp ${TH08_REFERENCE_SOURCE}/src/ZunMath.hpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.cpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.hpp
       ${TH08_REFERENCE_SOURCE}/src/EclManager.hpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsInt.cpp ${TH08_REFERENCE_SOURCE}/src/EclOperandsFloat.cpp ${TH08_REFERENCE_SOURCE}/src/EclRunLow.inl
       ${TH08_REFERENCE_SOURCE}/src/PlayerBomb.cpp ${TH08_REFERENCE_SOURCE}/src/Background.cpp
+      ${TH08_REFERENCE_SOURCE}/src/BulletManager.hpp
     VERBATIM)
   add_executable(source_oracle ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp)
   target_link_libraries(source_oracle PRIVATE th08_resources)
@@ -70,6 +71,9 @@ if(BUILD_TESTING)
   add_executable(acceleration_tests tests/acceleration_tests.cpp)
   target_link_libraries(acceleration_tests PRIVATE th08_geometry)
   add_test(NAME acceleration COMMAND acceleration_tests)
+  add_executable(transform_program_tests tests/transform_program_tests.cpp)
+  target_link_libraries(transform_program_tests PRIVATE th08_geometry)
+  add_test(NAME transform_program COMMAND transform_program_tests)
   add_executable(laser_motion_tests tests/laser_motion_tests.cpp)
   target_link_libraries(laser_motion_tests PRIVATE th08_geometry)
   add_test(NAME laser_motion COMMAND laser_motion_tests)

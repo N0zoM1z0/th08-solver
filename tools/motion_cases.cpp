@@ -8,11 +8,13 @@
 #include <th08/bullet_motion.hpp>
 #include <th08/emitter.hpp>
 #include <th08/planner.hpp>
+#include <th08/transform_program.hpp>
 
 namespace res = th08::resources;
 namespace vm = th08::emitter;
 namespace motion = th08::kinematics;
 namespace bullet = th08::bullet;
+namespace transform = th08::bullet::transform;
 namespace solver = th08::solver;
 namespace fs = std::filesystem;
 namespace {
@@ -22,6 +24,11 @@ void require(bool valid, const char *message) {
 }
 float number(std::uint32_t bits) {
     float value;
+    std::memcpy(&value, &bits, sizeof(value));
+    return value;
+}
+std::int32_t integer(std::uint32_t bits) {
+    std::int32_t value;
     std::memcpy(&value, &bits, sizeof(value));
     return value;
 }
@@ -46,15 +53,16 @@ std::vector<Born> expand(const vm::Workspace &workspace, const th08::animation::
     births.reserve(840);
     // Explicit fixture entry state: empty transform table, cursor zero, no rank
     // adjustment, no suppression, fixed emitter at (192,96), empty bullet pool.
-    std::array<std::array<std::uint32_t, 7>, 18> transforms{};
+    transform::Program transforms;
     std::size_t applied = 0;
     for (const auto &event : workspace.emissions) {
         require(event.transform_write_count <= workspace.transforms.size(),
                 "invalid transform history");
         while (applied < event.transform_write_count) {
             const auto &write = workspace.transforms[applied++].words;
-            require(write[0] < transforms.size(), "invalid transform slot");
-            transforms[write[0]] = write;
+            require(write[0] < transforms.records.size(), "invalid transform slot");
+            transforms.records[write[0]] = {number(write[5]),  number(write[6]), integer(write[3]),
+                                            integer(write[4]), write[1],         integer(write[2])};
         }
         const auto &words = event.words;
         const auto type = words[0] & 0xffffU, color = words[0] >> 16;
@@ -88,31 +96,29 @@ std::vector<Born> expand(const vm::Workspace &workspace, const th08::animation::
                                              timing.calls_after_template,
                                              0,
                                              {}};
-                for (const auto &record : transforms) {
-                    if (record[1] == 0)
-                        break;
-                    if ((record[1] & words[7]) == 0)
-                        continue;
-                    if (record[1] == 0x2000 && !initial.turn.active) {
-                        require(record[3] <= 32767, "invalid cull delay");
-                        initial.cull_delay = std::int32_t(record[3]);
-                    } else if (record[1] == 0x40 && !initial.turn.active) {
-                        require(record[3] <= 32767 && record[4] <= 32767,
-                                "invalid direction-change timing");
-                        const float speed = number(record[6]);
-                        initial.turn = {bullet::TurnMode::relative,
-                                        true,
-                                        std::int32_t(record[3]),
-                                        std::int32_t(record[4]),
-                                        0,
-                                        0,
-                                        number(record[5]),
-                                        speed > -999 ? speed : launch.speed};
-                    } else {
-                        throw std::runtime_error(
-                            "fixture needs a general transform program executor");
-                    }
-                }
+                transform::State installed;
+                installed.flight = {initial.x - launch.velocity_x * 4.0f,
+                                    initial.y - launch.velocity_y * 4.0f,
+                                    launch.velocity_x,
+                                    launch.velocity_y,
+                                    launch.angle,
+                                    launch.speed};
+                installed.enabled_flags = words[7];
+                const auto installation = transform::advance_program(transforms, installed, 1);
+                require(installation.status == bullet::Status::advanced &&
+                            installation.sound_count == 0 &&
+                            (installed.active_flags & ~transform::relative) == 0 &&
+                            (installed.pc == transforms.records.size() ||
+                             transforms.records[installed.pc].kind == transform::none),
+                        "fixture gained later transform scheduling or unsupported effects");
+                require(installed.offscreen_cull_delay >= 0 &&
+                            installed.offscreen_cull_delay <= 32767 &&
+                            installed.turn.interval >= 0 && installed.turn.interval <= 32767 &&
+                            installed.turn.repeats >= 0 && installed.turn.repeats <= 32767,
+                        "fixture transform timing outside verified particle bounds");
+                initial.cull_delay = installed.offscreen_cull_delay;
+                initial.turn = installed.turn;
+                initial.turn.active = (installed.active_flags & transform::relative) != 0;
                 bullet::Particle particle;
                 require(bullet::initialize(initial, particle) == bullet::Status::advanced,
                         "fixture particle initialization failed");

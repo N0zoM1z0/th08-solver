@@ -49,7 +49,8 @@ and execution statuses, without extracting game assets to disk.
 - Execute explicitly seeded, isolated random scalar slices, with source-backed
   conversions and shared call-stream ownership; stop at unresolved world effects.
 - Project deceleration, vector and polar acceleration with fractional clocks and
-  source-ordered numerical operations; general transform scheduling remains separate.
+  source-ordered numerical operations. Execute a verified subset of eighteen-record
+  transform programs, including shared direction state and overlapping effects.
 
 Complete ECL worlds, enemy/bullet lifecycles, ANM, damage, RNG consumption chains,
 and complete spell routes remain unimplemented. `RETURNED_SLICE` means a restricted
@@ -90,10 +91,9 @@ ctest --test-dir build --output-on-failure
 The native generator verifies reference source hashes, then extracts unmodified
 collision functions, angle normalization, and the launch switch into the build directory.
 It checks 600,000 collision predicates, 180,000 launch cases, and hundreds of thousands
-of direction-transform and laser-lifecycle frames. This comparison
-also covers every 16-bit RNG seed, ECL random assignments, and acceleration frames.
-It
-does not launch the game or establish original x87/Windows bitwise equivalence.
+of direction-transform and laser-lifecycle frames. It also covers every 16-bit RNG
+seed, ECL random assignments, acceleration frames and transform-program steps.
+This does not launch the game or establish original x87/Windows bitwise equivalence.
 
 ## Development checks
 

@@ -119,8 +119,29 @@ only outside the source's strict 0.0001 per-axis dead zone and leaves scalar spe
 unchanged. Its installed vector includes the installation frame multiplier; each
 update applies that update's multiplier again. Polar speed is signed, not clamped.
 Concurrent effects must run in source order: deceleration, vector, polar, then turns.
-Transform-program installation/scheduling and concurrent-state ownership remain
-separate from this allocation-free, failure-atomic kernel.
+This kernel remains allocation-free and failure-atomic.
+
+`transform::Program` contains eighteen immutable records that particles may share;
+`transform::State` owns the program cursor, enabled/active flags, scalar motion,
+three acceleration slots, one shared direction slot, and a wait clock. `advance_program`
+performs birth-time installation without ticking. `step` projects the fired phase
+through transform updates, before displacement, culling, ANM or collision.
+
+The active-effect gate precedes the enabled-kind mask test. Cull-delay and sound
+records continue immediately, while at most one timed effect is installed per call.
+A zero-kind record halts the table. Relative, absolute and aimed flags run in that
+order against the same direction state, potentially advancing/resetting it several
+times per frame. WAIT uses the original decrement semantics and an explicit extra-timer
+step flag; the acceleration/direction clocks ignore that flag, as the source does.
+
+The bounded result records up to 21 ordered sound requests: eighteen table records
+plus three overlapping direction firings. Failed projection leaves the state unchanged
+and exposes no sound events. Despawn is a phase-transition request, not immediate
+deallocation; a later call requires the still-unimplemented despawn ANM/world layer.
+Sprite replacement, bounce/wrap, child patterns, external EX mutation and other
+unverified record kinds remain unsupported. Unknown active flags also stop execution.
+The source oracle retains `AdvanceTransformProgram`, its payload layouts and the
+fired transform-dispatch block, comparing 103841 steps including simultaneous effects.
 
 `laser::advance` emits up to three ordered collision calls while updating offsets,
 phase and lifetime. It preserves switch fallthrough, the source's ramp axis, graze

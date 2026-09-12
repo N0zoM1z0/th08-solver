@@ -18,7 +18,10 @@ It deliberately reports `PASSED_COMPONENT_FIXTURES`, not a complete spell soluti
   already executed time zero; a copied bullet activates on its tenth update. That update
   performs both spawning displacement and fired motion.
 - The only installed motion transform is relative direction change, optionally preceded
-  by cull-delay installation. The adapter rejects other enabled records and flags.
+  by cull-delay installation. Births use the source-verified eighteen-record executor,
+  including its gates and speed sentinel. The particle adapter requires the remaining
+  cursor to be at a zero record or end of table, and rejects other active effects.
+  This establishes that no later installation needs to be simulated in these fixtures.
 - Numeric profile: modern-port float32 velocity, unit frame rate. Particle motion is
   pre-collision and unaffected by the candidate player in these explicitly bounded fixtures.
 - Player starts at (192,400), stays focused, and uses axis/diagonal speed and half of
