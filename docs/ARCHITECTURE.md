@@ -51,7 +51,12 @@ non-finite results, and division errors stop explicitly.
 
 Normal calls save the caller clock and context registers, inherit local storage, and
 load call parameters from shared slots. Return restores context storage but preserves
-entity/shared storage. Calls exceeding fifteen saved frames, disabled-stack behavior,
+entity/shared storage. Compact call frames own only thirty context scalar values
+and their validity flags, not copies of all 101 workspace slots. Explicit spawn
+scalar initialization supplies only the 46 proven template zeros and leaves external
+state untouched. See [ECL_CONTEXT_STORAGE.md](ECL_CONTEXT_STORAGE.md) for the source
+mapping, memory measurements and the remaining spawn-lifecycle boundary.
+Calls exceeding fifteen saved frames, disabled-stack behavior,
 negative/truncated subprogram IDs, child-context lifetimes, and callbacks remain outside
 the verified call subset. A standalone `Program` cannot resolve a call without a `Module`.
 

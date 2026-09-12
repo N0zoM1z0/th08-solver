@@ -390,8 +390,8 @@ Result advance(Execution &execution, Workspace &workspace, random::Rng *rng,
                 // separate lifetime contract; do not treat them as normal calls.
                 require(sub >= 0 && sub <= 32767 && std::size_t(sub) < module->subs.size());
                 require(depth < workspace.calls.size(), Status::unsupported);
-                workspace.calls[depth++] = {
-                    active, next, local_time, wait, workspace.registers, workspace.initialized};
+                workspace.calls[depth++] = {active, next, local_time, wait,
+                                            capture_context(workspace)};
                 active = &module->subs[std::size_t(sub)];
                 next = 0;
                 local_time = wait = 0;
@@ -414,12 +414,7 @@ Result advance(Execution &execution, Workspace &workspace, random::Rng *rng,
                 wait = frame.wait;
                 // Context storage rolls back, entity and shared scalar storage
                 // survives. This distinction matters even for a one-tick call.
-                for (std::size_t slot = 0; slot < workspace.registers.size(); ++slot)
-                    if (slot < 8 || (slot >= 16 && slot <= 23) || (slot >= 36 && slot <= 39) ||
-                        (slot >= 53 && slot <= 60) || (slot >= 94 && slot <= 95)) {
-                        workspace.registers[slot] = frame.registers[slot];
-                        workspace.initialized[slot] = frame.initialized[slot];
-                    }
+                restore_context(frame.scalars, workspace);
                 break;
             }
             case 2:
