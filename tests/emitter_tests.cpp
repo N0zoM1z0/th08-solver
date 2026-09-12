@@ -188,12 +188,147 @@ void random_tests(vm::Workspace &workspace) {
               stream.generation_count() == 6,
           "call/return restored or duplicated shared RNG state");
 }
+void payload_tests() {
+    namespace res = th08::resources;
+    res::Bytes input(256);
+    for (std::size_t i = 0; i < input.size(); ++i)
+        input[i] = std::uint8_t(i * 73 + 19);
+    res::Ecl ecl;
+    ecl.instructions = {{0, 0, 122, 244, 0, 255}, {244, 0, 1, 12, 0, 255}};
+    ecl.subs = {{0, 256, 0, 2}};
+    vm::Program program(res::view(input), ecl, 0);
+    check(program.payload(0).size == 232 && program.payload(1).size == 0,
+          "long or empty instruction payload size changed");
+    auto copied = program;
+    auto moved = std::move(copied);
+    input.clear();
+    program.payloads.clear();
+    const auto payload = moved.payload(0);
+    for (std::size_t i = 0; i < payload.size; ++i)
+        check(payload.data[i] == std::uint8_t((i + 12) * 73 + 19),
+              "compiled payload lost bytes or resource ownership");
+    for (unsigned word = 0; word < moved.code[0].words.size(); ++word)
+        check(moved.code[0].words[word] == res::u32(payload, word * 4),
+              "hot operands disagree with complete payload");
+    bool rejected = false;
+    try {
+        program.payload(0);
+    } catch (const std::exception &) {
+        rejected = true;
+    }
+    check(rejected, "missing payload silently became an empty world instruction");
+    rejected = false;
+    try {
+        moved.payload(2);
+    } catch (const std::exception &) {
+        rejected = true;
+    }
+    check(rejected, "invalid payload PC accepted");
+    for (unsigned mutation = 0; mutation < 3; ++mutation) {
+        auto invalid = ecl;
+        if (mutation == 0)
+            invalid.instructions[0].size = 11;
+        if (mutation == 1)
+            invalid.subs[0].count = 3;
+        if (mutation == 2)
+            invalid.instructions[0].offset = 256;
+        rejected = false;
+        res::Bytes valid_input(256);
+        try {
+            vm::Program bad(res::view(valid_input), invalid, 0);
+        } catch (const std::exception &) {
+            rejected = true;
+        }
+        check(rejected, "malformed compiled payload metadata accepted");
+    }
+}
+void resumable_tests() {
+    vm::Module module;
+    module.subs.resize(2);
+    module.subs[0].code = {op(6, {10000, 7}, 1), op(52, {1}), op(6, {10001, 10008}, 3), op(53, {})};
+    module.subs[1].code = {op(6, {10008, 3}, 1), op(2, {2}), op(63, {bits(123.0f), bits(40.0f)}),
+                           op(7, {bits(10024.0f), bits(10042.0f)}, 3), op(53, {})};
+    vm::Workspace workspace;
+    auto execution = vm::begin(module, 0, workspace, 8);
+    check(vm::advance(execution, workspace, nullptr, 1000, vm::Effects::yield_to_world).status ==
+                  vm::Status::frame_complete &&
+              execution.result.tick == 1 && execution.depth == 1 && execution.wait == 1 &&
+              execution.local_time == 0,
+          "resumable execution lost the called context's first wait frame");
+    auto fork = execution;
+    auto fork_workspace = workspace;
+    auto complete = [&](vm::Execution &context, vm::Workspace &storage, float position) {
+        check(vm::advance(context, storage, nullptr, 1000, vm::Effects::yield_to_world).status ==
+                      vm::Status::frame_complete &&
+                  context.result.tick == 2,
+              "resumable secondary wait changed the world frame count");
+        const auto effect =
+            vm::advance(context, storage, nullptr, 1000, vm::Effects::yield_to_world);
+        check(effect.status == vm::Status::external_effect && effect.tick == 2 &&
+                  vm::pending_operation(context)->opcode == 63,
+              "world effect was skipped or advanced the context clock");
+        check(vm::advance(context, storage).executed == effect.executed &&
+                  !vm::acknowledge_effect(context, effect.executed + 1),
+              "pending effect was re-executed or accepted a mismatched token");
+        // Explicit world fixture response: execute a position write and publish
+        // the computed engine field before allowing the script to continue.
+        storage.registers[42] = position;
+        storage.initialized[42] = true;
+        check(vm::acknowledge_effect(context, effect.executed) &&
+                  !vm::acknowledge_effect(context, effect.executed),
+              "world effect acknowledged twice");
+        const auto ended =
+            vm::advance(context, storage, nullptr, 1000, vm::Effects::yield_to_world);
+        check(ended.status == vm::Status::returned && ended.tick == 2 && context.finished &&
+                  !ended.terminated && storage.registers[0] == 7 && storage.registers[1] == 3 &&
+                  storage.registers[24] == position,
+              "effect resumption lost return storage, world state or clock");
+    };
+    complete(execution, workspace, 123);
+    complete(fork, fork_workspace, 456);
+    check(workspace.registers[24] == 123 && fork_workspace.registers[24] == 456,
+          "execution fork borrowed mutable runtime storage");
+
+    vm::Program program;
+    program.code = {op(6, {10000, 10032}, 3),
+                    op(97, {2, 1, 1, 0, 0, bits(10033.0f), 0, 0}, 1U << 6),
+                    op(6, {10001, 10032}, 3), op(1, {})};
+    th08::random::Rng rng(789), expected(789);
+    execution = vm::begin(program, workspace, 8);
+    const auto first = expected.next_u32() & 0x7fffffffU;
+    auto result = vm::advance(execution, workspace, &rng, 1000, vm::Effects::yield_to_world);
+    check(result.status == vm::Status::external_effect && workspace.registers[0] == first &&
+              rng.generation_count() == 2 && workspace.emissions.empty(),
+          "yielded shot consumed operands/RNG or emitted a duplicate request");
+    rng.next_u32(); // Explicit fixture world-side draw between script instructions.
+    expected.next_u32();
+    const auto after_world = expected.next_u32() & 0x7fffffffU;
+    check(vm::acknowledge_effect(execution, result.executed), "shot acknowledgement rejected");
+    result = vm::advance(execution, workspace, &rng, 1000, vm::Effects::yield_to_world);
+    check(result.status == vm::Status::returned && result.terminated && result.tick == 0 &&
+              workspace.registers[1] == after_world && rng.seed() == expected.seed() &&
+              rng.generation_count() == 6,
+          "resumed script ignored world-side RNG or conflated terminate with return");
+
+    program.code = {op(6, {10000, 10001}, 3), op(53, {})};
+    execution = vm::begin(program, workspace, 8);
+    result = vm::advance(execution, workspace);
+    check(result.status == vm::Status::missing_context && execution.finished,
+          "hard error exposed an unsafe partial instruction as resumable");
+    workspace.initialized[1] = true;
+    workspace.registers[1] = 12;
+    check(vm::advance(execution, workspace).executed == result.executed &&
+              !workspace.initialized[0],
+          "hard-error execution silently restarted after context mutation");
+}
 int main() {
     vm::Program program;
     vm::Workspace workspace;
     scalar_tests(workspace);
     call_tests(workspace);
     random_tests(workspace);
+    payload_tests();
+    resumable_tests();
     program.code = {{0, 63, 0, 8, 255, 76, 0, {}}};
     check(vm::run(program, workspace, 8).status == vm::Status::unsupported,
           "movement silently ignored");

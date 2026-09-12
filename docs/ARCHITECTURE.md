@@ -31,7 +31,11 @@ not execute those resource programs. Shared SHT descriptors retain their occurre
 ANM raw IDs and directory indices remain distinct.
 
 `Program` predecodes one subprogram into fixed-size records and resolves supported
-jumps to array indices. `Module` owns all predecoded subprograms in a resource, reused
+jumps to array indices. Eight common operand words stay inline; a contiguous owned
+payload arena retains every byte of longer world instructions. Payload access is
+bounds-checked, survives decoded-resource destruction and program copy/move, and
+performs no runtime allocation. The DAT check compares all 38110 compiled payloads,
+including 1449 terminal records, with the decoded input. `Module` owns all predecoded subprograms in a resource, reused
 across matrix entries. `Workspace` reuses register validity flags, emission records,
 and transform-write records across executions. Each emission references the number
 of preceding transform writes, avoiding a full transform-table copy per emission.
@@ -62,9 +66,27 @@ domain permits at most one RNG-consuming expression: two random operands, or a
 random sign combined with a random operand, stop as unsupported because expression
 evaluation order is not yet established. On a blocked instruction the RNG returns
 to that instruction's entry state; completed instructions retain their draws.
-Workspace output is diagnostic and is not a resumable VM snapshot.
+Hard-error output remains diagnostic; execution cannot resume a partially failed
+instruction. Restore an earlier caller-owned checkpoint to retry with new context.
 
-RNG-enabled execution stops before every shot request, including deterministic aim
+`Execution` preserves the active program, PC, call depth, integer local/secondary
+clocks and cumulative instruction budget. `advance` runs to one unit-rate frame
+boundary or an explicit world instruction. Copy it together with `Workspace` and
+the caller-owned RNG to fork; immutable programs must outlive those copies.
+`run` remains a fresh, bounded convenience wrapper with identical legacy results.
+
+In `yield_to_world` mode, shot/transform requests and unimplemented world opcodes
+stop before reading operands or drawing RNG. Repeated advances preserve the pending
+instruction. A world handler must implement it, publish affected computed fields,
+and acknowledge its execution-count token exactly once; only then can scalar
+execution continue in the same frame. Unknown effects must never be acknowledged
+as NOPs. This boundary is not itself a world handler. Opcode 1 termination is
+distinguished from normal root return. Tests cover waits inside calls, independent
+forks, same-frame resumption and world-side RNG draws between scalar instructions.
+Fractional ECL clocks, dynamic difficulty masks, child contexts, callbacks and the
+enemy frame tail are still outside this scheduler's unit-rate contract.
+
+RNG-enabled bounded request-recording execution stops before every shot request, including deterministic aim
 modes, because the missing allocation/callback world could consume additional draws.
 This mode assumes no external actor advances the shared stream during the isolated
 slice. The default no-RNG mode and its all-entry matrix remain unchanged. The source

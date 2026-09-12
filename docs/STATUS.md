@@ -63,6 +63,14 @@ The game is not launched in this phase.
     measured about 1198 ns for a compact bool scan versus 19.5 ns for the index; this is
     not full-world throughput. Actual bullet storage and allocation transactions remain
     the caller's responsibility, not an implemented complete pool lifecycle.
+18. Resumable unit-rate ECL contexts preserve call/wait state and can yield before
+    world instructions without consuming operands or RNG. Independent forks and
+    same-frame resumption are tested, including world-side RNG between assignments.
+    Complete owned instruction payloads retain long world commands; all 38110
+    compiled payloads (including terminal records) match the DAT byte-for-byte.
+    The 21735-entry legacy matrix and both particle fixtures remain unchanged.
+    This adds the execution boundary, not the still-missing world effect handlers,
+    fractional ECL clocks, child contexts, enemy movement or callback frame tail.
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the
