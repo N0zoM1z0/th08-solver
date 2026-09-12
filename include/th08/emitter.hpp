@@ -39,13 +39,6 @@ struct Module {
     Module() = default;
     Module(resources::View resource, const resources::Ecl &ecl);
 };
-struct CallFrame {
-    const Program *program;
-    std::uint32_t pc;
-    std::int64_t time, wait;
-    std::array<double, 101> registers;
-    std::array<bool, 101> initialized;
-};
 struct Emission {
     std::uint32_t tick, offset;
     std::int16_t opcode;
@@ -60,6 +53,53 @@ struct TransformWrite {
 struct ScalarStorage {
     std::array<double, 101> registers{};
     std::array<bool, 101> initialized{};
+};
+// Source order of the 0x78-byte scalar region in EnemyEclContext:
+// local int[8], local float[8], extra int[4], extra float[2],
+// call int[4], call float[4]. Entity and global call storage are not context.
+inline constexpr std::array<std::uint8_t, 30> context_slots = {
+    0,  1,  2,  3,  4,  5,  6,  7,  16, 17, 18, 19, 20, 21, 22,
+    23, 36, 37, 38, 39, 94, 95, 53, 54, 55, 56, 57, 58, 59, 60};
+struct ContextScalars {
+    // Native scalar projection, NOT the packed retail ABI. Unknown values stay
+    // unknown when inherited; capturing does not read or resolve operands.
+    std::array<double, context_slots.size()> values{};
+    std::array<bool, context_slots.size()> initialized{};
+};
+inline ContextScalars capture_context(const ScalarStorage &storage) {
+    ContextScalars result;
+    for (std::size_t i = 0; i < context_slots.size(); ++i) {
+        const auto slot = context_slots[i];
+        result.values[i] = storage.registers[slot];
+        result.initialized[i] = storage.initialized[slot];
+    }
+    return result;
+}
+inline void restore_context(const ContextScalars &context, ScalarStorage &storage) {
+    for (std::size_t i = 0; i < context_slots.size(); ++i) {
+        const auto slot = context_slots[i];
+        storage.registers[slot] = context.values[i];
+        storage.initialized[slot] = context.initialized[i];
+    }
+}
+// Apply only the scalar zeros proven by EnemyManager::Initialize's template
+// memset. Call AFTER begin(), which invalidates fresh execution storage. This is
+// not full enemy initialization; shared parameters and computed fields are left
+// untouched and must be supplied by their world owner, never inferred as zero.
+inline void initialize_spawn_scalars(ScalarStorage &storage) {
+    ContextScalars zero;
+    zero.initialized.fill(true);
+    restore_context(zero, storage);
+    for (std::size_t i = 0; i < 8; ++i) {
+        storage.registers[8 + i] = storage.registers[24 + i] = 0;
+        storage.initialized[8 + i] = storage.initialized[24 + i] = true;
+    }
+}
+struct CallFrame {
+    const Program *program;
+    std::uint32_t pc;
+    std::int64_t time, wait;
+    ContextScalars scalars;
 };
 struct Workspace : ScalarStorage {
     // Reused across candidates/runs; no hash maps or per-event allocation.

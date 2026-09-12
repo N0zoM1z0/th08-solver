@@ -22,7 +22,7 @@ reproduction commands. This packaging change adds no world-execution coverage.
    candidate-independent models, and independent path replay.
 5. Actual sub40/41/42 regressions, source-function predicate comparisons,
    unit tests, and consistent clang-format formatting.
-6. Nineteen Release and eighteen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
+6. Twenty Release and nineteen ASan/UBSan CTest cases pass. Sanitizer checks also cover the
    native parsers, restricted-execution matrix and both 600-frame particle fixtures,
    including the latest signed-laser/fractional-clock changes.
 7. All observed ECL payload schemas; 32 timelines / 2003 instructions; eight SHT files
@@ -119,6 +119,14 @@ reproduction commands. This packaging change adds no world-execution coverage.
     expected and the maintained implementation passes. Successful culls commit motion
     but skip later world reads. Allocation, surrounding ANM execution, camera evolution,
     freeze scheduling and effect-pool retirement remain unimplemented world work.
+24. Context-only scalar snapshots replace all-register call-frame copies. Source
+    order and unknown validity are preserved across thirty context slots; entity
+    and shared state survives returns. Explicit template initialization sets only
+    46 source-proven scalar zeros. All-slot ownership and nested-call tests pass;
+    on local x86_64 the call frame shrinks from 944 to 304 bytes and the workspace
+    from 15120 to 5520 bytes. The native 21735-entry matrix and four particle TSVs
+    remain byte-identical. This prepares storage for spawn/child ownership but does
+    not implement their complete lifecycle. See [ECL_CONTEXT_STORAGE.md](ECL_CONTEXT_STORAGE.md).
 
 The native matrix has 201 returned slices, 1224 bounded prefixes, 14973 unsupported
 attempts, and 5337 attempts requiring context. This executor implements only the
