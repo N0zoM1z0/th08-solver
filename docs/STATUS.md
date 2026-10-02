@@ -1,8 +1,9 @@
-# Current implementation status
+# Current handoff status
 
-Reviewed: 2026-10-02. This is the current capability ledger, not a development diary.
-Maintained implementation, tools and tests are C++17. No game or input controller
-is launched. Historical preparation results are not counted as native coverage.
+Reviewed: 2026-10-02. The owner is taking over locally. TH08 feature work is paused;
+this page records verified behavior and suggested next work, not an active task queue.
+
+## Verified coverage
 
 | Outcome | Verified count |
 |---|---|
@@ -10,99 +11,70 @@ is launched. Historical preparation results are not counted as native coverage.
 | Indexed spell-start occurrences | 431 |
 | Complete offline spell worlds | 0 |
 | Complete offline spell solutions | 0 |
-| Source-driven 600-frame particle fixtures with replayed routes | 2 |
-| Synthetic 7200-frame continuous profiles with replayed rolling routes | 2 |
+| DAT-derived controlled complete survival profiles | 1: ID179 Easy |
+| Synthetic 7200-frame profiles solved by baseline rolling beam | 2 |
+| Synthetic 7200-frame profiles solved with optional goal recovery | 3 |
+| Synthetic 72000-frame continuous profiles with replayed routes | 1 |
+| Older source-driven 600-frame particle fixtures | 2 |
 
-Do not derive a completion percentage from opcode support, test counts, or these
-two fixtures. A spell ID can have different stage/practice, difficulty, character,
-form, entry-state and RNG-dependent execution cases.
+Controlled survival is counted separately from source-faithful whole-world coverage.
+There is no verified complete original stage, retail practice capture or universal
+solver. Opcode counts and passing component tests are not completion percentages.
 
-## What works now
+## Results that matter
 
-| Layer | Implemented and checked | Still outside that claim |
-|---|---|---|
-| Resource decoding | All 317 DAT members; ECL, timeline, SHT, ANM and STD structural parsing and field checks | Running all resource programs or gameplay |
-| Scalar ECL | Typed arithmetic, branches, normal calls/waits, explicit RNG, owned full payloads and resumable world handoffs | General ECL/EX world effects, fractional ECL clocks, child contexts and callback tails |
-| Context ownership | Thirty-slot snapshots; source-proven 46 scalar template zeros; compact call frames with unknown validity preserved | Full actor initialization, spawn transactions or globally coherent shared storage |
-| Timeline | Source clocks, masks, waits, event slots and pending-effect tokens; real practice-entry request boundaries | Executing spawn/dialogue/boss/power/menu effects or defeating the boss |
-| Practice entry ownership | Owned 480-slot spawn pool, immediate resumable ECL prefix, restricted frame tail and post-spawn stores; real timeline packet connected to sub0 PC1 | Actual camera/RNG initialization, surrounding world phases and a complete practice entry |
-| Enemy motion | Polar, relative/interpolated and orbital motion; separate velocity/displacement phases; transactional ECL effects 63..76 and 178 | Actor pools, form/death/pause gates, child/parent lifecycle and shot/ANM scheduling |
-| ANM | Control/scalar execution, waits, interrupts, sprite identity, explicit RNG and hit-animation metadata; restricted lifetime certificates | Render/interpolation fields, resource-loading side effects and integration with world consumers |
-| Camera particles | Shared effect51/62 allocation and restricted unit-rate callback/ANM/freeze/retirement with explicit inputs | Other effects, global phase ordering, camera evolution and rendering |
-| Bullet/laser kernels | Nine launch modes, direction/acceleration phases, supported eighteen-record transforms and laser collision/lifetime projection | General transforms, sprite replacement, child patterns and complete pool/cancellation lifecycle |
-| Slot selection | Source-ordered 1536-slot circular selection and nested cursor completion using bitsets | Bullet storage, successful initialization or full-pool RNG behavior |
-| Geometry | Box/laser predicates, owned CSR broad phase, signed laser dimensions and unindexed differential checks | Whole-game gates or a formal proof over every floating-point input |
-| Planning | Deterministic bounded search, reusable buffers, independent route replay, fixed-model differential tests | Complete or optimal search; safe merging of different candidate-dependent world states |
-| Integrated fixtures | Actual sub40/41 requests connected through motion, geometry, search and replay | Complete Wriggle, Reisen or any other spell |
+- Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
+  Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
+- A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived
+  goal recovery completes it without a hardcoded scene/escape coordinate. It shares
+  the original 200000 expansion budget: measured peak 198117, with target probes reported
+  separately. Default behavior and the failing baseline remain available
+- A 72000-frame relay (20 simulated minutes) survived and freshly replayed: 38320 births,
+  2400 decisions, 120-frame peak forecast and 27471 peak model bullet references. Local
+  Release runtime was about 21.1 seconds including replay, not a timing guarantee
+- Actual DAT ID179 executes main sub72, child73, fast-spawn/polar bullets, 1200 lethal
+  phases and the timeout/end callback. Full-horizon and rolling planning survive seeds
+  0, 1, 65535; stationary fails all three and greedy succeeds only 0. Every result,
+  including collision/search-failure prefixes, is independently replayed without the index
+- For that short player-independent spell, full-horizon solve/replay took 92–94 ms,
+  rolling 387–401 ms. Repeated overlapping forecasts/searches add work; choose strategies
+  using evidence rather than assuming rolling is always better
+- Early exact-successor dedup avoids 32.6% of collision queries in the moving benchmark
+  and 86.5% at a clamped corner, preserving routes, attempted budgets and tie-breaking.
+  Both existing DAT sub40/41 route files remain byte-identical
 
-Implementation paths and ownership rules are mapped in [Architecture](ARCHITECTURE.md).
-The [comparison chain](PROVENANCE.md) identifies independent source evidence and
-exclusions for each layer; passing an adapter does not make it a complete world.
+Exact profiles and exclusions are in [Scenarios](SCENARIOS.md); measured records are
+in the [report index](../reports/native/README.md). Samples were collected on Linux
+x86_64, Intel Xeon Platinum 8573C, GCC 14.2, Release, contraction disabled.
 
-## Current all-resource and execution baselines
+## Existing reusable components
 
-| Audit | Current result | Authoritative generated record |
-|---|---|---|
-| ECL structure | 24 files, 1449 subs, 36661 nonterminal instructions, 2182 checked jumps, 32 EX IDs | [summary.json](../reports/native/summary.json) |
-| Other structures | 32 timelines / 2003 instructions; 8 SHT / 50 levels / 227 descriptors; 113 ANM / 310 entries / 1151 scripts / 1917 sprites / 15966 instructions; 18 STD / 68 objects / 552 quads / 1332 instances / 641 instructions | [resource_summary.json](../reports/native/resource_summary.json) |
-| Restricted ECL matrix | 21735 attempts: 201 returned, 1224 bounded, 14973 unsupported, 5337 require context; all 38110 owned payloads match | [slice_summary.json](../reports/native/slice_summary.json), [per-case ledger](../reports/native/slice_matrix.tsv) |
-| ANM, no RNG supplied | 1151 scripts, up to 600 calls each: 340 complete, 800 bounded, 11 require context, zero invalid; 42 independent timing certificates | [animation_control_summary.json](../reports/native/animation_control_summary.json) |
-| Timeline, no world observations | 160 entry/mask attempts, all require context; 2003 payloads checked | [timeline_control_summary.json](../reports/native/timeline_control_summary.json) |
-| First spell entry prefix | ID2 Easy selected; supplied GUI gates; one pending actor; first missing context sub0 PC1 offset260 opcode139; no invented RNG/player state | [first_spell_summary.json](../reports/native/first_spell_summary.json), [trace](../reports/native/first_spell_trace.tsv) |
-| Particle fixtures | Two 600-frame routes, each with 840 births and 688203 search expansions, independently replayed | [motion_summary.json](../reports/native/motion_summary.json), [fixture assumptions](MOTION_FIXTURES.md) |
-| Pinned native source comparisons | Zero mismatches in every reported category | [source_oracle.json](../reports/native/source_oracle.json) |
+The repository includes DAT/ECL/SHT/ANM/STD parsing, scalar ECL calls/waits/RNG,
+resumable world-effect handoffs, context ownership, timeline/motion kernels, certified
+ANM timing, bullet transforms/slot selection, laser collision/lifetime, spatial indexing
+and fixed-model planning. [Architecture](ARCHITECTURE.md) maps their owners.
 
-The ECL matrix is the isolated restricted executor, not an audit of every world
-handler. Conversely, supported world motion does not retroactively convert its
-isolated `UNSUPPORTED` entries into full executions. ANM's separately seeded
-profiles reset seed 0 or 65535 for every script; each completes 350 and bounds 801.
-They are component checks, not the shared RNG order of a world.
+Earlier practice-entry, effect51/62 and camera components remain checked code. They
+are optional component evidence, not prerequisites or the next integration roadmap.
+The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-## Verification and performance status
+There are 25 core CTests without private data, plus two optional pinned-source tests
+(27 total). The local Release suite and actual-DAT checks passed at handoff. Public
+CI excludes DAT and reconstruction; it cannot certify those profiles. See
+[Validation](VALIDATION.md) for commands and evidence limits.
 
-There are 25 core CTests without private data, plus two optional source
-comparisons (27 with the pinned reconstruction). The current Release and ASan/UBSan
-checks, DAT commands, CI limits and report-refresh procedure are documented in
-[Validation](VALIDATION.md). The four opt-in component source oracles are separately
-buildable; see [Build artifacts](BUILD_ARTIFACTS.md).
+## Recommended next steps for local work
 
-Current data-layout optimizations include contiguous immutable programs, hot/cold
-operands, fixed scratch state, thirty-slot call frames, bitset slot selection, CSR
-geometry and allocation-reusing search. On the measured x86_64 layout, a call frame
-is 304 bytes and a workspace 5520 bytes. Timing results are scoped samples in
-[Performance](PERFORMANCE.md), not maximum-performance or real-time guarantees.
+1. Reproduce the checked profiles on the local machine before changing algorithms
+2. Broaden real-DAT complete checkpoints and seeds, keeping failures and simple
+   baselines. Prioritize gameplay opcodes/lifecycles that unlock meaningful whole scenes
+3. For a genuine stage segment, define entrance and terminal state, carry actors,
+   bullets and RNG continuously, and implement actual transition/cancellation lifetimes.
+   ID179's despawning slots cannot currently be treated as an empty next-stage pool
+4. Add candidate-owned state before caching futures affected by aiming, damage,
+   form/graze feedback, RNG or pool contention. Position alone is not a world-state key
+5. Optimize measured end-to-end bottlenecks; retain outcome, action and replay checks.
+   Recovery remains a heuristic, not complete or optimal search
 
-## Current solver-first integration
-
-Explicit, reproducible spell-start checkpoints are accepted. The priority is complete
-continuous scenes, reproducible algorithm failures and end-to-end efficiency, not menu,
-practice-prelude or render/camera reconstruction. [Continuous scenarios](SCENARIOS.md)
-defines the controlled RNG and replay contract. Fixed-position candidate merging remains
-valid only for a player-independent hazard future.
-
-The synthetic runner carries bullets and RNG across phase transitions, uses bounded
-rolling forecasts and verifies the executed action tape in a fresh unindexed replay.
-Synthetic scenes are not original stages. The next real-resource profile is ID179 Easy
-in `ecldata7sp.ecl`, starting at a supplied spell checkpoint; implementation/validation
-must precede any complete controlled-spell count. The earlier Wriggle entry work is
-preserved as component evidence, not a prerequisite for this effort.
-
-[First spell entry](FIRST_SPELL.md) records the superseded entry-first investigation;
-[Coverage roadmap](COVERAGE.md) still defines eventual source-faithful all-case acceptance.
-Unknown gameplay semantics must stop a case. Explicit visual hooks must never silently
-replace gameplay RNG, aiming, damage or candidate-dependent state.
-
-## Existing-code maintenance
-
-Effect routing and effect execution are separated without changing their commit
-order. ANM visual operand length/types now have one descriptor. Source probes use
-an explicit shared extraction interface;17 identical test failure helpers share
-one small implementation. No unused test entry points were found, so independent
-oracles and behavior regressions were retained. At cleanup commit d91f94c,25 reference CTests passed; all1151 real-data ANM rows
-and both generated reference translation units were byte-identical to the prior version. This maintenance adds no world-completion claim.
-
-The source-derived Stage1 practice camera and callback-free background effect62
-now feed the separate entry checkpoint. Its28 occupied slots expose shared-pool
-contention rather than assuming an empty pool for effect51. Camera playback is
-unit-rate only and stops before the time1024 origin-shifting loop. This remains
-component integration with supplied GUI/RNG state, not a complete world.
+Do not return to full camera/menu reconstruction merely to unblock a controlled
+benchmark. Do not concatenate isolated spell fixtures and label the result an actual stage.

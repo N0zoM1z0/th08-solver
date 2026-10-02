@@ -167,6 +167,40 @@ bool same(Digests a, Digests b) {
     return a.world == b.world && a.events == b.events && a.gameplay_rng == b.gameplay_rng &&
            a.visual_rng == b.visual_rng;
 }
+std::size_t recovery_beam(std::size_t frames, std::size_t beam, std::uint64_t remaining) {
+    if (remaining < 9 * frames)
+        return 0;
+    if (frames == 1)
+        return beam;
+    // First layer has one parent; every later layer has at most beam parents.
+    // This upper bound leaves the complete retry inside the remaining budget.
+    return std::size_t(std::min(std::uint64_t(beam), (remaining / 9 - 1) / (frames - 1)));
+}
+bool find_refuge_goal(const solver::Model &model, Vec2 player, solver::Movement speed, Vec2 &goal,
+                      std::uint64_t &queries) {
+    double nearest = std::numeric_limits<double>::infinity();
+    const float reach = std::max(speed.axis, speed.diagonal) * float(model.frames.size());
+    // Coarse, deterministic domain sampling, independent of the scenario profile.
+    // A stationary refuge must remain free throughout the current lookahead.
+    // The reach bound only filters proposals; search and replay validate the route.
+    for (float y = 16; y <= 432; y += 8)
+        for (float x = 8; x <= 376; x += 8) {
+            const double dx = double(x) - player.x, dy = double(y) - player.y;
+            const double score = dx * dx + dy * dy;
+            if (score >= nearest || std::abs(dx) > reach || std::abs(dy) > reach)
+                continue;
+            const Vec2 candidate{x, y};
+            if (std::any_of(model.frames.begin(), model.frames.end(),
+                            [&](const geometry::Snapshot &frame) {
+                                ++queries;
+                                return frame.query(candidate);
+                            }))
+                continue;
+            goal = candidate;
+            nearest = score;
+        }
+    return std::isfinite(nearest);
+}
 } // namespace
 
 std::uint32_t Definition::duration() const {
@@ -318,6 +352,7 @@ RunResult run(const Checkpoint &initial, const RunOptions &options) {
     while (world.frame < world.definition->duration()) {
         std::vector<solver::Action> chosen;
         if (options.strategy == Strategy::rolling_beam) {
+            const auto expansions_before = result.expansions;
             auto timer = Clock::now();
             ForecastStats stats;
             auto model = forecast(world, options.horizon, &stats);
@@ -334,11 +369,47 @@ RunResult run(const Checkpoint &initial, const RunOptions &options) {
             search.terminal = {options.goal, {736, 832}};
             timer = Clock::now();
             auto proposal = solver::plan(model, result.player, world.definition->movement, search);
-            result.search_ms += elapsed(timer);
+            const auto initial_ms = elapsed(timer);
+            result.search_ms += initial_ms;
             ++result.decisions;
             result.expansions += proposal.expansions;
             result.collision_queries += proposal.collision_queries;
             result.duplicate_successors += proposal.duplicate_successors;
+            const auto remaining = options.expansions_per_plan - proposal.expansions;
+            const auto retry_beam = recovery_beam(model.frames.size(), options.beam, remaining);
+            if (options.recover_goal && proposal.status == solver::Status::search_exhausted &&
+                retry_beam > 0) {
+                ++result.recovery_attempts;
+                result.recovery_initial_expansions += proposal.expansions;
+                result.recovery_initial_ms += initial_ms;
+                timer = Clock::now();
+                Vec2 refuge{};
+                const bool found =
+                    find_refuge_goal(model, result.player, world.definition->movement, refuge,
+                                     result.recovery_target_queries);
+                const auto target_ms = elapsed(timer);
+                result.recovery_target_ms += target_ms;
+                result.search_ms += target_ms;
+                if (found) {
+                    search.terminal.center = refuge;
+                    search.expansions = remaining;
+                    search.beam = retry_beam;
+                    timer = Clock::now();
+                    proposal =
+                        solver::plan(model, result.player, world.definition->movement, search);
+                    const auto retry_ms = elapsed(timer);
+                    result.recovery_retry_ms += retry_ms;
+                    result.search_ms += retry_ms;
+                    result.recovery_retry_expansions += proposal.expansions;
+                    result.expansions += proposal.expansions;
+                    result.collision_queries += proposal.collision_queries;
+                    result.duplicate_successors += proposal.duplicate_successors;
+                    if (proposal.status == solver::Status::found)
+                        ++result.recovery_successes;
+                }
+            }
+            result.peak_decision_expansions =
+                std::max(result.peak_decision_expansions, result.expansions - expansions_before);
             if (proposal.status != solver::Status::found) {
                 result.outcome = Outcome::search_limit;
                 result.search_status = proposal.status;
@@ -377,6 +448,8 @@ RunResult run(const Checkpoint &initial, const RunOptions &options) {
                         }
                     }
                 ++result.decisions;
+                result.peak_decision_expansions =
+                    std::max(result.peak_decision_expansions, std::uint64_t(9));
                 result.search_ms += elapsed(search_start);
             }
             result.player = solver::advance(result.player, action, world.definition->movement);
