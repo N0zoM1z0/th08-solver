@@ -187,6 +187,39 @@ foreach(seed IN ITEMS 0 1 65535)
     message(FATAL_ERROR "ID198 did not exercise its two-leg cached forecast: ${report}")
   endif()
 endforeach()
+# ID201's first unadapted collision is a large parent still executing WAIT.
+# Preserve that source boundary, then require the isolated adapter to exercise
+# both the source-bounded WAIT path and deterministic future opcode-97 shots.
+scene(spell201-wait-baseline extra 201 0 hazard-reactive 1000 collision 2 362 4)
+file(READ "${WORK}/spell201-wait-baseline.json" spell201)
+foreach(pair IN ITEMS "bullet_slot;24" "active_transforms;131072")
+  list(GET pair 0 key)
+  list(GET pair 1 expected)
+  field("${spell201}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "ID201 changed delayed-bullet ${key}: ${actual}")
+  endif()
+endforeach()
+scene(spell201-portfolio-seed0 extra 201 0 spell-portfolio 6000 complete 0 4292 4)
+file(READ "${WORK}/spell201-portfolio-seed0.json" spell201_portfolio)
+foreach(pair IN ITEMS "policy_profile_last;\"id201-wait-and-ecl-shot\""
+                      "policy_bullet_horizon;32"
+                      "policy_upcoming_bullet_unsupported_spawns;0")
+  list(GET pair 0 key)
+  list(GET pair 1 expected)
+  field("${spell201_portfolio}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "ID201 changed ${key}: ${actual}")
+  endif()
+endforeach()
+foreach(key IN ITEMS policy_wait_linear_checks policy_upcoming_bullet_observed_spawns
+                     policy_upcoming_bullet_warnings
+                     policy_upcoming_bullet_constrained_decisions)
+  field("${spell201_portfolio}" "${key}" actual)
+  if(NOT actual GREATER 0)
+    message(FATAL_ERROR "ID201 did not exercise ${key}: ${spell201_portfolio}")
+  endif()
+endforeach()
 # Distinct spell profiles guard the measured portfolio boundary. ID195 needs
 # vector acceleration; ID199 deliberately retains constant-velocity ranking.
 scene(spell193-portfolio extra 193 0 spell-portfolio 5000 complete 0 3692 4)

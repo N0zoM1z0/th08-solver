@@ -18,6 +18,9 @@ struct BulletView {
     // copied after the native update; no transform program is executed here.
     float vector_acceleration_x, vector_acceleration_y;
     int vector_acceleration_timer, vector_acceleration_duration;
+    // Number of upcoming native updates whose velocity is guaranteed unchanged
+    // across the active WAIT and any proven terminal child-spawn boundary.
+    int wait_linear_updates;
 };
 // Raw source-owned laser state after an update. Consumers may forecast existing
 // lasers, but newly spawned/aimed lasers still belong to the next native update.
@@ -69,6 +72,29 @@ struct ImminentLaserSpawnView {
     int start_time = 0, hitbox_start_time = 0, duration = 0, despawn_duration = 0;
     int hitbox_end_delay = 0;
     std::uint16_t flags = 0;
+};
+// One bullet at its first native collision update, produced by a currently
+// visible future ECL shot. update is one-based from the observation boundary.
+// Unsupported entries preserve the source encounter so an enabled case
+// adapter can stop instead of treating unknown emission as empty space.
+enum class UpcomingBulletSpawnFailure {
+    None,
+    InstructionSequence,
+    DynamicContext,
+    EnemyMotion,
+    Operands,
+    TransformProgram,
+    SpriteGeometry,
+    OffscreenCull,
+    PoolCapacity,
+};
+struct UpcomingBulletSpawnView {
+    bool supported = false, suppressed = false;
+    UpcomingBulletSpawnFailure failure = UpcomingBulletSpawnFailure::None;
+    int enemy_index = -1, opcode = 0;
+    unsigned update = 0, linear_updates = 0;
+    float x = 0, y = 0, vx = 0, vy = 0;
+    float full_width = 0, full_height = 0;
 };
 enum class CollisionKind { None, Bullet, LethalRegion, Laser };
 struct Bounds {
@@ -124,6 +150,9 @@ class Session {
     const std::vector<EclContextView> &ecl_contexts();
     // Reused source-owned spawn previews; this read never resolves RNG operands.
     const std::vector<ImminentLaserSpawnView> &imminent_laser_spawns();
+    // Reused bounded ECL bullet previews. Only a linear current cursor, known
+    // enemy motion and deterministic non-aimed patterns are exported.
+    const std::vector<UpcomingBulletSpawnView> &upcoming_bullet_spawns(unsigned horizon);
     float focused_axis_speed() const;
     float focused_diagonal_speed() const;
     // A diagnostics projection of actor/script state, not a serialized world.
@@ -136,5 +165,6 @@ class Session {
     std::vector<LaserView> laser_views_;
     std::vector<EclContextView> ecl_views_;
     std::vector<ImminentLaserSpawnView> laser_spawn_views_;
+    std::vector<UpcomingBulletSpawnView> bullet_spawn_views_;
 };
 } // namespace th08::headless
