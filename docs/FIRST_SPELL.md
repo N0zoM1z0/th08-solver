@@ -1,5 +1,10 @@
 # First complete spell: execution plan
 
+Scope update (2026-10-02): the entry-first priority below is superseded by
+[continuous checkpoint-based solving](SCENARIOS.md). Its source-faithful acceptance
+criteria remain useful, but menu/practice/camera reconstruction does not block controlled
+complete-spell or stage-segment benchmarks. Historical results are not new completion claims.
+
 Decision: 2026-09-12. Finish one vertical slice before expanding families or
 optimizing unrelated components. This plan records work to do, not a solved spell.
 The current implementation ledger remains [Status](STATUS.md).

@@ -4,6 +4,21 @@ Read `docs/STATUS.md`, `docs/ARCHITECTURE.md`, and the affected interfaces first
 The current user scope is offline component/solver development. Do not launch
 Wine, a Linux game port, or an input controller as an implicit verification step.
 
+## Current solver-first scope (2026-10-02)
+
+- Start from explicit, reproducible spell/scenario checkpoints. Reconstructing
+  menus, practice preludes, camera or rendering is not a prerequisite for solving.
+- Prioritize complete-duration continuous-danmaku scenarios, algorithm comparisons,
+  replay and end-to-end performance. A short safe horizon is not a completed scene.
+- A controlled profile may replace explicitly identified visual RNG consumers
+  with deterministic, seeded hooks. Record that policy; do not claim its trace is
+  retail-equivalent. Gameplay randomness and candidate-dependent state remain real
+  dependencies, not arbitrary NOPs or one tape reused across divergent branches.
+- Distinguish synthetic stress scenes, DAT/ECL-derived controlled scenarios and
+  source-faithful spell/stage runs. Stage transitions preserve carried state unless
+  the scenario explicitly models a reset. Unknown gameplay semantics still stop.
+- Work directly on main and push verified checkpoints; no PR/new working branch.
+
 ## Implementation
 
 - Write maintained documentation, code, comments, and commit messages in English.

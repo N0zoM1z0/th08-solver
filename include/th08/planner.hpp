@@ -2,6 +2,7 @@
 #include "geometry.hpp"
 #include <array>
 #include <cstring>
+#include <limits>
 #include <string>
 
 namespace th08::solver {
@@ -44,6 +45,9 @@ struct Result {
     std::vector<Action> actions;
     std::vector<Vec2> positions;
     std::uint64_t expansions = 0;
+    // Attempted actions still consume the budget, including duplicate successors.
+    // These counters cover search only, not the independent final replay.
+    std::uint64_t collision_queries = 0, duplicate_successors = 0;
 };
 // Deterministic, bounded beam proposal followed by unindexed replay. Failure is
 // search failure, never a proof of impossibility or a safe fallback input.
@@ -74,15 +78,28 @@ inline Result plan(const Model &model, Vec2 start, Movement speed, const Options
         Action action;
         double score;
     };
+    const auto better = [](const Node &a, const Node &b) {
+        if (a.score != b.score)
+            return a.score < b.score;
+        if (a.parent != b.parent)
+            return a.parent < b.parent;
+        if (a.action.y != b.action.y)
+            return a.action.y < b.action.y;
+        return a.action.x < b.action.x;
+    };
+    const auto worse = [&](const Node &a, const Node &b) { return better(b, a); };
     std::vector<Node> nodes, next;
     nodes.reserve(1 + model.frames.size() * options.beam);
     next.reserve(options.beam * 9);
     nodes.push_back({start, 0, {}, 0});
     std::size_t first = 0, count = 1;
     std::size_t table_size = 4;
-    while (table_size < options.beam * 4)
+    // At most nine successors per parent; keep the table below half occupancy.
+    while (table_size < options.beam * 18)
         table_size *= 2;
     std::vector<std::uint64_t> seen(table_size);
+    std::vector<std::size_t> candidate(table_size);
+    constexpr auto blocked = std::numeric_limits<std::size_t>::max();
     auto key = [](Vec2 p) {
         std::uint32_t x, y;
         std::memcpy(&x, &p.x, sizeof(x));
@@ -98,6 +115,7 @@ inline Result plan(const Model &model, Vec2 start, Movement speed, const Options
     };
     for (const auto &frame : model.frames) {
         next.clear();
+        std::fill(seen.begin(), seen.end(), 0);
         for (std::size_t parent = first; parent < first + count; ++parent)
             for (int y = -1; y <= 1; ++y)
                 for (int x = -1; x <= 1; ++x) {
@@ -107,41 +125,50 @@ inline Result plan(const Model &model, Vec2 start, Movement speed, const Options
                     }
                     ++out.expansions;
                     Vec2 p = advance(nodes[parent].p, {x, y}, speed);
-                    if (frame.query(p))
-                        continue;
+                    // This equivalence is valid only for the fixed Model above:
+                    // identical positions share collision results and scores.
+                    // Clamping produces positive finite coordinates, excluding
+                    // signed zero, so bit keys preserve exact position equality.
+                    const auto position = key(p);
+                    auto slot = std::size_t(hash(position)) & (table_size - 1);
+                    while (seen[slot] != 0 && seen[slot] != position)
+                        slot = (slot + 1) & (table_size - 1);
+                    const bool duplicate = seen[slot] == position;
+                    if (duplicate) {
+                        ++out.duplicate_successors;
+                        if (candidate[slot] == blocked)
+                            continue;
+                    } else {
+                        seen[slot] = position;
+                        ++out.collision_queries;
+                        if (frame.query(p)) {
+                            candidate[slot] = blocked;
+                            continue;
+                        }
+                    }
                     double dx = double(p.x) - options.terminal.center.x,
                            dy = double(p.y) - options.terminal.center.y;
-                    next.push_back({p, parent, {x, y}, dx * dx + dy * dy});
+                    const Node n{p, parent, {x, y}, dx * dx + dy * dy};
+                    if (duplicate) {
+                        // Keep the comparator winner, rather than relying on
+                        // first arrival if candidate generation order changes.
+                        auto &previous = next[candidate[slot]];
+                        if (better(n, previous))
+                            previous = n;
+                    } else {
+                        candidate[slot] = next.size();
+                        next.push_back(n);
+                    }
                 }
         // Pop only enough candidates to fill the beam. Explicit generation-order
         // tie-breaks preserve the old stable_sort result without sorting the tail.
-        const auto better = [](const Node &a, const Node &b) {
-            if (a.score != b.score)
-                return a.score < b.score;
-            if (a.parent != b.parent)
-                return a.parent < b.parent;
-            if (a.action.y != b.action.y)
-                return a.action.y < b.action.y;
-            return a.action.x < b.action.x;
-        };
-        const auto worse = [&](const Node &a, const Node &b) { return better(b, a); };
         std::make_heap(next.begin(), next.end(), worse);
-        std::fill(seen.begin(), seen.end(), 0);
         first = nodes.size();
         count = 0;
         while (!next.empty() && count < options.beam) {
             std::pop_heap(next.begin(), next.end(), worse);
             const auto n = next.back();
             next.pop_back();
-            // Clamped coordinates are positive and finite, so zero is an unused
-            // key and bitwise equality equals numeric position equality here.
-            const auto position = key(n.p);
-            auto slot = std::size_t(hash(position)) & (table_size - 1);
-            while (seen[slot] != 0 && seen[slot] != position)
-                slot = (slot + 1) & (table_size - 1);
-            if (seen[slot] == position)
-                continue;
-            seen[slot] = position;
             nodes.push_back(n);
             ++count;
         }
