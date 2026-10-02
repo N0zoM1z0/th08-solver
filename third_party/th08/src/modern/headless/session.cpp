@@ -140,12 +140,17 @@ const std::vector<LaserView> &Session::lasers() {
     laser_views_.clear();
     int slot = 0;
     for (const auto &laser : g_BulletManager.lasers) {
-        if (laser.inUse)
+        if (laser.inUse) {
+            const auto motion = current_laser_motion(slot);
             laser_views_.push_back(
-                {laser.position.x, laser.position.y, laser.angle, laser.startOffset,
-                 laser.endOffset, laser.startLength, laser.width, laser.speed, laser.startTime,
-                 laser.hitboxStartTime, laser.duration, laser.despawnDuration, laser.hitboxEndDelay,
-                 laser.timer.current, slot, laser.flags, laser.state});
+                {laser.position.x,      laser.position.y,    laser.angle,
+                 laser.startOffset,     laser.endOffset,     laser.startLength,
+                 laser.width,           laser.speed,         laser.startTime,
+                 laser.hitboxStartTime, laser.duration,      laser.despawnDuration,
+                 laser.hitboxEndDelay,  laser.timer.current, slot,
+                 laser.flags,           laser.state,         motion.origin_delta_x,
+                 motion.origin_delta_y, motion.angle_delta,  motion.continuous});
+        }
         ++slot;
     }
     return laser_views_;

@@ -13,12 +13,16 @@ struct HazardReactiveOptions {
     // dy-major bits for the nine constant directions; callers must retain at
     // least one candidate when composing an independently derived constraint.
     std::uint16_t candidate_mask = 0x1ff;
+    // A spell adapter may extrapolate the most recently observed native pooled
+    // laser translation/rotation as one rigid motion. The default makes no
+    // future-motion claim.
+    bool rigid_laser_motion = false;
 };
 struct HazardReactiveStats {
     std::uint64_t decisions = 0, candidates = 0;
     std::uint64_t bullet_checks = 0, vector_acceleration_checks = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
-    std::uint64_t laser_checks = 0, predicted_overlaps = 0;
+    std::uint64_t rigid_laser_paths = 0, laser_checks = 0, predicted_overlaps = 0;
 };
 
 namespace detail {
@@ -83,6 +87,8 @@ struct LaserForecast {
     int timer, state;
     std::uint16_t flags;
     bool present = true;
+    float motion_center_x = 0, motion_center_y = 0, angle_delta = 0;
+    bool rigid_motion = false;
 };
 struct LaserPhase {
     float center_x = 0, center_y = 0, full_width = 0, full_height = 0;
@@ -90,26 +96,46 @@ struct LaserPhase {
     // for the next update after native collision has already run.
     bool lethal = false, present = true;
 };
-template <class Laser> LaserForecast forecast(const Laser &laser) {
-    return {laser.origin_x,
-            laser.origin_y,
-            laser.angle,
-            std::sin(-laser.angle),
-            std::cos(-laser.angle),
-            laser.start_offset,
-            laser.end_offset,
-            laser.start_length,
-            laser.width,
-            laser.speed,
-            laser.start_time,
-            laser.hitbox_start_time,
-            laser.duration,
-            laser.despawn_duration,
-            laser.hitbox_end_delay,
-            laser.timer,
-            laser.state,
-            laser.flags,
-            true};
+template <class Laser> LaserForecast forecast(const Laser &laser, bool rigid_motion = false) {
+    LaserForecast result{laser.origin_x,
+                         laser.origin_y,
+                         laser.angle,
+                         std::sin(-laser.angle),
+                         std::cos(-laser.angle),
+                         laser.start_offset,
+                         laser.end_offset,
+                         laser.start_length,
+                         laser.width,
+                         laser.speed,
+                         laser.start_time,
+                         laser.hitbox_start_time,
+                         laser.duration,
+                         laser.despawn_duration,
+                         laser.hitbox_end_delay,
+                         laser.timer,
+                         laser.state,
+                         laser.flags,
+                         true};
+    if (!rigid_motion || !laser.motion_observed || std::abs(laser.angle_delta) <= 1e-6f)
+        return result;
+    const float sine = std::sin(laser.angle_delta), cosine = std::cos(laser.angle_delta);
+    const float previous_x = laser.origin_x - laser.origin_delta_x;
+    const float previous_y = laser.origin_y - laser.origin_delta_y;
+    // Solve p1 - center = R(delta) * (p0 - center). This owns only the
+    // proposal geometry; native updates still decide whether motion repeats.
+    const float rhs_x = laser.origin_x - (cosine * previous_x - sine * previous_y);
+    const float rhs_y = laser.origin_y - (sine * previous_x + cosine * previous_y);
+    const float diagonal = 1 - cosine;
+    const float determinant = diagonal * diagonal + sine * sine;
+    if (determinant <= 1e-12f)
+        return result;
+    result.motion_center_x = (diagonal * rhs_x - sine * rhs_y) / determinant;
+    result.motion_center_y = (sine * rhs_x + diagonal * rhs_y) / determinant;
+    result.angle_delta = laser.angle_delta;
+    result.rigid_motion = std::isfinite(result.motion_center_x) &&
+                          std::isfinite(result.motion_center_y) &&
+                          std::isfinite(result.angle_delta);
+    return result;
 }
 // Mirrors the existing-laser geometry and lifecycle order in BulletManager::OnUpdate.
 // It deliberately cannot predict future spawns or player-aimed creation.
@@ -118,6 +144,18 @@ inline LaserPhase advance(LaserForecast &laser) {
         LaserPhase absent;
         absent.present = false;
         return absent;
+    }
+    if (laser.rigid_motion) {
+        // ECL changes pooled-laser position/angle before BulletManager advances
+        // lifecycle and submits collision geometry in the native calc chain.
+        const float sine = std::sin(laser.angle_delta), cosine = std::cos(laser.angle_delta);
+        const float relative_x = laser.origin_x - laser.motion_center_x;
+        const float relative_y = laser.origin_y - laser.motion_center_y;
+        laser.origin_x = laser.motion_center_x + cosine * relative_x - sine * relative_y;
+        laser.origin_y = laser.motion_center_y + sine * relative_x + cosine * relative_y;
+        laser.angle += laser.angle_delta;
+        laser.rotation_sine = std::sin(-laser.angle);
+        laser.rotation_cosine = std::cos(-laser.angle);
     }
     laser.end_offset += laser.speed;
     if (laser.end_offset - laser.start_offset > laser.start_length)
@@ -306,11 +344,14 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
             const float laser_last_y =
                 std::clamp(y + candidate.y * candidate_speed * laser_steps, 16.f, 432.f);
             for (const auto &view : lasers) {
-                auto laser = detail::forecast(view);
+                auto laser = detail::forecast(view, options.rigid_laser_motion);
                 ++stats.laser_paths;
+                if (laser.rigid_motion)
+                    ++stats.rigid_laser_paths;
                 if (options.laser_horizon < 2 ||
-                    !detail::laser_path_may_overlap(laser_first_x, laser_first_y, laser_last_x,
-                                                    laser_last_y, half_y, laser)) {
+                    (!laser.rigid_motion &&
+                     !detail::laser_path_may_overlap(laser_first_x, laser_first_y, laser_last_x,
+                                                     laser_last_y, half_y, laser))) {
                     ++stats.laser_paths_pruned;
                     continue;
                 }

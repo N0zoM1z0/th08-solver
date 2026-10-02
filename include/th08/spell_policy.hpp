@@ -14,6 +14,8 @@ struct NativeSpellPolicy {
 // ranking completed seeds 0, 1 and 65535, while vector ranking failed seed 0.
 // The native runtime remains the acceptance oracle for both proposal models.
 inline NativeSpellPolicy native_spell_policy(int spell_id) {
+    if (spell_id == 85)
+        return {"id85-rigid-laser-motion", {12, 120, true, 0x1ff, true}};
     if (spell_id == 89)
         return {"id89-direct-ecl-laser", {12, 120, true}, true};
     if (spell_id == 199)

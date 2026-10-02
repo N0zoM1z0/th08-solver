@@ -67,7 +67,12 @@ laser only when their predicted path rectangles cannot overlap at the observed a
 `spell-portfolio` selects hazard options in `spell_policy.hpp`. The default is the
 source-vector profile. ID199 uses the measured linear-ranking ablation: it completed
 seeds 0, 1 and 65535, while vector ranking failed seed 0; IDs 193/195 show the opposite
-need for vector projection. ID89 observes only the current native ECL cursor. A constant
+need for vector projection. ID85 measures each pooled laser's translation and shortest
+angle delta across the preceding native update. Its isolated profile fits the rotation
+center implied by those two source-owned states and extrapolates one rigid transform per
+forecast update; moving lasers bypass the constant-angle broad phase. This proposal is
+refreshed every update and does not claim that other pooled lasers continue rigid motion.
+ID89 observes only the current native ECL cursor. A constant
 opcode 136/137 selector for direct-laser EX callbacks 9/11/25 becomes a warning only
 when difficulty and timer state match and the currently observed parent, interpolation,
 movement and rotation state is static. The adapter refreshes that proposal every update;
@@ -103,7 +108,8 @@ choices; one safe observed update is not a complete future route.
 bullet slots, full collision dimensions in pixels, velocity in pixels/update, active
 transform flags, proposed action, sampled input and latched movement input. It also
 records every native `CalcLaserHitbox` center, size, origin, angle and graze flag, plus
-active ECL cursor/instruction fields used to diagnose warnings. Bullet
+raw pooled-laser lifecycle fields, preceding-update motion deltas and active ECL
+cursor/instruction fields used to diagnose warnings. Bullet
 slot reuse across updates is possible; these are pool indices, not stable entity IDs.
 Collision JSON records the first lethal overlap before death feedback; laser bounds
 use the original rotated test coordinates and retain the raw call geometry.

@@ -22,6 +22,8 @@ struct Laser {
     int timer, slot;
     std::uint16_t flags;
     std::uint8_t state;
+    float origin_delta_x, origin_delta_y, angle_delta;
+    bool motion_observed;
 };
 struct EclContext {
     int enemy_index, time, next_time, next_opcode;
@@ -35,7 +37,7 @@ struct EclContext {
     float variable0, variable1;
 };
 Laser horizontal_laser() {
-    return {0, 380, 0, 0, 400, 400, 2, 0, 0, 0, 100, 0, 0, 0, 7, 1, 1};
+    return {0, 380, 0, 0, 400, 400, 2, 0, 0, 0, 100, 0, 0, 0, 7, 1, 1, 0, 0, 0, false};
 }
 } // namespace
 
@@ -75,6 +77,8 @@ int main() {
     check(!th08::policy::native_spell_policy(199).hazards.vector_acceleration &&
               th08::policy::native_spell_policy(193).hazards.vector_acceleration,
           "spell portfolio lost its isolated ID199 model selection");
+    check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion,
+          "spell portfolio lost the isolated ID85 pooled-laser motion model");
 
     EclContext direct_context{2,   110, 120, 137,  0,    -1,    0,
                               -1,  0,   0,   true, true, false, 9,
@@ -155,6 +159,25 @@ int main() {
           "final active laser collision was removed one update early");
     phase = th08::policy::detail::advance(terminal);
     check(!phase.present, "removed laser produced another forecast phase");
+
+    auto rotating_view = horizontal_laser();
+    rotating_view.origin_x = 1;
+    rotating_view.origin_y = 0;
+    rotating_view.origin_delta_x = 1;
+    rotating_view.origin_delta_y = 1;
+    rotating_view.angle_delta = 1.57079632679489661923f;
+    rotating_view.motion_observed = true;
+    auto rotating = th08::policy::detail::forecast(rotating_view, true);
+    th08::policy::detail::advance(rotating);
+    check(std::abs(rotating.origin_x) < 1e-5f && std::abs(rotating.origin_y - 1) < 1e-5f &&
+              std::abs(rotating.angle - rotating_view.angle_delta) < 1e-6f,
+          "rigid pooled-laser motion did not preserve its observed rotation center");
+    HazardReactiveStats rotating_stats;
+    hazard_reactive(4, 4, .825f, .825f, 2, 1.414213538f, 4, no_bullets,
+                    std::vector<Laser>{rotating_view}, rotating_stats,
+                    HazardReactiveOptions{0, 2, true, 0x1ff, true});
+    check(rotating_stats.rigid_laser_paths == 9 && rotating_stats.laser_paths_pruned == 0,
+          "moving pooled lasers were not measured or bypassed the rotating forecast");
 
     auto fallthrough = th08::policy::detail::forecast(horizontal_laser());
     fallthrough.timer = fallthrough.duration;

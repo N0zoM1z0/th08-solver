@@ -13,9 +13,14 @@ extern uint16_t th08_headless_input;
 extern uint64_t th08_headless_frame;
 
 namespace th08::headless {
+struct LaserMotionObservation {
+    float origin_delta_x = 0, origin_delta_y = 0, angle_delta = 0;
+    bool continuous = false;
+};
 void begin_update_observation();
 CollisionEvent current_collision();
 const std::vector<LaserHitboxView> &current_laser_hitboxes();
+LaserMotionObservation current_laser_motion(int slot);
 void prepare_observation_storage();
 void record_laser_hitbox(const Float3 &center, const Float3 &size, const Float3 &origin,
                          float angle, bool graze_enabled);
