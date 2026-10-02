@@ -51,12 +51,18 @@ int main() {
     const std::vector<Bullet> no_bullets;
     const std::vector<Bullet> center_bullet{{194, 380, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0}};
     HazardReactiveStats delayed_stats;
-    const auto delayed = hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 132,
-                                         center_bullet, no_lasers, delayed_stats, {3, 0});
+    th08::policy::HazardReactiveDecision delayed_decision;
+    const auto delayed =
+        hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 132, center_bullet, no_lasers,
+                        delayed_stats, {3, 0}, &delayed_decision);
     check(delayed == 68, "policy ignored the already-latched rightward movement");
     check(delayed_stats.decisions == 1 && delayed_stats.candidates == 9 &&
               delayed_stats.bullet_checks == 18,
           "bullet proposal costs were not recorded exactly");
+    check(delayed_decision.selected_action == delayed && delayed_decision.candidates[3].enabled &&
+              delayed_decision.candidates[3].action == 68 &&
+              delayed_decision.candidates[3].first_overlap == 4,
+          "hazard decision diagnostics did not preserve the selected candidate scores");
 
     const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2}};
     HazardReactiveStats acceleration_stats;
@@ -172,6 +178,17 @@ int main() {
     check(std::abs(rotating.origin_x) < 1e-5f && std::abs(rotating.origin_y - 1) < 1e-5f &&
               std::abs(rotating.angle - rotating_view.angle_delta) < 1e-6f,
           "rigid pooled-laser motion did not preserve its observed rotation center");
+    auto pivoting_view = horizontal_laser();
+    pivoting_view.origin_x = 192;
+    pivoting_view.origin_y = 128;
+    pivoting_view.angle_delta = .0078539816f;
+    pivoting_view.motion_observed = true;
+    auto pivoting = th08::policy::detail::forecast(pivoting_view, true);
+    th08::policy::detail::advance(pivoting);
+    check(std::abs(pivoting.origin_x - pivoting_view.origin_x) < 1e-5f &&
+              std::abs(pivoting.origin_y - pivoting_view.origin_y) < 1e-5f &&
+              std::abs(pivoting.angle - pivoting_view.angle_delta) < 1e-6f,
+          "fixed-origin pooled-laser rotation did not preserve its native pivot");
     HazardReactiveStats rotating_stats;
     hazard_reactive(4, 4, .825f, .825f, 2, 1.414213538f, 4, no_bullets,
                     std::vector<Laser>{rotating_view}, rotating_stats,

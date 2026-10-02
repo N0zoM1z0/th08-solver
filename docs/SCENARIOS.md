@@ -109,7 +109,9 @@ bullet slots, full collision dimensions in pixels, velocity in pixels/update, ac
 transform flags, proposed action, sampled input and latched movement input. It also
 records every native `CalcLaserHitbox` center, size, origin, angle and graze flag, plus
 raw pooled-laser lifecycle fields, preceding-update motion deltas and active ECL
-cursor/instruction fields used to diagnose warnings. Bullet
+cursor/instruction fields used to diagnose warnings. Live hazard-policy traces also
+record all nine candidate actions, enablement, first predicted overlap, minimum
+clearance, accumulated danger, center distance and the selected candidate. Bullet
 slot reuse across updates is possible; these are pool indices, not stable entity IDs.
 Collision JSON records the first lethal overlap before death feedback; laser bounds
 use the original rotated test coordinates and retain the raw call geometry.

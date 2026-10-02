@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <limits>
@@ -23,6 +24,20 @@ struct HazardReactiveStats {
     std::uint64_t bullet_checks = 0, vector_acceleration_checks = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
     std::uint64_t rigid_laser_paths = 0, laser_checks = 0, predicted_overlaps = 0;
+};
+// Optional diagnostics copy the exact scalar ranking inputs without retaining
+// observed hazards or changing proposal evaluation. Masked entries still expose
+// their action so a trace can distinguish disabled from unevaluated directions.
+struct HazardCandidateEvaluation {
+    bool enabled = false;
+    std::uint16_t action = 4;
+    unsigned first_overlap = 0;
+    float minimum_clearance = 0;
+    double danger = 0, center_distance = 0;
+};
+struct HazardReactiveDecision {
+    std::array<HazardCandidateEvaluation, 9> candidates{};
+    std::uint16_t selected_action = 4;
 };
 
 namespace detail {
@@ -285,8 +300,11 @@ template <class Bullets, class Lasers>
 std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, float half_y,
                               float axis, float diagonal, std::uint16_t latched_input,
                               const Bullets &bullets, const Lasers &lasers,
-                              HazardReactiveStats &stats, HazardReactiveOptions options = {}) {
+                              HazardReactiveStats &stats, HazardReactiveOptions options = {},
+                              HazardReactiveDecision *decision = nullptr) {
     ++stats.decisions;
+    if (decision)
+        *decision = {};
     const unsigned horizon = std::max(options.bullet_horizon, options.laser_horizon);
     detail::CandidateScore best{0, -std::numeric_limits<float>::infinity(),
                                 std::numeric_limits<double>::infinity(),
@@ -295,11 +313,13 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
     for (int dy = -1; dy <= 1; ++dy)
         for (int dx = -1; dx <= 1; ++dx) {
             const unsigned candidate_index = unsigned((dy + 1) * 3 + dx + 1);
+            const detail::Direction candidate{dx, dy};
+            const auto action = detail::input(candidate);
+            if (decision)
+                decision->candidates[candidate_index].action = action;
             if (!(options.candidate_mask & (1u << candidate_index)))
                 continue;
             ++stats.candidates;
-            const detail::Direction candidate{dx, dy};
-            const auto action = detail::input(candidate);
             float x = player_x, y = player_y;
             detail::advance(x, y, pending, axis, diagonal);
             detail::CandidateScore score{horizon + 1, std::numeric_limits<float>::infinity(), 0, 0,
@@ -381,9 +401,18 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
             detail::advance(next_x, next_y, candidate, axis, diagonal);
             const double center_x = next_x - 192, center_y = next_y - 380;
             score.center_distance = center_x * center_x + center_y * center_y;
+            if (decision)
+                decision->candidates[candidate_index] = {true,
+                                                         score.action,
+                                                         score.first_overlap,
+                                                         score.minimum_clearance,
+                                                         score.danger,
+                                                         score.center_distance};
             if (detail::better(score, best))
                 best = score;
         }
+    if (decision)
+        decision->selected_action = best.action;
     return best.action;
 }
 } // namespace th08::policy
