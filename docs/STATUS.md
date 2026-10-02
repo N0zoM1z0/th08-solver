@@ -64,6 +64,11 @@ passing component tests are not completion percentages.
 - Preserving the native final active-laser collision before removal completed ID163.
   Retained failures are bullet IDs 32/139/167/183/201/202/203/204, pooled-laser IDs
   85/93/198, direct ECL laser ID89 and lethal-region ID192
+- ID89's source collision is a direct ECL `CalcLaserHitbox`, not a pooled laser. Its
+  590x160 hitbox first appears on collision update 393; replacing one action at updates
+  391, 392 or 393 leaves all nine directions colliding. The raw call view now exposes
+  source geometry for diagnosing the required earlier warning; no global laser horizon
+  was changed to hide this failure
 - Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
   Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
 - A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived

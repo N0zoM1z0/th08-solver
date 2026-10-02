@@ -69,6 +69,7 @@ Session::Session(const Config &config) {
                 g_GameManager.gameplaySetupState == GAMEPLAY_SETUP_COMPLETE,
             "native gameplay setup failed");
     require(g_AnmManager->ServicePreloadedAnims() == ZUN_SUCCESS, "stage ANM load failed");
+    prepare_observation_storage();
     views_.reserve(1536);
     laser_views_.reserve(256);
 }
@@ -86,7 +87,7 @@ Session::~Session() {
 State Session::step(std::uint16_t input) {
     require((input & ~std::uint16_t(0x10f7)) == 0, "unsupported headless input bits");
     th08_headless_input = input;
-    clear_collision();
+    begin_update_observation();
     ++th08_headless_frame;
     require(g_Chain.RunCalcChain() > 0, "native update chain stopped");
     g_SoundPlayer.ProcessQueues();
@@ -146,6 +147,9 @@ const std::vector<LaserView> &Session::lasers() {
         ++slot;
     }
     return laser_views_;
+}
+const std::vector<LaserHitboxView> &Session::laser_hitboxes() const {
+    return current_laser_hitboxes();
 }
 CollisionEvent Session::collision() const {
     return current_collision();
