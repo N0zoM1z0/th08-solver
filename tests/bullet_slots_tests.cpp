@@ -1,15 +1,10 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <random>
 #include <th08/bullet_slots.hpp>
 
 using th08::bullet::Slots;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 std::optional<std::uint16_t> scan(const Slots::Occupancy &occupied, unsigned cursor) {
     for (unsigned count = 0; count < Slots::capacity; ++count) {
         if (!occupied[cursor])

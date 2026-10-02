@@ -1,15 +1,10 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/animation.hpp>
 
 namespace res = th08::resources;
 namespace anm = th08::animation;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     res::Bytes bytes(40);
     bytes[8] = 146;

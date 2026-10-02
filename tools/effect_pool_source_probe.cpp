@@ -1,42 +1,25 @@
 // Hash-checked allocation-body comparison generator. Source checkout is read-only.
 #include "camera_particle_source_probe.hpp"
+#include "source_probe_support.hpp"
 #include <fstream>
 #include <iostream>
-#include <th08/resources.hpp>
-std::string source(const std::filesystem::path &path, const char *hash) {
-    const auto bytes = th08::resources::read_file(path);
-    if (th08::resources::sha256(th08::resources::view(bytes)) != hash)
-        throw std::runtime_error("effect source identity mismatch: " + path.string());
-    return {bytes.begin(), bytes.end()};
-}
-std::string function(const std::string &text, const std::string &signature) {
-    const auto start = text.find(signature);
-    if (start == std::string::npos)
-        throw std::runtime_error("source signature missing");
-    auto p = text.find('{', start);
-    unsigned depth = 1;
-    for (++p; p < text.size() && depth; ++p) {
-        if (text[p] == '{')
-            ++depth;
-        if (text[p] == '}')
-            --depth;
-    }
-    if (depth)
-        throw std::runtime_error("source body incomplete");
-    return text.substr(start, p - start);
-}
+namespace probe = th08::source_probe;
 int main(int argc, char **argv) try {
     if (argc != 3)
         throw std::runtime_error("Usage: effect_pool_source_probe source output");
     const std::filesystem::path repo(argv[1]);
-    const auto effects = source(repo / "src/EffectManager.cpp",
-                                "63d45a213956008b44874bc4707c971a7799a9c551b07e732bf1f55282c2209e");
-    const auto anm = source(repo / "src/AnmManager.cpp",
-                            "c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce");
-    const auto ascii = source(repo / "src/AsciiManager.cpp",
-                              "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1");
-    const auto global = source(repo / "src/Global.cpp",
-                               "8df17616c935d684b6636619d4726889e68f7d2d7000e27c25aebc4bc460b74b");
+    const auto effects = probe::read_pinned_source(
+        repo / "src/EffectManager.cpp",
+        "63d45a213956008b44874bc4707c971a7799a9c551b07e732bf1f55282c2209e");
+    const auto anm = probe::read_pinned_source(
+        repo / "src/AnmManager.cpp",
+        "c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce");
+    const auto ascii = probe::read_pinned_source(
+        repo / "src/AsciiManager.cpp",
+        "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1");
+    const auto global = probe::read_pinned_source(
+        repo / "src/Global.cpp",
+        "8df17616c935d684b6636619d4726889e68f7d2d7000e27c25aebc4bc460b74b");
     std::ofstream out(argv[2]);
     out.exceptions(std::ios::badbit | std::ios::failbit);
     out << "#include <th08/effect_animation.hpp>\n#include <cstring>\n#include <iostream>\n"
@@ -74,7 +57,8 @@ struct EffectManager {
 };
 #define FLOAT3_PTR(p) reinterpret_cast<Float3*>(p)
 )CPP";
-    out << function(effects, "Effect *EffectManager::SpawnEffect(") << "\n#undef FLOAT3_PTR\n}\n";
+    out << probe::extract_function(effects, "Effect *EffectManager::SpawnEffect(")
+        << "\n#undef FLOAT3_PTR\n}\n";
     out << R"CPP(
 namespace effect_anm_reference {
 using f32=float; using i32=std::int32_t;
@@ -95,9 +79,9 @@ struct AnmVmBase {
 };
 struct Supervisor {float framerateMultiplier=1;} g_Supervisor;
 )CPP";
-    out << function(ascii, "inline void AnmVmBase::Initialize()") << '\n';
-    out << function(global, "f32 AddNormalizeAngle(") << '\n';
-    const auto body = function(anm, "ZunBool AnmManager::ExecuteScript(");
+    out << probe::extract_function(ascii, "inline void AnmVmBase::Initialize()") << '\n';
+    out << probe::extract_function(global, "f32 AddNormalizeAngle(") << '\n';
+    const auto body = probe::extract_function(anm, "ZunBool AnmManager::ExecuteScript(");
     const auto angular_start = body.find("            vm->angleVel.x =");
     const auto angular_end = body.find("            break;", angular_start);
     const auto tail_start = body.find("    if (vm->angleVel.x !=");

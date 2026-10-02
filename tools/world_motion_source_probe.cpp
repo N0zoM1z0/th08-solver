@@ -2,8 +2,8 @@
 #include <stdexcept>
 #include <vector>
 
-std::string source(const std::filesystem::path &path, const char *expected);
-std::string function(const std::string &text, const std::string &signature);
+#include "source_probe_support.hpp"
+namespace probe = th08::source_probe;
 namespace {
 std::string section(const std::string &text, const char *first, const char *after) {
     const auto begin = text.find(first);
@@ -75,35 +75,40 @@ namespace EclOperands {int ResolveInt(Enemy* enemy,int operand);}
 )CPP";
 } // namespace
 std::string world_motion_reference(const std::filesystem::path &repo) {
-    const auto manager = source(repo / "src/EclManager.hpp",
-                                "1df7f926d46d24ad9e303a1a5e9b82cf9674ebec63d9ac5ff770c9c3957812e4");
-    const auto integers =
-        source(repo / "src/EclOperandsInt.cpp",
-               "7a11fcc17dc929484c2eaf32d4eb94a2e78165d592b1d4fa13d590aa9b26ab0a");
-    const auto floats = source(repo / "src/EclOperandsFloat.cpp",
-                               "5a6ede1121d4387d7e45ba1c421012668d60bba1e898207ff5b3ba778430c726");
-    const auto dispatch =
-        source(repo / "src/EclRunLow.inl",
-               "8c6d23bf4e9daf8f96dbd344f4a03d3ed32d1d200483959682e962cd41ec0045");
-    const auto scheduler =
-        source(repo / "src/EclRun.cpp",
-               "010049211263e47d8245c7335f56b17a8502ca0f84595c8b035926a495d90b57");
-    const auto helpers = source(repo / "src/EclHelpers.cpp",
-                                "64a9318a9a3b89d02f221b1837e618c027c3a7814ed43481a0ca78a5c0b77f73");
-    const auto dependencies =
-        source(repo / "src/EclDependencies.cpp",
-               "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4");
-    const auto player = source(repo / "src/Player.cpp",
-                               "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
-    const auto d3dx = source(repo / "src/modern/linux/d3dx8_compat.cpp",
-                             "8e9649ef554dcc2ac7d0218974a48d4583bae32591f4a7cd5b16ecdca3b62388");
+    const auto manager = probe::read_pinned_source(
+        repo / "src/EclManager.hpp",
+        "1df7f926d46d24ad9e303a1a5e9b82cf9674ebec63d9ac5ff770c9c3957812e4");
+    const auto integers = probe::read_pinned_source(
+        repo / "src/EclOperandsInt.cpp",
+        "7a11fcc17dc929484c2eaf32d4eb94a2e78165d592b1d4fa13d590aa9b26ab0a");
+    const auto floats = probe::read_pinned_source(
+        repo / "src/EclOperandsFloat.cpp",
+        "5a6ede1121d4387d7e45ba1c421012668d60bba1e898207ff5b3ba778430c726");
+    const auto dispatch = probe::read_pinned_source(
+        repo / "src/EclRunLow.inl",
+        "8c6d23bf4e9daf8f96dbd344f4a03d3ed32d1d200483959682e962cd41ec0045");
+    const auto scheduler = probe::read_pinned_source(
+        repo / "src/EclRun.cpp",
+        "010049211263e47d8245c7335f56b17a8502ca0f84595c8b035926a495d90b57");
+    const auto helpers = probe::read_pinned_source(
+        repo / "src/EclHelpers.cpp",
+        "64a9318a9a3b89d02f221b1837e618c027c3a7814ed43481a0ca78a5c0b77f73");
+    const auto dependencies = probe::read_pinned_source(
+        repo / "src/EclDependencies.cpp",
+        "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4");
+    const auto player = probe::read_pinned_source(
+        repo / "src/Player.cpp",
+        "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
+    const auto d3dx = probe::read_pinned_source(
+        repo / "src/modern/linux/d3dx8_compat.cpp",
+        "8e9649ef554dcc2ac7d0218974a48d4583bae32591f4a7cd5b16ecdca3b62388");
     std::string generated = "namespace world_motion_reference {\n" +
-                            function(manager, "enum EclOpcode") + ";\n" +
-                            function(manager, "enum EclOperandId") + ";\n" + adapter;
-    generated += function(player, "f32 Player::AngleToPoint(") + '\n';
+                            probe::extract_function(manager, "enum EclOpcode") + ";\n" +
+                            probe::extract_function(manager, "enum EclOperandId") + ";\n" + adapter;
+    generated += probe::extract_function(player, "f32 Player::AngleToPoint(") + '\n';
     for (const char *signature :
          {"FLOAT D3DXVec3Dot(", "FLOAT D3DXVec3LengthSq(", "FLOAT D3DXVec3Length("})
-        generated += function(d3dx, signature) + '\n';
+        generated += probe::extract_function(d3dx, signature) + '\n';
     generated +=
         "i32 EclOperands::ResolveInt(Enemy* enemy,i32 operand) {switch(operand) {\n" +
         operand_cases(integers, false) +
@@ -117,19 +122,21 @@ std::string world_motion_reference(const std::filesystem::path &repo) {
                  "return operand;}}\n";
     generated += section(dispatch, "#define RawInt", "#pragma var_order(angle") +
                  "namespace EclHelpers {\n" +
-                 function(helpers, "void __fastcall ConfigurePolarMotion(") + '\n' +
-                 function(helpers, "void __fastcall ConfigureRelativeMotion(") + "\n}\n";
-    generated += "namespace EclRunLow {\n" +
-                 section(dependencies, "#define DEP_READ_INT", "// FUNCTION: th08 0x4222b0") +
-                 function(dependencies, "void __fastcall StartTimedPolarDisplacement(") + '\n' +
-                 function(dependencies, "void __fastcall BeginBoundaryAwareMove(") + '\n' +
-                 function(dependencies, "void __fastcall ApplyRandomBiasedMove(") +
-                 "\n#undef DEP_READ_INT\n#undef DEP_READ_FLOAT\n}\n"
-                 "using EclRunLow::BeginBoundaryAwareMove;\n"
-                 "using EclRunLow::ApplyRandomBiasedMove;\n"
-                 "#define TH08_ECL_RUN_LOW_BODY\n"
-                 "#define TH08_ECL_CONTEXT_ENEMY(unused) enemy\n"
-                 "#define TH08_ECL_CONTEXT_INSTRUCTION(unused) instruction\n";
+                 probe::extract_function(helpers, "void __fastcall ConfigurePolarMotion(") + '\n' +
+                 probe::extract_function(helpers, "void __fastcall ConfigureRelativeMotion(") +
+                 "\n}\n";
+    generated +=
+        "namespace EclRunLow {\n" +
+        section(dependencies, "#define DEP_READ_INT", "// FUNCTION: th08 0x4222b0") +
+        probe::extract_function(dependencies, "void __fastcall StartTimedPolarDisplacement(") +
+        '\n' + probe::extract_function(dependencies, "void __fastcall BeginBoundaryAwareMove(") +
+        '\n' + probe::extract_function(dependencies, "void __fastcall ApplyRandomBiasedMove(") +
+        "\n#undef DEP_READ_INT\n#undef DEP_READ_FLOAT\n}\n"
+        "using EclRunLow::BeginBoundaryAwareMove;\n"
+        "using EclRunLow::ApplyRandomBiasedMove;\n"
+        "#define TH08_ECL_RUN_LOW_BODY\n"
+        "#define TH08_ECL_CONTEXT_ENEMY(unused) enemy\n"
+        "#define TH08_ECL_CONTEXT_INSTRUCTION(unused) instruction\n";
     const auto publication =
         section(scheduler, "        *D3DXVECTOR3_PTR(&enemy->worldPosition) =",
                 "        if ((int)enemy->activeEclContext->secondaryTime > 0)");

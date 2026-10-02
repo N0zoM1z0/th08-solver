@@ -93,6 +93,8 @@ class SpawnPool {
     bool last_spawn_failed_ = false, spawn_event_ = false;
 
     Result identify(Status status) const;
+    world::EffectStatus apply_effect51(Actor &actor, const emitter::Operation &op, random::Rng *rng,
+                                       const effect::Effect51Inputs *effect_inputs);
     world::EffectStatus apply_effect(Actor &actor, random::Rng *rng, const enemy::Vec3 *player,
                                      const effect::Effect51Inputs *effect_inputs);
 

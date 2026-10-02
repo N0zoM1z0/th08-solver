@@ -1,13 +1,14 @@
 #include "spawn_source_probe.hpp"
-std::string source(const std::filesystem::path &, const char *);
-std::string function(const std::string &, const std::string &);
+#include "source_probe_support.hpp"
+namespace probe = th08::source_probe;
 
 std::string spawn_reference(const std::filesystem::path &repo) {
-    const auto timeline =
-        source(repo / "src/EnemyTimeline.cpp",
-               "920ee34725aa6aad9f113d43454731acadab456abddac73256b2ba9a29e8e94b");
-    const auto header = source(repo / "src/EnemyManager.hpp",
-                               "e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256");
+    const auto timeline = probe::read_pinned_source(
+        repo / "src/EnemyTimeline.cpp",
+        "920ee34725aa6aad9f113d43454731acadab456abddac73256b2ba9a29e8e94b");
+    const auto header = probe::read_pinned_source(
+        repo / "src/EnemyManager.hpp",
+        "e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256");
     return R"CPP(
 #include <cstdint>
 #include <cstring>
@@ -22,7 +23,7 @@ using i16=std::int16_t; using i8=std::int8_t;
 using D3DXVECTOR3=th08::enemy::Vec3;
 constexpr u32 ENEMY_FLAG_ACTIVE=1, REPLAY_FRAME_EVENT_ENEMY_SPAWNED=1;
 constexpr int ZUN_ERROR=-1;
-)CPP" + function(header, "struct EnemyFlag1Bits") +
+)CPP" + probe::extract_function(header, "struct EnemyFlag1Bits") +
            R"CPP(;
 struct Context { i32 intVariables[30]{}; i32 sub=0; };
 struct Enemy {
@@ -60,7 +61,7 @@ struct EnemyManager {
     Enemy* SpawnEnemy2(i32,const D3DXVECTOR3*,i32,i32,i32,i32*);
 };
 #define FLOAT3_CONST_PTR(value) (value)
-)CPP" + function(timeline, "Enemy *EnemyManager::SpawnEnemy1(") +
-           "\n" + function(timeline, "Enemy *EnemyManager::SpawnEnemy2(") +
+)CPP" + probe::extract_function(timeline, "Enemy *EnemyManager::SpawnEnemy1(") +
+           "\n" + probe::extract_function(timeline, "Enemy *EnemyManager::SpawnEnemy2(") +
            "\n#undef FLOAT3_CONST_PTR\n}\n";
 }

@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <cstring>
 #include <iostream>
 #include <stdexcept>
@@ -7,12 +7,7 @@
 
 using namespace th08::resources;
 namespace {
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 template <class F> void rejects(F function) {
     try {
         function();

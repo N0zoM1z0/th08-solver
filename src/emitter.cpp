@@ -190,6 +190,10 @@ Status decode_operands(const Operation &op, const ScalarStorage &workspace,
             std::copy_n(decoded.begin(), count, values);
         return Status::operands_decoded;
     } catch (const Blocked &blocked) {
+        // Only this instruction's RNG is restored. Earlier instructions stay
+        // committed; scalar writes at this hard-error boundary are diagnostic
+        // and execution is terminal. This differs intentionally from ANM's
+        // whole-call rollback and must not share a generic transaction helper.
         if (rng)
             *rng = random::Rng(original_rng);
         return blocked.status;

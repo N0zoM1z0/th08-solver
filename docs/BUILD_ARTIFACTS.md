@@ -57,3 +57,10 @@ For future experiments, promote reusable drivers and deterministic cases into th
 maintained directories before calling the work complete. Track their CMake wiring
 and reproduction instructions; leave binaries, generated source, raw game data,
 and intentionally broken local copies ignored.
+
+The source generators share `tools/source_probe_support.hpp/.cpp` for pinned-file
+reads and unchanged-body extraction. Component generators depend on that explicit
+helper interface, not on symbols supplied by another tool's `main` translation
+unit. The brace scanner is intentionally limited to reviewed, hash-pinned source;
+it is not a general C++ parser. A helper-only cleanup must leave generated reference
+translation units byte-identical, as well as preserving their comparison results.

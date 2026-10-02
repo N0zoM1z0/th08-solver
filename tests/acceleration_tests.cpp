@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/acceleration.hpp>
 
 namespace bullet = th08::bullet;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     bullet::Flight flight{0, 0, 0, 0, 0, 2};
     bullet::Acceleration state;

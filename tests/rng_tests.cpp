@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/rng.hpp>
 
 using th08::random::Rng;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     Rng rng(1234);
     check(!rng.restore_saved_seed() && rng.seed() == 1234,

@@ -16,10 +16,71 @@ Status scalar_status(emitter::Status status) {
         return Status::invalid;
     }
 }
+world::EffectStatus operand_failure_status(emitter::Status status) {
+    switch (status) {
+    case emitter::Status::missing_context:
+        return world::EffectStatus::missing_context;
+    case emitter::Status::unsupported:
+        return world::EffectStatus::unsupported;
+    default:
+        return world::EffectStatus::invalid;
+    }
+}
 void publish(Actor &actor) {
     actor.scalars.registers[51] = actor.life;
     actor.scalars.initialized[51] = true;
     // Other computed/global selectors remain unknown until their owner exists.
+}
+world::EffectStatus apply_actor_fields(Actor &actor, const emitter::Operation &op,
+                                       random::Rng *rng) {
+    if (op.opcode != 77 && op.opcode != 78 && op.opcode != 79 && op.opcode != 80 &&
+        op.opcode != 81 && op.opcode != 131)
+        return world::EffectStatus::not_handled;
+
+    const bool hitbox = op.opcode == 77 || op.opcode == 78;
+    const emitter::OperandField fields[] = {
+        {0, hitbox ? emitter::OperandType::float32 : emitter::OperandType::signed32, 0},
+        {4, emitter::OperandType::float32, 1}};
+    double values[2];
+    // Hitbox dimensions are separate source stores, so decode in their order.
+    // After decoding, these actor-local fields require no further world inputs.
+    const auto decoded =
+        emitter::decode_operands(op, actor.scalars, fields, values, hitbox ? 2 : 1, rng,
+                                 emitter::OperandOrder::source_ordered_fields,
+                                 actor.execution.active->payload(actor.execution.pc));
+    if (decoded != emitter::Status::operands_decoded)
+        return operand_failure_status(decoded);
+    if (hitbox) {
+        auto &box = op.opcode == 77 ? actor.hitbox : actor.secondary_hitbox;
+        box.x = float(values[0]);
+        box.y = float(values[1]);
+    } else if (op.opcode == 131) {
+        // No accepted prefix opcode can install boss ownership. The GUI branch
+        // is therefore unreachable in this restricted spawn domain.
+        actor.life = actor.max_life = actor.phase_starting_life = std::int32_t(values[0]);
+        publish(actor);
+    } else {
+        const auto bits = std::uint32_t(std::int32_t(values[0]));
+        auto &flags = actor.interaction;
+        const bool set = op.opcode == 79, enable = op.opcode == 81;
+        if (set || (bits & 1))
+            flags.accepts_damage = set ? !(bits & 1) : enable;
+        if (set || (bits & 2))
+            flags.collision = set ? !(bits & 2) : enable;
+        if (set || (bits & 4))
+            flags.damageable = set ? !(bits & 4) : enable;
+        if (set || (bits & 8))
+            flags.no_sprite = set ? bool(bits & 8) : !enable;
+        if (set || (bits & 16))
+            flags.allow_offscreen = set ? bool(bits & 16) : !enable;
+        if (set || (bits & 32))
+            flags.no_death = set ? bool(bits & 32) : !enable;
+        // Alignment-effect creation is unsupported, so there is no attached VM
+        // whose collision flag would also need changing here.
+    }
+    return emitter::acknowledge_effect(actor.execution, actor.execution.result.executed)
+               ? world::EffectStatus::applied
+               : world::EffectStatus::invalid;
 }
 bool source_spawn_finished(Status status) {
     return status == Status::spawned || status == Status::pool_full ||
@@ -150,111 +211,71 @@ Result SpawnPool::begin(const SpawnRequest &request, std::uint8_t mask) {
     return identify(Status::spawn_pending);
 }
 
+world::EffectStatus SpawnPool::apply_effect51(Actor &actor, const emitter::Operation &op,
+                                              random::Rng *rng,
+                                              const effect::Effect51Inputs *effect_inputs) {
+    // Color is a dereferenced integer lvalue in the source, not ResolveInt.
+    // Masked lvalues need a bit-preserving storage adapter; reject them before
+    // checking pool context, without decoding operands or consuming RNG.
+    if (op.flags & 4U)
+        return world::EffectStatus::unsupported;
+    if (!effects_)
+        return world::EffectStatus::missing_context;
+    // Stage only RNG here: the pool owns rollback of its allocation state.
+    // Unknown effect IDs and later blockers must discard operand draws too.
+    auto stream = rng ? std::optional<random::Rng>(*rng) : std::nullopt;
+    const emitter::OperandField fields[] = {{0, emitter::OperandType::signed32, 0},
+                                            {4, emitter::OperandType::signed32, 1},
+                                            {8, emitter::OperandType::signed32, -1}};
+    double values[3];
+    const auto decoded =
+        emitter::decode_operands(op, actor.scalars, fields, values, 3, stream ? &*stream : nullptr,
+                                 emitter::OperandOrder::single_random_expression,
+                                 actor.execution.active->payload(actor.execution.pc));
+    if (decoded != emitter::Status::operands_decoded)
+        return operand_failure_status(decoded);
+    if (values[0] != 51)
+        return world::EffectStatus::not_handled;
+    const auto color = std::uint32_t(std::int32_t(values[2]));
+    effect::Effect51Request request;
+    request.count = std::int32_t(values[1]);
+    request.position = {actor.motion.position.x, actor.motion.position.y, actor.motion.position.z};
+    request.color = {std::uint8_t(color >> 16), std::uint8_t(color >> 8), std::uint8_t(color),
+                     std::uint8_t(color >> 24)};
+    // The surrounding immediate-ECL tail is currently unit-rate only.
+    if (effect_inputs && effect_inputs->multiplier && *effect_inputs->multiplier != 1.0f)
+        return world::EffectStatus::unsupported;
+    const auto result =
+        effects_->spawn_effect51(request, effect_inputs ? *effect_inputs : effect::Effect51Inputs{},
+                                 stream ? &*stream : nullptr);
+    if (result.status == effect::Status::missing_context)
+        return world::EffectStatus::missing_context;
+    if (result.status == effect::Status::invalid_state)
+        return world::EffectStatus::invalid;
+    // Exhausting a full pool still completes SpawnEffect, even with no births.
+    // Commit operand/allocation draws before acknowledging the ECL token once.
+    if (rng)
+        *rng = *stream;
+    return emitter::acknowledge_effect(actor.execution, actor.execution.result.executed)
+               ? world::EffectStatus::applied
+               : world::EffectStatus::invalid;
+}
+
 world::EffectStatus SpawnPool::apply_effect(Actor &actor, random::Rng *rng,
                                             const enemy::Vec3 *player,
                                             const effect::Effect51Inputs *effect_inputs) {
     const auto *op = emitter::pending_operation(actor.execution);
     if (!op)
         return world::EffectStatus::invalid;
-    if (op->opcode == 139) {
-        // Color is a dereferenced integer lvalue in the source, not ResolveInt.
-        // The current real entry uses an immediate color. Masked lvalues need
-        // their own bit-preserving storage adapter and remain unsupported.
-        if (op->flags & 4U)
-            return world::EffectStatus::unsupported;
-        if (!effects_)
-            return world::EffectStatus::missing_context;
-        auto stream = rng ? std::optional<random::Rng>(*rng) : std::nullopt;
-        const emitter::OperandField fields[] = {{0, emitter::OperandType::signed32, 0},
-                                                {4, emitter::OperandType::signed32, 1},
-                                                {8, emitter::OperandType::signed32, -1}};
-        double values[3];
-        const auto decoded = emitter::decode_operands(
-            *op, actor.scalars, fields, values, 3, stream ? &*stream : nullptr,
-            emitter::OperandOrder::single_random_expression,
-            actor.execution.active->payload(actor.execution.pc));
-        if (decoded != emitter::Status::operands_decoded)
-            return decoded == emitter::Status::missing_context
-                       ? world::EffectStatus::missing_context
-                   : decoded == emitter::Status::unsupported ? world::EffectStatus::unsupported
-                                                             : world::EffectStatus::invalid;
-        if (values[0] != 51)
-            return world::EffectStatus::not_handled;
-        const auto color = std::uint32_t(std::int32_t(values[2]));
-        effect::Effect51Request request;
-        request.count = std::int32_t(values[1]);
-        request.position = {actor.motion.position.x, actor.motion.position.y,
-                            actor.motion.position.z};
-        request.color = {std::uint8_t(color >> 16), std::uint8_t(color >> 8), std::uint8_t(color),
-                         std::uint8_t(color >> 24)};
-        // The surrounding immediate-ECL tail is currently unit-rate only.
-        if (effect_inputs && effect_inputs->multiplier && *effect_inputs->multiplier != 1.0f)
-            return world::EffectStatus::unsupported;
-        const auto result = effects_->spawn_effect51(
-            request, effect_inputs ? *effect_inputs : effect::Effect51Inputs{},
-            stream ? &*stream : nullptr);
-        if (result.status == effect::Status::missing_context)
-            return world::EffectStatus::missing_context;
-        if (result.status == effect::Status::invalid_state)
-            return world::EffectStatus::invalid;
-        if (rng)
-            *rng = *stream;
-        return emitter::acknowledge_effect(actor.execution, actor.execution.result.executed)
-                   ? world::EffectStatus::applied
-                   : world::EffectStatus::invalid;
-    }
+    // Each handler owns its mutation and acknowledgement. Keep opcode139 ahead
+    // of motion dispatch; an unhandled effect ID must remain pending as-is.
+    if (op->opcode == 139)
+        return apply_effect51(actor, *op, rng, effect_inputs);
     const auto motion =
         world::apply_motion_effect(actor.execution, actor.scalars, actor.motion, rng, player);
     if (motion != world::EffectStatus::not_handled)
         return motion;
-    if (op->opcode != 77 && op->opcode != 78 && op->opcode != 79 && op->opcode != 80 &&
-        op->opcode != 81 && op->opcode != 131)
-        return world::EffectStatus::not_handled;
-
-    const bool hitbox = op->opcode == 77 || op->opcode == 78;
-    const emitter::OperandField fields[] = {
-        {0, hitbox ? emitter::OperandType::float32 : emitter::OperandType::signed32, 0},
-        {4, emitter::OperandType::float32, 1}};
-    double values[2];
-    const auto decoded =
-        emitter::decode_operands(*op, actor.scalars, fields, values, hitbox ? 2 : 1, rng,
-                                 emitter::OperandOrder::source_ordered_fields,
-                                 actor.execution.active->payload(actor.execution.pc));
-    if (decoded != emitter::Status::operands_decoded)
-        return decoded == emitter::Status::missing_context ? world::EffectStatus::missing_context
-               : decoded == emitter::Status::unsupported   ? world::EffectStatus::unsupported
-                                                           : world::EffectStatus::invalid;
-    if (hitbox) {
-        auto &box = op->opcode == 77 ? actor.hitbox : actor.secondary_hitbox;
-        box.x = float(values[0]);
-        box.y = float(values[1]);
-    } else if (op->opcode == 131) {
-        // No accepted prefix opcode can install boss ownership. The GUI branch
-        // is therefore unreachable in this restricted spawn domain.
-        actor.life = actor.max_life = actor.phase_starting_life = std::int32_t(values[0]);
-        publish(actor);
-    } else {
-        const auto bits = std::uint32_t(std::int32_t(values[0]));
-        auto &flags = actor.interaction;
-        const bool set = op->opcode == 79, enable = op->opcode == 81;
-        if (set || (bits & 1))
-            flags.accepts_damage = set ? !(bits & 1) : enable;
-        if (set || (bits & 2))
-            flags.collision = set ? !(bits & 2) : enable;
-        if (set || (bits & 4))
-            flags.damageable = set ? !(bits & 4) : enable;
-        if (set || (bits & 8))
-            flags.no_sprite = set ? bool(bits & 8) : !enable;
-        if (set || (bits & 16))
-            flags.allow_offscreen = set ? bool(bits & 16) : !enable;
-        if (set || (bits & 32))
-            flags.no_death = set ? bool(bits & 32) : !enable;
-        // Alignment-effect creation is unsupported, so there is no attached VM
-        // whose collision flag would also need changing here.
-    }
-    return emitter::acknowledge_effect(actor.execution, actor.execution.result.executed)
-               ? world::EffectStatus::applied
-               : world::EffectStatus::invalid;
+    return apply_actor_fields(actor, *op, rng);
 }
 
 Result SpawnPool::resume(random::Rng *rng, const enemy::Vec3 *player,

@@ -1,8 +1,8 @@
 #include "enemy_motion_source_probe.hpp"
 #include <stdexcept>
 
-std::string source(const std::filesystem::path &path, const char *expected);
-std::string function(const std::string &text, const std::string &signature);
+#include "source_probe_support.hpp"
+namespace probe = th08::source_probe;
 namespace {
 std::string section(const std::string &text, const char *first, const char *after) {
     const auto begin = text.find(first);
@@ -47,27 +47,32 @@ float literal_float(EclRawInstruction* instruction,int index) {
 )CPP";
 } // namespace
 std::string enemy_motion_reference(const std::filesystem::path &repo) {
-    const auto header = source(repo / "src/EnemyManager.hpp",
-                               "e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256");
-    const auto implementation =
-        source(repo / "src/EnemyManager.cpp",
-               "e8febe94a833472b33f732e83ee39ee48fdc5097c5d69ff094fd1f1bb8629a7d");
-    const auto manager = source(repo / "src/EnemyManagerUpdate.cpp",
-                                "5692ab3214e95873626e6ab896f867746217b0556b34737c2556e1b38a454e59");
-    const auto helpers = source(repo / "src/EclHelpers.cpp",
-                                "64a9318a9a3b89d02f221b1837e618c027c3a7814ed43481a0ca78a5c0b77f73");
-    const auto ecl = source(repo / "src/EclManager.hpp",
-                            "1df7f926d46d24ad9e303a1a5e9b82cf9674ebec63d9ac5ff770c9c3957812e4");
+    const auto header = probe::read_pinned_source(
+        repo / "src/EnemyManager.hpp",
+        "e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256");
+    const auto implementation = probe::read_pinned_source(
+        repo / "src/EnemyManager.cpp",
+        "e8febe94a833472b33f732e83ee39ee48fdc5097c5d69ff094fd1f1bb8629a7d");
+    const auto manager = probe::read_pinned_source(
+        repo / "src/EnemyManagerUpdate.cpp",
+        "5692ab3214e95873626e6ab896f867746217b0556b34737c2556e1b38a454e59");
+    const auto helpers = probe::read_pinned_source(
+        repo / "src/EclHelpers.cpp",
+        "64a9318a9a3b89d02f221b1837e618c027c3a7814ed43481a0ca78a5c0b77f73");
+    const auto ecl = probe::read_pinned_source(
+        repo / "src/EclManager.hpp",
+        "1df7f926d46d24ad9e303a1a5e9b82cf9674ebec63d9ac5ff770c9c3957812e4");
     std::string generated = "namespace enemy_motion_reference {\n";
     for (const char *name : {"enum EnemyMovementMode", "enum EnemyFlag1Mask",
                              "enum EnemyFlag1Shift", "struct EnemyFlag1Bits"})
-        generated += function(header, name) + ";\n";
-    generated += function(ecl, "enum EclEasingMode") + ";\n" + adapter;
+        generated += probe::extract_function(header, name) + ";\n";
+    generated += probe::extract_function(ecl, "enum EclEasingMode") + ";\n" + adapter;
     for (const char *name : {"void Enemy::UpdateMovement()", "void Enemy::ClampPosition()",
                              "void Enemy::IntegrateVelocity()"})
-        generated += function(implementation, name) + '\n';
-    generated += function(helpers, "void __fastcall ConfigurePolarMotion(") + '\n' +
-                 function(helpers, "void __fastcall ConfigureRelativeMotion(") + '\n';
+        generated += probe::extract_function(implementation, name) + '\n';
+    generated += probe::extract_function(helpers, "void __fastcall ConfigurePolarMotion(") + '\n' +
+                 probe::extract_function(helpers, "void __fastcall ConfigureRelativeMotion(") +
+                 '\n';
     generated +=
         "void integrate(Enemy* enemy) {\n" +
         section(manager,

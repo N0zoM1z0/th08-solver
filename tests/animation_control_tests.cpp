@@ -1,15 +1,11 @@
+#include "test_support.hpp"
 #include <cmath>
-#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <th08/animation_control.hpp>
+#include <utility>
 namespace ac = th08::animation::control;
-void check(bool ok, const char *why) {
-    if (!ok) {
-        std::cerr << why << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 ac::Operation op(int opcode, int time = 0, std::initializer_list<std::int32_t> words = {}) {
     ac::Operation result;
     result.opcode = std::int16_t(opcode);
@@ -111,6 +107,25 @@ void scalar_tests() {
 }
 int main() {
     scalar_tests();
+    // One compact guard for the shared visual length/type descriptor. Visual
+    // fields are not rendered here, but their typed reads must still be checked.
+    for (const auto &instruction :
+         {masked(29, 7, {bits(10004.f), bits(0.f), 10000}), masked(24, 1, {0x7fc00000})}) {
+        ac::Program visual;
+        visual.code = {instruction, op(2, 1)};
+        ac::State projected;
+        projected.floats[0] = 2.5f;
+        check(ac::advance(visual, projected).status == ac::Status::advanced,
+              "mixed typed operands or masked raw visual literal changed");
+    }
+    for (const auto &[instruction, expected] : {std::pair{op(29, 0, {0}), ac::Status::invalid},
+                                                std::pair{op(120), ac::Status::unsupported}}) {
+        ac::Program visual;
+        visual.code = {instruction, op(2, 1)};
+        ac::State projected;
+        check(ac::advance(visual, projected).status == expected && projected.pc == 0,
+              "visual payload/unknown-opcode refusal or rollback changed");
+    }
     namespace res = th08::resources;
     auto compiled = [] {
         res::Bytes bytes(28, 0);

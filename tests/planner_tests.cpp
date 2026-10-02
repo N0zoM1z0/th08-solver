@@ -1,16 +1,12 @@
 #include "planner_reference.hpp"
+#include "test_support.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <random>
 #include <th08/planner.hpp>
 using namespace th08::solver;
 using namespace th08::geometry;
-void check(bool value, const char *message) {
-    if (!value) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     std::mt19937 rng(20260912);
     for (unsigned test = 0; test < 80; ++test) {

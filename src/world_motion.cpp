@@ -47,6 +47,9 @@ EffectStatus decoded_status(vm::Status status) {
 EffectStatus publish_motion(const enemy::State &motion, vm::ScalarStorage &storage,
                             const enemy::Vec3 *player) {
     auto checked = motion;
+    // Validate on a temporary, but publish the caller's phase-correct sample.
+    // Replacing motion with checked would silently recompute world_position
+    // across the ECL/manager boundary, where their z behavior differs.
     if (enemy::refresh_world(checked) != enemy::Status::advanced ||
         (player &&
          !(std::isfinite(player->x) && std::isfinite(player->y) && std::isfinite(player->z))))
@@ -81,6 +84,9 @@ EffectStatus apply_motion_effect(vm::Execution &execution, vm::Workspace &worksp
         require(enemy::refresh_world(next) == enemy::Status::advanced);
         require(publish_motion(next, storage, player) == EffectStatus::applied);
         auto read = [&](unsigned word, bool floating) {
+            // A later selector in this instruction observes earlier provisional
+            // writes. Do not batch these reads or cache published fields: that
+            // would change self-referential operands and shared RNG ordering.
             publish_fields(next, storage);
             const vm::OperandField field{
                 std::uint16_t(word * 4),
