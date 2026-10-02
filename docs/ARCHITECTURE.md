@@ -80,7 +80,10 @@ and actor motion state; it does not resolve flagged operands or cross control fl
 reused post-update view buffer invalidated by its next call; active vector-acceleration
 state is copied from its source transform slot without advancing it. For an active WAIT,
 the view also exports the bounded number of updates whose copied transform program proves
-the current velocity unchanged. `lasers()` owns a
+the current velocity unchanged. Active relative-direction state has a separate source-owned
+validity bound through its final turn, excluding subsequent/concurrent enabled transforms;
+the optional scorer evaluates its deceleration/turn recurrence without mutating native state.
+`lasers()` owns a
 separate reused buffer of raw pooled-laser lifecycle state. Its motion fields measure the
 immediately preceding native update and do not promise that motion will continue. Callers
 copy either view when retaining history; the per-update laser-hitbox view is invalidated

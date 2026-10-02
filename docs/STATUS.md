@@ -25,8 +25,8 @@ has its own profile and evidence:
 |---|---|
 | Complete stages | Easy Stages 1, 2, 4a, 4b and 5, Reimu/Yukari, seed 0, `spell-portfolio`; every tape freshly replayed |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
-| Spell portfolio sweep | 48/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
-| Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0 |
+| Spell portfolio sweep | 49/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
+| Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0; ID204 relative-direction profile complete for seeds 0/65535 |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
 | Deterministic feedback | Fresh-process tapes agree on per-frame projection, terminal, RNG and graze/score/gauge |
@@ -56,14 +56,14 @@ passing component tests are not completion percentages.
   conservative laser broad phase reduced ID151 policy time from about 7.8 to 2.1 seconds
   without shortening its 120-update horizon. The native update remains the collision oracle
 - On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
-  checkpoints. `spell-portfolio` completed 48/56 with no lost baseline completion;
+  checkpoints. `spell-portfolio` completed 49/56 with no lost baseline completion;
   all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
-  and trace projection. The remaining failures are seven bullets and one lethal region
+  and trace projection. The remaining failures are six bullets and one lethal region
 - Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
   IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
   constant-velocity ranking; its isolated selector lives outside the generic kernel
 - Preserving the native final active-laser collision before removal completed ID163.
-  Retained failures are bullet IDs 32/139/167/183/202/203/204 and lethal-region ID192
+  Retained failures are bullet IDs 32/139/167/183/202/203 and lethal-region ID192
 - ID85's static-angle forecast stopped at the bottom center while ten live pooled lasers
   rotated around `(192,128)`; slot 7 hit on update 631. Replacing update 630 with any
   rightward direction survives that collision. Native before/after observations expose
@@ -105,6 +105,11 @@ passing component tests are not completion percentages.
   4204/4216/3613, with fresh replay agreement. Seed 0's new blocker is an ECL shot born
   at 4203. A deterministic-preview extension stops earlier because opcode 99 uses
   random-angle selector 10082; no RNG future was guessed or unknown shot omitted
+- ID204's generic policy collides at 1205 with slot 669 while relative-direction
+  transform `0x40` decelerates it. The isolated source-bounded recurrence includes the
+  final turn's movement and stops before a subsequent enabled transform. With the
+  same 12-update horizon, seeds 0/65535 complete at 4832 and freshly replay at O0/O3;
+  seed 1 still collides at 3008. This adds seed-0 coverage, not all-seed robustness
 - Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
   Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
 - A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived
@@ -144,12 +149,12 @@ The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
 (28 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, the adapted IDs 85/89/93/198/201, ID202's partial
+duration, original boss transitions, the adapted IDs 85/89/93/198/201/204, ID202's partial
 WAIT improvement and retained failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
-The current GCC14 host passes core tests and the focused ID202 O0/O3/replay fixtures,
+The current GCC14 host passes core tests and the focused ID202/204 O0/O3/replay fixtures,
 but its full native CTest hits the retained GCC12-host Stage 6b golden-digest mismatch.
 Clean-main execution reproduces it; outcomes and collision details are unchanged.
 The aggregate is not reported as passing on this host.
@@ -160,8 +165,9 @@ The aggregate is not reported as passing on this host.
    Its other ECL shots and child patterns consume random angles. Evaluate a conservative
    emission envelope before considering branch-owned full-world RNG; do not enable the
    deterministic ID201 preview while silently excluding those random shots
-2. Diagnose ID204's update-1205 relative-direction transform (`0x40`). Record its native
-   interval/repeat state and nine-action prefix before adding an exact, opt-in projection
+2. Preserve ID204's seed-0/65535 completion and diagnose its remaining seed-1 update-3008
+   untransformed-bullet collision after the seed-0 portfolio gaps. Do not broaden its
+   active relative-direction forecast beyond the source-owned transform bound
 3. Diagnose ID139's update-5326 bottom-excluding bounce (`0x800`). Mirror the source
    boundary-test/update order in a case adapter, then use Stage 6a as the continuous gate
 4. Probe ID32's untransformed update-594 hit and the matching Stage 3 failure. Compare
@@ -173,7 +179,7 @@ The aggregate is not reported as passing on this host.
 6. Expose the source owner, lifetime and future geometry for ID192's lethal region at
    update 466. It needs a typed warning distinct from bullet and laser projection. The
    Extra run must pass it without resetting carried state; final clear is the aggregate gate
-7. Return to ID201 robustness after the eight seed-0 failures. Seed 1's random child
+7. Return to ID201 robustness after the seven seed-0 failures. Seed 1's random child
    pattern needs owned RNG/order evidence or a justified conservative envelope; never
    reuse one sampled future across action-dependent branches. Recheck seeds 0/1/65535
 8. After each isolated fix, rerun its baseline, full wrapper, fresh replay, the 56-case

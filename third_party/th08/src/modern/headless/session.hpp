@@ -8,6 +8,13 @@ struct Config {
     int stage = 0, spell = -1, difficulty = 0;
     std::uint16_t seed = 0;
 };
+struct RelativeDirectionView {
+    float angle = 0, speed = 0, turn_angle = 0, turn_speed = 0;
+    int timer = 0, interval = 0;
+    // Includes the final direction-change update, but never crosses into a
+    // subsequent transform or concurrently enabled transform-program record.
+    unsigned updates = 0;
+};
 struct BulletView {
     float x, y, vx, vy;
     std::uint16_t state;
@@ -21,6 +28,7 @@ struct BulletView {
     // Number of upcoming native updates whose velocity is guaranteed unchanged
     // across the active WAIT and any proven terminal child-spawn boundary.
     int wait_linear_updates;
+    RelativeDirectionView relative_direction;
 };
 // Raw source-owned laser state after an update. Consumers may forecast existing
 // lasers, but newly spawned/aimed lasers still belong to the next native update.

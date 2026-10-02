@@ -17,6 +17,11 @@ struct Bullet {
     float vector_acceleration_x, vector_acceleration_y;
     int vector_acceleration_timer, vector_acceleration_duration;
     int wait_linear_updates;
+    struct {
+        float angle = 0, speed = 0, turn_angle = 0, turn_speed = 0;
+        int timer = 0, interval = 0;
+        unsigned updates = 0;
+    } relative_direction{};
 };
 struct Laser {
     float origin_x, origin_y, angle;
@@ -154,6 +159,32 @@ int main() {
               th08::policy::detail::project_bullet(id202_child, 7, true, true).kind ==
                   th08::policy::detail::BulletProjectionKind::unsupported,
           "ID202 lost its source-bounded stationary collision and upward escape");
+    // Native ID204 slot 669 at update 1204: the next speed is 4-10*4/60,
+    // not its observed previous velocity. The source adds it before collision.
+    Bullet slowing{
+        251.074799f, 292.989685f, -.0767166093f, 3.3991344f, 4, 4, 1, 0x40, 0, 0, 0, 0, 0};
+    slowing.relative_direction = {1.59336233f, 4, 0, 0, 10, 60, 51};
+    const auto relative = th08::policy::detail::project_bullet(slowing, 1, true, false, true);
+    check(relative.x == 250.999588f && relative.y == 296.322174f &&
+              relative.kind == th08::policy::detail::BulletProjectionKind::relative_direction &&
+              th08::policy::detail::project_bullet(slowing, 52, true, false, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported,
+          "relative direction projection lost native deceleration or crossed the final turn");
+    // The last turn still moves at its installed speed; the following update
+    // belongs to a refreshed native observation, possibly another transform.
+    slowing.x = slowing.y = 0;
+    slowing.relative_direction = {0, 4, 0, 5, 59, 60, 2};
+    const auto turn_end = th08::policy::detail::project_bullet(slowing, 2, true, false, true);
+    check(turn_end.x == (4.f - (59.f * 4.f) / 60.f) + 5.f && turn_end.y == 0 &&
+              th08::policy::detail::project_bullet(slowing, 3, true, false, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported,
+          "relative direction projection omitted final-turn motion");
+    slowing.relative_direction.updates = 0;
+    check(th08::policy::detail::project_bullet(slowing, 1, true, false, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported &&
+              th08::policy::native_spell_policy(204).hazards.relative_direction_projection &&
+              !th08::policy::native_spell_policy(203).hazards.relative_direction_projection,
+          "relative direction projection ignored its source-owned validity bound or opt-in");
     check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion &&
               th08::policy::native_spell_policy(198).hazards.rigid_laser_motion,
           "spell portfolio lost an isolated pooled-laser motion model");
@@ -342,5 +373,6 @@ int main() {
     std::cout << "{\"input_latch\":\"covered\",\"vector_acceleration\":\"covered\","
                  "\"laser_lifecycle\":\"covered\",\"broad_phase\":\"covered\","
                  "\"wait_projection\":\"covered\",\"upcoming_ecl_bullet\":\"covered\","
+                 "\"relative_direction\":\"covered\","
                  "\"direct_ecl_laser\":\"covered\",\"spell_portfolio\":\"covered\"}\n";
 }

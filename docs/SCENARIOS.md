@@ -112,6 +112,16 @@ other visible opcode-99 shots use random-angle selector 10082. The baseline coll
 at 3265 is avoided, but seed 0/1/65535 wrappers still collide at 4204/4216/3613. This is
 a local modeling improvement, not another completed checkpoint.
 
+ID204 keeps the same 12-update horizon and enables the source-bounded active
+relative-direction recurrence. Its observation copies the current angle/base speed,
+turn angle/speed, interval and timer. The validity bound includes the final turn's
+movement/collision but stops before the next transform-program update; an enabled
+concurrent record invalidates the bound. The scorer mirrors native deceleration,
+timer comparison/reset/increment, angle addition and velocity-before-position order.
+Fractional timers, a non-unit frame multiplier and scripted freeze invalidate the view.
+It does not forecast aimed turns or execute the next transform record. Seeds 0 and
+65535 complete the 4832-update wrapper; seed 1 retains a collision at 3008.
+
 ID89 observes only the current native ECL cursor. A constant
 opcode 136/137 selector for direct-laser EX callbacks 9/11/25 becomes a warning only
 when difficulty and timer state match and the currently observed parent, interpolation,
