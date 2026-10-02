@@ -177,15 +177,19 @@ are optional component evidence, not prerequisites or the next integration roadm
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
-(28 total), an optional headless process-protocol test and one optional native real-data CTest. The native test covers complete
+(28 total), optional headless process-protocol/semantic-contract tests and one optional native real-data CTest. The native test covers complete
 duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, ID202's partial WAIT improvement, ID203's bounded repair and retained rolling failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
-The current GCC14 host passes core tests and the focused ID32/139/167/183/192/202/203/204 O0/O3/replay fixtures,
-but its full native CTest hits the retained GCC12-host Stage 6b golden-digest mismatch.
-Clean-main execution reproduces it; outcomes and collision details are unchanged.
-The aggregate is not reported as passing on this host.
+The historical GCC12 Stage6b digest differs on this GCC14 host. Its old numerical
+profile did not pin the complete solver build, libm or CPU, so it cannot promise
+cross-environment trajectory-bit equality. The named stage6b-semantic-v1 contract
+retains the historical literal/report, asserts the full scene/terminal/RNG/feedback
+and collision boundary, and labels numerical-profile identity unverified. Same-build
+fresh replay, O0/O3 comparison, diagnostics and all 18 latch probes remain strict.
+The exact historical trajectory difference remains unexplained; this is not a
+cross-host or retail bit-equivalence claim.
 
 - ID192 now uses typed source-owned body rectangles and outward-rounded all-angle
   random-move envelopes, with H12/81 paths/one-update first leg. Seeds 0/65535 complete
@@ -219,8 +223,8 @@ The aggregate is not reported as passing on this host.
    profile. The current repair trigger supports H32; do not silently treat ID202's
    original H12 trace as that profile or skip unsupported hazards
 4. Finish actual continuous Extra beyond ID202, preserving carried world/RNG state.
-   Diagnose the retained cross-host Stage6b numerical-profile golden mismatch before
-   final end-to-end completion; do not replace its expected digest merely to pass
+   Keep the historical cross-host numerical-profile limitation explicit; its named
+   semantic contract does not detect every possible intermediate float drift
 5. Return to ID201 robustness after the remaining seed-0 failure. Seed 1's random child
    pattern needs owned RNG/order evidence or a justified conservative envelope; never
    reuse one sampled future across action-dependent branches. Recheck seeds 0/1/65535

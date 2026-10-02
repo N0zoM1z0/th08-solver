@@ -17,6 +17,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id139` | `headless_id139_summary.json` | GCC14 bounded bounce and explicit 32-update/two-leg ranking: three complete seed wrappers, continuous Stage 6a clear, preserved failures, fresh replay and O0/O3 on corrected laser-item runtime |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id192` | `headless_id192_summary.json` | GCC14 typed body bounds/envelopes: complete seeds 0/65535, retained seed 1 failure and baseline, continuous Extra advances to ID202, fresh O0/O3 replay |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id203` | `headless_id203_summary.json` | GCC14 observed H32/63-path rolling failures, bounded actual-native prefix repair completing seed0, explicit process/search costs, baseline and fresh O0/O3 replay |
+| `tests/headless_real_data.cmake`, `CASE_GROUP=stage6b` | `headless_stage6b_contract_summary.json` | Named v1 scene/terminal/RNG/feedback/full-collision contract, historical digest mismatch and unverified numerical identity, strict native/O0 replay and 18 latch probes |
 | `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
 | `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
 | `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |
@@ -47,7 +48,8 @@ Regenerate with the optional real-data CTest, then copy its checked
 when refreshing O0/O3 evidence; tapes remain in the ignored build directory.
 The separate ID32/139/167/183/192/202/203/204 reports use Intel Xeon Platinum 8573C/GCC 14.2. Their focused
 generator emits `<group>-summary.json`; the older aggregate is deliberately retained
-because this host fails its pre-existing Stage 6b golden digest (see Validation).
+as historical numerical provenance. The v1 semantic contract explicitly records its
+digest mismatch without claiming cross-environment trajectory equality (see Validation).
 
 Experiment in ignored `reports/local/`; regenerate tracked records deliberately from
 their maintained C++ producer. Do not commit raw game assets. Preserve large digests

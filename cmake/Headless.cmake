@@ -83,6 +83,9 @@ set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH
   "Optional native executable built at another optimization level")
 
 if(BUILD_TESTING)
+  add_test(NAME headless_report_contract COMMAND ${CMAKE_COMMAND}
+    -DROOT=${CMAKE_CURRENT_SOURCE_DIR}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_stage6b_contract_tests.cmake)
   add_executable(th08_headless_repair_child tests/headless_repair_child.cpp)
   target_compile_features(th08_headless_repair_child PRIVATE cxx_std_17)
   add_test(NAME headless_repair_protocol COMMAND ${CMAKE_COMMAND}
