@@ -16,6 +16,7 @@
 #include <th08/direct_laser_policy.hpp>
 #include <th08/imminent_laser_policy.hpp>
 #include <th08/native_policy.hpp>
+#include <th08/observed_path_policy.hpp>
 #include <th08/reactive.hpp>
 #include <th08/spell_policy.hpp>
 #include <th08/upcoming_bullet_policy.hpp>
@@ -318,7 +319,7 @@ int main(int argc, char **argv) {
     try {
         th08::headless::Config config;
         std::string dat, output, strategy = "stationary", tape_path, replay_path, stage_name = "1";
-        std::string trace_path;
+        std::string trace_path, policy_log_path, resume_path;
         unsigned limit = 20000;
         unsigned prefix_frame = 0;
         bool allow_unused = false;
@@ -350,6 +351,10 @@ int main(int argc, char **argv) {
                 tape_path = fs::absolute(value).string();
             else if (key == "--replay")
                 replay_path = fs::absolute(value).string();
+            else if (key == "--resume-prefix")
+                resume_path = fs::absolute(value).string();
+            else if (key == "--policy-log")
+                policy_log_path = fs::absolute(value).string();
             else if (key == "--trace")
                 trace_path = fs::absolute(value).string();
             else if (key == "--strategy")
@@ -362,6 +367,8 @@ int main(int argc, char **argv) {
         }
         if (dat.empty() || !limit)
             throw std::runtime_error("--dat and a positive frame budget are required");
+        if (!resume_path.empty() && !replay_path.empty())
+            throw std::runtime_error("--replay and --resume-prefix are mutually exclusive");
         if (prefix_frame > limit || (allow_unused && replay_path.empty()))
             throw std::runtime_error("invalid replay/diagnostic boundary");
         if (strategy != "stationary" && strategy != "reactive" && strategy != "hazard-reactive" &&
@@ -372,7 +379,17 @@ int main(int argc, char **argv) {
         const auto identity = dat_hash(dat);
         if (identity != "9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb")
             throw std::runtime_error("DAT identity mismatch");
-        auto replay = replay_path.empty() ? std::vector<std::uint16_t>{} : read_tape(replay_path);
+        const auto &input_tape = resume_path.empty() ? replay_path : resume_path;
+        auto replay = input_tape.empty() ? std::vector<std::uint16_t>{} : read_tape(input_tape);
+        if (!resume_path.empty() && replay.size() > limit)
+            throw std::runtime_error("resume prefix exceeds frame budget");
+        std::ofstream policy_log;
+        if (!policy_log_path.empty()) {
+            policy_log.open(policy_log_path);
+            if (!policy_log)
+                throw std::runtime_error("cannot open policy log");
+            policy_log << "frame\toverlap\thorizon\ttrace_digest\n";
+        }
         config.dat_path = dat.c_str();
         RunDirectory scratch;
         th08::headless::Session session(config);
@@ -413,7 +430,7 @@ int main(int argc, char **argv) {
             std::uint16_t action = 4;
             th08::policy::HazardReactiveDecision policy_decision;
             bool has_policy_decision = false;
-            if (!replay_path.empty()) {
+            if (!replay_path.empty() || (!resume_path.empty() && i < replay.size())) {
                 if (i == replay.size()) {
                     outcome = "tape_end";
                     break;
@@ -499,12 +516,22 @@ int main(int argc, char **argv) {
                                               th08::headless::BodyForecastKind::RandomMoveEnvelope;
                     }
                     last_hazard_options = profile.hazards;
-                    action = th08::policy::hazard_reactive(
-                        state.x, state.y, state.hurt_half_x, state.hurt_half_y,
-                        session.focused_axis_speed(), session.focused_diagonal_speed(),
-                        state.latched_input, observed, observed_lasers, policy_stats,
-                        profile.hazards, tail ? &policy_decision : nullptr, body_forecast.warnings);
-                    has_policy_decision = tail != nullptr;
+                    auto *decision = (tail || policy_log.is_open()) ? &policy_decision : nullptr;
+                    if (profile.observed_path_beam) {
+                        if (!body_forecast.warnings.empty())
+                            throw std::runtime_error("observed path beam does not support bodies");
+                        action = th08::policy::observed_path_beam(
+                            state.x, state.y, state.hurt_half_x, state.hurt_half_y,
+                            session.focused_axis_speed(), session.focused_diagonal_speed(),
+                            state.latched_input, observed, observed_lasers, policy_stats,
+                            profile.hazards, decision);
+                    } else
+                        action = th08::policy::hazard_reactive(
+                            state.x, state.y, state.hurt_half_x, state.hurt_half_y,
+                            session.focused_axis_speed(), session.focused_diagonal_speed(),
+                            state.latched_input, observed, observed_lasers, policy_stats,
+                            profile.hazards, decision, body_forecast.warnings);
+                    has_policy_decision = decision != nullptr;
                 }
                 if (shoot)
                     action |= 1;
@@ -562,6 +589,26 @@ int main(int argc, char **argv) {
                 hash(digest, bits(b.vx));
                 hash(digest, bits(b.vy));
             }
+            if (policy_log.is_open()) {
+                const auto log_start = std::chrono::steady_clock::now();
+                unsigned overlap = 0, horizon = 0;
+                if (has_policy_decision) {
+                    horizon = last_hazard_options.bullet_horizon;
+                    for (const auto &candidate : policy_decision.candidates)
+                        if (candidate.enabled &&
+                            candidate.action == policy_decision.selected_action) {
+                            overlap = candidate.first_overlap;
+                            break;
+                        }
+                }
+                policy_log << state.frame << '\t' << overlap << '\t' << horizon << '\t' << digest
+                           << '\n';
+                if (!policy_log)
+                    throw std::runtime_error("cannot write policy log");
+                diagnostics_ms += std::chrono::duration<double, std::milli>(
+                                      std::chrono::steady_clock::now() - log_start)
+                                      .count();
+            }
             if (state.frame == prefix_frame)
                 prefix_digest = digest;
             if (state.spell_active && !started) {
@@ -618,7 +665,10 @@ int main(int argc, char **argv) {
             << ",\"difficulty\":" << config.difficulty << ",\"seed\":" << config.seed
             << ",\"optimization\":" << TH08_HEADLESS_OPTIMIZATION << ",\"compiler\":\""
             << __VERSION__ << "\""
-            << ",\"strategy\":\"" << (replay_path.empty() ? strategy : "replay")
+            << ",\"strategy\":\""
+            << (!resume_path.empty()  ? "prefix-replay-then-policy"
+                : replay_path.empty() ? strategy
+                                      : "replay")
             << "\",\"frame_budget\":" << limit << ",\"outcome\":\"" << outcome
             << "\",\"frames\":" << state.frame << ",\"spell_id\":" << state.spell
             << ",\"spell_start\":" << spell_start << ",\"first_hit\":" << first_hit
@@ -730,8 +780,10 @@ int main(int argc, char **argv) {
             << upcoming_bullet_stats.allowed_candidates << ",\"previous_trace_digest\":\""
             << previous_digest << "\",\"prefix_frame\":" << prefix_frame
             << ",\"prefix_trace_digest\":\"" << prefix_digest << "\",\"unused_actions\":"
-            << (replay_path.empty() ? 0 : replay.size() - actions.size())
-            << ",\"diagnostics_enabled\":" << (tail ? "true" : "false");
+            << (input_tape.empty() || actions.size() >= replay.size()
+                    ? 0
+                    : replay.size() - actions.size())
+            << ",\"diagnostics_enabled\":" << (tail || policy_log.is_open() ? "true" : "false");
         write_collision(out, session.collision());
         out << "}\n";
         if (!out)

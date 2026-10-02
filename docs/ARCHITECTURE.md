@@ -104,7 +104,13 @@ optionally owns a 32-update before/after ring, serialized after loop timing.
 Original managers contain process globals and internal pointers. `headless::Session`
 is noncopyable and permits one instance per process. Fresh replay starts another
 process. Do not memcpy this state or share one future across alternative actions.
-Branchable snapshots and immutable-resource sharing remain future integration work.
+`tools/headless_repair.cpp` uses this fresh-process boundary for bounded prefix repair.
+The child CLI keeps strict replay distinct from explicit prefix continuation; per-update
+policy logs supply source-prefix projections and rollback triggers. The outer process owns
+budgets, pinned executable provenance, artifact validation, failure ledger and replay.
+`observed_path_policy.hpp` owns only the H32/63-prefix player-path proposal beam.
+No native snapshot or global-state copying is introduced by either component.
+Branchable native snapshots remain future integration work.
 
 Keep emission, transform installation, acceleration, displacement, culling and collision
 order explicit. A certified fast-spawn bullet can activate and perform fired motion in

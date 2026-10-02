@@ -16,16 +16,17 @@ algorithm failures, and improve measured solve cost.
   exhaustion is not a proof of impossibility, and a short route is not a full solution
 
 The tracked TH08 runtime now runs complete real-data scenes natively on Linux without
-a display, Wine or a real-time frame limiter. A spell-aware hazard portfolio completes
-54 of the 56 enumerated Easy/Extra spell checkpoints at seed 0. The same policy clears
+a display, Wine or a real-time frame limiter. The rolling hazard portfolio completes
+54 of the 56 enumerated Easy/Extra spell checkpoints at seed 0; bounded fresh-process
+native-prefix repair adds ID203 for 55/56. The rolling portfolio clears
 Easy Stages 1, 2, 3, 4a, 4b, 5, 6a and 6b continuously from their explicit stage starts.
 Fresh-process action replay checks every sweep result. Existing controlled/synthetic
 planners remain available for algorithm comparisons. See
 [current results and remaining work](docs/STATUS.md).
 
 **Legacy subset complete offline spell solutions: 0.** Historical subset-engine reports
-retain that count. The native headless profile separately verifies 54 complete spell
-checkpoints in the portfolio sweep and eight complete stages, including native
+retain that count. The native headless profile separately verifies 55 complete spell
+checkpoints with the documented portfolio/repair recipe and eight complete stages, including native
 graze/score/item feedback. Its platform and numerical profile are explicit; retail
 Windows equivalence is not established.
 

@@ -25,7 +25,7 @@ has its own profile and evidence:
 |---|---|
 | Complete stages | Easy Stages 1, 2, 3, 4a, 4b, 5, 6a and 6b, Reimu/Yukari, seed 0, `spell-portfolio`; every tape freshly replayed |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
-| Spell portfolio sweep | 54/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
+| Spell solver sweep | 55/56 enumerated Easy standard and Extra checkpoints, seed 0: 54 rolling-portfolio clears plus bounded native-prefix repair for ID203; every selected tape freshly replayed |
 | Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0; ID204 relative-direction profile complete for seeds 0/65535; IDs32/139/167/183 two-leg profiles complete for seeds 0/1/65535 |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
@@ -58,12 +58,12 @@ passing component tests are not completion percentages.
 - On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
   checkpoints. `spell-portfolio` completed 54/56 with no lost baseline completion;
   all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
-  and trace projection. The remaining failures are bullet IDs202/203
+  and trace projection. ID202 remains unsolved; ID203 additionally completes through the bounded repair recipe
 - Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
   IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
   constant-velocity ranking; its isolated selector lives outside the generic kernel
 - Preserving the native final active-laser collision before removal completed ID163.
-  Retained failures are bullet IDs 202/203
+  The rolling profile retains bullet failures IDs202/203; bounded repair completes ID203
 - ID85's static-angle forecast stopped at the bottom center while ten live pooled lasers
   rotated around `(192,128)`; slot 7 hit on update 631. Replacing update 630 with any
   rightward direction survives that collision. Native before/after observations expose
@@ -177,9 +177,8 @@ are optional component evidence, not prerequisites or the next integration roadm
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
-(28 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, IDs202/203's partial
-WAIT improvements and retained failures, fresh replay, and the Stage 6b
+(28 total), an optional headless process-protocol test and one optional native real-data CTest. The native test covers complete
+duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, ID202's partial WAIT improvement, ID203's bounded repair and retained rolling failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
@@ -193,11 +192,19 @@ The aggregate is not reported as passing on this host.
   3692 updates; seed 1 retains a bullet collision at 1470. Actual Extra advances from
   ID192 at 7424 to ID202 at 67738. Body overlap joins the existing earliest-overlap
   ranking on each actual path; it is not a body-only admissibility filter
-- The WAIT certificate includes DESPAWN's final lethal fired movement. ID203 also
-  opts into a bounded WAIT→VECTOR→NONE forecast from already resolved native operands.
-  It still fails at 1711/4823/2896 for seeds 0/1/65535; this source correction does not
-  count as a solved spell. Against a complete preceding-main source build, all 53 prior
-  successes remain, and 54 other spell tapes and semantic records are unchanged
+- The WAIT certificate includes DESPAWN's final lethal fired movement. ID203's earlier
+  WAIT/vector-only profile failed at 1711/4823/2896. Its new observed H32 beam retains
+  seven player-path prefixes per first direction (63 total), but still fails at 787
+  for all three seeds. A bounded native repair automatically derives rollback proposals
+  from the failed trace and completes seed 0 at 5492 after 91 candidates. Each candidate
+  reconstructs the actual world/RNG in a fresh process; only the proposal beam shares
+  immutable observed hazards. Seeds 1/65535 have no repaired completion claim
+- Repair uses at most 2 rounds, 8 rollback segments per round and 9 direction holds of
+  16 updates, with 144 candidate/2160000 native-update/600-second search limits. Initial
+  execution and final fresh replay have separate costs. All failed candidates remain
+  recorded; interrupted/unverified children carry a conservative full-frame-cap charge.
+  The observed beam expands at most 16533 prefixes per decision, with stable original
+  score ordering and deterministic first-action-family retention
 
 ## Next useful work
 
@@ -208,14 +215,13 @@ The aggregate is not reported as passing on this host.
 2. Preserve ID204's seed-0/65535 completion and diagnose its remaining seed-1 update-3008
    untransformed-bullet collision after the seed-0 portfolio gaps. Do not broaden its
    active relative-direction forecast beyond the source-owned transform bound
-3. Solve IDs202/203 with bounded fresh-process native-prefix repair. A temporary
-   ID203 searched route completes5492 with fresh O0/O3 agreement, but its first manual
-   intervention is not an automatic policy. Derive proposals from failed traces,
-   account for every replayed prefix and prove automatic completion before counting it
+3. Apply the bounded native repair to ID202 with an explicitly evidenced proposal
+   profile. The current repair trigger supports H32; do not silently treat ID202's
+   original H12 trace as that profile or skip unsupported hazards
 4. Finish actual continuous Extra beyond ID202, preserving carried world/RNG state.
    Diagnose the retained cross-host Stage6b numerical-profile golden mismatch before
    final end-to-end completion; do not replace its expected digest merely to pass
-5. Return to ID201 robustness after the two seed-0 failures. Seed 1's random child
+5. Return to ID201 robustness after the remaining seed-0 failure. Seed 1's random child
    pattern needs owned RNG/order evidence or a justified conservative envelope; never
    reuse one sampled future across action-dependent branches. Recheck seeds 0/1/65535
 6. After each isolated fix, rerun its baseline, full wrapper, fresh replay, the 56-case
