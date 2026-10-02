@@ -228,6 +228,7 @@ if(BUILD_TESTING)
       -DPROBE_EXECUTABLE=$<TARGET_FILE:th08_headless_probe>
       -DLASER_ITEMS_EXECUTABLE=$<TARGET_FILE:th08_headless_laser_items>
       -DBULLET_BOUNDS_EXECUTABLE=$<TARGET_FILE:th08_headless_bullet_bounds>
+      -DBODY_FORECAST_EXECUTABLE=$<TARGET_FILE:th08_headless_body_forecast>
       -DDAT=${TH08_HEADLESS_DAT}
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/headless-regression
       -DCOMPARE_EXECUTABLE=${TH08_HEADLESS_COMPARE_EXECUTABLE}

@@ -42,6 +42,8 @@ struct HazardReactiveStats {
     std::uint64_t relative_direction_checks = 0;
     std::uint64_t boundary_bounce_checks = 0;
     std::uint64_t wait_vector_checks = 0;
+    std::uint64_t body_paths = 0, body_checks = 0, body_overlaps = 0;
+    std::uint64_t body_unsafe_decisions = 0, pending_body_overlaps = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
     std::uint64_t rigid_laser_paths = 0, laser_forecast_updates = 0, laser_checks = 0;
     std::uint64_t predicted_overlaps = 0;
@@ -424,14 +426,21 @@ inline bool better(const CandidateScore &left, const CandidateScore &right) {
 }
 } // namespace detail
 
+struct BodyWarningBounds {
+    float min_x, min_y, max_x, max_y;
+    unsigned update;
+};
+using NoBodyWarnings = std::array<BodyWarningBounds, 0>;
+
 // Candidate-independent projections rank proposals only. The native update remains
 // the acceptance oracle for spawns, transforms, aiming, damage, RNG and lifecycle.
-template <class Bullets, class Lasers>
+template <class Bullets, class Lasers, class Bodies = NoBodyWarnings>
 std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, float half_y,
                               float axis, float diagonal, std::uint16_t latched_input,
                               const Bullets &bullets, const Lasers &lasers,
                               HazardReactiveStats &stats, HazardReactiveOptions options = {},
-                              HazardReactiveDecision *decision = nullptr) {
+                              HazardReactiveDecision *decision = nullptr,
+                              const Bodies &bodies = {}) {
     ++stats.decisions;
     if (decision)
         *decision = {};
@@ -509,6 +518,18 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
         }
     }
 
+    auto body_overlaps = [&](float x, float y, const auto &body) {
+        // Direct endpoints retain native inclusive bounds, including envelopes
+        // that cannot be safely converted back to a center and width.
+        return x + half_x >= body.min_x && x - half_x <= body.max_x && y + half_y >= body.min_y &&
+               y - half_y <= body.max_y;
+    };
+    float pending_x = player_x, pending_y = player_y;
+    detail::advance(pending_x, pending_y, pending, axis, diagonal);
+    for (const auto &body : bodies)
+        if (body.update == 1 && body_overlaps(pending_x, pending_y, body))
+            ++stats.pending_body_overlaps;
+    bool any_body_safe = false;
     auto evaluate = [&](detail::Direction initial,
                         detail::Direction continuation) -> detail::CandidateScore {
         ++stats.candidates;
@@ -574,6 +595,24 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
         x = player_x;
         y = player_y;
         detail::advance(x, y, pending, axis, diagonal);
+        bool body_hit = false;
+        if (!bodies.empty())
+            ++stats.body_paths;
+        float body_x = x, body_y = y;
+        for (unsigned step = 2; step <= options.bullet_horizon; ++step) {
+            detail::advance(body_x, body_y, direction_at(step), axis, diagonal);
+            for (const auto &body : bodies) {
+                if (body.update != step)
+                    continue;
+                ++stats.body_checks;
+                if (body_overlaps(body_x, body_y, body)) {
+                    score.first_overlap = std::min(score.first_overlap, step);
+                    ++stats.body_overlaps;
+                    body_hit = true;
+                }
+            }
+        }
+        any_body_safe |= !body_hit;
         float laser_first_x = x, laser_first_y = y;
         if (options.laser_horizon >= 2)
             detail::advance(laser_first_x, laser_first_y, initial, axis, diagonal);
@@ -684,6 +723,8 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
             if (detail::better(score, best))
                 best = score;
         }
+    if (!bodies.empty() && !any_body_safe)
+        ++stats.body_unsafe_decisions;
     if (decision)
         decision->selected_action = best.action;
     return best.action;

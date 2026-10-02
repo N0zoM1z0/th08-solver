@@ -25,7 +25,7 @@ has its own profile and evidence:
 |---|---|
 | Complete stages | Easy Stages 1, 2, 3, 4a, 4b, 5, 6a and 6b, Reimu/Yukari, seed 0, `spell-portfolio`; every tape freshly replayed |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
-| Spell portfolio sweep | 53/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
+| Spell portfolio sweep | 54/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
 | Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0; ID204 relative-direction profile complete for seeds 0/65535; IDs32/139/167/183 two-leg profiles complete for seeds 0/1/65535 |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
@@ -40,10 +40,10 @@ passing component tests are not completion percentages.
   wall-clock limiter. It retains gameplay and ANM updates, original shared RNG,
   dialogue, damage, cancellation, items and graze feedback. It stops at actual stage
   clear or spell end, without resetting the world between boss phases
-- The current stage records cover 332805 native updates across nine entries,
+- The current stage records cover 393119 native updates across nine entries,
   including the later Stage3/6b replacement runs. `spell-portfolio` clears Stages
   1/2/3/4a/4b/5/6a/6b in 24135/32448/39767/22089/43700/43348/61041/58853 updates.
-  Extra still collides in ID192 at7424. Every tape freshly replays; native carried
+  Extra now passes ID192 and collides in ID202 at 67738. Every tape freshly replays; native carried
   bullets, items and RNG persist between phases
 - Stage 6b's reactive failure is now reproducible with native collision bounds and
   independent nine-direction replays. Recording-mode movement uses the previously
@@ -56,14 +56,14 @@ passing component tests are not completion percentages.
   conservative laser broad phase reduced ID151 policy time from about 7.8 to 2.1 seconds
   without shortening its 120-update horizon. The native update remains the collision oracle
 - On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
-  checkpoints. `spell-portfolio` completed 53/56 with no lost baseline completion;
+  checkpoints. `spell-portfolio` completed 54/56 with no lost baseline completion;
   all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
-  and trace projection. The remaining failures are two bullets and one lethal region
+  and trace projection. The remaining failures are bullet IDs202/203
 - Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
   IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
   constant-velocity ranking; its isolated selector lives outside the generic kernel
 - Preserving the native final active-laser collision before removal completed ID163.
-  Retained failures are bullet IDs 202/203 and lethal-region ID192
+  Retained failures are bullet IDs 202/203
 - ID85's static-angle forecast stopped at the bottom center while ten live pooled lasers
   rotated around `(192,128)`; slot 7 hit on update 631. Replacing update 630 with any
   rightward direction survives that collision. Native before/after observations expose
@@ -162,7 +162,7 @@ passing component tests are not completion percentages.
 Exact profiles and exclusions are in [Scenarios](SCENARIOS.md); measured records are
 in the [report index](../reports/native/README.md). Older subset samples used Linux
 x86_64, Intel Xeon Platinum 8573C, GCC 14.2. Earlier native samples use AMD EPYC 7B12,
-GCC 12.2; the ID32/139/167/183/202/204 checkpoints use Intel Xeon Platinum 8573C, GCC 14.2. Both native
+GCC 12.2; the ID32/139/167/183/192/202/203/204 checkpoints use Intel Xeon Platinum 8573C, GCC 14.2. Both native
 profiles are Release with contraction disabled; timings depend on environment.
 
 ## Existing reusable components
@@ -178,15 +178,26 @@ The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
 (28 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/198/201/204, ID202's partial
-WAIT improvement and retained failures, fresh replay, and the Stage 6b
+duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, IDs202/203's partial
+WAIT improvements and retained failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
-The current GCC14 host passes core tests and the focused ID139/202/204 O0/O3/replay fixtures,
+The current GCC14 host passes core tests and the focused ID32/139/167/183/192/202/203/204 O0/O3/replay fixtures,
 but its full native CTest hits the retained GCC12-host Stage 6b golden-digest mismatch.
 Clean-main execution reproduces it; outcomes and collision details are unchanged.
 The aggregate is not reported as passing on this host.
+
+- ID192 now uses typed source-owned body rectangles and outward-rounded all-angle
+  random-move envelopes, with H12/81 paths/one-update first leg. Seeds 0/65535 complete
+  3692 updates; seed 1 retains a bullet collision at 1470. Actual Extra advances from
+  ID192 at 7424 to ID202 at 67738. Body overlap joins the existing earliest-overlap
+  ranking on each actual path; it is not a body-only admissibility filter
+- The WAIT certificate includes DESPAWN's final lethal fired movement. ID203 also
+  opts into a bounded WAIT→VECTOR→NONE forecast from already resolved native operands.
+  It still fails at 1711/4823/2896 for seeds 0/1/65535; this source correction does not
+  count as a solved spell. Against a complete preceding-main source build, all 53 prior
+  successes remain, and 54 other spell tapes and semantic records are unchanged
 
 ## Next useful work
 
@@ -197,13 +208,14 @@ The aggregate is not reported as passing on this host.
 2. Preserve ID204's seed-0/65535 completion and diagnose its remaining seed-1 update-3008
    untransformed-bullet collision after the seed-0 portfolio gaps. Do not broaden its
    active relative-direction forecast beyond the source-owned transform bound
-3. Apply the same earliest-avoidable-decision procedure separately to untransformed
-   ID203 (update 1711). Preserve the source trace and test its complete wrapper;
-   Extra remains the continuous gate, currently blocked earlier at ID192
-4. Expose the source owner, lifetime and future geometry for ID192's lethal region at
-   update 466. It needs a typed warning distinct from bullet and laser projection. The
-   Extra run must pass it without resetting carried state; final clear is the aggregate gate
-5. Return to ID201 robustness after the three seed-0 failures. Seed 1's random child
+3. Solve IDs202/203 with bounded fresh-process native-prefix repair. A temporary
+   ID203 searched route completes5492 with fresh O0/O3 agreement, but its first manual
+   intervention is not an automatic policy. Derive proposals from failed traces,
+   account for every replayed prefix and prove automatic completion before counting it
+4. Finish actual continuous Extra beyond ID202, preserving carried world/RNG state.
+   Diagnose the retained cross-host Stage6b numerical-profile golden mismatch before
+   final end-to-end completion; do not replace its expected digest merely to pass
+5. Return to ID201 robustness after the two seed-0 failures. Seed 1's random child
    pattern needs owned RNG/order evidence or a justified conservative envelope; never
    reuse one sampled future across action-dependent branches. Recheck seeds 0/1/65535
 6. After each isolated fix, rerun its baseline, full wrapper, fresh replay, the 56-case

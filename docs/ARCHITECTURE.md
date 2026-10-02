@@ -83,6 +83,14 @@ the view also exports the bounded number of updates whose copied transform progr
 the current velocity unchanged. Active relative-direction state has a separate source-owned
 validity bound through its final turn, excluding subsequent/concurrent enabled transforms;
 the optional scorer evaluates its deceleration/turn recurrence without mutating native state.
+A separate WAIT/vector view certifies the activation handoff through final vector clear;
+the unchanged-velocity bound includes DESPAWN's final lethal fired movement.
+`enemy_body_forecast()` returns owned typed per-update endpoint rectangles or an explicit
+failure. Its private adapter owns ECL/passive-program/timeline/lifecycle certificates;
+`body_math.hpp` owns outward interval arithmetic, while the generic policy only consumes
+rectangles along actual candidate paths. Conditional callback immunity is labeled, and
+random movement uses all-angle bounds rather than consuming RNG. Unsupported enabled
+body forecasts stop the caller rather than silently dropping warnings.
 `lasers()` owns a
 separate reused buffer of raw pooled-laser lifecycle state. Its motion fields measure the
 immediately preceding native update and do not promise that motion will continue. Callers

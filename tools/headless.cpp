@@ -396,6 +396,7 @@ int main(int argc, char **argv) {
         upcoming_bullet_warnings.reserve(64);
         th08::policy::HazardReactiveOptions last_hazard_options;
         std::uint64_t linear_profile_decisions = 0;
+        std::uint64_t body_forecast_decisions = 0, body_warnings = 0, body_envelopes = 0;
         const char *last_policy_profile = "none";
         auto state = session.state();
         bool started = false, complete = false;
@@ -480,12 +481,29 @@ int main(int argc, char **argv) {
                                 state.latched_input, profile.hazards.bullet_horizon,
                                 upcoming_bullet_warnings, upcoming_bullet_stats);
                     }
+                    th08::headless::EnemyBodyForecast body_forecast;
+                    if (profile.enemy_bodies && state.spell_active) {
+                        ++body_forecast_decisions;
+                        body_forecast = session.enemy_body_forecast(profile.hazards.bullet_horizon);
+                        if (body_forecast.failure != th08::headless::BodyForecastFailure::None)
+                            throw std::runtime_error(
+                                "unsupported native body forecast: reason=" +
+                                std::to_string(int(body_forecast.failure)) +
+                                " owner=" + std::to_string(body_forecast.owner) +
+                                " opcode=" + std::to_string(body_forecast.opcode) +
+                                " update=" + std::to_string(body_forecast.update) +
+                                " frame=" + std::to_string(state.frame));
+                        body_warnings += body_forecast.warnings.size();
+                        for (const auto &warning : body_forecast.warnings)
+                            body_envelopes += warning.kind ==
+                                              th08::headless::BodyForecastKind::RandomMoveEnvelope;
+                    }
                     last_hazard_options = profile.hazards;
                     action = th08::policy::hazard_reactive(
                         state.x, state.y, state.hurt_half_x, state.hurt_half_y,
                         session.focused_axis_speed(), session.focused_diagonal_speed(),
                         state.latched_input, observed, observed_lasers, policy_stats,
-                        profile.hazards, tail ? &policy_decision : nullptr);
+                        profile.hazards, tail ? &policy_decision : nullptr, body_forecast.warnings);
                     has_policy_decision = tail != nullptr;
                 }
                 if (shoot)
@@ -621,6 +639,14 @@ int main(int argc, char **argv) {
             << ",\"policy_relative_direction_checks\":" << policy_stats.relative_direction_checks
             << ",\"policy_boundary_bounce_checks\":" << policy_stats.boundary_bounce_checks
             << ",\"policy_wait_vector_checks\":" << policy_stats.wait_vector_checks
+            << ",\"policy_body_forecast_decisions\":" << body_forecast_decisions
+            << ",\"policy_body_warnings\":" << body_warnings
+            << ",\"policy_body_envelopes\":" << body_envelopes
+            << ",\"policy_body_paths\":" << policy_stats.body_paths
+            << ",\"policy_body_checks\":" << policy_stats.body_checks
+            << ",\"policy_body_overlaps\":" << policy_stats.body_overlaps
+            << ",\"policy_body_unsafe_decisions\":" << policy_stats.body_unsafe_decisions
+            << ",\"policy_pending_body_overlaps\":" << policy_stats.pending_body_overlaps
             << ",\"policy_unsupported_transform_checks\":"
             << policy_stats.unsupported_transform_checks
             << ",\"policy_laser_paths\":" << policy_stats.laser_paths

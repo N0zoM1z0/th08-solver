@@ -9,6 +9,7 @@ struct NativeSpellPolicy {
     bool direct_ecl_lasers = false;
     bool imminent_pooled_lasers = false;
     bool upcoming_ecl_bullets = false;
+    bool enemy_bodies = false;
 };
 
 // Spell-specific selection belongs here rather than in the generic projection
@@ -44,6 +45,9 @@ inline NativeSpellPolicy native_spell_policy(int spell_id) {
         return {"id167-two-leg-corner", {12, 120, true, 0x1ff, false, 4}};
     if (spell_id == 183)
         return {"id183-two-leg-large-bullet", {32, 120, true, 0x1ff, false, 4}};
+    if (spell_id == 192)
+        return {
+            "id192-body-aware", {12, 120, true, 0x1ff, false, 1, true}, false, false, false, true};
     if (spell_id == 198)
         return {"id198-two-leg-rigid-laser", {12, 120, true, 0x1ff, true, 4}};
     if (spell_id == 199)
