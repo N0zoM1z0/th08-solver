@@ -25,8 +25,8 @@ has its own profile and evidence:
 |---|---|
 | Complete stage | Stage 1 Easy, Reimu/Yukari, seed 0; 22176 updates, no collision |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
-| Spell portfolio sweep | 43/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
-| Transform/profile cross-check | IDs 193 and 195 source-vector, ID199 linear ranking; seeds 0/1/65535 complete |
+| Spell portfolio sweep | 44/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
+| Transform/profile cross-check | ID89 direct ECL, IDs 193/195 source-vector and ID199 linear ranking; seeds 0/1/65535 complete |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
 | Deterministic feedback | Fresh-process tapes agree on per-frame projection, terminal, RNG and graze/score/gauge |
@@ -54,21 +54,22 @@ passing component tests are not completion percentages.
   conservative laser broad phase reduced ID151 policy time from about 7.8 to 2.1 seconds
   without shortening its 120-update horizon. The native update remains the collision oracle
 - On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
-  checkpoints. `spell-portfolio` completed 43/56 with no lost baseline completion;
+  checkpoints. `spell-portfolio` completed 44/56 with no lost baseline completion;
   all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
-  and trace projection. The remaining failures are eight bullets, three pooled lasers,
-  one direct ECL laser hitbox and one lethal region
+  and trace projection. The remaining failures are eight bullets, three pooled lasers
+  and one lethal region
 - Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
   IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
   constant-velocity ranking; its isolated selector lives outside the generic kernel
 - Preserving the native final active-laser collision before removal completed ID163.
   Retained failures are bullet IDs 32/139/167/183/201/202/203/204, pooled-laser IDs
-  85/93/198, direct ECL laser ID89 and lethal-region ID192
-- ID89's source collision is a direct ECL `CalcLaserHitbox`, not a pooled laser. Its
-  590x160 hitbox first appears on collision update 393; replacing one action at updates
-  391, 392 or 393 leaves all nine directions colliding. The raw call view now exposes
-  source geometry for diagnosing the required earlier warning; no global laser horizon
-  was changed to hide this failure
+  85/93/198 and lethal-region ID192
+- ID89's unadapted source collision is a direct ECL `CalcLaserHitbox`, not a pooled laser.
+  Its 590x160 hitbox first appears on update 393, and single-action replacements at
+  updates 391/392/393 fail 9/9. The active ECL cursor exposes constant opcode 137 / EX 9
+  from at least update 362. Its isolated adapter constrains candidates across the
+  repeating callback interval, then lets the generic scorer handle bullets. It completes
+  the 3162-update wrapper for seeds 0, 1 and 65535 with fresh replay agreement
 - Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
   Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
 - A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived
@@ -107,7 +108,7 @@ The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
 (28 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, three portfolio profiles, fresh replay, genuine
+duration, original boss transitions, four portfolio boundaries, fresh replay, genuine
 collision/budget failure and the Stage 6b input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
@@ -115,8 +116,8 @@ Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 ## Next useful work
 
 1. Reproduce the checked profiles on the local machine before changing algorithms
-2. Diagnose the 13 retained sweep failures from their actual collision source. Direct
-   ECL hitboxes, pooled-laser timing, WAIT/direction transforms and lethal regions need
+2. Diagnose the 12 retained sweep failures from their actual collision source. Pooled
+   laser timing, WAIT/direction transforms and lethal regions need
    distinct observations or policies rather than one global parameter change
 3. Broaden native stage/spell profiles while preserving failures and original transitions.
    Stage 1 ends at stage clear; continuous multi-stage execution is not implemented.

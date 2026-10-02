@@ -10,6 +10,9 @@ struct HazardReactiveOptions {
     unsigned bullet_horizon = 12;
     unsigned laser_horizon = 120;
     bool vector_acceleration = true;
+    // dy-major bits for the nine constant directions; callers must retain at
+    // least one candidate when composing an independently derived constraint.
+    std::uint16_t candidate_mask = 0x1ff;
 };
 struct HazardReactiveStats {
     std::uint64_t decisions = 0, candidates = 0;
@@ -253,6 +256,9 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
     const auto pending = detail::direction(latched_input);
     for (int dy = -1; dy <= 1; ++dy)
         for (int dx = -1; dx <= 1; ++dx) {
+            const unsigned candidate_index = unsigned((dy + 1) * 3 + dx + 1);
+            if (!(options.candidate_mask & (1u << candidate_index)))
+                continue;
             ++stats.candidates;
             const detail::Direction candidate{dx, dy};
             const auto action = detail::input(candidate);

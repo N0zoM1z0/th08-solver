@@ -21,7 +21,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Older entry/effect/camera integration | `practice_entry.*`, `practice_camera.*`, `effect_pool.cpp`, `effect_animation.cpp`, `camera_particle.hpp` |
 | Independent source extraction | `tools/*_source_probe.cpp`, shared `source_probe_support.*`, `tests/source_*_cases.hpp` |
 | Imported production game and headless session | `third_party/th08/src/`; `modern/headless/session.*`, CPU resource/time/input adapters |
-| Native proposal kernels | `include/th08/reactive.hpp`, `native_policy.hpp`; actual game establishes collisions/outcomes |
+| Native proposal kernels | `include/th08/reactive.hpp`, `native_policy.hpp`, `direct_laser_policy.hpp`; actual game establishes collisions/outcomes |
 | Native spell policy selection | `include/th08/spell_policy.hpp`; case IDs do not enter generic kernels |
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
 | Independent native input interventions | `tools/headless_probe.cpp`; serial fresh-process branches over a fixed tape |
@@ -74,11 +74,14 @@ lasers and records the exact checked bounds and input values. Every native
 `CalcLaserHitbox` call is also copied into a per-update raw view with its center, size,
 origin, angle, graze flag and pooled slot when one exists. This distinguishes transient
 ECL-owned geometry from `BulletManager` lasers without moving collision ownership out of
-the game. `bullets()` returns a
+the game. `ecl_contexts()` copies active main/child cursors, raw next-instruction fields
+and actor motion state; it does not resolve flagged operands or cross control flow.
+`bullets()` returns a
 reused post-update view buffer invalidated by its next call; active vector-acceleration
 state is copied from its source transform slot without advancing it. `lasers()` owns a
 separate reused buffer of raw pooled-laser lifecycle state. Callers copy either view when
-retaining history; the per-update laser-hitbox view is invalidated by `step()`. The CLI
+retaining history; the per-update laser-hitbox view is invalidated by `step()`. The ECL
+cursor buffer is independently reused by its next call. The CLI
 optionally owns a 32-update before/after ring, serialized after loop timing.
 
 Original managers contain process globals and internal pointers. `headless::Session`

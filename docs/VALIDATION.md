@@ -87,9 +87,9 @@ ctest --test-dir build-headless --output-on-failure
 
 The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
 wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary collision
-at 382, portfolio IDs 193/195/199 through their complete original wrappers, ID89's direct
-ECL laser collision at 393, a 10-update budget failure and the Stage 6b reactive collision
-at update 854.
+at 382, portfolio IDs 193/195/199 through their complete original wrappers, ID89's
+unadapted direct ECL collision at 393 and adapted completion for seeds 0/1/65535, a
+10-update budget failure and the Stage 6b reactive collision at update 854.
 Every execution tape replays in another process;
 tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
 Generated tapes and `summary.json` are under `build-headless/headless-regression/`.
@@ -123,10 +123,10 @@ No remote host is needed. Repeated prefix work is explicit; no unsafe native sna
 or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
-The Release `spell-portfolio` run completed 43 and retained 13 genuine collision
+The Release `spell-portfolio` run completed 44 and retained 12 genuine collision
 prefixes; all 56 tapes then agreed in a fresh process on the semantic fields used by
 `agree()` above. This is broad algorithm evidence, while the smaller real-data CTest
-keeps three transform/profile boundaries practical to rerun on every local change.
+keeps four transform/profile boundaries practical to rerun on every local change.
 
 Acceleration removes wall-clock waiting and presentation work while retaining every
 original calc-chain update, timer increment and shared RNG consumer in that chain.

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdint>
 #include <iostream>
+#include <th08/direct_laser_policy.hpp>
 #include <th08/native_policy.hpp>
 #include <th08/spell_policy.hpp>
 #include <vector>
@@ -22,6 +23,17 @@ struct Laser {
     std::uint16_t flags;
     std::uint8_t state;
 };
+struct EclContext {
+    int enemy_index, time, next_time, next_opcode;
+    int secondary_time, pending_subroutine, active_interpolations, per_frame_ex;
+    std::uint16_t operand_flags;
+    std::uint32_t enemy_flags;
+    bool difficulty_enabled, has_raw_int0, has_parent;
+    int raw_int0;
+    float position_x, position_y, position_offset_x, position_offset_y;
+    float velocity_x, velocity_y, rotation, rotation_velocity;
+    float variable0, variable1;
+};
 Laser horizontal_laser() {
     return {0, 380, 0, 0, 400, 400, 2, 0, 0, 0, 100, 0, 0, 0, 7, 1, 1};
 }
@@ -34,6 +46,7 @@ int main() {
     using th08::test::check;
 
     const std::vector<Laser> no_lasers;
+    const std::vector<Bullet> no_bullets;
     const std::vector<Bullet> center_bullet{{194, 380, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0}};
     HazardReactiveStats delayed_stats;
     const auto delayed = hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 132,
@@ -63,7 +76,54 @@ int main() {
               th08::policy::native_spell_policy(193).hazards.vector_acceleration,
           "spell portfolio lost its isolated ID199 model selection");
 
-    const std::vector<Bullet> no_bullets;
+    EclContext direct_context{2,   110, 120, 137,  0,    -1,    0,
+                              -1,  0,   0,   true, true, false, 9,
+                              262, 384, 0,   0,    0,    0,     1.57079632679489661923f,
+                              0,   0,   295};
+    std::vector<th08::policy::DirectLaserWarning> warnings;
+    th08::policy::DirectLaserStats direct_stats;
+    th08::policy::collect_direct_laser_warnings(std::vector<EclContext>{direct_context}, 120,
+                                                warnings, direct_stats);
+    check(warnings.size() == 1 && warnings[0].first_update == 11 &&
+              warnings[0].last_update == 120 && warnings[0].full_height == 160,
+          "constant ECL opcode 137 warning was not decoded at its native boundary");
+    auto disabling_context = direct_context;
+    disabling_context.per_frame_ex = 9;
+    disabling_context.raw_int0 = -1;
+    th08::policy::DirectLaserStats disable_stats;
+    th08::policy::collect_direct_laser_warnings(std::vector<EclContext>{disabling_context}, 120,
+                                                warnings, disable_stats);
+    check(warnings.size() == 1 && warnings[0].first_update == 1 && warnings[0].last_update == 10,
+          "repeating ECL laser warning crossed its source disable update");
+    th08::policy::collect_direct_laser_warnings(std::vector<EclContext>{direct_context}, 120,
+                                                warnings, direct_stats);
+    const auto direct_mask = th08::policy::direct_laser_candidate_mask(
+        192, 414, .825f, .825f, 2, 1.414213538f, 36, warnings, direct_stats);
+    check(direct_mask == 73 && direct_stats.candidate_overlaps > 0 &&
+              direct_stats.constrained_decisions == 1 && direct_stats.allowed_candidates == 3,
+          "direct ECL laser warning did not retain exactly its three safe escapes");
+    HazardReactiveStats constrained_stats;
+    const auto constrained =
+        hazard_reactive(192, 414, .825f, .825f, 2, 1.414213538f, 36, no_bullets, no_lasers,
+                        constrained_stats, HazardReactiveOptions{0, 0, true, direct_mask});
+    check((constrained == 84 || constrained == 68 || constrained == 100) &&
+              constrained_stats.candidates == 3,
+          "generic hazard ranking ignored an independently derived candidate mask");
+    auto variable_context = direct_context;
+    variable_context.operand_flags = 1;
+    th08::policy::collect_direct_laser_warnings(std::vector<EclContext>{variable_context}, 120,
+                                                warnings, direct_stats);
+    check(warnings.empty() && direct_stats.variable_selectors == 1,
+          "variable ECL selector was silently treated as a constant future");
+    auto moving_context = direct_context;
+    moving_context.velocity_x = 1;
+    th08::policy::collect_direct_laser_warnings(std::vector<EclContext>{moving_context}, 120,
+                                                warnings, direct_stats);
+    check(warnings.empty() && direct_stats.dynamic_geometry == 1,
+          "moving direct-laser geometry was projected without an owned motion model");
+    check(th08::policy::native_spell_policy(89).direct_ecl_lasers,
+          "spell portfolio lost the isolated ID89 ECL warning adapter");
+
     const std::vector<Laser> laser{horizontal_laser()};
     HazardReactiveStats laser_stats;
     const auto dodge = hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, no_bullets,
@@ -120,5 +180,5 @@ int main() {
 
     std::cout << "{\"input_latch\":\"covered\",\"vector_acceleration\":\"covered\","
                  "\"laser_lifecycle\":\"covered\",\"broad_phase\":\"covered\","
-                 "\"spell_portfolio\":\"covered\"}\n";
+                 "\"direct_ecl_laser\":\"covered\",\"spell_portfolio\":\"covered\"}\n";
 }

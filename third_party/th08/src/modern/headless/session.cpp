@@ -12,6 +12,7 @@
 #include "TextHelper.hpp"
 #include "pbg/PbgArchive.hpp"
 #include "runtime.hpp"
+#include <cstring>
 #include <stdexcept>
 
 namespace th08::headless {
@@ -72,6 +73,7 @@ Session::Session(const Config &config) {
     prepare_observation_storage();
     views_.reserve(1536);
     laser_views_.reserve(256);
+    ecl_views_.reserve(512);
 }
 Session::~Session() {
     g_Chain.Release();
@@ -150,6 +152,65 @@ const std::vector<LaserView> &Session::lasers() {
 }
 const std::vector<LaserHitboxView> &Session::laser_hitboxes() const {
     return current_laser_hitboxes();
+}
+const std::vector<EclContextView> &Session::ecl_contexts() {
+    ecl_views_.clear();
+    auto append = [&](const Enemy &enemy, const EnemyEclContext &context, int child_slot) {
+        const auto *instruction = context.currentInstr;
+        int raw_int0 = 0;
+        const bool has_raw_int0 = instruction && instruction->nextOffset >= 16;
+        if (has_raw_int0)
+            std::memcpy(&raw_int0, instruction->operands, sizeof(raw_int0));
+        int active_interpolations = 0;
+        for (const auto &slot : context.interpolationSlots)
+            active_interpolations += slot.callback != nullptr;
+        int per_frame_ex = -1;
+        for (int i = 0; i < 32; ++i)
+            if (context.perFrameCallback == g_EclExInsn[i]) {
+                per_frame_ex = i;
+                break;
+            }
+        const auto active_difficulty = static_cast<std::uint32_t>(g_GameManager.difficultyMask) |
+                                       enemy.eclDifficultyMaskOverride;
+        ecl_views_.push_back(
+            {enemy.enemyIndex,
+             child_slot,
+             context.subId,
+             context.time.current,
+             instruction ? instruction->time : 0,
+             instruction ? instruction->opcode : 0,
+             instruction ? instruction->nextOffset : 0,
+             context.secondaryTime.current,
+             enemy.pendingEclSubroutineIndex,
+             active_interpolations,
+             per_frame_ex,
+             instruction ? instruction->difficultyMask : std::uint8_t(0),
+             instruction ? instruction->operandFlags : std::uint16_t(0),
+             enemy.flags1,
+             instruction && (instruction->difficultyMask & active_difficulty) == active_difficulty,
+             has_raw_int0,
+             enemy.parentEnemy != nullptr,
+             raw_int0,
+             enemy.position.x,
+             enemy.position.y,
+             enemy.positionOffset.x,
+             enemy.positionOffset.y,
+             enemy.velocity.x,
+             enemy.velocity.y,
+             enemy.vm.rotation.z,
+             enemy.vm.angleVel.z,
+             context.floatVariables[0],
+             context.floatVariables[1]});
+    };
+    for (const auto &enemy : g_EnemyManager.enemies) {
+        if (!(enemy.flags1 & ENEMY_FLAG_ACTIVE))
+            continue;
+        append(enemy, enemy.mainEclContextStorage, 0);
+        for (int slot = 0; slot < 4; ++slot)
+            if (enemy.childEclBlocks[slot])
+                append(enemy, enemy.childEclBlocks[slot]->eclContext, slot + 1);
+    }
+    return ecl_views_;
 }
 CollisionEvent Session::collision() const {
     return current_collision();
