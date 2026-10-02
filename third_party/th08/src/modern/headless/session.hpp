@@ -20,6 +20,12 @@ struct BoundaryBounceView {
     unsigned remaining = 0;
     bool supported = false;
 };
+struct WaitVectorView {
+    float acceleration_x = 0, acceleration_y = 0;
+    unsigned wait_updates = 0, acceleration_updates = 0;
+    // Includes WAIT expiry and the final acceleration-clear update's movement.
+    unsigned updates = 0;
+};
 struct BulletView {
     float x, y, vx, vy;
     std::uint16_t state;
@@ -35,6 +41,7 @@ struct BulletView {
     int wait_linear_updates;
     RelativeDirectionView relative_direction;
     BoundaryBounceView boundary_bounce;
+    WaitVectorView wait_vector;
 };
 // Raw source-owned laser state after an update. Consumers may forecast existing
 // lasers, but newly spawned/aimed lasers still belong to the next native update.

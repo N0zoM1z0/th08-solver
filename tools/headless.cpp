@@ -620,6 +620,7 @@ int main(int argc, char **argv) {
             << ",\"policy_wait_linear_checks\":" << policy_stats.wait_linear_checks
             << ",\"policy_relative_direction_checks\":" << policy_stats.relative_direction_checks
             << ",\"policy_boundary_bounce_checks\":" << policy_stats.boundary_bounce_checks
+            << ",\"policy_wait_vector_checks\":" << policy_stats.wait_vector_checks
             << ",\"policy_unsupported_transform_checks\":"
             << policy_stats.unsupported_transform_checks
             << ",\"policy_laser_paths\":" << policy_stats.laser_paths
@@ -649,6 +650,9 @@ int main(int argc, char **argv) {
             << (policy_stats.decisions != 0 && last_hazard_options.boundary_bounce_projection
                     ? "true"
                     : "false")
+            << ",\"policy_wait_vector_enabled\":"
+            << (policy_stats.decisions != 0 && last_hazard_options.wait_vector_projection ? "true"
+                                                                                          : "false")
             << ",\"policy_direct_laser_decisions\":" << direct_laser_stats.decisions
             << ",\"policy_ecl_contexts\":" << direct_laser_stats.contexts
             << ",\"policy_direct_laser_calls\":" << direct_laser_stats.upcoming_calls

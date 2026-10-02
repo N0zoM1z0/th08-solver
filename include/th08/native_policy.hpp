@@ -32,6 +32,8 @@ struct HazardReactiveOptions {
     // Use loaded sprite bounds and source event order, stopping after the
     // final active bounce rather than inventing the next transform's motion.
     bool boundary_bounce_projection = false;
+    // A native certificate for one WAIT -> vector-acceleration -> NONE sequence.
+    bool wait_vector_projection = false;
 };
 struct HazardReactiveStats {
     std::uint64_t decisions = 0, candidates = 0;
@@ -39,6 +41,7 @@ struct HazardReactiveStats {
     std::uint64_t wait_linear_checks = 0;
     std::uint64_t relative_direction_checks = 0;
     std::uint64_t boundary_bounce_checks = 0;
+    std::uint64_t wait_vector_checks = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
     std::uint64_t rigid_laser_paths = 0, laser_forecast_updates = 0, laser_checks = 0;
     std::uint64_t predicted_overlaps = 0;
@@ -82,6 +85,7 @@ enum class BulletProjectionKind {
     wait_linear,
     relative_direction,
     boundary_bounce,
+    wait_vector,
     unsupported
 };
 struct BulletProjection {
@@ -113,11 +117,26 @@ template <class Bullet>
 BulletProjection
 project_bullet(const Bullet &bullet, unsigned step, bool enable_vector_acceleration = true,
                bool enable_wait_linear = false, bool enable_relative_direction = false,
-               bool enable_boundary_bounce = false) {
+               bool enable_boundary_bounce = false, bool enable_wait_vector = false) {
     constexpr std::uint32_t vector_acceleration = 0x10;
     constexpr std::uint32_t wait = 0x20000;
     constexpr std::uint32_t relative_direction = 0x40;
     constexpr std::uint32_t bounce_all = 0x400, bounce_except_bottom = 0x800;
+    if (enable_wait_vector && bullet.active_transforms == 0x20000 && bullet.wait_vector.updates &&
+        step <= bullet.wait_vector.updates) {
+        const auto &state = bullet.wait_vector;
+        float x = bullet.x, y = bullet.y, vx = bullet.vx, vy = bullet.vy;
+        for (unsigned update = 1; update <= step; ++update) {
+            if (update > state.wait_updates &&
+                update - state.wait_updates <= state.acceleration_updates) {
+                vx += state.acceleration_x;
+                vy += state.acceleration_y;
+            }
+            x += vx;
+            y += vy;
+        }
+        return {x, y, BulletProjectionKind::wait_vector};
+    }
     if (enable_boundary_bounce && bullet.boundary_bounce.supported &&
         (bullet.active_transforms == bounce_all ||
          bullet.active_transforms == bounce_except_bottom)) {
@@ -444,7 +463,8 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                     continue;
                 const auto projected = detail::project_bullet(
                     bullet, step, options.vector_acceleration, options.wait_linear_projection,
-                    options.relative_direction_projection, options.boundary_bounce_projection);
+                    options.relative_direction_projection, options.boundary_bounce_projection,
+                    options.wait_vector_projection);
                 ++stats.bullet_projections;
                 if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                     ++stats.vector_acceleration_checks;
@@ -454,6 +474,8 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                     ++stats.relative_direction_checks;
                 else if (projected.kind == detail::BulletProjectionKind::boundary_bounce)
                     ++stats.boundary_bounce_checks;
+                else if (projected.kind == detail::BulletProjectionKind::wait_vector)
+                    ++stats.wait_vector_checks;
                 else if (projected.kind == detail::BulletProjectionKind::unsupported)
                     ++stats.unsupported_transform_checks;
                 cached_bullets.push_back({projected.x, projected.y, bullet.full_width,
@@ -528,7 +550,8 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                         continue;
                     const auto projected = detail::project_bullet(
                         bullet, step, options.vector_acceleration, options.wait_linear_projection,
-                        options.relative_direction_projection, options.boundary_bounce_projection);
+                        options.relative_direction_projection, options.boundary_bounce_projection,
+                        options.wait_vector_projection);
                     ++stats.bullet_projections;
                     if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                         ++stats.vector_acceleration_checks;
@@ -538,6 +561,8 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                         ++stats.relative_direction_checks;
                     else if (projected.kind == detail::BulletProjectionKind::boundary_bounce)
                         ++stats.boundary_bounce_checks;
+                    else if (projected.kind == detail::BulletProjectionKind::wait_vector)
+                        ++stats.wait_vector_checks;
                     else if (projected.kind == detail::BulletProjectionKind::unsupported)
                         ++stats.unsupported_transform_checks;
                     score_bullet({projected.x, projected.y, bullet.full_width, bullet.full_height,

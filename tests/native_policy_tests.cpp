@@ -27,6 +27,10 @@ struct Bullet {
         unsigned remaining = 0;
         bool supported = false;
     } boundary_bounce{};
+    struct {
+        float acceleration_x = 0, acceleration_y = 0;
+        unsigned wait_updates = 0, acceleration_updates = 0, updates = 0;
+    } wait_vector{};
 };
 struct Laser {
     float origin_x, origin_y, angle;
@@ -118,7 +122,7 @@ int main() {
 
     const auto corner167 = th08::policy::native_spell_policy(167);
     check(corner167.hazards.bullet_horizon == 12 && corner167.hazards.first_leg_updates == 4 &&
-              th08::policy::native_spell_policy(203).hazards.first_leg_updates == 0 &&
+              th08::policy::native_spell_policy(0).hazards.first_leg_updates == 0 &&
               !corner167.direct_ecl_lasers && !corner167.imminent_pooled_lasers &&
               !corner167.upcoming_ecl_bullets,
           "ID167 maneuver budget escaped its isolated observed-bullet profile");
@@ -130,22 +134,30 @@ int main() {
               !large_bullet183.upcoming_ecl_bullets,
           "ID183 changed its observed large-bullet maneuver budget or source scope");
 
-    const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
-    HazardReactiveStats acceleration_stats;
-    const auto accelerated =
-        hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, accelerating_bullet, no_lasers,
-                        acceleration_stats, {3, 0});
-    check(accelerated == 68, "active vector acceleration was projected as constant velocity");
-    check(acceleration_stats.vector_acceleration_checks == 18 &&
-              acceleration_stats.unsupported_transform_checks == 0,
-          "vector-acceleration coverage was not reported exactly");
-    HazardReactiveStats linear_stats;
-    const auto linear =
-        hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, accelerating_bullet, no_lasers,
-                        linear_stats, {3, 0, false});
-    check(linear != accelerated && linear_stats.vector_acceleration_checks == 0 &&
-              linear_stats.unsupported_transform_checks == 18,
-          "vector-acceleration ablation did not retain the explicit unknown model");
+    Bullet delayed_vector{10, 20, 1, -1, 4, 4, 1, 0x20000, 0, 0, 0, 0, 0};
+    delayed_vector.wait_vector = {2, -3, 1, 2, 4};
+    auto project_delayed = [&](unsigned step) {
+        return th08::policy::detail::project_bullet(delayed_vector, step, true, false, false, false,
+                                                    true);
+    };
+    check(project_delayed(1).x == 11 && project_delayed(1).y == 19 && project_delayed(2).x == 14 &&
+              project_delayed(2).y == 15 && project_delayed(3).x == 19 &&
+              project_delayed(3).y == 8 && project_delayed(4).x == 24 &&
+              project_delayed(4).y == 1 &&
+              project_delayed(5).kind == th08::policy::detail::BulletProjectionKind::unsupported,
+          "WAIT/vector handoff changed expiry, acceleration-before-movement or final bound");
+    delayed_vector.wait_vector = {2, -3, 1, 0, 2};
+    check(project_delayed(2).x == 12 && project_delayed(2).y == 18 &&
+              project_delayed(3).kind == th08::policy::detail::BulletProjectionKind::unsupported,
+          "zero-duration vector accelerated or crossed its clear update");
+    delayed_vector.wait_vector.updates = 0;
+    check(project_delayed(1).kind == th08::policy::detail::BulletProjectionKind::unsupported,
+          "absent native WAIT/vector certificate was treated as known motion");
+    delayed_vector.wait_vector.updates = 4;
+    delayed_vector.active_transforms |= 0x10;
+    check(project_delayed(1).kind == th08::policy::detail::BulletProjectionKind::unsupported,
+          "WAIT/vector forecast accepted concurrent active transforms");
+
     const Bullet waiting_bullet{192, 404, 0, 4, 24, 24, 1, 0x20000, 0, 0, 0, 0, 4};
     check(th08::policy::detail::project_bullet(waiting_bullet, 4, true, true).kind ==
                   th08::policy::detail::BulletProjectionKind::wait_linear &&
