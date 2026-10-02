@@ -72,7 +72,13 @@ angle delta across the preceding native update. Its isolated profile fits the ro
 center implied by those two source-owned states and extrapolates one rigid transform per
 forecast update; moving lasers bypass the constant-angle broad phase. This proposal is
 refreshed every update and does not claim that other pooled lasers continue rigid motion.
-ID89 observes only the current native ECL cursor. A constant
+ID198 combines that fixed-origin rotation observation with 81 two-leg proposals: each
+initial direction lasts four candidate-controlled updates, then one of nine continuation
+directions repeats. Bullet projections and laser lifecycle forecasts are immutable and
+shared across those paths within one decision; mutable player paths remain separate and
+all proposal/check costs are reported. Only the first action executes before fresh native
+state is observed and the portfolio replans. ID89 observes only the current native ECL
+cursor. A constant
 opcode 136/137 selector for direct-laser EX callbacks 9/11/25 becomes a warning only
 when difficulty and timer state match and the currently observed parent, interpolation,
 movement and rotation state is static. The adapter refreshes that proposal every update;
@@ -111,7 +117,8 @@ records every native `CalcLaserHitbox` center, size, origin, angle and graze fla
 raw pooled-laser lifecycle fields, preceding-update motion deltas and active ECL
 cursor/instruction fields used to diagnose warnings. Live hazard-policy traces also
 record all nine candidate actions, enablement, first predicted overlap, minimum
-clearance, accumulated danger, center distance and the selected candidate. Bullet
+clearance, accumulated danger, center distance, best continuation and the selected
+candidate. Bullet
 slot reuse across updates is possible; these are pool indices, not stable entity IDs.
 Collision JSON records the first lethal overlap before death feedback; laser bounds
 use the original rotated test coordinates and retain the raw call geometry.

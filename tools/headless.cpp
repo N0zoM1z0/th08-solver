@@ -158,7 +158,8 @@ class TraceTail {
                "laser_start_time\tlaser_hitbox_start_time\tlaser_duration\t"
                "laser_despawn_duration\tlaser_hitbox_end_delay\tlaser_timer\tlaser_flags\t"
                "laser_motion_observed\tlaser_origin_delta_x\tlaser_origin_delta_y\t"
-               "laser_angle_delta\tpolicy_enabled\tpolicy_first_overlap\t"
+               "laser_angle_delta\tpolicy_enabled\tpolicy_continuation_action\t"
+               "policy_first_overlap\t"
                "policy_minimum_clearance\tpolicy_danger\tpolicy_center_distance\t"
                "policy_selected\n";
         for (std::size_t i = 0; i < count; ++i) {
@@ -173,7 +174,7 @@ class TraceTail {
                     << s.x << '\t' << s.y << "\t0\t0\t" << 2 * s.hurt_half_x << '\t'
                     << 2 * s.hurt_half_y << "\t0\t" << f.action << '\t' << s.latched_input << '\t'
                     << s.sampled_input;
-                zeros(44);
+                zeros(45);
                 out << '\n';
                 if (!std::strcmp(name, "before") && f.has_policy_decision)
                     for (std::size_t candidate_index = 0;
@@ -184,7 +185,8 @@ class TraceTail {
                         zeros(7);
                         out << '\t' << candidate.action;
                         zeros(40);
-                        out << '\t' << candidate.enabled << '\t' << candidate.first_overlap << '\t'
+                        out << '\t' << candidate.enabled << '\t' << candidate.continuation_action
+                            << '\t' << candidate.first_overlap << '\t'
                             << candidate.minimum_clearance << '\t' << candidate.danger << '\t'
                             << candidate.center_distance << '\t'
                             << (candidate.enabled &&
@@ -197,7 +199,7 @@ class TraceTail {
                         << '\t' << b.full_width << '\t' << b.full_height << '\t'
                         << b.active_transforms << '\t' << f.action << '\t' << s.latched_input
                         << '\t' << s.sampled_input;
-                    zeros(44);
+                    zeros(45);
                     out << '\n';
                 }
                 for (const auto &laser : lasers) {
@@ -215,7 +217,7 @@ class TraceTail {
                         << laser.hitbox_end_delay << '\t' << laser.timer << '\t' << laser.flags
                         << '\t' << laser.motion_observed << '\t' << laser.origin_delta_x << '\t'
                         << laser.origin_delta_y << '\t' << laser.angle_delta;
-                    zeros(6);
+                    zeros(7);
                     out << '\n';
                 }
                 for (const auto &h : laser_hitboxes) {
@@ -224,7 +226,7 @@ class TraceTail {
                         << '\t' << h.full_height << "\t0\t" << f.action << '\t' << s.latched_input
                         << '\t' << s.sampled_input << '\t' << h.origin_x << '\t' << h.origin_y
                         << '\t' << h.angle << '\t' << h.graze_enabled;
-                    zeros(40);
+                    zeros(41);
                     out << '\n';
                 }
                 for (const auto &e : ecl) {
@@ -241,7 +243,7 @@ class TraceTail {
                         << '\t' << e.active_interpolations << '\t' << e.per_frame_ex << '\t'
                         << e.difficulty_enabled << '\t' << e.enemy_flags << '\t' << e.has_parent
                         << '\t' << e.rotation_velocity;
-                    zeros(22);
+                    zeros(23);
                     out << '\n';
                 }
             };
@@ -360,6 +362,7 @@ int main(int argc, char **argv) {
         th08::policy::DirectLaserStats direct_laser_stats;
         std::vector<th08::policy::DirectLaserWarning> direct_laser_warnings;
         direct_laser_warnings.reserve(16);
+        th08::policy::HazardReactiveOptions last_hazard_options;
         std::uint64_t linear_profile_decisions = 0;
         const char *last_policy_profile = "none";
         auto state = session.state();
@@ -410,6 +413,7 @@ int main(int argc, char **argv) {
                             session.focused_axis_speed(), session.focused_diagonal_speed(),
                             state.latched_input, direct_laser_warnings, direct_laser_stats);
                     }
+                    last_hazard_options = profile.hazards;
                     action = th08::policy::hazard_reactive(
                         state.x, state.y, state.hurt_half_x, state.hurt_half_y,
                         session.focused_axis_speed(), session.focused_diagonal_speed(),
@@ -543,6 +547,7 @@ int main(int argc, char **argv) {
             << ",\"execution_ms\":" << ms << ",\"diagnostics_ms\":" << diagnostics_ms
             << ",\"policy_decisions\":" << policy_stats.decisions
             << ",\"policy_candidates\":" << policy_stats.candidates
+            << ",\"policy_bullet_projections\":" << policy_stats.bullet_projections
             << ",\"policy_bullet_checks\":" << policy_stats.bullet_checks
             << ",\"policy_vector_acceleration_checks\":" << policy_stats.vector_acceleration_checks
             << ",\"policy_unsupported_transform_checks\":"
@@ -550,9 +555,15 @@ int main(int argc, char **argv) {
             << ",\"policy_laser_paths\":" << policy_stats.laser_paths
             << ",\"policy_laser_paths_pruned\":" << policy_stats.laser_paths_pruned
             << ",\"policy_rigid_laser_paths\":" << policy_stats.rigid_laser_paths
+            << ",\"policy_laser_forecast_updates\":" << policy_stats.laser_forecast_updates
             << ",\"policy_laser_checks\":" << policy_stats.laser_checks
             << ",\"policy_predicted_overlaps\":" << policy_stats.predicted_overlaps
-            << ",\"policy_bullet_horizon\":12,\"policy_laser_horizon\":120"
+            << ",\"policy_bullet_horizon\":" << last_hazard_options.bullet_horizon
+            << ",\"policy_laser_horizon\":" << last_hazard_options.laser_horizon
+            << ",\"policy_first_leg_updates\":" << last_hazard_options.first_leg_updates
+            << ",\"policy_rigid_laser_motion_enabled\":"
+            << (policy_stats.decisions != 0 && last_hazard_options.rigid_laser_motion ? "true"
+                                                                                      : "false")
             << ",\"policy_vector_acceleration_enabled\":"
             << (policy_stats.decisions != 0 && linear_profile_decisions == 0 ? "true" : "false")
             << ",\"policy_linear_profile_decisions\":" << linear_profile_decisions

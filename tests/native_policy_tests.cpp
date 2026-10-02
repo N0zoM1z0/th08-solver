@@ -57,12 +57,31 @@ int main() {
                         delayed_stats, {3, 0}, &delayed_decision);
     check(delayed == 68, "policy ignored the already-latched rightward movement");
     check(delayed_stats.decisions == 1 && delayed_stats.candidates == 9 &&
-              delayed_stats.bullet_checks == 18,
+              delayed_stats.bullet_projections == 18 && delayed_stats.bullet_checks == 18,
           "bullet proposal costs were not recorded exactly");
     check(delayed_decision.selected_action == delayed && delayed_decision.candidates[3].enabled &&
               delayed_decision.candidates[3].action == 68 &&
+              delayed_decision.candidates[3].continuation_action == 68 &&
               delayed_decision.candidates[3].first_overlap == 4,
           "hazard decision diagnostics did not preserve the selected candidate scores");
+    HazardReactiveStats maneuver_stats;
+    th08::policy::HazardReactiveDecision maneuver_decision;
+    const auto maneuver =
+        hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, center_bullet,
+                        std::vector<Laser>{horizontal_laser()}, maneuver_stats,
+                        HazardReactiveOptions{3, 3, true, 0x1ff, false, 1}, &maneuver_decision);
+    check(maneuver_decision.selected_action == maneuver && maneuver_stats.candidates == 81 &&
+              maneuver_stats.bullet_projections == 2 && maneuver_stats.bullet_checks == 162 &&
+              maneuver_stats.laser_forecast_updates == 3 && maneuver_stats.laser_paths == 81,
+          "two-leg ranking did not share immutable hazard forecasts or report its full cost");
+    const std::vector<Bullet> crossing_bullet{{190, 370, -2, 1, 3, 3, 1, 0, 0, 0, 0, 0}};
+    HazardReactiveStats turn_stats;
+    th08::policy::HazardReactiveDecision turn_decision;
+    const auto turn = hazard_reactive(
+        192, 380, .825f, .825f, 2, 1.414213538f, 4, crossing_bullet, no_lasers, turn_stats,
+        HazardReactiveOptions{6, 0, true, 0x1ff, false, 1}, &turn_decision);
+    check(turn == 36 && turn_decision.candidates[7].continuation_action == 132,
+          "two-leg ranking collapsed the selected down-then-right path to one direction");
 
     const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2}};
     HazardReactiveStats acceleration_stats;
@@ -83,8 +102,9 @@ int main() {
     check(!th08::policy::native_spell_policy(199).hazards.vector_acceleration &&
               th08::policy::native_spell_policy(193).hazards.vector_acceleration,
           "spell portfolio lost its isolated ID199 model selection");
-    check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion,
-          "spell portfolio lost the isolated ID85 pooled-laser motion model");
+    check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion &&
+              th08::policy::native_spell_policy(198).hazards.rigid_laser_motion,
+          "spell portfolio lost an isolated pooled-laser motion model");
 
     EclContext direct_context{2,   110, 120, 137,  0,    -1,    0,
                               -1,  0,   0,   true, true, false, 9,
