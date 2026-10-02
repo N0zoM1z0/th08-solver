@@ -618,6 +618,7 @@ int main(int argc, char **argv) {
             << ",\"policy_bullet_checks\":" << policy_stats.bullet_checks
             << ",\"policy_vector_acceleration_checks\":" << policy_stats.vector_acceleration_checks
             << ",\"policy_wait_linear_checks\":" << policy_stats.wait_linear_checks
+            << ",\"policy_relative_direction_checks\":" << policy_stats.relative_direction_checks
             << ",\"policy_unsupported_transform_checks\":"
             << policy_stats.unsupported_transform_checks
             << ",\"policy_laser_paths\":" << policy_stats.laser_paths
@@ -638,6 +639,10 @@ int main(int argc, char **argv) {
             << (policy_stats.decisions != 0 && last_hazard_options.wait_linear_projection ? "true"
                                                                                           : "false")
             << ",\"policy_linear_profile_decisions\":" << linear_profile_decisions
+            << ",\"policy_relative_direction_enabled\":"
+            << (policy_stats.decisions != 0 && last_hazard_options.relative_direction_projection
+                    ? "true"
+                    : "false")
             << ",\"policy_profile_last\":\"" << last_policy_profile << "\""
             << ",\"policy_direct_laser_decisions\":" << direct_laser_stats.decisions
             << ",\"policy_ecl_contexts\":" << direct_laser_stats.contexts

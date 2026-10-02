@@ -341,6 +341,45 @@ unsigned initial_bullet_linear_updates(const BulletSpawnDescriptor &descriptor, 
     }
     return limit;
 }
+
+RelativeDirectionView relative_direction_view(const Bullet &bullet) {
+    RelativeDirectionView view;
+    if (bullet.state != BULLET_STATE_FIRED ||
+        bullet.activeTransformFlags != BULLET_TRANSFORM_CHANGE_DIRECTION_RELATIVE ||
+        bullet.transformIndex < 0 || g_Supervisor.framerateMultiplier != 1.f ||
+        g_GameManager.scriptedUpdateFreeze)
+        return view;
+    // AdvanceTransformProgram runs before active transforms. A blocked record
+    // stays blocked through the final active update; an allowed enabled record
+    // would invalidate the single-transform forecast immediately.
+    for (int index = bullet.transformIndex; index >= 0 && index < 18; ++index) {
+        const auto &record = bullet.transforms[index];
+        if (!record.kind || !record.allowWhileActive)
+            break;
+        if (bullet.transformFlags & record.kind)
+            return view;
+    }
+    const auto &state = bullet.exStates[BULLET_TRANSFORM_STATE_DIRECTION_CHANGE];
+    if (state.timer.current < 0 || state.timer.subFrame != 0.f ||
+        state.directionChangeIntervalFrames < 0 || !std::isfinite(bullet.angle) ||
+        !std::isfinite(bullet.speed) || !std::isfinite(state.directionChangeAngle) ||
+        !std::isfinite(state.directionChangeSpeed))
+        return view;
+    const auto turns = std::max<std::int64_t>(1, std::int64_t(state.directionChangeRepeatCount) -
+                                                     state.directionChangesCompleted);
+    const auto first = std::max<std::int64_t>(0, std::int64_t(state.directionChangeIntervalFrames) -
+                                                     state.timer.current) +
+                       1;
+    const auto updates = first + (turns - 1) * std::max(1, state.directionChangeIntervalFrames);
+    view = {bullet.angle,
+            bullet.speed,
+            state.directionChangeAngle,
+            state.directionChangeSpeed,
+            state.timer.current,
+            state.directionChangeIntervalFrames,
+            unsigned(std::min<std::int64_t>(updates, std::numeric_limits<unsigned>::max()))};
+    return view;
+}
 } // namespace
 Session::Session(const Config &config) {
     static bool used = false;
@@ -460,7 +499,7 @@ const std::vector<BulletView> &Session::bullets() {
                               b.sprites.collisionSize.x, b.sprites.collisionSize.y,
                               b.activeTransformFlags, acceleration.vector.x, acceleration.vector.y,
                               acceleration.timer.current, acceleration.durationFrames,
-                              wait_linear_updates});
+                              wait_linear_updates, relative_direction_view(b)});
         }
         ++slot;
     }

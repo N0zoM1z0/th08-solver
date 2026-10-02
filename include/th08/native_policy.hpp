@@ -26,11 +26,15 @@ struct HazardReactiveOptions {
     // Treat active WAIT as exact linear motion only within the source-owned
     // bound exported by the native adapter. Kept opt-in for spell ablations.
     bool wait_linear_projection = false;
+    // Source-bounded active deceleration/relative-turn recurrence. This never
+    // executes a future transform-program record or forecasts aimed turns.
+    bool relative_direction_projection = false;
 };
 struct HazardReactiveStats {
     std::uint64_t decisions = 0, candidates = 0;
     std::uint64_t bullet_projections = 0, bullet_checks = 0, vector_acceleration_checks = 0;
     std::uint64_t wait_linear_checks = 0;
+    std::uint64_t relative_direction_checks = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
     std::uint64_t rigid_laser_paths = 0, laser_forecast_updates = 0, laser_checks = 0;
     std::uint64_t predicted_overlaps = 0;
@@ -68,7 +72,13 @@ inline float box_clearance(float x, float y, float half_x, float half_y, float c
     const float gap_y = std::abs(y - center_y) - half_y - std::abs(full_height) / 2;
     return std::max(gap_x, gap_y);
 }
-enum class BulletProjectionKind { linear, vector_acceleration, wait_linear, unsupported };
+enum class BulletProjectionKind {
+    linear,
+    vector_acceleration,
+    wait_linear,
+    relative_direction,
+    unsupported
+};
 struct BulletProjection {
     float x, y;
     BulletProjectionKind kind;
@@ -77,11 +87,38 @@ struct BulletProjection {
 // position. This closed form mirrors that order for an already-active opcode.
 // Other active transforms remain soft ranking evidence rather than collision proof.
 template <class Bullet>
-BulletProjection project_bullet(const Bullet &bullet, unsigned step,
-                                bool enable_vector_acceleration = true,
-                                bool enable_wait_linear = false) {
+BulletProjection
+project_bullet(const Bullet &bullet, unsigned step, bool enable_vector_acceleration = true,
+               bool enable_wait_linear = false, bool enable_relative_direction = false) {
     constexpr std::uint32_t vector_acceleration = 0x10;
     constexpr std::uint32_t wait = 0x20000;
+    constexpr std::uint32_t relative_direction = 0x40;
+    if (enable_relative_direction && bullet.active_transforms == relative_direction &&
+        step <= bullet.relative_direction.updates) {
+        const auto &state = bullet.relative_direction;
+        float x = bullet.x, y = bullet.y, angle = state.angle, speed = state.speed;
+        int timer = state.timer;
+        float cosine = std::cos(angle), sine = std::sin(angle);
+        for (unsigned update = 0; update < step; ++update) {
+            float magnitude;
+            if (timer >= state.interval) {
+                angle += state.turn_angle;
+                speed = state.turn_speed;
+                magnitude = speed;
+                timer = 0;
+                cosine = std::cos(angle);
+                sine = std::sin(angle);
+            } else {
+                magnitude = speed - (float(timer) * speed) / state.interval;
+            }
+            // Native relative direction changes update velocity, then the
+            // manager adds it to position, including the final active turn.
+            x += cosine * magnitude;
+            y += sine * magnitude;
+            ++timer;
+        }
+        return {x, y, BulletProjectionKind::relative_direction};
+    }
     if (enable_vector_acceleration && bullet.active_transforms == vector_acceleration) {
         const int remaining_frames =
             std::max(0, bullet.vector_acceleration_duration - bullet.vector_acceleration_timer);
@@ -350,12 +387,15 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                 if (bullet.state == 5 || bullet.state == 6)
                     continue;
                 const auto projected = detail::project_bullet(
-                    bullet, step, options.vector_acceleration, options.wait_linear_projection);
+                    bullet, step, options.vector_acceleration, options.wait_linear_projection,
+                    options.relative_direction_projection);
                 ++stats.bullet_projections;
                 if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                     ++stats.vector_acceleration_checks;
                 else if (projected.kind == detail::BulletProjectionKind::wait_linear)
                     ++stats.wait_linear_checks;
+                else if (projected.kind == detail::BulletProjectionKind::relative_direction)
+                    ++stats.relative_direction_checks;
                 else if (projected.kind == detail::BulletProjectionKind::unsupported)
                     ++stats.unsupported_transform_checks;
                 cached_bullets.push_back({projected.x, projected.y, bullet.full_width,
@@ -429,12 +469,15 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                     if (bullet.state == 5 || bullet.state == 6)
                         continue;
                     const auto projected = detail::project_bullet(
-                        bullet, step, options.vector_acceleration, options.wait_linear_projection);
+                        bullet, step, options.vector_acceleration, options.wait_linear_projection,
+                        options.relative_direction_projection);
                     ++stats.bullet_projections;
                     if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                         ++stats.vector_acceleration_checks;
                     else if (projected.kind == detail::BulletProjectionKind::wait_linear)
                         ++stats.wait_linear_checks;
+                    else if (projected.kind == detail::BulletProjectionKind::relative_direction)
+                        ++stats.relative_direction_checks;
                     else if (projected.kind == detail::BulletProjectionKind::unsupported)
                         ++stats.unsupported_transform_checks;
                     score_bullet({projected.x, projected.y, bullet.full_width, bullet.full_height,

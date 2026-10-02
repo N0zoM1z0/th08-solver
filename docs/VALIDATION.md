@@ -85,6 +85,7 @@ ctest --test-dir build-headless --output-on-failure
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 199 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 5000 --actions reports/local/id199.actions --output reports/local/id199-native.json
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 201 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id201.actions --output reports/local/id201-native.json
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 202 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id202.actions --output reports/local/id202-native.json
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 204 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id204.actions --output reports/local/id204-native.json
 ```
 
 The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
@@ -95,6 +96,8 @@ at 382, and retained/adapted boundaries for IDs 85, 89, 93, 198 and 201. IDs 85,
 also run through their complete wrappers. ID202 retains its generic WAIT collision at
 3265 and its WAIT-only portfolio collisions at 4204/4216/3613 for seeds 0/1/65535;
 its original 12-update horizon and disabled future-ECL adapter are checked explicitly.
+ID204 retains its generic relative-direction collision at 1205, requires complete
+4832-update wrappers for seeds 0/65535, and preserves seed 1's collision at 3008.
 A 10-update budget failure and the Stage 6b
 reactive collision at update 854 remain covered.
 Every execution tape replays in another process;
@@ -118,6 +121,10 @@ the update-854 slot-664 collision, bounds, RNG and feedback are unchanged. The p
 cross-host projection difference is not diagnosed, and the old golden remains intact.
 This is a reported aggregate-test blocker, not a full native CTest pass. The earlier
 aggregate report is retained; the separate ID202 report records this host's evidence.
+`CASE_GROUP=id204` similarly runs the four ID204 fixtures and emits `id204-summary.json`.
+Its baseline and seed-1 failure, as well as both complete seed wrappers, agree in fresh
+processes and at native O0/O3 on this host. Both group selectors use the same scene/replay
+checks as the full aggregate, whose retained cross-host golden remains unchanged.
 
 Reproduce the Stage 6b failure and compare the nine input directions locally:
 
@@ -147,11 +154,15 @@ No remote host is needed. Repeated prefix work is explicit; no unsafe native sna
 or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
-The Release `spell-portfolio` run completed 48 and retained 8 genuine collision
-prefixes: bullet IDs 32/139/167/183/202/203/204 and lethal-region ID192. All 56 tapes
+The Release `spell-portfolio` run completed 49 and retained 7 genuine collision
+prefixes: bullet IDs 32/139/167/183/202/203 and lethal-region ID192. All 56 tapes
 then agreed in a fresh process on the semantic fields used by `agree()` above. This is
 broad algorithm evidence, while the smaller real-data CTest keeps the affected
 transform/profile boundaries practical to rerun on every local change.
+The ID204 change was compared with its preceding main checkpoint across all 56 cases:
+the other 55 semantic reports and action tapes remained unchanged, and both versions'
+tapes freshly replayed. Continuous Extra also remained at its earlier ID192 collision
+on update 7424; reaching ID204 from the stage start is still blocked by that earlier spell.
 
 ### Easy stage sweep
 

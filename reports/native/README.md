@@ -10,6 +10,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 |---|---|---|
 | `th08_headless` + `th08_headless_probe` + `tests/headless_real_data.cmake` | `headless_summary.json` | Retained GCC12 native Stage 1, ID179, adapted IDs 85/89/93/198/201 and portfolio IDs 193/195/199, source collisions, Stage 6b input-latch witnesses, replay and O0/O3 comparison |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id202` | `headless_id202_summary.json` | GCC14 ID202 bounded WAIT improvement with three retained seed failures, preserved baseline, fresh replay and O0/O3 comparison; not a completed spell |
+| `tests/headless_real_data.cmake`, `CASE_GROUP=id204` | `headless_id204_summary.json` | GCC14 ID204 source-bounded relative-direction projection: complete seeds 0/65535, retained seed-1 collision and baseline, fresh replay and O0/O3 comparison |
 | `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
 | `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
 | `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |
