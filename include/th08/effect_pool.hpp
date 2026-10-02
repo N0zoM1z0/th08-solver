@@ -12,28 +12,31 @@ inline constexpr std::size_t primary_capacity = 512;
 // including when earlier iterations initialized some primary-pool slots.
 inline constexpr std::size_t exhausted_effect = 653;
 
-// Supplied, validated post-SetAndExecuteScriptIdx(73) time-zero projection.
+enum class ScriptCertificate { unknown, script73, script75 };
+// Supplied, validated post-SetAndExecuteScriptIdx(73/75) time-zero projection.
 // This pool does not load sprite resources or execute arbitrary ANM programs.
 // Ancillary fields remain owned for later world consumers.
 // Renderer matrices/textures and the complete ANM VM are not represented here.
-struct Effect51Animation {
+struct ParticleAnimation {
     camera_particle::Animation fields;
     animation::control::State control;
     camera_particle::Vec3 rotation, angular_velocity;
     float sprite_width, sprite_height;
-    // The compiler sets this after checking the pinned script73 resource. A
-    // caller supplying a projection directly must explicitly assert the same
-    // unit-rate script contract; an arbitrary spawn template is not certified.
-    bool unit_rate_script73 = false;
+    // The compiler certifies one pinned unit-rate script. A caller supplying
+    // a projection directly must explicitly assert the corresponding contract;
+    // arbitrary spawn templates do not acquire a lifecycle certificate.
+    ScriptCertificate script = ScriptCertificate::unknown;
 };
-using Template = Effect51Animation;
+using Effect51Animation = ParticleAnimation;
+using Template = ParticleAnimation;
+enum class SlotKind { unknown, effect51, background62 };
 struct Slot {
     bool active = false;
     // Occupancy-only checkpoints do not imply known particle/ANM fields.
-    // Consumers must check this flag before reading either projection below.
-    bool effect51_known = false;
+    // Consumers must check the kind before reading either projection below.
+    SlotKind kind = SlotKind::unknown;
     camera_particle::State particle{};
-    Effect51Animation animation{};
+    ParticleAnimation animation{};
     // SpawnEffect clears the whole Effect before its initializer. Unlike an
     // ANM clock's default sentinel, all three effect-timer fields start at zero.
     animation::control::Clock timer{0, 0, 0};
@@ -57,18 +60,20 @@ struct Result {
         return status == Status::spawned || status == Status::exhausted;
     }
 };
-struct Effect51UpdateInputs {
+struct ParticleUpdateInputs {
     std::optional<bool> deathbomb_freeze;
     const camera_particle::Camera *camera = nullptr;
     const camera_particle::Bosses *bosses = nullptr;
     const camera_particle::Color *stage_tint = nullptr;
 };
+using Effect51UpdateInputs = ParticleUpdateInputs;
 enum class UpdateStatus { advanced, missing_context, unsupported_animation, invalid_state };
 const char *name(UpdateStatus status);
 struct UpdateResult {
     UpdateStatus status = UpdateStatus::invalid_state;
-    // Updated counts callbacks executed, including callbacks that retire a
-    // slot. Source activeCount counts occupied slots BEFORE either cull path.
+    // Updated counts non-frozen slot phases, including either retirement path.
+    // Effect62 has no callback. Source activeCount counts occupied slots BEFORE
+    // callback or ANM retirement.
     std::size_t updated = 0, retired = 0, source_active_count = 0;
     bool committed() const {
         return status == UpdateStatus::advanced;
@@ -78,7 +83,7 @@ struct UpdateResult {
 // Restricted EffectManager primary-pool ownership. Construction explicitly
 // supplies empty storage or known occupancy; it is not world initialization.
 // Copy this owner and the external RNG separately to fork a checkpoint. Queries
-// are immutable; only the explicitly supported effect51 manager phase is owned.
+// are immutable; only the two explicitly supported particle kinds are owned.
 class PrimaryPool {
   public:
     using Occupancy = std::array<bool, primary_capacity>;
@@ -92,6 +97,12 @@ class PrimaryPool {
     std::vector<Delta> scratch_;
     std::size_t cursor_ = 0, active_count_ = 0;
     bool spawn_event_ = false;
+    // Slot653 is outside this primary array. Only its draw-group write by the
+    // background caller is known; never turn the source sentinel into an index.
+    std::optional<std::int8_t> exhausted_draw_group_;
+
+    Result spawn_particle(SlotKind kind, const Effect51Request &request,
+                          const Effect51Inputs &inputs, random::Rng *rng);
 
   public:
     PrimaryPool();
@@ -112,18 +123,30 @@ class PrimaryPool {
     // failures are blockers, never source callback failure/deactivation events.
     Result spawn_effect51(const Effect51Request &request, const Effect51Inputs &inputs,
                           random::Rng *rng = nullptr);
-    // One unit-rate primary-pool phase, in ascending slot order. Known effect51
-    // slots retain their cleared updateDuringFreeze=0 behavior: a supplied
+    // One Background::OnUpdate emission: effect62, count1, color0x20ffffff,
+    // followed by drawGroup=4 on the returned effect, including sentinel653.
+    // Its script75 template has no initializer or update callback and no RNG.
+    // Background scheduling and the twelve source-ordered calls belong outside
+    // this pool; all calls share effect51's occupancy and circular cursor.
+    Result spawn_background62(camera_particle::Vec3 position,
+                              const ParticleAnimation *post_time_zero);
+    // One unit-rate primary-pool phase, in ascending slot order. Known slots
+    // retain their cleared updateDuringFreeze=0 behavior: a supplied
     // deathbomb freeze skips callback, ANM and effect timer. Unknown occupied
     // checkpoint slots always block, even during freeze.
     //
-    // Callback culling precedes script73 advancement; static ANM completion
+    // Effect51 callback culling precedes ANM; effect62 skips the callback.
+    // Both certified scripts share the angular/static tail. Static completion
     // precedes angular motion and the effect timer. Camera/boss/tint inputs are
     // required only on the callback branches that actually read them. Any
     // missing/invalid state rolls back the WHOLE phase using native staging.
     // This is not a full EffectManager/world phase: draw-list grouping,
     // tamper counters, renderer state and non-primary effects are not represented.
-    UpdateResult advance_effect51(const Effect51UpdateInputs &inputs);
+    UpdateResult advance_particles(const ParticleUpdateInputs &inputs);
+    // Compatibility name; this still advances both supported kinds in one pool.
+    UpdateResult advance_effect51(const Effect51UpdateInputs &inputs) {
+        return advance_particles(inputs);
+    }
     const Slot &slot(std::size_t index) const;
     bool occupied(std::size_t index) const {
         return slot(index).active;
@@ -136,6 +159,9 @@ class PrimaryPool {
     }
     bool spawn_event() const {
         return spawn_event_;
+    }
+    std::optional<std::int8_t> exhausted_draw_group() const {
+        return exhausted_draw_group_;
     }
 };
 } // namespace th08::effect

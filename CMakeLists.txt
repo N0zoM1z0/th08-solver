@@ -23,6 +23,7 @@ add_library(th08_resources
   src/animation_control.cpp
   src/world_motion.cpp
   src/practice_entry.cpp
+  src/practice_camera.cpp
   src/effect_pool.cpp
   src/effect_animation.cpp
   src/timeline.cpp)
@@ -149,6 +150,9 @@ if(BUILD_TESTING)
   add_executable(practice_entry_tests tests/practice_entry_tests.cpp)
   target_link_libraries(practice_entry_tests PRIVATE th08_resources)
   add_test(NAME practice_entry COMMAND practice_entry_tests)
+  add_executable(practice_camera_tests tests/practice_camera_tests.cpp)
+  target_link_libraries(practice_camera_tests PRIVATE th08_resources)
+  add_test(NAME practice_camera COMMAND practice_camera_tests)
   add_executable(effect_pool_tests tests/effect_pool_tests.cpp)
   target_link_libraries(effect_pool_tests PRIVATE th08_resources)
   add_test(NAME effect_pool COMMAND effect_pool_tests)

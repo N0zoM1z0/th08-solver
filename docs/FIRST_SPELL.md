@@ -107,6 +107,6 @@ family by reachable dependency cost. The all-case requirements in
 The [effect51 integration](EFFECT51_ENTRY.md) implements the former allocation
 boundary with explicit supplied state. The no-context report now returns
 `MISSING_ENTRY_STATE`. A separate supplied-context report finishes immediate
-sub0 spawning, with16 effects and256 RNG draws, before stopping at the missing
+sub0 spawning, with16 effect51 particles and256 RNG draws, before stopping at the missing
 manager-frame integration. Earlier paragraphs describe the initial checkpoint;
 none of the three acceptance gates has passed.

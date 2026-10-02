@@ -7,13 +7,13 @@ No game, port, controller or Python process is needed.
 
 ## Current verification profiles
 
-Core CTest cases: 23
+Core CTest cases: 24
 
 | Profile | Expected suite | What it establishes |
 |---|---|---|
-| Native build without reconstruction | 23 core tests | Unit, parser, ownership, deterministic regressions and documentation checks; no private game data |
-| Release with pinned reconstruction | 25 tests: core plus `source_oracle` and `source_effect_pool` | The above plus extracted native source-body comparisons |
-| Debug with ASan/UBSan, without reconstruction | 23 core tests | Instrumented core behavior and ownership |
+| Native build without reconstruction | 24 core tests | Unit, parser, ownership, deterministic regressions and documentation checks; no private game data |
+| Release with pinned reconstruction | 26 tests: core plus `source_oracle` and `source_effect_pool` | The above plus extracted native source-body comparisons |
+| Debug with ASan/UBSan, without reconstruction | 24 core tests | Instrumented core behavior and ownership |
 | Opt-in component source oracles | Four independently built executables | Enemy motion, world motion, camera particles and spawn ordering; not extra default CTests |
 | Native DAT audit tools | Explicit commands below | Real-data structural and restricted execution baselines, plus two model routes |
 
@@ -118,7 +118,7 @@ to vary; a changed member hash, event digest, route, payload or status requires 
 explanation or regression. Existing deterministic TSV baselines remain unchanged
 by the new entry-prefix report. See the [report index](../reports/native/README.md).
 
-The first-spell diagnostic checks DAT/member and eleven relevant source hashes, then
+The first-spell diagnostic checks DAT/member and thirteen relevant source hashes, then
 runs a supplied-gate prefix with no RNG/player defaults. Its process exit0 means
 report generation succeeded; its JSON status remains `MISSING_ENTRY_STATE`.
 The entry tests also check masks1/2/4/8 on the native DAT. Repeat both commands with
@@ -144,8 +144,14 @@ effects, context and RNG consumers remain blockers, not undocumented NOPs.
 [Effect51 entry](EFFECT51_ENTRY.md) describes the focused source comparison and
 DAT regression commands. `source_effect_pool` is a second optional default CTest
 when the pinned reconstruction is supplied. Pass DAT explicitly to also compare
-the actual script73 time-zero projection. The core suite has23 tests and the
-reference suite25. Run `effect_entry_tests th08.dat` for supplied ID2 Easy state; the existing
+the actual script73 time-zero projection. The core suite has24 tests and the
+reference suite26. Run `effect_entry_tests th08.dat` for supplied ID2 Easy state; the existing
 `practice_entry_tests th08.dat` retains four-mask missing-context coverage.
 The first-spell command now also writes `first_spell_effect51_summary.json` for a
 clearly labeled supplied-state prefix; it is not an actual initialized-world run.
+
+`practice_camera_tests th08.dat` checks the source-derived Stage1 camera, including
+freeze, non-unit refusal, retargeting and the first world-effect stop. The updated
+`source_effect_pool th08.dat` additionally compares512 mixed effect51/62 allocation
+calls. The supplied first-spell checkpoint now has12 background62 slots plus16
+ECL effect51 slots; RNG remains256 draws at the supplied immediate-ECL boundary.

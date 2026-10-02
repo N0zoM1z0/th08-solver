@@ -16,7 +16,9 @@
     "src/EclDependencies.cpp": "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4",
     "src/EffectManager.cpp": "63d45a213956008b44874bc4707c971a7799a9c551b07e732bf1f55282c2209e",
     "src/AnmManager.cpp": "c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce",
-    "src/AsciiManager.cpp": "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1"
+    "src/AsciiManager.cpp": "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1",
+    "src/Background.cpp": "36889a17a6f0c314eaf3751a2238e778c82d13bffd3a18e55051b49f3d8fd285",
+    "src/Background.hpp": "bbfa9022f52c5b5332f8e690d42c7338ec97f062b43a3bfcd6dc33190484efe8"
   },
   "selected_case": {"spell_id": 2, "difficulty": "Easy", "difficulty_mask": 1, "entry": "spell_practice", "timeline": 0, "wrapper_sub": 42, "spell_sub": 24, "spell_pc": 10, "spell_offset": 18116},
   "input_state": {"provenance": "source manager template plus explicitly supplied GUI gate observations; surrounding world phases not executed", "gui_boss_present": false, "timeline_spawns_suppressed": false, "rng_seed": null, "rng_draw_counter": null, "player_state": null},

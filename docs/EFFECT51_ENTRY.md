@@ -61,10 +61,10 @@ allocation adapter.
 ```
 
 With no supplied world state, the original diagnostic still stops at sub0 PC1,
-offset260, opcode139, now with `MISSING_ENTRY_STATE`. With an explicitly supplied
-empty pool, camera `(position=0, lookAtOffset=(0,0,100), forward=(0,0,1))` and seed0,
-it allocates16 effects, consumes256 draws, finishes immediate sub0 spawning and
-applies its post-spawn stores. The timeline reaches PC1, offset39716, time2.
+offset260, opcode139, now with `MISSING_ENTRY_STATE`. At the initial checkpoint, an explicitly supplied
+empty pool and camera `(position=0, lookAtOffset=(0,0,100), forward=(0,0,1))` with seed0
+allocated16 effects, consumed256 draws, finished immediate sub0 spawning and
+applied its post-spawn stores. That checkpoint reached PC1, offset39716, time2.
 
 Stop there: EnemyManager, effect, background and player phases have not run.
 Advancing the timeline alone to its next spawn would invent elapsed world state.
@@ -97,3 +97,39 @@ pools and other effect types remain excluded. In particular, draw callbacks can
 write ANM fields; do not treat later rendering-dependent state as automatically
 candidate-independent. The first-spell diagnostic still stops before the missing
 world phases instead of stitching these components together in a guessed order.
+
+## Source-derived camera and shared background particles
+
+Stage1 practice now has a separate camera projection compiled from the pinned
+`stage1_s.std` (SHA-256 `c3895cdfeac5e66a7c35e48077e4ee8841c3136000c0cfea2dd537c74daa58c6`).
+It owns STD identity/PC and position/look/up interpolation state, and depends on
+neither ECL nor effect storage. The caller must explicitly supply a unit multiplier
+and freeze observation. Non-unit timing is refused: the source clocks are ZunTimer,
+not unrestricted integers. The first update produces position `(0,3966.5,-400)`
+and look offset `(29.8,500,460)`. At time1024 the jump stops before its required
+world-origin compensation; the camera never silently loops past that effect.
+
+Background's prelude attempts12 effect62 allocations every third frame while the
+spell background is not yet active. These share the SAME512 slots and cursor as
+effect51. Effect62 uses certified script75/sprite123, no initializer callback and
+no RNG. The shared allocation and angular/static lifecycle implementation handles
+both kinds; unknown occupied checkpoint slots still block updates. The caller's
+post-store to draw group4 is retained even when the source returns sentinel653.
+The source adapter adds512 mixed allocation calls, including full-pool behavior.
+
+The first-spell diagnostic now prepares a clearly labeled component checkpoint:
+two source camera updates,12 reset-position background62 allocations and their
+first effect update, then the existing immediate-ECL prefix. It supplies seed0 at
+that ECL boundary, not at unexecuted game startup. The result has12 background slots
+and16 effect51 slots (28 total), with256 ECL-side RNG draws. GUI/player/background
+object/render phases are still omitted, and their effects are not claimed to have
+been reconstructed. This replaces the arbitrary fixed camera in the diagnostic;
+it does not pass an end-to-end world acceptance gate.
+
+```sh
+./build/practice_camera_tests game_data_donottrack/th08.dat
+```
+
+Camera evidence is source inspection plus pinned-DAT boundary regressions; it is
+not a new extracted full-Background oracle. Existing callback and allocation source
+comparisons retain their separate, narrower claims.
