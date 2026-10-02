@@ -23,6 +23,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Imported production game and headless session | `third_party/th08/src/`; `modern/headless/session.*`, CPU resource/time/input adapters |
 | Native reactive proposal policy | `include/th08/reactive.hpp`; actual game establishes collisions/outcomes |
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
+| Independent native input interventions | `tools/headless_probe.cpp`; serial fresh-process branches over a fixed tape |
 
 Paths above are under `include/th08/` or `src/` unless qualified. Keep the generic
 resource library independent of case-specific adapters. CLI code must not own hidden
@@ -61,6 +62,16 @@ ANM updates and original shared RNG consumption, with synchronous initialization
 not the GUI/message update logic. This profile does not split visual RNG streams.
 Initialization and loading completion are explicit adapter boundaries, described in
 [Scenarios](SCENARIOS.md); no claim about original menu entry is needed.
+
+In recording mode the supervisor samples controller input at priority 0, Player moves
+at 9, BulletManager updates/collides at 14, and ReplayManager latches movement input
+at 17. Player therefore reads the previous latch. The headless adapter preserves this
+order; proposals must account for the pending input rather than reorder the game.
+`Session::collision()` owns a value copy captured at the successful source collision
+test before death effects alter RNG/state. It identifies bullets, lethal regions or
+lasers and records the exact checked bounds and input values. `bullets()` returns a
+reused view buffer invalidated by its next call; callers copy it when retaining history.
+The CLI optionally owns a 32-update before/after ring, serialized after loop timing.
 
 Original managers contain process globals and internal pointers. `headless::Session`
 is noncopyable and permits one instance per process. Fresh replay starts another

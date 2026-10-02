@@ -24,13 +24,19 @@ function(agree left right)
   # Compare execution feedback and the frame-by-frame projection, not timings.
   foreach(key IN ITEMS source_revision profile dat_sha256 stage requested_spell_id difficulty
       seed frame_budget outcome frames spell_id spell_start first_hit deaths player_state
-      rng_draws rng_seed graze score gauge peak_bullets trace_digest)
+      rng_draws rng_seed graze score gauge peak_bullets trace_digest previous_trace_digest
+      prefix_frame prefix_trace_digest unused_actions)
     field("${left}" "${key}" a)
     field("${right}" "${key}" b)
     if(NOT a STREQUAL b)
       message(FATAL_ERROR "Fresh replay diverged at ${key}: ${a} vs ${b}")
     endif()
   endforeach()
+  string(REGEX MATCH "\"collision\":\\{[^}]+\\}" a "${left}")
+  string(REGEX MATCH "\"collision\":\\{[^}]+\\}" b "${right}")
+  if(NOT a OR NOT a STREQUAL b)
+    message(FATAL_ERROR "Fresh replay collision diagnostics diverged: ${a} vs ${b}")
+  endif()
 endfunction()
 
 function(scene name stage spell seed strategy budget outcome exit frames)
@@ -71,18 +77,104 @@ endforeach()
 # Preserve a genuine bad strategy and a bounded run as failures, including replay.
 scene(spell179-stationary 6b 179 0 stationary 2000 collision 2 382)
 scene(stage1-budget 1 -1 0 reactive 10 frame_limit 2 10)
+scene(stage6b-reactive 6b -1 0 reactive 50000 collision 2 854)
+
+# Diagnostics must observe the existing failure without changing its trajectory.
+set(stage6_tape "${WORK}/stage6b-reactive.actions")
+file(READ "${WORK}/stage6b-reactive.json" baseline)
+field("${baseline}" trace_digest baseline_digest)
+if(NOT baseline_digest STREQUAL "\"4060221407534777929\"")
+  message(FATAL_ERROR "The preserved Stage 6b baseline changed")
+endif()
+run("${EXECUTABLE}" "${WORK}/stage6b-diagnostic.json" 2
+  --stage 6b --frames 50000 --replay "${stage6_tape}" --trace "${WORK}/stage6b.tsv")
+file(READ "${WORK}/stage6b-diagnostic.json" diagnostic)
+agree("${baseline}" "${diagnostic}")
+foreach(pair IN ITEMS "bullet_slot;664" "movement_input;133" "sampled_input;4165")
+  list(GET pair 0 key)
+  list(GET pair 1 expected)
+  field("${diagnostic}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "Unexpected collision ${key}: ${actual}")
+  endif()
+endforeach()
+
+# Same-update input replacement is too late for movement. One update earlier,
+# three leftward directions survive the actual collision boundary.
+foreach(frame IN ITEMS 854 853)
+  set(directory "${WORK}/probe${frame}")
+  execute_process(COMMAND "${PROBE_EXECUTABLE}" --executable "${EXECUTABLE}"
+    --dat "${DAT}" --stage 6b --difficulty 0 --seed 0 --actions "${stage6_tape}"
+    --frame "${frame}" --through-frame 854 --output-dir "${directory}"
+    RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr)
+  if(NOT result STREQUAL "0")
+    message(FATAL_ERROR "Probe ${frame} failed: ${stdout} ${stderr}")
+  endif()
+  file(READ "${directory}/summary.json" probe)
+  list(APPEND probes "${probe}")
+  foreach(branch RANGE 0 8)
+    file(READ "${directory}/branch${branch}.json" report)
+    field("${report}" outcome outcome)
+    field("${report}" prefix_frame prefix_frame)
+    math(EXPR expected_prefix "${frame} - 1")
+    if(NOT prefix_frame STREQUAL "${expected_prefix}")
+      message(FATAL_ERROR "Probe verified the wrong prefix boundary")
+    endif()
+    if((frame EQUAL 854 AND branch EQUAL 3) OR (frame EQUAL 853 AND branch EQUAL 5))
+      field("${report}" trace_digest unchanged_digest)
+      if(NOT unchanged_digest STREQUAL baseline_digest)
+        message(FATAL_ERROR "The unchanged direction did not reproduce the source baseline")
+      endif()
+    endif()
+    if(frame EQUAL 853 AND branch MATCHES "^(0|3|6)$")
+      if(NOT outcome STREQUAL "\"frame_limit\"")
+        message(FATAL_ERROR "Early leftward intervention no longer avoids the hit")
+      endif()
+    elseif(NOT outcome STREQUAL "\"collision\"")
+      message(FATAL_ERROR "Preserved collision counterfactual changed")
+    endif()
+    # A second optimization level checks the exact same independent branch tape.
+    if(COMPARE_EXECUTABLE)
+      run("${COMPARE_EXECUTABLE}" "${directory}/branch${branch}-comparison.json" 2
+        --stage 6b --frames 854 --replay "${directory}/branch${branch}.actions"
+        --prefix-frame "${expected_prefix}" --allow-unused-actions 1)
+      file(READ "${directory}/branch${branch}-comparison.json" comparison)
+      agree("${report}" "${comparison}")
+    endif()
+  endforeach()
+endforeach()
 
 file(WRITE "${WORK}/illegal.actions" "32768\n")
 run("${EXECUTABLE}" "${WORK}/illegal.json" 1 --replay "${WORK}/illegal.actions")
 file(READ "${WORK}/stage1-budget.actions" prefix)
 file(WRITE "${WORK}/excess.actions" "${prefix}4\n")
 run("${EXECUTABLE}" "${WORK}/excess.json" 1 --frames 10 --replay "${WORK}/excess.actions")
+# Explicit diagnostic suffix truncation stays a frame-limit failure and reports
+# the unused input. Strict replay above still rejects the same tape by default.
+run("${EXECUTABLE}" "${WORK}/bounded-prefix.json" 2 --frames 10
+  --replay "${WORK}/excess.actions" --allow-unused-actions 1)
+file(READ "${WORK}/bounded-prefix.json" bounded)
+field("${bounded}" unused_actions unused)
+if(NOT unused STREQUAL "1")
+  message(FATAL_ERROR "Unused diagnostic suffix was not recorded")
+endif()
+execute_process(COMMAND "${PROBE_EXECUTABLE}" --executable "${EXECUTABLE}"
+  --dat "${DAT}" --actions "${stage6_tape}" --frame 855 --output-dir "${WORK}/invalid-probe"
+  RESULT_VARIABLE invalid_probe OUTPUT_QUIET ERROR_QUIET)
+if(NOT invalid_probe STREQUAL "1")
+  message(FATAL_ERROR "An out-of-tape intervention was accepted")
+endif()
 # An engine practice wrapper can choose another raw ID for an invalid stage/ID pair.
 run("${EXECUTABLE}" "${WORK}/wrong-checkpoint.json" 1
   --stage 6b --spell-id 178 --strategy reactive --frames 2000)
 
 string(JOIN ",\n" records_json ${records})
+string(JOIN ",\n" probes_json ${probes})
+set(probe_comparison_checked false)
+if(COMPARE_EXECUTABLE)
+  set(probe_comparison_checked true)
+endif()
 cmake_host_system_information(RESULT host_cpu QUERY PROCESSOR_DESCRIPTION)
 cmake_host_system_information(RESULT host_platform QUERY OS_PLATFORM)
 file(WRITE "${WORK}/summary.json"
-  "{\"producer\":\"tests/headless_real_data.cmake + th08_headless\",\"host_processor\":\"${host_cpu}\",\"host_system\":\"${CMAKE_HOST_SYSTEM_NAME}\",\"host_architecture\":\"${host_platform}\",\"runs\":[\n${records_json}\n],\"illegal_input_rejected\":true,\"excess_tape_rejected\":true,\"wrong_checkpoint_rejected\":true}\n")
+  "{\"producer\":\"tests/headless_real_data.cmake + th08_headless + th08_headless_probe\",\"host_processor\":\"${host_cpu}\",\"host_system\":\"${CMAKE_HOST_SYSTEM_NAME}\",\"host_architecture\":\"${host_platform}\",\"runs\":[\n${records_json}\n],\"probes\":[\n${probes_json}\n],\"illegal_input_rejected\":true,\"excess_tape_rejected\":true,\"wrong_checkpoint_rejected\":true,\"invalid_probe_rejected\":true,\"diagnostics_preserve_trajectory\":true,\"probe_comparison_checked\":${probe_comparison_checked}}\n")

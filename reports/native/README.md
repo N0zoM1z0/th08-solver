@@ -8,7 +8,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 
 | Producer | Records | Meaning |
 |---|---|---|
-| `th08_headless` + `tests/headless_real_data.cmake` | `headless_summary.json` | Native Stage 1 and ID179 complete scenes, collision/budget failures, fresh-process replay and O0/O3 comparison |
+| `th08_headless` + `th08_headless_probe` + `tests/headless_real_data.cmake` | `headless_summary.json` | Native Stage 1 and ID179 complete scenes, Stage 6b collision/input-latch witnesses, replay and O0/O3 comparison |
 | `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
 | `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
 | `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |

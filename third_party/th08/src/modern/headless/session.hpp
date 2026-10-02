@@ -11,6 +11,24 @@ struct Config {
 struct BulletView {
     float x, y, vx, vy;
     std::uint16_t state;
+    int slot;
+    float full_width, full_height;
+    std::uint32_t active_transforms;
+};
+enum class CollisionKind { None, Bullet, LethalRegion, Laser };
+struct Bounds {
+    float left = 0, top = 0, right = 0, bottom = 0;
+};
+// Captured at the successful original collision test, before death feedback.
+// Laser bounds are in its rotated test coordinates; other bounds are world pixels.
+struct CollisionEvent {
+    CollisionKind kind = CollisionKind::None;
+    std::uint64_t frame = 0;
+    Bounds player, hazard;
+    int bullet_slot = -1;
+    float vx = 0, vy = 0;
+    std::uint32_t active_transforms = 0;
+    std::uint16_t movement_input = 0, sampled_input = 0;
 };
 struct State {
     std::uint64_t frame = 0;
@@ -22,6 +40,9 @@ struct State {
     std::uint32_t score = 0;
     int graze = 0, gauge = 0;
     float lives = 0;
+    float hurt_half_x = 0, hurt_half_y = 0;
+    // Recording mode latches movement input after Player/BulletManager update.
+    std::uint16_t latched_input = 0, sampled_input = 0;
 };
 // Upstream managers are pointer-rich process globals. Exactly one noncopyable
 // session may be created per process; fresh processes provide fresh replay.
@@ -34,12 +55,14 @@ class Session {
     Session &operator=(const Session &) = delete;
     State step(std::uint16_t input);
     State state() const;
+    // Reused snapshot storage; its contents are invalidated by the next call.
     const std::vector<BulletView> &bullets();
     float focused_axis_speed() const;
     float focused_diagonal_speed() const;
     // A diagnostics projection of actor/script state, not a serialized world.
     std::uint64_t actor_digest() const;
     std::uint64_t file_io_time_ns() const;
+    CollisionEvent collision() const;
 
   private:
     std::vector<BulletView> views_;

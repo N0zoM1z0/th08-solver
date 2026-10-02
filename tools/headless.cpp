@@ -7,6 +7,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <openssl/evp.h>
 #include <sstream>
@@ -95,6 +96,80 @@ std::vector<std::uint16_t> read_tape(const std::string &path) {
         throw std::runtime_error("invalid or empty action tape");
     return actions;
 }
+struct TraceFrame {
+    th08::headless::State before, after;
+    std::uint16_t action = 0;
+    std::vector<th08::headless::BulletView> before_bullets, after_bullets;
+};
+// Fixed tail, reused across updates. Serialization happens after timing stops.
+class TraceTail {
+  public:
+    void before(const th08::headless::State &state, std::uint16_t action,
+                const std::vector<th08::headless::BulletView> &bullets) {
+        auto &f = frames[next];
+        f.before = state;
+        f.action = action;
+        f.before_bullets.assign(bullets.begin(), bullets.end());
+    }
+    void after(const th08::headless::State &state,
+               const std::vector<th08::headless::BulletView> &bullets) {
+        auto &f = frames[next];
+        f.after = state;
+        f.after_bullets.assign(bullets.begin(), bullets.end());
+        next = (next + 1) % frames.size();
+        count = std::min(count + 1, frames.size());
+    }
+    void write(const std::string &path) const {
+        std::ofstream out(path);
+        if (!out)
+            throw std::runtime_error("cannot open diagnostic trace");
+        out << std::setprecision(std::numeric_limits<float>::max_digits10)
+            << "frame\tphase\tkind\tslot\tstate\tx\ty\tvx\tvy\twidth\theight\ttransforms\t"
+               "action\tlatched_input\tsampled_input\n";
+        for (std::size_t i = 0; i < count; ++i) {
+            const auto &f = frames[(next + frames.size() - count + i) % frames.size()];
+            auto phase = [&](const char *name, const auto &s, const auto &bullets) {
+                out << f.after.frame << '\t' << name << "\tplayer\t-1\t" << s.player_state << '\t'
+                    << s.x << '\t' << s.y << "\t0\t0\t" << 2 * s.hurt_half_x << '\t'
+                    << 2 * s.hurt_half_y << "\t0\t" << f.action << '\t' << s.latched_input << '\t'
+                    << s.sampled_input << '\n';
+                for (const auto &b : bullets)
+                    out << f.after.frame << '\t' << name << "\tbullet\t" << b.slot << '\t'
+                        << b.state << '\t' << b.x << '\t' << b.y << '\t' << b.vx << '\t' << b.vy
+                        << '\t' << b.full_width << '\t' << b.full_height << '\t'
+                        << b.active_transforms << '\t' << f.action << '\t' << s.latched_input
+                        << '\t' << s.sampled_input << '\n';
+            };
+            phase("before", f.before, f.before_bullets);
+            phase("after", f.after, f.after_bullets);
+        }
+        if (!out)
+            throw std::runtime_error("cannot write diagnostic trace");
+    }
+
+  private:
+    std::array<TraceFrame, 32> frames;
+    std::size_t next = 0, count = 0;
+};
+void write_collision(std::ostream &out, const th08::headless::CollisionEvent &event) {
+    using Kind = th08::headless::CollisionKind;
+    const char *kind = event.kind == Kind::Bullet         ? "bullet"
+                       : event.kind == Kind::LethalRegion ? "lethal_region"
+                       : event.kind == Kind::Laser        ? "laser"
+                                                          : "none";
+    auto bounds = [&](const auto &b) {
+        out << '[' << b.left << ',' << b.top << ',' << b.right << ',' << b.bottom << ']';
+    };
+    out << ",\"collision\":{\"kind\":\"" << kind << "\",\"frame\":" << event.frame
+        << ",\"bullet_slot\":" << event.bullet_slot << ",\"player_bounds\":";
+    bounds(event.player);
+    out << ",\"hazard_bounds\":";
+    bounds(event.hazard);
+    out << ",\"vx\":" << event.vx << ",\"vy\":" << event.vy
+        << ",\"active_transforms\":" << event.active_transforms
+        << ",\"movement_input\":" << event.movement_input
+        << ",\"sampled_input\":" << event.sampled_input << '}';
+}
 } // namespace
 
 // The engine adapter owns the game. This CLI owns options, tapes and reports.
@@ -102,7 +177,10 @@ int main(int argc, char **argv) {
     try {
         th08::headless::Config config;
         std::string dat, output, strategy = "stationary", tape_path, replay_path, stage_name = "1";
+        std::string trace_path;
         unsigned limit = 20000;
+        unsigned prefix_frame = 0;
+        bool allow_unused = false;
         bool shoot = false, shoot_set = false;
         for (int i = 1; i < argc; i += 2) {
             if (i + 1 >= argc)
@@ -121,12 +199,18 @@ int main(int argc, char **argv) {
                 config.seed = number(value, 65535);
             else if (key == "--frames")
                 limit = number(value, 1000000);
+            else if (key == "--prefix-frame")
+                prefix_frame = number(value, 1000000);
+            else if (key == "--allow-unused-actions")
+                allow_unused = number(value, 1);
             else if (key == "--output")
                 output = fs::absolute(value).string();
             else if (key == "--actions")
                 tape_path = fs::absolute(value).string();
             else if (key == "--replay")
                 replay_path = fs::absolute(value).string();
+            else if (key == "--trace")
+                trace_path = fs::absolute(value).string();
             else if (key == "--strategy")
                 strategy = value;
             else if (key == "--shoot") {
@@ -137,6 +221,8 @@ int main(int argc, char **argv) {
         }
         if (dat.empty() || !limit)
             throw std::runtime_error("--dat and a positive frame budget are required");
+        if (prefix_frame > limit || (allow_unused && replay_path.empty()))
+            throw std::runtime_error("invalid replay/diagnostic boundary");
         if (strategy != "stationary" && strategy != "reactive")
             throw std::runtime_error("unknown strategy");
         if (!shoot_set)
@@ -148,16 +234,21 @@ int main(int argc, char **argv) {
         config.dat_path = dat.c_str();
         RunDirectory scratch;
         th08::headless::Session session(config);
+        std::unique_ptr<TraceTail> tail;
+        if (!trace_path.empty())
+            tail = std::make_unique<TraceTail>();
         std::vector<std::uint16_t> actions;
         actions.reserve(limit);
         const auto initial_io_ns = session.file_io_time_ns();
         const auto start = std::chrono::steady_clock::now();
-        double update_ms = 0, decision_ms = 0;
+        double update_ms = 0, decision_ms = 0, diagnostics_ms = 0;
         auto state = session.state();
         bool started = false, complete = false;
         unsigned peak = 0, first_hit = 0, spell_start = 0;
         std::string outcome = "frame_limit";
         std::uint64_t digest = 1469598103934665603ULL;
+        std::uint64_t previous_digest = digest;
+        std::uint64_t prefix_digest = digest;
         for (unsigned i = 0; i < limit; ++i) {
             const auto decision_start = std::chrono::steady_clock::now();
             const auto &observed = session.bullets();
@@ -179,15 +270,22 @@ int main(int argc, char **argv) {
                 if (config.spell < 0 && i % 2)
                     action |= 4096;
             }
-            const auto update_start = std::chrono::steady_clock::now();
+            const auto decision_end = std::chrono::steady_clock::now();
             decision_ms +=
-                std::chrono::duration<double, std::milli>(update_start - decision_start).count();
+                std::chrono::duration<double, std::milli>(decision_end - decision_start).count();
+            if (tail)
+                tail->before(state, action, observed);
+            const auto update_start = std::chrono::steady_clock::now();
+            if (tail)
+                diagnostics_ms +=
+                    std::chrono::duration<double, std::milli>(update_start - decision_end).count();
             state = session.step(action);
             update_ms += std::chrono::duration<double, std::milli>(
                              std::chrono::steady_clock::now() - update_start)
                              .count();
             actions.push_back(action);
             peak = std::max(peak, unsigned(state.bullets));
+            previous_digest = digest;
             hash(digest, state.frame);
             hash(digest, action);
             hash(digest, state.rng_seed);
@@ -201,13 +299,23 @@ int main(int argc, char **argv) {
             hash(digest, state.gauge);
             hash(digest, bits(state.lives));
             hash(digest, session.actor_digest());
-            for (const auto &b : session.bullets()) {
+            const auto &updated_bullets = session.bullets();
+            if (tail) {
+                const auto trace_start = std::chrono::steady_clock::now();
+                tail->after(state, updated_bullets);
+                diagnostics_ms += std::chrono::duration<double, std::milli>(
+                                      std::chrono::steady_clock::now() - trace_start)
+                                      .count();
+            }
+            for (const auto &b : updated_bullets) {
                 hash(digest, b.state);
                 hash(digest, bits(b.x));
                 hash(digest, bits(b.y));
                 hash(digest, bits(b.vx));
                 hash(digest, bits(b.vy));
             }
+            if (state.frame == prefix_frame)
+                prefix_digest = digest;
             if (state.spell_active && !started) {
                 started = true;
                 spell_start = state.frame;
@@ -234,8 +342,12 @@ int main(int argc, char **argv) {
             std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start)
                 .count();
         const double io_ms = double(session.file_io_time_ns() - initial_io_ns) / 1000000;
-        if (!replay_path.empty() && actions.size() != replay.size())
+        if (state.frame < prefix_frame)
+            throw std::runtime_error("execution ended before the requested prefix boundary");
+        if (!replay_path.empty() && actions.size() != replay.size() && !allow_unused)
             throw std::runtime_error("action tape extends beyond the execution boundary");
+        if (tail)
+            tail->write(trace_path);
         if (!tape_path.empty()) {
             std::ofstream tape(tape_path);
             if (!tape)
@@ -251,6 +363,7 @@ int main(int argc, char **argv) {
         auto &out = output.empty() ? std::cout : file;
         if (!out)
             throw std::runtime_error("cannot open report");
+        out << std::setprecision(std::numeric_limits<float>::max_digits10);
         out << "{\"source_revision\":\"861bec908b84fa4658382d7526e5a0075f520846\","
             << "\"profile\":\"native-headless-float32\",\"dat_sha256\":\"" << identity
             << "\",\"stage\":\"" << stage_name << "\",\"requested_spell_id\":" << config.spell
@@ -268,7 +381,14 @@ int main(int argc, char **argv) {
             << ",\"trace_digest\":\"" << digest
             << "\",\"simulation_ms\":" << std::max(0., update_ms - io_ms)
             << ",\"file_io_ms\":" << io_ms << ",\"decision_ms\":" << decision_ms
-            << ",\"execution_ms\":" << ms << "}\n";
+            << ",\"execution_ms\":" << ms << ",\"diagnostics_ms\":" << diagnostics_ms
+            << ",\"previous_trace_digest\":\"" << previous_digest
+            << "\",\"prefix_frame\":" << prefix_frame << ",\"prefix_trace_digest\":\""
+            << prefix_digest << "\",\"unused_actions\":"
+            << (replay_path.empty() ? 0 : replay.size() - actions.size())
+            << ",\"diagnostics_enabled\":" << (tail ? "true" : "false");
+        write_collision(out, session.collision());
+        out << "}\n";
         if (!out)
             throw std::runtime_error("cannot write report");
         return complete ? 0 : 2;
