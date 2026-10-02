@@ -3,6 +3,7 @@
 #include <limits>
 #include <stdexcept>
 #include <th08/effect_pool.hpp>
+#include <th08/kinematics.hpp>
 
 namespace effect = th08::effect;
 namespace cp = effect::camera_particle;
@@ -39,6 +40,10 @@ bool same(rng_api::State left, rng_api::State right) {
     return left.seed == right.seed && left.generation_count == right.generation_count &&
            left.saved_seed == right.saved_seed && left.saved_seed_valid == right.saved_seed_valid;
 }
+bool same(th08::animation::control::Clock left, th08::animation::control::Clock right) {
+    return left.previous == right.previous && left.current == right.current &&
+           left.fraction == right.fraction;
+}
 effect::Effect51Animation prepared() {
     // Explicit fixture projection, not a claim about enemy.anm script73.
     effect::Effect51Animation value{};
@@ -68,9 +73,138 @@ void check_unchanged(const effect::PrimaryPool &pool, const effect::PrimaryPool 
         if (slot.effect51_known)
             check(same(slot.particle, prior.particle) &&
                       same(slot.animation.fields, prior.animation.fields) &&
-                      slot.animation.control.pc == prior.animation.control.pc,
+                      slot.animation.control.pc == prior.animation.control.pc &&
+                      slot.animation.control.active == prior.animation.control.active &&
+                      slot.animation.control.visible == prior.animation.control.visible &&
+                      same(slot.animation.control.time, prior.animation.control.time) &&
+                      same(slot.animation.rotation, prior.animation.rotation) &&
+                      same(slot.timer, prior.timer),
                   "blocked pool transaction changed an initialized effect");
     }
+}
+void lifecycle_regressions() {
+    // Explicit synthetic assertion of the restricted script73 waiting shape.
+    // Real resources obtain this certificate only through compile_effect51_animation.
+    effect::Effect51Animation animation{};
+    animation.fields.flags = 3; // Visible, with the renderer's dirty bit cleared.
+    animation.unit_rate_script73 = true;
+    animation.control.pc = 2;
+    animation.control.sprite = 121;
+    animation.control.visible = true;
+    animation.control.time = {0, 1, 0};
+    animation.rotation = {3.1f, -.2f, -3.1f};
+    animation.angular_velocity = {.1f, 0, -.1f};
+    const cp::Camera camera{{0, 0, 0}, {0, 0, 10000}, {0, 0, 1}};
+    const cp::Bosses bosses{};
+    const cp::Color tint{80, 120, 160, 200};
+    const effect::Effect51Inputs spawn{&animation, &camera, 1.0f};
+    const effect::Effect51UpdateInputs update{false, &camera, &bosses, &tint};
+    const effect::Effect51Request request{1, {}, {240, 200, 160, 120}};
+    rng_api::Rng rng(0);
+    effect::PrimaryPool pool;
+    check(pool.spawn_effect51(request, spawn, &rng).committed(), "lifecycle setup failed");
+    const auto initial = pool;
+    check(same(pool.slot(0).timer, {0, 0, 0}), "allocation did not clear the effect timer");
+    check(pool.advance_effect51({}).status == effect::UpdateStatus::missing_context &&
+              pool.advance_effect51({false}).status == effect::UpdateStatus::missing_context,
+          "lifecycle invented freeze or camera context");
+    const auto frozen = pool.advance_effect51({true});
+    check(frozen.committed() && frozen.source_active_count == 1 && frozen.updated == 0 &&
+              frozen.retired == 0,
+          "freeze demanded callback inputs or omitted source activeCount");
+    check_unchanged(pool, initial);
+
+    auto particle = initial.slot(0).particle;
+    check(cp::update(particle, &camera, &bosses, &tint) == cp::Status::alive,
+          "lifecycle camera fixture did not survive");
+    particle.animation.flags |= 4U; // The following angular phase marks rotation dirty.
+    const auto advanced = pool.advance_effect51(update);
+    const auto &alive = pool.slot(0);
+    check(advanced.committed() && advanced.updated == 1 && advanced.retired == 0 &&
+              advanced.source_active_count == 1 && pool.active_count() == 1 &&
+              same(alive.particle, particle) && same(alive.animation.fields, particle.animation) &&
+              same(alive.timer, {0, 1, 0}) && same(alive.animation.control.time, {1, 2, 0}) &&
+              same(alive.animation.rotation, {th08::kinematics::normalize_angle(3.1f, .1f), -.2f,
+                                              th08::kinematics::normalize_angle(-3.1f, -.1f)}),
+          "callback, angular motion or source timer ordering changed");
+
+    auto culled = initial;
+    auto rear_camera = camera;
+    rear_camera.forward.z = -1;
+    particle = initial.slot(0).particle;
+    check(cp::update(particle, &rear_camera, nullptr, nullptr) == cp::Status::culled,
+          "cull fixture did not leave the view cone");
+    const auto retired = culled.advance_effect51({false, &rear_camera});
+    check(retired.committed() && retired.updated == 1 && retired.retired == 1 &&
+              retired.source_active_count == 1 && culled.active_count() == 0 &&
+              same(culled.slot(0).particle, particle) &&
+              same(culled.slot(0).animation.control.time, {0, 1, 0}) &&
+              same(culled.slot(0).animation.rotation, animation.rotation) &&
+              same(culled.slot(0).timer, {0, 0, 0}) &&
+              culled.advance_effect51({false}).source_active_count == 0,
+          "cull lost pre-test motion, advanced ANM/timer or remained occupied");
+
+    // Slot0 culls, then slot1 needs a missing tint. The first retirement must
+    // not leak through a later blocker; retry performs the same ordered phase.
+    auto side_camera = camera;
+    side_camera.look_at_offset = {10000, 0, 0};
+    effect::PrimaryPool rollback;
+    check(rollback.spawn_effect51(request, {&animation, &side_camera, 1}, &rng).committed() &&
+              rollback.spawn_effect51(request, spawn, &rng).committed(),
+          "rollback setup failed");
+    const auto checkpoint = rollback;
+    check(rollback.advance_effect51({false, &camera, &bosses}).status ==
+              effect::UpdateStatus::missing_context,
+          "late missing tint was silently supplied");
+    check_unchanged(rollback, checkpoint);
+    const auto retried = rollback.advance_effect51(update);
+    check(retried.committed() && retried.updated == 2 && retried.retired == 1 &&
+              retried.source_active_count == 2 && !rollback.occupied(0) && rollback.occupied(1),
+          "blocked phase retry did not commit the same ascending-slot effects");
+
+    effect::PrimaryPool::Occupancy occupied{};
+    occupied[1] = true;
+    effect::PrimaryPool unknown(occupied, 0);
+    check(unknown.spawn_effect51(request, spawn, &rng).committed(), "unknown-slot setup failed");
+    const auto unknown_before = unknown;
+    check(unknown.advance_effect51(update).status == effect::UpdateStatus::missing_context &&
+              unknown.advance_effect51({true}).status == effect::UpdateStatus::missing_context,
+          "unknown occupied checkpoint slot was skipped");
+    check_unchanged(unknown, unknown_before);
+
+    // Arbitrary templates may still be spawned, but cannot run as script73.
+    // A malformed certified clock similarly blocks after an earlier live slot.
+    for (const bool certified : {false, true}) {
+        auto bad_animation = animation;
+        bad_animation.unit_rate_script73 = certified;
+        if (certified)
+            bad_animation.control.time.fraction = .5f;
+        auto invalid = initial;
+        check(invalid.spawn_effect51(request, {&bad_animation, &camera, 1}, &rng).committed(),
+              "invalid-update setup failed");
+        const auto before = invalid;
+        check(invalid.advance_effect51(update).status ==
+                  (certified ? effect::UpdateStatus::invalid_state
+                             : effect::UpdateStatus::unsupported_animation),
+              "uncertified ANM or non-unit clock was advanced");
+        check_unchanged(invalid, before);
+    }
+
+    animation.control.time = {29998, 29999, 0};
+    effect::PrimaryPool completing;
+    check(completing.spawn_effect51(request, spawn, &rng).committed() &&
+              completing.advance_effect51(update).committed() && completing.occupied(0),
+          "script73 completed before reaching its static-completion time");
+    const auto before_completion = completing;
+    const auto completed = completing.advance_effect51(update);
+    check(completed.committed() && completed.retired == 1 && completed.source_active_count == 1 &&
+              completing.active_count() == 0 && !completing.slot(0).animation.control.active &&
+              completing.slot(0).animation.control.visible &&
+              same(completing.slot(0).animation.control.time, {29999, 30000, 0}) &&
+              same(completing.slot(0).animation.rotation,
+                   before_completion.slot(0).animation.rotation) &&
+              same(completing.slot(0).timer, before_completion.slot(0).timer),
+          "static completion ticked ANM/effect timer, rotated or cleared visibility");
 }
 
 int main() {
@@ -298,5 +432,6 @@ int main() {
         bad_slot = true;
     }
     check(bad_cursor && bad_slot, "effect pool accepted an out-of-bounds cursor or slot");
-    std::cout << "Effect51 primary pool scan, ANM ownership, RNG and atomic retries: passed\n";
+    lifecycle_regressions();
+    std::cout << "Effect51 pool scan, unit-rate lifecycle, RNG and atomic retries: passed\n";
 }

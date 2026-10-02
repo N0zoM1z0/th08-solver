@@ -34,8 +34,12 @@ int main(int argc, char **argv) try {
         require_effect(found, "enemy.anm missing");
         effect_anm_reference::AnmVmBase source{};
         source.Initialize();
-        const float angular[] = {initial.angular_velocity.x, initial.angular_velocity.y,
-                                 initial.angular_velocity.z};
+        // Independently recorded opcode13 words from the pinned DAT, rather
+        // than feeding the implementation's decoded operands back as expected.
+        const std::uint32_t z_word = 0x3e860a92U;
+        float z_velocity;
+        std::memcpy(&z_velocity, &z_word, sizeof(z_velocity));
+        const float angular[] = {0, 0, z_velocity};
         effect_anm_reference::time_zero(&source, angular);
         require_effect(equal_vec(initial.rotation, source.rotation) &&
                            equal_vec(initial.angular_velocity, source.angleVel) &&
