@@ -308,6 +308,10 @@ unsigned linear_updates_after_wait(const BulletTransformRecord *transforms,
                 }
                 break;
             }
+            // DESPAWN changes state inside the already-entered FIRED branch.
+            // That branch still moves and performs its last lethal collision.
+            if (record.kind == BULLET_TRANSFORM_DESPAWN)
+                return unsigned(std::min<std::uint64_t>(limit, updates + 1));
             if (record.kind != BULLET_TRANSFORM_SPAWN_CHILD_PATTERN || index + 1 >= 18 ||
                 transforms[index + 1].kind != child_secondary)
                 return unsigned(updates);
@@ -385,6 +389,43 @@ RelativeDirectionView relative_direction_view(const Bullet &bullet) {
             state.directionChangeIntervalFrames,
             unsigned(std::min<std::int64_t>(updates, std::numeric_limits<unsigned>::max()))};
     return view;
+}
+
+WaitVectorView wait_vector_view(const Bullet &bullet) {
+    WaitVectorView view;
+    const auto &wait = bullet.exStates[BULLET_TRANSFORM_STATE_WAIT];
+    if (bullet.state != BULLET_STATE_FIRED ||
+        bullet.activeTransformFlags != BULLET_TRANSFORM_WAIT || bullet.transformIndex < 0 ||
+        bullet.transformIndex >= 17 || wait.timer.subFrame != 0.f ||
+        g_Supervisor.framerateMultiplier != 1.f || g_GameManager.scriptedUpdateFreeze ||
+        g_GameManager.flags.deathbombFreezeActive || g_Supervisor.flags.forceExtraTimerStep)
+        return view;
+    const auto &record = bullet.transforms[bullet.transformIndex];
+    // This narrow certificate accepts one already-copied, blocked vector record
+    // followed by NONE. No selector resolver, child spawn or RNG is evaluated.
+    if (record.kind != BULLET_TRANSFORM_ACCELERATE_VECTOR || record.allowWhileActive ||
+        !(bullet.transformFlags & BULLET_TRANSFORM_ACCELERATE_VECTOR) ||
+        bullet.transforms[bullet.transformIndex + 1].kind != BULLET_TRANSFORM_NONE)
+        return view;
+    const auto &args = record.payload.vectorAcceleration;
+    if (!std::isfinite(bullet.position.x) || !std::isfinite(bullet.position.y) ||
+        !std::isfinite(bullet.velocity.x) || !std::isfinite(bullet.velocity.y) ||
+        !std::isfinite(args.magnitude) || !std::isfinite(args.angle) ||
+        !std::isfinite(bullet.angle))
+        return view;
+    const float angle = args.angle > -990.f ? args.angle : bullet.angle;
+    Float3 acceleration;
+    acceleration.FromAngleMagnitude(angle, args.magnitude);
+    if (!std::isfinite(acceleration.x) || !std::isfinite(acceleration.y))
+        return view;
+    const std::uint64_t waiting = std::uint64_t(std::max(0, wait.timer.current)) + 1;
+    const auto accelerating = unsigned(std::max(0, args.durationFrames));
+    const auto bound = waiting + accelerating + 1;
+    if (bound > std::numeric_limits<unsigned>::max())
+        return view;
+    // AdvanceTransformProgram runs before WAIT decrements/clears. Vector starts
+    // on the following update and accelerates before that update's movement.
+    return {acceleration.x, acceleration.y, unsigned(waiting), accelerating, unsigned(bound)};
 }
 
 BoundaryBounceView boundary_bounce_view(const Bullet &bullet) {
@@ -535,7 +576,7 @@ const std::vector<BulletView> &Session::bullets() {
                               b.activeTransformFlags, acceleration.vector.x, acceleration.vector.y,
                               acceleration.timer.current, acceleration.durationFrames,
                               wait_linear_updates, relative_direction_view(b),
-                              boundary_bounce_view(b)});
+                              boundary_bounce_view(b), wait_vector_view(b)});
         }
         ++slot;
     }

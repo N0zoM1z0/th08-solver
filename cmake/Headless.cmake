@@ -62,6 +62,12 @@ target_link_libraries(th08_headless_laser_items PRIVATE th08_native_headless)
 target_compile_options(th08_headless_laser_items PRIVATE -ffp-contract=off
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 
+add_executable(th08_headless_bullet_bounds tests/headless_bullet_bounds.cpp)
+target_include_directories(th08_headless_bullet_bounds PRIVATE include)
+target_link_libraries(th08_headless_bullet_bounds PRIVATE th08_native_headless)
+target_compile_options(th08_headless_bullet_bounds PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+
 set(TH08_HEADLESS_DAT "" CACHE FILEPATH "Private DAT for the optional full-scene regression")
 set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH
   "Optional native executable built at another optimization level")

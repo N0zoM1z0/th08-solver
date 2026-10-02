@@ -215,6 +215,17 @@ coordinates. None of this changes acceptance physics or calls the RNG. The origi
 FNV projection is unchanged and remains a partial diagnostic projection, not a complete
 state key.
 
+### Bounded WAIT transform continuations
+
+A source-owned WAIT→VECTOR→NONE certificate copies already resolved acceleration,
+models the native activation handoff and includes final-clear movement. It rejects
+concurrent, fractional, frozen, nonfinite and unsupported programs. No random operand
+is evaluated. The unchanged-velocity WAIT bound also includes DESPAWN's final lethal
+fired movement; the following despawn update is nonlethal.
+ID203 opts into the vector certificate at its unchanged H12/nine-candidate budget.
+Seeds 0/1/65535 still fail at 1711/4823/2896. This is a source projection correction,
+not a solved spell, native branch search or action-dependent future RNG prediction.
+
 ## Synthetic continuous profiles
 
 `th08_scenario_cases` supports `relay` (curtain/rings/moving lane), `lane-switch`

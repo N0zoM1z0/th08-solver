@@ -53,6 +53,8 @@ inline NativeSpellPolicy native_spell_policy(int spell_id) {
             "id201-wait-and-ecl-shot", {32, 120, true, 0x1ff, false, 0, true}, false, false, true};
     if (spell_id == 202)
         return {"id202-observed-wait", {12, 120, true, 0x1ff, false, 0, true}};
+    if (spell_id == 203)
+        return {"id203-wait-vector", {12, 120, true, 0x1ff, false, 0, false, false, false, true}};
     if (spell_id == 204)
         return {"id204-relative-direction", {12, 120, true, 0x1ff, false, 0, false, true}};
     return {"source-vector-ranking", {12, 120, true}};

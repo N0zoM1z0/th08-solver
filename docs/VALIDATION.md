@@ -345,3 +345,10 @@ Generated source-oracle translation units belong only in ignored build directori
 Their maintained generators share `source_probe_support.*`, not another tool's main().
 Game DAT/EXE/assets are not distributed. Keep [third-party notices](THIRD_PARTY_NOTICES.md)
 and the original preparation attribution; do not assign those artifacts a new license.
+
+The separate ID203 source-certificate checkpoint uses CASE_GROUP=id203 in the same
+real-data generator. It preserves baseline 1711 and three genuine failures at
+1711/4823/2896, with fresh O3/O0 replay agreement. The native bullet-bound executable
+checks WAIT/vector timing and guards plus DESPAWN's actual last lethal movement and
+nonlethal next update. Both O0/O3 pass. The existing full aggregate's historical
+Stage6b golden mismatch remains unresolved; the focused result does not waive it.
