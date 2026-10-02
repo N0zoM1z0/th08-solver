@@ -1,8 +1,9 @@
 # Engineering rules
 
 Read README.md, docs/STATUS.md and the affected interfaces before changing code.
-Follow the owner's latest scope. At the current handoff, TH08 feature development
-is paused while the owner continues locally; do not autonomously resume it.
+Follow the owner's latest scope. The owner authorized a tracked native headless TH08
+import and solver experiments over complete real-data scenes. Keep upstream code in
+this repository, not an ignored checkout, submodule or separate feature branch.
 
 ## Solver-first scope
 
@@ -61,7 +62,7 @@ is paused while the owner continues locally; do not autonomously resume it.
 - Raw DAT/EXE/assets, generated reference translation units and local experiments
   remain ignored. Do not force-add them; preserve third-party notices
 - For authorized assistant changes to this N0zoM1z0 repository, use
-  `gpt-dots: <English summary>`. Do not rewrite older commits solely for their prefix
+  `gpt-6.1-sol: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requested direct main progress commits, not feature branches/PRs.
   Fetch first, preserve others' work, never force an unrelated change, and publish
   only tested scope. Do not infer permission to continue beyond the latest request

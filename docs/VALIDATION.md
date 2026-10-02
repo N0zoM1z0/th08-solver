@@ -3,7 +3,8 @@
 Core CTest cases: 25
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (27 total). Existing public CI runs sanitizer OFF/ON without DAT/source;
+add two CTests (27 total). A native build with private DAT adds one full-scene CTest.
+Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
 
@@ -53,8 +54,10 @@ Platinum 8573C, GCC 14.2, Release; timing is not portable or a guarantee.
 ## Exact input provenance
 
 - DAT: 46,838,025 bytes, SHA256 `9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb`
-- Reconstructed source: [N0zoM1z0/th08](https://github.com/N0zoM1z0/th08), pinned commit
+- Component-oracle source: [N0zoM1z0/th08](https://github.com/N0zoM1z0/th08), pinned commit
   `a45e99fb1942714e6edded20847e32a654d56f97`
+- Tracked native runtime: same upstream, branch `port/portable-64bit`, commit
+  `861bec908b84fa4658382d7526e5a0075f520846`, adapted under `third_party/th08`
 - Original preparation archive `TH08_AllCase_20260911.zip`: SHA256
   `8913fffc96824c27b681ff1b1133a4385f7c7ca3e8e377fede17e552e535b199`
 - Older preparation reports mentioning a dirty worktree near `af72ca9` are historical
@@ -64,6 +67,62 @@ DAT tools check the expected input hash. Scenario reports retain relevant member
 hashes and instruction identities. Source probe generators enforce per-file hashes before
 extracting reviewed unchanged bodies; those maintained constants are the authoritative
 file-hash list. Do not bypass a mismatch or use aggregate pass rates to hide it.
+
+## Native headless reproduction and acceleration checks
+
+The opt-in target requires SDL2, SDL2_image, SDL2_ttf and Fontconfig development
+libraries (Debian/Ubuntu packages `libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+libfontconfig1-dev`). The CPU compatibility layer decodes resources; no video/audio
+device or OpenGL renderer is initialized. No Python, Windows or Wine is used.
+
+```sh
+cmake -S . -B build-headless -DCMAKE_BUILD_TYPE=Release -DTH08_HEADLESS=ON -DTH08_HEADLESS_DAT="$PWD/game_data_donottrack/th08.dat"
+cmake --build build-headless --parallel 2
+ctest --test-dir build-headless --output-on-failure
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --spell-id 179 --difficulty 0 --seed 0 --strategy reactive --frames 2000 --actions reports/local/id179.actions --output reports/local/id179-native.json
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --spell-id 179 --difficulty 0 --seed 0 --frames 2000 --replay reports/local/id179.actions --output reports/local/id179-native-replay.json
+```
+
+The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
+wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary collision
+at 382 and a 10-update budget failure. Every execution tape replays in another process;
+tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
+Generated tapes and `summary.json` are under `build-headless/headless-regression/`.
+Without `TH08_HEADLESS_DAT`, these private-data tests are not registered.
+
+Acceleration removes wall-clock waiting and presentation work while retaining every
+original calc-chain update, timer increment and shared RNG consumer in that chain.
+The virtual clock depends only on executed update count, never CPU throughput. Do not
+accelerate by multiplying dt, subsampling actions/collisions, shortening spell timers,
+or sharing action-dependent futures. These change the experiment's semantics.
+
+Compare a second native library optimization level against the exact same tapes:
+
+```sh
+cmake -S . -B build-headless-o0 -DCMAKE_BUILD_TYPE=Release -DTH08_HEADLESS=ON -DTH08_HEADLESS_OPTIMIZATION=0
+cmake --build build-headless-o0 --parallel 2 --target th08_headless
+cmake -S . -B build-headless -DTH08_HEADLESS_COMPARE_EXECUTABLE="$PWD/build-headless-o0/th08_headless"
+ctest --test-dir build-headless --output-on-failure -R '^headless_real_data$'
+```
+
+`TH08_HEADLESS_OPTIMIZATION` controls the imported game translation units (0..3),
+not planner budgets or frame semantics. The checked GCC 12.2 O0/O3 tapes match all
+reported semantic fields and every frame's diagnostic projection for these cases.
+This checks acceleration within the native profile, not every spell or retail x87.
+The original calc chain includes collision/feedback; the policy's extrapolation is
+only a proposal, never the acceptance oracle.
+
+Reports separate `simulation_ms` (calc-chain/queue updates minus timed native file
+open/read/write/seek/stat/close wrappers), `file_io_ms`, `decision_ms` (observation and
+policy/tape selection), and `execution_ms` (whole loop including trace work and I/O).
+Initialization, DAT hashing, tape loading, output serialization and cleanup are outside
+these loop measurements. CPU decoding during an update remains simulation work; compare
+the same profile/tape. Run serially and record hardware/compiler/outcome/budget alongside
+timing. The checked native host is Linux x86_64, AMD EPYC 7B12, GCC 12.2, Release.
+
+Fresh-process replay checks execution agreement and RNG/feedback, not an independent
+physics oracle. Original runtime globals are not yet branchable solver checkpoints.
+Keep the scope in [Scenarios](SCENARIOS.md) when interpreting complete-scene reports.
 
 ## Optional pinned-source comparisons
 

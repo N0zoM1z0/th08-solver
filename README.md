@@ -15,14 +15,16 @@ algorithm failures, and improve measured solve cost.
 - Compare simple baselines and alternative planners under stated budgets. Search
   exhaustion is not a proof of impossibility, and a short route is not a full solution
 
-The verified handoff includes 7200/72000-frame synthetic runs, a real-DAT controlled
-ID179 Easy survival segment, and a geometry-derived recovery for a reproduced beam
-search failure. See [current results and remaining work](docs/STATUS.md).
+The tracked TH08 runtime now runs complete real-data scenes natively on Linux without
+a display, Wine or a real-time frame limiter. A simple reactive policy completes Stage 1
+Easy and spell ID179 Easy; fresh-process action replay checks their state traces.
+Existing controlled/synthetic planners remain available for algorithm comparisons.
+See [current results and remaining work](docs/STATUS.md).
 
-**Complete offline spell solutions: 0.** This is the conservative source-faithful
-whole-world coverage count. The separately verified controlled ID179 survival
-profile omits graze/score/item feedback and retail visual RNG ordering; it is not
-an original full-stage or practice-capture equivalence claim.
+**Legacy subset complete offline spell solutions: 0.** Historical subset-engine reports
+retain that count. The native headless profile separately verifies one complete spell
+and one complete stage, including native graze/score/item feedback. Its platform and
+numerical profile are explicit; retail Windows equivalence is not established.
 
 ## Take over locally
 
@@ -45,8 +47,20 @@ Place your own `th08.dat` in ignored `game_data_donottrack/`, then:
 ./build/th08_spell_cases game_data_donottrack/th08.dat reports/local/id179
 ```
 
-The owner is taking over local development. Automated TH08 feature work is paused
-at this handoff; the next steps below are recommendations, not background tasks.
+For the native runtime, also install the SDL2, SDL2_image, SDL2_ttf and Fontconfig
+development packages. These support CPU resource decoding; headless execution creates
+no window or audio device. Build and run a complete stage:
+
+```sh
+cmake -S . -B build-headless -DCMAKE_BUILD_TYPE=Release -DTH08_HEADLESS=ON -DTH08_HEADLESS_DAT="$PWD/game_data_donottrack/th08.dat"
+cmake --build build-headless --parallel 2
+ctest --test-dir build-headless --output-on-failure
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 1 --strategy reactive --frames 30000 --actions reports/local/stage1.actions --output reports/local/stage1.json
+```
+
+Each step still executes one original calc-chain update. Acceleration removes waiting;
+it does not enlarge time steps or skip gameplay frames. [Validation](docs/VALIDATION.md)
+includes complete-spell, replay and optimization comparison commands.
 
 ## Documentation map
 
