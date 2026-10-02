@@ -134,6 +134,38 @@ int main() {
               !large_bullet183.upcoming_ecl_bullets,
           "ID183 changed its observed large-bullet maneuver budget or source scope");
 
+    const std::vector<th08::policy::BodyWarningBounds> body_warning{{191, 379, 193, 381, 2}};
+    HazardReactiveStats body_stats;
+    const auto body_action = hazard_reactive(
+        192, 380, .825f, .825f, 2, 1.414213538f, 4, std::vector<Bullet>{}, no_lasers, body_stats,
+        HazardReactiveOptions{3, 0, true, 0x1ff, false, 1}, nullptr, body_warning);
+    check(body_action == 20 && body_stats.body_paths == 81 && body_stats.body_checks == 81 &&
+              body_stats.body_overlaps == 45 && body_stats.body_unsafe_decisions == 0,
+          "body collision ranking did not evaluate each actual two-leg path");
+    HazardReactiveStats pending_body_stats;
+    const std::vector<th08::policy::BodyWarningBounds> pending_body{{191, 379, 193, 381, 1}};
+    const auto pending_body_action = hazard_reactive(
+        192, 380, .825f, .825f, 2, 1.414213538f, 4, std::vector<Bullet>{}, no_lasers,
+        pending_body_stats, HazardReactiveOptions{3, 0}, nullptr, pending_body);
+    check(pending_body_action == 4 && pending_body_stats.pending_body_overlaps == 1,
+          "common latched body overlap was hidden or treated as controllable");
+
+    const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
+    HazardReactiveStats acceleration_stats;
+    const auto accelerated =
+        hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, accelerating_bullet, no_lasers,
+                        acceleration_stats, {3, 0});
+    check(accelerated == 68, "active vector acceleration was projected as constant velocity");
+    check(acceleration_stats.vector_acceleration_checks == 18 &&
+              acceleration_stats.unsupported_transform_checks == 0,
+          "vector-acceleration coverage was not reported exactly");
+    HazardReactiveStats linear_stats;
+    const auto linear =
+        hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, accelerating_bullet, no_lasers,
+                        linear_stats, {3, 0, false});
+    check(linear != accelerated && linear_stats.vector_acceleration_checks == 0 &&
+              linear_stats.unsupported_transform_checks == 18,
+          "vector-acceleration ablation did not retain the explicit unknown model");
     Bullet delayed_vector{10, 20, 1, -1, 4, 4, 1, 0x20000, 0, 0, 0, 0, 0};
     delayed_vector.wait_vector = {2, -3, 1, 2, 4};
     auto project_delayed = [&](unsigned step) {

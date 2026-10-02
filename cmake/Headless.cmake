@@ -35,7 +35,8 @@ add_library(th08_native_headless STATIC ${th08_game_files}
   "${th08_native}/src/modern/linux/render_audit.cpp"
   "${th08_native}/src/modern/headless/d3d_null.cpp"
   "${th08_native}/src/modern/headless/runtime.cpp")
-target_sources(th08_native_headless PRIVATE "${th08_native}/src/modern/headless/session.cpp")
+target_sources(th08_native_headless PRIVATE "${th08_native}/src/modern/headless/session.cpp"
+  "${th08_native}/src/modern/headless/body_forecast.cpp")
 target_compile_features(th08_native_headless PUBLIC cxx_std_17)
 target_compile_definitions(th08_native_headless PUBLIC TH08_MODERN_PORT
   TH08_MODERN_LINUX TH08_PORTABLE_NATIVE_LAYOUT TH08_HEADLESS WIN32_LEAN_AND_MEAN
@@ -66,6 +67,11 @@ add_executable(th08_headless_bullet_bounds tests/headless_bullet_bounds.cpp)
 target_include_directories(th08_headless_bullet_bounds PRIVATE include)
 target_link_libraries(th08_headless_bullet_bounds PRIVATE th08_native_headless)
 target_compile_options(th08_headless_bullet_bounds PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+
+add_executable(th08_headless_body_forecast tests/headless_body_forecast.cpp)
+target_link_libraries(th08_headless_body_forecast PRIVATE th08_native_headless)
+target_compile_options(th08_headless_body_forecast PRIVATE -ffp-contract=off
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 
 set(TH08_HEADLESS_DAT "" CACHE FILEPATH "Private DAT for the optional full-scene regression")

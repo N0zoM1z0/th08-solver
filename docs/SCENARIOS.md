@@ -215,16 +215,40 @@ coordinates. None of this changes acceptance physics or calls the RNG. The origi
 FNV projection is unchanged and remains a partial diagnostic projection, not a complete
 state key.
 
-### Bounded WAIT transform continuations
+### ID192 body geometry and ID203 transform boundary
 
-A source-owned WAIT→VECTOR→NONE certificate copies already resolved acceleration,
-models the native activation handoff and includes final-clear movement. It rejects
-concurrent, fractional, frozen, nonfinite and unsupported programs. No random operand
-is evaluated. The unchanged-velocity WAIT bound also includes DESPAWN's final lethal
-fired movement; the following despawn update is nonlethal.
-ID203 opts into the vector certificate at its unchanged H12/nine-candidate budget.
-Seeds 0/1/65535 still fail at 1711/4823/2896. This is a source projection correction,
-not a solved spell, native branch search or action-dependent future RNG prediction.
+ID192's baseline 466 is the boss body, with native dimensions 48×32 at (192,128).
+Input 466 changes fail 9/9; input 465 has 6/9 local survivors. The adapter exports direct
+inclusive endpoints using native reciprocal multiplication by 1/1.5, followed by /2.
+It handles observed static/resolved interpolation and one literal future random 67
+move using an outward-rounded all-angle envelope, without evaluating random operands.
+The canonical pre-clamp envelope contains the in-bounds origin and remains conservative
+under native clamping. Intersecting it with clamp bounds is also conservative but changes
+ranking and fails 687; retaining the source excursion is an explicit proposal convention,
+not extra numerical padding. No fixed epsilon or sampled random angle is used.
+
+Support requires unit integral clocks, finite bounded motion and guarded owner state.
+Narrow owner-local ECL/subgraph checks reject remote mutations, unknown selectors,
+returns/callback state and unsupported operations. Timelines must remain future, terminal
+or blocked on the supported boss/event. Boss callbacks' 70-update immunity and recognized
+phase death cover conditional lifecycle branches. Continuous Extra's mode 1 death requires
+the validated immediate 134/160/123 EndSpell prefix before collision can resume.
+Unknown support returns a typed failure and stops the enabled profile. Warnings are
+conditional lethal-coverage bounds, not exact geometry through arbitrary callbacks or
+complete unseen-spawn prediction. Native execution remains the collision oracle.
+
+The profile uses 81 actual two-leg paths, H12, first leg 1, with bounded WAIT projection.
+Bodies affect earliest overlap only; bullet clearance/danger/ties stay unchanged on
+body-safe paths. Common pending-input overlap and absence of body-safe continuations
+have separate counters. Seeds 0/65535 clear 3692, seed 1 fails1470. Actual Extra reaches
+ID202 at 67738 without any world reset; it does not yet clear.
+
+A WAIT followed by DESPAWN still has a final fired movement/collision before the next
+nonlethal despawn update. A distinct typed WAIT→VECTOR→NONE view models the copied
+resolved acceleration, activation delay and final-clear movement, rejecting concurrent,
+fractional, frozen, nonfinite or unsupported programs. ID203 opts in at its original
+H12/nine-candidate budget, retaining failures 1711/4823/2896. This is a transform
+certificate improvement, not completion or a future action-dependent RNG prediction.
 
 ## Synthetic continuous profiles
 

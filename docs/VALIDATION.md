@@ -188,15 +188,15 @@ No remote host is needed. Repeated prefix work is explicit; no unsafe native sna
 or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
-The Release `spell-portfolio` run completed 53 and retained 3 genuine collision
-prefixes: bullet IDs 202/203 and lethal-region ID192. All 56 tapes
+The Release `spell-portfolio` run completed 54 and retained 2 genuine collision
+prefixes: bullet IDs 202/203. All 56 tapes
 then agreed in a fresh process on the semantic fields used by `agree()` above. This is
 broad algorithm evidence, while the smaller real-data CTest keeps the affected
 transform/profile boundaries practical to rerun on every local change.
 The ID204 change was compared with its preceding main checkpoint across all 56 cases:
 the other 55 semantic reports and action tapes remained unchanged, and both versions'
 tapes freshly replayed. Continuous Extra also remained at its earlier ID192 collision
-on update 7424; reaching ID204 from the stage start is still blocked by that earlier spell.
+on update 7424 at that historical checkpoint. The later ID192 change advances Extra below.
 
 The ID139 comparison runs the previous portfolio and the new isolated profile on the
 same corrected laser-item runtime: 49 versus 50 complete spells. All 55 unaffected
@@ -221,6 +221,27 @@ all 55 unaffected semantic records and literal action tapes agree, and all 112 t
 freshly replay. Continuous Stage6b advances from its preserved ID183 collision54401
 to clear58853, adding the eighth complete stage. The prior ID167 report retains its
 historical failure; the current single Stage6b fixture belongs to ID183.
+
+The subsequent source/body comparison uses a complete separately compiled source snapshot
+of preceding main 54f926d (original headers, Session, CLI and native units), rather than
+an old-adapter/new-layout hybrid. It changes 53 to 54 clears, preserving all 53 successes.
+Only ID192 and the still-failing ID203 prefix differ; 54 other semantic records and
+literal tapes agree, including IDs201/202. Both versions of all 56 spells and Extra
+freshly replay (114 tapes). Extra advances7424→67738, stopping in ID202.
+
+ID192's focused five-record report preserves baseline 466, complete seeds 0/65535 at 3692,
+seed 1 collision 1470 and actual Extra 67738. All agree with fresh O3 and O0 replays.
+The H12/81-path profile costs 299052 candidates and 11074.8ms decision time for seed0,
+versus 4194 candidates/84.5ms for the 466-update baseline; these are unequal workloads.
+ID203's separate four-record report retains baseline 1711 and all three failures
+1711/4823/2896 while checking nonzero bounded WAIT/vector projections.
+Native-linked regressions check WAIT/vector activation and final-clear boundaries,
+DESPAWN's last lethal movement, 27 body source/lifecycle/clock guards, native movement
+containment and the reciprocal-multiply size cancellation boundary. Both O0/O3 pass.
+Independent native differential checks cover 23976 WAIT/vector updates and complete
+ID192 tapes, including continuous Extra's delayed EndSpell-immunity transition.
+The final normal CTest run takes 401.05s: 26 core tests pass; the native aggregate ends
+at the unchanged historical Stage6b golden assertion described below, not a new gate.
 
 ### Easy stage sweep
 
@@ -248,10 +269,10 @@ done
 | 5 | complete | 43348 | - | 7025.9 | 10772.8 | 665 |
 | 6a | complete | 61041 | - | 27644.8 | 33844.9 | 1201 |
 | 6b | complete | 58853 | - | 22694.2 | 27796.8 | 1199 |
-| extra | collision | 7424 | 192 | 2269.9 | 3177.8 | 920 |
+| extra | collision | 67738 | 202 | 32346.5 | 41409.4 | 1536 |
 
 The corrected-runtime stage records, including the subsequent ID32 Stage3 and ID167/183
-Stage6b reruns, cover 332805 updates and eight clears. All nine tapes freshly replayed.
+Stage6b and ID192 Extra reruns, cover 393119 updates and eight clears. All nine tapes freshly replayed.
 These Intel Xeon Platinum 8573C/GCC 14.2 samples were run
 alongside other verification; timings are workload records, not performance guarantees.
 The earlier AMD EPYC/GCC12 five-clear sweep is superseded for current coverage. The
@@ -345,10 +366,3 @@ Generated source-oracle translation units belong only in ignored build directori
 Their maintained generators share `source_probe_support.*`, not another tool's main().
 Game DAT/EXE/assets are not distributed. Keep [third-party notices](THIRD_PARTY_NOTICES.md)
 and the original preparation attribution; do not assign those artifacts a new license.
-
-The separate ID203 source-certificate checkpoint uses CASE_GROUP=id203 in the same
-real-data generator. It preserves baseline 1711 and three genuine failures at
-1711/4823/2896, with fresh O3/O0 replay agreement. The native bullet-bound executable
-checks WAIT/vector timing and guards plus DESPAWN's actual last lethal movement and
-nonlethal next update. Both O0/O3 pass. The existing full aggregate's historical
-Stage6b golden mismatch remains unresolved; the focused result does not waive it.

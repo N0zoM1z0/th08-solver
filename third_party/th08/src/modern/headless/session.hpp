@@ -136,6 +136,20 @@ struct CollisionEvent {
     float laser_origin_x = 0, laser_origin_y = 0, laser_angle = 0;
     std::uint16_t movement_input = 0, sampled_input = 0;
 };
+enum class BodyForecastKind { ObservedMotion, RandomMoveEnvelope, ConditionalLifecycle };
+enum class BodyForecastFailure { None, Clock, Owner, Motion, Program, Lifecycle, Spawn, Numeric };
+struct EnemyBodyWarning {
+    float min_x = 0, min_y = 0, max_x = 0, max_y = 0;
+    unsigned update = 0;
+    int owner = -1;
+    BodyForecastKind kind = BodyForecastKind::ObservedMotion;
+};
+struct EnemyBodyForecast {
+    std::vector<EnemyBodyWarning> warnings;
+    BodyForecastFailure failure = BodyForecastFailure::None;
+    int owner = -1, opcode = -1;
+    unsigned update = 0;
+};
 struct State {
     std::uint64_t frame = 0;
     float x = 0, y = 0, deaths = 0;
@@ -174,6 +188,9 @@ class Session {
     // Reused bounded ECL bullet previews. Only a linear current cursor, known
     // enemy motion and deterministic non-aimed patterns are exported.
     const std::vector<UpcomingBulletSpawnView> &upcoming_bullet_spawns(unsigned horizon);
+    // Source-owned bounds for currently observed eligible enemy bodies.
+    // No RNG operand is evaluated; random moves use an all-angle envelope.
+    EnemyBodyForecast enemy_body_forecast(unsigned horizon) const;
     float focused_axis_speed() const;
     float focused_diagonal_speed() const;
     // A diagnostics projection of actor/script state, not a serialized world.
