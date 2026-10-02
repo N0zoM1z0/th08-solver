@@ -134,6 +134,34 @@ foreach(seed IN ITEMS 0 1 65535)
     message(FATAL_ERROR "ID89 did not exercise its ECL candidate constraint: ${report}")
   endif()
 endforeach()
+# ID93 creates a one-frame-startup pooled laser after the policy decision. By
+# the first observed LaserView, input latency makes the measured hit unavoidable.
+# Preserve that failure and require a source-decoded, currently due opcode-114
+# warning with no unsupported future substituted into the three seeded runs.
+scene(spell93-pooled-laser-baseline 4b 93 0 hazard-reactive 2000 collision 2 1539)
+file(READ "${WORK}/spell93-pooled-laser-baseline.json" spell93)
+foreach(pair IN ITEMS "laser_slot;0" "laser_hitbox_call;0")
+  list(GET pair 0 key)
+  list(GET pair 1 expected)
+  field("${spell93}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "ID93 changed imminent pooled-laser source: ${spell93}")
+  endif()
+endforeach()
+foreach(seed IN ITEMS 0 1 65535)
+  scene(spell93-portfolio-seed${seed} 4b 93 ${seed} spell-portfolio 5000 complete 0 3392)
+  file(READ "${WORK}/spell93-portfolio-seed${seed}.json" report)
+  field("${report}" policy_profile_last profile)
+  field("${report}" policy_imminent_laser_due_spawns due)
+  field("${report}" policy_imminent_laser_warnings warnings)
+  field("${report}" policy_imminent_laser_unsupported_spawns unsupported)
+  field("${report}" policy_imminent_laser_constrained_decisions constrained)
+  if(NOT profile STREQUAL "\"id93-imminent-pooled-laser\"" OR
+     NOT due STREQUAL "82" OR NOT warnings STREQUAL "82" OR
+     NOT unsupported STREQUAL "0" OR NOT constrained GREATER 0)
+    message(FATAL_ERROR "ID93 did not exercise its source-owned spawn warning: ${report}")
+  endif()
+endforeach()
 # ID198's fixed-origin beam requires the same observed rotation model as ID85,
 # but constant paths oscillate into a later bullet/beam trap. Preserve that
 # first failure and require the isolated two-leg proposal set through spell end.

@@ -124,10 +124,10 @@ No remote host is needed. Repeated prefix work is explicit; no unsafe native sna
 or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
-The Release `spell-portfolio` run completed 46 and retained 10 genuine collision
+The Release `spell-portfolio` run completed 47 and retained 9 genuine collision
 prefixes; all 56 tapes then agreed in a fresh process on the semantic fields used by
 `agree()` above. This is broad algorithm evidence, while the smaller real-data CTest
-keeps five transform/profile boundaries practical to rerun on every local change.
+keeps the affected transform/profile boundaries practical to rerun on every local change.
 
 Acceleration removes wall-clock waiting and presentation work while retaining every
 original calc-chain update, timer increment and shared RNG consumer in that chain.
