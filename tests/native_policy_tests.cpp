@@ -110,6 +110,12 @@ int main() {
     check(turn == 36 && turn_decision.candidates[7].continuation_action == 132,
           "two-leg ranking collapsed the selected down-then-right path to one direction");
 
+    const auto corner_profile = th08::policy::native_spell_policy(32);
+    check(corner_profile.hazards.bullet_horizon == 13 &&
+              corner_profile.hazards.first_leg_updates == 1 && !corner_profile.direct_ecl_lasers &&
+              !corner_profile.imminent_pooled_lasers && !corner_profile.upcoming_ecl_bullets,
+          "ID32 changed its explicit observed-bullet maneuver budget");
+
     const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
     HazardReactiveStats acceleration_stats;
     const auto accelerated =
