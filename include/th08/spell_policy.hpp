@@ -26,6 +26,8 @@ struct NativeSpellPolicy {
 // before continuation; the unchanged constant-path ablation still collides.
 // ID167 keeps the original horizon but needs a short maneuver before its
 // continuation to avoid the observed bottom-corner constant-path trap.
+// ID183 large-bullet approaches remain visible well before the short horizon;
+// its isolated profile uses the already-tested 32-update/two-leg search scope.
 // The native runtime remains the acceptance oracle.
 inline NativeSpellPolicy native_spell_policy(int spell_id) {
     if (spell_id == 32)
@@ -40,6 +42,8 @@ inline NativeSpellPolicy native_spell_policy(int spell_id) {
         return {"id139-two-leg-bounce", {32, 120, true, 0x1ff, false, 4, false, false, true}};
     if (spell_id == 167)
         return {"id167-two-leg-corner", {12, 120, true, 0x1ff, false, 4}};
+    if (spell_id == 183)
+        return {"id183-two-leg-large-bullet", {32, 120, true, 0x1ff, false, 4}};
     if (spell_id == 198)
         return {"id198-two-leg-rigid-laser", {12, 120, true, 0x1ff, true, 4}};
     if (spell_id == 199)
