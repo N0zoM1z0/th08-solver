@@ -118,10 +118,17 @@ int main() {
 
     const auto corner167 = th08::policy::native_spell_policy(167);
     check(corner167.hazards.bullet_horizon == 12 && corner167.hazards.first_leg_updates == 4 &&
-              th08::policy::native_spell_policy(183).hazards.first_leg_updates == 0 &&
+              th08::policy::native_spell_policy(203).hazards.first_leg_updates == 0 &&
               !corner167.direct_ecl_lasers && !corner167.imminent_pooled_lasers &&
               !corner167.upcoming_ecl_bullets,
           "ID167 maneuver budget escaped its isolated observed-bullet profile");
+
+    const auto large_bullet183 = th08::policy::native_spell_policy(183);
+    check(large_bullet183.hazards.bullet_horizon == 32 &&
+              large_bullet183.hazards.first_leg_updates == 4 &&
+              !large_bullet183.hazards.boundary_bounce_projection &&
+              !large_bullet183.upcoming_ecl_bullets,
+          "ID183 changed its observed large-bullet maneuver budget or source scope");
 
     const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
     HazardReactiveStats acceleration_stats;

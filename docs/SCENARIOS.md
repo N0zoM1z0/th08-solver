@@ -129,8 +129,17 @@ collides at 932; all constant proposals predict collision from observation 917.
 The successful profile changes earlier decisions (first divergence 567), rather
 than claiming a late escape from that prefix. It reuses unchanged source projections
 and costs 444852 candidate evaluations for each 5492-update complete seed wrapper.
-Seeds 0/1/65535 freshly replay at O0/O3. Continuous Stage6b passes ID167 but still
-collides in ID183 at 54401; no full-stage completion is counted.
+Seeds 0/1/65535 freshly replay at O0/O3. Its preceding-checkpoint Stage6b run passed ID167 but collided in ID183 at 54401;
+the later ID183 profile supplies the current whole-stage clear.
+
+ID183's original constant-path profile collides at 1041. All nine interventions at
+1030 fail; upward input at 1029 survives through 1041 with the original suffix. Horizon 13 alone instead fails at 820, and
+H12/two-leg4 fails at 819. In the latter run the fatal 24-pixel bullet is already
+visible 31 updates earlier, beyond the short horizon. Its isolated profile therefore
+uses the existing 32-update/two-leg4 search scope, with unchanged linear source
+projection: 81 candidates and 31 future bullet steps, 104652 candidates per wrapper.
+It clears all three 1292-update seed wrappers and continuous Stage6b at 58853, with
+fresh O3 and O0 replay. It does not enable ID139's boundary-bounce source adapter.
 
 ID139 uses source-bounded active boundary-bounce projection. The native boundary test
 runs before movement and uses loaded sprite dimensions, not the smaller collision box.
