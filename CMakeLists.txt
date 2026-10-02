@@ -226,6 +226,7 @@ if(BUILD_TESTING)
     add_test(NAME headless_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_headless>
       -DPROBE_EXECUTABLE=$<TARGET_FILE:th08_headless_probe>
+      -DLASER_ITEMS_EXECUTABLE=$<TARGET_FILE:th08_headless_laser_items>
       -DDAT=${TH08_HEADLESS_DAT}
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/headless-regression
       -DCOMPARE_EXECUTABLE=${TH08_HEADLESS_COMPARE_EXECUTABLE}
