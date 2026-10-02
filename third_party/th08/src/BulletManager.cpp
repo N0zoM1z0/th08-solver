@@ -20,7 +20,17 @@ void __fastcall CopyBulletAnmVmCore(AnmVm *dst, const AnmVm *src);
 void __fastcall SelectBulletSprite(AnmVm *dst, AnmVm *base, AnmVm *sizeSource, i32 offset);
 
 
-void __fastcall fsincos(f32 *sine, f32 *cosine, f32 angle) {}
+void __fastcall fsincos(f32 *sine, f32 *cosine, f32 angle)
+{
+    // Cancellation uses this geometry to create gameplay items, not just draw
+    // lasers. Reuse the established platform math path; never leave outputs
+    // dependent on stack contents or optimization level.
+    f32 sineValue;
+    f32 cosineValue;
+    sincos(angle, sineValue, cosineValue);
+    *sine = sineValue;
+    *cosine = cosineValue;
+}
 
 // FUNCTION: th08 0x42a410
 BulletSpawnDescriptor::BulletSpawnDescriptor()

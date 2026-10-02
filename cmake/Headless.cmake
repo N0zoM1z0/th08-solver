@@ -57,6 +57,10 @@ target_link_libraries(th08_headless PRIVATE OpenSSL::Crypto)
 target_compile_options(th08_headless PRIVATE -ffp-contract=off)
 add_executable(th08_headless_probe tools/headless_probe.cpp)
 target_compile_features(th08_headless_probe PRIVATE cxx_std_17)
+add_executable(th08_headless_laser_items tests/headless_laser_items.cpp)
+target_link_libraries(th08_headless_laser_items PRIVATE th08_native_headless)
+target_compile_options(th08_headless_laser_items PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 
 set(TH08_HEADLESS_DAT "" CACHE FILEPATH "Private DAT for the optional full-scene regression")
 set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH

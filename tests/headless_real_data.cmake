@@ -2,6 +2,13 @@
 # Each launch owns fresh process globals and an isolated configuration directory.
 file(MAKE_DIRECTORY "${WORK}")
 get_filename_component(DAT "${DAT}" ABSOLUTE)
+if(LASER_ITEMS_EXECUTABLE)
+  execute_process(COMMAND "${LASER_ITEMS_EXECUTABLE}" "${DAT}"
+    RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr)
+  if(NOT result STREQUAL "0")
+    message(FATAL_ERROR "Native laser item regression failed: ${stdout} ${stderr}")
+  endif()
+endif()
 if(NOT DEFINED CASE_GROUP)
   set(CASE_GROUP all)
 endif()
