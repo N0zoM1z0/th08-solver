@@ -104,6 +104,14 @@ candidate path advances once and is reused across all bullets at that boundary. 
 seed-0 wrapper completes; seeds 1 and 65535 remain failures, and seed 1 confirms that
 RNG-dependent child patterns are outside this adapter.
 
+ID202 opts into the same bounded projection of already-observed WAIT bullets, with its
+original 12-update horizon. The random child's angle and speed have already been chosen
+by the native runtime before observation; forecasting its proven linear interval does
+not sample a future RNG state. ID202 does not enable the deterministic ECL adapter:
+other visible opcode-99 shots use random-angle selector 10082. The baseline collision
+at 3265 is avoided, but seed 0/1/65535 wrappers still collide at 4204/4216/3613. This is
+a local modeling improvement, not another completed checkpoint.
+
 ID89 observes only the current native ECL cursor. A constant
 opcode 136/137 selector for direct-laser EX callbacks 9/11/25 becomes a warning only
 when difficulty and timer state match and the currently observed parent, interpolation,

@@ -97,6 +97,14 @@ passing component tests are not completion percentages.
   constrained and no unsupported future was substituted. Fresh replay matches digest
   `954752188841509475`. Seed 1 still collides at 3455 and seed 65535 at 700; seed 1's
   confirmed gap is an RNG-dependent child pattern, so this is not multi-seed coverage
+- ID202's generic policy collides at update 3265 with slot 1369, a random child already
+  born on update 3258. Its copied WAIT program proves unchanged velocity through that
+  hit; enabling only the existing bounded WAIT projection avoids it without changing
+  the 12-update horizon. Up/up-left inputs at 3264 avoid the hit; all nine replacements
+  at 3265 are too late. The wrapper remains unsolved: seeds 0/1/65535 collide at
+  4204/4216/3613, with fresh replay agreement. Seed 0's new blocker is an ECL shot born
+  at 4203. A deterministic-preview extension stops earlier because opcode 99 uses
+  random-angle selector 10082; no RNG future was guessed or unknown shot omitted
 - Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
   Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
 - A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived
@@ -119,8 +127,9 @@ passing component tests are not completion percentages.
 
 Exact profiles and exclusions are in [Scenarios](SCENARIOS.md); measured records are
 in the [report index](../reports/native/README.md). Older subset samples used Linux
-x86_64, Intel Xeon Platinum 8573C, GCC 14.2. Native samples use AMD EPYC 7B12, GCC 12.2,
-Release. Both profiles disable contraction; timings depend on environment.
+x86_64, Intel Xeon Platinum 8573C, GCC 14.2. Earlier native samples use AMD EPYC 7B12,
+GCC 12.2; the ID202 checkpoint uses Intel Xeon Platinum 8573C, GCC 14.2. Both native
+profiles are Release with contraction disabled; timings depend on environment.
 
 ## Existing reusable components
 
@@ -135,17 +144,22 @@ The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
 (28 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, the adapted IDs 85/89/93/198/201 plus retained
-profile boundaries, fresh replay, genuine collision/budget failure and the Stage 6b
+duration, original boss transitions, the adapted IDs 85/89/93/198/201, ID202's partial
+WAIT improvement and retained failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
+The current GCC14 host passes core tests and the focused ID202 O0/O3/replay fixtures,
+but its full native CTest hits the retained GCC12-host Stage 6b golden-digest mismatch.
+Clean-main execution reproduces it; outcomes and collision details are unchanged.
+The aggregate is not reported as passing on this host.
 
 ## Next useful work
 
-1. Diagnose ID202 at its update-3265 active-WAIT collision. Reuse the bounded transform
-   trace to distinguish the moving parent, a child spawn and an ECL shot before extending
-   the ID201 adapter; stop if its program crosses an unmodeled transform or RNG boundary
+1. ID202's remaining seed-0 failure needs advance emission awareness at update 4203.
+   Its other ECL shots and child patterns consume random angles. Evaluate a conservative
+   emission envelope before considering branch-owned full-world RNG; do not enable the
+   deterministic ID201 preview while silently excluding those random shots
 2. Diagnose ID204's update-1205 relative-direction transform (`0x40`). Record its native
    interval/repeat state and nine-action prefix before adding an exact, opt-in projection
 3. Diagnose ID139's update-5326 bottom-excluding bounce (`0x800`). Mirror the source
