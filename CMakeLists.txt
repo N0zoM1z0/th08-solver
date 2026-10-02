@@ -214,7 +214,7 @@ if(BUILD_TESTING)
   add_executable(documentation_tests tests/documentation_tests.cpp)
   target_link_libraries(documentation_tests PRIVATE th08_geometry)
   get_property(th08_core_tests DIRECTORY PROPERTY TESTS)
-  list(REMOVE_ITEM th08_core_tests source_oracle source_effect_pool headless_repair_protocol)
+  list(REMOVE_ITEM th08_core_tests source_oracle source_effect_pool headless_repair_protocol headless_report_contract)
   list(LENGTH th08_core_tests th08_core_test_count)
   math(EXPR th08_core_test_count "${th08_core_test_count} + 1")
   add_test(NAME documentation COMMAND documentation_tests

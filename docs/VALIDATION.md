@@ -126,17 +126,25 @@ cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" -DCOMPARE_EXECUTABLE="$PW
 
 The 2026-10-02 Intel Xeon Platinum 8573C/GCC 14.2 run passed all 26 core tests and
 the four focused ID202 scenes with fresh replay and native O0/O3 agreement. The normal
-aggregate reached every scene successfully but failed its existing Stage 6b golden:
-this host's digest is `6279671846274327225`, versus recorded GCC12-host digest
-`4060221407534777929`. A clean-main CLI and O0/O3 replay reproduce the new-host digest;
-the update-854 slot-664 collision, bounds, RNG and feedback are unchanged. The precise
-cross-host projection difference is not diagnosed, and the old golden remains intact.
-This is a reported aggregate-test blocker, not a full native CTest pass. The earlier
-aggregate report is retained; the separate ID202 report records this host's evidence.
+aggregate originally failed the unconditional historical Stage6b digest assertion:
+this host produces 6279671846274327225, versus historical 4060221407534777929. Clean-main
+and O0/O3 replay reproduce the current digest, while the 854/slot664 boundary, complete
+collision object, RNG and feedback agree. The older profile did not identify solver
+build/libm/CPU sufficiently to claim cross-environment float-bit equality. The precise
+intermediate difference is not diagnosed.
+
+The stage6b-semantic-v1 contract now guards DAT/profile/scene, terminal, RNG, feedback
+and every collision field instead. It retains the old digest/report and emits
+historical_digest_match plus numerical_profile_match=unverified; there is no compiler
+whitelist or replacement digest. Strict current-run replay/O0/O3/diagnostic equality and
+all 18 input-latch probes are unchanged. Negative DAT, RNG (including malformed fractional
+integers), collision and replay mutations fail. This loses the unsupported historical
+intermediate-trajectory oracle, so cross-host float drift outside the named boundary
+is not proven absent. The historical aggregate remains an immutable provenance record.
 `CASE_GROUP=id204` similarly runs the four ID204 fixtures and emits `id204-summary.json`.
 Its baseline and seed-1 failure, as well as both complete seed wrappers, agree in fresh
 processes and at native O0/O3 on this host. Both group selectors use the same scene/replay
-checks as the full aggregate, whose retained cross-host golden remains unchanged.
+checks as the full aggregate, whose historical digest remains provenance, with current-run equality still strict.
 
 `CASE_GROUP=id32` runs the six ID32 wrapper/Stage3 cases and emits `id32-summary.json`.
 All three seed wrappers and both baseline/complete stage tapes agree at O0/O3.
@@ -174,8 +182,8 @@ player bounds `[373.174988,431.174988,374.825012,432.825012]` overlap hazard bou
 `[371.920898,428.774048,375.920898,432.774048]`. Movement consumes input 133 from
 update 853, while update 854 samples 4165. Nine replacements at 854 all collide;
 replacing 853 with left/up-left/down-left survives the observed update 854. The
-real-data CTest guards these witnesses, verifies diagnostics leave the original
-`4060221407534777929` trace unchanged, and compares each branch tape at O0/O3 when
+real-data CTest guards these witnesses and verifies diagnostics leave the current
+run’s trace unchanged (the historical 4060221407534777929 is separately labeled), and compares each branch tape at O0/O3 when
 configured. It does not assert a whole-stage solution or an independent physics oracle.
 
 The probe serializes its nine fresh processes and writes tapes, per-branch JSON/TSV
@@ -255,8 +263,8 @@ The final search used 91 candidates and 138198 native candidate updates, includi
 replayed-prefix updates, in 384041ms. Initial execution used 787 updates/3919.03ms; the
 built-in final replay used 5492 updates/875.446ms. Zero interrupted updates were charged.
 The selected tape digest is 2771752472810487521 and independently agrees at native O0/O3.
-The final normal CTest took 799.97s: 26 core tests and the headless protocol test pass;
-the aggregate stops at the retained Stage6b golden. The latest expanded protocol suite
+The preceding f372 normal CTest took 799.97s and stopped at the old unconditional
+Stage6b digest assertion. The latest expanded protocol suite
 also passes separately. These host timings include process setup/artifacts and concurrent verification; they are
 not the candidate policy's decision-only time or a performance guarantee.
 
@@ -268,8 +276,7 @@ all nine first-action families, deterministic ties and 16533-expansion bound. Th
 ID203 group checks baseline 1711, rolling 787 for three seeds, strict replay/prefix control,
 and the complete bounded search with fresh O3/O0 replay. Its public JSON records include
 child/repair executable SHA256 identities; `source_revision` remains the imported native
-runtime provenance and does not identify a planner build. Historical golden limitations
-below remain separate until their numerical-profile contract is resolved.
+runtime provenance and does not identify a planner build. Historical numerical-profile limitations remain explicit under the v1 semantic contract.
 
 `CASE_GROUP=id203` accepts `-DREPAIR_EXECUTABLE=$PWD/build-headless/th08_headless_repair`
 to include the search (the normal CTest supplies it). The tracked five-case report
