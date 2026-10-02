@@ -40,7 +40,11 @@ function(agree left right)
 endfunction()
 
 function(scene name stage spell seed strategy budget outcome exit frames)
-  set(args --stage "${stage}" --difficulty 0 --seed "${seed}" --frames "${budget}")
+  set(difficulty 0)
+  if(ARGC GREATER 9)
+    list(GET ARGN 0 difficulty)
+  endif()
+  set(args --stage "${stage}" --difficulty "${difficulty}" --seed "${seed}" --frames "${budget}")
   if(NOT spell LESS 0)
     list(APPEND args --spell-id "${spell}")
   endif()
@@ -78,6 +82,22 @@ endforeach()
 scene(spell179-stationary 6b 179 0 stationary 2000 collision 2 382)
 scene(stage1-budget 1 -1 0 reactive 10 frame_limit 2 10)
 scene(stage6b-reactive 6b -1 0 reactive 50000 collision 2 854)
+# Distinct spell profiles guard the measured portfolio boundary. ID195 needs
+# vector acceleration; ID199 deliberately retains constant-velocity ranking.
+scene(spell193-portfolio extra 193 0 spell-portfolio 5000 complete 0 3692 4)
+scene(spell195-portfolio extra 195 0 spell-portfolio 6000 complete 0 4712 4)
+scene(spell199-portfolio extra 199 0 spell-portfolio 5000 complete 0 4292 4)
+foreach(pair IN ITEMS "spell193-portfolio;source-vector-ranking"
+                      "spell195-portfolio;source-vector-ranking"
+                      "spell199-portfolio;id199-linear-ranking")
+  list(GET pair 0 name)
+  list(GET pair 1 expected)
+  file(READ "${WORK}/${name}.json" report)
+  field("${report}" policy_profile_last actual)
+  if(NOT actual STREQUAL "\"${expected}\"")
+    message(FATAL_ERROR "${name}: selected ${actual}, expected ${expected}")
+  endif()
+endforeach()
 
 # Diagnostics must observe the existing failure without changing its trajectory.
 set(stage6_tape "${WORK}/stage6b-reactive.actions")

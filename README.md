@@ -16,15 +16,17 @@ algorithm failures, and improve measured solve cost.
   exhaustion is not a proof of impossibility, and a short route is not a full solution
 
 The tracked TH08 runtime now runs complete real-data scenes natively on Linux without
-a display, Wine or a real-time frame limiter. A simple reactive policy completes Stage 1
-Easy and spell ID179 Easy; fresh-process action replay checks their state traces.
-Existing controlled/synthetic planners remain available for algorithm comparisons.
-See [current results and remaining work](docs/STATUS.md).
+a display, Wine or a real-time frame limiter. A spell-aware hazard portfolio completes
+43 of the 56 enumerated Easy/Extra spell checkpoints at seed 0, while the simpler
+reactive policy still provides a stable Stage 1 baseline. Fresh-process action replay
+checks every sweep result. Existing controlled/synthetic planners remain available for
+algorithm comparisons. See [current results and remaining work](docs/STATUS.md).
 
 **Legacy subset complete offline spell solutions: 0.** Historical subset-engine reports
-retain that count. The native headless profile separately verifies one complete spell
-and one complete stage, including native graze/score/item feedback. Its platform and
-numerical profile are explicit; retail Windows equivalence is not established.
+retain that count. The native headless profile separately verifies 43 complete spell
+checkpoints in the portfolio sweep and one complete stage, including native
+graze/score/item feedback. Its platform and numerical profile are explicit; retail
+Windows equivalence is not established.
 
 ## Take over locally
 

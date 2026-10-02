@@ -13,7 +13,9 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <th08/native_policy.hpp>
 #include <th08/reactive.hpp>
+#include <th08/spell_policy.hpp>
 #include <unistd.h>
 #include <vector>
 
@@ -167,7 +169,7 @@ void write_collision(std::ostream &out, const th08::headless::CollisionEvent &ev
     bounds(event.hazard);
     out << ",\"vx\":" << event.vx << ",\"vy\":" << event.vy
         << ",\"active_transforms\":" << event.active_transforms
-        << ",\"movement_input\":" << event.movement_input
+        << ",\"laser_slot\":" << event.laser_slot << ",\"movement_input\":" << event.movement_input
         << ",\"sampled_input\":" << event.sampled_input << '}';
 }
 } // namespace
@@ -223,7 +225,8 @@ int main(int argc, char **argv) {
             throw std::runtime_error("--dat and a positive frame budget are required");
         if (prefix_frame > limit || (allow_unused && replay_path.empty()))
             throw std::runtime_error("invalid replay/diagnostic boundary");
-        if (strategy != "stationary" && strategy != "reactive")
+        if (strategy != "stationary" && strategy != "reactive" && strategy != "hazard-reactive" &&
+            strategy != "hazard-reactive-linear" && strategy != "spell-portfolio")
             throw std::runtime_error("unknown strategy");
         if (!shoot_set)
             shoot = config.spell < 0;
@@ -242,6 +245,9 @@ int main(int argc, char **argv) {
         const auto initial_io_ns = session.file_io_time_ns();
         const auto start = std::chrono::steady_clock::now();
         double update_ms = 0, decision_ms = 0, diagnostics_ms = 0;
+        th08::policy::HazardReactiveStats policy_stats;
+        std::uint64_t linear_profile_decisions = 0;
+        const char *last_policy_profile = "none";
         auto state = session.state();
         bool started = false, complete = false;
         unsigned peak = 0, first_hit = 0, spell_start = 0;
@@ -252,6 +258,7 @@ int main(int argc, char **argv) {
         for (unsigned i = 0; i < limit; ++i) {
             const auto decision_start = std::chrono::steady_clock::now();
             const auto &observed = session.bullets();
+            const auto &observed_lasers = session.lasers();
             std::uint16_t action = 4;
             if (!replay_path.empty()) {
                 if (i == replay.size()) {
@@ -263,6 +270,26 @@ int main(int argc, char **argv) {
                 if (strategy == "reactive")
                     action = th08::policy::reactive(state.x, state.y, session.focused_axis_speed(),
                                                     session.focused_diagonal_speed(), observed);
+                else if (strategy == "hazard-reactive" || strategy == "hazard-reactive-linear" ||
+                         strategy == "spell-portfolio") {
+                    auto profile = th08::policy::native_spell_policy(-1);
+                    if (strategy == "hazard-reactive-linear")
+                        profile = {"linear-ranking", {12, 120, false}};
+                    else if (strategy == "spell-portfolio") {
+                        const int policy_spell = config.spell >= 0
+                                                     ? config.spell
+                                                     : (state.spell_active ? state.spell : -1);
+                        profile = th08::policy::native_spell_policy(policy_spell);
+                    }
+                    last_policy_profile = profile.name;
+                    if (!profile.hazards.vector_acceleration)
+                        ++linear_profile_decisions;
+                    action = th08::policy::hazard_reactive(
+                        state.x, state.y, state.hurt_half_x, state.hurt_half_y,
+                        session.focused_axis_speed(), session.focused_diagonal_speed(),
+                        state.latched_input, observed, observed_lasers, policy_stats,
+                        profile.hazards);
+                }
                 if (shoot)
                     action |= 1;
                 // Alternating confirm advances real message scripts; timeline
@@ -382,6 +409,21 @@ int main(int argc, char **argv) {
             << "\",\"simulation_ms\":" << std::max(0., update_ms - io_ms)
             << ",\"file_io_ms\":" << io_ms << ",\"decision_ms\":" << decision_ms
             << ",\"execution_ms\":" << ms << ",\"diagnostics_ms\":" << diagnostics_ms
+            << ",\"policy_decisions\":" << policy_stats.decisions
+            << ",\"policy_candidates\":" << policy_stats.candidates
+            << ",\"policy_bullet_checks\":" << policy_stats.bullet_checks
+            << ",\"policy_vector_acceleration_checks\":" << policy_stats.vector_acceleration_checks
+            << ",\"policy_unsupported_transform_checks\":"
+            << policy_stats.unsupported_transform_checks
+            << ",\"policy_laser_paths\":" << policy_stats.laser_paths
+            << ",\"policy_laser_paths_pruned\":" << policy_stats.laser_paths_pruned
+            << ",\"policy_laser_checks\":" << policy_stats.laser_checks
+            << ",\"policy_predicted_overlaps\":" << policy_stats.predicted_overlaps
+            << ",\"policy_bullet_horizon\":12,\"policy_laser_horizon\":120"
+            << ",\"policy_vector_acceleration_enabled\":"
+            << (policy_stats.decisions != 0 && linear_profile_decisions == 0 ? "true" : "false")
+            << ",\"policy_linear_profile_decisions\":" << linear_profile_decisions
+            << ",\"policy_profile_last\":\"" << last_policy_profile << "\""
             << ",\"previous_trace_digest\":\"" << previous_digest
             << "\",\"prefix_frame\":" << prefix_frame << ",\"prefix_trace_digest\":\""
             << prefix_digest << "\",\"unused_actions\":"

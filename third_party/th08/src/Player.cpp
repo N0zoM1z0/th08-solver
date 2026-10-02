@@ -479,7 +479,7 @@ lethalPath:
         return 0;
 #ifdef TH08_HEADLESS
     headless::record_collision(headless::CollisionKind::Laser,
-        playerMin, playerMax, incomingMin, incomingMax);
+        playerMin, playerMax, incomingMin, incomingMax, origin);
 #endif
     g_GameManager.RandomizeAntiTamper();
     this->Die();

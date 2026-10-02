@@ -25,6 +25,8 @@ has its own profile and evidence:
 |---|---|
 | Complete stage | Stage 1 Easy, Reimu/Yukari, seed 0; 22176 updates, no collision |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
+| Spell portfolio sweep | 43/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
+| Transform/profile cross-check | IDs 193 and 195 source-vector, ID199 linear ranking; seeds 0/1/65535 complete |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
 | Deterministic feedback | Fresh-process tapes agree on per-frame projection, terminal, RNG and graze/score/gauge |
@@ -47,6 +49,21 @@ passing component tests are not completion percentages.
   rather than overlap feasibility. Replacing update 853 with left/up-left/down-left
   avoids update 854; replacing update 854 is too late. This is a local escape witness,
   not stage completion. No strategy parameters or original update order were changed
+- The hazard policy accounts for the one-update input latch, forecasts existing native
+  lasers, and mirrors active vector-acceleration order from source-owned state. A
+  conservative laser broad phase reduced ID151 policy time from about 7.8 to 2.1 seconds
+  without shortening its 120-update horizon. The native update remains the collision oracle
+- On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
+  checkpoints. `spell-portfolio` completed 43/56 with no lost baseline completion;
+  all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
+  and trace projection. The remaining failures are eight bullets, three pooled lasers,
+  one direct ECL laser hitbox and one lethal region
+- Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
+  IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
+  constant-velocity ranking; its isolated selector lives outside the generic kernel
+- Preserving the native final active-laser collision before removal completed ID163.
+  Retained failures are bullet IDs 32/139/167/183/201/202/203/204, pooled-laser IDs
+  85/93/198, direct ECL laser ID89 and lethal-region ID192
 - Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
   Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
 - A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived
@@ -83,26 +100,27 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 25 core CTests without private data, plus two optional pinned-source tests
-(27 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, fresh replay, genuine collision/budget failure
-and the Stage 6b input-latch counterfactuals.
+There are 26 core CTests without private data, plus two optional pinned-source tests
+(28 total), and one optional native real-data CTest. The native test covers complete
+duration, original boss transitions, three portfolio profiles, fresh replay, genuine
+collision/budget failure and the Stage 6b input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
 
 ## Next useful work
 
 1. Reproduce the checked profiles on the local machine before changing algorithms
-2. Broaden real-DAT complete checkpoints and seeds, keeping failures and simple
-   baselines. Prioritize gameplay opcodes/lifecycles that unlock meaningful whole scenes
+2. Diagnose the 13 retained sweep failures from their actual collision source. Direct
+   ECL hitboxes, pooled-laser timing, WAIT/direction transforms and lethal regions need
+   distinct observations or policies rather than one global parameter change
 3. Broaden native stage/spell profiles while preserving failures and original transitions.
    Stage 1 ends at stage clear; continuous multi-stage execution is not implemented.
    Never treat ID179's despawning slots as an empty next-stage pool
 4. Add candidate-owned state before caching futures affected by aiming, damage,
    form/graze feedback, RNG or pool contention. Position alone is not a world-state key
 5. Optimize measured end-to-end bottlenecks; retain outcome, action and replay checks.
-   Choose algorithms per scene/opcode behavior. The new reactive policy is a baseline,
-   not complete or optimal search; it does not supply branchable native snapshots
+   The portfolio is neither complete nor optimal and does not supply branchable native
+   snapshots. Add a spell profile only after a baseline/ablation and multi-seed evidence
 
 Do not return to full camera/menu reconstruction merely to unblock a controlled
 benchmark. Do not concatenate isolated spell fixtures and label the result an actual stage.

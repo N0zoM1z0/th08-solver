@@ -55,6 +55,21 @@ damage, graze/score/gauge/item feedback and cancellation. Stage mode also shoots
 alternates confirm to advance actual message scripts; spell mode defaults to movement
 only. `--shoot 0|1` overrides shooting. Focused `stationary` is retained as a bad baseline.
 
+`hazard-reactive` applies the previously latched movement, then ranks the same nine
+constant-direction proposals over 12 bullet updates and 120 pooled-laser updates. It
+projects an already-active vector-acceleration opcode with the native velocity-before-
+position order. Other active bullet transforms remain explicitly counted soft evidence;
+future transform-program activation, new emission and ECL-owned transient hitboxes are
+not inferred. Existing lasers use copied raw lifecycle fields and source collision
+coordinates. A conservative perpendicular-axis broad phase can discard a candidate and
+laser only when their predicted path rectangles cannot overlap at the observed angle.
+
+`spell-portfolio` selects hazard options in `spell_policy.hpp`. The default is the
+source-vector profile. ID199 uses the measured linear-ranking ablation: it completed
+seeds 0, 1 and 65535, while vector ranking failed seed 0; IDs 193/195 show the opposite
+need for vector projection. This is an explicit proposal choice, not altered native
+physics or a claim that either forecast models every transform.
+
 Action tapes contain decimal original 16-bit input masks, one per update (shoot 1,
 bomb 2, focus 4, directions 16/32/64/128, confirm 4096). Replay uses a fresh process,
 without planner decisions, and rejects extra actions beyond the execution boundary.
