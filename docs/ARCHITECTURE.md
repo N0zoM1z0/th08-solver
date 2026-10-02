@@ -512,4 +512,5 @@ preparation, pool ownership and the ECL bridge. A caller must explicitly supply
 pool occupancy, camera and shared RNG. Successful immediate spawning now reaches
 the next timeline boundary with the real DAT under supplied-state assumptions;
 no later manager phase is implied. The effect pool does not depend on ECL or
-practice entry, and does not retire effects without the missing lifecycle owner.
+practice entry. Its restricted unit-rate update owns effect51 cull/static retirement,
+while global phase ordering and other effect/render consumers remain missing.

@@ -41,6 +41,7 @@ Effect51Animation compile_effect51_animation(resources::View bytes) {
     const auto &sprite = decoded.sprites[121];
     result.sprite_width = sprite.width;
     result.sprite_height = sprite.height;
+    result.unit_rate_script73 = true;
     return result;
 }
 } // namespace th08::effect

@@ -1,6 +1,9 @@
 #include <cmath>
+#include <limits>
 #include <stdexcept>
 #include <th08/effect_pool.hpp>
+#include <th08/kinematics.hpp>
+#include <th08/timing.hpp>
 
 namespace th08::effect {
 namespace {
@@ -21,6 +24,19 @@ bool valid_animation(const Effect51Animation &value) {
             return false;
     return true;
 }
+bool script73_waiting(const Effect51Animation &value) {
+    const auto &control = value.control;
+    // This projection begins AFTER executing script73's time-zero instructions
+    // and remains at its static-completion instruction. Interrupts, external
+    // ANM freezes and arbitrary restored PCs need the full VM, not this phase.
+    return value.unit_rate_script73 && control.pc == 2 && control.sprite == 121 && control.active &&
+           control.visible && !control.stopped && !control.frozen && !control.has_return &&
+           control.pending_interrupt == 0;
+}
+void tick_unit(animation::control::Clock &clock) {
+    clock.previous = clock.current;
+    timing::tick(clock.current, clock.fraction, 1.0f);
+}
 } // namespace
 
 const char *name(Status status) {
@@ -32,6 +48,19 @@ const char *name(Status status) {
     case Status::missing_context:
         return "MISSING_CONTEXT";
     case Status::invalid_state:
+        return "INVALID_STATE";
+    }
+    return "INVALID_STATE";
+}
+const char *name(UpdateStatus status) {
+    switch (status) {
+    case UpdateStatus::advanced:
+        return "ADVANCED";
+    case UpdateStatus::missing_context:
+        return "MISSING_CONTEXT";
+    case UpdateStatus::unsupported_animation:
+        return "UNSUPPORTED_ANIMATION";
+    case UpdateStatus::invalid_state:
         return "INVALID_STATE";
     }
     return "INVALID_STATE";
@@ -138,6 +167,83 @@ Result PrimaryPool::spawn_effect51(const Effect51Request &request, const Effect5
     spawn_event_ = true;
     if (stream)
         *rng = *stream;
+    return result;
+}
+
+UpdateResult PrimaryPool::advance_effect51(const Effect51UpdateInputs &inputs) {
+    scratch_.clear();
+    if (!inputs.deathbomb_freeze)
+        return {UpdateStatus::missing_context};
+    UpdateResult result{UpdateStatus::advanced};
+    for (std::size_t index = 0; index < primary_capacity; ++index) {
+        const auto &slot = slots_[index];
+        if (!slot.active)
+            continue;
+        // The source increments activeCount before callback/ANM retirement, so
+        // this observation can exceed the live occupancy after a successful phase.
+        ++result.source_active_count;
+        if (!slot.effect51_known)
+            return {UpdateStatus::missing_context};
+        if (*inputs.deathbomb_freeze)
+            continue;
+
+        auto next = slot;
+        const auto callback =
+            cp::update(next.particle, inputs.camera, inputs.bosses, inputs.stage_tint);
+        if (callback == cp::Status::missing_context)
+            return {UpdateStatus::missing_context};
+        if (callback == cp::Status::invalid_state)
+            return {UpdateStatus::invalid_state};
+        ++result.updated;
+        next.animation.fields = next.particle.animation;
+        if (callback == cp::Status::culled) {
+            // Motion before the view-cone test remains observable on the dead
+            // slot. Neither ANM nor its effect timer has run on this path.
+            next.active = false;
+        } else {
+            if (!script73_waiting(next.animation))
+                return {UpdateStatus::unsupported_animation};
+            auto &control = next.animation.control;
+            if (!valid_animation(next.animation) || control.time.current < 1 ||
+                control.time.fraction != 0.0f)
+                return {UpdateStatus::invalid_state};
+            if (control.time.current >= 30000) {
+                // Opcode2 is static completion: visibility is retained and the
+                // source returns before angular motion and either timer tail.
+                control.active = false;
+                next.active = false;
+            } else {
+                auto rotate = [](float current, float velocity) {
+                    return velocity != 0.0f ? kinematics::normalize_angle(current, velocity)
+                                            : current;
+                };
+                auto &rotation = next.animation.rotation;
+                const auto &velocity = next.animation.angular_velocity;
+                rotation = {rotate(rotation.x, velocity.x), rotate(rotation.y, velocity.y),
+                            rotate(rotation.z, velocity.z)};
+                // ExecuteScript marks the rotation dirty on every nonzero
+                // angular update; a renderer may have cleared this bit since
+                // the last phase. Keep both owned views of the flags aligned.
+                if (velocity.x != 0.0f || velocity.y != 0.0f || velocity.z != 0.0f) {
+                    next.animation.fields.flags |= 4U;
+                    next.particle.animation.flags = next.animation.fields.flags;
+                }
+                if (!cp::detail::finite(rotation) || next.timer.current < 0 ||
+                    next.timer.current == std::numeric_limits<std::int32_t>::max() ||
+                    next.timer.fraction != 0.0f)
+                    return {UpdateStatus::invalid_state};
+                tick_unit(control.time);
+                tick_unit(next.timer);
+            }
+        }
+        result.retired += next.active ? 0 : 1;
+        scratch_.push_back({index, next});
+    }
+    // As with spawn staging, a later blocked slot discards all provisional
+    // earlier writes. This rollback is our interface contract, not engine behavior.
+    for (const auto &delta : scratch_)
+        slots_[delta.index] = delta.slot;
+    active_count_ -= result.retired;
     return result;
 }
 } // namespace th08::effect

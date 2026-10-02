@@ -39,7 +39,7 @@ contract, not a claim that the original engine rolls back failures.
 Script73 contains angular velocity and sprite selection at time0, static completion
 at time30000, and a sentinel. Angular velocity also affects the time-zero tail.
 The projection retains that rotation; it is not a silent visual NOP. Renderer
-matrices/textures, later ANM updates, effect retirement and global ANM counters
+matrices/textures, general ANM updates, other effect lifecycles and global ANM counters
 are outside this component and must be added when their world consumers exist.
 
 ## Verification and next boundary
@@ -71,3 +71,29 @@ Advancing the timeline alone to its next spawn would invent elapsed world state.
 The next work is to own those phases and derive actual entry camera/shared-RNG
 state. All three first-spell acceptance gates, complete worlds and solutions
 remain zero. The separate supplied-state report records this distinction.
+
+## Owned effect51 update phase
+
+`PrimaryPool::advance_effect51` now owns one restricted primary-pool update:
+ascending slots, explicit deathbomb-freeze observation, callback, certified
+unit-rate script73 angular/static phase, then the effect timer. A callback cull
+commits its earlier motion but skips ANM and timer; static completion retains
+visibility and skips angular motion/timer. Rotation sets the source dirty flag.
+The returned source active count is measured before retirement, while pool
+occupancy reflects the surviving slots. Missing input at any slot rolls back the
+whole native phase, permitting an unchanged retry.
+
+The phase has no ECL, timeline or player dependencies. Camera, boss occupancy and
+tint are explicit current observations. Unknown occupied slots and uncertified
+ANM checkpoints block. Freeze avoids callback inputs and timer advancement.
+This reuses the independently checked callback and angular kernels; only a few
+ordering/rollback/termination regressions were added to the existing pool test.
+
+This does not yet connect the global scheduler. Source calculation priorities are
+Background8, Player9, EnemyManager11, BulletManager12, EffectManager13. The same
+frame that spawns sub0 must still run its normal enemy update before the effect
+phase. Draw-list construction, rendering callbacks, tamper checks, secondary/fixed
+pools and other effect types remain excluded. In particular, draw callbacks can
+write ANM fields; do not treat later rendering-dependent state as automatically
+candidate-independent. The first-spell diagnostic still stops before the missing
+world phases instead of stitching these components together in a guessed order.
