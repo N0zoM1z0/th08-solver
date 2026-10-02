@@ -56,6 +56,10 @@ target_link_libraries(th08_headless PRIVATE th08_native_headless)
 target_include_directories(th08_headless PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(th08_headless PRIVATE OpenSSL::Crypto)
 target_compile_options(th08_headless PRIVATE -ffp-contract=off)
+add_executable(th08_headless_repair tools/headless_repair.cpp)
+target_compile_features(th08_headless_repair PRIVATE cxx_std_17)
+target_link_libraries(th08_headless_repair PRIVATE OpenSSL::Crypto)
+
 add_executable(th08_headless_probe tools/headless_probe.cpp)
 target_compile_features(th08_headless_probe PRIVATE cxx_std_17)
 add_executable(th08_headless_laser_items tests/headless_laser_items.cpp)
@@ -77,3 +81,13 @@ target_compile_options(th08_headless_body_forecast PRIVATE -ffp-contract=off
 set(TH08_HEADLESS_DAT "" CACHE FILEPATH "Private DAT for the optional full-scene regression")
 set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH
   "Optional native executable built at another optimization level")
+
+if(BUILD_TESTING)
+  add_executable(th08_headless_repair_child tests/headless_repair_child.cpp)
+  target_compile_features(th08_headless_repair_child PRIVATE cxx_std_17)
+  add_test(NAME headless_repair_protocol COMMAND ${CMAKE_COMMAND}
+    -DREPAIR=$<TARGET_FILE:th08_headless_repair>
+    -DCHILD=$<TARGET_FILE:th08_headless_repair_child>
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/repair-protocol
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_repair_protocol.cmake)
+endif()

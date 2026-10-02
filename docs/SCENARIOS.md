@@ -246,9 +246,48 @@ ID202 at 67738 without any world reset; it does not yet clear.
 A WAIT followed by DESPAWN still has a final fired movement/collision before the next
 nonlethal despawn update. A distinct typed WAIT→VECTOR→NONE view models the copied
 resolved acceleration, activation delay and final-clear movement, rejecting concurrent,
-fractional, frozen, nonfinite or unsupported programs. ID203 opts in at its original
-H12/nine-candidate budget, retaining failures 1711/4823/2896. This is a transform
-certificate improvement, not completion or a future action-dependent RNG prediction.
+fractional, frozen, nonfinite or unsupported programs. ID203's preceding H12/nine-candidate profile retained failures 1711/4823/2896. The
+certificate itself does not solve the spell or predict action-dependent future RNG.
+
+### Bounded native-prefix repair
+
+ID203 now uses an observed-bullet H32 beam, retaining seven prefixes per first-action
+family, 63 total. Every prefix owns only player coordinates and score; bullet projections
+are immutable. It consumes the pending native input before candidate movement. Stable
+sorting preserves the existing comparator, numeric action/last-action ties and generation
+order. The reported continuation action is the last beam action, not a two-leg command.
+Observed pooled lasers and supplied body warnings are explicitly unsupported. The
+ID203 profile does not enable the ID192-specific body adapter; these are partial
+observed-bullet proposals, not complete world-safety certificates. Unsupported bullet
+transforms remain counted soft projections, never certified empty future space.
+The rolling beam still collides at 787 for seeds 0/1/65535.
+
+`th08_headless_repair` first executes that policy from the requested original checkpoint.
+For a collision with an observed terminal safe-to-unsafe transition, it enumerates
+rollback counts 1..8 times 16 updates and nine row-major direction holds of 16 updates.
+The first replaced action is one-based; earlier tape actions and the hold's non-direction
+bits are preserved. Each child process replays its exact prefix, executes its intervention,
+then resumes the unchanged policy. Source-prefix projection digests and all forced actions
+are checked, so action-dependent native aiming, feedback and RNG belong to that child.
+No native memory snapshot or shared future world is used.
+
+After each full round, only the longest genuine collision survivor advances, with first
+candidate winning equal-frame ties. Search stops on the first full completion, no progress,
+unsupported trigger or explicit budget. The fixed tested family is two rounds, 144 candidates,
+2160000 native candidate updates and 600 seconds; the CLI exposes frame/update/wall budgets
+for longer scenes. Initial execution and final verification replay are counted separately.
+The seed 0 ID203 run automatically finds a complete 5492-update tape after 91 candidates;
+none of its intervention frames are encoded in the algorithm. This does not establish
+other seeds or a continuous Extra clear, which still stops earlier in ID202.
+
+Strict `--replay` stops at its tape boundary. Explicit `--resume-prefix` continues
+with the selected policy; a 50-update control prefix reproduces the original 787 tape.
+A complete policy log owns per-update digest/horizon/overlap records. The outer runner
+pins and hashes child executable bytes, validates the entire child report and scene,
+requires new output directories and preserves all attempted artifacts. Timeout sends
+TERM, then KILL after bounded grace and reaps the child; protocol/interruption errors
+retain per-phase costs and an upper bound for unverified updates. Fresh replay equality
+is a projection/feedback check, not full-state identity or retail equivalence.
 
 ## Synthetic continuous profiles
 

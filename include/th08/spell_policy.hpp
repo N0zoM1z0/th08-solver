@@ -10,6 +10,7 @@ struct NativeSpellPolicy {
     bool imminent_pooled_lasers = false;
     bool upcoming_ecl_bullets = false;
     bool enemy_bodies = false;
+    bool observed_path_beam = false;
 };
 
 // Spell-specific selection belongs here rather than in the generic projection
@@ -58,7 +59,13 @@ inline NativeSpellPolicy native_spell_policy(int spell_id) {
     if (spell_id == 202)
         return {"id202-observed-wait", {12, 120, true, 0x1ff, false, 0, true}};
     if (spell_id == 203)
-        return {"id203-wait-vector", {12, 120, true, 0x1ff, false, 0, false, false, false, true}};
+        return {"id203-observed-stratified63-h32",
+                {32, 120, true, 0x1ff, false, 0, false, false, false, true},
+                false,
+                false,
+                false,
+                false,
+                true};
     if (spell_id == 204)
         return {"id204-relative-direction", {12, 120, true, 0x1ff, false, 0, false, true}};
     return {"source-vector-ranking", {12, 120, true}};

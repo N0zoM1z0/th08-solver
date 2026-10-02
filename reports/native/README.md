@@ -16,7 +16,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id183` | `headless_id183_summary.json` | GCC14 explicit H32/two-leg large-bullet avoidance: three complete seeds, baseline collision, continuous Stage6b clear and fresh O0/O3 replay |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id139` | `headless_id139_summary.json` | GCC14 bounded bounce and explicit 32-update/two-leg ranking: three complete seed wrappers, continuous Stage 6a clear, preserved failures, fresh replay and O0/O3 on corrected laser-item runtime |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id192` | `headless_id192_summary.json` | GCC14 typed body bounds/envelopes: complete seeds 0/65535, retained seed 1 failure and baseline, continuous Extra advances to ID202, fresh O0/O3 replay |
-| `tests/headless_real_data.cmake`, `CASE_GROUP=id203` | `headless_id203_summary.json` | GCC14 bounded WAIT/vector projection, baseline and three retained seed failures, fresh O0/O3 replay; not a solved spell |
+| `tests/headless_real_data.cmake`, `CASE_GROUP=id203` | `headless_id203_summary.json` | GCC14 observed H32/63-path rolling failures, bounded actual-native prefix repair completing seed0, explicit process/search costs, baseline and fresh O0/O3 replay |
 | `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
 | `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
 | `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |

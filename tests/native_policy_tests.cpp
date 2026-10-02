@@ -5,6 +5,7 @@
 #include <th08/direct_laser_policy.hpp>
 #include <th08/imminent_laser_policy.hpp>
 #include <th08/native_policy.hpp>
+#include <th08/observed_path_policy.hpp>
 #include <th08/spell_policy.hpp>
 #include <th08/upcoming_bullet_policy.hpp>
 #include <vector>
@@ -133,6 +134,26 @@ int main() {
               !large_bullet183.hazards.boundary_bounce_projection &&
               !large_bullet183.upcoming_ecl_bullets,
           "ID183 changed its observed large-bullet maneuver budget or source scope");
+
+    const auto beam_profile = th08::policy::native_spell_policy(203);
+    check(beam_profile.observed_path_beam && beam_profile.hazards.bullet_horizon == 32 &&
+              beam_profile.hazards.first_leg_updates == 0 &&
+              beam_profile.hazards.wait_vector_projection,
+          "ID203 bounded observed-path profile changed");
+    HazardReactiveStats beam_stats;
+    th08::policy::HazardReactiveDecision beam_decision;
+    const auto beam_action = th08::policy::observed_path_beam(
+        192, 380, .825f, .825f, 2, 1.414213538f, 4, std::vector<Bullet>{}, no_lasers, beam_stats,
+        beam_profile.hazards, &beam_decision);
+    check(beam_action == 4 && beam_stats.candidates == 16533 &&
+              std::all_of(beam_decision.candidates.begin(), beam_decision.candidates.end(),
+                          [](const auto &candidate) { return candidate.enabled; }),
+          "beam tie, expansion budget or first-action family retention changed");
+    HazardReactiveStats latched_beam_stats;
+    const auto latched_beam = th08::policy::observed_path_beam(
+        192, 380, .825f, .825f, 2, 1.414213538f, 132, std::vector<Bullet>{}, no_lasers,
+        latched_beam_stats, beam_profile.hazards);
+    check(latched_beam == 68, "beam did not consume pending movement before its first action");
 
     const std::vector<th08::policy::BodyWarningBounds> body_warning{{191, 379, 193, 381, 2}};
     HazardReactiveStats body_stats;

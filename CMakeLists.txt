@@ -214,7 +214,7 @@ if(BUILD_TESTING)
   add_executable(documentation_tests tests/documentation_tests.cpp)
   target_link_libraries(documentation_tests PRIVATE th08_geometry)
   get_property(th08_core_tests DIRECTORY PROPERTY TESTS)
-  list(REMOVE_ITEM th08_core_tests source_oracle source_effect_pool)
+  list(REMOVE_ITEM th08_core_tests source_oracle source_effect_pool headless_repair_protocol)
   list(LENGTH th08_core_tests th08_core_test_count)
   math(EXPR th08_core_test_count "${th08_core_test_count} + 1")
   add_test(NAME documentation COMMAND documentation_tests
@@ -226,6 +226,7 @@ if(BUILD_TESTING)
     add_test(NAME headless_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_headless>
       -DPROBE_EXECUTABLE=$<TARGET_FILE:th08_headless_probe>
+      -DREPAIR_EXECUTABLE=$<TARGET_FILE:th08_headless_repair>
       -DLASER_ITEMS_EXECUTABLE=$<TARGET_FILE:th08_headless_laser_items>
       -DBULLET_BOUNDS_EXECUTABLE=$<TARGET_FILE:th08_headless_bullet_bounds>
       -DBODY_FORECAST_EXECUTABLE=$<TARGET_FILE:th08_headless_body_forecast>
@@ -233,9 +234,9 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/headless-regression
       -DCOMPARE_EXECUTABLE=${TH08_HEADLESS_COMPARE_EXECUTABLE}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_real_data.cmake)
-    # Complete ID139 wrappers and Stage 6a now join the ID198/204 regressions.
+    # Complete scenes plus the bounded ID203 search/replay run in this aggregate.
     # This is only the aggregate test process timeout, not a solver/frame budget.
-    set_tests_properties(headless_real_data PROPERTIES TIMEOUT 480)
+    set_tests_properties(headless_real_data PROPERTIES TIMEOUT 1200)
   endif()
 endif()
 add_executable(geometry_bench benchmarks/geometry_bench.cpp)

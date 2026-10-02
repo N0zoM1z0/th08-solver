@@ -145,7 +145,7 @@ The tracked five-case ID167 report is retained as preceding-checkpoint evidence,
 including the then-genuine Stage6b ID183 collision. `CASE_GROUP=id183` runs five
 current fixtures and emits `id183-summary.json`, including the new Stage6b clear.
 All checked O3/O0 replays match; the full stage runs once in the aggregate.
-For ID183 seed0 on this GCC14 host, the complete 1292-update H32/81-path wrapper
+For ID183 seed 0 on this GCC14 host, the complete 1292-update H32/81-path wrapper
 uses 8894.1 ms of decision time; the failing 1041-update baseline uses 613.6 ms. These
 different durations are not an equal-work performance comparison. Both exclude file
 I/O and make the additional planning cost explicit.
@@ -189,7 +189,8 @@ or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
 The Release `spell-portfolio` run completed 54 and retained 2 genuine collision
-prefixes: bullet IDs 202/203. All 56 tapes
+prefixes: bullet IDs 202/203. Bounded native-prefix repair additionally completes ID203,
+so the combined documented recipe solves 55/56. All 56 rolling tapes
 then agreed in a fresh process on the semantic fields used by `agree()` above. This is
 broad algorithm evidence, while the smaller real-data CTest keeps the affected
 transform/profile boundaries practical to rerun on every local change.
@@ -231,17 +232,60 @@ freshly replay (114 tapes). Extra advances7424→67738, stopping in ID202.
 
 ID192's focused five-record report preserves baseline 466, complete seeds 0/65535 at 3692,
 seed 1 collision 1470 and actual Extra 67738. All agree with fresh O3 and O0 replays.
-The H12/81-path profile costs 299052 candidates and 11074.8ms decision time for seed0,
+The H12/81-path profile costs 299052 candidates and 11074.8ms decision time for seed 0,
 versus 4194 candidates/84.5ms for the 466-update baseline; these are unequal workloads.
-ID203's separate four-record report retains baseline 1711 and all three failures
-1711/4823/2896 while checking nonzero bounded WAIT/vector projections.
+At preceding checkpoint bd678, ID203's four-record report retained baseline 1711
+and failures 1711/4823/2896 with bounded WAIT/vector projections; the current five-record
+report below supersedes that partial evidence.
 Native-linked regressions check WAIT/vector activation and final-clear boundaries,
 DESPAWN's last lethal movement, 27 body source/lifecycle/clock guards, native movement
 containment and the reciprocal-multiply size cancellation boundary. Both O0/O3 pass.
 Independent native differential checks cover 23976 WAIT/vector updates and complete
 ID192 tapes, including continuous Extra's delayed EndSpell-immunity transition.
-The final normal CTest run takes 401.05s: 26 core tests pass; the native aggregate ends
+That preceding bd678 normal CTest took 401.05s: 26 core tests passed; its native aggregate ended
 at the unchanged historical Stage6b golden assertion described below, not a new gate.
+
+The subsequent ID203 change keeps the rolling portfolio at 54/56 and adds one complete
+seed 0 wrapper through bounded native-prefix repair. Compare against a complete separately
+built bd678 source snapshot: the other 55 spell tapes/semantic results and continuous
+Extra remain unchanged; the new rolling ID203 fails 787. Every comparison tape freshly
+replays. The repaired 5492 tape is a separate verified outcome with full search costs,
+not a replacement of the rolling failure record or a hardcoded route.
+The final search used 91 candidates and 138198 native candidate updates, including 119908
+replayed-prefix updates, in 384041ms. Initial execution used 787 updates/3919.03ms; the
+built-in final replay used 5492 updates/875.446ms. Zero interrupted updates were charged.
+The selected tape digest is 2771752472810487521 and independently agrees at native O0/O3.
+The final normal CTest took 799.97s: 26 core tests and the headless protocol test pass;
+the aggregate stops at the retained Stage6b golden. The latest expanded protocol suite
+also passes separately. These host timings include process setup/artifacts and concurrent verification; they are
+not the candidate policy's decision-only time or a performance guarantee.
+
+The optional `headless_repair_protocol` test uses an explicitly synthetic child process
+to reject malformed/duplicate/trailing JSON, wrong scene/prefix/hold/exit artifacts,
+existing output directories and a TERM-ignoring timeout. It checks conservative charges
+for semantically invalid children. Native policy tests check the pending-input step,
+all nine first-action families, deterministic ties and 16533-expansion bound. The real-DAT
+ID203 group checks baseline 1711, rolling 787 for three seeds, strict replay/prefix control,
+and the complete bounded search with fresh O3/O0 replay. Its public JSON records include
+child/repair executable SHA256 identities; `source_revision` remains the imported native
+runtime provenance and does not identify a planner build. Historical golden limitations
+below remain separate until their numerical-profile contract is resolved.
+
+`CASE_GROUP=id203` accepts `-DREPAIR_EXECUTABLE=$PWD/build-headless/th08_headless_repair`
+to include the search (the normal CTest supplies it). The tracked five-case report
+reuses that frozen successful search, then freshly replays its selected tape at O3/O0;
+original search costs are retained. Optional `REPAIR_RESULT_DIR` requires both recorded
+executable hashes to match and a complete result, and labels `search_reused`; fresh search
+remains the default. Reproduce the complete solve with:
+
+```sh
+./build-headless/th08_headless_repair --executable build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 203 --difficulty 4 --seed 0 --frames 15000 --output-dir reports/local/id203-new-search
+```
+
+The output directory must not already exist. `summary.json` separates initial,
+candidate/prefix and final-replay work; `processes.tsv` and `process-costs.json` retain
+process outcomes and conservative unverified-update bounds. A budget-limited or malformed
+run is not completion. All failed candidate reports/tapes remain available for diagnosis.
 
 ### Easy stage sweep
 
