@@ -23,10 +23,14 @@ struct HazardReactiveOptions {
     // initial direction lasts this many candidate-controlled updates before
     // the continuation repeats; zero preserves the nine constant paths.
     unsigned first_leg_updates = 0;
+    // Treat active WAIT as exact linear motion only within the source-owned
+    // bound exported by the native adapter. Kept opt-in for spell ablations.
+    bool wait_linear_projection = false;
 };
 struct HazardReactiveStats {
     std::uint64_t decisions = 0, candidates = 0;
     std::uint64_t bullet_projections = 0, bullet_checks = 0, vector_acceleration_checks = 0;
+    std::uint64_t wait_linear_checks = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
     std::uint64_t rigid_laser_paths = 0, laser_forecast_updates = 0, laser_checks = 0;
     std::uint64_t predicted_overlaps = 0;
@@ -64,7 +68,7 @@ inline float box_clearance(float x, float y, float half_x, float half_y, float c
     const float gap_y = std::abs(y - center_y) - half_y - std::abs(full_height) / 2;
     return std::max(gap_x, gap_y);
 }
-enum class BulletProjectionKind { linear, vector_acceleration, unsupported };
+enum class BulletProjectionKind { linear, vector_acceleration, wait_linear, unsupported };
 struct BulletProjection {
     float x, y;
     BulletProjectionKind kind;
@@ -74,8 +78,10 @@ struct BulletProjection {
 // Other active transforms remain soft ranking evidence rather than collision proof.
 template <class Bullet>
 BulletProjection project_bullet(const Bullet &bullet, unsigned step,
-                                bool enable_vector_acceleration = true) {
+                                bool enable_vector_acceleration = true,
+                                bool enable_wait_linear = false) {
     constexpr std::uint32_t vector_acceleration = 0x10;
+    constexpr std::uint32_t wait = 0x20000;
     if (enable_vector_acceleration && bullet.active_transforms == vector_acceleration) {
         const int remaining_frames =
             std::max(0, bullet.vector_acceleration_duration - bullet.vector_acceleration_timer);
@@ -87,6 +93,10 @@ BulletProjection project_bullet(const Bullet &bullet, unsigned step,
                 bullet.y + step * bullet.vy + coefficient * bullet.vector_acceleration_y,
                 BulletProjectionKind::vector_acceleration};
     }
+    if (enable_wait_linear && bullet.active_transforms == wait && bullet.wait_linear_updates > 0 &&
+        step <= unsigned(bullet.wait_linear_updates))
+        return {bullet.x + step * bullet.vx, bullet.y + step * bullet.vy,
+                BulletProjectionKind::wait_linear};
     return {bullet.x + step * bullet.vx, bullet.y + step * bullet.vy,
             bullet.active_transforms ? BulletProjectionKind::unsupported
                                      : BulletProjectionKind::linear};
@@ -339,11 +349,13 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
             for (const auto &bullet : bullets) {
                 if (bullet.state == 5 || bullet.state == 6)
                     continue;
-                const auto projected =
-                    detail::project_bullet(bullet, step, options.vector_acceleration);
+                const auto projected = detail::project_bullet(
+                    bullet, step, options.vector_acceleration, options.wait_linear_projection);
                 ++stats.bullet_projections;
                 if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                     ++stats.vector_acceleration_checks;
+                else if (projected.kind == detail::BulletProjectionKind::wait_linear)
+                    ++stats.wait_linear_checks;
                 else if (projected.kind == detail::BulletProjectionKind::unsupported)
                     ++stats.unsupported_transform_checks;
                 cached_bullets.push_back({projected.x, projected.y, bullet.full_width,
@@ -416,11 +428,13 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                 for (const auto &bullet : bullets) {
                     if (bullet.state == 5 || bullet.state == 6)
                         continue;
-                    const auto projected =
-                        detail::project_bullet(bullet, step, options.vector_acceleration);
+                    const auto projected = detail::project_bullet(
+                        bullet, step, options.vector_acceleration, options.wait_linear_projection);
                     ++stats.bullet_projections;
                     if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                         ++stats.vector_acceleration_checks;
+                    else if (projected.kind == detail::BulletProjectionKind::wait_linear)
+                        ++stats.wait_linear_checks;
                     else if (projected.kind == detail::BulletProjectionKind::unsupported)
                         ++stats.unsupported_transform_checks;
                     score_bullet({projected.x, projected.y, bullet.full_width, bullet.full_height,

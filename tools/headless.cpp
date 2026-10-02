@@ -18,6 +18,7 @@
 #include <th08/native_policy.hpp>
 #include <th08/reactive.hpp>
 #include <th08/spell_policy.hpp>
+#include <th08/upcoming_bullet_policy.hpp>
 #include <unistd.h>
 #include <vector>
 
@@ -36,6 +37,30 @@ int stage_index(const std::string &name) {
     if (found == names.end())
         throw std::runtime_error("unknown stage: " + name);
     return int(found - names.begin());
+}
+const char *upcoming_bullet_failure_name(th08::headless::UpcomingBulletSpawnFailure failure) {
+    using Failure = th08::headless::UpcomingBulletSpawnFailure;
+    switch (failure) {
+    case Failure::None:
+        return "none";
+    case Failure::InstructionSequence:
+        return "instruction-sequence";
+    case Failure::DynamicContext:
+        return "dynamic-context";
+    case Failure::EnemyMotion:
+        return "enemy-motion";
+    case Failure::Operands:
+        return "operands";
+    case Failure::TransformProgram:
+        return "transform-program";
+    case Failure::SpriteGeometry:
+        return "sprite-geometry";
+    case Failure::OffscreenCull:
+        return "offscreen-cull";
+    case Failure::PoolCapacity:
+        return "pool-capacity";
+    }
+    return "invalid";
 }
 std::string dat_hash(const std::string &path) {
     std::ifstream input(path, std::ios::binary);
@@ -162,7 +187,7 @@ class TraceTail {
                "laser_angle_delta\tpolicy_enabled\tpolicy_continuation_action\t"
                "policy_first_overlap\t"
                "policy_minimum_clearance\tpolicy_danger\tpolicy_center_distance\t"
-               "policy_selected\n";
+               "policy_selected\tbullet_wait_linear_updates\n";
         for (std::size_t i = 0; i < count; ++i) {
             const auto &f = frames[(next + frames.size() - count + i) % frames.size()];
             auto zeros = [&](unsigned n) {
@@ -176,7 +201,7 @@ class TraceTail {
                     << 2 * s.hurt_half_y << "\t0\t" << f.action << '\t' << s.latched_input << '\t'
                     << s.sampled_input;
                 zeros(45);
-                out << '\n';
+                out << "\t0\n";
                 if (!std::strcmp(name, "before") && f.has_policy_decision)
                     for (std::size_t candidate_index = 0;
                          candidate_index < f.policy_decision.candidates.size(); ++candidate_index) {
@@ -192,7 +217,7 @@ class TraceTail {
                             << candidate.center_distance << '\t'
                             << (candidate.enabled &&
                                 candidate.action == f.policy_decision.selected_action)
-                            << '\n';
+                            << "\t0\n";
                     }
                 for (const auto &b : bullets) {
                     out << f.after.frame << '\t' << name << "\tbullet\t" << b.slot << '\t'
@@ -201,7 +226,7 @@ class TraceTail {
                         << b.active_transforms << '\t' << f.action << '\t' << s.latched_input
                         << '\t' << s.sampled_input;
                     zeros(45);
-                    out << '\n';
+                    out << '\t' << b.wait_linear_updates << '\n';
                 }
                 for (const auto &laser : lasers) {
                     out << f.after.frame << '\t' << name << "\tpooled_laser\t" << laser.slot << '\t'
@@ -219,7 +244,7 @@ class TraceTail {
                         << '\t' << laser.motion_observed << '\t' << laser.origin_delta_x << '\t'
                         << laser.origin_delta_y << '\t' << laser.angle_delta;
                     zeros(7);
-                    out << '\n';
+                    out << "\t0\n";
                 }
                 for (const auto &h : laser_hitboxes) {
                     out << f.after.frame << '\t' << name << "\tlaser_hitbox\t" << h.pooled_slot
@@ -228,7 +253,7 @@ class TraceTail {
                         << '\t' << s.sampled_input << '\t' << h.origin_x << '\t' << h.origin_y
                         << '\t' << h.angle << '\t' << h.graze_enabled;
                     zeros(41);
-                    out << '\n';
+                    out << "\t0\n";
                 }
                 for (const auto &e : ecl) {
                     out << f.after.frame << '\t' << name << "\tecl_context\t" << e.enemy_index
@@ -245,7 +270,7 @@ class TraceTail {
                         << e.difficulty_enabled << '\t' << e.enemy_flags << '\t' << e.has_parent
                         << '\t' << e.rotation_velocity;
                     zeros(23);
-                    out << '\n';
+                    out << "\t0\n";
                 }
             };
             phase("before", f.before, f.before_bullets, f.before_lasers, f.before_laser_hitboxes,
@@ -366,6 +391,9 @@ int main(int argc, char **argv) {
         th08::policy::ImminentLaserStats imminent_laser_stats;
         std::vector<th08::policy::ImminentLaserWarning> imminent_laser_warnings;
         imminent_laser_warnings.reserve(16);
+        th08::policy::UpcomingBulletStats upcoming_bullet_stats;
+        std::vector<th08::policy::UpcomingBulletWarning> upcoming_bullet_warnings;
+        upcoming_bullet_warnings.reserve(64);
         th08::policy::HazardReactiveOptions last_hazard_options;
         std::uint64_t linear_profile_decisions = 0;
         const char *last_policy_profile = "none";
@@ -429,6 +457,28 @@ int main(int argc, char **argv) {
                                 session.focused_axis_speed(), session.focused_diagonal_speed(),
                                 state.latched_input, profile.hazards.laser_horizon,
                                 imminent_laser_warnings, imminent_laser_stats);
+                    }
+                    if (profile.upcoming_ecl_bullets) {
+                        const auto &upcoming_spawns =
+                            session.upcoming_bullet_spawns(profile.hazards.bullet_horizon);
+                        if (!th08::policy::collect_upcoming_bullet_warnings(
+                                upcoming_spawns, upcoming_bullet_warnings, upcoming_bullet_stats)) {
+                            const auto failed =
+                                std::find_if(upcoming_spawns.begin(), upcoming_spawns.end(),
+                                             [](const auto &spawn) { return !spawn.supported; });
+                            throw std::runtime_error(
+                                "unsupported upcoming ECL bullet spawn: enemy=" +
+                                std::to_string(failed->enemy_index) +
+                                " opcode=" + std::to_string(failed->opcode) +
+                                " update=" + std::to_string(failed->update) +
+                                " reason=" + upcoming_bullet_failure_name(failed->failure));
+                        }
+                        profile.hazards.candidate_mask &=
+                            th08::policy::upcoming_bullet_candidate_mask(
+                                state.x, state.y, state.hurt_half_x, state.hurt_half_y,
+                                session.focused_axis_speed(), session.focused_diagonal_speed(),
+                                state.latched_input, profile.hazards.bullet_horizon,
+                                upcoming_bullet_warnings, upcoming_bullet_stats);
                     }
                     last_hazard_options = profile.hazards;
                     action = th08::policy::hazard_reactive(
@@ -567,6 +617,7 @@ int main(int argc, char **argv) {
             << ",\"policy_bullet_projections\":" << policy_stats.bullet_projections
             << ",\"policy_bullet_checks\":" << policy_stats.bullet_checks
             << ",\"policy_vector_acceleration_checks\":" << policy_stats.vector_acceleration_checks
+            << ",\"policy_wait_linear_checks\":" << policy_stats.wait_linear_checks
             << ",\"policy_unsupported_transform_checks\":"
             << policy_stats.unsupported_transform_checks
             << ",\"policy_laser_paths\":" << policy_stats.laser_paths
@@ -583,6 +634,9 @@ int main(int argc, char **argv) {
                                                                                       : "false")
             << ",\"policy_vector_acceleration_enabled\":"
             << (policy_stats.decisions != 0 && linear_profile_decisions == 0 ? "true" : "false")
+            << ",\"policy_wait_linear_enabled\":"
+            << (policy_stats.decisions != 0 && last_hazard_options.wait_linear_projection ? "true"
+                                                                                          : "false")
             << ",\"policy_linear_profile_decisions\":" << linear_profile_decisions
             << ",\"policy_profile_last\":\"" << last_policy_profile << "\""
             << ",\"policy_direct_laser_decisions\":" << direct_laser_stats.decisions
@@ -613,7 +667,27 @@ int main(int argc, char **argv) {
             << ",\"policy_imminent_laser_constrained_decisions\":"
             << imminent_laser_stats.constrained_decisions
             << ",\"policy_imminent_laser_allowed_candidates\":"
-            << imminent_laser_stats.allowed_candidates << ",\"previous_trace_digest\":\""
+            << imminent_laser_stats.allowed_candidates
+            << ",\"policy_upcoming_bullet_decisions\":" << upcoming_bullet_stats.decisions
+            << ",\"policy_upcoming_bullet_observed_spawns\":"
+            << upcoming_bullet_stats.observed_spawns
+            << ",\"policy_upcoming_bullet_warnings\":" << upcoming_bullet_stats.warnings
+            << ",\"policy_upcoming_bullet_suppressed_spawns\":"
+            << upcoming_bullet_stats.suppressed_spawns
+            << ",\"policy_upcoming_bullet_unsupported_spawns\":"
+            << upcoming_bullet_stats.unsupported_spawns
+            << ",\"policy_upcoming_bullet_candidate_paths\":"
+            << upcoming_bullet_stats.candidate_paths
+            << ",\"policy_upcoming_bullet_candidate_updates\":"
+            << upcoming_bullet_stats.candidate_updates
+            << ",\"policy_upcoming_bullet_candidate_checks\":"
+            << upcoming_bullet_stats.candidate_checks
+            << ",\"policy_upcoming_bullet_candidate_overlaps\":"
+            << upcoming_bullet_stats.candidate_overlaps
+            << ",\"policy_upcoming_bullet_constrained_decisions\":"
+            << upcoming_bullet_stats.constrained_decisions
+            << ",\"policy_upcoming_bullet_allowed_candidates\":"
+            << upcoming_bullet_stats.allowed_candidates << ",\"previous_trace_digest\":\""
             << previous_digest << "\",\"prefix_frame\":" << prefix_frame
             << ",\"prefix_trace_digest\":\"" << prefix_digest << "\",\"unused_actions\":"
             << (replay_path.empty() ? 0 : replay.size() - actions.size())

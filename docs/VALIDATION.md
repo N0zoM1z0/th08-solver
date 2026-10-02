@@ -83,14 +83,16 @@ ctest --test-dir build-headless --output-on-failure
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --spell-id 179 --difficulty 0 --seed 0 --frames 2000 --replay reports/local/id179.actions --output reports/local/id179-native-replay.json
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 195 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id195.actions --output reports/local/id195-native.json
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 199 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 5000 --actions reports/local/id199.actions --output reports/local/id199-native.json
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 201 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id201.actions --output reports/local/id201-native.json
 ```
 
 The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
 wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary collision
-at 382, portfolio IDs 193/195/199 through their complete original wrappers, ID85's
-unadapted pooled-laser collision at 631 and adapted completion for seeds 0/1/65535,
-ID89's unadapted direct ECL collision at 393 and adapted completion for seeds 0/1/65535, a
-10-update budget failure and the Stage 6b reactive collision at update 854.
+at 382, and retained/adapted boundaries for IDs 85, 89, 93, 198 and 201. IDs 85, 89,
+93 and 198 complete for seeds 0/1/65535; ID201 preserves its generic WAIT collision at
+362 and requires the seed-0 portfolio completion at 4292. Portfolio IDs 193/195/199
+also run through their complete wrappers. A 10-update budget failure and the Stage 6b
+reactive collision at update 854 remain covered.
 Every execution tape replays in another process;
 tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
 Generated tapes and `summary.json` are under `build-headless/headless-regression/`.
@@ -124,10 +126,46 @@ No remote host is needed. Repeated prefix work is explicit; no unsafe native sna
 or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
-The Release `spell-portfolio` run completed 47 and retained 9 genuine collision
-prefixes; all 56 tapes then agreed in a fresh process on the semantic fields used by
-`agree()` above. This is broad algorithm evidence, while the smaller real-data CTest
-keeps the affected transform/profile boundaries practical to rerun on every local change.
+The Release `spell-portfolio` run completed 48 and retained 8 genuine collision
+prefixes: bullet IDs 32/139/167/183/202/203/204 and lethal-region ID192. All 56 tapes
+then agreed in a fresh process on the semantic fields used by `agree()` above. This is
+broad algorithm evidence, while the smaller real-data CTest keeps the affected
+transform/profile boundaries practical to rerun on every local change.
+
+### Easy stage sweep
+
+The 2026-10-02 local sweep used every supported stage entry, Easy, seed 0, the Release
+O3 native profile, a 100000-update cap and a 2 GiB address-space limit. Stage mode keeps
+shooting enabled and advances original message scripts. Each execution wrote an action
+tape and every tape agreed in a fresh process on the semantic fields and collision object
+used by `agree()`:
+
+```sh
+mkdir -p reports/local/easy-stage-sweep
+for stage in 1 2 3 4a 4b 5 6a 6b extra; do
+  ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage "$stage" --difficulty 0 --seed 0 --strategy spell-portfolio --frames 100000 --actions "reports/local/easy-stage-sweep/$stage.actions" --output "reports/local/easy-stage-sweep/$stage.json" || [ $? -eq 2 ]
+  ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage "$stage" --difficulty 0 --seed 0 --frames 100000 --replay "reports/local/easy-stage-sweep/$stage.actions" --output "reports/local/easy-stage-sweep/$stage-replay.json" || [ $? -eq 2 ]
+done
+```
+
+| Stage | Outcome | Updates | Blocking spell | Decision ms | Execution ms | Process wall s | Max RSS KiB | Peak bullets |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1 | complete | 24135 | - | 1576.4 | 2855.7 | 3.02 | 60676 | 258 |
+| 2 | complete | 32448 | - | 2553.0 | 4182.9 | 4.34 | 60316 | 293 |
+| 3 | collision | 7443 | 32 | 1252.1 | 1720.0 | 1.88 | 60372 | 294 |
+| 4a | complete | 22089 | - | 7574.2 | 9495.7 | 9.68 | 62356 | 528 |
+| 4b | complete | 43700 | - | 4942.5 | 7301.5 | 7.48 | 62840 | 548 |
+| 5 | complete | 43348 | - | 11704.1 | 14394.8 | 14.58 | 63904 | 665 |
+| 6a | collision | 48302 | 139 | 17128.5 | 20963.8 | 21.16 | 68848 | 1201 |
+| 6b | collision | 42560 | 167 | 8631.2 | 11884.2 | 12.11 | 74980 | 696 |
+| Extra | collision | 7424 | 192 | 4342.5 | 5210.4 | 5.41 | 71460 | 920 |
+
+The nine planning runs executed 271449 updates in 79.66 seconds of process wall time;
+their measured loop time was 78.01 seconds, with 59.70 seconds in policy decisions.
+Five stages cleared. The wall/RSS columns cover planning processes only; replay was an
+additional acceptance check. These AMD EPYC 7B12/GCC 12.2 timings are workload records,
+not portable performance guarantees. The older 22176-update Stage 1 CTest uses the
+different `reactive` action tape and remains a separate stable baseline.
 
 Acceleration removes wall-clock waiting and presentation work while retaining every
 original calc-chain update, timer increment and shared RNG consumer in that chain.

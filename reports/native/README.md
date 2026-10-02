@@ -8,7 +8,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 
 | Producer | Records | Meaning |
 |---|---|---|
-| `th08_headless` + `th08_headless_probe` + `tests/headless_real_data.cmake` | `headless_summary.json` | Native Stage 1, ID179 and portfolio IDs 85/89/193/195/199, ID85 pooled and ID89 direct ECL baselines, Stage 6b collision/input-latch witnesses, replay and O0/O3 comparison |
+| `th08_headless` + `th08_headless_probe` + `tests/headless_real_data.cmake` | `headless_summary.json` | Native Stage 1, ID179, adapted IDs 85/89/93/198/201 and portfolio IDs 193/195/199, retained source collisions, Stage 6b input-latch witnesses, replay and O0/O3 comparison |
 | `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
 | `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
 | `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |

@@ -6,6 +6,7 @@
 #include <th08/imminent_laser_policy.hpp>
 #include <th08/native_policy.hpp>
 #include <th08/spell_policy.hpp>
+#include <th08/upcoming_bullet_policy.hpp>
 #include <vector>
 
 namespace {
@@ -15,6 +16,7 @@ struct Bullet {
     std::uint32_t active_transforms;
     float vector_acceleration_x, vector_acceleration_y;
     int vector_acceleration_timer, vector_acceleration_duration;
+    int wait_linear_updates;
 };
 struct Laser {
     float origin_x, origin_y, angle;
@@ -45,6 +47,12 @@ struct ImminentSpawn {
     int start_time, hitbox_start_time, duration, despawn_duration, hitbox_end_delay;
     std::uint16_t flags;
 };
+struct UpcomingSpawn {
+    bool supported, suppressed;
+    int enemy_index, opcode;
+    unsigned update, linear_updates;
+    float x, y, vx, vy, full_width, full_height;
+};
 Laser horizontal_laser() {
     return {0, 380, 0, 0, 400, 400, 2, 0, 0, 0, 100, 0, 0, 0, 7, 1, 1, 0, 0, 0, false};
 }
@@ -58,7 +66,7 @@ int main() {
 
     const std::vector<Laser> no_lasers;
     const std::vector<Bullet> no_bullets;
-    const std::vector<Bullet> center_bullet{{194, 380, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0}};
+    const std::vector<Bullet> center_bullet{{194, 380, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0}};
     HazardReactiveStats delayed_stats;
     th08::policy::HazardReactiveDecision delayed_decision;
     const auto delayed =
@@ -83,7 +91,7 @@ int main() {
               maneuver_stats.bullet_projections == 2 && maneuver_stats.bullet_checks == 162 &&
               maneuver_stats.laser_forecast_updates == 3 && maneuver_stats.laser_paths == 81,
           "two-leg ranking did not share immutable hazard forecasts or report its full cost");
-    const std::vector<Bullet> crossing_bullet{{190, 370, -2, 1, 3, 3, 1, 0, 0, 0, 0, 0}};
+    const std::vector<Bullet> crossing_bullet{{190, 370, -2, 1, 3, 3, 1, 0, 0, 0, 0, 0, 0}};
     HazardReactiveStats turn_stats;
     th08::policy::HazardReactiveDecision turn_decision;
     const auto turn = hazard_reactive(
@@ -92,7 +100,7 @@ int main() {
     check(turn == 36 && turn_decision.candidates[7].continuation_action == 132,
           "two-leg ranking collapsed the selected down-then-right path to one direction");
 
-    const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2}};
+    const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
     HazardReactiveStats acceleration_stats;
     const auto accelerated =
         hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, accelerating_bullet, no_lasers,
@@ -108,9 +116,26 @@ int main() {
     check(linear != accelerated && linear_stats.vector_acceleration_checks == 0 &&
               linear_stats.unsupported_transform_checks == 18,
           "vector-acceleration ablation did not retain the explicit unknown model");
+    const Bullet waiting_bullet{192, 404, 0, 4, 24, 24, 1, 0x20000, 0, 0, 0, 0, 4};
+    check(th08::policy::detail::project_bullet(waiting_bullet, 4, true, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::wait_linear &&
+              th08::policy::detail::project_bullet(waiting_bullet, 5, true, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported,
+          "WAIT projection crossed its source-owned linear-motion bound");
+    HazardReactiveStats wait_stats;
+    const auto wait_escape = hazard_reactive(
+        197.65686f, 432, .825f, .825f, 2, 1.414213538f, 164, std::vector<Bullet>{waiting_bullet},
+        no_lasers, wait_stats, HazardReactiveOptions{12, 0, true, 0x1ff, false, 0, true});
+    check(wait_escape == 132 && wait_stats.wait_linear_checks == 27 &&
+              wait_stats.unsupported_transform_checks == 72,
+          "bounded WAIT projection lost the measured pure-right escape");
     check(!th08::policy::native_spell_policy(199).hazards.vector_acceleration &&
               th08::policy::native_spell_policy(193).hazards.vector_acceleration,
           "spell portfolio lost its isolated ID199 model selection");
+    check(th08::policy::native_spell_policy(201).hazards.bullet_horizon == 32 &&
+              th08::policy::native_spell_policy(201).hazards.wait_linear_projection &&
+              th08::policy::native_spell_policy(201).upcoming_ecl_bullets,
+          "spell portfolio lost the isolated ID201 WAIT projection");
     check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion &&
               th08::policy::native_spell_policy(198).hazards.rigid_laser_motion,
           "spell portfolio lost an isolated pooled-laser motion model");
@@ -137,6 +162,32 @@ int main() {
           "unsupported imminent pooled-laser geometry did not stop warning collection");
     check(th08::policy::native_spell_policy(93).imminent_pooled_lasers,
           "spell portfolio lost the isolated ID93 spawn-warning adapter");
+
+    // Enemy-order observations need not be chronological. The harmless update-2
+    // spawn follows the lethal update-12 spawn to exercise sorting and path reuse.
+    const std::vector<UpcomingSpawn> upcoming_spawns{
+        {true, false, 22, 97, 12, 1, 200, 424, 0, 4, 100, 24},
+        {true, false, 23, 99, 2, 1, -1000, -1000, 0, 0, 1, 1}};
+    std::vector<th08::policy::UpcomingBulletWarning> upcoming_warnings;
+    th08::policy::UpcomingBulletStats upcoming_stats;
+    check(th08::policy::collect_upcoming_bullet_warnings(upcoming_spawns, upcoming_warnings,
+                                                         upcoming_stats),
+          "source-bounded ECL bullet spawn was rejected");
+    const auto upcoming_mask = th08::policy::upcoming_bullet_candidate_mask(
+        200, 432, .825f, .825f, 2, 1.414213538f, 4, 12, upcoming_warnings, upcoming_stats);
+    check(upcoming_mask == (1u << 1) && upcoming_stats.observed_spawns == 2 &&
+              upcoming_stats.warnings == 2 && upcoming_stats.candidate_checks == 18 &&
+              upcoming_stats.candidate_updates == 108 && upcoming_stats.candidate_overlaps == 8 &&
+              upcoming_stats.constrained_decisions == 1,
+          "upcoming ECL bullet warning lost its only pure-up escape");
+    auto unknown_bullet_spawn = upcoming_spawns.front();
+    unknown_bullet_spawn.supported = false;
+    th08::policy::UpcomingBulletStats unsupported_bullet_stats;
+    check(!th08::policy::collect_upcoming_bullet_warnings(
+              std::vector<UpcomingSpawn>{unknown_bullet_spawn}, upcoming_warnings,
+              unsupported_bullet_stats) &&
+              unsupported_bullet_stats.unsupported_spawns == 1,
+          "unsupported ECL bullet future did not stop warning collection");
 
     EclContext direct_context{2,   110, 120, 137,  0,    -1,    0,
                               -1,  0,   0,   true, true, false, 9,
@@ -272,5 +323,6 @@ int main() {
 
     std::cout << "{\"input_latch\":\"covered\",\"vector_acceleration\":\"covered\","
                  "\"laser_lifecycle\":\"covered\",\"broad_phase\":\"covered\","
+                 "\"wait_projection\":\"covered\",\"upcoming_ecl_bullet\":\"covered\","
                  "\"direct_ecl_laser\":\"covered\",\"spell_portfolio\":\"covered\"}\n";
 }

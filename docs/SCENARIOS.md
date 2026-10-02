@@ -58,9 +58,11 @@ only. `--shoot 0|1` overrides shooting. Focused `stationary` is retained as a ba
 `hazard-reactive` applies the previously latched movement, then ranks the same nine
 constant-direction proposals over 12 bullet updates and 120 pooled-laser updates. It
 projects an already-active vector-acceleration opcode with the native velocity-before-
-position order. Other active bullet transforms remain explicitly counted soft evidence;
-future transform-program activation, new emission and ECL-owned transient hitboxes are
-not inferred. Existing lasers use copied raw lifecycle fields and source collision
+position order. A spell profile may also opt into a source-owned count of linear updates
+through an active WAIT; outside that proven count the transform remains unsupported.
+Other active bullet transforms remain explicitly counted soft evidence; future transform-
+program activation, new emission and ECL-owned transient hitboxes are not inferred by the
+generic policy. Existing lasers use copied raw lifecycle fields and source collision
 coordinates. A conservative perpendicular-axis broad phase can discard a candidate and
 laser only when their predicted path rectangles cannot overlap at the observed angle.
 
@@ -83,8 +85,26 @@ initial direction lasts four candidate-controlled updates, then one of nine cont
 directions repeats. Bullet projections and laser lifecycle forecasts are immutable and
 shared across those paths within one decision; mutable player paths remain separate and
 all proposal/check costs are reported. Only the first action executes before fresh native
-state is observed and the portfolio replans. ID89 observes only the current native ECL
-cursor. A constant
+state is observed and the portfolio replans. ID201 uses a 32-update bullet horizon. For a
+live bullet whose only active transform is WAIT, the session follows the copied transform
+records without mutating them and exports exactly how many later updates retain the current
+velocity. Disabled records and source `allowWhileActive` order are preserved; a terminal
+child-pattern record contributes the parent's final movement/collision update, while any
+other enabled transform ends the proof.
+
+ID201 also has a narrow future-ECL adapter. From the current main cursor it accepts only
+the same-time opcode sequence needed by this spell: known local-float add/subtract,
+literal/local-float transform record writes, and deterministic non-aimed fan/circle shots.
+It copies the descriptor and local variables, forecasts supported enemy interpolation,
+applies sprite geometry, suppression, offscreen culling and pool limits, and emits each
+new bullet at its first native collision update. It never calls the gameplay operand
+resolver or RNG. Unknown control flow, selectors, aimed/random shots, motion, transforms
+or capacity stop this enabled case. Spawn warnings are sorted by update so every constant
+candidate path advances once and is reused across all bullets at that boundary. The
+seed-0 wrapper completes; seeds 1 and 65535 remain failures, and seed 1 confirms that
+RNG-dependent child patterns are outside this adapter.
+
+ID89 observes only the current native ECL cursor. A constant
 opcode 136/137 selector for direct-laser EX callbacks 9/11/25 becomes a warning only
 when difficulty and timer state match and the currently observed parent, interpolation,
 movement and rotation state is static. The adapter refreshes that proposal every update;
@@ -118,7 +138,8 @@ choices; one safe observed update is not a complete future route.
 
 `--trace PATH` writes the last 32 updates as TSV, with before/after player and occupied
 bullet slots, full collision dimensions in pixels, velocity in pixels/update, active
-transform flags, proposed action, sampled input and latched movement input. It also
+transform flags, the source-bounded WAIT linear-update count, proposed action, sampled
+input and latched movement input. It also
 records every native `CalcLaserHitbox` center, size, origin, angle and graze flag, plus
 raw pooled-laser lifecycle fields, preceding-update motion deltas and active ECL
 cursor/instruction fields used to diagnose warnings. Live hazard-policy traces also
