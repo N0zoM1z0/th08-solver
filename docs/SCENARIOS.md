@@ -123,6 +123,15 @@ bullet steps. It changes no source projection, RNG, tie-break or terminal rules.
 All three seeds complete the 2372-update wrapper; continuous seed-0 Stage 3 clears
 at 39767 with carried native state and fresh O0/O3 replay.
 
+ID167 keeps the 12-update horizon and enables the existing 81 two-leg paths with a
+four-update first leg. Its baseline enters a bottom-left constant-path trap and
+collides at 932; all constant proposals predict collision from observation 917.
+The successful profile changes earlier decisions (first divergence 567), rather
+than claiming a late escape from that prefix. It reuses unchanged source projections
+and costs 444852 candidate evaluations for each 5492-update complete seed wrapper.
+Seeds 0/1/65535 freshly replay at O0/O3. Continuous Stage6b passes ID167 but still
+collides in ID183 at 54401; no full-stage completion is counted.
+
 ID139 uses source-bounded active boundary-bounce projection. The native boundary test
 runs before movement and uses loaded sprite dimensions, not the smaller collision box.
 It mirrors strict outside tests, X then Y reflection, bounded native angle normalization,
