@@ -13,6 +13,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <th08/direct_laser_policy.hpp>
 #include <th08/native_policy.hpp>
 #include <th08/reactive.hpp>
 #include <th08/spell_policy.hpp>
@@ -103,26 +104,31 @@ struct TraceFrame {
     std::uint16_t action = 0;
     std::vector<th08::headless::BulletView> before_bullets, after_bullets;
     std::vector<th08::headless::LaserHitboxView> before_laser_hitboxes, after_laser_hitboxes;
+    std::vector<th08::headless::EclContextView> before_ecl, after_ecl;
 };
 // Fixed tail, reused across updates. Serialization happens after timing stops.
 class TraceTail {
   public:
     void before(const th08::headless::State &state, std::uint16_t action,
                 const std::vector<th08::headless::BulletView> &bullets,
-                const std::vector<th08::headless::LaserHitboxView> &laser_hitboxes) {
+                const std::vector<th08::headless::LaserHitboxView> &laser_hitboxes,
+                const std::vector<th08::headless::EclContextView> &ecl) {
         auto &f = frames[next];
         f.before = state;
         f.action = action;
         f.before_bullets.assign(bullets.begin(), bullets.end());
         f.before_laser_hitboxes.assign(laser_hitboxes.begin(), laser_hitboxes.end());
+        f.before_ecl.assign(ecl.begin(), ecl.end());
     }
     void after(const th08::headless::State &state,
                const std::vector<th08::headless::BulletView> &bullets,
-               const std::vector<th08::headless::LaserHitboxView> &laser_hitboxes) {
+               const std::vector<th08::headless::LaserHitboxView> &laser_hitboxes,
+               const std::vector<th08::headless::EclContextView> &ecl) {
         auto &f = frames[next];
         f.after = state;
         f.after_bullets.assign(bullets.begin(), bullets.end());
         f.after_laser_hitboxes.assign(laser_hitboxes.begin(), laser_hitboxes.end());
+        f.after_ecl.assign(ecl.begin(), ecl.end());
         next = (next + 1) % frames.size();
         count = std::min(count + 1, frames.size());
     }
@@ -132,30 +138,51 @@ class TraceTail {
             throw std::runtime_error("cannot open diagnostic trace");
         out << std::setprecision(std::numeric_limits<float>::max_digits10)
             << "frame\tphase\tkind\tslot\tstate\tx\ty\tvx\tvy\twidth\theight\ttransforms\t"
-               "action\tlatched_input\tsampled_input\torigin_x\torigin_y\tangle\tgraze_enabled\n";
+               "action\tlatched_input\tsampled_input\torigin_x\torigin_y\tangle\tgraze_enabled\t"
+               "ecl_sub_id\tecl_time\tnext_time\tnext_offset\tdifficulty_mask\toperand_flags\t"
+               "raw_int0\thas_raw_int0\tvariable0\tvariable1\tsecondary_time\t"
+               "pending_subroutine\tactive_interpolations\tper_frame_ex\tdifficulty_enabled\t"
+               "enemy_flags\thas_parent\trotation_velocity\n";
         for (std::size_t i = 0; i < count; ++i) {
             const auto &f = frames[(next + frames.size() - count + i) % frames.size()];
             auto phase = [&](const char *name, const auto &s, const auto &bullets,
-                             const auto &laser_hitboxes) {
+                             const auto &laser_hitboxes, const auto &ecl) {
                 out << f.after.frame << '\t' << name << "\tplayer\t-1\t" << s.player_state << '\t'
                     << s.x << '\t' << s.y << "\t0\t0\t" << 2 * s.hurt_half_x << '\t'
                     << 2 * s.hurt_half_y << "\t0\t" << f.action << '\t' << s.latched_input << '\t'
-                    << s.sampled_input << "\t0\t0\t0\t0\n";
+                    << s.sampled_input
+                    << "\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\n";
                 for (const auto &b : bullets)
                     out << f.after.frame << '\t' << name << "\tbullet\t" << b.slot << '\t'
                         << b.state << '\t' << b.x << '\t' << b.y << '\t' << b.vx << '\t' << b.vy
                         << '\t' << b.full_width << '\t' << b.full_height << '\t'
                         << b.active_transforms << '\t' << f.action << '\t' << s.latched_input
-                        << '\t' << s.sampled_input << "\t0\t0\t0\t0\n";
+                        << '\t' << s.sampled_input
+                        << "\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\n";
                 for (const auto &h : laser_hitboxes)
                     out << f.after.frame << '\t' << name << "\tlaser_hitbox\t" << h.pooled_slot
                         << "\t0\t" << h.center_x << '\t' << h.center_y << "\t0\t0\t" << h.full_width
                         << '\t' << h.full_height << "\t0\t" << f.action << '\t' << s.latched_input
                         << '\t' << s.sampled_input << '\t' << h.origin_x << '\t' << h.origin_y
-                        << '\t' << h.angle << '\t' << h.graze_enabled << '\n';
+                        << '\t' << h.angle << '\t' << h.graze_enabled
+                        << "\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\t0\n";
+                for (const auto &e : ecl)
+                    out << f.after.frame << '\t' << name << "\tecl_context\t" << e.enemy_index
+                        << '\t' << e.child_slot << '\t' << e.position_x << '\t' << e.position_y
+                        << '\t' << e.velocity_x << '\t' << e.velocity_y << "\t0\t0\t"
+                        << e.next_opcode << '\t' << f.action << '\t' << s.latched_input << '\t'
+                        << s.sampled_input << '\t' << e.position_offset_x << '\t'
+                        << e.position_offset_y << '\t' << e.rotation << "\t0\t" << e.sub_id << '\t'
+                        << e.time << '\t' << e.next_time << '\t' << e.next_offset << '\t'
+                        << unsigned(e.difficulty_mask) << '\t' << e.operand_flags << '\t'
+                        << e.raw_int0 << '\t' << e.has_raw_int0 << '\t' << e.variable0 << '\t'
+                        << e.variable1 << '\t' << e.secondary_time << '\t' << e.pending_subroutine
+                        << '\t' << e.active_interpolations << '\t' << e.per_frame_ex << '\t'
+                        << e.difficulty_enabled << '\t' << e.enemy_flags << '\t' << e.has_parent
+                        << '\t' << e.rotation_velocity << '\n';
             };
-            phase("before", f.before, f.before_bullets, f.before_laser_hitboxes);
-            phase("after", f.after, f.after_bullets, f.after_laser_hitboxes);
+            phase("before", f.before, f.before_bullets, f.before_laser_hitboxes, f.before_ecl);
+            phase("after", f.after, f.after_bullets, f.after_laser_hitboxes, f.after_ecl);
         }
         if (!out)
             throw std::runtime_error("cannot write diagnostic trace");
@@ -264,6 +291,9 @@ int main(int argc, char **argv) {
         const auto start = std::chrono::steady_clock::now();
         double update_ms = 0, decision_ms = 0, diagnostics_ms = 0;
         th08::policy::HazardReactiveStats policy_stats;
+        th08::policy::DirectLaserStats direct_laser_stats;
+        std::vector<th08::policy::DirectLaserWarning> direct_laser_warnings;
+        direct_laser_warnings.reserve(16);
         std::uint64_t linear_profile_decisions = 0;
         const char *last_policy_profile = "none";
         auto state = session.state();
@@ -303,6 +333,15 @@ int main(int argc, char **argv) {
                     last_policy_profile = profile.name;
                     if (!profile.hazards.vector_acceleration)
                         ++linear_profile_decisions;
+                    if (profile.direct_ecl_lasers) {
+                        th08::policy::collect_direct_laser_warnings(
+                            session.ecl_contexts(), profile.hazards.laser_horizon,
+                            direct_laser_warnings, direct_laser_stats);
+                        profile.hazards.candidate_mask = th08::policy::direct_laser_candidate_mask(
+                            state.x, state.y, state.hurt_half_x, state.hurt_half_y,
+                            session.focused_axis_speed(), session.focused_diagonal_speed(),
+                            state.latched_input, direct_laser_warnings, direct_laser_stats);
+                    }
                     action = th08::policy::hazard_reactive(
                         state.x, state.y, state.hurt_half_x, state.hurt_half_y,
                         session.focused_axis_speed(), session.focused_diagonal_speed(),
@@ -320,7 +359,8 @@ int main(int argc, char **argv) {
             decision_ms +=
                 std::chrono::duration<double, std::milli>(decision_end - decision_start).count();
             if (tail)
-                tail->before(state, action, observed, observed_laser_hitboxes);
+                tail->before(state, action, observed, observed_laser_hitboxes,
+                             session.ecl_contexts());
             const auto update_start = std::chrono::steady_clock::now();
             if (tail)
                 diagnostics_ms +=
@@ -349,7 +389,7 @@ int main(int argc, char **argv) {
             const auto &updated_laser_hitboxes = session.laser_hitboxes();
             if (tail) {
                 const auto trace_start = std::chrono::steady_clock::now();
-                tail->after(state, updated_bullets, updated_laser_hitboxes);
+                tail->after(state, updated_bullets, updated_laser_hitboxes, session.ecl_contexts());
                 diagnostics_ms += std::chrono::duration<double, std::milli>(
                                       std::chrono::steady_clock::now() - trace_start)
                                       .count();
@@ -444,9 +484,21 @@ int main(int argc, char **argv) {
             << (policy_stats.decisions != 0 && linear_profile_decisions == 0 ? "true" : "false")
             << ",\"policy_linear_profile_decisions\":" << linear_profile_decisions
             << ",\"policy_profile_last\":\"" << last_policy_profile << "\""
-            << ",\"previous_trace_digest\":\"" << previous_digest
-            << "\",\"prefix_frame\":" << prefix_frame << ",\"prefix_trace_digest\":\""
-            << prefix_digest << "\",\"unused_actions\":"
+            << ",\"policy_direct_laser_decisions\":" << direct_laser_stats.decisions
+            << ",\"policy_ecl_contexts\":" << direct_laser_stats.contexts
+            << ",\"policy_direct_laser_calls\":" << direct_laser_stats.upcoming_calls
+            << ",\"policy_direct_laser_warnings\":" << direct_laser_stats.usable_warnings
+            << ",\"policy_direct_laser_variable_selectors\":"
+            << direct_laser_stats.variable_selectors
+            << ",\"policy_direct_laser_dynamic_geometry\":" << direct_laser_stats.dynamic_geometry
+            << ",\"policy_direct_laser_candidate_overlaps\":"
+            << direct_laser_stats.candidate_overlaps
+            << ",\"policy_direct_laser_constrained_decisions\":"
+            << direct_laser_stats.constrained_decisions
+            << ",\"policy_direct_laser_allowed_candidates\":"
+            << direct_laser_stats.allowed_candidates << ",\"previous_trace_digest\":\""
+            << previous_digest << "\",\"prefix_frame\":" << prefix_frame
+            << ",\"prefix_trace_digest\":\"" << prefix_digest << "\",\"unused_actions\":"
             << (replay_path.empty() ? 0 : replay.size() - actions.size())
             << ",\"diagnostics_enabled\":" << (tail ? "true" : "false");
         write_collision(out, session.collision());

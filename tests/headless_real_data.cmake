@@ -82,10 +82,10 @@ endforeach()
 scene(spell179-stationary 6b 179 0 stationary 2000 collision 2 382)
 scene(stage1-budget 1 -1 0 reactive 10 frame_limit 2 10)
 scene(stage6b-reactive 6b -1 0 reactive 50000 collision 2 854)
-# ID89's rotating beam is an ECL-owned CalcLaserHitbox call rather than a
-# BulletManager laser. Preserve that distinction and its exact first-hit frame.
-scene(spell89-direct-laser 4b 89 0 spell-portfolio 1000 collision 2 393)
-file(READ "${WORK}/spell89-direct-laser.json" spell89)
+# Preserve the unadapted ID89 failure: its rotating beam is an ECL-owned
+# CalcLaserHitbox call rather than a BulletManager laser.
+scene(spell89-direct-laser-baseline 4b 89 0 hazard-reactive 1000 collision 2 393)
+file(READ "${WORK}/spell89-direct-laser-baseline.json" spell89)
 foreach(pair IN ITEMS "laser_slot;-1" "laser_hitbox_call;0")
   list(GET pair 0 key)
   list(GET pair 1 expected)
@@ -96,7 +96,7 @@ foreach(pair IN ITEMS "laser_slot;-1" "laser_hitbox_call;0")
 endforeach()
 run("${EXECUTABLE}" "${WORK}/spell89-direct-laser-diagnostic.json" 2
   --stage 4b --spell-id 89 --difficulty 0 --seed 0 --frames 1000
-  --replay "${WORK}/spell89-direct-laser.actions" --trace "${WORK}/spell89.tsv")
+  --replay "${WORK}/spell89-direct-laser-baseline.actions" --trace "${WORK}/spell89.tsv")
 file(READ "${WORK}/spell89-direct-laser-diagnostic.json" spell89_diagnostic)
 agree("${spell89}" "${spell89_diagnostic}")
 file(STRINGS "${WORK}/spell89.tsv" direct_hitbox
@@ -104,6 +104,15 @@ file(STRINGS "${WORK}/spell89.tsv" direct_hitbox
 if(NOT direct_hitbox)
   message(FATAL_ERROR "ID89 direct ECL hitbox was absent from the diagnostic trace")
 endif()
+foreach(seed IN ITEMS 0 1 65535)
+  scene(spell89-portfolio-seed${seed} 4b 89 ${seed} spell-portfolio 4000 complete 0 3162)
+  file(READ "${WORK}/spell89-portfolio-seed${seed}.json" report)
+  field("${report}" policy_profile_last profile)
+  field("${report}" policy_direct_laser_constrained_decisions constrained)
+  if(NOT profile STREQUAL "\"id89-direct-ecl-laser\"" OR NOT constrained GREATER 0)
+    message(FATAL_ERROR "ID89 did not exercise its ECL candidate constraint: ${report}")
+  endif()
+endforeach()
 # Distinct spell profiles guard the measured portfolio boundary. ID195 needs
 # vector acceleration; ID199 deliberately retains constant-velocity ranking.
 scene(spell193-portfolio extra 193 0 spell-portfolio 5000 complete 0 3692 4)

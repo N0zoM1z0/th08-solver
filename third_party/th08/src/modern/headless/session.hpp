@@ -38,6 +38,22 @@ struct LaserHitboxView {
     int pooled_slot;
     bool graze_enabled;
 };
+// A read-only post-update cursor into one active native ECL context. Operands
+// remain raw: consumers must not assume that a flagged value is constant or
+// that linear lookahead crosses a control-flow instruction.
+struct EclContextView {
+    int enemy_index, child_slot, sub_id, time;
+    int next_time, next_opcode, next_offset;
+    int secondary_time, pending_subroutine, active_interpolations, per_frame_ex;
+    std::uint8_t difficulty_mask;
+    std::uint16_t operand_flags;
+    std::uint32_t enemy_flags;
+    bool difficulty_enabled, has_raw_int0, has_parent;
+    int raw_int0;
+    float position_x, position_y, position_offset_x, position_offset_y;
+    float velocity_x, velocity_y, rotation, rotation_velocity;
+    float variable0, variable1;
+};
 enum class CollisionKind { None, Bullet, LethalRegion, Laser };
 struct Bounds {
     float left = 0, top = 0, right = 0, bottom = 0;
@@ -88,6 +104,8 @@ class Session {
     const std::vector<LaserView> &lasers();
     // Calls observed in the most recent native update; invalidated by step().
     const std::vector<LaserHitboxView> &laser_hitboxes() const;
+    // Reused post-update ECL cursor storage; invalidated by the next call.
+    const std::vector<EclContextView> &ecl_contexts();
     float focused_axis_speed() const;
     float focused_diagonal_speed() const;
     // A diagnostics projection of actor/script state, not a serialized world.
@@ -98,5 +116,6 @@ class Session {
   private:
     std::vector<BulletView> views_;
     std::vector<LaserView> laser_views_;
+    std::vector<EclContextView> ecl_views_;
 };
 } // namespace th08::headless

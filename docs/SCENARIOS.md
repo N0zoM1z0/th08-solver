@@ -67,7 +67,14 @@ laser only when their predicted path rectangles cannot overlap at the observed a
 `spell-portfolio` selects hazard options in `spell_policy.hpp`. The default is the
 source-vector profile. ID199 uses the measured linear-ranking ablation: it completed
 seeds 0, 1 and 65535, while vector ranking failed seed 0; IDs 193/195 show the opposite
-need for vector projection. This is an explicit proposal choice, not altered native
+need for vector projection. ID89 observes only the current native ECL cursor. A constant
+opcode 136/137 selector for direct-laser EX callbacks 9/11/25 becomes a warning only
+when difficulty and timer state match and the currently observed parent, interpolation,
+movement and rotation state is static. The adapter refreshes that proposal every update;
+it does not infer across uninspected ECL control flow. Repeating callbacks constrain the
+nine-direction candidate set over their active interval; the generic hazard scorer ranks
+bullets and pooled lasers within that set. Flagged selectors and dynamic geometry are
+counted and left unsupported. This is an explicit proposal choice, not altered native
 physics or a claim that either forecast models every transform.
 
 Action tapes contain decimal original 16-bit input masks, one per update (shoot 1,
@@ -95,7 +102,8 @@ choices; one safe observed update is not a complete future route.
 `--trace PATH` writes the last 32 updates as TSV, with before/after player and occupied
 bullet slots, full collision dimensions in pixels, velocity in pixels/update, active
 transform flags, proposed action, sampled input and latched movement input. It also
-records every native `CalcLaserHitbox` center, size, origin, angle and graze flag. Bullet
+records every native `CalcLaserHitbox` center, size, origin, angle and graze flag, plus
+active ECL cursor/instruction fields used to diagnose warnings. Bullet
 slot reuse across updates is possible; these are pool indices, not stable entity IDs.
 Collision JSON records the first lethal overlap before death feedback; laser bounds
 use the original rotated test coordinates and retain the raw call geometry.

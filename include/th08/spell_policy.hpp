@@ -6,6 +6,7 @@ namespace th08::policy {
 struct NativeSpellPolicy {
     const char *name;
     HazardReactiveOptions hazards;
+    bool direct_ecl_lasers = false;
 };
 
 // Spell-specific selection belongs here rather than in the generic projection
@@ -13,6 +14,8 @@ struct NativeSpellPolicy {
 // ranking completed seeds 0, 1 and 65535, while vector ranking failed seed 0.
 // The native runtime remains the acceptance oracle for both proposal models.
 inline NativeSpellPolicy native_spell_policy(int spell_id) {
+    if (spell_id == 89)
+        return {"id89-direct-ecl-laser", {12, 120, true}, true};
     if (spell_id == 199)
         return {"id199-linear-ranking", {12, 120, false}};
     return {"source-vector-ranking", {12, 120, true}};
