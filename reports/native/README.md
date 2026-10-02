@@ -8,6 +8,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 
 | Producer | Records | Meaning |
 |---|---|---|
+| `th08_headless` + `tests/headless_real_data.cmake` | `headless_summary.json` | Native Stage 1 and ID179 complete scenes, collision/budget failures, fresh-process replay and O0/O3 comparison |
 | `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
 | `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
 | `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |
@@ -28,6 +29,14 @@ Current controlled ID179 success does not rewrite the legacy audit/motion/entry 
 into source-faithful world completion. Synthetic and controlled scenarios must remain
 separately labeled. A `SEARCH_LIMIT`, collision, unsupported opcode or missing context
 is evidence to inspect, not a success or mathematical impossibility proof.
+
+Native headless records use the tracked source revision and original calc-chain/shared
+RNG/feedback under an explicit no-draw native float32 profile. They add coverage without
+relabeling historical subset reports. Native timing samples use AMD EPYC 7B12, GCC 12.2,
+Linux x86_64; wall-clock waiting is removed and initialization/output are excluded.
+Regenerate with the optional real-data CTest, then copy its checked
+`build-headless/headless-regression/summary.json` here. Keep comparison replay enabled
+when refreshing O0/O3 evidence; tapes remain in the ignored build directory.
 
 Experiment in ignored `reports/local/`; regenerate tracked records deliberately from
 their maintained C++ producer. Do not commit raw game assets. Preserve large digests

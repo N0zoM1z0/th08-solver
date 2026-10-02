@@ -17,6 +17,56 @@ Distinguish synthetic scenes, actual-DAT controlled projections and source-faith
   be replaced by a cached fixed future. Synthetic hook policy is not retail equivalence
 - Default public CI uses no proprietary DAT; real-data checks are explicit local commands
 
+## Native headless complete scenes
+
+`th08_headless` links the tracked reconstructed game at revision recorded in
+[Validation](VALIDATION.md). It runs production ECL, timeline, player, enemy, bullet,
+laser, item, effect, spell, background and GUI/message updates. This is a native
+source-execution profile, distinct from the controlled subset below.
+
+- Start with default configuration and empty score/replay files in a disposable working
+  directory. Select Reimu/Yukari, difficulty 0..4, a named stage and a 16-bit seed.
+  Stage mode uses original stage-practice initialization; spell mode uses original
+  spell-practice initialization. The complete wrapper/prelude is actually executed
+- Load DAT/ANM/SHT/STD/ECL synchronously and bypass presentation loading countdowns.
+  No menu/window startup, worker loading waits or draw-chain execution is required.
+  CPU ANM resource metadata and calc-chain lifetimes remain; text rasterization is omitted
+- Use native float32 with contraction disabled, no fast-math, and deterministic
+  `timeGetTime = floor(update_count * 1000 / 60)` milliseconds. One input executes one
+  original calc-chain update; timers retain original multiplier/update order. Original
+  shared RNG consumers in that chain remain active, including visual effects
+- Carry the original live managers through boss/dialogue/spell transitions. Stage mode
+  stops at native stage-clear state before result/next-stage processing; continuous
+  multi-stage execution is not implemented. Spell mode stops when the requested spell,
+  after becoming active, becomes inactive. No terminal cleanup/reset is invented
+- Raw `--spell-id` is zero-based 0..221. Stage/difficulty wrappers can select another
+  ID; first activation is checked and a mismatch stops the case. An insufficient
+  budget before activation remains a failure, not proof that the requested ID ran
+- Stop at the first native player state 2 as `collision`, before the later death-counter
+  increment. `complete`, `collision`, `frame_limit`, `tape_end` and `retry_menu` are
+  distinct outcomes. Exit status is 0 for complete, 2 for ordinary failure and 1 for
+  invalid/unsupported execution. Unknown ECL/timeline opcodes stop rather than skip;
+  header-only timed ECL opcode 0 is explicitly recognized as upstream padding
+
+The baseline `reactive` policy proposes one of nine focused moves using a 12-frame
+constant-velocity hazard estimate and a center preference. It is not a physics oracle
+or optimal search. The actual game performs collision, new emission, transforms,
+damage, graze/score/gauge/item feedback and cancellation. Stage mode also shoots and
+alternates confirm to advance actual message scripts; spell mode defaults to movement
+only. `--shoot 0|1` overrides shooting. Focused `stationary` is retained as a bad baseline.
+
+Action tapes contain decimal original 16-bit input masks, one per update (shoot 1,
+bomb 2, focus 4, directions 16/32/64/128, confirm 4096). Replay uses a fresh process,
+without planner decisions, and rejects extra actions beyond the execution boundary.
+The FNV projection covers actions, player, bullets, actor/script timers, RNG state/count
+and feedback every frame. It is not a complete world serialization or independent
+physics oracle. `rng_draws` reports the native generation counter at the terminal
+update; original code can reset this counter, so it is not total run consumption.
+
+The current noncopyable session owns original process-global managers. It cannot
+provide independent candidate snapshots yet. Alternative futures must not share one
+mutating native world; exact branch ownership is required before adding beam/tree search.
+
 ## Synthetic continuous profiles
 
 `th08_scenario_cases` supports `relay` (curtain/rings/moving lane), `lane-switch`

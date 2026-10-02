@@ -145,8 +145,8 @@ int main(int argc, char **argv) try {
             count(root / "reports/native/first_spell_summary.json", "complete_spell_solutions") ==
                 "0",
         "first entry-prefix evidence changed; review its completion contract and documentation");
-    contains(read(root / "README.md"), "Complete offline spell solutions: " + solutions + ".",
-             "README.md");
+    contains(read(root / "README.md"),
+             "Legacy subset complete offline spell solutions: " + solutions + ".", "README.md");
     contains(status, "There are " + core_tests + " core CTests", "STATUS.md");
     contains(read(root / "docs/VALIDATION.md"), "\nCore CTest cases: " + core_tests + "\n",
              "VALIDATION.md");

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(th08_solver VERSION 0.1.0 LANGUAGES CXX)
 find_package(OpenSSL REQUIRED COMPONENTS Crypto)
+option(TH08_HEADLESS "Build the imported native TH08 runtime without a display" OFF)
+if(TH08_HEADLESS)
+  include(cmake/Headless.cmake)
+endif()
 option(TH08_SANITIZERS "Enable address and undefined-behavior sanitizers" OFF)
 add_library(th08_geometry INTERFACE)
 target_include_directories(th08_geometry INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -212,6 +216,18 @@ if(BUILD_TESTING)
   math(EXPR th08_core_test_count "${th08_core_test_count} + 1")
   add_test(NAME documentation COMMAND documentation_tests
     ${CMAKE_CURRENT_SOURCE_DIR} ${th08_core_test_count})
+  if(TH08_HEADLESS AND TH08_HEADLESS_DAT)
+    if(NOT EXISTS "${TH08_HEADLESS_DAT}")
+      message(FATAL_ERROR "TH08_HEADLESS_DAT does not exist")
+    endif()
+    add_test(NAME headless_real_data COMMAND ${CMAKE_COMMAND}
+      -DEXECUTABLE=$<TARGET_FILE:th08_headless>
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/headless-regression
+      -DCOMPARE_EXECUTABLE=${TH08_HEADLESS_COMPARE_EXECUTABLE}
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_real_data.cmake)
+    set_tests_properties(headless_real_data PROPERTIES TIMEOUT 120)
+  endif()
 endif()
 add_executable(geometry_bench benchmarks/geometry_bench.cpp)
 target_link_libraries(geometry_bench PRIVATE th08_geometry)
