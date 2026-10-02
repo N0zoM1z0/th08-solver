@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <limits>
+#include <vector>
 
 namespace th08::policy {
 struct HazardReactiveOptions {
@@ -18,19 +19,24 @@ struct HazardReactiveOptions {
     // laser translation/rotation as one rigid motion. The default makes no
     // future-motion claim.
     bool rigid_laser_motion = false;
+    // A positive value ranks all 81 initial/continuation direction pairs. The
+    // initial direction lasts this many candidate-controlled updates before
+    // the continuation repeats; zero preserves the nine constant paths.
+    unsigned first_leg_updates = 0;
 };
 struct HazardReactiveStats {
     std::uint64_t decisions = 0, candidates = 0;
-    std::uint64_t bullet_checks = 0, vector_acceleration_checks = 0;
+    std::uint64_t bullet_projections = 0, bullet_checks = 0, vector_acceleration_checks = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
-    std::uint64_t rigid_laser_paths = 0, laser_checks = 0, predicted_overlaps = 0;
+    std::uint64_t rigid_laser_paths = 0, laser_forecast_updates = 0, laser_checks = 0;
+    std::uint64_t predicted_overlaps = 0;
 };
 // Optional diagnostics copy the exact scalar ranking inputs without retaining
 // observed hazards or changing proposal evaluation. Masked entries still expose
 // their action so a trace can distinguish disabled from unevaluated directions.
 struct HazardCandidateEvaluation {
     bool enabled = false;
-    std::uint16_t action = 4;
+    std::uint16_t action = 4, continuation_action = 4;
     unsigned first_overlap = 0;
     float minimum_clearance = 0;
     double danger = 0, center_distance = 0;
@@ -279,7 +285,7 @@ struct CandidateScore {
     unsigned first_overlap;
     float minimum_clearance;
     double danger, center_distance;
-    std::uint16_t action;
+    std::uint16_t action, continuation_action;
 };
 inline bool better(const CandidateScore &left, const CandidateScore &right) {
     if (left.first_overlap != right.first_overlap)
@@ -290,7 +296,9 @@ inline bool better(const CandidateScore &left, const CandidateScore &right) {
         return left.danger < right.danger;
     if (left.center_distance != right.center_distance)
         return left.center_distance < right.center_distance;
-    return left.action < right.action;
+    if (left.action != right.action)
+        return left.action < right.action;
+    return left.continuation_action < right.continuation_action;
 }
 } // namespace detail
 
@@ -306,63 +314,166 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
     if (decision)
         *decision = {};
     const unsigned horizon = std::max(options.bullet_horizon, options.laser_horizon);
-    detail::CandidateScore best{0, -std::numeric_limits<float>::infinity(),
+    detail::CandidateScore best{0,
+                                -std::numeric_limits<float>::infinity(),
                                 std::numeric_limits<double>::infinity(),
-                                std::numeric_limits<double>::infinity(), 4};
+                                std::numeric_limits<double>::infinity(),
+                                4,
+                                4};
     const auto pending = detail::direction(latched_input);
-    for (int dy = -1; dy <= 1; ++dy)
-        for (int dx = -1; dx <= 1; ++dx) {
-            const unsigned candidate_index = unsigned((dy + 1) * 3 + dx + 1);
-            const detail::Direction candidate{dx, dy};
-            const auto action = detail::input(candidate);
-            if (decision)
-                decision->candidates[candidate_index].action = action;
-            if (!(options.candidate_mask & (1u << candidate_index)))
-                continue;
-            ++stats.candidates;
-            float x = player_x, y = player_y;
-            detail::advance(x, y, pending, axis, diagonal);
-            detail::CandidateScore score{horizon + 1, std::numeric_limits<float>::infinity(), 0, 0,
-                                         action};
 
-            for (unsigned step = 2; step <= options.bullet_horizon; ++step) {
-                detail::advance(x, y, candidate, axis, diagonal);
+    // Every two-leg path starts from the same immutable native observation.
+    // Cache only scalar projections/lifecycle states for this decision; player
+    // positions and scores remain path-owned below.
+    struct CachedBullet {
+        float x, y, full_width, full_height;
+        int state;
+        detail::BulletProjectionKind kind;
+    };
+    std::vector<CachedBullet> cached_bullets;
+    std::vector<std::size_t> bullet_offsets(options.bullet_horizon + 2);
+    if (options.first_leg_updates) {
+        cached_bullets.reserve(bullets.size() * options.bullet_horizon);
+        for (unsigned step = 2; step <= options.bullet_horizon; ++step) {
+            bullet_offsets[step] = cached_bullets.size();
+            for (const auto &bullet : bullets) {
+                if (bullet.state == 5 || bullet.state == 6)
+                    continue;
+                const auto projected =
+                    detail::project_bullet(bullet, step, options.vector_acceleration);
+                ++stats.bullet_projections;
+                if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
+                    ++stats.vector_acceleration_checks;
+                else if (projected.kind == detail::BulletProjectionKind::unsupported)
+                    ++stats.unsupported_transform_checks;
+                cached_bullets.push_back({projected.x, projected.y, bullet.full_width,
+                                          bullet.full_height, bullet.state, projected.kind});
+            }
+        }
+        bullet_offsets[options.bullet_horizon + 1] = cached_bullets.size();
+    }
+
+    struct CachedLaserUpdate {
+        detail::LaserForecast laser;
+        detail::LaserPhase phase;
+    };
+    struct CachedLaser {
+        std::vector<CachedLaserUpdate> updates;
+        bool rigid_motion;
+    };
+    std::vector<CachedLaser> cached_lasers;
+    if (options.first_leg_updates) {
+        cached_lasers.reserve(lasers.size());
+        for (const auto &view : lasers) {
+            auto laser = detail::forecast(view, options.rigid_laser_motion);
+            cached_lasers.push_back({{}, laser.rigid_motion});
+            auto &cached = cached_lasers.back();
+            cached.updates.reserve(options.laser_horizon);
+            for (unsigned step = 1; step <= options.laser_horizon && laser.present; ++step) {
+                const auto phase = detail::advance(laser);
+                ++stats.laser_forecast_updates;
+                cached.updates.push_back({laser, phase});
+            }
+        }
+    }
+
+    auto evaluate = [&](detail::Direction initial,
+                        detail::Direction continuation) -> detail::CandidateScore {
+        ++stats.candidates;
+        auto direction_at = [&](unsigned step) {
+            if (!options.first_leg_updates || step - 1 <= options.first_leg_updates)
+                return initial;
+            return continuation;
+        };
+        float x = player_x, y = player_y;
+        detail::advance(x, y, pending, axis, diagonal);
+        detail::CandidateScore score{horizon + 1,
+                                     std::numeric_limits<float>::infinity(),
+                                     0,
+                                     0,
+                                     detail::input(initial),
+                                     detail::input(continuation)};
+        auto score_bullet = [&](const CachedBullet &bullet, unsigned step) {
+            ++stats.bullet_checks;
+            const float clearance = detail::box_clearance(x, y, half_x, half_y, bullet.x, bullet.y,
+                                                          bullet.full_width, bullet.full_height);
+            score.minimum_clearance = std::min(score.minimum_clearance, clearance);
+            const double positive = std::max(0.f, clearance);
+            score.danger += 1 / ((positive + 1) * (positive + 1) * step);
+            if (clearance <= 0 && bullet.state == 1 &&
+                bullet.kind != detail::BulletProjectionKind::unsupported) {
+                score.first_overlap = std::min(score.first_overlap, step);
+                ++stats.predicted_overlaps;
+            }
+        };
+
+        for (unsigned step = 2; step <= options.bullet_horizon; ++step) {
+            detail::advance(x, y, direction_at(step), axis, diagonal);
+            if (options.first_leg_updates) {
+                for (auto index = bullet_offsets[step]; index < bullet_offsets[step + 1]; ++index)
+                    score_bullet(cached_bullets[index], step);
+            } else
                 for (const auto &bullet : bullets) {
                     if (bullet.state == 5 || bullet.state == 6)
                         continue;
-                    ++stats.bullet_checks;
                     const auto projected =
                         detail::project_bullet(bullet, step, options.vector_acceleration);
+                    ++stats.bullet_projections;
                     if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                         ++stats.vector_acceleration_checks;
                     else if (projected.kind == detail::BulletProjectionKind::unsupported)
                         ++stats.unsupported_transform_checks;
-                    const float clearance =
-                        detail::box_clearance(x, y, half_x, half_y, projected.x, projected.y,
-                                              bullet.full_width, bullet.full_height);
-                    score.minimum_clearance = std::min(score.minimum_clearance, clearance);
-                    const double positive = std::max(0.f, clearance);
-                    score.danger += 1 / ((positive + 1) * (positive + 1) * step);
-                    if (clearance <= 0 && bullet.state == 1 &&
-                        projected.kind != detail::BulletProjectionKind::unsupported) {
-                        score.first_overlap = std::min(score.first_overlap, step);
-                        ++stats.predicted_overlaps;
-                    }
+                    score_bullet({projected.x, projected.y, bullet.full_width, bullet.full_height,
+                                  bullet.state, projected.kind},
+                                 step);
+                }
+        }
+
+        x = player_x;
+        y = player_y;
+        detail::advance(x, y, pending, axis, diagonal);
+        float laser_first_x = x, laser_first_y = y;
+        if (options.laser_horizon >= 2)
+            detail::advance(laser_first_x, laser_first_y, initial, axis, diagonal);
+        const float candidate_speed = initial.x && initial.y ? diagonal : axis;
+        const float laser_steps = options.laser_horizon > 1 ? options.laser_horizon - 1 : 0;
+        const float laser_last_x =
+            std::clamp(x + initial.x * candidate_speed * laser_steps, 8.f, 376.f);
+        const float laser_last_y =
+            std::clamp(y + initial.y * candidate_speed * laser_steps, 16.f, 432.f);
+        auto score_laser = [&](float lx, float ly, const detail::LaserForecast &laser,
+                               const detail::LaserPhase &phase, unsigned step) {
+            if (step < 2 || !phase.present || !phase.lethal)
+                return;
+            ++stats.laser_checks;
+            const float clearance = detail::laser_clearance(lx, ly, half_x, half_y, laser, phase);
+            score.minimum_clearance = std::min(score.minimum_clearance, clearance);
+            const double positive = std::max(0.f, clearance);
+            score.danger += 1 / ((positive + 1) * (positive + 1) * step);
+            if (clearance <= 0) {
+                score.first_overlap = std::min(score.first_overlap, step);
+                ++stats.predicted_overlaps;
+            }
+        };
+        if (options.first_leg_updates) {
+            for (const auto &cached : cached_lasers) {
+                ++stats.laser_paths;
+                if (cached.rigid_motion)
+                    ++stats.rigid_laser_paths;
+                if (options.laser_horizon < 2) {
+                    ++stats.laser_paths_pruned;
+                    continue;
+                }
+                float lx = x, ly = y;
+                for (std::size_t index = 0; index < cached.updates.size(); ++index) {
+                    const auto step = unsigned(index + 1);
+                    if (step >= 2)
+                        detail::advance(lx, ly, direction_at(step), axis, diagonal);
+                    const auto &update = cached.updates[index];
+                    score_laser(lx, ly, update.laser, update.phase, step);
                 }
             }
-
-            x = player_x;
-            y = player_y;
-            detail::advance(x, y, pending, axis, diagonal);
-            float laser_first_x = x, laser_first_y = y;
-            if (options.laser_horizon >= 2)
-                detail::advance(laser_first_x, laser_first_y, candidate, axis, diagonal);
-            const float candidate_speed = candidate.x && candidate.y ? diagonal : axis;
-            const float laser_steps = options.laser_horizon > 1 ? options.laser_horizon - 1 : 0;
-            const float laser_last_x =
-                std::clamp(x + candidate.x * candidate_speed * laser_steps, 8.f, 376.f);
-            const float laser_last_y =
-                std::clamp(y + candidate.y * candidate_speed * laser_steps, 16.f, 432.f);
+        } else
             for (const auto &view : lasers) {
                 auto laser = detail::forecast(view, options.rigid_laser_motion);
                 ++stats.laser_paths;
@@ -378,32 +489,52 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                 float lx = x, ly = y;
                 for (unsigned step = 1; step <= options.laser_horizon && laser.present; ++step) {
                     const auto phase = detail::advance(laser);
+                    ++stats.laser_forecast_updates;
                     if (step >= 2)
-                        detail::advance(lx, ly, candidate, axis, diagonal);
-                    if (step < 2 || !phase.present || !phase.lethal)
-                        continue;
-                    ++stats.laser_checks;
-                    const float clearance =
-                        detail::laser_clearance(lx, ly, half_x, half_y, laser, phase);
-                    score.minimum_clearance = std::min(score.minimum_clearance, clearance);
-                    const double positive = std::max(0.f, clearance);
-                    score.danger += 1 / ((positive + 1) * (positive + 1) * step);
-                    if (clearance <= 0) {
-                        score.first_overlap = std::min(score.first_overlap, step);
-                        ++stats.predicted_overlaps;
-                    }
+                        detail::advance(lx, ly, direction_at(step), axis, diagonal);
+                    score_laser(lx, ly, laser, phase, step);
                 }
             }
-            if (!std::isfinite(score.minimum_clearance))
-                score.minimum_clearance = 1e6f;
-            float next_x = player_x, next_y = player_y;
-            detail::advance(next_x, next_y, pending, axis, diagonal);
-            detail::advance(next_x, next_y, candidate, axis, diagonal);
-            const double center_x = next_x - 192, center_y = next_y - 380;
-            score.center_distance = center_x * center_x + center_y * center_y;
+        if (!std::isfinite(score.minimum_clearance))
+            score.minimum_clearance = 1e6f;
+        float next_x = player_x, next_y = player_y;
+        detail::advance(next_x, next_y, pending, axis, diagonal);
+        detail::advance(next_x, next_y, initial, axis, diagonal);
+        const double center_x = next_x - 192, center_y = next_y - 380;
+        score.center_distance = center_x * center_x + center_y * center_y;
+        return score;
+    };
+
+    for (int dy = -1; dy <= 1; ++dy)
+        for (int dx = -1; dx <= 1; ++dx) {
+            const unsigned candidate_index = unsigned((dy + 1) * 3 + dx + 1);
+            const detail::Direction candidate{dx, dy};
+            const auto action = detail::input(candidate);
+            if (decision) {
+                decision->candidates[candidate_index].action = action;
+                decision->candidates[candidate_index].continuation_action = action;
+            }
+            if (!(options.candidate_mask & (1u << candidate_index)))
+                continue;
+            detail::CandidateScore score{0,
+                                         -std::numeric_limits<float>::infinity(),
+                                         std::numeric_limits<double>::infinity(),
+                                         std::numeric_limits<double>::infinity(),
+                                         action,
+                                         action};
+            if (options.first_leg_updates)
+                for (int continuation_y = -1; continuation_y <= 1; ++continuation_y)
+                    for (int continuation_x = -1; continuation_x <= 1; ++continuation_x) {
+                        const auto path = evaluate(candidate, {continuation_x, continuation_y});
+                        if (detail::better(path, score))
+                            score = path;
+                    }
+            else
+                score = evaluate(candidate, candidate);
             if (decision)
                 decision->candidates[candidate_index] = {true,
                                                          score.action,
+                                                         score.continuation_action,
                                                          score.first_overlap,
                                                          score.minimum_clearance,
                                                          score.danger,

@@ -134,6 +134,31 @@ foreach(seed IN ITEMS 0 1 65535)
     message(FATAL_ERROR "ID89 did not exercise its ECL candidate constraint: ${report}")
   endif()
 endforeach()
+# ID198's fixed-origin beam requires the same observed rotation model as ID85,
+# but constant paths oscillate into a later bullet/beam trap. Preserve that
+# first failure and require the isolated two-leg proposal set through spell end.
+scene(spell198-pooled-laser-baseline extra 198 0 hazard-reactive 1000 collision 2 446 4)
+file(READ "${WORK}/spell198-pooled-laser-baseline.json" spell198)
+foreach(pair IN ITEMS "laser_slot;0" "laser_hitbox_call;0")
+  list(GET pair 0 key)
+  list(GET pair 1 expected)
+  field("${spell198}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "ID198 changed pooled-laser source: ${spell198}")
+  endif()
+endforeach()
+foreach(seed IN ITEMS 0 1 65535)
+  scene(spell198-portfolio-seed${seed} extra 198 ${seed} spell-portfolio 6000 complete 0 4292 4)
+  file(READ "${WORK}/spell198-portfolio-seed${seed}.json" report)
+  field("${report}" policy_profile_last profile)
+  field("${report}" policy_first_leg_updates first_leg)
+  field("${report}" policy_rigid_laser_paths rigid_paths)
+  field("${report}" policy_bullet_projections projections)
+  if(NOT profile STREQUAL "\"id198-two-leg-rigid-laser\"" OR
+     NOT first_leg STREQUAL "4" OR NOT rigid_paths GREATER 0 OR NOT projections GREATER 0)
+    message(FATAL_ERROR "ID198 did not exercise its two-leg cached forecast: ${report}")
+  endif()
+endforeach()
 # Distinct spell profiles guard the measured portfolio boundary. ID195 needs
 # vector acceleration; ID199 deliberately retains constant-velocity ranking.
 scene(spell193-portfolio extra 193 0 spell-portfolio 5000 complete 0 3692 4)

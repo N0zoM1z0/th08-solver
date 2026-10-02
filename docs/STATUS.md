@@ -25,8 +25,8 @@ has its own profile and evidence:
 |---|---|
 | Complete stage | Stage 1 Easy, Reimu/Yukari, seed 0; 22176 updates, no collision |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
-| Spell portfolio sweep | 45/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
-| Transform/profile cross-check | ID85 rigid pooled laser, ID89 direct ECL, IDs 193/195 source-vector and ID199 linear ranking; seeds 0/1/65535 complete |
+| Spell portfolio sweep | 46/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
+| Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, IDs 193/195 source-vector and ID199 linear ranking; seeds 0/1/65535 complete |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
 | Deterministic feedback | Fresh-process tapes agree on per-frame projection, terminal, RNG and graze/score/gauge |
@@ -54,16 +54,16 @@ passing component tests are not completion percentages.
   conservative laser broad phase reduced ID151 policy time from about 7.8 to 2.1 seconds
   without shortening its 120-update horizon. The native update remains the collision oracle
 - On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
-  checkpoints. `spell-portfolio` completed 45/56 with no lost baseline completion;
+  checkpoints. `spell-portfolio` completed 46/56 with no lost baseline completion;
   all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
-  and trace projection. The remaining failures are eight bullets, two pooled lasers
-  and one lethal region
+  and trace projection. The remaining failures are eight bullets, one pooled laser and
+  one lethal region
 - Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
   IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
   constant-velocity ranking; its isolated selector lives outside the generic kernel
 - Preserving the native final active-laser collision before removal completed ID163.
   Retained failures are bullet IDs 32/139/167/183/201/202/203/204, pooled-laser IDs
-  93/198 and lethal-region ID192
+  93 and lethal-region ID192
 - ID85's static-angle forecast stopped at the bottom center while ten live pooled lasers
   rotated around `(192,128)`; slot 7 hit on update 631. Replacing update 630 with any
   rightward direction survives that collision. Native before/after observations expose
@@ -76,6 +76,13 @@ passing component tests are not completion percentages.
   from at least update 362. Its isolated adapter constrains candidates across the
   repeating callback interval, then lets the generic scorer handle bullets. It completes
   the 3162-update wrapper for seeds 0, 1 and 65535 with fresh replay agreement
+- ID198's static forecast first meets rotating pooled-laser slot 0 on update 446. Rigid
+  motion removes that hit, but nine constant paths later oscillate into a bullet/beam
+  trap on update 1062. Its isolated two-leg profile ranks every initial/continuation
+  pair from shared immutable forecasts and completes the 4292-update wrapper for seeds
+  0, 1 and 65535. On local x86-64 GCC 12.2 Release, difficulty 4, seed 0 and a
+  6000-update budget, forecast caching retained the exact action tape while reducing
+  decision time from roughly 15.3 to 10.3 seconds; file I/O is outside that metric
 - Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
   Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
 - A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived
