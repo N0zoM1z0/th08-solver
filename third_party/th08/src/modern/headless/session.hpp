@@ -14,6 +14,20 @@ struct BulletView {
     int slot;
     float full_width, full_height;
     std::uint32_t active_transforms;
+    // Source-owned state for the active vector-acceleration opcode. Values are
+    // copied after the native update; no transform program is executed here.
+    float vector_acceleration_x, vector_acceleration_y;
+    int vector_acceleration_timer, vector_acceleration_duration;
+};
+// Raw source-owned laser state after an update. Consumers may forecast existing
+// lasers, but newly spawned/aimed lasers still belong to the next native update.
+struct LaserView {
+    float origin_x, origin_y, angle;
+    float start_offset, end_offset, start_length, width, speed;
+    int start_time, hitbox_start_time, duration, despawn_duration, hitbox_end_delay;
+    int timer, slot;
+    std::uint16_t flags;
+    std::uint8_t state;
 };
 enum class CollisionKind { None, Bullet, LethalRegion, Laser };
 struct Bounds {
@@ -25,7 +39,7 @@ struct CollisionEvent {
     CollisionKind kind = CollisionKind::None;
     std::uint64_t frame = 0;
     Bounds player, hazard;
-    int bullet_slot = -1;
+    int bullet_slot = -1, laser_slot = -1;
     float vx = 0, vy = 0;
     std::uint32_t active_transforms = 0;
     std::uint16_t movement_input = 0, sampled_input = 0;
@@ -57,6 +71,8 @@ class Session {
     State state() const;
     // Reused snapshot storage; its contents are invalidated by the next call.
     const std::vector<BulletView> &bullets();
+    // Reused independently from bullets(); invalidated by the next lasers() call.
+    const std::vector<LaserView> &lasers();
     float focused_axis_speed() const;
     float focused_diagonal_speed() const;
     // A diagnostics projection of actor/script state, not a serialized world.
@@ -66,5 +82,6 @@ class Session {
 
   private:
     std::vector<BulletView> views_;
+    std::vector<LaserView> laser_views_;
 };
 } // namespace th08::headless

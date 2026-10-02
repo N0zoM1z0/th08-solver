@@ -17,7 +17,7 @@ void clear_collision();
 CollisionEvent current_collision();
 void record_collision(CollisionKind, const Float3 &player_min, const Float3 &player_max,
                       const Float3 &hazard_min, const Float3 &hazard_max,
-                      const Float3 *bullet_position = nullptr);
+                      const Float3 *owner_position = nullptr);
 // Single-threaded diagnostics only. Timing never feeds game clocks or RNG.
 extern uint64_t file_io_ns;
 struct FileIoTimer {

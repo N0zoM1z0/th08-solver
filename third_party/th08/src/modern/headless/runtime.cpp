@@ -18,7 +18,7 @@ CollisionEvent current_collision() {
     return observed_collision;
 }
 void record_collision(CollisionKind kind, const Float3 &pmin, const Float3 &pmax,
-                      const Float3 &hmin, const Float3 &hmax, const Float3 *position) {
+                      const Float3 &hmin, const Float3 &hmax, const Float3 *owner_position) {
     if (observed_collision.kind != CollisionKind::None)
         return;
     observed_collision.kind = kind;
@@ -27,17 +27,23 @@ void record_collision(CollisionKind kind, const Float3 &pmin, const Float3 &pmax
     observed_collision.hazard = {hmin.x, hmin.y, hmax.x, hmax.y};
     observed_collision.movement_input = g_GuiMessageInputCurrent;
     observed_collision.sampled_input = g_CurFrameInput;
-    if (kind != CollisionKind::Bullet)
-        return;
-    for (int i = 0; i < 1536; ++i) {
-        const auto &bullet = g_BulletManager.bullets[i];
-        if (&bullet.position != position)
-            continue;
-        observed_collision.bullet_slot = i;
-        observed_collision.vx = bullet.velocity.x;
-        observed_collision.vy = bullet.velocity.y;
-        observed_collision.active_transforms = bullet.activeTransformFlags;
-        break;
+    if (kind == CollisionKind::Bullet) {
+        for (int i = 0; i < 1536; ++i) {
+            const auto &bullet = g_BulletManager.bullets[i];
+            if (&bullet.position != owner_position)
+                continue;
+            observed_collision.bullet_slot = i;
+            observed_collision.vx = bullet.velocity.x;
+            observed_collision.vy = bullet.velocity.y;
+            observed_collision.active_transforms = bullet.activeTransformFlags;
+            break;
+        }
+    } else if (kind == CollisionKind::Laser) {
+        for (int i = 0; i < 256; ++i)
+            if (&g_BulletManager.lasers[i].position == owner_position) {
+                observed_collision.laser_slot = i;
+                break;
+            }
     }
 }
 } // namespace th08::headless

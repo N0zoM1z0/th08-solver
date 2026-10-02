@@ -1,9 +1,9 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 25
+Core CTest cases: 26
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (27 total). A native build with private DAT adds one full-scene CTest.
+add two CTests (28 total). A native build with private DAT adds one full-scene CTest.
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
@@ -81,11 +81,14 @@ cmake --build build-headless --parallel 2
 ctest --test-dir build-headless --output-on-failure
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --spell-id 179 --difficulty 0 --seed 0 --strategy reactive --frames 2000 --actions reports/local/id179.actions --output reports/local/id179-native.json
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --spell-id 179 --difficulty 0 --seed 0 --frames 2000 --replay reports/local/id179.actions --output reports/local/id179-native-replay.json
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 195 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id195.actions --output reports/local/id195-native.json
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 199 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 5000 --actions reports/local/id199.actions --output reports/local/id199-native.json
 ```
 
 The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
 wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary collision
-at 382, a 10-update budget failure and the Stage 6b reactive collision at update 854.
+at 382, portfolio IDs 193/195/199 through their complete original wrappers, a 10-update
+budget failure and the Stage 6b reactive collision at update 854.
 Every execution tape replays in another process;
 tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
 Generated tapes and `summary.json` are under `build-headless/headless-regression/`.
@@ -117,6 +120,12 @@ output and cleanup, and per-child maximum RSS in KiB. Local runs use approximate
 73 MiB per child; use `ulimit -v 2097152` for a 2 GiB address-space cap if desired.
 No remote host is needed. Repeated prefix work is explicit; no unsafe native snapshot
 or shared action-dependent future is introduced to hide that cost.
+
+The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
+The Release `spell-portfolio` run completed 43 and retained 13 genuine collision
+prefixes; all 56 tapes then agreed in a fresh process on the semantic fields used by
+`agree()` above. This is broad algorithm evidence, while the smaller real-data CTest
+keeps three transform/profile boundaries practical to rerun on every local change.
 
 Acceleration removes wall-clock waiting and presentation work while retaining every
 original calc-chain update, timer increment and shared RNG consumer in that chain.

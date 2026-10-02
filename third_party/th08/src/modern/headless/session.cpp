@@ -70,6 +70,7 @@ Session::Session(const Config &config) {
             "native gameplay setup failed");
     require(g_AnmManager->ServicePreloadedAnims() == ZUN_SUCCESS, "stage ANM load failed");
     views_.reserve(1536);
+    laser_views_.reserve(256);
 }
 Session::~Session() {
     g_Chain.Release();
@@ -121,13 +122,30 @@ const std::vector<BulletView> &Session::bullets() {
     views_.clear();
     int slot = 0;
     for (const auto &b : g_BulletManager.bullets) {
-        if (b.state)
+        if (b.state) {
+            const auto &acceleration = b.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION];
             views_.push_back({b.position.x, b.position.y, b.velocity.x, b.velocity.y, b.state, slot,
                               b.sprites.collisionSize.x, b.sprites.collisionSize.y,
-                              b.activeTransformFlags});
+                              b.activeTransformFlags, acceleration.vector.x, acceleration.vector.y,
+                              acceleration.timer.current, acceleration.durationFrames});
+        }
         ++slot;
     }
     return views_;
+}
+const std::vector<LaserView> &Session::lasers() {
+    laser_views_.clear();
+    int slot = 0;
+    for (const auto &laser : g_BulletManager.lasers) {
+        if (laser.inUse)
+            laser_views_.push_back(
+                {laser.position.x, laser.position.y, laser.angle, laser.startOffset,
+                 laser.endOffset, laser.startLength, laser.width, laser.speed, laser.startTime,
+                 laser.hitboxStartTime, laser.duration, laser.despawnDuration, laser.hitboxEndDelay,
+                 laser.timer.current, slot, laser.flags, laser.state});
+        ++slot;
+    }
+    return laser_views_;
 }
 CollisionEvent Session::collision() const {
     return current_collision();

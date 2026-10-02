@@ -21,7 +21,8 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Older entry/effect/camera integration | `practice_entry.*`, `practice_camera.*`, `effect_pool.cpp`, `effect_animation.cpp`, `camera_particle.hpp` |
 | Independent source extraction | `tools/*_source_probe.cpp`, shared `source_probe_support.*`, `tests/source_*_cases.hpp` |
 | Imported production game and headless session | `third_party/th08/src/`; `modern/headless/session.*`, CPU resource/time/input adapters |
-| Native reactive proposal policy | `include/th08/reactive.hpp`; actual game establishes collisions/outcomes |
+| Native proposal kernels | `include/th08/reactive.hpp`, `native_policy.hpp`; actual game establishes collisions/outcomes |
+| Native spell policy selection | `include/th08/spell_policy.hpp`; case IDs do not enter generic kernels |
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
 | Independent native input interventions | `tools/headless_probe.cpp`; serial fresh-process branches over a fixed tape |
 
@@ -70,8 +71,11 @@ order; proposals must account for the pending input rather than reorder the game
 `Session::collision()` owns a value copy captured at the successful source collision
 test before death effects alter RNG/state. It identifies bullets, lethal regions or
 lasers and records the exact checked bounds and input values. `bullets()` returns a
-reused view buffer invalidated by its next call; callers copy it when retaining history.
-The CLI optionally owns a 32-update before/after ring, serialized after loop timing.
+reused post-update view buffer invalidated by its next call; active vector-acceleration
+state is copied from its source transform slot without advancing it. `lasers()` owns a
+separate reused buffer of raw pooled-laser lifecycle state. Callers copy either view when
+retaining history. The CLI optionally owns a 32-update before/after ring, serialized
+after loop timing.
 
 Original managers contain process globals and internal pointers. `headless::Session`
 is noncopyable and permits one instance per process. Fresh replay starts another
