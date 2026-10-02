@@ -48,8 +48,8 @@ void json_record(std::ostream &out, const Record &record, const Arguments &args)
         << ",\"duration_frames\":" << record.definition->duration() << ",\"horizon\":" << o.horizon
         << ",\"commit_frames\":" << o.commit_frames << ",\"beam\":" << o.beam
         << ",\"expansions_per_plan\":" << o.expansions_per_plan << ",\"goal\":[" << o.goal.x << ','
-        << o.goal.y << ']' << ",\"outcome\":\"" << scene::name(r.outcome)
-        << "\",\"search_status\":\""
+        << o.goal.y << ']' << ",\"recover_goal\":" << (o.recover_goal ? "true" : "false")
+        << ",\"outcome\":\"" << scene::name(r.outcome) << "\",\"search_status\":\""
         << (o.strategy == scene::Strategy::rolling_beam ? scene::name(r.search_status) : "not_run")
         << "\",\"executed_frames\":" << r.completed_frames
         << ",\"survived_frames\":" << r.completed_frames - (r.death_frame ? 1 : 0)
@@ -57,6 +57,12 @@ void json_record(std::ostream &out, const Record &record, const Arguments &args)
         << ",\"decisions\":" << r.decisions << ",\"expansions\":" << r.expansions
         << ",\"collision_queries\":" << r.collision_queries
         << ",\"duplicate_successors\":" << r.duplicate_successors
+        << ",\"peak_decision_expansions\":" << r.peak_decision_expansions
+        << ",\"recovery_attempts\":" << r.recovery_attempts
+        << ",\"recovery_successes\":" << r.recovery_successes
+        << ",\"recovery_target_queries\":" << r.recovery_target_queries
+        << ",\"recovery_initial_expansions\":" << r.recovery_initial_expansions
+        << ",\"recovery_retry_expansions\":" << r.recovery_retry_expansions
         << ",\"forecast_frames\":" << r.forecast_frames
         << ",\"peak_model_frames\":" << r.peak_model_frames
         << ",\"peak_model_bullet_references\":" << r.peak_model_bullet_references
@@ -71,6 +77,9 @@ void json_record(std::ostream &out, const Record &record, const Arguments &args)
         << "\",\"action_tape_bytes\":" << r.actions.size()
         << ",\"fresh_unindexed_replay_verified\":" << (r.replay_verified ? "true" : "false")
         << ",\"generation_ms\":" << r.generation_ms << ",\"search_ms\":" << r.search_ms
+        << ",\"recovery_initial_ms\":" << r.recovery_initial_ms
+        << ",\"recovery_target_ms\":" << r.recovery_target_ms
+        << ",\"recovery_retry_ms\":" << r.recovery_retry_ms
         << ",\"execution_ms\":" << r.execution_ms << ",\"replay_ms\":" << r.replay_ms
         << ",\"total_ms\":" << r.total_ms << ",\"phases\":[";
     for (std::size_t i = 0; i < record.definition->phases.size(); ++i) {
@@ -111,11 +120,15 @@ void output(std::ostream &out, const std::vector<Record> &records, const Argumen
                "  \"action_encoding\":\"(y+1)*3+x+1; x,y in {-1,0,1}; 4=stay; JSON includes the "
                "executed action tape\",\n"
                "  \"timing\":\"generation includes committed simulation and lookahead; search "
-               "includes planner validation; replay is fresh unindexed simulation; no timed file "
+               "includes planner validation and optional recovery; recovery timings are subsets "
+               "of search; replay is fresh unindexed simulation; no timed file "
                "I/O\",\n"
                "  \"counterexample\":\"late-gate exposes center-seeking finite-beam failure; "
-               "--goal-x 24 supplies an escape witness, not a general algorithm fix or "
-               "impossibility proof\",\n"
+               "--goal-x 24 supplies an explicit escape witness; --recover-goal 1 retries "
+               "toward a forecast-derived refuge, with no completeness claim\",\n"
+               "  \"recovery_policy\":\"off by default; at most one retry after search_exhausted; "
+               "nearest 8-pixel grid point free throughout lookahead; capped retry beam shares "
+               "the original expansion budget per decision; target queries counted separately\",\n"
                "  \"results\":[\n";
         for (std::size_t i = 0; i < records.size(); ++i) {
             if (i)
@@ -126,13 +139,17 @@ void output(std::ostream &out, const std::vector<Record> &records, const Argumen
         return;
     }
     out << "classification\tscenario\tstrategy\tseed\tvisual_draws_per_frame\tduration_frames"
-           "\thorizon\tcommit_frames\tbeam\texpansions_per_plan\tgoal_x\tgoal_y\toutcome"
+           "\thorizon\tcommit_frames\tbeam\texpansions_per_plan\tgoal_x\tgoal_y\trecover_goal"
+           "\toutcome"
            "\tsearch_status\texecuted_frames\tsurvived_frames\tdeath_frame\tsearch_stop_frame"
-           "\tdecisions\texpansions\tcollision_queries\tduplicate_successors\tforecast_"
-           "frames\tpeak_model_frames\tpeak_model_bullet_references"
+           "\tdecisions\texpansions\tcollision_queries\tduplicate_successors"
+           "\tpeak_decision_expansions\trecovery_attempts\trecovery_successes"
+           "\trecovery_target_queries\trecovery_initial_expansions\trecovery_retry_expansions"
+           "\tforecast_frames\tpeak_model_frames\tpeak_model_bullet_references"
            "\tpeak_live_bullets\temitted_bullets\temission_events\tgameplay_draws\tvisual_draws"
            "\tworld_digest\troute_digest\tevent_digest\tgameplay_rng_digest\tvisual_rng_digest"
-           "\treplay_verified\tgeneration_ms\tsearch_ms\texecution_ms\treplay_ms\ttotal_ms\n";
+           "\treplay_verified\tgeneration_ms\tsearch_ms\trecovery_initial_ms\trecovery_target_ms"
+           "\trecovery_retry_ms\texecution_ms\treplay_ms\ttotal_ms\n";
     for (const auto &record : records) {
         const auto &r = record.result;
         const auto &o = record.options;
@@ -140,19 +157,23 @@ void output(std::ostream &out, const std::vector<Record> &records, const Argumen
             << scene::name(o.strategy) << '\t' << args.seed << '\t' << args.visual_draws << '\t'
             << record.definition->duration() << '\t' << o.horizon << '\t' << o.commit_frames << '\t'
             << o.beam << '\t' << o.expansions_per_plan << '\t' << o.goal.x << '\t' << o.goal.y
-            << '\t' << scene::name(r.outcome) << '\t'
+            << '\t' << o.recover_goal << '\t' << scene::name(r.outcome) << '\t'
             << (o.strategy == scene::Strategy::rolling_beam ? scene::name(r.search_status)
                                                             : "not_run")
             << '\t' << r.completed_frames << '\t' << r.completed_frames - (r.death_frame ? 1 : 0)
             << '\t' << r.death_frame << '\t' << r.search_stop_frame << '\t' << r.decisions << '\t'
             << r.expansions << '\t' << r.collision_queries << '\t' << r.duplicate_successors << '\t'
+            << r.peak_decision_expansions << '\t' << r.recovery_attempts << '\t'
+            << r.recovery_successes << '\t' << r.recovery_target_queries << '\t'
+            << r.recovery_initial_expansions << '\t' << r.recovery_retry_expansions << '\t'
             << r.forecast_frames << '\t' << r.peak_model_frames << '\t'
             << r.peak_model_bullet_references << '\t' << r.peak_live_bullets << '\t'
             << r.emitted_bullets << '\t' << r.emission_events << '\t' << r.gameplay_draws << '\t'
             << r.visual_draws << '\t' << hex(r.digests.world) << '\t' << hex(r.route_digest) << '\t'
             << hex(r.digests.events) << '\t' << hex(r.digests.gameplay_rng) << '\t'
             << hex(r.digests.visual_rng) << '\t' << r.replay_verified << '\t' << r.generation_ms
-            << '\t' << r.search_ms << '\t' << r.execution_ms << '\t' << r.replay_ms << '\t'
+            << '\t' << r.search_ms << '\t' << r.recovery_initial_ms << '\t' << r.recovery_target_ms
+            << '\t' << r.recovery_retry_ms << '\t' << r.execution_ms << '\t' << r.replay_ms << '\t'
             << r.total_ms << '\n';
     }
 }
@@ -169,9 +190,10 @@ int main(int argc, char **argv) {
                        "all|stationary|greedy|rolling-beam\n"
                        "--seed 0..65535 --duration 3..10000000 --horizon 1..4096 --commit FRAMES\n"
                        "--beam 1..4096 --budget EXPANSIONS_PER_PLAN --goal-x X --goal-y Y\n"
+                       "--recover-goal 0|1 (rolling beam only; retries share the decision budget)\n"
                        "--visual-draws 0..32 --format json|tsv --output PATH\n"
                        "Defaults: all profiles/strategies, seed 1, 7200 frames, horizon 120, "
-                       "commit 30, beam 128.\n"
+                       "commit 30, beam 128, goal recovery off.\n"
                        "Exit 0 includes reported collision/search_limit outcomes; invalid input or "
                        "replay disagreement exits 1.\n";
                 return 0;
@@ -205,6 +227,8 @@ int main(int argc, char **argv) {
                 args.options.goal.x = real(value);
             else if (option == "--goal-y")
                 args.options.goal.y = real(value);
+            else if (option == "--recover-goal")
+                args.options.recover_goal = integer(value, 1) != 0;
             else
                 throw std::invalid_argument("unknown option: " + option);
         }

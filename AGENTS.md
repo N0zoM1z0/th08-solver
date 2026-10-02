@@ -1,58 +1,67 @@
-# th08-solver engineering contract
+# Engineering rules
 
-Read `docs/STATUS.md`, `docs/ARCHITECTURE.md`, and the affected interfaces first.
-The current user scope is offline component/solver development. Do not launch
-Wine, a Linux game port, or an input controller as an implicit verification step.
+Read README.md, docs/STATUS.md and the affected interfaces before changing code.
+Follow the owner's latest scope. At the current handoff, TH08 feature development
+is paused while the owner continues locally; do not autonomously resume it.
 
-## Current solver-first scope (2026-10-02)
+## Solver-first scope
 
-- Start from explicit, reproducible spell/scenario checkpoints. Reconstructing
-  menus, practice preludes, camera or rendering is not a prerequisite for solving.
-- Prioritize complete-duration continuous-danmaku scenarios, algorithm comparisons,
-  replay and end-to-end performance. A short safe horizon is not a completed scene.
-- A controlled profile may replace explicitly identified visual RNG consumers
-  with deterministic, seeded hooks. Record that policy; do not claim its trace is
-  retail-equivalent. Gameplay randomness and candidate-dependent state remain real
-  dependencies, not arbitrary NOPs or one tape reused across divergent branches.
-- Distinguish synthetic stress scenes, DAT/ECL-derived controlled scenarios and
-  source-faithful spell/stage runs. Stage transitions preserve carried state unless
-  the scenario explicitly models a reset. Unknown gameplay semantics still stop.
-- Work directly on main and push verified checkpoints; no PR/new working branch.
+- The goal is accurate, efficient offline planning over complete spell/scenario
+  segments, eventually genuine continuous stages
+- Explicit reproducible checkpoints are valid starting points. Do not make menu,
+  practice-prelude, camera or rendering reconstruction a prerequisite
+- Controlled visual RNG hooks are allowed when named, seeded and recorded. Never
+  silently substitute gameplay RNG or use one future for action-dependent branches
+- Preserve carried bullets, RNG, actors and lifecycle state across transitions.
+  Reset only where the modeled transition actually resets them
+- Unknown gameplay opcodes/state must stop the affected case. Classify synthetic,
+  DAT-controlled and source-faithful evidence separately. No game launch is required
 
-## Implementation
+## Code quality
 
-- Write maintained documentation, code, comments, and commit messages in English.
-  Communicate with the user in Chinese. Preserve original preparation artifacts
-  in their source language rather than rewriting historical evidence.
-- Use C++ for maintained components, tools, tests, and benchmarks. No Python
-  implementation or Python dependency; old preparation archives remain evidence.
-- Keep code reviewable: named structures, explicit units and ownership, small
-  responsibilities, `.clang-format`, and comments for non-obvious engine rules.
-- Prefer contiguous storage, reuse scratch memory, and measure realistic batches.
-  Do not use fast-math, unsupported SIMD assumptions, or approximate geometry
-  without an independent correctness check and an explicit domain contract.
-- Keep raw game data and extracted assets in ignored directories. Track the
-  user's original `preparations/` unchanged. Do not force-add ignored data.
-- Save verified progress in frequent, focused commits. New commit subjects use
-  `gpt-dots: <English summary>`; do not rewrite older subjects solely for this convention.
+- Maintain C++17 code/tools/tests and English code comments/docs. Keep original
+  preparation artifacts unchanged; no Python implementation/dependency
+- Keep responsibilities separate: parsing/immutable programs, owned simulation,
+  planning, replay and CLI/reporting. Case-specific adapters must not spread into
+  generic kernels. Use explicit typed interfaces, not cross-tool globals or main()
+  symbols as dependencies
+- Prefer the smallest complete change. Do not build a general engine/framework for
+  one narrow case, add speculative features, or preserve unused scaffolding
+- Document why, ownership/lifetimes, update order, units, checkpoint assumptions,
+  unsupported behavior and terminal boundaries. Avoid comments that merely restate code
+- Use named structures and small functions; apply .clang-format. Share immutable
+  data, own mutable state, reuse buffers where measurement justifies it
+- No fast-math, approximate collision shortcuts, speculative SIMD or unsafe state
+  merging. Optimize against a measured workload while preserving stated semantics
+- Do not silently change budgets, tie-breaking, RNG consumption or failure meaning
+  to improve a benchmark. Record additional retry/target-selection costs
 
-## Evidence
+## Proportionate verification
 
-- State exactly what is covered: structure, restricted execution, model route,
-  complete offline world, or original-game validation are distinct statuses.
-- Unknown opcodes, inherited state, callbacks and RNG consumers must stop a
-  dependent execution or optimization; do not invent defaults or silent NOPs.
-- Preserve file/sub/PC/mask identities; 222 IDs are not 222 identical entry cases.
-- Shot requests are not successful bullet-pool allocations. Search exhaustion
-  is not mathematical impossibility. A finite-horizon path is not a full spell.
-- Maintain the source/DAT hashes and first blocker in reproducible outputs.
+- Add a focused regression that reproduces the bug or guards a meaningful contract
+- Prefer a small number of end-to-end scenarios covering a complete duration,
+  transitions, deterministic replay and a failure case over many redundant tests
+- Keep useful independent source/differential checks. Delete tests only when unused,
+  duplicated or made obsolete by a replacement; do not delete an inconvenient failure
+- Run relevant tests and the normal CTest suite before publishing. For changed
+  DAT/runtime behavior, run the affected real-data command when data is available
+- Existing CI sanitizer coverage remains useful. Do not create elaborate new
+  ASan/UBSan infrastructure or make every small change a sanitizer project
+- Measure Release builds, exclude file I/O from simulation timing, and record seed,
+  profile, outcome, budget and environment. A faster failing solver is not a win
+- Fresh replay checks execution/index agreement; it is not an independent physics
+  oracle or proof of retail equivalence
 
-## Verification and handoff
+## Documentation and publication
 
-Run relevant CTest cases and native DAT checks for changed parser/runtime code.
-For geometry changes run brute-force differential tests and, when available,
-the pinned source oracle. Use sanitizers for binary parser/ownership changes.
-Update `docs/STATUS.md` with completed work and the next concrete missing behavior.
-Use `docs/README.md` as the documentation map. Keep implemented status separate from
-`docs/COVERAGE.md` acceptance criteria; refresh affected report generators and outputs
-together. Run the native documentation CTest after maintained documentation changes.
+- Keep only the compact current document set linked by README. Update the document
+  that owns the fact instead of adding another roadmap, diary or duplicate checklist
+- Keep current status, future work and historical/component evidence distinct.
+  Update report generators and affected outputs together; run the documentation CTest
+- Raw DAT/EXE/assets, generated reference translation units and local experiments
+  remain ignored. Do not force-add them; preserve third-party notices
+- For authorized assistant changes to this N0zoM1z0 repository, use
+  `gpt-dots: <English summary>`. Do not rewrite older commits solely for their prefix
+- The owner requested direct main progress commits, not feature branches/PRs.
+  Fetch first, preserve others' work, never force an unrelated change, and publish
+  only tested scope. Do not infer permission to continue beyond the latest request

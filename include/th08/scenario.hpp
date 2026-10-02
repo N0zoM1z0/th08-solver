@@ -71,8 +71,10 @@ struct RunOptions {
     Strategy strategy = Strategy::rolling_beam;
     std::uint32_t horizon = 120, commit_frames = 30;
     std::size_t beam = 128;
+    // With goal recovery enabled, this is shared by both searches in a decision.
     std::uint64_t expansions_per_plan = 200000;
     Vec2 goal{192, 352};
+    bool recover_goal = false;
 };
 struct ReplayResult {
     std::uint32_t completed_frames = 0, death_frame = 0;
@@ -87,6 +89,12 @@ struct RunResult {
     std::uint32_t decisions = 0, peak_model_frames = 0;
     std::uint64_t expansions = 0, forecast_frames = 0, peak_model_bullet_references = 0;
     std::uint64_t collision_queries = 0, duplicate_successors = 0;
+    std::uint64_t peak_decision_expansions = 0;
+    // An attempt includes refuge selection even when no target permits a retry.
+    std::uint32_t recovery_attempts = 0, recovery_successes = 0;
+    // Target probes are separate from action-expansion collision queries.
+    std::uint64_t recovery_target_queries = 0, recovery_initial_expansions = 0;
+    std::uint64_t recovery_retry_expansions = 0;
     std::size_t peak_live_bullets = 0;
     std::uint64_t emitted_bullets = 0, emission_events = 0;
     std::uint32_t gameplay_draws = 0, visual_draws = 0;
@@ -99,6 +107,8 @@ struct RunResult {
     ReplayResult replay{};
     bool replay_verified = false;
     double generation_ms = 0, search_ms = 0, execution_ms = 0, replay_ms = 0, total_ms = 0;
+    // Recovery timings are subsets of search_ms, not additional total costs.
+    double recovery_initial_ms = 0, recovery_target_ms = 0, recovery_retry_ms = 0;
 };
 RunResult run(const Checkpoint &initial, const RunOptions &options = {});
 ReplayResult replay(const Checkpoint &initial, const std::vector<std::uint8_t> &actions);

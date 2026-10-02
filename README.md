@@ -1,71 +1,65 @@
 # th08-solver
 
-Offline analysis, modeling and solving components for Touhou 08: Imperishable Night
-1.00d. Maintained code, tools and tests use **C++17**, with no Python dependency.
-Performance and readability are requirements; numerical shortcuts need independent
-correctness evidence. The current phase does not launch the game.
+Offline C++17 simulation and planning for Touhou 08. The immediate goal is to run
+complete, reproducible spell/scenario segments without starting the game, expose
+algorithm failures, and improve measured solve cost.
 
-**Complete offline spell solutions: 0.** All 317 DAT members are decoded and all
-222 original spell IDs are indexed, but complete worlds are not implemented.
-Two source-driven 600-frame particle fixtures have independently replayed routes;
-they are not complete spell solutions.
+## Current direction
 
-## Read the project
+- Start from an explicit spell/scenario checkpoint. Menus, practice preludes,
+  camera and rendering are not prerequisites
+- Replace identified visual RNG consumers with seeded, recorded hooks when useful;
+  label this a controlled profile. Keep gameplay RNG and action-dependent state honest
+- Test whole continuous scenarios, not only short safe horizons. Carry bullets,
+  RNG and relevant actor state across transitions; replay executed actions from scratch
+- Compare simple baselines and alternative planners under stated budgets. Search
+  exhaustion is not a proof of impossibility, and a short route is not a full solution
 
-| Document | Purpose |
-|---|---|
-| [Current status](docs/STATUS.md) | Implemented layers, exact baselines and missing integration |
-| [Architecture and methods](docs/ARCHITECTURE.md) | Design rationale, code map, state ownership and algorithm contracts |
-| [Complete-coverage roadmap](docs/COVERAGE.md) | All-case acceptance, dependencies and the first complete-world target |
-| [Validation and reproduction](docs/VALIDATION.md) | Test profiles, pinned-source oracle, DAT audits and report refresh |
-| [Documentation guide](docs/README.md) | Specialized evidence, performance, regression and maintenance references |
+The verified handoff includes 7200/72000-frame synthetic runs, a real-DAT controlled
+ID179 Easy survival segment, and a geometry-derived recovery for a reproduced beam
+search failure. See [current results and remaining work](docs/STATUS.md).
 
-The current priority is reproducible checkpoint-to-terminal solving without launching
-the game: continuous synthetic scenes first, then DAT-driven complete spell and stage
-segments. Explicit checkpoints and seeded visual-RNG hooks are allowed; these controlled
-profiles are distinguished from original-game shared-RNG equivalence. Menu, camera and
-practice-prelude reconstruction are not prerequisites. See [Continuous scenarios](docs/SCENARIOS.md).
+**Complete offline spell solutions: 0.** This is the conservative source-faithful
+whole-world coverage count. The separately verified controlled ID179 survival
+profile omits graze/score/item feedback and retail visual RNG ordering; it is not
+an original full-stage or practice-capture equivalence claim.
 
-## Build and run
+## Take over locally
 
-Requires CMake 3.16+, a C++17 compiler and OpenSSL development libraries. Linux is
-tested; other platforms and retail x87 numerical equivalence are not verified.
+Requires CMake 3.16+, a C++17 compiler and OpenSSL development libraries. Linux
+x86_64 is tested; portability and retail x87 equivalence are not established.
 
 ```sh
+git clone https://github.com/N0zoM1z0/th08-solver.git
+cd th08-solver
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --parallel 2
 ctest --test-dir build --output-on-failure
-
-./build/th08_audit game_data_donottrack/th08.dat reports/local/review
-./build/th08_slices game_data_donottrack/th08.dat reports/local/review
-./build/th08_motion_cases game_data_donottrack/th08.dat reports/local/review
-./build/th08_animation_cases game_data_donottrack/th08.dat reports/local/review
-./build/th08_timeline_cases game_data_donottrack/th08.dat reports/local/review
+mkdir -p reports/local
+./build/th08_scenario_cases --scenario all --strategy rolling-beam --recover-goal 1 --output reports/local/scenarios.json
 ```
 
-Supply your own DAT under the ignored `game_data_donottrack/` directory. Native
-tools verify its hash and write reports without extracting game assets to disk.
-The default ANM audit supplies no RNG; random instructions stop for missing context.
-Default CI uses neither private DAT nor the optional reconstruction checkout.
+Place your own `th08.dat` in ignored `game_data_donottrack/`, then:
 
-For ASan/UBSan, pinned reconstruction setup and independent component-oracle targets,
-follow [Validation](docs/VALIDATION.md) and [Build artifacts](docs/BUILD_ARTIFACTS.md).
-Do not enable fast-math. Use `reports/local/` for experiments; refresh tracked
-`reports/native/` intentionally using the documented verification procedure.
+```sh
+./build/th08_spell_cases game_data_donottrack/th08.dat reports/local/id179
+```
 
-## Repository map
+The owner is taking over local development. Automated TH08 feature work is paused
+at this handoff; the next steps below are recommendations, not background tasks.
 
-| Path | Purpose |
+## Documentation map
+
+| Document | Single responsibility |
 |---|---|
-| `include/th08/`, `src/` | Current parsing, execution, motion, geometry and planner components |
-| `tools/` | Native audit/report tools and hash-checked source-oracle generators |
-| `tests/` | Unit, ownership, source-comparison, regression and documentation checks |
-| `benchmarks/` | Reproducible component performance comparisons |
-| [reports/native/](reports/native/README.md) | Current generated structural/execution baselines and scoped measurements |
-| [docs/](docs/README.md) | Current design, status, acceptance criteria and evidence |
-| `preparations/` | Original materials preserved unchanged; not current implementation status |
-| `.cache/`, `build*/`, `reports/local/` | Ignored reference checkout, generated build files and experiments |
+| [Engineering rules](AGENTS.md) | Scope, code quality, tests and change discipline |
+| [Status](docs/STATUS.md) | Verified progress, limits and next useful work |
+| [Architecture](docs/ARCHITECTURE.md) | Code map, ownership and correctness contracts |
+| [Scenarios](docs/SCENARIOS.md) | Checkpoints, RNG policy, exact profiles and terminal semantics |
+| [Validation](docs/VALIDATION.md) | Reproduction, input provenance and evidence boundaries |
+| [Report index](reports/native/README.md) | Generated evidence and its producer |
+| [Third-party notices](docs/THIRD_PARTY_NOTICES.md) | Required attribution/license |
 
-Maintained documentation and code are English; original preparation artifacts retain
-their original language and attribution. See [Provenance](docs/PROVENANCE.md) and
-[Third-party notices](docs/THIRD_PARTY_NOTICES.md) for the evidence/distribution boundary.
+Old entry-first roadmaps were consolidated or removed; Git history retains them.
+`preparations/` is preserved original research, not current instructions or verified
+coverage. Game assets, generated binaries/source and experiments stay ignored.

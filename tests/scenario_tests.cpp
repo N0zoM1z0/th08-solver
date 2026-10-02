@@ -114,11 +114,26 @@ void bounded_search_counterexample() {
     check(escaped.outcome == scene::Outcome::survived && escaped.completed_frames == 900 &&
               escaped.replay_verified,
           "explicit early escape heuristic did not resolve the counterexample");
+    options.goal = {192, 352};
+    options.recover_goal = true;
+    const auto recovered = scene::run(initial, options);
+    check(recovered.outcome == scene::Outcome::survived && recovered.completed_frames == 900 &&
+              recovered.replay_verified && recovered.recovery_successes > 0 &&
+              recovered.recovery_successes == recovered.recovery_attempts &&
+              recovered.recovery_attempts <= recovered.decisions,
+          "forecast-derived goal recovery did not resolve the same seeded counterexample");
+    check(recovered.peak_decision_expansions <= options.expansions_per_plan &&
+              recovered.recovery_initial_expansions > 0 &&
+              recovered.recovery_retry_expansions > 0 && recovered.recovery_target_queries > 0 &&
+              recovered.expansions == recovered.collision_queries + recovered.duplicate_successors,
+          "recovery lost failed-search/probe accounting or exceeded the shared decision budget");
     options.expansions_per_plan = 1;
     const auto limited = scene::run(initial, options);
     check(limited.outcome == scene::Outcome::search_limit &&
               limited.search_status == th08::solver::Status::expansion_limit &&
-              limited.completed_frames == 0 && limited.actions.empty() && limited.replay_verified,
+              limited.completed_frames == 0 && limited.actions.empty() && limited.replay_verified &&
+              limited.recovery_attempts == 0 && limited.recovery_target_queries == 0 &&
+              limited.peak_decision_expansions == 1,
           "expansion budget failure produced executed actions or a collision claim");
     options.strategy = scene::Strategy::stationary;
     const auto collision = scene::run(initial, options);

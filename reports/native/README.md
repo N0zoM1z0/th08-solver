@@ -1,36 +1,34 @@
-# Current native report index
+# Generated evidence index
 
-Refreshed: 2026-09-12. These are current generated C++ component baselines, not the
-historical preparation interpreter's output. Runtime baseline:
-`6317947c8bd289722314b267e8522ce75eb77b1d` for the existing broad component reports.
-The new first-spell report separately records the owned entry-prefix implementation;
-it does not change those older component results or claim a completed world.
-Input hashes and reference boundaries are in [Provenance](../../docs/PROVENANCE.md).
+Current solver handoff: 2026-10-02. This directory mixes current solver records with
+explicitly scoped older component baselines. A report's producer/input/scope controls
+its meaning; its presence is not a claim that every original spell or stage runs.
+See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
+[Validation](../../docs/VALIDATION.md) for interpretation and reproduction.
 
-| Producer | Reports | Meaning |
+| Producer | Records | Meaning |
 |---|---|---|
-| `th08_audit` | `summary.json`, `members.tsv`, `subprograms.tsv`, `opcodes.tsv`, `spell_sites.tsv`, `shot_sites.tsv` | DAT/ECL structural identities; zero complete spell solutions |
-| `th08_audit` resource reports | `resource_summary.json`, `timelines.tsv`, `sht_*.tsv`, `anm_*.tsv`, `std_*.tsv` | Parsed fields and restricted ANM timing certificates, not complete resource execution |
-| `th08_slices` | `slice_summary.json`, `slice_matrix.tsv`, `emitter_examples.tsv`, `emitter_benchmark.json` | Restricted entry/mask attempts, first blockers, owned payload checks and scoped scheduling timing |
-| `th08_scenario_cases` | `scenario_summary.json`, `scenario_escape.json` | Synthetic controlled 7200-frame scenes, all strategy outcomes and fresh replay; not original stages |
-| `th08_motion_cases` | `motion_summary.json`, `motion_sub40_frames.tsv`, `motion_sub40_route.tsv`, `motion_sub41_frames.tsv`, `motion_sub41_route.tsv` | Two fixed-entry particle models and independently replayed routes |
-| `th08_animation_cases` | `animation_control_summary.json`, `animation_control_cases.tsv` | Unseeded 600-call ANM control/scalar profile; context blockers remain explicit |
-| `th08_timeline_cases` | `timeline_control_summary.json`, `timeline_control_cases.tsv` | Timeline control with unknown world observations, not completed world effects |
-| `th08_first_spell` | `first_spell_summary.json`, `first_spell_trace.tsv`, `first_spell_effect51_summary.json` | Selected ID2 Easy entry prefix with supplied GUI gates; missing effect51 context plus separately supplied successful immediate spawn; no full entry/world/solution |
-| `source_oracle` | `source_oracle.json` | Pinned native source-body comparisons by category; no game execution |
-| `geometry_bench`, `planner_bench`, `bullet_slots_bench` | Corresponding `*_benchmark.json` files | Scoped component comparisons, not full-world performance |
+| `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
+| `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
+| `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |
+| `th08_scenario_cases` | `scenario_long.tsv` | 72000-frame synthetic relay; not an original stage |
+| `th08_spell_cases` | `spell179_summary.json`, `spell179_*_seed*_route.tsv` | Actual-DAT controlled ID179, three seeds/four strategies, success and failure-prefix replay |
+| `planner_bench` | `planner_benchmark.json` | Fixed-model reference comparison, exact-successor query counts and local timings |
+| `th08_audit` | `summary.json`, member/sub/opcode/spell/shot TSVs | Structural identities; legacy source-faithful complete-spell count remains 0 |
+| `th08_audit` resource reports | `resource_summary.json`, timeline/SHT/ANM/STD TSVs | Parsed fields and restricted certificates |
+| `th08_slices` | `slice_summary.json`, `slice_matrix.tsv`, `emitter_examples.tsv`, `emitter_benchmark.json` | Restricted ECL execution and component timing |
+| `th08_motion_cases` | `motion_summary.json`, `motion_sub*_frames.tsv`, `motion_sub*_route.tsv` | Two older 600-frame particle fixtures, not complete Wriggle spells |
+| `th08_animation_cases` | `animation_control_summary.json`, `animation_control_cases.tsv` | Restricted ANM scalar/control profiles |
+| `th08_timeline_cases` | `timeline_control_summary.json`, `timeline_control_cases.tsv` | Timeline execution without complete world effects |
+| `th08_first_spell` | `first_spell*` | Historical entry-prefix/supplied-state diagnostics; not the current required entry path |
+| `source_oracle` | `source_oracle.json` | Pinned component source comparisons; zero mismatches is not whole-game validation |
+| Other `*_bench` tools | Corresponding benchmark JSON | Scoped component timings; not additive estimates of complete solve cost |
 
-Exact counts belong in the JSON summaries and per-case identities in TSVs. A
-`PASSED` audit means its checks passed, not that all its entries executed to a
-terminal world. Likewise, `FOUND_AND_REPLAYED` in the motion fixture report does
-not mean a whole spell was captured. Fields named `*_atomic_failures` in the source
-oracle count deliberate rejection/rollback test cases, not failed test results;
-the corresponding mismatch count must be zero.
+Current controlled ID179 success does not rewrite the legacy audit/motion/entry fields
+into source-faithful world completion. Synthetic and controlled scenarios must remain
+separately labeled. A `SEARCH_LIMIT`, collision, unsupported opcode or missing context
+is evidence to inspect, not a success or mathematical impossibility proof.
 
-Timing fields vary by run. Preserve large integer digests exactly when processing
-JSON: some consumers round integers above 2^53. Prefer the original file or a
-lossless integer parser, not a floating-point reserialization of state digests.
-
-Use [Validation](../../docs/VALIDATION.md) for reproduction. Experiments, alternate
-seeds and sanitizer timing go to ignored `reports/local/`. Do not edit generated
-numeric results to match a document; rerun their producer and review the difference.
+Experiment in ignored `reports/local/`; regenerate tracked records deliberately from
+their maintained C++ producer. Do not commit raw game assets. Preserve large digests
+without floating-point rounding and compare semantic outcomes before wall-clock time.
