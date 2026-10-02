@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <iostream>
 #include <th08/direct_laser_policy.hpp>
+#include <th08/imminent_laser_policy.hpp>
 #include <th08/native_policy.hpp>
 #include <th08/spell_policy.hpp>
 #include <vector>
@@ -35,6 +36,14 @@ struct EclContext {
     float position_x, position_y, position_offset_x, position_offset_y;
     float velocity_x, velocity_y, rotation, rotation_velocity;
     float variable0, variable1;
+};
+struct ImminentSpawn {
+    bool supported, suppressed;
+    int enemy_index, opcode;
+    float origin_x, origin_y, angle;
+    float start_offset, end_offset, start_length, width, speed;
+    int start_time, hitbox_start_time, duration, despawn_duration, hitbox_end_delay;
+    std::uint16_t flags;
 };
 Laser horizontal_laser() {
     return {0, 380, 0, 0, 400, 400, 2, 0, 0, 0, 100, 0, 0, 0, 7, 1, 1, 0, 0, 0, false};
@@ -105,6 +114,29 @@ int main() {
     check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion &&
               th08::policy::native_spell_policy(198).hazards.rigid_laser_motion,
           "spell portfolio lost an isolated pooled-laser motion model");
+
+    const std::vector<ImminentSpawn> imminent_spawns{{true, false, 3, 114, 7.35971069f, 448,
+                                                      -1.56775308f, 0, 0, 2400, 16, 30, 1, 1, 40,
+                                                      40, 20, 6}};
+    std::vector<th08::policy::ImminentLaserWarning> imminent_warnings;
+    th08::policy::ImminentLaserStats imminent_stats;
+    check(th08::policy::collect_imminent_laser_warnings(imminent_spawns, imminent_warnings,
+                                                        imminent_stats),
+          "literal imminent pooled-laser spawn was rejected");
+    const auto imminent_mask = th08::policy::imminent_laser_candidate_mask(
+        8.82842636f, 426.34314f, .825f, .825f, 2, 1.414213538f, 20, 120, imminent_warnings,
+        imminent_stats);
+    check(imminent_mask == (1u << 5) && imminent_stats.due_spawns == 1 &&
+              imminent_stats.warnings == 1 && imminent_stats.constrained_decisions == 1,
+          "imminent pooled-laser warning lost the only native-observed rightward escape");
+    auto unsupported_spawn = imminent_spawns.front();
+    unsupported_spawn.supported = false;
+    check(!th08::policy::collect_imminent_laser_warnings(
+              std::vector<ImminentSpawn>{unsupported_spawn}, imminent_warnings, imminent_stats) &&
+              imminent_stats.unsupported_spawns == 1,
+          "unsupported imminent pooled-laser geometry did not stop warning collection");
+    check(th08::policy::native_spell_policy(93).imminent_pooled_lasers,
+          "spell portfolio lost the isolated ID93 spawn-warning adapter");
 
     EclContext direct_context{2,   110, 120, 137,  0,    -1,    0,
                               -1,  0,   0,   true, true, false, 9,

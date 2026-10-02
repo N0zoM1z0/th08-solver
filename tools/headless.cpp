@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <string>
 #include <th08/direct_laser_policy.hpp>
+#include <th08/imminent_laser_policy.hpp>
 #include <th08/native_policy.hpp>
 #include <th08/reactive.hpp>
 #include <th08/spell_policy.hpp>
@@ -362,6 +363,9 @@ int main(int argc, char **argv) {
         th08::policy::DirectLaserStats direct_laser_stats;
         std::vector<th08::policy::DirectLaserWarning> direct_laser_warnings;
         direct_laser_warnings.reserve(16);
+        th08::policy::ImminentLaserStats imminent_laser_stats;
+        std::vector<th08::policy::ImminentLaserWarning> imminent_laser_warnings;
+        imminent_laser_warnings.reserve(16);
         th08::policy::HazardReactiveOptions last_hazard_options;
         std::uint64_t linear_profile_decisions = 0;
         const char *last_policy_profile = "none";
@@ -412,6 +416,19 @@ int main(int argc, char **argv) {
                             state.x, state.y, state.hurt_half_x, state.hurt_half_y,
                             session.focused_axis_speed(), session.focused_diagonal_speed(),
                             state.latched_input, direct_laser_warnings, direct_laser_stats);
+                    }
+                    if (profile.imminent_pooled_lasers) {
+                        if (!th08::policy::collect_imminent_laser_warnings(
+                                session.imminent_laser_spawns(), imminent_laser_warnings,
+                                imminent_laser_stats))
+                            throw std::runtime_error(
+                                "unsupported imminent pooled-laser spawn instruction");
+                        profile.hazards.candidate_mask &=
+                            th08::policy::imminent_laser_candidate_mask(
+                                state.x, state.y, state.hurt_half_x, state.hurt_half_y,
+                                session.focused_axis_speed(), session.focused_diagonal_speed(),
+                                state.latched_input, profile.hazards.laser_horizon,
+                                imminent_laser_warnings, imminent_laser_stats);
                     }
                     last_hazard_options = profile.hazards;
                     action = th08::policy::hazard_reactive(
@@ -580,7 +597,23 @@ int main(int argc, char **argv) {
             << ",\"policy_direct_laser_constrained_decisions\":"
             << direct_laser_stats.constrained_decisions
             << ",\"policy_direct_laser_allowed_candidates\":"
-            << direct_laser_stats.allowed_candidates << ",\"previous_trace_digest\":\""
+            << direct_laser_stats.allowed_candidates
+            << ",\"policy_imminent_laser_decisions\":" << imminent_laser_stats.decisions
+            << ",\"policy_imminent_laser_due_spawns\":" << imminent_laser_stats.due_spawns
+            << ",\"policy_imminent_laser_warnings\":" << imminent_laser_stats.warnings
+            << ",\"policy_imminent_laser_suppressed_spawns\":"
+            << imminent_laser_stats.suppressed_spawns
+            << ",\"policy_imminent_laser_unsupported_spawns\":"
+            << imminent_laser_stats.unsupported_spawns
+            << ",\"policy_imminent_laser_candidate_paths\":" << imminent_laser_stats.candidate_paths
+            << ",\"policy_imminent_laser_forecast_updates\":"
+            << imminent_laser_stats.forecast_updates
+            << ",\"policy_imminent_laser_candidate_overlaps\":"
+            << imminent_laser_stats.candidate_overlaps
+            << ",\"policy_imminent_laser_constrained_decisions\":"
+            << imminent_laser_stats.constrained_decisions
+            << ",\"policy_imminent_laser_allowed_candidates\":"
+            << imminent_laser_stats.allowed_candidates << ",\"previous_trace_digest\":\""
             << previous_digest << "\",\"prefix_frame\":" << prefix_frame
             << ",\"prefix_trace_digest\":\"" << prefix_digest << "\",\"unused_actions\":"
             << (replay_path.empty() ? 0 : replay.size() - actions.size())

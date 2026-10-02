@@ -12,6 +12,8 @@
 #include "TextHelper.hpp"
 #include "pbg/PbgArchive.hpp"
 #include "runtime.hpp"
+#include <algorithm>
+#include <cmath>
 #include <cstring>
 #include <stdexcept>
 
@@ -21,6 +23,16 @@ void require(bool ok, const char *message) {
     if (!ok)
         throw std::runtime_error(message);
 }
+// Serialized opcode 114 payload. Keep this private to the observation adapter;
+// the policy consumes only resolved scalar geometry, never native pointers.
+struct NativeLaserSpawnArgs {
+    std::uint16_t bullet_type;
+    std::int16_t color;
+    float angle, speed, start_offset, end_offset, start_length, width;
+    std::int32_t start_time, duration, despawn_duration, hitbox_start_time, hitbox_end_delay;
+    std::uint32_t transform_flags;
+};
+static_assert(sizeof(NativeLaserSpawnArgs) == 0x34, "opcode 114 payload layout changed");
 } // namespace
 Session::Session(const Config &config) {
     static bool used = false;
@@ -74,6 +86,7 @@ Session::Session(const Config &config) {
     views_.reserve(1536);
     laser_views_.reserve(256);
     ecl_views_.reserve(512);
+    laser_spawn_views_.reserve(64);
 }
 Session::~Session() {
     g_Chain.Release();
@@ -216,6 +229,98 @@ const std::vector<EclContextView> &Session::ecl_contexts() {
                 append(enemy, enemy.childEclBlocks[slot]->eclContext, slot + 1);
     }
     return ecl_views_;
+}
+const std::vector<ImminentLaserSpawnView> &Session::imminent_laser_spawns() {
+    constexpr std::int16_t create_laser = 114, create_laser_aimed = 115;
+    constexpr std::uint16_t variable_angle = 1u << 2;
+    constexpr std::uint16_t variable_geometry_or_lifecycle = 0x7f8;
+    constexpr std::uint32_t spawn_during_suppression = 0x4;
+    constexpr int local_float_0 = 0x2720, local_float_7 = 0x2727;
+
+    laser_spawn_views_.clear();
+    const bool pool_has_space =
+        std::any_of(std::begin(g_BulletManager.lasers), std::end(g_BulletManager.lasers),
+                    [](const Laser &laser) { return !laser.inUse; });
+    auto append = [&](const Enemy &enemy, const EnemyEclContext &context, bool main_context) {
+        const auto *instruction = context.currentInstr;
+        if (!instruction ||
+            (instruction->opcode != create_laser && instruction->opcode != create_laser_aimed))
+            return;
+        const auto active_difficulty = static_cast<std::uint32_t>(g_GameManager.difficultyMask) |
+                                       enemy.eclDifficultyMaskOverride;
+        if ((instruction->difficultyMask & active_difficulty) != active_difficulty ||
+            context.time.current != instruction->time || context.secondaryTime.current > 0 ||
+            enemy.pendingEclSubroutineIndex >= 0)
+            return;
+
+        ImminentLaserSpawnView view;
+        view.enemy_index = enemy.enemyIndex;
+        view.opcode = instruction->opcode;
+        // Child execution follows the main context and may be invalidated by it;
+        // this narrow preview deliberately owns only the next main instruction.
+        // A full pool may also change before this call, so a snapshot cannot
+        // prove that native SpawnLaserPattern will suppress the instruction.
+        if (!main_context || !pool_has_space || instruction->opcode == create_laser_aimed ||
+            instruction->nextOffset != 0x40 ||
+            (instruction->operandFlags & variable_geometry_or_lifecycle)) {
+            laser_spawn_views_.push_back(view);
+            return;
+        }
+
+        NativeLaserSpawnArgs args{};
+        std::memcpy(&args, instruction->operands, sizeof(args));
+        float angle = args.angle;
+        if (instruction->operandFlags & variable_angle) {
+            if (!std::isfinite(args.angle) || std::trunc(args.angle) != args.angle ||
+                args.angle < local_float_0 || args.angle >= local_float_7 + 1) {
+                laser_spawn_views_.push_back(view);
+                return;
+            }
+            const int selector = static_cast<int>(args.angle);
+            angle = context.floatVariables[selector - local_float_0];
+        }
+        const float origin_x = enemy.position.x + enemy.positionOffset.x + enemy.shootOffset.x;
+        const float origin_y = enemy.position.y + enemy.positionOffset.y + enemy.shootOffset.y;
+        const bool finite = std::isfinite(origin_x) && std::isfinite(origin_y) &&
+                            std::isfinite(angle) && std::isfinite(args.speed) &&
+                            std::isfinite(args.start_offset) && std::isfinite(args.end_offset) &&
+                            std::isfinite(args.start_length) && std::isfinite(args.width);
+        if (!finite || args.start_offset < 0 || args.end_offset < args.start_offset ||
+            args.start_length < 0 || args.width < 0 || args.speed < 0 || args.start_time < 0 ||
+            args.duration < 0 || args.despawn_duration < 0 || args.hitbox_start_time < 0 ||
+            args.hitbox_end_delay < 0) {
+            laser_spawn_views_.push_back(view);
+            return;
+        }
+
+        view.suppressed = g_BulletManager.spawnSuppressionFrames != 0 &&
+                          !(args.transform_flags & spawn_during_suppression);
+        view.supported = true;
+        view.origin_x = origin_x;
+        view.origin_y = origin_y;
+        view.angle = angle;
+        view.start_offset = args.start_offset;
+        view.end_offset = args.end_offset;
+        view.start_length = args.start_length;
+        view.width = args.width;
+        view.speed = args.speed;
+        view.start_time = args.start_time;
+        view.hitbox_start_time = args.hitbox_start_time;
+        view.duration = args.duration;
+        view.despawn_duration = args.despawn_duration;
+        view.hitbox_end_delay = args.hitbox_end_delay;
+        view.flags = static_cast<std::uint16_t>(args.transform_flags);
+        laser_spawn_views_.push_back(view);
+    };
+    for (const auto &enemy : g_EnemyManager.enemies) {
+        if (!(enemy.flags1 & ENEMY_FLAG_ACTIVE))
+            continue;
+        append(enemy, enemy.mainEclContextStorage, true);
+        for (int slot = 0; slot < 4; ++slot)
+            if (enemy.childEclBlocks[slot])
+                append(enemy, enemy.childEclBlocks[slot]->eclContext, false);
+    }
+    return laser_spawn_views_;
 }
 CollisionEvent Session::collision() const {
     return current_collision();

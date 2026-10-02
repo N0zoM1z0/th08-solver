@@ -72,6 +72,12 @@ angle delta across the preceding native update. Its isolated profile fits the ro
 center implied by those two source-owned states and extrapolates one rigid transform per
 forecast update; moving lasers bypass the constant-angle broad phase. This proposal is
 refreshed every update and does not claim that other pooled lasers continue rigid motion.
+ID93 reads only a currently due native ECL opcode 114. Its typed observation copies the
+52-byte spawn payload, resolves a local-float angle without calling the gameplay operand
+resolver, and reconstructs the same-update pooled-laser lifecycle from the source-owned
+enemy position and shoot offset. Aimed opcode 115, child contexts and variable geometry
+stop the adapted case; suppressed spawns produce no warning. The warning ranks the nine
+directions before the pooled laser exists, accounting for the already-latched first move.
 ID198 combines that fixed-origin rotation observation with 81 two-leg proposals: each
 initial direction lasts four candidate-controlled updates, then one of nine continuation
 directions repeats. Bullet projections and laser lifecycle forecasts are immutable and
@@ -86,7 +92,7 @@ it does not infer across uninspected ECL control flow. Repeating callbacks const
 nine-direction candidate set over their active interval; the generic hazard scorer ranks
 bullets and pooled lasers within that set. Flagged selectors and dynamic geometry are
 counted and left unsupported. This is an explicit proposal choice, not altered native
-physics or a claim that either forecast models every transform.
+physics or a claim that these forecasts model every transform.
 
 Action tapes contain decimal original 16-bit input masks, one per update (shoot 1,
 bomb 2, focus 4, directions 16/32/64/128, confirm 4096). Replay uses a fresh process,

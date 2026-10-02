@@ -58,6 +58,18 @@ struct EclContextView {
     float velocity_x, velocity_y, rotation, rotation_velocity;
     float variable0, variable1;
 };
+// A decoded opcode-114 instruction that the native ECL interpreter will execute
+// on the next update. Unsupported previews are retained so an enabled solver
+// adapter can stop instead of silently omitting an action-dependent future.
+struct ImminentLaserSpawnView {
+    bool supported = false, suppressed = false;
+    int enemy_index = -1, opcode = 0;
+    float origin_x = 0, origin_y = 0, angle = 0;
+    float start_offset = 0, end_offset = 0, start_length = 0, width = 0, speed = 0;
+    int start_time = 0, hitbox_start_time = 0, duration = 0, despawn_duration = 0;
+    int hitbox_end_delay = 0;
+    std::uint16_t flags = 0;
+};
 enum class CollisionKind { None, Bullet, LethalRegion, Laser };
 struct Bounds {
     float left = 0, top = 0, right = 0, bottom = 0;
@@ -110,6 +122,8 @@ class Session {
     const std::vector<LaserHitboxView> &laser_hitboxes() const;
     // Reused post-update ECL cursor storage; invalidated by the next call.
     const std::vector<EclContextView> &ecl_contexts();
+    // Reused source-owned spawn previews; this read never resolves RNG operands.
+    const std::vector<ImminentLaserSpawnView> &imminent_laser_spawns();
     float focused_axis_speed() const;
     float focused_diagonal_speed() const;
     // A diagnostics projection of actor/script state, not a serialized world.
@@ -121,5 +135,6 @@ class Session {
     std::vector<BulletView> views_;
     std::vector<LaserView> laser_views_;
     std::vector<EclContextView> ecl_views_;
+    std::vector<ImminentLaserSpawnView> laser_spawn_views_;
 };
 } // namespace th08::headless
