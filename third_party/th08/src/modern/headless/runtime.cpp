@@ -2,6 +2,7 @@
 #include "BulletManager.hpp"
 #include "Gui.hpp"
 #include "modern/windows_runtime.hpp"
+#include <array>
 
 uint16_t th08_headless_input = 0;
 uint64_t th08_headless_frame = 0;
@@ -11,6 +12,11 @@ namespace th08::headless {
 namespace {
 CollisionEvent observed_collision;
 std::vector<LaserHitboxView> observed_laser_hitboxes;
+struct LaserSnapshot {
+    float origin_x = 0, origin_y = 0, angle = 0;
+    bool in_use = false;
+};
+std::array<LaserSnapshot, 256> laser_snapshots;
 
 int pooled_laser_slot(const Float3 *owner_position) {
     for (int i = 0; i < 256; ++i)
@@ -22,12 +28,34 @@ int pooled_laser_slot(const Float3 *owner_position) {
 void begin_update_observation() {
     observed_collision = {};
     observed_laser_hitboxes.clear();
+    for (int i = 0; i < 256; ++i) {
+        const auto &laser = g_BulletManager.lasers[i];
+        laser_snapshots[i] =
+            laser.inUse ? LaserSnapshot{laser.position.x, laser.position.y, laser.angle, true}
+                        : LaserSnapshot{};
+    }
 }
 CollisionEvent current_collision() {
     return observed_collision;
 }
 const std::vector<LaserHitboxView> &current_laser_hitboxes() {
     return observed_laser_hitboxes;
+}
+LaserMotionObservation current_laser_motion(int slot) {
+    if (slot < 0 || slot >= 256)
+        return {};
+    const auto &before = laser_snapshots[slot];
+    const auto &after = g_BulletManager.lasers[slot];
+    if (!before.in_use || !after.inUse)
+        return {};
+    float angle_delta = after.angle - before.angle;
+    constexpr float pi = 3.14159265358979323846f, tau = 2 * pi;
+    while (angle_delta > pi)
+        angle_delta -= tau;
+    while (angle_delta < -pi)
+        angle_delta += tau;
+    return {after.position.x - before.origin_x, after.position.y - before.origin_y, angle_delta,
+            true};
 }
 void prepare_observation_storage() {
     // Pooled lasers can submit two calls on a lifecycle transition, while active

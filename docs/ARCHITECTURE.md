@@ -79,8 +79,10 @@ and actor motion state; it does not resolve flagged operands or cross control fl
 `bullets()` returns a
 reused post-update view buffer invalidated by its next call; active vector-acceleration
 state is copied from its source transform slot without advancing it. `lasers()` owns a
-separate reused buffer of raw pooled-laser lifecycle state. Callers copy either view when
-retaining history; the per-update laser-hitbox view is invalidated by `step()`. The ECL
+separate reused buffer of raw pooled-laser lifecycle state. Its motion fields measure the
+immediately preceding native update and do not promise that motion will continue. Callers
+copy either view when retaining history; the per-update laser-hitbox view is invalidated
+by `step()`. The ECL
 cursor buffer is independently reused by its next call. The CLI
 optionally owns a 32-update before/after ring, serialized after loop timing.
 

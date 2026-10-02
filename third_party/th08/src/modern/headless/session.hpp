@@ -28,6 +28,10 @@ struct LaserView {
     int timer, slot;
     std::uint16_t flags;
     std::uint8_t state;
+    // Native changes observed across the most recent update for this same pool
+    // slot. These are evidence about the past update, not a promised future.
+    float origin_delta_x, origin_delta_y, angle_delta;
+    bool motion_observed;
 };
 // Exact geometry submitted to Player::CalcLaserHitbox during one native update.
 // Center/size use the source function's rotated comparison coordinates; origin
