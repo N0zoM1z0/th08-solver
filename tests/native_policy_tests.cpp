@@ -116,6 +116,13 @@ int main() {
               !corner_profile.imminent_pooled_lasers && !corner_profile.upcoming_ecl_bullets,
           "ID32 changed its explicit observed-bullet maneuver budget");
 
+    const auto corner167 = th08::policy::native_spell_policy(167);
+    check(corner167.hazards.bullet_horizon == 12 && corner167.hazards.first_leg_updates == 4 &&
+              th08::policy::native_spell_policy(183).hazards.first_leg_updates == 0 &&
+              !corner167.direct_ecl_lasers && !corner167.imminent_pooled_lasers &&
+              !corner167.upcoming_ecl_bullets,
+          "ID167 maneuver budget escaped its isolated observed-bullet profile");
+
     const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
     HazardReactiveStats acceleration_stats;
     const auto accelerated =

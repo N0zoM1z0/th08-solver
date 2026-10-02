@@ -101,6 +101,9 @@ ID204 retains its generic relative-direction collision at 1205, requires complet
 ID32 preserves its generic 594 collision, checks the explicit 13-update/one-update-leg
 profile and 192132 candidate evaluations for each complete 2372-update seed wrapper,
 and runs Stage 3 through both its 7443 baseline collision and 39767 clear.
+ID167 retains its generic 932 collision, requires all three 5492-update wrappers
+with H12/four-update first leg and 444852 candidates, and guards the continued Stage6b
+collision at 54401 in ID183.
 ID139 preserves its generic 5326 collision, requires all three 7292-update seed
 wrappers, and runs Stage 6a through both its 48302 baseline collision and 61041 clear.
 The native laser-item executable also checks 18 cancellation geometry cases, including
@@ -136,6 +139,8 @@ checks as the full aggregate, whose retained cross-host golden remains unchanged
 
 `CASE_GROUP=id32` runs the six ID32 wrapper/Stage3 cases and emits `id32-summary.json`.
 All three seed wrappers and both baseline/complete stage tapes agree at O0/O3.
+`CASE_GROUP=id167` similarly runs five fixtures and emits `id167-summary.json`.
+It includes the genuine later Stage6b failure; all O3/O0 replays match.
 `CASE_GROUP=id139` runs six baseline/complete scenes and emits `id139-summary.json`.
 The checked report includes fresh O3 replay and separate O0 replay for every tape.
 Pass `-DLASER_ITEMS_EXECUTABLE="$PWD/build-headless/th08_headless_laser_items"` to
@@ -175,8 +180,8 @@ No remote host is needed. Repeated prefix work is explicit; no unsafe native sna
 or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
-The Release `spell-portfolio` run completed 51 and retained 5 genuine collision
-prefixes: bullet IDs 167/183/202/203 and lethal-region ID192. All 56 tapes
+The Release `spell-portfolio` run completed 52 and retained 4 genuine collision
+prefixes: bullet IDs 183/202/203 and lethal-region ID192. All 56 tapes
 then agreed in a fresh process on the semantic fields used by `agree()` above. This is
 broad algorithm evidence, while the smaller real-data CTest keeps the affected
 transform/profile boundaries practical to rerun on every local change.
@@ -197,6 +202,11 @@ all 55 unaffected semantic records and literal action tapes agree, and all 112 t
 freshly replay. Continuous Stage3 changes from collision7443 to clear39767. The new
 13-update horizon and 81 one-update-leg paths are isolated to ID32; generic projection
 and tie-breaking are unchanged.
+
+The subsequent ID167 comparison changes only ID167 among 56 spells (51 to 52 clears):
+all 55 unaffected semantic records and literal action tapes agree, and all 112 tapes
+freshly replay. Continuous Stage6b advances from ID167 at 42560 to the retained ID183
+collision at 54401. This does not increase the stage-clear count.
 
 ### Easy stage sweep
 
@@ -223,11 +233,12 @@ done
 | 4b | complete | 43700 | - | 2675.4 | 5216.4 | 548 |
 | 5 | complete | 43348 | - | 7025.9 | 10772.8 | 665 |
 | 6a | complete | 61041 | - | 27644.8 | 33844.9 | 1201 |
-| 6b | collision | 42560 | 167 | 4800.3 | 7633.8 | 696 |
+| 6b | collision | 54401 | 183 | 12037.9 | 16536.8 | 1199 |
 | extra | collision | 7424 | 192 | 2269.9 | 3177.8 | 920 |
 
-The corrected-runtime stage records, including the subsequent ID32 Stage3 rerun,
-cover 316512 updates and seven clears. All nine tapes freshly replayed. These Intel Xeon Platinum 8573C/GCC 14.2 samples were run
+The corrected-runtime stage records, including the subsequent ID32 Stage3 and ID167
+Stage6b reruns, cover 328353 updates and seven clears. All nine tapes freshly replayed.
+These Intel Xeon Platinum 8573C/GCC 14.2 samples were run
 alongside other verification; timings are workload records, not performance guarantees.
 The earlier AMD EPYC/GCC12 five-clear sweep is superseded for current coverage. The
 older 22176-update Stage 1 CTest uses the different `reactive` action tape and remains

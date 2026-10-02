@@ -24,6 +24,8 @@ struct NativeSpellPolicy {
 // and the existing 81 two-leg paths, with their extra work counted explicitly.
 // ID32 needs one extra observed bullet update and a one-update escape leg
 // before continuation; the unchanged constant-path ablation still collides.
+// ID167 keeps the original horizon but needs a short maneuver before its
+// continuation to avoid the observed bottom-corner constant-path trap.
 // The native runtime remains the acceptance oracle.
 inline NativeSpellPolicy native_spell_policy(int spell_id) {
     if (spell_id == 32)
@@ -36,6 +38,8 @@ inline NativeSpellPolicy native_spell_policy(int spell_id) {
         return {"id93-imminent-pooled-laser", {12, 120, true}, false, true};
     if (spell_id == 139)
         return {"id139-two-leg-bounce", {32, 120, true, 0x1ff, false, 4, false, false, true}};
+    if (spell_id == 167)
+        return {"id167-two-leg-corner", {12, 120, true, 0x1ff, false, 4}};
     if (spell_id == 198)
         return {"id198-two-leg-rigid-laser", {12, 120, true, 0x1ff, true, 4}};
     if (spell_id == 199)
