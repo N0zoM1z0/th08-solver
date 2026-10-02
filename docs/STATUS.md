@@ -23,10 +23,10 @@ has its own profile and evidence:
 
 | Native headless outcome | Verified coverage |
 |---|---|
-| Complete stages | Easy Stages 1, 2, 4a, 4b, 5 and 6a, Reimu/Yukari, seed 0, `spell-portfolio`; every tape freshly replayed |
+| Complete stages | Easy Stages 1, 2, 3, 4a, 4b, 5 and 6a, Reimu/Yukari, seed 0, `spell-portfolio`; every tape freshly replayed |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
-| Spell portfolio sweep | 50/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
-| Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0; ID204 relative-direction profile complete for seeds 0/65535; ID139 bounce/two-leg profile complete for seeds 0/1/65535 |
+| Spell portfolio sweep | 51/56 enumerated Easy standard and Extra checkpoints, seed 0; every tape freshly replayed |
+| Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0; ID204 relative-direction profile complete for seeds 0/65535; IDs32/139 two-leg profiles complete for seeds 0/1/65535 |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
 | Deterministic feedback | Fresh-process tapes agree on per-frame projection, terminal, RNG and graze/score/gauge |
@@ -40,11 +40,11 @@ passing component tests are not completion percentages.
   wall-clock limiter. It retains gameplay and ANM updates, original shared RNG,
   dialogue, damage, cancellation, items and graze feedback. It stops at actual stage
   clear or spell end, without resetting the world between boss phases
-- The corrected-runtime Easy stage sweep ran 284188 native updates across all nine
-  entries. `spell-portfolio` cleared Stages 1/2/4a/4b/5/6a in
-  24135/32448/22089/43700/43348/61041 updates. Stage 3 reached ID32, 6b reached ID167
-  and Extra reached ID192 before their preserved collisions. All nine tapes freshly
-  replayed; native carried bullets, items and RNG persist between phases
+- The current Easy stage records cover 316512 native updates across nine entries,
+  including the ID32 Stage3 replacement run. `spell-portfolio` clears Stages
+  1/2/3/4a/4b/5/6a in 24135/32448/39767/22089/43700/43348/61041 updates. Stage6b
+  reaches ID167 and Extra reaches ID192 before their preserved collisions. Every
+  tape freshly replays; native carried bullets, items and RNG persist between phases
 - Stage 6b's reactive failure is now reproducible with native collision bounds and
   independent nine-direction replays. Recording-mode movement uses the previously
   latched input; the heuristic assumes immediate movement and uses center distances
@@ -56,14 +56,14 @@ passing component tests are not completion percentages.
   conservative laser broad phase reduced ID151 policy time from about 7.8 to 2.1 seconds
   without shortening its 120-update horizon. The native update remains the collision oracle
 - On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
-  checkpoints. `spell-portfolio` completed 50/56 with no lost baseline completion;
+  checkpoints. `spell-portfolio` completed 51/56 with no lost baseline completion;
   all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
-  and trace projection. The remaining failures are five bullets and one lethal region
+  and trace projection. The remaining failures are four bullets and one lethal region
 - Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
   IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
   constant-velocity ranking; its isolated selector lives outside the generic kernel
 - Preserving the native final active-laser collision before removal completed ID163.
-  Retained failures are bullet IDs 32/167/183/202/203 and lethal-region ID192
+  Retained failures are bullet IDs 167/183/202/203 and lethal-region ID192
 - ID85's static-angle forecast stopped at the bottom center while ten live pooled lasers
   rotated around `(192,128)`; slot 7 hit on update 631. Replacing update 630 with any
   rightward direction survives that collision. Native before/after observations expose
@@ -110,6 +110,12 @@ passing component tests are not completion percentages.
   final turn's movement and stops before a subsequent enabled transform. With the
   same 12-update horizon, seeds 0/65535 complete at 4832 and freshly replay at O0/O3;
   seed 1 still collides at 3008. This adds seed-0 coverage, not all-seed robustness
+- ID32's corner collision at update 594 is avoidable by departing one update earlier.
+  A 13-update horizon removes it but still collides at 1394; the next counterfactual
+  requires a one-update diagonal leg before rightward continuation. Its isolated
+  81-path profile clears all three 2372-update wrappers and continuous Stage 3 at
+  39767. Fresh/O0/O3 replay agrees; both the original failure and explicit extra
+  horizon/candidate costs remain visible
 - ID139's baseline hits a bottom-excluding bounce at update 5326. Source projection
   uses sprite bounds and the pre-movement boundary test through the final bounce.
   Bounce-only horizon 12 still fails at 5327; 81 two-leg paths at horizon 12 fail at
@@ -146,7 +152,7 @@ passing component tests are not completion percentages.
 Exact profiles and exclusions are in [Scenarios](SCENARIOS.md); measured records are
 in the [report index](../reports/native/README.md). Older subset samples used Linux
 x86_64, Intel Xeon Platinum 8573C, GCC 14.2. Earlier native samples use AMD EPYC 7B12,
-GCC 12.2; the ID139/202/204 checkpoints use Intel Xeon Platinum 8573C, GCC 14.2. Both native
+GCC 12.2; the ID32/139/202/204 checkpoints use Intel Xeon Platinum 8573C, GCC 14.2. Both native
 profiles are Release with contraction disabled; timings depend on environment.
 
 ## Existing reusable components
@@ -162,7 +168,7 @@ The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
 (28 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, the adapted IDs 85/89/93/139/198/201/204, ID202's partial
+duration, original boss transitions, the adapted IDs 32/85/89/93/139/198/201/204, ID202's partial
 WAIT improvement and retained failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
@@ -181,19 +187,16 @@ The aggregate is not reported as passing on this host.
 2. Preserve ID204's seed-0/65535 completion and diagnose its remaining seed-1 update-3008
    untransformed-bullet collision after the seed-0 portfolio gaps. Do not broaden its
    active relative-direction forecast beyond the source-owned transform bound
-3. Probe ID32's untransformed update-594 hit and the matching Stage 3 failure. Compare
-   constant, longer-horizon and two-leg proposals on the same prefix; retain the simplest
-   route that completes the whole wrapper and then the stage
-4. Apply the same earliest-avoidable-decision procedure separately to untransformed
+3. Apply the same earliest-avoidable-decision procedure separately to untransformed
    ID167 (update 932), ID183 (1041) and ID203 (1711). Do not share a tuned profile until
    their source traces establish the same mechanism; Stage 6b is their continuous gate
-5. Expose the source owner, lifetime and future geometry for ID192's lethal region at
+4. Expose the source owner, lifetime and future geometry for ID192's lethal region at
    update 466. It needs a typed warning distinct from bullet and laser projection. The
    Extra run must pass it without resetting carried state; final clear is the aggregate gate
-6. Return to ID201 robustness after the six seed-0 failures. Seed 1's random child
+5. Return to ID201 robustness after the five seed-0 failures. Seed 1's random child
    pattern needs owned RNG/order evidence or a justified conservative envelope; never
    reuse one sampled future across action-dependent branches. Recheck seeds 0/1/65535
-7. After each isolated fix, rerun its baseline, full wrapper, fresh replay, the 56-case
+6. After each isolated fix, rerun its baseline, full wrapper, fresh replay, the 56-case
    sweep and the affected continuous stage. Record failed seeds as failures rather than
    changing budgets, tie-breaking or RNG consumption to improve the count
 

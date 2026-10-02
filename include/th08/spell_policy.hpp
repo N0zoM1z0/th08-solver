@@ -22,8 +22,12 @@ struct NativeSpellPolicy {
 // ID204 needs the active relative-direction deceleration/turn recurrence.
 // ID139's observed large bullets need earlier wall-trap planning: 32 updates
 // and the existing 81 two-leg paths, with their extra work counted explicitly.
+// ID32 needs one extra observed bullet update and a one-update escape leg
+// before continuation; the unchanged constant-path ablation still collides.
 // The native runtime remains the acceptance oracle.
 inline NativeSpellPolicy native_spell_policy(int spell_id) {
+    if (spell_id == 32)
+        return {"id32-two-leg-corner", {13, 120, true, 0x1ff, false, 1}};
     if (spell_id == 85)
         return {"id85-rigid-laser-motion", {12, 120, true, 0x1ff, true}};
     if (spell_id == 89)

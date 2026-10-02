@@ -112,6 +112,17 @@ other visible opcode-99 shots use random-angle selector 10082. The baseline coll
 at 3265 is avoided, but seed 0/1/65535 wrappers still collide at 4204/4216/3613. This is
 a local modeling improvement, not another completed checkpoint.
 
+ID32 uses the existing two-leg scorer with a 13-update observed-bullet horizon and
+one-update first leg. At the baseline bottom-left corner, the 12-update view waits
+at decision 582 and collides at 594; rightward intervention at 582 survives, while
+all nine replacements at 583 fail. Horizon 13 alone avoids that hit but fails at
+1394. At decision 1382, only down-right followed by the original rightward suffix
+survives, motivating the short first leg rather than another horizon increase.
+The isolated profile ranks 81 paths instead of nine, with 12 instead of 11 future
+bullet steps. It changes no source projection, RNG, tie-break or terminal rules.
+All three seeds complete the 2372-update wrapper; continuous seed-0 Stage 3 clears
+at 39767 with carried native state and fresh O0/O3 replay.
+
 ID139 uses source-bounded active boundary-bounce projection. The native boundary test
 runs before movement and uses loaded sprite dimensions, not the smaller collision box.
 It mirrors strict outside tests, X then Y reflection, bounded native angle normalization,
