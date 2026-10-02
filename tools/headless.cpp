@@ -106,6 +106,8 @@ struct TraceFrame {
     std::vector<th08::headless::LaserView> before_lasers, after_lasers;
     std::vector<th08::headless::LaserHitboxView> before_laser_hitboxes, after_laser_hitboxes;
     std::vector<th08::headless::EclContextView> before_ecl, after_ecl;
+    th08::policy::HazardReactiveDecision policy_decision;
+    bool has_policy_decision = false;
 };
 // Fixed tail, reused across updates. Serialization happens after timing stops.
 class TraceTail {
@@ -114,7 +116,8 @@ class TraceTail {
                 const std::vector<th08::headless::BulletView> &bullets,
                 const std::vector<th08::headless::LaserView> &lasers,
                 const std::vector<th08::headless::LaserHitboxView> &laser_hitboxes,
-                const std::vector<th08::headless::EclContextView> &ecl) {
+                const std::vector<th08::headless::EclContextView> &ecl,
+                const th08::policy::HazardReactiveDecision *policy_decision) {
         auto &f = frames[next];
         f.before = state;
         f.action = action;
@@ -122,6 +125,9 @@ class TraceTail {
         f.before_lasers.assign(lasers.begin(), lasers.end());
         f.before_laser_hitboxes.assign(laser_hitboxes.begin(), laser_hitboxes.end());
         f.before_ecl.assign(ecl.begin(), ecl.end());
+        f.has_policy_decision = policy_decision != nullptr;
+        if (policy_decision)
+            f.policy_decision = *policy_decision;
     }
     void after(const th08::headless::State &state,
                const std::vector<th08::headless::BulletView> &bullets,
@@ -152,7 +158,9 @@ class TraceTail {
                "laser_start_time\tlaser_hitbox_start_time\tlaser_duration\t"
                "laser_despawn_duration\tlaser_hitbox_end_delay\tlaser_timer\tlaser_flags\t"
                "laser_motion_observed\tlaser_origin_delta_x\tlaser_origin_delta_y\t"
-               "laser_angle_delta\n";
+               "laser_angle_delta\tpolicy_enabled\tpolicy_first_overlap\t"
+               "policy_minimum_clearance\tpolicy_danger\tpolicy_center_distance\t"
+               "policy_selected\n";
         for (std::size_t i = 0; i < count; ++i) {
             const auto &f = frames[(next + frames.size() - count + i) % frames.size()];
             auto zeros = [&](unsigned n) {
@@ -165,15 +173,31 @@ class TraceTail {
                     << s.x << '\t' << s.y << "\t0\t0\t" << 2 * s.hurt_half_x << '\t'
                     << 2 * s.hurt_half_y << "\t0\t" << f.action << '\t' << s.latched_input << '\t'
                     << s.sampled_input;
-                zeros(38);
+                zeros(44);
                 out << '\n';
+                if (!std::strcmp(name, "before") && f.has_policy_decision)
+                    for (std::size_t candidate_index = 0;
+                         candidate_index < f.policy_decision.candidates.size(); ++candidate_index) {
+                        const auto &candidate = f.policy_decision.candidates[candidate_index];
+                        out << f.after.frame << "\tbefore\tpolicy_candidate\t" << candidate_index
+                            << '\t' << candidate.enabled;
+                        zeros(7);
+                        out << '\t' << candidate.action;
+                        zeros(40);
+                        out << '\t' << candidate.enabled << '\t' << candidate.first_overlap << '\t'
+                            << candidate.minimum_clearance << '\t' << candidate.danger << '\t'
+                            << candidate.center_distance << '\t'
+                            << (candidate.enabled &&
+                                candidate.action == f.policy_decision.selected_action)
+                            << '\n';
+                    }
                 for (const auto &b : bullets) {
                     out << f.after.frame << '\t' << name << "\tbullet\t" << b.slot << '\t'
                         << b.state << '\t' << b.x << '\t' << b.y << '\t' << b.vx << '\t' << b.vy
                         << '\t' << b.full_width << '\t' << b.full_height << '\t'
                         << b.active_transforms << '\t' << f.action << '\t' << s.latched_input
                         << '\t' << s.sampled_input;
-                    zeros(38);
+                    zeros(44);
                     out << '\n';
                 }
                 for (const auto &laser : lasers) {
@@ -190,7 +214,9 @@ class TraceTail {
                         << laser.duration << '\t' << laser.despawn_duration << '\t'
                         << laser.hitbox_end_delay << '\t' << laser.timer << '\t' << laser.flags
                         << '\t' << laser.motion_observed << '\t' << laser.origin_delta_x << '\t'
-                        << laser.origin_delta_y << '\t' << laser.angle_delta << '\n';
+                        << laser.origin_delta_y << '\t' << laser.angle_delta;
+                    zeros(6);
+                    out << '\n';
                 }
                 for (const auto &h : laser_hitboxes) {
                     out << f.after.frame << '\t' << name << "\tlaser_hitbox\t" << h.pooled_slot
@@ -198,7 +224,7 @@ class TraceTail {
                         << '\t' << h.full_height << "\t0\t" << f.action << '\t' << s.latched_input
                         << '\t' << s.sampled_input << '\t' << h.origin_x << '\t' << h.origin_y
                         << '\t' << h.angle << '\t' << h.graze_enabled;
-                    zeros(34);
+                    zeros(40);
                     out << '\n';
                 }
                 for (const auto &e : ecl) {
@@ -215,7 +241,7 @@ class TraceTail {
                         << '\t' << e.active_interpolations << '\t' << e.per_frame_ex << '\t'
                         << e.difficulty_enabled << '\t' << e.enemy_flags << '\t' << e.has_parent
                         << '\t' << e.rotation_velocity;
-                    zeros(16);
+                    zeros(22);
                     out << '\n';
                 }
             };
@@ -349,6 +375,8 @@ int main(int argc, char **argv) {
             const auto &observed_lasers = session.lasers();
             const auto &observed_laser_hitboxes = session.laser_hitboxes();
             std::uint16_t action = 4;
+            th08::policy::HazardReactiveDecision policy_decision;
+            bool has_policy_decision = false;
             if (!replay_path.empty()) {
                 if (i == replay.size()) {
                     outcome = "tape_end";
@@ -386,7 +414,8 @@ int main(int argc, char **argv) {
                         state.x, state.y, state.hurt_half_x, state.hurt_half_y,
                         session.focused_axis_speed(), session.focused_diagonal_speed(),
                         state.latched_input, observed, observed_lasers, policy_stats,
-                        profile.hazards);
+                        profile.hazards, tail ? &policy_decision : nullptr);
+                    has_policy_decision = tail != nullptr;
                 }
                 if (shoot)
                     action |= 1;
@@ -400,7 +429,8 @@ int main(int argc, char **argv) {
                 std::chrono::duration<double, std::milli>(decision_end - decision_start).count();
             if (tail)
                 tail->before(state, action, observed, observed_lasers, observed_laser_hitboxes,
-                             session.ecl_contexts());
+                             session.ecl_contexts(),
+                             has_policy_decision ? &policy_decision : nullptr);
             const auto update_start = std::chrono::steady_clock::now();
             if (tail)
                 diagnostics_ms +=
