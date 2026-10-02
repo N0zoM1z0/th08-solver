@@ -98,6 +98,11 @@ also run through their complete wrappers. ID202 retains its generic WAIT collisi
 its original 12-update horizon and disabled future-ECL adapter are checked explicitly.
 ID204 retains its generic relative-direction collision at 1205, requires complete
 4832-update wrappers for seeds 0/65535, and preserves seed 1's collision at 3008.
+ID139 preserves its generic 5326 collision, requires all three 7292-update seed
+wrappers, and runs Stage 6a through both its 48302 baseline collision and 61041 clear.
+The native laser-item executable also checks 18 cancellation geometry cases, including
+both source cancellation paths, angle quadrants, 32-unit spacing, exclusive end bounds,
+item suppression and off-playfield X rejection.
 A 10-update budget failure and the Stage 6b
 reactive collision at update 854 remain covered.
 Every execution tape replays in another process;
@@ -125,6 +130,17 @@ aggregate report is retained; the separate ID202 report records this host's evid
 Its baseline and seed-1 failure, as well as both complete seed wrappers, agree in fresh
 processes and at native O0/O3 on this host. Both group selectors use the same scene/replay
 checks as the full aggregate, whose retained cross-host golden remains unchanged.
+
+`CASE_GROUP=id139` runs six baseline/complete scenes and emits `id139-summary.json`.
+The checked report includes fresh O3 replay and separate O0 replay for every tape.
+Pass `-DLASER_ITEMS_EXECUTABLE="$PWD/build-headless/th08_headless_laser_items"` to
+include the focused native cancellation regression (the normal CTest already does).
+An empty native `fsincos` stub previously caused undefined item geometry and an O0/O3
+score difference at Stage 6a update 32432. Assigning both established sin/cos outputs
+makes the long baseline and complete-stage tapes agree again: corrected digests are
+`3641853114352264503` and `6502928606160698451`. The 18 geometry cases fail with both
+pre-fix O0/O3 archives and pass after repair. This does not resolve or replace the
+separate retained Stage 6b cross-host golden.
 
 Reproduce the Stage 6b failure and compare the nine input directions locally:
 
@@ -154,8 +170,8 @@ No remote host is needed. Repeated prefix work is explicit; no unsafe native sna
 or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
-The Release `spell-portfolio` run completed 49 and retained 7 genuine collision
-prefixes: bullet IDs 32/139/167/183/202/203 and lethal-region ID192. All 56 tapes
+The Release `spell-portfolio` run completed 50 and retained 6 genuine collision
+prefixes: bullet IDs 32/167/183/202/203 and lethal-region ID192. All 56 tapes
 then agreed in a fresh process on the semantic fields used by `agree()` above. This is
 broad algorithm evidence, while the smaller real-data CTest keeps the affected
 transform/profile boundaries practical to rerun on every local change.
@@ -164,10 +180,17 @@ the other 55 semantic reports and action tapes remained unchanged, and both vers
 tapes freshly replayed. Continuous Extra also remained at its earlier ID192 collision
 on update 7424; reaching ID204 from the stage start is still blocked by that earlier spell.
 
+The ID139 comparison runs the previous portfolio and the new isolated profile on the
+same corrected laser-item runtime: 49 versus 50 complete spells. All 55 unaffected
+semantic records and literal action tapes agree; all 112 tapes freshly replay. Stage
+6a changes from its preserved 48302 collision to a 61041 clear. Older aggregate
+reports retain their original numerical/runtime profile rather than silently receiving
+corrected item scores or digests.
+
 ### Easy stage sweep
 
 The 2026-10-02 local sweep used every supported stage entry, Easy, seed 0, the Release
-O3 native profile, a 100000-update cap and a 2 GiB address-space limit. Stage mode keeps
+O3 native profile and a 100000-update cap. Stage mode keeps
 shooting enabled and advances original message scripts. Each execution wrote an action
 tape and every tape agreed in a fresh process on the semantic fields and collision object
 used by `agree()`:
@@ -180,24 +203,24 @@ for stage in 1 2 3 4a 4b 5 6a 6b extra; do
 done
 ```
 
-| Stage | Outcome | Updates | Blocking spell | Decision ms | Execution ms | Process wall s | Max RSS KiB | Peak bullets |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1 | complete | 24135 | - | 1576.4 | 2855.7 | 3.02 | 60676 | 258 |
-| 2 | complete | 32448 | - | 2553.0 | 4182.9 | 4.34 | 60316 | 293 |
-| 3 | collision | 7443 | 32 | 1252.1 | 1720.0 | 1.88 | 60372 | 294 |
-| 4a | complete | 22089 | - | 7574.2 | 9495.7 | 9.68 | 62356 | 528 |
-| 4b | complete | 43700 | - | 4942.5 | 7301.5 | 7.48 | 62840 | 548 |
-| 5 | complete | 43348 | - | 11704.1 | 14394.8 | 14.58 | 63904 | 665 |
-| 6a | collision | 48302 | 139 | 17128.5 | 20963.8 | 21.16 | 68848 | 1201 |
-| 6b | collision | 42560 | 167 | 8631.2 | 11884.2 | 12.11 | 74980 | 696 |
-| Extra | collision | 7424 | 192 | 4342.5 | 5210.4 | 5.41 | 71460 | 920 |
+| Stage | Outcome | Updates | Blocking spell | Decision ms | Execution ms | Peak bullets |
+|---|---:|---:|---:|---:|---:|---:|
+| 1 | complete | 24135 | - | 1828.4 | 4009.8 | 258 |
+| 2 | complete | 32448 | - | 1581.4 | 3370.9 | 293 |
+| 3 | collision | 7443 | 32 | 884.2 | 1592.8 | 294 |
+| 4a | complete | 22089 | - | 7354.6 | 11400.8 | 528 |
+| 4b | complete | 43700 | - | 2675.4 | 5216.4 | 548 |
+| 5 | complete | 43348 | - | 7025.9 | 10772.8 | 665 |
+| 6a | complete | 61041 | - | 27644.8 | 33844.9 | 1201 |
+| 6b | collision | 42560 | 167 | 4800.3 | 7633.8 | 696 |
+| extra | collision | 7424 | 192 | 2269.9 | 3177.8 | 920 |
 
-The nine planning runs executed 271449 updates in 79.66 seconds of process wall time;
-their measured loop time was 78.01 seconds, with 59.70 seconds in policy decisions.
-Five stages cleared. The wall/RSS columns cover planning processes only; replay was an
-additional acceptance check. These AMD EPYC 7B12/GCC 12.2 timings are workload records,
-not portable performance guarantees. The older 22176-update Stage 1 CTest uses the
-different `reactive` action tape and remains a separate stable baseline.
+The corrected-runtime rerun executed 284188 updates and cleared six stages. All nine
+tapes freshly replayed. These Intel Xeon Platinum 8573C/GCC 14.2 samples were run
+alongside other verification; timings are workload records, not performance guarantees.
+The earlier AMD EPYC/GCC12 five-clear sweep is superseded for current coverage. The
+older 22176-update Stage 1 CTest uses the different `reactive` action tape and remains
+a separate baseline.
 
 Acceleration removes wall-clock waiting and presentation work while retaining every
 original calc-chain update, timer increment and shared RNG consumer in that chain.

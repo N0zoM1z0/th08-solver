@@ -112,6 +112,20 @@ other visible opcode-99 shots use random-angle selector 10082. The baseline coll
 at 3265 is avoided, but seed 0/1/65535 wrappers still collide at 4204/4216/3613. This is
 a local modeling improvement, not another completed checkpoint.
 
+ID139 uses source-bounded active boundary-bounce projection. The native boundary test
+runs before movement and uses loaded sprite dimensions, not the smaller collision box.
+It mirrors strict outside tests, X then Y reflection, bounded native angle normalization,
+velocity replacement and bounce counting, including the final active update. Bottom-
+excluding bounce still consumes a bounce and installs speed when outside the bottom.
+The view rejects concurrent transforms, active sprite animation, non-unit update rates
+and scripted freeze. Future cancellation, freeze or despawn remains native-owned.
+Its isolated profile ranks 81 two-leg paths (first leg four updates) over 32 bullet
+updates. Bounce alone at horizon 12 fails at 5327; two-leg horizon 12 fails at 4355.
+The latter fatal bullet was already observed 31 updates before impact, motivating the
+32-update bound. This explicitly costs nine times as many candidates and 31 rather
+than 11 future bullet steps. Seeds 0/1/65535 complete 7292 updates; seed-0 continuous
+Stage 6a completes 61041 without resetting the world between spells.
+
 ID204 keeps the same 12-update horizon and enables the source-bounded active
 relative-direction recurrence. Its observation copies the current angle/base speed,
 turn angle/speed, interval and timer. The validity bound includes the final turn's

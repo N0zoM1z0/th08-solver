@@ -231,9 +231,9 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/headless-regression
       -DCOMPARE_EXECUTABLE=${TH08_HEADLESS_COMPARE_EXECUTABLE}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_real_data.cmake)
-    # The three ID198 live-planning regressions add roughly 35 seconds locally;
-    # retain the full existing replay/probe coverage with headroom for slower hosts.
-    set_tests_properties(headless_real_data PROPERTIES TIMEOUT 240)
+    # Complete ID139 wrappers and Stage 6a now join the ID198/204 regressions.
+    # This is only the aggregate test process timeout, not a solver/frame budget.
+    set_tests_properties(headless_real_data PROPERTIES TIMEOUT 480)
   endif()
 endif()
 add_executable(geometry_bench benchmarks/geometry_bench.cpp)
