@@ -1,4 +1,5 @@
 #pragma once
+#include "effect_pool.hpp"
 #include "timeline.hpp"
 #include "world_motion.hpp"
 #include <memory>
@@ -88,17 +89,24 @@ class SpawnPool {
     std::vector<Actor> actors_;
     std::optional<PendingSpawn> pending_;
     SharedCallParameters shared_calls_;
+    std::optional<effect::PrimaryPool> effects_;
     bool last_spawn_failed_ = false, spawn_event_ = false;
 
     Result identify(Status status) const;
-    world::EffectStatus apply_effect(Actor &actor, random::Rng *rng, const enemy::Vec3 *player);
+    world::EffectStatus apply_effect(Actor &actor, random::Rng *rng, const enemy::Vec3 *player,
+                                     const effect::Effect51Inputs *effect_inputs);
 
   public:
     explicit SpawnPool(std::shared_ptr<const Programs> programs,
-                       SharedCallParameters shared_calls = {});
+                       SharedCallParameters shared_calls = {},
+                       std::optional<effect::PrimaryPool> effects = std::nullopt);
     Result begin(const SpawnRequest &request, std::uint8_t mask);
     Result resume(random::Rng *rng = nullptr, const enemy::Vec3 *player = nullptr,
-                  std::uint32_t instruction_limit = 100000);
+                  std::uint32_t instruction_limit = 100000,
+                  const effect::Effect51Inputs *effect_inputs = nullptr);
+    const std::optional<effect::PrimaryPool> &effects() const {
+        return effects_;
+    }
     const Actor &actor(std::size_t index) const;
     const std::optional<PendingSpawn> &pending() const {
         return pending_;
@@ -127,9 +135,11 @@ class Entry {
     std::uint8_t mask_;
 
   public:
-    Entry(std::shared_ptr<const Programs> programs, std::uint8_t mask);
+    Entry(std::shared_ptr<const Programs> programs, std::uint8_t mask,
+          std::optional<effect::PrimaryPool> effects = std::nullopt);
     Result advance(timeline::Context &observations, random::Rng *rng = nullptr,
-                   const enemy::Vec3 *player = nullptr, std::uint32_t instruction_limit = 100000);
+                   const enemy::Vec3 *player = nullptr, std::uint32_t instruction_limit = 100000,
+                   const effect::Effect51Inputs *effect_inputs = nullptr);
     const SpawnPool &pool() const {
         return pool_;
     }

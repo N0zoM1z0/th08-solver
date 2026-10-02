@@ -62,8 +62,10 @@ const char *name(Status status) {
     return "INVALID";
 }
 
-SpawnPool::SpawnPool(std::shared_ptr<const Programs> programs, SharedCallParameters shared_calls)
-    : programs_(std::move(programs)), actors_(enemy_capacity), shared_calls_(shared_calls) {
+SpawnPool::SpawnPool(std::shared_ptr<const Programs> programs, SharedCallParameters shared_calls,
+                     std::optional<effect::PrimaryPool> effects)
+    : programs_(std::move(programs)), actors_(enemy_capacity), shared_calls_(shared_calls),
+      effects_(std::move(effects)) {
     if (!programs_)
         throw std::invalid_argument("spawn pool requires immutable programs");
 }
@@ -149,10 +151,58 @@ Result SpawnPool::begin(const SpawnRequest &request, std::uint8_t mask) {
 }
 
 world::EffectStatus SpawnPool::apply_effect(Actor &actor, random::Rng *rng,
-                                            const enemy::Vec3 *player) {
+                                            const enemy::Vec3 *player,
+                                            const effect::Effect51Inputs *effect_inputs) {
     const auto *op = emitter::pending_operation(actor.execution);
     if (!op)
         return world::EffectStatus::invalid;
+    if (op->opcode == 139) {
+        // Color is a dereferenced integer lvalue in the source, not ResolveInt.
+        // The current real entry uses an immediate color. Masked lvalues need
+        // their own bit-preserving storage adapter and remain unsupported.
+        if (op->flags & 4U)
+            return world::EffectStatus::unsupported;
+        if (!effects_)
+            return world::EffectStatus::missing_context;
+        auto stream = rng ? std::optional<random::Rng>(*rng) : std::nullopt;
+        const emitter::OperandField fields[] = {{0, emitter::OperandType::signed32, 0},
+                                                {4, emitter::OperandType::signed32, 1},
+                                                {8, emitter::OperandType::signed32, -1}};
+        double values[3];
+        const auto decoded = emitter::decode_operands(
+            *op, actor.scalars, fields, values, 3, stream ? &*stream : nullptr,
+            emitter::OperandOrder::single_random_expression,
+            actor.execution.active->payload(actor.execution.pc));
+        if (decoded != emitter::Status::operands_decoded)
+            return decoded == emitter::Status::missing_context
+                       ? world::EffectStatus::missing_context
+                   : decoded == emitter::Status::unsupported ? world::EffectStatus::unsupported
+                                                             : world::EffectStatus::invalid;
+        if (values[0] != 51)
+            return world::EffectStatus::not_handled;
+        const auto color = std::uint32_t(std::int32_t(values[2]));
+        effect::Effect51Request request;
+        request.count = std::int32_t(values[1]);
+        request.position = {actor.motion.position.x, actor.motion.position.y,
+                            actor.motion.position.z};
+        request.color = {std::uint8_t(color >> 16), std::uint8_t(color >> 8), std::uint8_t(color),
+                         std::uint8_t(color >> 24)};
+        // The surrounding immediate-ECL tail is currently unit-rate only.
+        if (effect_inputs && effect_inputs->multiplier && *effect_inputs->multiplier != 1.0f)
+            return world::EffectStatus::unsupported;
+        const auto result = effects_->spawn_effect51(
+            request, effect_inputs ? *effect_inputs : effect::Effect51Inputs{},
+            stream ? &*stream : nullptr);
+        if (result.status == effect::Status::missing_context)
+            return world::EffectStatus::missing_context;
+        if (result.status == effect::Status::invalid_state)
+            return world::EffectStatus::invalid;
+        if (rng)
+            *rng = *stream;
+        return emitter::acknowledge_effect(actor.execution, actor.execution.result.executed)
+                   ? world::EffectStatus::applied
+                   : world::EffectStatus::invalid;
+    }
     const auto motion =
         world::apply_motion_effect(actor.execution, actor.scalars, actor.motion, rng, player);
     if (motion != world::EffectStatus::not_handled)
@@ -208,7 +258,8 @@ world::EffectStatus SpawnPool::apply_effect(Actor &actor, random::Rng *rng,
 }
 
 Result SpawnPool::resume(random::Rng *rng, const enemy::Vec3 *player,
-                         std::uint32_t instruction_limit) {
+                         std::uint32_t instruction_limit,
+                         const effect::Effect51Inputs *effect_inputs) {
     if (!pending_)
         return {Status::invalid};
     auto &actor = actors_[pending_->actor];
@@ -228,11 +279,11 @@ Result SpawnPool::resume(random::Rng *rng, const enemy::Vec3 *player,
             shared_calls_.known[i] = actor.scalars.initialized[61 + i];
         }
         if (result.status == emitter::Status::external_effect) {
-            const auto status = apply_effect(actor, rng, player);
+            const auto status = apply_effect(actor, rng, player, effect_inputs);
             if (status != world::EffectStatus::applied)
                 return identify(
                     status == world::EffectStatus::missing_context ? Status::missing_entry_state
-                    : status == world::EffectStatus::invalid       ? Status::invalid
+                    : status == world::EffectStatus::invalid ? Status::invalid
                                                              : Status::unsupported_world_effect);
             continue;
         }
@@ -271,17 +322,19 @@ Result SpawnPool::resume(random::Rng *rng, const enemy::Vec3 *player,
     }
 }
 
-Entry::Entry(std::shared_ptr<const Programs> programs, std::uint8_t mask)
-    : programs_(std::move(programs)), pool_(programs_), mask_(mask) {
+Entry::Entry(std::shared_ptr<const Programs> programs, std::uint8_t mask,
+             std::optional<effect::PrimaryPool> effects)
+    : programs_(std::move(programs)), pool_(programs_, {}, std::move(effects)), mask_(mask) {
     if (!mask_)
         throw std::invalid_argument("entry requires an explicit nonzero execution mask");
 }
 Result Entry::advance(timeline::Context &observations, random::Rng *rng, const enemy::Vec3 *player,
-                      std::uint32_t instruction_limit) {
+                      std::uint32_t instruction_limit,
+                      const effect::Effect51Inputs *effect_inputs) {
     // This budget bounds same-frame external operations as well as scalar loops.
     for (std::uint32_t handoffs = 0; handoffs < instruction_limit; ++handoffs) {
         if (awaiting_spawn_) {
-            const auto result = pool_.resume(rng, player, instruction_limit);
+            const auto result = pool_.resume(rng, player, instruction_limit, effect_inputs);
             if (!source_spawn_finished(result.status))
                 return result;
             if (!timeline::acknowledge_effect(programs_->timeline, timeline_,

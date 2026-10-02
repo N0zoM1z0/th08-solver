@@ -23,6 +23,8 @@ add_library(th08_resources
   src/animation_control.cpp
   src/world_motion.cpp
   src/practice_entry.cpp
+  src/effect_pool.cpp
+  src/effect_animation.cpp
   src/timeline.cpp)
 target_link_libraries(th08_resources PUBLIC th08_geometry OpenSSL::Crypto)
 add_executable(th08_audit tools/audit.cpp tools/resource_reports.cpp)
@@ -39,6 +41,27 @@ add_executable(th08_first_spell tools/first_spell.cpp)
 target_link_libraries(th08_first_spell PRIVATE th08_resources)
 set(TH08_REFERENCE_SOURCE "" CACHE PATH "Optional pinned reconstruction checkout for source oracle")
 if(TH08_REFERENCE_SOURCE)
+  add_executable(effect_pool_source_probe tools/effect_pool_source_probe.cpp tools/camera_particle_source_probe.cpp)
+  target_link_libraries(effect_pool_source_probe PRIVATE th08_resources)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/source_effect_pool.cpp
+    COMMAND effect_pool_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_effect_pool.cpp
+    DEPENDS effect_pool_source_probe ${TH08_REFERENCE_SOURCE}/src/EffectManager.cpp
+      ${TH08_REFERENCE_SOURCE}/src/AnmManager.cpp ${TH08_REFERENCE_SOURCE}/src/AsciiManager.cpp
+      ${TH08_REFERENCE_SOURCE}/src/Global.cpp
+      ${TH08_REFERENCE_SOURCE}/src/EclManager.hpp ${TH08_REFERENCE_SOURCE}/src/EnemyManager.cpp
+      ${TH08_REFERENCE_SOURCE}/src/EnemyManager.hpp ${TH08_REFERENCE_SOURCE}/src/ZunMath.hpp
+      ${TH08_REFERENCE_SOURCE}/src/Background.cpp ${TH08_REFERENCE_SOURCE}/src/Background.hpp
+      ${TH08_REFERENCE_SOURCE}/src/ZunColor.hpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.cpp
+      ${TH08_REFERENCE_SOURCE}/src/Global.hpp
+      ${TH08_REFERENCE_SOURCE}/src/modern/linux/d3dx8_compat.cpp
+      ${TH08_REFERENCE_SOURCE}/src/modern/linux/include/d3dx8.h
+    VERBATIM)
+  add_executable(source_effect_pool ${CMAKE_CURRENT_BINARY_DIR}/source_effect_pool.cpp)
+  target_link_libraries(source_effect_pool PRIVATE th08_resources)
+  target_include_directories(source_effect_pool PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+  if(NOT MSVC)
+    target_compile_options(source_effect_pool PRIVATE -Wno-unused-parameter -Wno-unknown-pragmas -fno-strict-aliasing)
+  endif()
   add_executable(th08_source_probe
     tools/source_probe.cpp
     tools/ecl_source_probe.cpp
@@ -124,6 +147,12 @@ if(BUILD_TESTING)
   add_executable(practice_entry_tests tests/practice_entry_tests.cpp)
   target_link_libraries(practice_entry_tests PRIVATE th08_resources)
   add_test(NAME practice_entry COMMAND practice_entry_tests)
+  add_executable(effect_pool_tests tests/effect_pool_tests.cpp)
+  target_link_libraries(effect_pool_tests PRIVATE th08_resources)
+  add_test(NAME effect_pool COMMAND effect_pool_tests)
+  add_executable(effect_entry_tests tests/effect_entry_tests.cpp)
+  target_link_libraries(effect_entry_tests PRIVATE th08_resources)
+  add_test(NAME effect_entry COMMAND effect_entry_tests)
   add_executable(camera_particle_tests tests/camera_particle_tests.cpp)
   target_link_libraries(camera_particle_tests PRIVATE th08_geometry)
   add_test(NAME camera_particle COMMAND camera_particle_tests)
@@ -156,11 +185,12 @@ if(BUILD_TESTING)
   add_test(NAME rng COMMAND rng_tests)
   if(TARGET source_oracle)
     add_test(NAME source_oracle COMMAND source_oracle)
+    add_test(NAME source_effect_pool COMMAND source_effect_pool)
   endif()
   add_executable(documentation_tests tests/documentation_tests.cpp)
   target_link_libraries(documentation_tests PRIVATE th08_geometry)
   get_property(th08_core_tests DIRECTORY PROPERTY TESTS)
-  list(REMOVE_ITEM th08_core_tests source_oracle)
+  list(REMOVE_ITEM th08_core_tests source_oracle source_effect_pool)
   list(LENGTH th08_core_tests th08_core_test_count)
   math(EXPR th08_core_test_count "${th08_core_test_count} + 1")
   add_test(NAME documentation COMMAND documentation_tests

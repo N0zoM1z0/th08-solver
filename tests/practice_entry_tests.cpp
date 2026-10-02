@@ -172,8 +172,8 @@ void pause_and_fork() {
     check(pool.begin(request, 1).status == p::Status::spawn_pending, "paused spawn begins");
     th08::random::Rng rng(42, 17);
     auto blocked = pool.resume(&rng);
-    check(blocked.status == p::Status::unsupported_world_effect && blocked.sub == 3 &&
-              blocked.pc == 1 && blocked.opcode == 139 && blocked.local_time == 0 &&
+    check(blocked.status == p::Status::missing_entry_state && blocked.sub == 3 && blocked.pc == 1 &&
+              blocked.opcode == 139 && blocked.local_time == 0 &&
               pool.actor(0).interaction.no_sprite && pool.actor(0).interaction.allow_offscreen &&
               pool.actor(0).interaction.no_death && pool.actor(0).interaction.collision &&
               pool.actor(0).score == 100 && pool.actor(0).max_life == 0,
@@ -249,7 +249,7 @@ void timeline_connection() {
           "unknown GUI gate must stop before pool access");
     observations.gui_boss_present = observations.spawns_suppressed = t::KnownBool::no;
     const auto result = entry.advance(observations);
-    check(result.status == p::Status::unsupported_world_effect && result.opcode == 139 &&
+    check(result.status == p::Status::missing_entry_state && result.opcode == 139 &&
               entry.timeline_state().pending_effect && entry.timeline_state().pc == 0 &&
               entry.timeline_state().time.current == 0 && entry.pool().active_count() == 1,
           "timeline was acknowledged before spawn's immediate ECL completed");
@@ -328,7 +328,7 @@ void dat(const char *path) {
             check(entry.advance(observations).status == p::Status::timeline_frame_complete,
                   "initial empty timeline phase");
             const auto stopped = entry.advance(observations);
-            check(stopped.status == p::Status::unsupported_world_effect && stopped.actor == 0 &&
+            check(stopped.status == p::Status::missing_entry_state && stopped.actor == 0 &&
                       stopped.sub == 0 && stopped.pc == 1 && stopped.offset == 260 &&
                       stopped.opcode == 139 && stopped.instruction_mask == 255 &&
                       stopped.execution_mask == mask && stopped.local_time == 0 &&

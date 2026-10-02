@@ -24,10 +24,10 @@ form, entry-state and RNG-dependent execution cases.
 | Scalar ECL | Typed arithmetic, branches, normal calls/waits, explicit RNG, owned full payloads and resumable world handoffs | General ECL/EX world effects, fractional ECL clocks, child contexts and callback tails |
 | Context ownership | Thirty-slot snapshots; source-proven 46 scalar template zeros; compact call frames with unknown validity preserved | Full actor initialization, spawn transactions or globally coherent shared storage |
 | Timeline | Source clocks, masks, waits, event slots and pending-effect tokens; real practice-entry request boundaries | Executing spawn/dialogue/boss/power/menu effects or defeating the boss |
-| Practice entry ownership | Owned 480-slot spawn pool, immediate resumable ECL prefix, restricted frame tail and post-spawn stores; real timeline packet connected to sub0 PC1 | Effect51/ANM/camera integration, surrounding world phases and a complete practice entry |
+| Practice entry ownership | Owned 480-slot spawn pool, immediate resumable ECL prefix, restricted frame tail and post-spawn stores; real timeline packet connected to sub0 PC1 | Actual camera/RNG initialization, surrounding world phases and a complete practice entry |
 | Enemy motion | Polar, relative/interpolated and orbital motion; separate velocity/displacement phases; transactional ECL effects 63..76 and 178 | Actor pools, form/death/pause gates, child/parent lifecycle and shot/ANM scheduling |
 | ANM | Control/scalar execution, waits, interrupts, sprite identity, explicit RNG and hit-animation metadata; restricted lifetime certificates | Render/interpolation fields, resource-loading side effects and integration with world consumers |
-| Camera particles | Effect 51 initialization and update callbacks with explicit camera, boss, tint and RNG | Effect allocation, surrounding ANM, camera evolution, freeze and retirement |
+| Camera particles | Effect 51 initialization and update callbacks with explicit camera, boss, tint and RNG | General effect lifecycle, later ANM, camera evolution, freeze and retirement |
 | Bullet/laser kernels | Nine launch modes, direction/acceleration phases, supported eighteen-record transforms and laser collision/lifetime projection | General transforms, sprite replacement, child patterns and complete pool/cancellation lifecycle |
 | Slot selection | Source-ordered 1536-slot circular selection and nested cursor completion using bitsets | Bullet storage, successful initialization or full-pool RNG behavior |
 | Geometry | Box/laser predicates, owned CSR broad phase, signed laser dimensions and unindexed differential checks | Whole-game gates or a formal proof over every floating-point input |
@@ -47,7 +47,7 @@ exclusions for each layer; passing an adapter does not make it a complete world.
 | Restricted ECL matrix | 21735 attempts: 201 returned, 1224 bounded, 14973 unsupported, 5337 require context; all 38110 owned payloads match | [slice_summary.json](../reports/native/slice_summary.json), [per-case ledger](../reports/native/slice_matrix.tsv) |
 | ANM, no RNG supplied | 1151 scripts, up to 600 calls each: 340 complete, 800 bounded, 11 require context, zero invalid; 42 independent timing certificates | [animation_control_summary.json](../reports/native/animation_control_summary.json) |
 | Timeline, no world observations | 160 entry/mask attempts, all require context; 2003 payloads checked | [timeline_control_summary.json](../reports/native/timeline_control_summary.json) |
-| First spell entry prefix | ID2 Easy selected; supplied GUI gates; one pending actor; first blocker sub0 PC1 offset260 opcode139; no invented RNG/player state | [first_spell_summary.json](../reports/native/first_spell_summary.json), [trace](../reports/native/first_spell_trace.tsv) |
+| First spell entry prefix | ID2 Easy selected; supplied GUI gates; one pending actor; first missing context sub0 PC1 offset260 opcode139; no invented RNG/player state | [first_spell_summary.json](../reports/native/first_spell_summary.json), [trace](../reports/native/first_spell_trace.tsv) |
 | Particle fixtures | Two 600-frame routes, each with 840 births and 688203 search expansions, independently replayed | [motion_summary.json](../reports/native/motion_summary.json), [fixture assumptions](MOTION_FIXTURES.md) |
 | Pinned native source comparisons | Zero mismatches in every reported category | [source_oracle.json](../reports/native/source_oracle.json) |
 
@@ -59,8 +59,8 @@ They are component checks, not the shared RNG order of a world.
 
 ## Verification and performance status
 
-There are 21 core CTests without private data, plus the optional integrated source
-oracle (22 with the pinned reconstruction). The current Release and ASan/UBSan
+There are 23 core CTests without private data, plus two optional source
+comparisons (25 with the pinned reconstruction). The current Release and ASan/UBSan
 checks, DAT commands, CI limits and report-refresh procedure are documented in
 [Validation](VALIDATION.md). The four opt-in component source oracles are separately
 buildable; see [Build artifacts](BUILD_ARTIFACTS.md).
@@ -78,10 +78,12 @@ then the rest of IDs2..5, not a longer fixed sub40/41 fixture. The
 [first-spell execution plan](FIRST_SPELL.md) records selection, three end-to-end
 acceptance gates and the rule to follow this case's first blocker. The owned prefix
 now selects the first actor and executes opcode80, retaining the timeline and spawn
-transaction at sub0's effect51 request. Its first missing behavior is effect51 pool
-allocation with actual ANM/camera/shared RNG inputs. GUI gates in this diagnostic
+transaction at sub0's effect51 request. Effect51 allocation and the pinned ANM73 time-zero projection now work with
+explicitly supplied pool/camera/shared RNG inputs; see [Effect51 entry](EFFECT51_ENTRY.md).
+Actual entry initialization and surrounding manager phases remain missing. GUI gates in this diagnostic
 are explicitly supplied; surrounding background/player/global initialization has
-not run. Neither a complete spawn for sub0 nor acceptance gate1 is passed.
+not run. The separate supplied-context profile completes immediate sub0 spawning,
+with16 effects and256 RNG draws. Actual-entry acceptance gate1 remains unpassed.
 
 The restricted spawn protocol separately passes 6000 comparisons against extracted
 SpawnEnemy1/2 bodies with a controlled immediate-ECL boundary. That is evidence for

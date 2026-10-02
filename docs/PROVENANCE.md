@@ -127,3 +127,12 @@ language and attribution. This project does not assign them a new license.
 
 The Nitori workflow informed input pinning, competing mechanism checks, and independent
 comparisons. Its commit trailer records workflow assistance, not human authorship.
+
+The effect51 allocation adapter additionally extracts the unchanged SpawnEffect
+body from the same pinned EffectManager.cpp, supplying only its ANM boundary.
+It compares6000 pool transactions and629042 initialized slots with independent
+source callbacks, including cursor wrap, full/partial exhaustion, color and RNG.
+The DAT-enabled run checks the retained time-zero angular behavior with extracted
+ANM Initialize and angular-update blocks. Template/script and opcode139 operand
+mapping are source-inspected contracts, not full-world oracle claims. See
+[Effect51 entry](EFFECT51_ENTRY.md) for inputs, exclusions and reproduction.

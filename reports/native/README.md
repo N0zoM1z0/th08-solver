@@ -15,7 +15,7 @@ Input hashes and reference boundaries are in [Provenance](../../docs/PROVENANCE.
 | `th08_motion_cases` | `motion_summary.json`, `motion_sub40_frames.tsv`, `motion_sub40_route.tsv`, `motion_sub41_frames.tsv`, `motion_sub41_route.tsv` | Two fixed-entry particle models and independently replayed routes |
 | `th08_animation_cases` | `animation_control_summary.json`, `animation_control_cases.tsv` | Unseeded 600-call ANM control/scalar profile; context blockers remain explicit |
 | `th08_timeline_cases` | `timeline_control_summary.json`, `timeline_control_cases.tsv` | Timeline control with unknown world observations, not completed world effects |
-| `th08_first_spell` | `first_spell_summary.json`, `first_spell_trace.tsv` | Selected ID2 Easy entry prefix with supplied GUI gates; pending effect51 blocker, no full entry/world/solution |
+| `th08_first_spell` | `first_spell_summary.json`, `first_spell_trace.tsv`, `first_spell_effect51_summary.json` | Selected ID2 Easy entry prefix with supplied GUI gates; missing effect51 context plus separately supplied successful immediate spawn; no full entry/world/solution |
 | `source_oracle` | `source_oracle.json` | Pinned native source-body comparisons by category; no game execution |
 | `geometry_bench`, `planner_bench`, `bullet_slots_bench` | Corresponding `*_benchmark.json` files | Scoped component comparisons, not full-world performance |
 

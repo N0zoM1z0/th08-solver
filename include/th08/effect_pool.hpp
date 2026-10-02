@@ -1,0 +1,105 @@
+#pragma once
+#include "animation_control.hpp"
+#include "camera_particle.hpp"
+#include <array>
+#include <cstddef>
+#include <optional>
+#include <vector>
+
+namespace th08::effect {
+inline constexpr std::size_t primary_capacity = 512;
+// SpawnEffect returns the address of effects[653] after exhausting its scan,
+// including when earlier iterations initialized some primary-pool slots.
+inline constexpr std::size_t exhausted_effect = 653;
+
+// Supplied, validated post-SetAndExecuteScriptIdx(73) time-zero projection.
+// This pool does not load sprite resources or execute an ANM program. Ancillary
+// fields in this declared projection remain owned for later world consumers.
+// Renderer matrices/textures and the complete ANM VM are not represented here.
+struct Effect51Animation {
+    camera_particle::Animation fields;
+    animation::control::State control;
+    camera_particle::Vec3 rotation, angular_velocity;
+    float sprite_width, sprite_height;
+};
+using Template = Effect51Animation;
+struct Slot {
+    bool active = false;
+    // Occupancy-only checkpoints do not imply known particle/ANM fields.
+    // Consumers must check this flag before reading either projection below.
+    bool effect51_known = false;
+    camera_particle::State particle{};
+    Effect51Animation animation{};
+};
+struct Effect51Request {
+    std::int32_t count;
+    camera_particle::Vec3 position;
+    camera_particle::Color color;
+};
+struct Effect51Inputs {
+    const Effect51Animation *post_time_zero = nullptr;
+    const camera_particle::Camera *camera = nullptr;
+    std::optional<float> multiplier;
+};
+enum class Status { spawned, exhausted, missing_context, invalid_state };
+const char *name(Status status);
+struct Result {
+    Status status = Status::invalid_state;
+    std::size_t allocated = 0, inspected = 0, returned_slot = exhausted_effect;
+    bool committed() const {
+        return status == Status::spawned || status == Status::exhausted;
+    }
+};
+
+// Restricted EffectManager primary-pool ownership. Construction explicitly
+// supplies empty storage or known occupancy; it is not world initialization.
+// Copy this owner and the external RNG separately to fork a checkpoint. Queries
+// are immutable; no unimplemented retirement or manager-frame phase is implied.
+class PrimaryPool {
+  public:
+    using Occupancy = std::array<bool, primary_capacity>;
+
+  private:
+    struct Delta {
+        std::size_t index;
+        Slot slot;
+    };
+    std::array<Slot, primary_capacity> slots_{};
+    std::vector<Delta> scratch_;
+    std::size_t cursor_ = 0, active_count_ = 0;
+    bool spawn_event_ = false;
+
+  public:
+    PrimaryPool();
+    explicit PrimaryPool(const Occupancy &occupied, std::size_t cursor, bool spawn_event = false);
+    PrimaryPool(const PrimaryPool &other);
+    PrimaryPool &operator=(const PrimaryPool &other);
+    PrimaryPool(PrimaryPool &&) noexcept = default;
+    PrimaryPool &operator=(PrimaryPool &&) noexcept = default;
+
+    // Missing or invalid required inputs roll back slots, cursor, spawn event
+    // and shared RNG together. This atomicity is a native interface guarantee,
+    // not a claim about source-engine rollback. A full pool reads no request
+    // initialization fields or context and consumes no RNG.
+    //
+    // A single source-ordered scan visits at most 512 slots. Nonpositive counts
+    // initialize every free slot in that scan; they are not no-op requests.
+    // Effect51's source callback always succeeds. Native context/finite-domain
+    // failures are blockers, never source callback failure/deactivation events.
+    Result spawn_effect51(const Effect51Request &request, const Effect51Inputs &inputs,
+                          random::Rng *rng = nullptr);
+    const Slot &slot(std::size_t index) const;
+    bool occupied(std::size_t index) const {
+        return slot(index).active;
+    }
+    std::size_t cursor() const {
+        return cursor_;
+    }
+    std::size_t active_count() const {
+        return active_count_;
+    }
+    bool spawn_event() const {
+        return spawn_event_;
+    }
+};
+} // namespace th08::effect
