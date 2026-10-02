@@ -499,8 +499,17 @@ Establish correctness comparisons, then reduce work through batching, shared str
 and data layout. Apply SIMD or further specialization only to measured bottlenecks.
 A fixed emitter slice can generate its schedule once and share it; repeated interpreter
 costs shown in microbenchmarks need not be paid per candidate when the dependency
-contract permits reuse. The owned entry prefix now stops inside the first spawn at
-effect51; the next integration boundary is its ANM/camera/shared RNG ownership and
-the surrounding practice-entry world, including candidate-dependent consumers; see
+contract permits reuse. The owned entry prefix demands explicit pool/camera/shared RNG at
+effect51 and can finish immediate spawning with supplied inputs. The next boundary
+is actual initialization and surrounding manager phases, including candidate-dependent consumers; see
 [Coverage](COVERAGE.md). Measurements and excluded costs are in
 [Performance](PERFORMANCE.md). Microbenchmark time is not complete solving time.
+
+## Effect51 allocation bridge
+
+The [effect51 entry contract](EFFECT51_ENTRY.md) separates resource-certified ANM
+preparation, pool ownership and the ECL bridge. A caller must explicitly supply
+pool occupancy, camera and shared RNG. Successful immediate spawning now reaches
+the next timeline boundary with the real DAT under supplied-state assumptions;
+no later manager phase is implied. The effect pool does not depend on ECL or
+practice entry, and does not retire effects without the missing lifecycle owner.

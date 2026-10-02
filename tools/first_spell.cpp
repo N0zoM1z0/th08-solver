@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <th08/effect_animation.hpp>
 #include <th08/practice_entry.hpp>
 
 namespace r = th08::resources;
@@ -17,7 +18,10 @@ constexpr Pin source_pins[] = {
     {"EclRun.cpp", "010049211263e47d8245c7335f56b17a8502ca0f84595c8b035926a495d90b57"},
     {"EclRunLow.inl", "8c6d23bf4e9daf8f96dbd344f4a03d3ed32d1d200483959682e962cd41ec0045"},
     {"EclRunHigh.inl", "5e8c0b8ac1bd35f92cf2c3eb8792b2fb62d00feb97a21dc27e935101c5a45914"},
-    {"EclDependencies.cpp", "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4"}};
+    {"EclDependencies.cpp", "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4"},
+    {"EffectManager.cpp", "63d45a213956008b44874bc4707c971a7799a9c551b07e732bf1f55282c2209e"},
+    {"AnmManager.cpp", "c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce"},
+    {"AsciiManager.cpp", "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1"}};
 void require(bool condition, const char *message) {
     if (!condition)
         throw std::runtime_error(message);
@@ -59,8 +63,8 @@ int main(int argc, char **argv) try {
         require(initial.status == p::Status::timeline_frame_complete,
                 "unexpected initial timeline stop");
         const auto stop = entry.advance(observations);
-        require(stop.status == p::Status::unsupported_world_effect && stop.sub == 0 &&
-                    stop.pc == 1 && stop.offset == 260 && stop.opcode == 139 && stop.actor == 0 &&
+        require(stop.status == p::Status::missing_entry_state && stop.sub == 0 && stop.pc == 1 &&
+                    stop.offset == 260 && stop.opcode == 139 && stop.actor == 0 &&
                     entry.pool().pending(),
                 "first blocker changed; review and refresh producer assertions with the "
                 "implementation");
@@ -128,8 +132,8 @@ int main(int argc, char **argv) try {
                << ", \"instruction_mask\": " << unsigned(stop.instruction_mask)
                << ", \"execution_mask\": " << unsigned(stop.execution_mask)
                << ", \"local_time\": " << stop.local_time
-               << ", \"reason\": \"effect51 allocation, "
-                  "ANM initialization and camera/shared-RNG ownership are not integrated\"},\n"
+               << ", \"reason\": \"effect51 pool occupancy, camera and shared RNG "
+                  "must be supplied by the missing entry-world owner\"},\n"
                << "  \"pending_spawn\": {\"active_slots\": " << entry.pool().active_count()
                << ", \"life\": " << actor.life << ", \"score\": " << actor.score
                << ", \"item_drop\": " << int(actor.item_drop)
@@ -139,6 +143,49 @@ int main(int argc, char **argv) try {
                << "  \"complete_worlds\": 0,\n  \"complete_spell_solutions\": 0,\n"
                << "  \"acceptance_gates_passed\": 0,\n  \"blocked_resumptions_checked\": 8\n}\n";
         report.close();
+        for (std::size_t anm_member = 0; anm_member < archive.entries().size(); ++anm_member) {
+            if (archive.entries()[anm_member].name != "enemy.anm")
+                continue;
+            const auto anm_bytes = archive.decode(anm_member);
+            const auto effect_anm = th08::effect::compile_effect51_animation(r::view(anm_bytes));
+            // Separate diagnostic fixture, never inferred retail entry values.
+            const th08::effect::camera_particle::Camera camera{{0, 0, 0}, {0, 0, 100}, {0, 0, 1}};
+            const th08::effect::Effect51Inputs inputs{&effect_anm, &camera, 1};
+            th08::random::Rng rng(0);
+            p::Entry supplied(code, 1, th08::effect::PrimaryPool{});
+            require(supplied.advance(observations, &rng, nullptr, 100000, &inputs).status ==
+                        p::Status::timeline_frame_complete,
+                    "supplied first timeline mismatch");
+            const auto next = supplied.advance(observations, &rng, nullptr, 100000, &inputs);
+            require(next.status == p::Status::timeline_frame_complete &&
+                        supplied.timeline_state().pc == 1 && !supplied.pool().pending() &&
+                        supplied.pool().effects()->active_count() == 16 &&
+                        rng.generation_count() == 256,
+                    "supplied effect51 entry regression");
+            std::ofstream extra(fs::path(argv[3]) / "first_spell_effect51_summary.json");
+            extra.exceptions(std::ios::failbit | std::ios::badbit);
+            extra << "{\n  \"status\": \"" << p::name(next.status)
+                  << "\",\n  \"scope\": \"supplied empty effect pool, camera and seed0; "
+                     "immediate entry prefix only, not actual initialized world\",\n"
+                  << "  \"dat_sha256\": \"" << dat_hash << "\",\n"
+                  << "  \"ecl_member_sha256\": \"" << member_hash << "\",\n"
+                  << "  \"reference_revision\": \"a45e99fb1942714e6edded20847e32a654d56f97\",\n"
+                  << "  \"source_provenance\": \"first_spell_summary.json source_sha256; "
+                     "all listed files verified during this same command\",\n"
+                  << "  \"anm_sha256\": \"" << r::sha256(r::view(anm_bytes)) << "\",\n"
+                  << "  \"effect_slots\": " << supplied.pool().effects()->active_count()
+                  << ",\n  \"rng_seed\": " << rng.seed()
+                  << ",\n  \"rng_draws\": " << rng.generation_count()
+                  << ",\n  \"timeline_boundary\": {\"pc\": " << next.pc
+                  << ", \"offset\": " << next.offset << ", \"opcode\": " << next.opcode
+                  << "},\n  \"next_missing_behavior\": \"EnemyManager/effect/background/player "
+                     "frame phases before advancing another timeline frame\",\n"
+                     "  \"complete_worlds\": 0,\n  \"complete_spell_solutions\": 0,\n"
+                     "  \"acceptance_gates_passed\": 0\n}\n";
+            std::cout << "Supplied effect51 prefix: " << p::name(next.status) << " timeline PC"
+                      << next.pc << " effects=" << supplied.pool().effects()->active_count()
+                      << " draws=" << rng.generation_count() << '\n';
+        }
         std::cout << "ID2 Easy practice: " << p::name(stop.status)
                   << " at sub0 PC1 offset260 opcode139; pending timeline39684 retained. "
                      "No complete spell solution.\n";

@@ -84,7 +84,7 @@ Run the same diagnostic as implementation advances:
 ```
 
 The [current report](../reports/native/first_spell_summary.json) is explicitly
-`UNSUPPORTED_WORLD_EFFECT` at effect51, with supplied GUI gates and unknown RNG/player
+`MISSING_ENTRY_STATE` at effect51, with supplied GUI gates and unknown RNG/player
 state. The first empty timeline phase and the suspended immediate-ECL boundary are
 recorded in [the trace](../reports/native/first_spell_trace.tsv). This is not a
 per-frame world replay; all three acceptance gates remain unpassed. Successful
@@ -101,3 +101,12 @@ After gate3, add capture, character/form choices, seeds and remaining difficulti
 as separately verified cases; derive stage entry separately. Then choose the next
 family by reachable dependency cost. The all-case requirements in
 [Coverage](COVERAGE.md) remain the final scope, not a prerequisite for the first route.
+
+## Current effect51 extension
+
+The [effect51 integration](EFFECT51_ENTRY.md) implements the former allocation
+boundary with explicit supplied state. The no-context report now returns
+`MISSING_ENTRY_STATE`. A separate supplied-context report finishes immediate
+sub0 spawning, with16 effects and256 RNG draws, before stopping at the missing
+manager-frame integration. Earlier paragraphs describe the initial checkpoint;
+none of the three acceptance gates has passed.
