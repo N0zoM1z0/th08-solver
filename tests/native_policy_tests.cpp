@@ -22,6 +22,11 @@ struct Bullet {
         int timer = 0, interval = 0;
         unsigned updates = 0;
     } relative_direction{};
+    struct {
+        float angle = 0, speed = 0, sprite_width = 0, sprite_height = 0;
+        unsigned remaining = 0;
+        bool supported = false;
+    } boundary_bounce{};
 };
 struct Laser {
     float origin_x, origin_y, angle;
@@ -185,6 +190,38 @@ int main() {
               th08::policy::native_spell_policy(204).hazards.relative_direction_projection &&
               !th08::policy::native_spell_policy(203).hazards.relative_direction_projection,
           "relative direction projection ignored its source-owned validity bound or opt-in");
+    // ID139 uses a 64-pixel sprite but only a 24-pixel collision box. The
+    // source gate is strict and precedes movement, so x=416 has not bounced.
+    Bullet bouncing{416, 200, 2.5f, 0, 24, 24, 1, 0x800, 0, 0, 0, 0, 0};
+    bouncing.boundary_bounce = {0, 2.5f, 64, 64, 1, true};
+    const auto edge = th08::policy::detail::project_bullet(bouncing, 1, true, false, false, true);
+    const auto reflected =
+        th08::policy::detail::project_bullet(bouncing, 2, true, false, false, true);
+    check(edge.x == 418.5f && reflected.x == 416.f &&
+              reflected.kind == th08::policy::detail::BulletProjectionKind::boundary_bounce &&
+              th08::policy::detail::project_bullet(bouncing, 3, true, false, false, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported,
+          "bounce projection changed sprite-bound/event order or crossed its final event");
+    bouncing.x = 192;
+    bouncing.y = 481;
+    bouncing.vx = 0;
+    bouncing.vy = 2.5f;
+    bouncing.boundary_bounce = {1.57079632679489661923f, 5, 64, 64, 1, true};
+    const auto bottom = th08::policy::detail::project_bullet(bouncing, 1, true, false, false, true);
+    bouncing.active_transforms = 0x400;
+    const auto bottom_all =
+        th08::policy::detail::project_bullet(bouncing, 1, true, false, false, true);
+    check(bottom.y == 486 && bottom_all.y == 476 &&
+              th08::policy::detail::project_bullet(bouncing, 2, true, false, false, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported,
+          "bottom-excluding bounce lost its speed/count update or reflected the excluded edge");
+    bouncing.boundary_bounce.supported = false;
+    check(th08::policy::detail::project_bullet(bouncing, 1, true, false, false, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported &&
+              th08::policy::native_spell_policy(139).hazards.boundary_bounce_projection &&
+              th08::policy::native_spell_policy(139).hazards.bullet_horizon == 32 &&
+              th08::policy::native_spell_policy(139).hazards.first_leg_updates == 4,
+          "bounce projection ignored its observation guard or explicit ID139 planning budget");
     check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion &&
               th08::policy::native_spell_policy(198).hazards.rigid_laser_motion,
           "spell portfolio lost an isolated pooled-laser motion model");
@@ -374,5 +411,6 @@ int main() {
                  "\"laser_lifecycle\":\"covered\",\"broad_phase\":\"covered\","
                  "\"wait_projection\":\"covered\",\"upcoming_ecl_bullet\":\"covered\","
                  "\"relative_direction\":\"covered\","
+                 "\"boundary_bounce\":\"covered\","
                  "\"direct_ecl_laser\":\"covered\",\"spell_portfolio\":\"covered\"}\n";
 }

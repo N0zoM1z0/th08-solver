@@ -15,6 +15,11 @@ struct RelativeDirectionView {
     // subsequent transform or concurrently enabled transform-program record.
     unsigned updates = 0;
 };
+struct BoundaryBounceView {
+    float angle = 0, speed = 0, sprite_width = 0, sprite_height = 0;
+    unsigned remaining = 0;
+    bool supported = false;
+};
 struct BulletView {
     float x, y, vx, vy;
     std::uint16_t state;
@@ -29,6 +34,7 @@ struct BulletView {
     // across the active WAIT and any proven terminal child-spawn boundary.
     int wait_linear_updates;
     RelativeDirectionView relative_direction;
+    BoundaryBounceView boundary_bounce;
 };
 // Raw source-owned laser state after an update. Consumers may forecast existing
 // lasers, but newly spawned/aimed lasers still belong to the next native update.

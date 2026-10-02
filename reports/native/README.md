@@ -11,6 +11,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 | `th08_headless` + `th08_headless_probe` + `tests/headless_real_data.cmake` | `headless_summary.json` | Retained GCC12 native Stage 1, ID179, adapted IDs 85/89/93/198/201 and portfolio IDs 193/195/199, source collisions, Stage 6b input-latch witnesses, replay and O0/O3 comparison |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id202` | `headless_id202_summary.json` | GCC14 ID202 bounded WAIT improvement with three retained seed failures, preserved baseline, fresh replay and O0/O3 comparison; not a completed spell |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id204` | `headless_id204_summary.json` | GCC14 ID204 source-bounded relative-direction projection: complete seeds 0/65535, retained seed-1 collision and baseline, fresh replay and O0/O3 comparison |
+| `tests/headless_real_data.cmake`, `CASE_GROUP=id139` | `headless_id139_summary.json` | GCC14 bounded bounce and explicit 32-update/two-leg ranking: three complete seed wrappers, continuous Stage 6a clear, preserved failures, fresh replay and O0/O3 on corrected laser-item runtime |
 | `th08_scenario_cases` | `scenario_summary.json` | Three synthetic 7200-frame profiles, three baseline strategies; includes genuine failures |
 | `th08_scenario_cases` | `scenario_escape.json` | Explicit left-goal escape witness; not a general algorithm fix |
 | `th08_scenario_cases` | `scenario_recovery.json` | Geometry-derived retry, shared budget and target-scan cost; full replay |
@@ -34,13 +35,13 @@ is evidence to inspect, not a success or mathematical impossibility proof.
 
 Native headless records use the tracked source revision and original calc-chain/shared
 RNG/feedback under an explicit no-draw native float32 profile. They add coverage without
-relabeling historical subset reports. Native timing samples use AMD EPYC 7B12, GCC 12.2,
+relabeling historical subset reports. Historical native timing samples use AMD EPYC 7B12, GCC 12.2,
 Linux x86_64; wall-clock waiting is removed and initialization/output are excluded.
 Regenerate with the optional real-data CTest, then copy its checked
 `build-headless/headless-regression/summary.json` here. Keep comparison replay enabled
 when refreshing O0/O3 evidence; tapes remain in the ignored build directory.
-The separate ID202 report uses Intel Xeon Platinum 8573C/GCC 14.2. Its focused
-generator emits `id202-summary.json`; the older aggregate is deliberately retained
+The separate ID139/202/204 reports use Intel Xeon Platinum 8573C/GCC 14.2. Their focused
+generator emits `id139-summary.json`, `id202-summary.json` and `id204-summary.json`; the older aggregate is deliberately retained
 because this host fails its pre-existing Stage 6b golden digest (see Validation).
 
 Experiment in ignored `reports/local/`; regenerate tracked records deliberately from

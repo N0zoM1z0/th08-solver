@@ -20,6 +20,8 @@ struct NativeSpellPolicy {
 // its current future ECL cursor. ID202 reuses only the observed WAIT bound:
 // its random future emissions cannot use the deterministic ECL adapter.
 // ID204 needs the active relative-direction deceleration/turn recurrence.
+// ID139's observed large bullets need earlier wall-trap planning: 32 updates
+// and the existing 81 two-leg paths, with their extra work counted explicitly.
 // The native runtime remains the acceptance oracle.
 inline NativeSpellPolicy native_spell_policy(int spell_id) {
     if (spell_id == 85)
@@ -28,6 +30,8 @@ inline NativeSpellPolicy native_spell_policy(int spell_id) {
         return {"id89-direct-ecl-laser", {12, 120, true}, true};
     if (spell_id == 93)
         return {"id93-imminent-pooled-laser", {12, 120, true}, false, true};
+    if (spell_id == 139)
+        return {"id139-two-leg-bounce", {32, 120, true, 0x1ff, false, 4, false, false, true}};
     if (spell_id == 198)
         return {"id198-two-leg-rigid-laser", {12, 120, true, 0x1ff, true, 4}};
     if (spell_id == 199)

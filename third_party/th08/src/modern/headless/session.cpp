@@ -342,13 +342,9 @@ unsigned initial_bullet_linear_updates(const BulletSpawnDescriptor &descriptor, 
     return limit;
 }
 
-RelativeDirectionView relative_direction_view(const Bullet &bullet) {
-    RelativeDirectionView view;
-    if (bullet.state != BULLET_STATE_FIRED ||
-        bullet.activeTransformFlags != BULLET_TRANSFORM_CHANGE_DIRECTION_RELATIVE ||
-        bullet.transformIndex < 0 || g_Supervisor.framerateMultiplier != 1.f ||
-        g_GameManager.scriptedUpdateFreeze)
-        return view;
+bool active_transform_stays_single(const Bullet &bullet) {
+    if (bullet.transformIndex < 0)
+        return false;
     // AdvanceTransformProgram runs before active transforms. A blocked record
     // stays blocked through the final active update; an allowed enabled record
     // would invalidate the single-transform forecast immediately.
@@ -357,8 +353,18 @@ RelativeDirectionView relative_direction_view(const Bullet &bullet) {
         if (!record.kind || !record.allowWhileActive)
             break;
         if (bullet.transformFlags & record.kind)
-            return view;
+            return false;
     }
+    return true;
+}
+
+RelativeDirectionView relative_direction_view(const Bullet &bullet) {
+    RelativeDirectionView view;
+    if (bullet.state != BULLET_STATE_FIRED ||
+        bullet.activeTransformFlags != BULLET_TRANSFORM_CHANGE_DIRECTION_RELATIVE ||
+        !active_transform_stays_single(bullet) || g_Supervisor.framerateMultiplier != 1.f ||
+        g_GameManager.scriptedUpdateFreeze)
+        return view;
     const auto &state = bullet.exStates[BULLET_TRANSFORM_STATE_DIRECTION_CHANGE];
     if (state.timer.current < 0 || state.timer.subFrame != 0.f ||
         state.directionChangeIntervalFrames < 0 || !std::isfinite(bullet.angle) ||
@@ -378,6 +384,35 @@ RelativeDirectionView relative_direction_view(const Bullet &bullet) {
             state.timer.current,
             state.directionChangeIntervalFrames,
             unsigned(std::min<std::int64_t>(updates, std::numeric_limits<unsigned>::max()))};
+    return view;
+}
+
+BoundaryBounceView boundary_bounce_view(const Bullet &bullet) {
+    BoundaryBounceView view;
+    const auto flags = bullet.activeTransformFlags;
+    if (bullet.state != BULLET_STATE_FIRED ||
+        (flags != BULLET_TRANSFORM_BOUNCE_ALL_EDGES &&
+         flags != BULLET_TRANSFORM_BOUNCE_EXCEPT_BOTTOM) ||
+        !active_transform_stays_single(bullet) || g_Supervisor.framerateMultiplier != 1.f ||
+        g_GameManager.scriptedUpdateFreeze || !bullet.sprites.bulletVm.loadedSprite ||
+        bullet.sprites.bulletVm.currentInstruction)
+        return view;
+    const auto &state = bullet.exStates[BULLET_TRANSFORM_STATE_BOUNDARY_BOUNCE];
+    const auto &sprite = *bullet.sprites.bulletVm.loadedSprite;
+    if (!std::isfinite(bullet.angle) || !std::isfinite(state.bounceSpeed) ||
+        !std::isfinite(sprite.widthPx) || !std::isfinite(sprite.heightPx) || sprite.widthPx < 0 ||
+        sprite.heightPx < 0)
+        return view;
+    // Native increments before comparing, so limit zero still permits one
+    // boundary event. The policy stops after that event's movement/collision.
+    const auto remaining =
+        std::max<std::int64_t>(1, std::int64_t(state.bounceLimit) - state.bouncesCompleted);
+    view = {bullet.angle,
+            state.bounceSpeed,
+            sprite.widthPx,
+            sprite.heightPx,
+            unsigned(std::min<std::int64_t>(remaining, std::numeric_limits<unsigned>::max())),
+            true};
     return view;
 }
 } // namespace
@@ -499,7 +534,8 @@ const std::vector<BulletView> &Session::bullets() {
                               b.sprites.collisionSize.x, b.sprites.collisionSize.y,
                               b.activeTransformFlags, acceleration.vector.x, acceleration.vector.y,
                               acceleration.timer.current, acceleration.durationFrames,
-                              wait_linear_updates, relative_direction_view(b)});
+                              wait_linear_updates, relative_direction_view(b),
+                              boundary_bounce_view(b)});
         }
         ++slot;
     }

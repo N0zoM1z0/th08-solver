@@ -29,12 +29,16 @@ struct HazardReactiveOptions {
     // Source-bounded active deceleration/relative-turn recurrence. This never
     // executes a future transform-program record or forecasts aimed turns.
     bool relative_direction_projection = false;
+    // Use loaded sprite bounds and source event order, stopping after the
+    // final active bounce rather than inventing the next transform's motion.
+    bool boundary_bounce_projection = false;
 };
 struct HazardReactiveStats {
     std::uint64_t decisions = 0, candidates = 0;
     std::uint64_t bullet_projections = 0, bullet_checks = 0, vector_acceleration_checks = 0;
     std::uint64_t wait_linear_checks = 0;
     std::uint64_t relative_direction_checks = 0;
+    std::uint64_t boundary_bounce_checks = 0;
     std::uint64_t unsupported_transform_checks = 0, laser_paths = 0, laser_paths_pruned = 0;
     std::uint64_t rigid_laser_paths = 0, laser_forecast_updates = 0, laser_checks = 0;
     std::uint64_t predicted_overlaps = 0;
@@ -77,22 +81,74 @@ enum class BulletProjectionKind {
     vector_acceleration,
     wait_linear,
     relative_direction,
+    boundary_bounce,
     unsupported
 };
 struct BulletProjection {
     float x, y;
     BulletProjectionKind kind;
 };
-// BulletManager updates active vector acceleration before adding velocity to
-// position. This closed form mirrors that order for an already-active opcode.
-// Other active transforms remain soft ranking evidence rather than collision proof.
+// Native X reflection normalizes with bounded repeated float32 additions,
+// not remainder/fmod; preserve that operation order and its iteration guard.
+inline float normalize_bounce_angle(float angle) {
+    constexpr float pi = 3.14159265358979323846f, tau = pi * 2.f;
+    unsigned adjustments = 0;
+    angle += 0.f;
+    while (angle > pi) {
+        angle -= tau;
+        if (adjustments++ > 16)
+            break;
+    }
+    while (angle < -pi) {
+        angle += tau;
+        if (adjustments++ > 16)
+            break;
+    }
+    return angle;
+}
+// These proposals use observed active state. Source-bounded transform views
+// stop before unmodeled program boundaries; unsupported motion remains soft
+// ranking evidence rather than collision proof.
 template <class Bullet>
 BulletProjection
 project_bullet(const Bullet &bullet, unsigned step, bool enable_vector_acceleration = true,
-               bool enable_wait_linear = false, bool enable_relative_direction = false) {
+               bool enable_wait_linear = false, bool enable_relative_direction = false,
+               bool enable_boundary_bounce = false) {
     constexpr std::uint32_t vector_acceleration = 0x10;
     constexpr std::uint32_t wait = 0x20000;
     constexpr std::uint32_t relative_direction = 0x40;
+    constexpr std::uint32_t bounce_all = 0x400, bounce_except_bottom = 0x800;
+    if (enable_boundary_bounce && bullet.boundary_bounce.supported &&
+        (bullet.active_transforms == bounce_all ||
+         bullet.active_transforms == bounce_except_bottom)) {
+        const auto &state = bullet.boundary_bounce;
+        float x = bullet.x, y = bullet.y, vx = bullet.vx, vy = bullet.vy, angle = state.angle;
+        unsigned remaining = state.remaining;
+        for (unsigned update = 0; update < step; ++update) {
+            if (!remaining)
+                return {bullet.x + step * bullet.vx, bullet.y + step * bullet.vy,
+                        BulletProjectionKind::unsupported};
+            // Source tests loaded sprite bounds BEFORE movement. The collision
+            // box is a different size and must not move this reflection gate.
+            const bool outside =
+                state.sprite_width / 2.f + x < 0.f || x - state.sprite_width / 2.f > 384.f ||
+                state.sprite_height / 2.f + y < 0.f || y - state.sprite_height / 2.f > 448.f;
+            if (outside) {
+                if (x < 0.f || x >= 384.f)
+                    angle = normalize_bounce_angle(-angle - 3.14159265358979323846f);
+                if (y < 0.f || (y >= 448.f && bullet.active_transforms == bounce_all))
+                    angle = -angle;
+                vx = std::cos(angle) * state.speed;
+                vy = std::sin(angle) * state.speed;
+                // Even a bottom-excluding event installs speed and consumes a
+                // bounce. Its final movement occurs before the flag stays off.
+                --remaining;
+            }
+            x += vx;
+            y += vy;
+        }
+        return {x, y, BulletProjectionKind::boundary_bounce};
+    }
     if (enable_relative_direction && bullet.active_transforms == relative_direction &&
         step <= bullet.relative_direction.updates) {
         const auto &state = bullet.relative_direction;
@@ -388,7 +444,7 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                     continue;
                 const auto projected = detail::project_bullet(
                     bullet, step, options.vector_acceleration, options.wait_linear_projection,
-                    options.relative_direction_projection);
+                    options.relative_direction_projection, options.boundary_bounce_projection);
                 ++stats.bullet_projections;
                 if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                     ++stats.vector_acceleration_checks;
@@ -396,6 +452,8 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                     ++stats.wait_linear_checks;
                 else if (projected.kind == detail::BulletProjectionKind::relative_direction)
                     ++stats.relative_direction_checks;
+                else if (projected.kind == detail::BulletProjectionKind::boundary_bounce)
+                    ++stats.boundary_bounce_checks;
                 else if (projected.kind == detail::BulletProjectionKind::unsupported)
                     ++stats.unsupported_transform_checks;
                 cached_bullets.push_back({projected.x, projected.y, bullet.full_width,
@@ -470,7 +528,7 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                         continue;
                     const auto projected = detail::project_bullet(
                         bullet, step, options.vector_acceleration, options.wait_linear_projection,
-                        options.relative_direction_projection);
+                        options.relative_direction_projection, options.boundary_bounce_projection);
                     ++stats.bullet_projections;
                     if (projected.kind == detail::BulletProjectionKind::vector_acceleration)
                         ++stats.vector_acceleration_checks;
@@ -478,6 +536,8 @@ std::uint16_t hazard_reactive(float player_x, float player_y, float half_x, floa
                         ++stats.wait_linear_checks;
                     else if (projected.kind == detail::BulletProjectionKind::relative_direction)
                         ++stats.relative_direction_checks;
+                    else if (projected.kind == detail::BulletProjectionKind::boundary_bounce)
+                        ++stats.boundary_bounce_checks;
                     else if (projected.kind == detail::BulletProjectionKind::unsupported)
                         ++stats.unsupported_transform_checks;
                     score_bullet({projected.x, projected.y, bullet.full_width, bullet.full_height,
