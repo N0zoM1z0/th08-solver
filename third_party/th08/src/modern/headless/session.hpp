@@ -29,6 +29,15 @@ struct LaserView {
     std::uint16_t flags;
     std::uint8_t state;
 };
+// Exact geometry submitted to Player::CalcLaserHitbox during one native update.
+// Center/size use the source function's rotated comparison coordinates; origin
+// and angle map a world-space player position into those coordinates.
+struct LaserHitboxView {
+    float center_x, center_y, full_width, full_height;
+    float origin_x, origin_y, angle;
+    int pooled_slot;
+    bool graze_enabled;
+};
 enum class CollisionKind { None, Bullet, LethalRegion, Laser };
 struct Bounds {
     float left = 0, top = 0, right = 0, bottom = 0;
@@ -42,6 +51,10 @@ struct CollisionEvent {
     int bullet_slot = -1, laser_slot = -1;
     float vx = 0, vy = 0;
     std::uint32_t active_transforms = 0;
+    int laser_hitbox_call = -1;
+    float laser_center_x = 0, laser_center_y = 0;
+    float laser_full_width = 0, laser_full_height = 0;
+    float laser_origin_x = 0, laser_origin_y = 0, laser_angle = 0;
     std::uint16_t movement_input = 0, sampled_input = 0;
 };
 struct State {
@@ -73,6 +86,8 @@ class Session {
     const std::vector<BulletView> &bullets();
     // Reused independently from bullets(); invalidated by the next lasers() call.
     const std::vector<LaserView> &lasers();
+    // Calls observed in the most recent native update; invalidated by step().
+    const std::vector<LaserHitboxView> &laser_hitboxes() const;
     float focused_axis_speed() const;
     float focused_diagonal_speed() const;
     // A diagnostics projection of actor/script state, not a serialized world.

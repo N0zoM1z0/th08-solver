@@ -94,12 +94,15 @@ choices; one safe observed update is not a complete future route.
 
 `--trace PATH` writes the last 32 updates as TSV, with before/after player and occupied
 bullet slots, full collision dimensions in pixels, velocity in pixels/update, active
-transform flags, proposed action, sampled input and latched movement input. Bullet
+transform flags, proposed action, sampled input and latched movement input. It also
+records every native `CalcLaserHitbox` center, size, origin, angle and graze flag. Bullet
 slot reuse across updates is possible; these are pool indices, not stable entity IDs.
 Collision JSON records the first lethal overlap before death feedback; laser bounds
-use the original rotated test coordinates, other bounds use world coordinates. None
-of this changes acceptance physics or calls the RNG. The original FNV projection is
-unchanged and remains a partial diagnostic projection, not a complete state key.
+use the original rotated test coordinates and retain the raw call geometry.
+`laser_slot=-1` identifies an ECL-owned direct hitbox. Other bounds use world
+coordinates. None of this changes acceptance physics or calls the RNG. The original
+FNV projection is unchanged and remains a partial diagnostic projection, not a complete
+state key.
 
 ## Synthetic continuous profiles
 

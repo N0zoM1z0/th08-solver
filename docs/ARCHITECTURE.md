@@ -70,12 +70,16 @@ at 17. Player therefore reads the previous latch. The headless adapter preserves
 order; proposals must account for the pending input rather than reorder the game.
 `Session::collision()` owns a value copy captured at the successful source collision
 test before death effects alter RNG/state. It identifies bullets, lethal regions or
-lasers and records the exact checked bounds and input values. `bullets()` returns a
+lasers and records the exact checked bounds and input values. Every native
+`CalcLaserHitbox` call is also copied into a per-update raw view with its center, size,
+origin, angle, graze flag and pooled slot when one exists. This distinguishes transient
+ECL-owned geometry from `BulletManager` lasers without moving collision ownership out of
+the game. `bullets()` returns a
 reused post-update view buffer invalidated by its next call; active vector-acceleration
 state is copied from its source transform slot without advancing it. `lasers()` owns a
 separate reused buffer of raw pooled-laser lifecycle state. Callers copy either view when
-retaining history. The CLI optionally owns a 32-update before/after ring, serialized
-after loop timing.
+retaining history; the per-update laser-hitbox view is invalidated by `step()`. The CLI
+optionally owns a 32-update before/after ring, serialized after loop timing.
 
 Original managers contain process globals and internal pointers. `headless::Session`
 is noncopyable and permits one instance per process. Fresh replay starts another

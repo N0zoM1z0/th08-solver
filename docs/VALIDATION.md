@@ -87,8 +87,9 @@ ctest --test-dir build-headless --output-on-failure
 
 The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
 wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary collision
-at 382, portfolio IDs 193/195/199 through their complete original wrappers, a 10-update
-budget failure and the Stage 6b reactive collision at update 854.
+at 382, portfolio IDs 193/195/199 through their complete original wrappers, ID89's direct
+ECL laser collision at 393, a 10-update budget failure and the Stage 6b reactive collision
+at update 854.
 Every execution tape replays in another process;
 tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
 Generated tapes and `summary.json` are under `build-headless/headless-regression/`.

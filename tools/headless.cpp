@@ -102,22 +102,27 @@ struct TraceFrame {
     th08::headless::State before, after;
     std::uint16_t action = 0;
     std::vector<th08::headless::BulletView> before_bullets, after_bullets;
+    std::vector<th08::headless::LaserHitboxView> before_laser_hitboxes, after_laser_hitboxes;
 };
 // Fixed tail, reused across updates. Serialization happens after timing stops.
 class TraceTail {
   public:
     void before(const th08::headless::State &state, std::uint16_t action,
-                const std::vector<th08::headless::BulletView> &bullets) {
+                const std::vector<th08::headless::BulletView> &bullets,
+                const std::vector<th08::headless::LaserHitboxView> &laser_hitboxes) {
         auto &f = frames[next];
         f.before = state;
         f.action = action;
         f.before_bullets.assign(bullets.begin(), bullets.end());
+        f.before_laser_hitboxes.assign(laser_hitboxes.begin(), laser_hitboxes.end());
     }
     void after(const th08::headless::State &state,
-               const std::vector<th08::headless::BulletView> &bullets) {
+               const std::vector<th08::headless::BulletView> &bullets,
+               const std::vector<th08::headless::LaserHitboxView> &laser_hitboxes) {
         auto &f = frames[next];
         f.after = state;
         f.after_bullets.assign(bullets.begin(), bullets.end());
+        f.after_laser_hitboxes.assign(laser_hitboxes.begin(), laser_hitboxes.end());
         next = (next + 1) % frames.size();
         count = std::min(count + 1, frames.size());
     }
@@ -127,23 +132,30 @@ class TraceTail {
             throw std::runtime_error("cannot open diagnostic trace");
         out << std::setprecision(std::numeric_limits<float>::max_digits10)
             << "frame\tphase\tkind\tslot\tstate\tx\ty\tvx\tvy\twidth\theight\ttransforms\t"
-               "action\tlatched_input\tsampled_input\n";
+               "action\tlatched_input\tsampled_input\torigin_x\torigin_y\tangle\tgraze_enabled\n";
         for (std::size_t i = 0; i < count; ++i) {
             const auto &f = frames[(next + frames.size() - count + i) % frames.size()];
-            auto phase = [&](const char *name, const auto &s, const auto &bullets) {
+            auto phase = [&](const char *name, const auto &s, const auto &bullets,
+                             const auto &laser_hitboxes) {
                 out << f.after.frame << '\t' << name << "\tplayer\t-1\t" << s.player_state << '\t'
                     << s.x << '\t' << s.y << "\t0\t0\t" << 2 * s.hurt_half_x << '\t'
                     << 2 * s.hurt_half_y << "\t0\t" << f.action << '\t' << s.latched_input << '\t'
-                    << s.sampled_input << '\n';
+                    << s.sampled_input << "\t0\t0\t0\t0\n";
                 for (const auto &b : bullets)
                     out << f.after.frame << '\t' << name << "\tbullet\t" << b.slot << '\t'
                         << b.state << '\t' << b.x << '\t' << b.y << '\t' << b.vx << '\t' << b.vy
                         << '\t' << b.full_width << '\t' << b.full_height << '\t'
                         << b.active_transforms << '\t' << f.action << '\t' << s.latched_input
-                        << '\t' << s.sampled_input << '\n';
+                        << '\t' << s.sampled_input << "\t0\t0\t0\t0\n";
+                for (const auto &h : laser_hitboxes)
+                    out << f.after.frame << '\t' << name << "\tlaser_hitbox\t" << h.pooled_slot
+                        << "\t0\t" << h.center_x << '\t' << h.center_y << "\t0\t0\t" << h.full_width
+                        << '\t' << h.full_height << "\t0\t" << f.action << '\t' << s.latched_input
+                        << '\t' << s.sampled_input << '\t' << h.origin_x << '\t' << h.origin_y
+                        << '\t' << h.angle << '\t' << h.graze_enabled << '\n';
             };
-            phase("before", f.before, f.before_bullets);
-            phase("after", f.after, f.after_bullets);
+            phase("before", f.before, f.before_bullets, f.before_laser_hitboxes);
+            phase("after", f.after, f.after_bullets, f.after_laser_hitboxes);
         }
         if (!out)
             throw std::runtime_error("cannot write diagnostic trace");
@@ -169,7 +181,13 @@ void write_collision(std::ostream &out, const th08::headless::CollisionEvent &ev
     bounds(event.hazard);
     out << ",\"vx\":" << event.vx << ",\"vy\":" << event.vy
         << ",\"active_transforms\":" << event.active_transforms
-        << ",\"laser_slot\":" << event.laser_slot << ",\"movement_input\":" << event.movement_input
+        << ",\"laser_slot\":" << event.laser_slot
+        << ",\"laser_hitbox_call\":" << event.laser_hitbox_call << ",\"laser_center\":["
+        << event.laser_center_x << ',' << event.laser_center_y << ']' << ",\"laser_size\":["
+        << event.laser_full_width << ',' << event.laser_full_height << ']' << ",\"laser_origin\":["
+        << event.laser_origin_x << ',' << event.laser_origin_y << ']'
+        << ",\"laser_angle\":" << event.laser_angle
+        << ",\"movement_input\":" << event.movement_input
         << ",\"sampled_input\":" << event.sampled_input << '}';
 }
 } // namespace
@@ -259,6 +277,7 @@ int main(int argc, char **argv) {
             const auto decision_start = std::chrono::steady_clock::now();
             const auto &observed = session.bullets();
             const auto &observed_lasers = session.lasers();
+            const auto &observed_laser_hitboxes = session.laser_hitboxes();
             std::uint16_t action = 4;
             if (!replay_path.empty()) {
                 if (i == replay.size()) {
@@ -301,7 +320,7 @@ int main(int argc, char **argv) {
             decision_ms +=
                 std::chrono::duration<double, std::milli>(decision_end - decision_start).count();
             if (tail)
-                tail->before(state, action, observed);
+                tail->before(state, action, observed, observed_laser_hitboxes);
             const auto update_start = std::chrono::steady_clock::now();
             if (tail)
                 diagnostics_ms +=
@@ -327,9 +346,10 @@ int main(int argc, char **argv) {
             hash(digest, bits(state.lives));
             hash(digest, session.actor_digest());
             const auto &updated_bullets = session.bullets();
+            const auto &updated_laser_hitboxes = session.laser_hitboxes();
             if (tail) {
                 const auto trace_start = std::chrono::steady_clock::now();
-                tail->after(state, updated_bullets);
+                tail->after(state, updated_bullets, updated_laser_hitboxes);
                 diagnostics_ms += std::chrono::duration<double, std::milli>(
                                       std::chrono::steady_clock::now() - trace_start)
                                       .count();

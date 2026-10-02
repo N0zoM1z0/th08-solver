@@ -441,6 +441,10 @@ u32 Player::CalcLaserHitbox(Float3 *position, Float3 *size, Float3 *origin, f32 
     incomingMin = *position - *size / 2.0f;
     incomingMax = *position + *size / 2.0f;
 
+#ifdef TH08_HEADLESS
+    headless::record_laser_hitbox(*position, *size, *origin, angle, graze != 0);
+#endif
+
     if (!(playerMin.x > incomingMax.x))
     {
         if (!(playerMax.x < incomingMin.x))

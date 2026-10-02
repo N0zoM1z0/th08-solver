@@ -13,8 +13,12 @@ extern uint16_t th08_headless_input;
 extern uint64_t th08_headless_frame;
 
 namespace th08::headless {
-void clear_collision();
+void begin_update_observation();
 CollisionEvent current_collision();
+const std::vector<LaserHitboxView> &current_laser_hitboxes();
+void prepare_observation_storage();
+void record_laser_hitbox(const Float3 &center, const Float3 &size, const Float3 &origin,
+                         float angle, bool graze_enabled);
 void record_collision(CollisionKind, const Float3 &player_min, const Float3 &player_max,
                       const Float3 &hazard_min, const Float3 &hazard_max,
                       const Float3 *owner_position = nullptr);

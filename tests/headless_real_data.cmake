@@ -82,6 +82,28 @@ endforeach()
 scene(spell179-stationary 6b 179 0 stationary 2000 collision 2 382)
 scene(stage1-budget 1 -1 0 reactive 10 frame_limit 2 10)
 scene(stage6b-reactive 6b -1 0 reactive 50000 collision 2 854)
+# ID89's rotating beam is an ECL-owned CalcLaserHitbox call rather than a
+# BulletManager laser. Preserve that distinction and its exact first-hit frame.
+scene(spell89-direct-laser 4b 89 0 spell-portfolio 1000 collision 2 393)
+file(READ "${WORK}/spell89-direct-laser.json" spell89)
+foreach(pair IN ITEMS "laser_slot;-1" "laser_hitbox_call;0")
+  list(GET pair 0 key)
+  list(GET pair 1 expected)
+  field("${spell89}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "ID89 direct-laser ${key} changed: ${actual}")
+  endif()
+endforeach()
+run("${EXECUTABLE}" "${WORK}/spell89-direct-laser-diagnostic.json" 2
+  --stage 4b --spell-id 89 --difficulty 0 --seed 0 --frames 1000
+  --replay "${WORK}/spell89-direct-laser.actions" --trace "${WORK}/spell89.tsv")
+file(READ "${WORK}/spell89-direct-laser-diagnostic.json" spell89_diagnostic)
+agree("${spell89}" "${spell89_diagnostic}")
+file(STRINGS "${WORK}/spell89.tsv" direct_hitbox
+  REGEX "^393.*after.*laser_hitbox.*-1")
+if(NOT direct_hitbox)
+  message(FATAL_ERROR "ID89 direct ECL hitbox was absent from the diagnostic trace")
+endif()
 # Distinct spell profiles guard the measured portfolio boundary. ID195 needs
 # vector acceleration; ID199 deliberately retains constant-velocity ranking.
 scene(spell193-portfolio extra 193 0 spell-portfolio 5000 complete 0 3692 4)
