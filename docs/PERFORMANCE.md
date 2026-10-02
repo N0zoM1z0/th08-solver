@@ -16,6 +16,7 @@ the complete-world executor is not implemented.
 | Fixed-state motion and transform kernels | Per-step allocations and duplicated mutable state | Pinned source comparisons and phase-order regressions |
 | Bitset bullet-slot index | Linear near-full circular scans | Source-order selection, all single-hole cases and nested cursor completion |
 | Owned CSR spatial index | Most unnecessary narrow collision predicates | Unindexed scans, boundary/contact and signed-laser checks |
+| Exact-position successor cache | Duplicate collision queries, including blocked positions | Fixed-model only; explicit comparator winner and unchanged attempted-action budget |
 | Reused planner buffers and deterministic heap | Per-frame tree allocation and full sorting | Retained reference planner, identical routes and independent replay |
 
 The current local x86_64 layout is 304 bytes per call frame and 5520 bytes per
@@ -56,3 +57,24 @@ Measure complete entry-to-terminal execution once it is verified, identify actua
 bottlenecks, and only then add justified specialization or SIMD. An optimization
 is acceptable only when its independent event/geometry/replay checks retain the
 same results in the stated numerical and input domain.
+
+## Early successor deduplication
+
+The planner now caches exact successor positions before collision queries and heap
+insertion, rather than deduplicating only after heap selection. It retains the
+comparator-winning predecessor and charges every attempted action to the existing
+expansion budget. Safe and blocked duplicates both reuse their first collision result.
+This equivalence is restricted to a fixed candidate-independent model.
+
+The benchmark reports collision queries and duplicate successors separately; their
+sum equals attempted expansions, including budget-cutoff prefixes. The retained
+reference comparisons check exact actions, position bits, status and expansion count
+at clamped boundaries and nearby floating-point positions. Long-scene performance
+is measured separately by [the scenario runner](SCENARIOS.md).
+
+The 2026-10-02 planner record was collected on Intel Xeon Platinum 8573C, GCC 14.2,
+Release, rather than the older machine described above. The moving fixture used
+411723 attempts, 277427 collision queries and 134296 duplicates (32.6% avoided);
+the corner used 406602 attempts, 54742 queries and 351860 duplicates (86.5% avoided).
+Its reference remains the original sorting planner, not the immediately preceding
+heap implementation, so the reference/optimized timing ratio includes both changes.

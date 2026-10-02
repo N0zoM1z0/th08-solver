@@ -15,9 +15,10 @@ four documents; specialized evidence is linked from them.
 
 | Document | Purpose |
 |---|---|
+| [Continuous scenarios](SCENARIOS.md) | Solver-first checkpoints, controlled RNG, long runs and strategy comparison |
 | [Provenance](PROVENANCE.md) | Pinned source/data identities, independent comparison chain and numerical limits |
 | [Performance](PERFORMANCE.md) | Implemented optimizations, current benchmark samples and excluded costs |
-| [First spell execution plan](FIRST_SPELL.md) | One selected ID2 Easy practice case, three end-to-end acceptance gates, then expansion |
+| [First spell execution plan](FIRST_SPELL.md) | Historical entry-first ID2 plan; superseded as the immediate priority |
 | [Effect51 entry integration](EFFECT51_ENTRY.md) | Narrow ANM/pool/ECL ownership, supplied-state evidence and next missing world phase |
 | [Wriggle world contract](WRIGGLE_WORLD_CONTRACT.md) | Source-derived first integration target: actual practice/stage entry, familiars, RNG and endings |
 | [Motion fixtures](MOTION_FIXTURES.md) | Exact assumptions behind the two replayed 600-frame routes |

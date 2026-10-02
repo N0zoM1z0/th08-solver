@@ -12,6 +12,7 @@ Input hashes and reference boundaries are in [Provenance](../../docs/PROVENANCE.
 | `th08_audit` | `summary.json`, `members.tsv`, `subprograms.tsv`, `opcodes.tsv`, `spell_sites.tsv`, `shot_sites.tsv` | DAT/ECL structural identities; zero complete spell solutions |
 | `th08_audit` resource reports | `resource_summary.json`, `timelines.tsv`, `sht_*.tsv`, `anm_*.tsv`, `std_*.tsv` | Parsed fields and restricted ANM timing certificates, not complete resource execution |
 | `th08_slices` | `slice_summary.json`, `slice_matrix.tsv`, `emitter_examples.tsv`, `emitter_benchmark.json` | Restricted entry/mask attempts, first blockers, owned payload checks and scoped scheduling timing |
+| `th08_scenario_cases` | `scenario_summary.json`, `scenario_escape.json` | Synthetic controlled 7200-frame scenes, all strategy outcomes and fresh replay; not original stages |
 | `th08_motion_cases` | `motion_summary.json`, `motion_sub40_frames.tsv`, `motion_sub40_route.tsv`, `motion_sub41_frames.tsv`, `motion_sub41_route.tsv` | Two fixed-entry particle models and independently replayed routes |
 | `th08_animation_cases` | `animation_control_summary.json`, `animation_control_cases.tsv` | Unseeded 600-call ANM control/scalar profile; context blockers remain explicit |
 | `th08_timeline_cases` | `timeline_control_summary.json`, `timeline_control_cases.tsv` | Timeline control with unknown world observations, not completed world effects |

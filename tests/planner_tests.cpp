@@ -7,6 +7,27 @@
 using namespace th08::solver;
 using namespace th08::geometry;
 using th08::test::check;
+namespace {
+bool same_bits(float a, float b) {
+    return std::memcmp(&a, &b, sizeof(a)) == 0;
+}
+Result check_reference(const Model &model, Vec2 start, Movement speed, const Options &options) {
+    const auto actual = plan(model, start, speed, options);
+    const auto expected = reference_plan(model, start, speed, options);
+    check(actual.status == expected.status && actual.expansions == expected.expansions &&
+              actual.actions.size() == expected.actions.size(),
+          "optimized search changed status, budget or route length");
+    check(actual.expansions == actual.collision_queries + actual.duplicate_successors,
+          "search metrics lost an attempted action");
+    for (std::size_t i = 0; i < actual.actions.size(); ++i)
+        check(actual.actions[i].x == expected.actions[i].x &&
+                  actual.actions[i].y == expected.actions[i].y &&
+                  same_bits(actual.positions[i].x, expected.positions[i].x) &&
+                  same_bits(actual.positions[i].y, expected.positions[i].y),
+              "optimized search changed deterministic tie-break or exact position bits");
+    return actual;
+}
+} // namespace
 int main() {
     std::mt19937 rng(20260912);
     for (unsigned test = 0; test < 80; ++test) {
@@ -25,18 +46,54 @@ int main() {
         options.beam = 1 + rng() % 128;
         options.expansions = test % 5 ? 100000 : 30;
         options.terminal = {{192, 224}, {368, 416}};
-        const auto actual = plan(model, start, {}, options);
-        const auto expected = reference_plan(model, start, {}, options);
-        check(actual.status == expected.status && actual.expansions == expected.expansions &&
-                  actual.actions.size() == expected.actions.size(),
-              "optimized search changed status, budget or route length");
-        for (std::size_t i = 0; i < actual.actions.size(); ++i)
-            check(actual.actions[i].x == expected.actions[i].x &&
-                      actual.actions[i].y == expected.actions[i].y &&
-                      actual.positions[i].x == expected.positions[i].x &&
-                      actual.positions[i].y == expected.positions[i].y,
-                  "optimized search changed deterministic tie-break or position merging");
+        check_reference(model, start, {}, options);
     }
+    Model boundary;
+    boundary.dependency = Dependency::independent;
+    boundary.frames.emplace_back(std::vector<Hazard>{}, Vec2{0, 0});
+    Options edge_options;
+    edge_options.terminal = {{8, 16}, {0, 0}};
+    auto corner = check_reference(boundary, {8, 16}, {2, 2}, edge_options);
+    check(corner.status == Status::found && corner.expansions == 9 &&
+              corner.collision_queries == 4 && corner.duplicate_successors == 5 &&
+              corner.actions[0].x == -1 && corner.actions[0].y == -1,
+          "clamped successor merge changed generation-order winner or query count");
+    boundary.frames[0] = Snapshot({Hazard::bullet({{8, 16}, {0, 0}})}, {0, 0});
+    edge_options.terminal = {{192, 224}, {368, 416}};
+    auto blocked_corner = check_reference(boundary, {8, 16}, {2, 2}, edge_options);
+    check(blocked_corner.collision_queries == 4 && blocked_corner.duplicate_successors == 5,
+          "blocked duplicate successors were queried again");
+    boundary.frames[0] = Snapshot({}, {0, 0});
+    const float tiny = std::numeric_limits<float>::denorm_min();
+    auto rounded = check_reference(boundary, {192, 224}, {tiny, tiny}, edge_options);
+    check(rounded.collision_queries == 1 && rounded.duplicate_successors == 8 &&
+              rounded.actions[0].x == -1 && rounded.actions[0].y == -1,
+          "rounded equal successors lost the earliest action");
+    const float ulp = std::nextafter(192.f, 193.f) - 192.f;
+    auto adjacent = check_reference(boundary, {192, 224}, {ulp, ulp}, edge_options);
+    check(adjacent.collision_queries == 9 && adjacent.duplicate_successors == 0,
+          "distinct adjacent float positions were merged");
+    for (int tick = 1; tick < 8; ++tick)
+        boundary.frames.emplace_back(std::vector<Hazard>{}, Vec2{0, 0});
+    for (const auto start :
+         std::array<Vec2, 5>{{{8, 16}, {376, 16}, {8, 432}, {376, 432}, {192, 224}}})
+        for (const auto speed : std::array<Movement, 4>{{{}, {2, 2}, {ulp, ulp}, {32, 32}}})
+            for (const std::size_t beam : {1, 17}) {
+                edge_options.beam = beam;
+                for (const std::uint64_t budget : {0, 8, 9, 10, 161, 10000}) {
+                    edge_options.expansions = budget;
+                    check_reference(boundary, start, speed, edge_options);
+                }
+            }
+    // Signed zero cannot be a valid player coordinate or movement magnitude.
+    // It is permitted in terminal geometry, which does not participate in keys.
+    edge_options.expansions = 10000;
+    edge_options.terminal = {{-0.f, +0.f}, {1000, 1000}};
+    check_reference(boundary, {8, 16}, {}, edge_options);
+    check(plan(boundary, {-0.f, 16}, {}, edge_options).status == Status::invalid_argument &&
+              plan(boundary, {8, -0.f}, {}, edge_options).status == Status::invalid_argument &&
+              plan(boundary, {8, 16}, {-0.f, 1}, edge_options).status == Status::invalid_argument,
+          "signed-zero position or movement bypassed the domain contract");
     Model m;
     for (int t = 0; t < 24; ++t) {
         std::vector<Hazard> h;
@@ -84,5 +141,7 @@ int main() {
     check(failure.status == Status::search_exhausted && failure.actions.empty(),
           "blocked world returned route");
     std::cout << "{\"fixture_gate\":\"found_and_replayed\",\"expansions\":" << r.expansions
+              << ",\"collision_queries\":" << r.collision_queries
+              << ",\"duplicate_successors\":" << r.duplicate_successors
               << ",\"contract_failures\":0}\n";
 }

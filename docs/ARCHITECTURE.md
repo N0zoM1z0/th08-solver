@@ -41,6 +41,7 @@ The main choices are deliberate:
 | Bullet/laser kernels and pool index | [kinematics.hpp](../include/th08/kinematics.hpp), [bullet_motion.hpp](../include/th08/bullet_motion.hpp), [acceleration.hpp](../include/th08/acceleration.hpp), [transform_program.hpp](../include/th08/transform_program.hpp), [laser_motion.hpp](../include/th08/laser_motion.hpp), [bullet_slots.hpp](../include/th08/bullet_slots.hpp) | Kernel unit tests and pinned native source comparisons |
 | Shared numerical helpers | [rng.hpp](../include/th08/rng.hpp), [timing.hpp](../include/th08/timing.hpp) | Seed/clock comparisons, including fractional rates |
 | Collision and fixed-model planning | [geometry.hpp](../include/th08/geometry.hpp), [planner.hpp](../include/th08/planner.hpp) | Unindexed differential checks, reference planner and replay |
+| Continuous controlled scenarios | [scenario.hpp](../include/th08/scenario.hpp), [scenario.cpp](../src/scenario.cpp) | Cross-phase/RNG continuity, strategy comparison and regenerated unindexed replay |
 | Bounded end-to-end fixtures | [motion_cases.cpp](../tools/motion_cases.cpp) | Source-driven sub40/41 frame/route reports |
 
 There is no complete `World` owner yet. The practice-entry prefix owns actor slots

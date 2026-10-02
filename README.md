@@ -20,9 +20,11 @@ they are not complete spell solutions.
 | [Validation and reproduction](docs/VALIDATION.md) | Test profiles, pinned-source oracle, DAT audits and report refresh |
 | [Documentation guide](docs/README.md) | Specialized evidence, performance, regression and maintenance references |
 
-The first complete-world target is Wriggle IDs 2..5 through their actual practice
-entry, followed by separately verified stage inheritance. The all-spell objective
-also requires the remaining indexed families and their relevant entry/state variants.
+The current priority is reproducible checkpoint-to-terminal solving without launching
+the game: continuous synthetic scenes first, then DAT-driven complete spell and stage
+segments. Explicit checkpoints and seeded visual-RNG hooks are allowed; these controlled
+profiles are distinguished from original-game shared-RNG equivalence. Menu, camera and
+practice-prelude reconstruction are not prerequisites. See [Continuous scenarios](docs/SCENARIOS.md).
 
 ## Build and run
 

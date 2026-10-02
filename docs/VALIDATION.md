@@ -7,13 +7,13 @@ No game, port, controller or Python process is needed.
 
 ## Current verification profiles
 
-Core CTest cases: 24
+Core CTest cases: 25
 
 | Profile | Expected suite | What it establishes |
 |---|---|---|
-| Native build without reconstruction | 24 core tests | Unit, parser, ownership, deterministic regressions and documentation checks; no private game data |
-| Release with pinned reconstruction | 26 tests: core plus `source_oracle` and `source_effect_pool` | The above plus extracted native source-body comparisons |
-| Debug with ASan/UBSan, without reconstruction | 24 core tests | Instrumented core behavior and ownership |
+| Native build without reconstruction | 25 core tests | Unit, parser, ownership, deterministic regressions and documentation checks; no private game data |
+| Release with pinned reconstruction | 27 tests: core plus `source_oracle` and `source_effect_pool` | The above plus extracted native source-body comparisons |
+| Debug with ASan/UBSan, without reconstruction | 25 core tests | Instrumented core behavior and ownership |
 | Opt-in component source oracles | Four independently built executables | Enemy motion, world motion, camera particles and spawn ordering; not extra default CTests |
 | Native DAT audit tools | Explicit commands below | Real-data structural and restricted execution baselines, plus two model routes |
 
@@ -155,3 +155,11 @@ freeze, non-unit refusal, retargeting and the first world-effect stop. The updat
 `source_effect_pool th08.dat` additionally compares512 mixed effect51/62 allocation
 calls. The supplied first-spell checkpoint now has12 background62 slots plus16
 ECL effect51 slots; RNG remains256 draws at the supplied immediate-ECL boundary.
+
+## Continuous controlled runs
+
+`scenario` is one focused CTest covering phase/RNG continuity, a complete 7200-frame
+route, seeded repeat/replay and a finite-horizon failure with an escape witness.
+Use [Continuous scenarios](SCENARIOS.md) for CLI reproduction and scope. It requires
+no DAT. Record outcomes separately from runtimes; search exhaustion is an expected
+benchmark result, not a successful solution or proof that the scene is impossible.

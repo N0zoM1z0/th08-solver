@@ -1,6 +1,6 @@
 # Current implementation status
 
-Reviewed: 2026-09-12. This is the current capability ledger, not a development diary.
+Reviewed: 2026-10-02. This is the current capability ledger, not a development diary.
 Maintained implementation, tools and tests are C++17. No game or input controller
 is launched. Historical preparation results are not counted as native coverage.
 
@@ -11,6 +11,7 @@ is launched. Historical preparation results are not counted as native coverage.
 | Complete offline spell worlds | 0 |
 | Complete offline spell solutions | 0 |
 | Source-driven 600-frame particle fixtures with replayed routes | 2 |
+| Synthetic 7200-frame continuous profiles with replayed rolling routes | 2 |
 
 Do not derive a completion percentage from opcode support, test counts, or these
 two fixtures. A spell ID can have different stage/practice, difficulty, character,
@@ -59,8 +60,8 @@ They are component checks, not the shared RNG order of a world.
 
 ## Verification and performance status
 
-There are 24 core CTests without private data, plus two optional source
-comparisons (26 with the pinned reconstruction). The current Release and ASan/UBSan
+There are 25 core CTests without private data, plus two optional source
+comparisons (27 with the pinned reconstruction). The current Release and ASan/UBSan
 checks, DAT commands, CI limits and report-refresh procedure are documented in
 [Validation](VALIDATION.md). The four opt-in component source oracles are separately
 buildable; see [Build artifacts](BUILD_ARTIFACTS.md).
@@ -71,31 +72,25 @@ geometry and allocation-reusing search. On the measured x86_64 layout, a call fr
 is 304 bytes and a workspace 5520 bytes. Timing results are scoped samples in
 [Performance](PERFORMANCE.md), not maximum-performance or real-time guarantees.
 
-## Next required integration
+## Current solver-first integration
 
-The first complete-world target is now one actual **ID2 Easy spell-practice entry**,
-then the rest of IDs2..5, not a longer fixed sub40/41 fixture. The
-[first-spell execution plan](FIRST_SPELL.md) records selection, three end-to-end
-acceptance gates and the rule to follow this case's first blocker. The owned prefix
-now selects the first actor and executes opcode80, retaining the timeline and spawn
-transaction at sub0's effect51 request. Effect51 allocation and the pinned ANM73 time-zero projection now work with
-explicitly supplied pool/camera/shared RNG inputs; see [Effect51 entry](EFFECT51_ENTRY.md).
-Actual entry initialization and surrounding manager phases remain missing. GUI gates in this diagnostic
-are explicitly supplied; surrounding background/player/global initialization has
-not run. The separate supplied-context profile completes immediate sub0 spawning,
-with16 effect51 particles and256 RNG draws. Actual-entry acceptance gate1 remains unpassed.
+Explicit, reproducible spell-start checkpoints are accepted. The priority is complete
+continuous scenes, reproducible algorithm failures and end-to-end efficiency, not menu,
+practice-prelude or render/camera reconstruction. [Continuous scenarios](SCENARIOS.md)
+defines the controlled RNG and replay contract. Fixed-position candidate merging remains
+valid only for a player-independent hazard future.
 
-The restricted spawn protocol separately passes 6000 comparisons against extracted
-SpawnEnemy1/2 bodies with a controlled immediate-ECL boundary. That is evidence for
-allocation/post-store ordering, not a new full ECL/world oracle. Continue the same
-entry command through the prelude and wrapper EX19; do not replace it with a longer
-fixed-emitter fixture.
+The synthetic runner carries bullets and RNG across phase transitions, uses bounded
+rolling forecasts and verifies the executed action tape in a fresh unindexed replay.
+Synthetic scenes are not original stages. The next real-resource profile is ID179 Easy
+in `ecldata7sp.ecl`, starting at a supplied spell checkpoint; implementation/validation
+must precede any complete controlled-spell count. The earlier Wriggle entry work is
+preserved as component evidence, not a prerequisite for this effort.
 
-Then connect child/parent lifetimes, shot gates/allocation, player shots and damage,
-callbacks and genuine endings. [Coverage roadmap](COVERAGE.md) defines the full
-all-case acceptance contract and dependency-ordered work; the
-[Wriggle world contract](WRIGGLE_WORLD_CONTRACT.md) supplies exact source identities.
-None of those integration milestones is currently marked complete.
+[First spell entry](FIRST_SPELL.md) records the superseded entry-first investigation;
+[Coverage roadmap](COVERAGE.md) still defines eventual source-faithful all-case acceptance.
+Unknown gameplay semantics must stop a case. Explicit visual hooks must never silently
+replace gameplay RNG, aiming, damage or candidate-dependent state.
 
 ## Existing-code maintenance
 

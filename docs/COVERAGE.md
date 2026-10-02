@@ -1,5 +1,10 @@
 # Complete-coverage roadmap
 
+Scope update (2026-10-02): the entry-first priority below is superseded by
+[continuous checkpoint-based solving](SCENARIOS.md). Its source-faithful acceptance
+criteria remain useful, but menu/practice/camera reconstruction does not block controlled
+complete-spell or stage-segment benchmarks. Historical results are not new completion claims.
+
 Reviewed: 2026-09-12. Everything below is an acceptance contract or unfinished
 integration task, not an assertion that the corresponding world already runs.
 Current verified complete worlds and spell solutions: **0**.
