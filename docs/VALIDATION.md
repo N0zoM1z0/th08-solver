@@ -85,10 +85,38 @@ ctest --test-dir build-headless --output-on-failure
 
 The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
 wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary collision
-at 382 and a 10-update budget failure. Every execution tape replays in another process;
+at 382, a 10-update budget failure and the Stage 6b reactive collision at update 854.
+Every execution tape replays in another process;
 tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
 Generated tapes and `summary.json` are under `build-headless/headless-regression/`.
 Without `TH08_HEADLESS_DAT`, these private-data tests are not registered.
+
+Reproduce the Stage 6b failure and compare the nine input directions locally:
+
+```sh
+mkdir -p reports/local/stage6b
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --difficulty 0 --seed 0 --strategy reactive --frames 50000 --actions reports/local/stage6b/baseline.actions --trace reports/local/stage6b/baseline.tsv --output reports/local/stage6b/baseline.json
+./build-headless/th08_headless_probe --executable build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --difficulty 0 --seed 0 --actions reports/local/stage6b/baseline.actions --frame 854 --output-dir reports/local/stage6b/late
+./build-headless/th08_headless_probe --executable build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --difficulty 0 --seed 0 --actions reports/local/stage6b/baseline.actions --frame 853 --through-frame 854 --output-dir reports/local/stage6b/early
+```
+
+The baseline intentionally exits 2. It hits fired, untransformed bullet slot 664:
+player bounds `[373.174988,431.174988,374.825012,432.825012]` overlap hazard bounds
+`[371.920898,428.774048,375.920898,432.774048]`. Movement consumes input 133 from
+update 853, while update 854 samples 4165. Nine replacements at 854 all collide;
+replacing 853 with left/up-left/down-left survives the observed update 854. The
+real-data CTest guards these witnesses, verifies diagnostics leave the original
+`4060221407534777929` trace unchanged, and compares each branch tape at O0/O3 when
+configured. It does not assert a whole-stage solution or an independent physics oracle.
+
+The probe serializes its nine fresh processes and writes tapes, per-branch JSON/TSV
+and `summary.json` into the output directory. It checks the projection at the common
+prefix, rejects an out-of-tape frame and removes an old summary before a rerun. It
+records actual total replayed updates, process wall time including initialization,
+output and cleanup, and per-child maximum RSS in KiB. Local runs use approximately
+73 MiB per child; use `ulimit -v 2097152` for a 2 GiB address-space cap if desired.
+No remote host is needed. Repeated prefix work is explicit; no unsafe native snapshot
+or shared action-dependent future is introduced to hide that cost.
 
 Acceleration removes wall-clock waiting and presentation work while retaining every
 original calc-chain update, timer increment and shared RNG consumer in that chain.
@@ -114,7 +142,8 @@ only a proposal, never the acceptance oracle.
 
 Reports separate `simulation_ms` (calc-chain/queue updates minus timed native file
 open/read/write/seek/stat/close wrappers), `file_io_ms`, `decision_ms` (observation and
-policy/tape selection), and `execution_ms` (whole loop including trace work and I/O).
+policy/tape selection), `diagnostics_ms` (optional ring copies), and `execution_ms`
+(whole loop including projection/trace work and I/O).
 Initialization, DAT hashing, tape loading, output serialization and cleanup are outside
 these loop measurements. CPU decoding during an update remains simulation work; compare
 the same profile/tape. Run serially and record hardware/compiler/outcome/budget alongside

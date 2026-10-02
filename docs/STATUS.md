@@ -26,6 +26,7 @@ has its own profile and evidence:
 | Complete stage | Stage 1 Easy, Reimu/Yukari, seed 0; 22176 updates, no collision |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
+| Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
 | Deterministic feedback | Fresh-process tapes agree on per-frame projection, terminal, RNG and graze/score/gauge |
 
 No universal solver or retail executable equivalence is claimed. Opcode counts and
@@ -40,6 +41,12 @@ passing component tests are not completion percentages.
 - Native Stage 1 executes 369.6 seconds of nominal 60 Hz game time in roughly 2
   seconds locally, including policy and trace work but excluding initialization and
   serialization. This is acceleration against real-time pacing, not a Wine benchmark
+- Stage 6b's reactive failure is now reproducible with native collision bounds and
+  independent nine-direction replays. Recording-mode movement uses the previously
+  latched input; the heuristic assumes immediate movement and uses center distances
+  rather than overlap feasibility. Replacing update 853 with left/up-left/down-left
+  avoids update 854; replacing update 854 is too late. This is a local escape witness,
+  not stage completion. No strategy parameters or original update order were changed
 - Synthetic relay/lane-switch retain live bullets and both RNG streams across phases.
   Both baseline rolling planners survive 7200 frames and regenerate/replay their tapes
 - A closing-gate case exposed center-seeking beam pruning. Optional geometry-derived
@@ -78,7 +85,8 @@ The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 25 core CTests without private data, plus two optional pinned-source tests
 (27 total), and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, fresh replay and genuine collision/budget failure.
+duration, original boss transitions, fresh replay, genuine collision/budget failure
+and the Stage 6b input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
 

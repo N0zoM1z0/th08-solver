@@ -55,6 +55,8 @@ target_link_libraries(th08_headless PRIVATE th08_native_headless)
 target_include_directories(th08_headless PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(th08_headless PRIVATE OpenSSL::Crypto)
 target_compile_options(th08_headless PRIVATE -ffp-contract=off)
+add_executable(th08_headless_probe tools/headless_probe.cpp)
+target_compile_features(th08_headless_probe PRIVATE cxx_std_17)
 
 set(TH08_HEADLESS_DAT "" CACHE FILEPATH "Private DAT for the optional full-scene regression")
 set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH

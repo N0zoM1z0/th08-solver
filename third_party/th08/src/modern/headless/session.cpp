@@ -4,6 +4,7 @@
 #include "BulletManager.hpp"
 #include "EnemyManager.hpp"
 #include "GameManager.hpp"
+#include "Gui.hpp"
 #include "Player.hpp"
 #include "SoundPlayer.hpp"
 #include "Spellcard.hpp"
@@ -84,6 +85,7 @@ Session::~Session() {
 State Session::step(std::uint16_t input) {
     require((input & ~std::uint16_t(0x10f7)) == 0, "unsupported headless input bits");
     th08_headless_input = input;
+    clear_collision();
     ++th08_headless_frame;
     require(g_Chain.RunCalcChain() > 0, "native update chain stopped");
     g_SoundPlayer.ProcessQueues();
@@ -109,14 +111,26 @@ State Session::state() const {
             g_GameManager.globals->score,
             g_GameManager.globals->graze,
             g_GameManager.globals->youkaiGauge,
-            g_GameManager.globals->livesRemaining};
+            g_GameManager.globals->livesRemaining,
+            g_Player.hurtboxHalfSize.x,
+            g_Player.hurtboxHalfSize.y,
+            g_GuiMessageInputCurrent,
+            g_CurFrameInput};
 }
 const std::vector<BulletView> &Session::bullets() {
     views_.clear();
-    for (const auto &b : g_BulletManager.bullets)
+    int slot = 0;
+    for (const auto &b : g_BulletManager.bullets) {
         if (b.state)
-            views_.push_back({b.position.x, b.position.y, b.velocity.x, b.velocity.y, b.state});
+            views_.push_back({b.position.x, b.position.y, b.velocity.x, b.velocity.y, b.state, slot,
+                              b.sprites.collisionSize.x, b.sprites.collisionSize.y,
+                              b.activeTransformFlags});
+        ++slot;
+    }
     return views_;
+}
+CollisionEvent Session::collision() const {
+    return current_collision();
 }
 float Session::focused_axis_speed() const {
     return g_Player.secondaryShtFile->focusedAxisSpeed;

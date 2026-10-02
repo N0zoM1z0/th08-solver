@@ -58,6 +58,10 @@ only. `--shoot 0|1` overrides shooting. Focused `stationary` is retained as a ba
 Action tapes contain decimal original 16-bit input masks, one per update (shoot 1,
 bomb 2, focus 4, directions 16/32/64/128, confirm 4096). Replay uses a fresh process,
 without planner decisions, and rejects extra actions beyond the execution boundary.
+Only explicit `--allow-unused-actions 1` permits an unused replay suffix, recording
+`unused_actions` while preserving the actual terminal/failure. This is for bounded
+interventions, not successful strict replay. `--prefix-frame N` records the projection
+digest after N updates; an unreachable prefix is an error.
 The FNV projection covers actions, player, bullets, actor/script timers, RNG state/count
 and feedback every frame. It is not a complete world serialization or independent
 physics oracle. `rng_draws` reports the native generation counter at the terminal
@@ -66,6 +70,21 @@ update; original code can reset this counter, so it is not total run consumption
 The current noncopyable session owns original process-global managers. It cannot
 provide independent candidate snapshots yet. Alternative futures must not share one
 mutating native world; exact branch ownership is required before adding beam/tree search.
+`th08_headless_probe` already provides candidate ownership through serial fresh
+processes: replace only the direction bits at one 1-based input update, retain focus,
+shoot/confirm and the common prefix, optionally observe a fixed unchanged suffix.
+The suffix does not rerun the policy after intervention. Each child retains its own
+original RNG, actors, bullets, feedback and lifecycle updates. This diagnoses local
+choices; one safe observed update is not a complete future route.
+
+`--trace PATH` writes the last 32 updates as TSV, with before/after player and occupied
+bullet slots, full collision dimensions in pixels, velocity in pixels/update, active
+transform flags, proposed action, sampled input and latched movement input. Bullet
+slot reuse across updates is possible; these are pool indices, not stable entity IDs.
+Collision JSON records the first lethal overlap before death feedback; laser bounds
+use the original rotated test coordinates, other bounds use world coordinates. None
+of this changes acceptance physics or calls the RNG. The original FNV projection is
+unchanged and remains a partial diagnostic projection, not a complete state key.
 
 ## Synthetic continuous profiles
 

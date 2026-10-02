@@ -1,4 +1,7 @@
 #include "th_pch.h"
+#ifdef TH08_HEADLESS
+#include "modern/headless/runtime.hpp"
+#endif
 
 #include "AsciiManager.hpp"
 #include "Background.hpp"
@@ -329,6 +332,10 @@ i32 Player::CheckBulletCollision(Float3 *position, Float3 *size)
     g_ReplayManager->frameEventFlags |= REPLAY_FRAME_EVENT_PLAYER_HIT;
     if (this->playerState != PLAYER_STATE_ALIVE)
         return 1;
+#ifdef TH08_HEADLESS
+    headless::record_collision(headless::CollisionKind::Bullet,
+        this->hurtboxBoundsMin, this->hurtboxBoundsMax, boundsMin, boundsMax, position);
+#endif
     g_GameManager.RandomizeAntiTamper();
     this->Die();
     return 1;
@@ -356,6 +363,10 @@ i32 Player::CheckLethalCollision(Float3 *position, Float3 *size)
     g_ReplayManager->frameEventFlags |= REPLAY_FRAME_EVENT_PLAYER_HIT;
     if (this->playerState != PLAYER_STATE_ALIVE)
         return 1;
+#ifdef TH08_HEADLESS
+    headless::record_collision(headless::CollisionKind::LethalRegion,
+        this->hurtboxBoundsMin, this->hurtboxBoundsMax, boundsMin, boundsMax);
+#endif
     g_GameManager.RandomizeAntiTamper();
     this->Die();
     return 1;
@@ -466,6 +477,10 @@ lethalPath:
     g_ReplayManager->frameEventFlags |= REPLAY_FRAME_EVENT_PLAYER_HIT;
     if (this->playerState != PLAYER_STATE_ALIVE)
         return 0;
+#ifdef TH08_HEADLESS
+    headless::record_collision(headless::CollisionKind::Laser,
+        playerMin, playerMax, incomingMin, incomingMax);
+#endif
     g_GameManager.RandomizeAntiTamper();
     this->Die();
     return 1;
