@@ -27,7 +27,7 @@ form, entry-state and RNG-dependent execution cases.
 | Practice entry ownership | Owned 480-slot spawn pool, immediate resumable ECL prefix, restricted frame tail and post-spawn stores; real timeline packet connected to sub0 PC1 | Actual camera/RNG initialization, surrounding world phases and a complete practice entry |
 | Enemy motion | Polar, relative/interpolated and orbital motion; separate velocity/displacement phases; transactional ECL effects 63..76 and 178 | Actor pools, form/death/pause gates, child/parent lifecycle and shot/ANM scheduling |
 | ANM | Control/scalar execution, waits, interrupts, sprite identity, explicit RNG and hit-animation metadata; restricted lifetime certificates | Render/interpolation fields, resource-loading side effects and integration with world consumers |
-| Camera particles | Effect51 allocation and restricted unit-rate callback/ANM/freeze/retirement phase with explicit inputs | Other effects, global phase ordering, camera evolution and rendering |
+| Camera particles | Shared effect51/62 allocation and restricted unit-rate callback/ANM/freeze/retirement with explicit inputs | Other effects, global phase ordering, camera evolution and rendering |
 | Bullet/laser kernels | Nine launch modes, direction/acceleration phases, supported eighteen-record transforms and laser collision/lifetime projection | General transforms, sprite replacement, child patterns and complete pool/cancellation lifecycle |
 | Slot selection | Source-ordered 1536-slot circular selection and nested cursor completion using bitsets | Bullet storage, successful initialization or full-pool RNG behavior |
 | Geometry | Box/laser predicates, owned CSR broad phase, signed laser dimensions and unindexed differential checks | Whole-game gates or a formal proof over every floating-point input |
@@ -59,8 +59,8 @@ They are component checks, not the shared RNG order of a world.
 
 ## Verification and performance status
 
-There are 23 core CTests without private data, plus two optional source
-comparisons (25 with the pinned reconstruction). The current Release and ASan/UBSan
+There are 24 core CTests without private data, plus two optional source
+comparisons (26 with the pinned reconstruction). The current Release and ASan/UBSan
 checks, DAT commands, CI limits and report-refresh procedure are documented in
 [Validation](VALIDATION.md). The four opt-in component source oracles are separately
 buildable; see [Build artifacts](BUILD_ARTIFACTS.md).
@@ -83,7 +83,7 @@ explicitly supplied pool/camera/shared RNG inputs; see [Effect51 entry](EFFECT51
 Actual entry initialization and surrounding manager phases remain missing. GUI gates in this diagnostic
 are explicitly supplied; surrounding background/player/global initialization has
 not run. The separate supplied-context profile completes immediate sub0 spawning,
-with16 effects and256 RNG draws. Actual-entry acceptance gate1 remains unpassed.
+with16 effect51 particles and256 RNG draws. Actual-entry acceptance gate1 remains unpassed.
 
 The restricted spawn protocol separately passes 6000 comparisons against extracted
 SpawnEnemy1/2 bodies with a controlled immediate-ECL boundary. That is evidence for
@@ -103,6 +103,11 @@ Effect routing and effect execution are separated without changing their commit
 order. ANM visual operand length/types now have one descriptor. Source probes use
 an explicit shared extraction interface;17 identical test failure helpers share
 one small implementation. No unused test entry points were found, so independent
-oracles and behavior regressions were retained. The cleanup passes25 reference
-CTests; all1151 real-data ANM rows and both generated reference translation units
-remain byte-identical. This maintenance adds no world-completion claim.
+oracles and behavior regressions were retained. At cleanup commit d91f94c,25 reference CTests passed; all1151 real-data ANM rows
+and both generated reference translation units were byte-identical to the prior version. This maintenance adds no world-completion claim.
+
+The source-derived Stage1 practice camera and callback-free background effect62
+now feed the separate entry checkpoint. Its28 occupied slots expose shared-pool
+contention rather than assuming an empty pool for effect51. Camera playback is
+unit-rate only and stops before the time1024 origin-shifting loop. This remains
+component integration with supplied GUI/RNG state, not a complete world.

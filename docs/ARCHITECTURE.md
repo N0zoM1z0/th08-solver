@@ -529,3 +529,10 @@ probe support is shared behind a named interface, and the simple test assertion
 helper is shared without replacing independent expected-value models or source
 oracles. Large switches or repeated test values are not removed merely for size:
 some encode numerical phase order or deliberate stale-state regressions.
+
+The camera projection in `practice_camera.hpp/.cpp` owns only certified Stage1 STD
+camera state. Explicit timing/freeze inputs and a typed world-effect stop keep it
+separate from effect allocation. `PrimaryPool` now distinguishes effect51 and
+background62 slots; both use one allocator and ANM tail, while only51 calls the
+camera/RNG callbacks. Sentinel post-stores are separate metadata, never an
+out-of-range primary-slot access. See [Effect51 entry](EFFECT51_ENTRY.md).

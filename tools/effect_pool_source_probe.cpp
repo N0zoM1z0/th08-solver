@@ -38,7 +38,7 @@ struct Effect : camera_particle_reference::Effect {
 struct AnmLoaded {
     Animation initial{};
     void SetAndExecuteScriptIdx(Animation *vm, int script) {
-        if (script != 73) throw std::runtime_error("unexpected effect script");
+        if (script != 73 && script != 75) throw std::runtime_error("unexpected effect script");
         *vm = initial;
     }
 };

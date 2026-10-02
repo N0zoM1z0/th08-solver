@@ -173,7 +173,8 @@ void unsupported_fields_and_full_pool() {
     begin(full);
     check(full.resume().status == p::Status::spawned && full.effects()->cursor() == 319 &&
               full.effects()->active_count() == fx::primary_capacity &&
-              full.effects()->spawn_event() && !full.effects()->slot(319).effect51_known &&
+              full.effects()->spawn_event() &&
+              full.effects()->slot(319).kind == fx::SlotKind::unknown &&
               full.actor(0).score == 1000,
           "full pool demanded unused initialization inputs or fabricated particle fields");
 }

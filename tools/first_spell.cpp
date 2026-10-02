@@ -1,6 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <th08/effect_animation.hpp>
+#include <th08/practice_camera.hpp>
 #include <th08/practice_entry.hpp>
 
 namespace r = th08::resources;
@@ -21,7 +22,9 @@ constexpr Pin source_pins[] = {
     {"EclDependencies.cpp", "019f9cd6abdb73223d3d41cc8a6317641e6fe6bfbd7777d126a4bace3e14e2e4"},
     {"EffectManager.cpp", "63d45a213956008b44874bc4707c971a7799a9c551b07e732bf1f55282c2209e"},
     {"AnmManager.cpp", "c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce"},
-    {"AsciiManager.cpp", "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1"}};
+    {"AsciiManager.cpp", "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1"},
+    {"Background.cpp", "36889a17a6f0c314eaf3751a2238e778c82d13bffd3a18e55051b49f3d8fd285"},
+    {"Background.hpp", "bbfa9022f52c5b5332f8e690d42c7338ec97f062b43a3bfcd6dc33190484efe8"}};
 void require(bool condition, const char *message) {
     if (!condition)
         throw std::runtime_error(message);
@@ -148,31 +151,65 @@ int main(int argc, char **argv) try {
                 continue;
             const auto anm_bytes = archive.decode(anm_member);
             const auto effect_anm = th08::effect::compile_effect51_animation(r::view(anm_bytes));
-            // Separate diagnostic fixture, never inferred retail entry values.
-            const th08::effect::camera_particle::Camera camera{{0, 0, 0}, {0, 0, 100}, {0, 0, 1}};
+            const auto background_anm =
+                th08::effect::compile_background62_animation(r::view(anm_bytes));
+            r::Bytes stage_bytes;
+            for (std::size_t i = 0; i < archive.entries().size(); ++i)
+                if (archive.entries()[i].name == "stage1_s.std")
+                    stage_bytes = archive.decode(i);
+            const th08::practice::camera::Program camera_program(r::view(stage_bytes));
+            th08::practice::camera::State camera_state;
+            // Camera runs before EnemyManager on both the initial empty
+            // timeline phase and the following phase that first spawns sub0.
+            for (int phase = 0; phase < 2; ++phase)
+                require(camera_program.advance(camera_state, false, 1).status ==
+                            th08::practice::camera::Status::advanced,
+                        "practice camera prefix blocked");
+            const auto cp_vector = [](th08::practice::camera::Vec3 value) {
+                return th08::effect::camera_particle::Vec3{value.x, value.y, value.z};
+            };
+            const th08::effect::camera_particle::Camera camera{
+                cp_vector(camera_state.position.current),
+                cp_vector(camera_state.look_at_offset.current), cp_vector(camera_state.forward)};
+            // A separately supplied component checkpoint: Background's first
+            // 12 effect62 requests see reset specialEffectPoints (all zero).
+            // Their first EffectManager phase advances ANM but consumes no RNG.
+            // This does NOT execute omitted player/background-object phases.
+            th08::effect::PrimaryPool prepared_pool;
+            for (int i = 0; i < 12; ++i)
+                require(prepared_pool.spawn_background62({}, &background_anm).committed(),
+                        "background effect checkpoint failed");
+            require(prepared_pool.advance_particles({false}).committed(),
+                    "background effect update failed");
             const th08::effect::Effect51Inputs inputs{&effect_anm, &camera, 1};
+            // Seed0 is explicitly supplied at the immediate-ECL checkpoint,
+            // not inferred from game startup or omitted global RNG consumers.
             th08::random::Rng rng(0);
-            p::Entry supplied(code, 1, th08::effect::PrimaryPool{});
+            p::Entry supplied(code, 1, std::move(prepared_pool));
             require(supplied.advance(observations, &rng, nullptr, 100000, &inputs).status ==
                         p::Status::timeline_frame_complete,
                     "supplied first timeline mismatch");
             const auto next = supplied.advance(observations, &rng, nullptr, 100000, &inputs);
             require(next.status == p::Status::timeline_frame_complete &&
                         supplied.timeline_state().pc == 1 && !supplied.pool().pending() &&
-                        supplied.pool().effects()->active_count() == 16 &&
+                        supplied.pool().effects()->active_count() == 28 &&
                         rng.generation_count() == 256,
                     "supplied effect51 entry regression");
             std::ofstream extra(fs::path(argv[3]) / "first_spell_effect51_summary.json");
             extra.exceptions(std::ios::failbit | std::ios::badbit);
             extra << "{\n  \"status\": \"" << p::name(next.status)
-                  << "\",\n  \"scope\": \"supplied empty effect pool, camera and seed0; "
-                     "immediate entry prefix only, not actual initialized world\",\n"
+                  << "\",\n  \"scope\": \"source-derived camera and background62 component "
+                     "checkpoint; supplied GUI gates and seed0 at immediate ECL; not a full "
+                     "world\",\n"
                   << "  \"dat_sha256\": \"" << dat_hash << "\",\n"
                   << "  \"ecl_member_sha256\": \"" << member_hash << "\",\n"
                   << "  \"reference_revision\": \"a45e99fb1942714e6edded20847e32a654d56f97\",\n"
                   << "  \"source_provenance\": \"first_spell_summary.json source_sha256; "
                      "all listed files verified during this same command\",\n"
                   << "  \"anm_sha256\": \"" << r::sha256(r::view(anm_bytes)) << "\",\n"
+                  << "  \"std_sha256\": \"" << r::sha256(r::view(stage_bytes)) << "\",\n"
+                  << "  \"camera_steps\": 2,\n  \"background_effect62_slots\": 12,\n"
+                     "  \"effect51_slots\": 16,\n"
                   << "  \"effect_slots\": " << supplied.pool().effects()->active_count()
                   << ",\n  \"rng_seed\": " << rng.seed()
                   << ",\n  \"rng_draws\": " << rng.generation_count()

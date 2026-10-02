@@ -58,16 +58,18 @@ effect::Effect51Animation prepared() {
 }
 void check_unchanged(const effect::PrimaryPool &pool, const effect::PrimaryPool &before) {
     check(pool.cursor() == before.cursor() && pool.active_count() == before.active_count() &&
-              pool.spawn_event() == before.spawn_event(),
+              pool.spawn_event() == before.spawn_event() &&
+              pool.exhausted_draw_group() == before.exhausted_draw_group(),
           "blocked pool transaction changed manager state");
     for (std::size_t i = 0; i < effect::primary_capacity; ++i) {
         const auto &slot = pool.slot(i);
         const auto &prior = before.slot(i);
-        check(slot.active == prior.active && slot.effect51_known == prior.effect51_known,
+        check(slot.active == prior.active && slot.kind == prior.kind,
               "blocked pool transaction changed occupancy or known state");
-        if (slot.effect51_known)
+        if (slot.kind != effect::SlotKind::unknown)
             check(same(slot.particle, prior.particle) &&
                       same(slot.animation.fields, prior.animation.fields) &&
+                      slot.animation.script == prior.animation.script &&
                       slot.animation.control.pc == prior.animation.control.pc &&
                       slot.animation.control.active == prior.animation.control.active &&
                       slot.animation.control.visible == prior.animation.control.visible &&
@@ -82,7 +84,7 @@ void lifecycle_regressions() {
     // Real resources obtain this certificate only through compile_effect51_animation.
     effect::Effect51Animation animation{};
     animation.fields.flags = 3; // Visible, with the renderer's dirty bit cleared.
-    animation.unit_rate_script73 = true;
+    animation.script = effect::ScriptCertificate::script73;
     animation.control.pc = 2;
     animation.control.sprite = 121;
     animation.control.visible = true;
@@ -171,7 +173,8 @@ void lifecycle_regressions() {
     // A malformed certified clock similarly blocks after an earlier live slot.
     for (const bool certified : {false, true}) {
         auto bad_animation = animation;
-        bad_animation.unit_rate_script73 = certified;
+        bad_animation.script =
+            certified ? effect::ScriptCertificate::script73 : effect::ScriptCertificate::unknown;
         if (certified)
             bad_animation.control.time.fraction = .5f;
         auto invalid = initial;
@@ -202,6 +205,112 @@ void lifecycle_regressions() {
           "static completion ticked ANM/effect timer, rotated or cleared visibility");
 }
 
+void background62_regressions() {
+    // Synthetic certified waiting projections. Resource identity and exact
+    // angular operands remain the animation compiler's separate responsibility.
+    effect::ParticleAnimation animation{};
+    animation.fields.flags = 3;
+    animation.script = effect::ScriptCertificate::script75;
+    animation.control.pc = 2;
+    animation.control.sprite = 123;
+    animation.control.visible = true;
+    animation.control.time = {0, 1, 0};
+    animation.angular_velocity.z = .25f;
+    const cp::Vec3 point{10, -20, 30};
+    const cp::Camera camera{{0, 0, 0}, {0, 0, 10000}, {0, 0, 1}};
+    const cp::Bosses bosses{};
+    const cp::Color tint{80, 120, 160, 200};
+    const effect::ParticleUpdateInputs update{false, &camera, &bosses, &tint};
+    auto animation51 = animation;
+    animation51.script = effect::ScriptCertificate::script73;
+    animation51.control.sprite = 121;
+    rng_api::Rng rng(99), expected_rng(99);
+    effect::PrimaryPool mixed({}, 511);
+    check(mixed.spawn_background62(point, &animation).returned_slot == 511 &&
+              same(rng.state(), expected_rng.state()),
+          "background62 allocation did not use the shared wrapping cursor");
+    const auto &background = mixed.slot(511);
+    cp::State expected{};
+    expected.position = point;
+    expected.draw_group = 4;
+    expected.animation = animation.fields;
+    expected.animation.flags |= 0x2000U;
+    expected.animation.primary = {255, 255, 255, 32};
+    check(background.kind == effect::SlotKind::background62 &&
+              same(background.particle, expected) && same(background.timer, {0, 0, 0}),
+          "background62 invented initializer state or lost caller overrides");
+    check(mixed.spawn_effect51({1, {}, {}}, {&animation51, &camera, 1}, &rng).returned_slot == 0 &&
+              mixed.spawn_background62(point, &animation).returned_slot == 1 &&
+              mixed.cursor() == 2 && mixed.active_count() == 3 && rng.generation_count() == 16 &&
+              mixed.slot(0).kind == effect::SlotKind::effect51,
+          "mixed particle kinds used separate occupancy, cursors or RNG draws");
+    const auto before = mixed;
+    check(mixed.advance_particles({true}).committed(), "mixed freeze required callback inputs");
+    check_unchanged(mixed, before);
+    const auto advanced = mixed.advance_particles(update);
+    check(advanced.committed() && advanced.updated == 3 && advanced.source_active_count == 3 &&
+              same(mixed.slot(511).particle.position, point) &&
+              mixed.slot(511).particle.draw_group == 4 && same(mixed.slot(511).timer, {0, 1, 0}) &&
+              same(mixed.slot(511).animation.control.time, {1, 2, 0}) &&
+              mixed.slot(511).animation.rotation.z == th08::kinematics::normalize_angle(0, .25f),
+          "mixed phase omitted callback-free angular/timer advancement");
+
+    effect::PrimaryPool::Occupancy occupied{};
+    occupied[1] = true;
+    effect::PrimaryPool unknown(occupied, 0);
+    check(unknown.spawn_background62(point, &animation).committed(), "unknown setup failed");
+    const auto unknown_before = unknown;
+    check(unknown.advance_particles({false}).status == effect::UpdateStatus::missing_context &&
+              unknown.advance_particles({true}).status == effect::UpdateStatus::missing_context,
+          "background62 phase skipped unknown occupied storage");
+    check_unchanged(unknown, unknown_before);
+
+    effect::PrimaryPool wrong_script;
+    check(wrong_script.spawn_background62(point, &animation).committed() &&
+              wrong_script.spawn_background62(point, &animation51).committed(),
+          "certificate mismatch setup failed");
+    const auto wrong_before = wrong_script;
+    check(wrong_script.advance_particles({false}).status ==
+              effect::UpdateStatus::unsupported_animation,
+          "background62 accepted script73's lifecycle certificate");
+    check_unchanged(wrong_script, wrong_before);
+
+    animation.control.time = {29998, 29999, 0};
+    effect::PrimaryPool completing;
+    check(completing.spawn_background62(point, &animation).committed() &&
+              completing.advance_particles({false}).committed() && completing.occupied(0),
+          "background62 needed a callback or completed its static ANM too early");
+    const auto completion_before = completing;
+    const auto completed = completing.advance_particles({false});
+    check(completed.committed() && completed.updated == 1 && completed.retired == 1 &&
+              completing.active_count() == 0 && !completing.slot(0).animation.control.active &&
+              completing.slot(0).animation.control.visible &&
+              same(completing.slot(0).timer, completion_before.slot(0).timer) &&
+              same(completing.slot(0).animation.rotation,
+                   completion_before.slot(0).animation.rotation),
+          "background62 static completion ticked its timer, rotated or cleared visibility");
+
+    occupied.fill(true);
+    effect::PrimaryPool full(occupied, 173);
+    const auto invalid = std::numeric_limits<float>::quiet_NaN();
+    check(!full.exhausted_draw_group(), "unknown sentinel state was fabricated");
+    const auto exhausted = full.spawn_background62({invalid, invalid, invalid}, nullptr);
+    check(exhausted.status == effect::Status::exhausted && exhausted.allocated == 0 &&
+              exhausted.returned_slot == effect::exhausted_effect && exhausted.inspected == 512 &&
+              full.cursor() == 173 && full.exhausted_draw_group() == 4,
+          "full background62 spawn read initialization inputs or lost sentinel drawGroup=4");
+    auto copied = full;
+    check(copied.spawn_effect51({}, {}).committed() && copied.exhausted_draw_group() == 4,
+          "snapshot or later exhaustion discarded the sentinel caller write");
+
+    const auto blocked_before = mixed;
+    check(mixed.spawn_background62(point, nullptr).status == effect::Status::missing_context &&
+              mixed.spawn_background62({invalid, 0, 0}, &animation).status ==
+                  effect::Status::invalid_state,
+          "background62 fabricated missing template or accepted nonfinite position");
+    check_unchanged(mixed, blocked_before);
+}
+
 int main() {
     const auto animation = prepared();
     const cp::Camera camera{{10, -20, 30}, {4, 8, -12}, {0, 0, 1}};
@@ -226,7 +335,8 @@ int main() {
     check(cp::initialize(expected, &camera, .5f, &expected_rng) == cp::Status::initialized,
           "explicit initializer fixture failed");
     const auto &created = pool.slot(0);
-    check(created.active && created.effect51_known && same(created.particle, expected) &&
+    check(created.active && created.kind == effect::SlotKind::effect51 &&
+              same(created.particle, expected) &&
               same(created.animation.fields, expected.animation) &&
               same(rng.state(), expected_rng.state()) && rng.generation_count() == 43,
           "pool slot initialization, ANM overrides or shared RNG differs from callback");
@@ -258,7 +368,8 @@ int main() {
     check(wrapped.status == effect::Status::spawned && wrapped.allocated == 2 &&
               wrapped.inspected == 4 && wrapped.returned_slot == 1 && wrapping.cursor() == 2 &&
               wrapping.occupied(510) && wrapping.occupied(1) &&
-              !wrapping.slot(511).effect51_known && !wrapping.slot(0).effect51_known,
+              wrapping.slot(511).kind == effect::SlotKind::unknown &&
+              wrapping.slot(0).kind == effect::SlotKind::unknown,
           "wrap, occupied skipping or checkpoint validity changed");
 
     occupancy.fill(true);
@@ -411,7 +522,8 @@ int main() {
                   "circular occupancy differential or exact sixteen-draw allocation failed");
             for (std::size_t i = 0; i < effect::primary_capacity; ++i)
                 check(actual.occupied(i) == expected_occupancy[i] &&
-                          actual.slot(i).effect51_known == (!occupancy[i] && expected_occupancy[i]),
+                          (actual.slot(i).kind == effect::SlotKind::effect51) ==
+                              (!occupancy[i] && expected_occupancy[i]),
                       "circular differential modified a skipped or unreachable slot");
         }
     }
@@ -428,5 +540,7 @@ int main() {
     }
     check(bad_cursor && bad_slot, "effect pool accepted an out-of-bounds cursor or slot");
     lifecycle_regressions();
-    std::cout << "Effect51 pool scan, unit-rate lifecycle, RNG and atomic retries: passed\n";
+    background62_regressions();
+    std::cout
+        << "Effect51/background62 shared pool, unit-rate lifecycles and atomic retries: passed\n";
 }
