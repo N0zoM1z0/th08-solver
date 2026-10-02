@@ -84,6 +84,7 @@ ctest --test-dir build-headless --output-on-failure
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 195 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id195.actions --output reports/local/id195-native.json
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 199 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 5000 --actions reports/local/id199.actions --output reports/local/id199-native.json
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 201 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id201.actions --output reports/local/id201-native.json
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 202 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id202.actions --output reports/local/id202-native.json
 ```
 
 The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
@@ -91,12 +92,32 @@ wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary col
 at 382, and retained/adapted boundaries for IDs 85, 89, 93, 198 and 201. IDs 85, 89,
 93 and 198 complete for seeds 0/1/65535; ID201 preserves its generic WAIT collision at
 362 and requires the seed-0 portfolio completion at 4292. Portfolio IDs 193/195/199
-also run through their complete wrappers. A 10-update budget failure and the Stage 6b
+also run through their complete wrappers. ID202 retains its generic WAIT collision at
+3265 and its WAIT-only portfolio collisions at 4204/4216/3613 for seeds 0/1/65535;
+its original 12-update horizon and disabled future-ECL adapter are checked explicitly.
+A 10-update budget failure and the Stage 6b
 reactive collision at update 854 remain covered.
 Every execution tape replays in another process;
 tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
 Generated tapes and `summary.json` are under `build-headless/headless-regression/`.
 Without `TH08_HEADLESS_DAT`, these private-data tests are not registered.
+
+The focused ID202 group can also run through the same generator, preserving its
+baseline and all three failed seed wrappers rather than declaring the spell solved:
+
+```sh
+cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" -DCOMPARE_EXECUTABLE="$PWD/build-headless-o0/th08_headless" -DDAT="$PWD/game_data_donottrack/th08.dat" -DWORK="$PWD/reports/local/id202-check" -DCASE_GROUP=id202 -P tests/headless_real_data.cmake
+```
+
+The 2026-10-02 Intel Xeon Platinum 8573C/GCC 14.2 run passed all 26 core tests and
+the four focused ID202 scenes with fresh replay and native O0/O3 agreement. The normal
+aggregate reached every scene successfully but failed its existing Stage 6b golden:
+this host's digest is `6279671846274327225`, versus recorded GCC12-host digest
+`4060221407534777929`. A clean-main CLI and O0/O3 replay reproduce the new-host digest;
+the update-854 slot-664 collision, bounds, RNG and feedback are unchanged. The precise
+cross-host projection difference is not diagnosed, and the old golden remains intact.
+This is a reported aggregate-test blocker, not a full native CTest pass. The earlier
+aggregate report is retained; the separate ID202 report records this host's evidence.
 
 Reproduce the Stage 6b failure and compare the nine input directions locally:
 

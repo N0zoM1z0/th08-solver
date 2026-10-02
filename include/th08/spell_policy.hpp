@@ -17,8 +17,9 @@ struct NativeSpellPolicy {
 // short initial leg before its constant continuation to avoid a measured
 // bullet/rotating-beam trap. ID199 instead needs the measured constant-velocity
 // ablation. ID201 combines bounded WAIT motion with deterministic bullets from
-// its current future ECL cursor. The native runtime remains the acceptance
-// oracle.
+// its current future ECL cursor. ID202 reuses only the observed WAIT bound:
+// its random future emissions cannot use the deterministic ECL adapter.
+// The native runtime remains the acceptance oracle.
 inline NativeSpellPolicy native_spell_policy(int spell_id) {
     if (spell_id == 85)
         return {"id85-rigid-laser-motion", {12, 120, true, 0x1ff, true}};
@@ -33,6 +34,8 @@ inline NativeSpellPolicy native_spell_policy(int spell_id) {
     if (spell_id == 201)
         return {
             "id201-wait-and-ecl-shot", {32, 120, true, 0x1ff, false, 0, true}, false, false, true};
+    if (spell_id == 202)
+        return {"id202-observed-wait", {12, 120, true, 0x1ff, false, 0, true}};
     return {"source-vector-ranking", {12, 120, true}};
 }
 } // namespace th08::policy

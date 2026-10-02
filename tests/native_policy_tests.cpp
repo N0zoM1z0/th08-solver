@@ -136,6 +136,24 @@ int main() {
               th08::policy::native_spell_policy(201).hazards.wait_linear_projection &&
               th08::policy::native_spell_policy(201).upcoming_ecl_bullets,
           "spell portfolio lost the isolated ID201 WAIT projection");
+    const auto id202 = th08::policy::native_spell_policy(202);
+    check(id202.hazards.bullet_horizon == 12 && id202.hazards.wait_linear_projection &&
+              !id202.upcoming_ecl_bullets && !id202.hazards.first_leg_updates,
+          "ID202 crossed its observed-WAIT-only profile boundary");
+    // Native update 3264: this already-born random child has six proven linear
+    // updates left. No future random angle is needed to reject staying still.
+    const Bullet id202_child{
+        187.367584f, 429.627258f, 2.10032201f, -.317858994f, 4, 4, 1, 0x20000, 0, 0, 0, 0, 6};
+    HazardReactiveStats id202_stats;
+    th08::policy::HazardReactiveDecision id202_decision;
+    hazard_reactive(192.568558f, 426.34314f, .825f, .825f, 2, 1.414213538f, 4,
+                    std::vector<Bullet>{id202_child}, no_lasers, id202_stats, id202.hazards,
+                    &id202_decision);
+    check(id202_decision.candidates[4].first_overlap == 2 &&
+              id202_decision.candidates[1].first_overlap > 2 &&
+              th08::policy::detail::project_bullet(id202_child, 7, true, true).kind ==
+                  th08::policy::detail::BulletProjectionKind::unsupported,
+          "ID202 lost its source-bounded stationary collision and upward escape");
     check(th08::policy::native_spell_policy(85).hazards.rigid_laser_motion &&
               th08::policy::native_spell_policy(198).hazards.rigid_laser_motion,
           "spell portfolio lost an isolated pooled-laser motion model");

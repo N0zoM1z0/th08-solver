@@ -2,6 +2,12 @@
 # Each launch owns fresh process globals and an isolated configuration directory.
 file(MAKE_DIRECTORY "${WORK}")
 get_filename_component(DAT "${DAT}" ABSOLUTE)
+if(NOT DEFINED CASE_GROUP)
+  set(CASE_GROUP all)
+endif()
+if(NOT CASE_GROUP MATCHES "^(all|id202)$")
+  message(FATAL_ERROR "Unknown native case group: ${CASE_GROUP}")
+endif()
 
 function(field report key result)
   string(REGEX MATCH "\"${key}\":[ ]*(\"[^\"]*\"|-?[0-9]+)" match "${report}")
@@ -73,6 +79,49 @@ function(scene name stage spell seed strategy budget outcome exit frames)
   set(records ${records} "${record}" PARENT_SCOPE)
   message(STATUS "${name}: ${outcome}, ${frames} frames; fresh replay agrees")
 endfunction()
+
+# ID202's first collision is an already-born random child executing WAIT.
+# The opt-in removes that local mistake but retains the later emission failure;
+# no random future is sampled or treated as an empty deterministic preview.
+scene(spell202-wait-baseline extra 202 0 hazard-reactive 6000 collision 2 3265 4)
+file(READ "${WORK}/spell202-wait-baseline.json" spell202_baseline)
+foreach(pair IN ITEMS "bullet_slot;1369" "active_transforms;131072")
+  list(GET pair 0 key)
+  list(GET pair 1 expected)
+  field("${spell202_baseline}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "ID202 changed its preserved WAIT boundary: ${key}=${actual}")
+  endif()
+endforeach()
+foreach(pair IN ITEMS "0;4204" "1;4216" "65535;3613")
+  list(GET pair 0 seed)
+  list(GET pair 1 frames)
+  scene(spell202-portfolio-seed${seed} extra 202 ${seed} spell-portfolio 6000 collision 2 ${frames} 4)
+  file(READ "${WORK}/spell202-portfolio-seed${seed}.json" report)
+  foreach(contract IN ITEMS "policy_profile_last;\"id202-observed-wait\""
+                            "policy_bullet_horizon;12" "policy_upcoming_bullet_decisions;0")
+    list(GET contract 0 key)
+    list(GET contract 1 expected)
+    field("${report}" "${key}" actual)
+    if(NOT actual STREQUAL expected)
+      message(FATAL_ERROR "ID202 crossed its observed-WAIT contract: ${key}=${actual}")
+    endif()
+  endforeach()
+  field("${report}" policy_wait_linear_checks checks)
+  if(NOT checks GREATER 0)
+    message(FATAL_ERROR "ID202 never exercised bounded WAIT")
+  endif()
+endforeach()
+# Emit this focused failure evidence before unrelated host-sensitive goldens.
+# The normal aggregate still executes every pre-existing test below.
+string(JOIN ",\n" id202_records ${records})
+cmake_host_system_information(RESULT id202_cpu QUERY PROCESSOR_DESCRIPTION)
+cmake_host_system_information(RESULT id202_platform QUERY OS_PLATFORM)
+file(WRITE "${WORK}/id202-summary.json"
+  "{\"producer\":\"tests/headless_real_data.cmake ID202 fixtures\",\"host_processor\":\"${id202_cpu}\",\"host_system\":\"${CMAKE_HOST_SYSTEM_NAME}\",\"host_architecture\":\"${id202_platform}\",\"runs\":[\n${id202_records}\n]}\n")
+if(CASE_GROUP STREQUAL "id202")
+  return()
+endif()
 
 scene(stage1 1 -1 0 reactive 30000 complete 0 22176)
 foreach(seed IN ITEMS 0 1 65535)
