@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/laser_motion.hpp>
 
 namespace laser = th08::laser;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     // Minimized from the pinned source oracle's scenario 66. The literal keeps
     // the exact float32 width; the source expression rounds below zero at t=12.

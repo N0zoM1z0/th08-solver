@@ -4,6 +4,7 @@
 #include "camera_particle_source_probe.hpp"
 #include "ecl_source_probe.hpp"
 #include "enemy_motion_source_probe.hpp"
+#include "source_probe_support.hpp"
 #include "spawn_source_probe.hpp"
 #include "timeline_source_probe.hpp"
 #include "transform_source_probe.hpp"
@@ -11,36 +12,9 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include <th08/resources.hpp>
-
-namespace res = th08::resources;
-std::string source(const std::filesystem::path &path, const char *expected) {
-    const auto bytes = res::read_file(path);
-    if (res::sha256(res::view(bytes)) != expected)
-        throw std::runtime_error("reference source hash mismatch: " + path.string());
-    return {bytes.begin(), bytes.end()};
-}
-std::string function(const std::string &text, const std::string &signature) {
-    const auto start = text.find(signature);
-    if (start == std::string::npos)
-        throw std::runtime_error("missing reference function");
-    auto opening = text.find('{', start);
-    if (opening == std::string::npos)
-        throw std::runtime_error("missing function body");
-    unsigned depth = 1;
-    auto end = opening + 1;
-    for (; end < text.size() && depth; ++end) {
-        if (text[end] == '{')
-            ++depth;
-        if (text[end] == '}')
-            --depth;
-    }
-    if (depth)
-        throw std::runtime_error("unterminated reference function");
-    return text.substr(start, end - start);
-}
+namespace probe = th08::source_probe;
 std::string slots_reference(const std::string &bullet) {
-    const auto body = function(bullet, "i32 BulletManager::SpawnSingleBullet(");
+    const auto body = probe::extract_function(bullet, "i32 BulletManager::SpawnSingleBullet(");
     const auto scan_begin = body.find("    i = 0;");
     const auto scan_end = body.find("    angle = 0.0f;", scan_begin);
     const auto finish_begin = body.rfind("    bullet++;");
@@ -478,29 +452,33 @@ int main() {
 )CPP";
         return 0;
     }
-    const auto player = source(repo / "src/Player.cpp",
-                               "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
-    const auto global = source(repo / "src/Global.cpp",
-                               "8df17616c935d684b6636619d4726889e68f7d2d7000e27c25aebc4bc460b74b");
-    const auto global_header =
-        source(repo / "src/Global.hpp",
-               "ce49422a53e5ba33b63d803d17e7051ba2a5ad7a33ae531910c048a091f37592");
-    const auto bullet = source(repo / "src/BulletManager.cpp",
-                               "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
-    const auto math = source(repo / "src/ZunMath.hpp",
-                             "ba187178ec936c2492f3e311e8d6d634421c35bc5abd74ab4af77a4c81ddb3de");
-    const auto player_bomb =
-        source(repo / "src/PlayerBomb.cpp",
-               "914cb85ebf128678427a4243c071a4b30385ea7eb688571940f5ec06d3dfa75d");
-    const auto background =
-        source(repo / "src/Background.cpp",
-               "36889a17a6f0c314eaf3751a2238e778c82d13bffd3a18e55051b49f3d8fd285");
-    const auto supervisor =
-        source(repo / "src/Supervisor.cpp",
-               "67b761377ae38aec18581920ea07ff31fb4dd3c0de0d15acdd42530d19fa1a5e");
-    const auto supervisor_header =
-        source(repo / "src/Supervisor.hpp",
-               "985ed6b9c210ba4cc7e6c54e033df4e882ad46567e71ccd8c6fadcbe2efac976");
+    const auto player = probe::read_pinned_source(
+        repo / "src/Player.cpp",
+        "80c6829a41a30fcce47837edaa8da90bb11779130b5c443db842c7623745242c");
+    const auto global = probe::read_pinned_source(
+        repo / "src/Global.cpp",
+        "8df17616c935d684b6636619d4726889e68f7d2d7000e27c25aebc4bc460b74b");
+    const auto global_header = probe::read_pinned_source(
+        repo / "src/Global.hpp",
+        "ce49422a53e5ba33b63d803d17e7051ba2a5ad7a33ae531910c048a091f37592");
+    const auto bullet = probe::read_pinned_source(
+        repo / "src/BulletManager.cpp",
+        "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
+    const auto math = probe::read_pinned_source(
+        repo / "src/ZunMath.hpp",
+        "ba187178ec936c2492f3e311e8d6d634421c35bc5abd74ab4af77a4c81ddb3de");
+    const auto player_bomb = probe::read_pinned_source(
+        repo / "src/PlayerBomb.cpp",
+        "914cb85ebf128678427a4243c071a4b30385ea7eb688571940f5ec06d3dfa75d");
+    const auto background = probe::read_pinned_source(
+        repo / "src/Background.cpp",
+        "36889a17a6f0c314eaf3751a2238e778c82d13bffd3a18e55051b49f3d8fd285");
+    const auto supervisor = probe::read_pinned_source(
+        repo / "src/Supervisor.cpp",
+        "67b761377ae38aec18581920ea07ff31fb4dd3c0de0d15acdd42530d19fa1a5e");
+    const auto supervisor_header = probe::read_pinned_source(
+        repo / "src/Supervisor.hpp",
+        "985ed6b9c210ba4cc7e6c54e033df4e882ad46567e71ccd8c6fadcbe2efac976");
     const auto launch_start =
         bullet.find("    angle = 0.0f;", bullet.find("i32 BulletManager::SpawnSingleBullet("));
     const auto launch_end = bullet.find("    bullet->state = BULLET_STATE_FIRED;", launch_start);
@@ -518,44 +496,44 @@ int main() {
     out.exceptions(std::ios::badbit | std::ios::failbit);
     std::string preamble = prefix;
     preamble.insert(preamble.find("struct RandomTrace"),
-                    function(global_header, "class Rng") + ";\n");
+                    probe::extract_function(global_header, "class Rng") + ";\n");
     preamble.insert(preamble.find("struct MotionState"),
-                    function(supervisor_header, "struct ZunTimer") + ";\n");
+                    probe::extract_function(supervisor_header, "struct ZunTimer") + ";\n");
     preamble.insert(preamble.find("    void FromAngleMagnitude"),
-                    function(math, "Float3 *operator+=") + "\n" +
-                        function(math, "operator float *()") + "\n");
-    out << preamble << function(supervisor, "void Supervisor::TickTimer(") << '\n'
-        << function(supervisor, "void ZunTimer::Increment(") << '\n'
-        << function(supervisor, "void ZunTimer::Decrement(") << '\n'
-        << function(player_bomb, "f32 VectorAngle(") << '\n'
-        << function(background, "Float3 Float3::operator*(") << '\n'
-        << function(global, "void Rng::SetSeed(") << '\n'
-        << function(global, "void Rng::ResetGenerationCount(") << '\n'
-        << function(global, "u16 Rng::GetSeed(") << '\n'
-        << function(global, "u16 Rng::GetRandomU16(") << '\n'
-        << function(global, "u32 Rng::GetRandomU32(") << '\n'
-        << function(global, "f32 Rng::GetRandomF32(") << '\n'
-        << function(global, "f32 Rng::GetRandomF32Signed(") << '\n'
-        << function(global, "f32 AddNormalizeAngle(") << '\n'
+                    probe::extract_function(math, "Float3 *operator+=") + "\n" +
+                        probe::extract_function(math, "operator float *()") + "\n");
+    out << preamble << probe::extract_function(supervisor, "void Supervisor::TickTimer(") << '\n'
+        << probe::extract_function(supervisor, "void ZunTimer::Increment(") << '\n'
+        << probe::extract_function(supervisor, "void ZunTimer::Decrement(") << '\n'
+        << probe::extract_function(player_bomb, "f32 VectorAngle(") << '\n'
+        << probe::extract_function(background, "Float3 Float3::operator*(") << '\n'
+        << probe::extract_function(global, "void Rng::SetSeed(") << '\n'
+        << probe::extract_function(global, "void Rng::ResetGenerationCount(") << '\n'
+        << probe::extract_function(global, "u16 Rng::GetSeed(") << '\n'
+        << probe::extract_function(global, "u16 Rng::GetRandomU16(") << '\n'
+        << probe::extract_function(global, "u32 Rng::GetRandomU32(") << '\n'
+        << probe::extract_function(global, "f32 Rng::GetRandomF32(") << '\n'
+        << probe::extract_function(global, "f32 Rng::GetRandomF32Signed(") << '\n'
+        << probe::extract_function(global, "f32 AddNormalizeAngle(") << '\n'
         << "th08::kinematics::Launch reference_launch(BulletSpawnDescriptor* descriptor, "
            "i32 index1,i32 index2,f32 angleToPlayer,float multiplier) { float angle,speed;\n"
         << bullet.substr(launch_start, launch_end - launch_start)
         << "return {angle,AddNormalizeAngle(angle,0),speed,cosf(angle)*(speed*multiplier),"
            "sinf(angle)*(speed*multiplier)}; }\n"
-        << function(bullet, "void Bullet::UpdateRelativeDirectionChange()") << '\n'
-        << function(bullet, "void Bullet::UpdateAbsoluteDirectionChange()") << '\n'
-        << function(bullet, "void Bullet::UpdateAimedDirectionChange()") << '\n'
-        << function(bullet, "void Bullet::UpdateDeceleration()") << '\n'
-        << function(bullet, "void Bullet::UpdateVectorAcceleration()") << '\n'
-        << function(bullet, "void Bullet::UpdatePolarAcceleration()") << '\n'
+        << probe::extract_function(bullet, "void Bullet::UpdateRelativeDirectionChange()") << '\n'
+        << probe::extract_function(bullet, "void Bullet::UpdateAbsoluteDirectionChange()") << '\n'
+        << probe::extract_function(bullet, "void Bullet::UpdateAimedDirectionChange()") << '\n'
+        << probe::extract_function(bullet, "void Bullet::UpdateDeceleration()") << '\n'
+        << probe::extract_function(bullet, "void Bullet::UpdateVectorAcceleration()") << '\n'
+        << probe::extract_function(bullet, "void Bullet::UpdatePolarAcceleration()") << '\n'
         << "th08::laser::Result reference_laser(SourceLaser* laser) { LaserRecorder g_Player; "
            "float laserSize[3],laserCenter[3],currentWidth; int alpha,rampWindow; "
            "for(int once=0;once<1;++once) {\n"
         << bullet.substr(laser_start, laser_end - laser_start) << "\n} return g_Player.trace; }\n"
-        << function(global, "void Rotate(Float3 *") << '\n'
-        << function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
-        << function(player, "i32 Player::CheckBulletCollision(") << '\n'
-        << function(player, "u32 Player::CalcLaserHitbox(") << '\n';
+        << probe::extract_function(global, "void Rotate(Float3 *") << '\n'
+        << probe::extract_function(player, "i32 Player::CheckBulletCancelCollision(") << '\n'
+        << probe::extract_function(player, "i32 Player::CheckBulletCollision(") << '\n'
+        << probe::extract_function(player, "u32 Player::CalcLaserHitbox(") << '\n';
     if (component == "enemy_motion") {
         out << enemy_motion_reference(repo) << R"CPP(
 #include "source_enemy_motion_cases.hpp"

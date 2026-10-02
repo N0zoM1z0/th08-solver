@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/enemy_motion.hpp>
 
 namespace enemy = th08::enemy;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     enemy::State state;
     state.position = {10, 20, 3};

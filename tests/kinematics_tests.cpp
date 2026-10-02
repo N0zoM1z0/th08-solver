@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/kinematics.hpp>
 
 namespace motion = th08::kinematics;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     motion::Pattern pattern{motion::Aim::fan, 5, 4, 8, 0, 0, 0.25f};
     motion::Launch result{};

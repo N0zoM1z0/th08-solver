@@ -41,8 +41,10 @@ add_executable(th08_first_spell tools/first_spell.cpp)
 target_link_libraries(th08_first_spell PRIVATE th08_resources)
 set(TH08_REFERENCE_SOURCE "" CACHE PATH "Optional pinned reconstruction checkout for source oracle")
 if(TH08_REFERENCE_SOURCE)
+  add_library(th08_source_support STATIC tools/source_probe_support.cpp)
+  target_link_libraries(th08_source_support PUBLIC th08_resources)
   add_executable(effect_pool_source_probe tools/effect_pool_source_probe.cpp tools/camera_particle_source_probe.cpp)
-  target_link_libraries(effect_pool_source_probe PRIVATE th08_resources)
+  target_link_libraries(effect_pool_source_probe PRIVATE th08_source_support)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/source_effect_pool.cpp
     COMMAND effect_pool_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_effect_pool.cpp
     DEPENDS effect_pool_source_probe ${TH08_REFERENCE_SOURCE}/src/EffectManager.cpp
@@ -72,7 +74,7 @@ if(TH08_REFERENCE_SOURCE)
     tools/world_motion_source_probe.cpp
     tools/timeline_source_probe.cpp
     tools/camera_particle_source_probe.cpp)
-  target_link_libraries(th08_source_probe PRIVATE th08_resources)
+  target_link_libraries(th08_source_probe PRIVATE th08_source_support)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     COMMAND th08_source_probe ${TH08_REFERENCE_SOURCE} ${CMAKE_CURRENT_BINARY_DIR}/source_oracle.cpp
     DEPENDS th08_source_probe ${TH08_REFERENCE_SOURCE}/src/Player.cpp ${TH08_REFERENCE_SOURCE}/src/Global.cpp ${TH08_REFERENCE_SOURCE}/src/Global.hpp ${TH08_REFERENCE_SOURCE}/src/BulletManager.cpp ${TH08_REFERENCE_SOURCE}/src/ZunMath.hpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.cpp ${TH08_REFERENCE_SOURCE}/src/Supervisor.hpp

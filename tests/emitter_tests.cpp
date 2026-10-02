@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <cstring>
 #include <iostream>
 #include <th08/emitter.hpp>
 namespace vm = th08::emitter;
-void check(bool valid, const char *why) {
-    if (!valid) {
-        std::cerr << why << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 std::uint32_t bits(float value) {
     std::uint32_t result;
     std::memcpy(&result, &value, sizeof(result));

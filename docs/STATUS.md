@@ -96,3 +96,13 @@ callbacks and genuine endings. [Coverage roadmap](COVERAGE.md) defines the full
 all-case acceptance contract and dependency-ordered work; the
 [Wriggle world contract](WRIGGLE_WORLD_CONTRACT.md) supplies exact source identities.
 None of those integration milestones is currently marked complete.
+
+## Existing-code maintenance
+
+Effect routing and effect execution are separated without changing their commit
+order. ANM visual operand length/types now have one descriptor. Source probes use
+an explicit shared extraction interface;17 identical test failure helpers share
+one small implementation. No unused test entry points were found, so independent
+oracles and behavior regressions were retained. The cleanup passes25 reference
+CTests; all1151 real-data ANM rows and both generated reference translation units
+remain byte-identical. This maintenance adds no world-completion claim.

@@ -1,16 +1,11 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <cstring>
 #include <iostream>
 #include <th08/world_motion.hpp>
 namespace vm = th08::emitter;
 namespace world = th08::world;
 namespace enemy = th08::enemy;
-void check(bool ok, const char *why) {
-    if (!ok) {
-        std::cerr << why << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 std::uint32_t bits(float value) {
     std::uint32_t result;
     std::memcpy(&result, &value, 4);

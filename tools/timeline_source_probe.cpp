@@ -1,20 +1,23 @@
 #include "timeline_source_probe.hpp"
 // Shared source readers supplied by source_probe.cpp pin complete file hashes.
-std::string source(const std::filesystem::path &, const char *);
-std::string function(const std::string &, const std::string &);
+#include "source_probe_support.hpp"
+namespace probe = th08::source_probe;
 
 std::string timeline_reference(const std::filesystem::path &repo) {
-    const auto text = source(repo / "src/EnemyTimeline.cpp",
-                             "920ee34725aa6aad9f113d43454731acadab456abddac73256b2ba9a29e8e94b");
-    const auto header = source(repo / "src/EnemyManager.hpp",
-                               "e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256");
-    const auto gui = source(repo / "src/Gui.cpp",
-                            "bd053c070d1ce136910e163898e6f97f4c00683558051d1a953967c6c5c89af8");
-    const auto scale = source(repo / "src/AsciiManagerScale.cpp",
-                              "b439ca540148240df69319277721cad4638a5422d7f98efc7a873e2fdcda62df");
+    const auto text = probe::read_pinned_source(
+        repo / "src/EnemyTimeline.cpp",
+        "920ee34725aa6aad9f113d43454731acadab456abddac73256b2ba9a29e8e94b");
+    const auto header = probe::read_pinned_source(
+        repo / "src/EnemyManager.hpp",
+        "e56633232cfb8e0934fb9e83f592989b577cd045e623df0c2c294eed9b2bf256");
+    const auto gui = probe::read_pinned_source(
+        repo / "src/Gui.cpp", "bd053c070d1ce136910e163898e6f97f4c00683558051d1a953967c6c5c89af8");
+    const auto scale = probe::read_pinned_source(
+        repo / "src/AsciiManagerScale.cpp",
+        "b439ca540148240df69319277721cad4638a5422d7f98efc7a873e2fdcda62df");
     return "\nnamespace timeline_reference {\nusing u8=std::uint8_t;\n" +
-           function(header, "enum EclTimelineOpcode") + ";\n" +
-           function(header, "struct EclTimelineInstruction") + R"CPP(;
+           probe::extract_function(header, "enum EclTimelineOpcode") + ";\n" +
+           probe::extract_function(header, "struct EclTimelineInstruction") + R"CPP(;
 // The complete source dispatcher runs unchanged. External effects are recorded
 // at their invocation boundary, not represented as a complete enemy/game world.
 // Random spawn handlers are outside the ungated oracle domain and fail loudly.
@@ -69,7 +72,7 @@ struct RejectedRandom {
         throw std::runtime_error("ungated random timeline spawn outside source recorder domain");
     }
 } g_Rng;
-)CPP" + function(gui, "i32 Gui::MsgWait()") +
-           "\n" + function(scale, "bool Gui::IsBossPresent()") + "\n" +
-           function(text, "void EclTimeline::Run()") + "\n}\n";
+)CPP" + probe::extract_function(gui, "i32 Gui::MsgWait()") +
+           "\n" + probe::extract_function(scale, "bool Gui::IsBossPresent()") + "\n" +
+           probe::extract_function(text, "void EclTimeline::Run()") + "\n}\n";
 }

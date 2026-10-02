@@ -1,15 +1,10 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <limits>
 #include <th08/camera_particle.hpp>
 
 namespace cp = th08::effect::camera_particle;
-void check(bool value, const char *message) {
-    if (!value) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 cp::State prepared() {
     // Explicit fixture snapshot, not a default effect-pool/template assumption.
     cp::State state{};

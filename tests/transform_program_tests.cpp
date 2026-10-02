@@ -1,15 +1,10 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/transform_program.hpp>
 
 namespace transform = th08::bullet::transform;
 using th08::bullet::Status;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 void boundary_tests() {
     transform::Program empty;
     transform::State state;

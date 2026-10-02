@@ -1,9 +1,8 @@
 #include "ecl_source_probe.hpp"
 #include <stdexcept>
 
-// Shared extraction helpers in source_probe.cpp check identities before slicing.
-std::string source(const std::filesystem::path &path, const char *expected);
-std::string function(const std::string &text, const std::string &signature);
+#include "source_probe_support.hpp"
+namespace probe = th08::source_probe;
 
 namespace {
 std::string section(const std::string &text, const char *first, const char *after) {
@@ -98,18 +97,20 @@ Comparison compare() {
 } // namespace
 
 std::string ecl_reference(const std::filesystem::path &repo) {
-    const auto manager = source(repo / "src/EclManager.hpp",
-                                "1df7f926d46d24ad9e303a1a5e9b82cf9674ebec63d9ac5ff770c9c3957812e4");
-    const auto integers =
-        source(repo / "src/EclOperandsInt.cpp",
-               "7a11fcc17dc929484c2eaf32d4eb94a2e78165d592b1d4fa13d590aa9b26ab0a");
-    const auto floats = source(repo / "src/EclOperandsFloat.cpp",
-                               "5a6ede1121d4387d7e45ba1c421012668d60bba1e898207ff5b3ba778430c726");
-    const auto dispatch =
-        source(repo / "src/EclRunLow.inl",
-               "8c6d23bf4e9daf8f96dbd344f4a03d3ed32d1d200483959682e962cd41ec0045");
-    return "namespace ecl_reference {\n" + function(manager, "enum EclOpcode") + ";\n" +
-           function(manager, "enum EclOperandId") + ";\n" + adapter +
+    const auto manager = probe::read_pinned_source(
+        repo / "src/EclManager.hpp",
+        "1df7f926d46d24ad9e303a1a5e9b82cf9674ebec63d9ac5ff770c9c3957812e4");
+    const auto integers = probe::read_pinned_source(
+        repo / "src/EclOperandsInt.cpp",
+        "7a11fcc17dc929484c2eaf32d4eb94a2e78165d592b1d4fa13d590aa9b26ab0a");
+    const auto floats = probe::read_pinned_source(
+        repo / "src/EclOperandsFloat.cpp",
+        "5a6ede1121d4387d7e45ba1c421012668d60bba1e898207ff5b3ba778430c726");
+    const auto dispatch = probe::read_pinned_source(
+        repo / "src/EclRunLow.inl",
+        "8c6d23bf4e9daf8f96dbd344f4a03d3ed32d1d200483959682e962cd41ec0045");
+    return "namespace ecl_reference {\n" + probe::extract_function(manager, "enum EclOpcode") +
+           ";\n" + probe::extract_function(manager, "enum EclOperandId") + ";\n" + adapter +
            "i32 EclOperands::ResolveInt(Enemy*,i32 operand) {switch(operand) {\n" +
            random_cases(integers, false) + "default:return operand;}}\n" +
            "f32 Enemy::ResolveFloat(f32 operand) {switch((i32)operand) {\n" +

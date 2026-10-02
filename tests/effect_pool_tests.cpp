@@ -1,4 +1,4 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <limits>
 #include <stdexcept>
@@ -9,12 +9,7 @@ namespace effect = th08::effect;
 namespace cp = effect::camera_particle;
 namespace rng_api = th08::random;
 
-void check(bool value, const char *message) {
-    if (!value) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 bool same(cp::Vec3 left, cp::Vec3 right) {
     return left.x == right.x && left.y == right.y && left.z == right.z;
 }

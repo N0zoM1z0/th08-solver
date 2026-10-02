@@ -148,119 +148,79 @@ void decrement(Clock &clock, float multiplier, bool extra) {
         }
     }
 }
-// These writes cannot feed scalar/control observables. Their typed reads are
-// checked below; they neither draw RNG nor write script variables.
-int visual_words(std::int16_t opcode) {
+// These writes cannot feed scalar/control observables. One descriptor owns both
+// their payload length and typed selector reads, preventing two opcode lists
+// from drifting. Unmarked fields are raw literals EVEN when their mask is set.
+struct VisualOperands {
+    int words;
+    unsigned floats = 0, integers = 0;
+};
+VisualOperands visual_operands(std::int16_t opcode) {
     switch (opcode) {
     case 0:
     case 10:
     case 11:
     case 22:
-        return 0;
-    case 8:
+        return {0};
     case 16:
     case 24:
     case 25:
-    case 26:
-    case 27:
     case 30:
     case 31:
+    case 82:
+    case 88:
+        return {1};
+    case 8:
+    case 85:
+        return {1, 0, 1};
+    case 26:
+    case 27:
     case 80:
     case 81:
-    case 82:
-    case 85:
-    case 88:
-        return 1;
+        return {1, 1, 0};
     case 7:
     case 14:
+        return {2, 3, 0};
     case 15:
-        return 2;
+        return {2, 0, 2};
     case 6:
-    case 9:
     case 12:
     case 13:
-    case 29:
-    case 34:
+        return {3, 7, 0};
+    case 9:
     case 84:
+        return {3, 0, 7};
+    case 29:
+        return {3, 3, 4};
+    case 34:
     case 87:
-        return 3;
+        return {3, 0, 5};
     case 17:
     case 18:
     case 19:
+        return {4, 7, 8};
     case 36:
-        return 4;
+        return {4, 12, 1};
     case 32:
-    case 33:
     case 35:
+        return {5, 28, 1};
+    case 33:
     case 86:
-        return 5;
+        return {5, 0, 29};
     default:
-        return -1;
+        return {-1};
     }
 }
 void check_visual_operands(const Operands &args) {
-    unsigned float_mask = 0, int_mask = 0;
-    switch (args.operation.opcode) {
-    case 6:
-    case 12:
-    case 13:
-        float_mask = 7;
-        break;
-    case 7:
-    case 14:
-        float_mask = 3;
-        break;
-    case 8:
-    case 85:
-        int_mask = 1;
-        break;
-    case 9:
-    case 84:
-        int_mask = 7;
-        break;
-    case 15:
-        int_mask = 2;
-        break;
-    case 17:
-    case 18:
-    case 19:
-        float_mask = 7;
-        int_mask = 8;
-        break;
-    case 26:
-    case 27:
-    case 80:
-    case 81:
-        float_mask = 1;
-        break;
-    case 29:
-        float_mask = 3;
-        int_mask = 4;
-        break;
-    case 32:
-    case 35:
-        float_mask = 28;
-        int_mask = 1;
-        break;
-    case 33:
-    case 86:
-        int_mask = 29;
-        break;
-    case 34:
-    case 87:
-        int_mask = 5;
-        break;
-    case 36:
-        float_mask = 12;
-        int_mask = 1;
-        break;
-    default:
-        break; // Remaining fields are raw literals, even when a mask bit is set.
-    }
-    for (unsigned index = 0; index < 5; ++index) {
-        if (float_mask & (1U << index))
+    const auto layout = visual_operands(args.operation.opcode);
+    require(layout.words >= 0, Status::unsupported);
+    require(args.operation.payload_size == unsigned(layout.words) * 4);
+    // Reads neither draw RNG nor write variables. Keep the original ascending
+    // field order anyway, so malformed operands stop at the same first read.
+    for (unsigned index = 0; index < unsigned(layout.words); ++index) {
+        if (layout.floats & (1U << index))
             args.read_float(index);
-        if (int_mask & (1U << index))
+        if (layout.integers & (1U << index))
             args.read_int(index);
     }
 }
@@ -534,9 +494,6 @@ Result advance(const Program &program, State &state, float multiplier, bool extr
                     }
                     break;
                 }
-                const auto words = visual_words(op.opcode);
-                require(words >= 0, Status::unsupported);
-                require(op.payload_size == unsigned(words) * 4);
                 check_visual_operands(args);
                 break;
             }

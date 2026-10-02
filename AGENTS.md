@@ -19,7 +19,7 @@ Wine, a Linux game port, or an input controller as an implicit verification step
 - Keep raw game data and extracted assets in ignored directories. Track the
   user's original `preparations/` unchanged. Do not force-add ignored data.
 - Save verified progress in frequent, focused commits. New commit subjects use
-  `gpt-dos: <English summary>`; do not rewrite older subjects solely for this convention.
+  `gpt-dots: <English summary>`; do not rewrite older subjects solely for this convention.
 
 ## Evidence
 

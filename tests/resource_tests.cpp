@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <stdexcept>
 #include <th08/resources.hpp>
 using namespace th08::resources;
-void check(bool value, const char *why) {
-    if (!value) {
-        std::cerr << why << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 template <class F> void rejects(F function) {
     try {
         function();

@@ -1,14 +1,9 @@
-#include <cstdlib>
+#include "test_support.hpp"
 #include <iostream>
 #include <th08/bullet_motion.hpp>
 
 namespace bullet = th08::bullet;
-void check(bool valid, const char *message) {
-    if (!valid) {
-        std::cerr << message << '\n';
-        std::exit(1);
-    }
-}
+using th08::test::check;
 int main() {
     for (float x : {0.0f, 100.0f, 0.0f}) {
         bullet::Flight flight{x, 0, 4, 0, 0, 4};

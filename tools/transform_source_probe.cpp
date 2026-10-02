@@ -1,8 +1,8 @@
 #include "transform_source_probe.hpp"
 #include <stdexcept>
 
-std::string source(const std::filesystem::path &path, const char *expected);
-std::string function(const std::string &text, const std::string &signature);
+#include "source_probe_support.hpp"
+namespace probe = th08::source_probe;
 namespace {
 std::string section(const std::string &text, const char *first, const char *after) {
     const auto begin = text.find(first);
@@ -67,18 +67,21 @@ struct Bullet {
 )CPP";
 } // namespace
 std::string transform_reference(const std::filesystem::path &repo) {
-    const auto game = source(repo / "src/GameManager.cpp",
-                             "4d042171aa200c72c8fbf4cac9debfdb51289e2ff68d0e63751e3fd438ad735e");
-    const auto header = source(repo / "src/BulletManager.hpp",
-                               "583e9b9e89d49a358dafffaa9f123d817e4784afef114c33c464b906c8e7f596");
-    const auto implementation =
-        source(repo / "src/BulletManager.cpp",
-               "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
+    const auto game = probe::read_pinned_source(
+        repo / "src/GameManager.cpp",
+        "4d042171aa200c72c8fbf4cac9debfdb51289e2ff68d0e63751e3fd438ad735e");
+    const auto header = probe::read_pinned_source(
+        repo / "src/BulletManager.hpp",
+        "583e9b9e89d49a358dafffaa9f123d817e4784afef114c33c464b906c8e7f596");
+    const auto implementation = probe::read_pinned_source(
+        repo / "src/BulletManager.cpp",
+        "77562e578c4fd2b2fd55f836f3b2e9e0ade16198208f81e94eb1d1a837207dc1");
     std::string generated =
         "namespace transform_reference {\n#define C_ASSERT(x) static_assert(x)\n" +
         section(header, "struct BulletTransformRawPayload", "enum BulletAimMode") +
-        "#undef C_ASSERT\n" + function(header, "enum BulletTransformStateSlot") + ";\n" + adapter +
-        function(game, "ZunBool GameManager::IsWithinPlayfield(") + "\n";
+        "#undef C_ASSERT\n" + probe::extract_function(header, "enum BulletTransformStateSlot") +
+        ";\n" + adapter + probe::extract_function(game, "ZunBool GameManager::IsWithinPlayfield(") +
+        "\n";
     for (const char *name :
          {"void Bullet::AdvanceTransformProgram()", "void Bullet::UpdateDeceleration()",
           "void Bullet::UpdateVectorAcceleration()", "void Bullet::UpdatePolarAcceleration()",
@@ -86,7 +89,7 @@ std::string transform_reference(const std::filesystem::path &repo) {
           "void Bullet::UpdateAbsoluteDirectionChange()",
           "void Bullet::UpdateAimedDirectionChange()", "void Bullet::UpdateBoundaryBounce()",
           "void Bullet::UpdateHorizontalWrap()", "void Bullet::UpdateVerticalWrap()"})
-        generated += function(implementation, name) + '\n';
+        generated += probe::extract_function(implementation, name) + '\n';
     generated += "void step(Bullet* bullet) {bullet->AdvanceTransformProgram();\n" +
                  section(implementation, "            if (bullet->activeTransformFlags != 0)",
                          "            if (bullet->offscreenCullDelayFrames != 0)") +

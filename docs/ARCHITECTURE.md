@@ -514,3 +514,18 @@ the next timeline boundary with the real DAT under supplied-state assumptions;
 no later manager phase is implied. The effect pool does not depend on ECL or
 practice entry. Its restricted unit-rate update owns effect51 cull/static retirement,
 while global phase ordering and other effect/render consumers remain missing.
+
+## Maintenance boundaries
+
+Keep effect routing separate from execution: practice entry selects the effect51,
+movement or actor-field handler; each handler retains its own source operand order
+and commit point. ECL hard errors preserve earlier instructions and terminate the
+execution, whereas ANM rejects an entire call atomically. These are different
+contracts, not candidates for one generic rollback abstraction.
+
+ANM's projected visual instructions have one local descriptor for payload length
+and typed selector fields. Raw literal fields remain raw even when masked. Source
+probe support is shared behind a named interface, and the simple test assertion
+helper is shared without replacing independent expected-value models or source
+oracles. Large switches or repeated test values are not removed merely for size:
+some encode numerical phase order or deliberate stale-state regressions.

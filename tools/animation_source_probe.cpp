@@ -1,25 +1,26 @@
 #include "animation_source_probe.hpp"
+#include "source_probe_support.hpp"
 #include <stdexcept>
-// Shared pinned-source readers supplied by source_probe.cpp.
-std::string source(const std::filesystem::path &, const char *);
-std::string function(const std::string &, const std::string &);
+namespace probe = th08::source_probe;
 
 std::string animation_reference(const std::filesystem::path &repo) {
-    source(repo / "src/AsciiManager.cpp",
-           "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1");
-    const auto text = source(repo / "src/AnmManager.cpp",
-                             "c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce");
-    const auto header = source(repo / "src/AnmManager.hpp",
-                               "df96ae2abd43ffc64a5967451fcd3ca5b83b75f6ad6ed37ba852370855c7f582");
-    const auto body = function(text, "ZunBool AnmManager::ExecuteScript(");
+    probe::read_pinned_source(repo / "src/AsciiManager.cpp",
+                              "86c0d3cca5040036f16de762e80b3126b7037c89b526044cbb74bcc4bc6abdb1");
+    const auto text = probe::read_pinned_source(
+        repo / "src/AnmManager.cpp",
+        "c82bb37c19af4ccaabfa4bf4606d92c72e180f5f2fdd642cf3ec2131c85cecce");
+    const auto header = probe::read_pinned_source(
+        repo / "src/AnmManager.hpp",
+        "df96ae2abd43ffc64a5967451fcd3ca5b83b75f6ad6ed37ba852370855c7f582");
+    const auto body = probe::extract_function(text, "ZunBool AnmManager::ExecuteScript(");
     auto section = [&](const std::string &first, const std::string &last) {
         const auto begin = body.find(first), end = body.find(last, begin);
         if (begin == std::string::npos || end == std::string::npos)
             throw std::runtime_error("missing pinned ANM control block");
         return body.substr(begin, end - begin);
     };
-    return "\nnamespace anm_reference {\n" + function(header, "enum AnmOpcode") + ";\n" +
-           function(header, "enum AnmVariable") + R"CPP(;
+    return "\nnamespace anm_reference {\n" + probe::extract_function(header, "enum AnmOpcode") +
+           ";\n" + probe::extract_function(header, "enum AnmVariable") + R"CPP(;
 enum { FALSE=0, TRUE=1 };
 using u8=std::uint8_t;
 Rng g_Rng;
@@ -51,10 +52,10 @@ struct AnmVm {
 };
 void AnmLoaded::SetSprite(AnmVm* vm,int sprite) {vm->sprite=sprite;}
 struct AnmManager { ZunBool ExecuteScript(AnmVm*); };
-)CPP" + function(text, "f32 AnmVm::GetFloatVar(") +
-           "\n" + function(text, "i32 AnmVm::GetIntVar(") + "\n" +
-           function(text, "f32 *AnmVm::GetFloatVarPtr(") + "\n" +
-           function(text, "i32 *AnmVm::GetIntVarPtr(") + "\n" +
+)CPP" + probe::extract_function(text, "f32 AnmVm::GetFloatVar(") +
+           "\n" + probe::extract_function(text, "i32 AnmVm::GetIntVar(") + "\n" +
+           probe::extract_function(text, "f32 *AnmVm::GetFloatVarPtr(") + "\n" +
+           probe::extract_function(text, "i32 *AnmVm::GetIntVarPtr(") + "\n" +
            section("ZunBool AnmManager::ExecuteScript(", "        case AnmOpcode_Scale:") +
            section("        case AnmOpcode_Jmp:", "        case AnmOpcode_FlipX:") +
            section("        case AnmOpcode_Wait:", "        case AnmOpcode_AnchorTopLeft:") +
