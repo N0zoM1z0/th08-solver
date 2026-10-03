@@ -197,8 +197,8 @@ or shared action-dependent future is introduced to hide that cost.
 
 The maintained seed-0 sweep enumerates 56 Easy standard/Extra practice checkpoints.
 The Release `spell-portfolio` run completed 54 and retained 2 genuine collision
-prefixes: bullet IDs 202/203. Bounded native-prefix repair additionally completes ID203,
-so the combined documented recipe solves 55/56. All 56 rolling tapes
+prefixes: bullet IDs 202/203. Bounded native-prefix repair additionally completes both,
+so the combined documented recipe solves 56/56. All 56 rolling tapes
 then agreed in a fresh process on the semantic fields used by `agree()` above. This is
 broad algorithm evidence, while the smaller real-data CTest keeps the affected
 transform/profile boundaries practical to rerun on every local change.
@@ -444,3 +444,54 @@ cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" \
 Its fixed 56-case rolling sweep and nine actual stage entries are independent of
 the repair searches. A collision remains a collision in this report; adding two
 isolated repair successes does not imply continuous Extra is complete.
+
+A stage-sized Extra episode explicitly uses 144 candidates, 14400000 candidate
+updates and 1800 search seconds, not the smaller isolated-spell budget. The first
+fresh run used 9809223 candidate updates and 872386 ms of search, reaching ID203 at
+69227 (`496550657910513129`, fresh O0 replay agrees). It is a failure, not stage clear.
+To continue only an improved validated frontier without repeating earlier branches:
+
+```sh
+./build-headless/th08_headless_repair --executable "$PWD/build-headless/th08_headless" \
+  --dat "$PWD/game_data_donottrack/th08.dat" --stage extra --difficulty 0 --seed 0 \
+  --shoot 1 --frames 100000 --seconds 1800 --update-budget 14400000 \
+  --resume-search "$PWD/reports/local/extra-episode1" \
+  --resume-producer /path/to/exact/previous/th08_headless_repair \
+  --output-dir "$PWD/reports/local/extra-episode2"
+```
+
+Keep the previous producer binary when rebuilding the search tool. Resume verifies
+its hash, copies the selected artifacts, reconstructs the selected world afresh,
+and reports prior/new/cumulative costs. An unchanged frontier is rejected rather
+than silently starting the same finite proposal family again.
+
+### Final seed-0 completion
+
+The resumed Extra episode completes the actual carried-world stage at 92339,
+ending after ID204, digest `15529738245795540729`. Its 87 candidates cost 6078636
+native updates, with 6040785 repeated-prefix updates. Fresh source regeneration
+used 69227 updates; final replay used 92339. Across both episodes the verified total
+is 16117163 updates, with no interrupted uncertainty charge, and about 1591.15 seconds
+of managed process wall time. Independent O0 replay agrees; those additional validation
+costs and broad-sweep runs are separate from the managed episode totals.
+The final integrated normal CTest passes 29/29 in 692.31 seconds.
+
+After the rolling sweep and repaired searches, generate the current combined report:
+
+```sh
+cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" \
+  -DCOMPARE_EXECUTABLE="$PWD/build-headless-o0/th08_headless" \
+  -DDAT="$PWD/game_data_donottrack/th08.dat" \
+  -DSWEEP_DIR="$PWD/reports/local/full-sweep" \
+  -DSPELL202_DIR="$PWD/build-headless/headless-regression/id202-repair" \
+  -DSPELL203_DIR="$PWD/build-headless/headless-regression/id203-repair" \
+  -DEXTRA_DIR="$PWD/reports/local/extra-episode2" \
+  -DWORK="$PWD/reports/local/completion-verification" \
+  -DOUTPUT="$PWD/reports/native/headless_current_summary.json" \
+  -P tests/headless_completion.cmake
+```
+
+This verifies three repaired tapes afresh at O3/O0, checks binary/data identities,
+and embeds the rolling failures, prior Extra search, hash-bound lineage, successful
+searches and replay reports. The primary totals are 56 checkpoint recipes and nine
+continuous stage recipes. The nested rolling-only totals remain 54/56 and 8/9.

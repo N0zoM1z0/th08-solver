@@ -58,5 +58,10 @@ without floating-point rounding and compare semantic outcomes before wall-clock 
 The 2026-10-03 regenerated ID202/ID203 group reports include bounded native repair
 and fresh O0/O3 replay. ID202's rolling failures remain, alongside its new 4712-frame
 seed-0 completion. `tests/headless_sweep.cmake` produces the compact current 56-spell
-and nine-stage sweep report; repair-search costs remain in their respective group
-reports instead of duplicating all full reports into another large aggregate.
+and nine-stage rolling component. The completion composer adds only the three
+repaired routes and their search/lineage evidence, rather than duplicating all 65
+full baseline reports into another large aggregate.
+
+| Current producer | Report | Scope |
+|---|---|---|
+| `tests/headless_completion.cmake` | `headless_current_summary.json` | Current 56/56 checkpoint and 9/9 continuous-stage recipes; nested rolling baseline, two Extra search episodes with cumulative costs, and fresh O3/O0 repaired-tape verification |

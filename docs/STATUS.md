@@ -23,7 +23,7 @@ has its own profile and evidence:
 
 | Native headless outcome | Verified coverage |
 |---|---|
-| Complete stages | Easy Stages 1, 2, 3, 4a, 4b, 5, 6a and 6b, Reimu/Yukari, seed 0, `spell-portfolio`; every tape freshly replayed |
+| Complete stages | All nine stage entries: Easy Stages 1/2/3/4a/4b/5/6a/6b via rolling portfolio, continuous Extra via bounded native repair; Reimu/Yukari, seed 0, every selected tape freshly replayed |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
 | Spell solver sweep | 56/56 enumerated Easy standard and Extra checkpoints, seed 0: 54 rolling-portfolio clears plus bounded native-prefix repair for IDs202/203; every selected tape freshly replayed |
 | Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0; ID204 relative-direction profile complete for seeds 0/65535; IDs32/139/167/183 two-leg profiles complete for seeds 0/1/65535 |
@@ -43,7 +43,9 @@ passing component tests are not completion percentages.
 - The current stage records cover 393119 native updates across nine entries,
   including the later Stage3/6b replacement runs. `spell-portfolio` clears Stages
   1/2/3/4a/4b/5/6a/6b in 24135/32448/39767/22089/43700/43348/61041/58853 updates.
-  Extra now passes ID192 and collides in ID202 at 67738. Every tape freshly replays; native carried
+  The rolling Extra route passes ID192 and collides in ID202 at 67738; bounded stage
+  repair first reaches ID203 at 69227, then a verified resumed episode clears at
+  92339 with fresh O3/O0 agreement. Every selected tape freshly replays; native carried
   bullets, items and RNG persist between phases
 - Stage 6b's reactive failure is now reproducible with native collision bounds and
   independent nine-direction replays. Recording-mode movement uses the previously
@@ -101,7 +103,7 @@ passing component tests are not completion percentages.
   born on update 3258. Its copied WAIT program proves unchanged velocity through that
   hit; enabling only the existing bounded WAIT projection avoids it without changing
   the 12-update horizon. Up/up-left inputs at 3264 avoid the hit; all nine replacements
-  at 3265 are too late. The wrapper remains unsolved: seeds 0/1/65535 collide at
+  at 3265 are too late. The rolling wrapper retains failures: seeds 0/1/65535 collide at
   4204/4216/3613, with fresh replay agreement. Seed 0's new blocker is an ECL shot born
   at 4203. A deterministic-preview extension stops earlier because opcode 99 uses
   random-angle selector 10082; no RNG future was guessed or unknown shot omitted
@@ -178,7 +180,7 @@ The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 26 core CTests without private data, plus two optional pinned-source tests
 (28 total), optional headless process-protocol/semantic-contract tests and one optional native real-data CTest. The native test covers complete
-duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, ID202's partial WAIT improvement, ID203's bounded repair and retained rolling failures, fresh replay, and the Stage 6b
+duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, bounded repairs for IDs202/203 and their retained rolling failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
@@ -204,28 +206,36 @@ cross-host or retail bit-equivalence claim.
   reconstructs the actual world/RNG in a fresh process; only the proposal beam shares
   immutable observed hazards. Seeds 1/65535 have no repaired completion claim
 - Repair uses at most 2 rounds, 8 rollback segments per round and 9 direction holds of
-  16 updates, with 144 candidate/2160000 native-update/600-second search limits. Initial
+  H/2 updates (6 for H12, 16 for H32), with 144 candidate/2160000 native-update/600-second isolated-spell search limits. Initial
   execution and final fresh replay have separate costs. All failed candidates remain
   recorded; interrupted/unverified children carry a conservative full-frame-cap charge.
   The observed beam expands at most 16533 prefixes per decision, with stable original
   score ordering and deterministic first-action-family retention
 
-## Next useful work
+## Completion and optional future work
 
-1. ID202's remaining seed-0 failure needs advance emission awareness at update 4203.
-   Its other ECL shots and child patterns consume random angles. Evaluate a conservative
-   emission envelope before considering branch-owned full-world RNG; do not enable the
-   deterministic ID201 preview while silently excluding those random shots
+The requested seed-0 checkpoint/stage goal is complete: 56/56 checkpoint recipes
+and nine continuous stage routes. Final integrated CTest: 29/29 in 692.31 seconds.
+Extra's two episodes used 16117163 verified native updates in total, including
+initial reconstruction, all candidates, resumed reconstruction and final replay;
+independent O0 verification is separate. Zero interrupted-update charges occurred.
+The successful 92339-update tape ends after ID204 and has digest
+`15529738245795540729`. The compact current report preserves the 54/56 and 8/9
+rolling baselines separately from the successful repair recipes and their costs.
+No all-seed, all-character, retail-equivalence or optimal-policy claim is made.
+
+1. Future efficiency work can reduce Extra's repeated native-prefix cost or improve
+   rolling proposals. Preserve the completed stage and report search/verification
+   costs honestly. Do not repeat a failed finite family from an unchanged frontier
 2. Preserve ID204's seed-0/65535 completion and diagnose its remaining seed-1 update-3008
-   untransformed-bullet collision after the seed-0 portfolio gaps. Do not broaden its
+   untransformed-bullet collision as optional multi-seed work. Do not broaden its
    active relative-direction forecast beyond the source-owned transform bound
-3. Apply the bounded native repair to ID202 with an explicitly evidenced proposal
-   profile. The current repair trigger supports H32; do not silently treat ID202's
-   original H12 trace as that profile or skip unsupported hazards
-4. Finish actual continuous Extra beyond ID202, preserving carried world/RNG state.
-   Keep the historical cross-host numerical-profile limitation explicit; its named
+3. Preserve ID202's bounded H12 repair and its failed rolling/RNG seeds. Its random
+   emissions are not an empty deterministic future; improving rolling performance
+   still needs a justified envelope or branch-owned RNG/state evidence
+4. Keep the historical cross-host numerical-profile limitation explicit; its named
    semantic contract does not detect every possible intermediate float drift
-5. Return to ID201 robustness after the remaining seed-0 failure. Seed 1's random child
+5. Optional ID201 multi-seed robustness remains future work. Seed 1's random child
    pattern needs owned RNG/order evidence or a justified conservative envelope; never
    reuse one sampled future across action-dependent branches. Recheck seeds 0/1/65535
 6. After each isolated fix, rerun its baseline, full wrapper, fresh replay, the 56-case
