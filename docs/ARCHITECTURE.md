@@ -173,3 +173,10 @@ It is not the active solver roadmap. Detailed historical structural predictions 
 entry investigations remain recoverable in Git history; they must be revalidated if
 that integration is revisited. Do not use a literal callback operand as the effective
 callback without accounting for wrapper inheritance and reset instructions.
+
+Native lethal-region observations preserve the exact endpoints submitted to
+`Player::CheckLethalCollision`, including misses and invulnerable contacts. They
+are last-update evidence, invalidated on the next native step, not stationary
+future hazards. Future body bounds remain separately certified; an empty current
+actor set must still pass global timeline coverage before returning empty bounds.
+Unknown body creation/motion is not converted to an empty or frozen future.

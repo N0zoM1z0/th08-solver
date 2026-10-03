@@ -216,7 +216,7 @@ bool end_spell_prefix(const Enemy &owner, int sub_id, const EclRawInstruction *c
            end.nextOffset == 12 && end.operandFlags == 0 && end.difficultyMask == 255;
 }
 
-bool timelines_stable_for(const Enemy &owner, unsigned horizon) {
+bool timelines_stable_for(const Enemy *owner, unsigned horizon) {
     const int count = g_EclManager.GetTimelineCount();
     if (count < 0 || count > 16)
         return false;
@@ -245,7 +245,7 @@ bool timelines_stable_for(const Enemy &owner, unsigned horizon) {
         if (instruction->opcode != ECL_TIMELINE_OPCODE_WAIT_FOR_BOSS_DEFEAT)
             return false;
         const int slot = instruction->args.ints[0];
-        if (slot < 0 || slot >= 8 || g_EnemyManager.bosses[slot] != &owner)
+        if (!owner || slot < 0 || slot >= 8 || g_EnemyManager.bosses[slot] != owner)
             return false;
         // This wait cannot advance while the certified boss is active. A
         // phase-death branch grants immunity before later timeline dispatch.
@@ -265,6 +265,7 @@ bool clock_ready() {
 
 EnemyBodyForecast Session::enemy_body_forecast(unsigned horizon) const {
     EnemyBodyForecast result;
+    bool timeline_covered = false;
     auto reject = [&](BodyForecastFailure reason, int owner, unsigned update = 0, int opcode = -1) {
         result.failure = reason;
         result.owner = owner;
@@ -301,8 +302,10 @@ EnemyBodyForecast Session::enemy_body_forecast(unsigned horizon) const {
                 pending_immunity &= !slot.callback;
             for (const auto *child : enemy.childEclBlocks)
                 pending_immunity &= !child;
-            if (pending_immunity && timelines_stable_for(enemy, horizon))
+            if (pending_immunity && timelines_stable_for(&enemy, horizon)) {
+                timeline_covered = true;
                 continue;
+            }
             if (!(flags & ENEMY_FLAG_NO_SPRITE) || !passive_owner(enemy))
                 return reject(BodyForecastFailure::Spawn, enemy.enemyIndex);
             continue;
@@ -335,8 +338,9 @@ EnemyBodyForecast Session::enemy_body_forecast(unsigned horizon) const {
         if (death_mode != ENEMY_DEATH_MODE_END_BOSS_PHASE && !delayed_immunity &&
             enemy.life <= 70 * int(horizon))
             return reject(BodyForecastFailure::Lifecycle, enemy.enemyIndex);
-        if (!timelines_stable_for(enemy, horizon))
+        if (!timelines_stable_for(&enemy, horizon))
             return reject(BodyForecastFailure::Program, enemy.enemyIndex);
+        timeline_covered = true;
         // A nonzero main return stack is harmless here: RETURN/CALL are not
         // supported future instructions, so this forecast never consumes it.
         float x = enemy.position.x, y = enemy.position.y;
@@ -518,6 +522,11 @@ EnemyBodyForecast Session::enemy_body_forecast(unsigned horizon) const {
             return reject(BodyForecastFailure::Numeric, enemy.enemyIndex);
         }
     }
+    // An empty/currently passive actor set is not evidence of an empty future.
+    // Check timeline publication even when no body entered the owner-specific
+    // certificate. A boss wait requires an actually protected owner, not nullptr.
+    if (!timeline_covered && !timelines_stable_for(nullptr, horizon))
+        return reject(BodyForecastFailure::Program, -1);
     return result;
 }
 } // namespace th08::headless
