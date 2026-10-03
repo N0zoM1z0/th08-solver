@@ -1,0 +1,364 @@
+diff --git a/include/th08/native_policy.hpp b/include/th08/native_policy.hpp
+index 973e4bb..b3601ef 100644
+--- a/include/th08/native_policy.hpp
++++ b/include/th08/native_policy.hpp
+@@ -124,6 +124,9 @@ project_bullet(const Bullet &bullet, unsigned step, bool enable_vector_accelerat
+     constexpr std::uint32_t wait = 0x20000;
+     constexpr std::uint32_t relative_direction = 0x40;
+     constexpr std::uint32_t bounce_all = 0x400, bounce_except_bottom = 0x800;
++    if (!bullet.motion_clock_supported)
++        return {bullet.x + step * bullet.vx, bullet.y + step * bullet.vy,
++                BulletProjectionKind::unsupported};
+     if (enable_wait_vector && bullet.active_transforms == 0x20000 && bullet.wait_vector.updates &&
+         step <= bullet.wait_vector.updates) {
+         const auto &state = bullet.wait_vector;
+@@ -196,24 +199,30 @@ project_bullet(const Bullet &bullet, unsigned step, bool enable_vector_accelerat
+         }
+         return {x, y, BulletProjectionKind::relative_direction};
+     }
+-    if (enable_vector_acceleration && bullet.active_transforms == vector_acceleration) {
+-        const int remaining_frames =
+-            std::max(0, bullet.vector_acceleration_duration - bullet.vector_acceleration_timer);
+-        const unsigned accelerated = std::min(step, unsigned(remaining_frames));
+-        const float accelerated_updates = float(accelerated);
+-        const float coefficient =
+-            accelerated_updates * float(step) - accelerated_updates * (accelerated_updates - 1) / 2;
+-        return {bullet.x + step * bullet.vx + coefficient * bullet.vector_acceleration_x,
+-                bullet.y + step * bullet.vy + coefficient * bullet.vector_acceleration_y,
+-                BulletProjectionKind::vector_acceleration};
++    if (enable_vector_acceleration && bullet.active_transforms == vector_acceleration &&
++        bullet.vector_acceleration_updates && step <= bullet.vector_acceleration_updates) {
++        const auto remaining =
++            std::max<std::int64_t>(0, std::int64_t(bullet.vector_acceleration_duration) -
++                                          bullet.vector_acceleration_timer);
++        float x = bullet.x, y = bullet.y, vx = bullet.vx, vy = bullet.vy;
++        for (unsigned update = 0; update < step; ++update) {
++            if (update < std::uint64_t(remaining)) {
++                vx += bullet.vector_acceleration_x;
++                vy += bullet.vector_acceleration_y;
++            }
++            x += vx;
++            y += vy;
++        }
++        return {x, y, BulletProjectionKind::vector_acceleration};
+     }
+     if (enable_wait_linear && bullet.active_transforms == wait && bullet.wait_linear_updates > 0 &&
+         step <= unsigned(bullet.wait_linear_updates))
+         return {bullet.x + step * bullet.vx, bullet.y + step * bullet.vy,
+                 BulletProjectionKind::wait_linear};
+     return {bullet.x + step * bullet.vx, bullet.y + step * bullet.vy,
+-            bullet.active_transforms ? BulletProjectionKind::unsupported
+-                                     : BulletProjectionKind::linear};
++            !bullet.active_transforms && bullet.linear_updates && step <= bullet.linear_updates
++                ? BulletProjectionKind::linear
++                : BulletProjectionKind::unsupported};
+ }
+ inline std::uint16_t input(Direction direction) {
+     return std::uint16_t(4 |
+diff --git a/tests/headless_bullet_bounds.cpp b/tests/headless_bullet_bounds.cpp
+index 0186885..9a7b62d 100644
+--- a/tests/headless_bullet_bounds.cpp
++++ b/tests/headless_bullet_bounds.cpp
+@@ -161,6 +161,116 @@ void check_despawn(th08::headless::Session &session, Fixture &fixture) {
+     check(headless::current_collision().kind == headless::CollisionKind::None,
+           "later despawn animation was incorrectly lethal");
+ }
++
++void check_active_vector(th08::headless::Session &session, Fixture &fixture) {
++    using namespace th08;
++    auto reset = [&](int duration) {
++        fixture.reset();
++        auto &b = fixture.bullet;
++        b.position = {0, 100, 0};
++        b.velocity = {1, 0, 0};
++        b.speed = 1;
++        b.angle = 0;
++        b.activeTransformFlags = BULLET_TRANSFORM_ACCELERATE_VECTOR;
++        b.transformFlags = BULLET_TRANSFORM_ACCELERATE_VECTOR | BULLET_TRANSFORM_ACCELERATE_POLAR;
++        auto &state = b.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION];
++        state.vector = {1, 0, 0};
++        state.timer = 0;
++        state.durationFrames = duration;
++        b.transforms[1].kind = BULLET_TRANSFORM_ACCELERATE_POLAR;
++        b.transforms[1].payload.polarAcceleration = {3, 0, 100, 0};
++    };
++    for (int duration : {0, 1, 32}) {
++        reset(duration);
++        auto &b = fixture.bullet;
++        if (duration == 32) {
++            b.velocity.x = .1f;
++            b.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION].vector.x = .01f;
++        }
++        const auto view = session.bullets().front();
++        check(view.vector_acceleration_updates == unsigned(duration + 1),
++              "VECTOR omitted its final clear movement or crossed the next record");
++        for (unsigned step = 1; step <= view.vector_acceleration_updates; ++step) {
++            BulletManager::OnUpdate(&g_BulletManager);
++            const auto p = policy::detail::project_bullet(view, step);
++            check(p.kind == policy::detail::BulletProjectionKind::vector_acceleration &&
++                      p.x == b.position.x && p.y == b.position.y,
++                  "VECTOR projection differs from native float recurrence");
++        }
++        check(policy::detail::project_bullet(view, duration + 2).kind ==
++                  policy::detail::BulletProjectionKind::unsupported,
++              "VECTOR forecast crossed a blocked next POLAR transform");
++        const auto cleared = session.bullets().front();
++        check(cleared.active_transforms == 0 && cleared.linear_updates == 0 &&
++                  policy::detail::project_bullet(cleared, 1).kind ==
++                      policy::detail::BulletProjectionKind::unsupported,
++              "cleared VECTOR was mistaken for an indefinitely linear future");
++    }
++    reset(1);
++    fixture.bullet.transforms[1].allowWhileActive = 1;
++    check(session.bullets().front().vector_acceleration_updates == 0,
++          "concurrent enabled transform accepted by VECTOR certificate");
++    reset(1);
++    fixture.bullet.transformFlags &= ~BULLET_TRANSFORM_ACCELERATE_POLAR;
++    check(session.bullets().front().vector_acceleration_updates == 2,
++          "disabled disallowing record did not preserve active VECTOR boundary");
++    for (int clock = 0; clock < 3; ++clock) {
++        reset(1);
++        if (clock == 0)
++            g_GameManager.scriptedUpdateFreeze = 1;
++        else if (clock == 1)
++            g_GameManager.flags.deathbombFreezeActive = 1;
++        else
++            g_Supervisor.framerateMultiplier = .5f;
++        const auto view = session.bullets().front();
++        check(!view.motion_clock_supported && view.vector_acceleration_updates == 0,
++              "unsupported current movement clock retained a VECTOR certificate");
++        fixture.bullet.activeTransformFlags = 0;
++        fixture.bullet.transforms[1].kind = BULLET_TRANSFORM_NONE;
++        const auto linear = session.bullets().front();
++        check(linear.linear_updates == 0 && policy::detail::project_bullet(linear, 1).kind ==
++                                                policy::detail::BulletProjectionKind::unsupported,
++              "unsupported clock was relabeled as ordinary linear motion");
++    }
++    reset(1);
++    fixture.bullet.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION].timer.subFrame = .5f;
++    check(session.bullets().front().vector_acceleration_updates == 0,
++          "fractional VECTOR clock accepted");
++    reset(1);
++    fixture.bullet.state = BULLET_STATE_SPAWNING_NORMAL;
++    check(session.bullets().front().vector_acceleration_updates == 0,
++          "non-FIRED VECTOR motion was certified");
++    reset(std::numeric_limits<int>::max());
++    fixture.bullet.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION].timer =
++        std::numeric_limits<int>::max() - 1;
++    const auto near_overflow = session.bullets().front();
++    check(near_overflow.vector_acceleration_updates == 1,
++          "VECTOR lost its safe prefix or included an overflowing update");
++    BulletManager::OnUpdate(&g_BulletManager);
++    check(policy::detail::project_bullet(near_overflow, 1).x == fixture.bullet.position.x &&
++              policy::detail::project_bullet(near_overflow, 2).kind ==
++                  policy::detail::BulletProjectionKind::unsupported,
++          "VECTOR overflow guard differs from the last representable native update");
++    reset(1);
++    fixture.bullet.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION].timer =
++        std::numeric_limits<int>::max();
++    check(session.bullets().front().vector_acceleration_updates == 0,
++          "VECTOR clear update would overflow its timer");
++    reset(1);
++    g_Supervisor.flags.forceExtraTimerStep = 1;
++    check(session.bullets().front().vector_acceleration_updates == 2,
++          "WAIT-only extra decrement was incorrectly applied to VECTOR timer++");
++    fixture.bullet.activeTransformFlags = BULLET_TRANSFORM_WAIT;
++    fixture.bullet.transformFlags = BULLET_TRANSFORM_WAIT | BULLET_TRANSFORM_ACCELERATE_POLAR;
++    fixture.bullet.exStates[BULLET_TRANSFORM_STATE_WAIT].timer = 2;
++    const auto wait = session.bullets().front();
++    check(wait.wait_linear_updates == 0, "WAIT certificate ignored the native extra decrement");
++    for (int i = 0; i < 3; ++i)
++        BulletManager::OnUpdate(&g_BulletManager);
++    check(fixture.bullet.position.x == 6,
++          "extra-decrement witness no longer enters POLAR on the third update");
++    fixture.reset();
++}
+ } // namespace
+ int main(int argc, char **argv) {
+     try {
+@@ -170,8 +280,9 @@ int main(int argc, char **argv) {
+         th08::headless::Session session({dat.c_str(), 8, 203, 4, 0});
+         Fixture fixture;
+         check_vector(session, fixture);
++        check_active_vector(session, fixture);
+         check_despawn(session, fixture);
+-        std::cout << "Native WAIT/vector bounds and terminal DESPAWN collision passed\n";
++        std::cout << "Native active VECTOR/WAIT bounds, clocks and terminal DESPAWN passed\n";
+     } catch (const std::exception &error) {
+         std::cerr << error.what() << '\n';
+         return 1;
+diff --git a/tests/native_policy_tests.cpp b/tests/native_policy_tests.cpp
+index 0676d31..26bd4c6 100644
+--- a/tests/native_policy_tests.cpp
++++ b/tests/native_policy_tests.cpp
+@@ -32,6 +32,9 @@ struct Bullet {
+         float acceleration_x = 0, acceleration_y = 0;
+         unsigned wait_updates = 0, acceleration_updates = 0, updates = 0;
+     } wait_vector{};
++    unsigned vector_acceleration_updates = 0;
++    unsigned linear_updates = std::numeric_limits<unsigned>::max();
++    bool motion_clock_supported = true;
+ };
+ struct Laser {
+     float origin_x, origin_y, angle;
+@@ -171,7 +174,8 @@ int main() {
+     check(pending_body_action == 4 && pending_body_stats.pending_body_overlaps == 1,
+           "common latched body overlap was hidden or treated as controllable");
+ 
+-    const std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
++    std::vector<Bullet> accelerating_bullet{{186, 380, 0, 0, 1, 1, 1, 0x10, 2, 0, 0, 2, 0}};
++    accelerating_bullet.front().vector_acceleration_updates = 3;
+     HazardReactiveStats acceleration_stats;
+     const auto accelerated =
+         hazard_reactive(192, 380, .825f, .825f, 2, 1.414213538f, 4, accelerating_bullet, no_lasers,
+diff --git a/third_party/th08/src/modern/headless/session.cpp b/third_party/th08/src/modern/headless/session.cpp
+index 87467e1..639bf50 100644
+--- a/third_party/th08/src/modern/headless/session.cpp
++++ b/third_party/th08/src/modern/headless/session.cpp
+@@ -257,12 +257,11 @@ bool forecast_shot_origin(const Enemy &enemy, const EnemyEclContext &context,
+ // WAIT; all other enabled transforms end the proof before their update.
+ unsigned linear_updates_after_wait(const BulletTransformRecord *transforms,
+                                    std::uint32_t transform_flags, int next_index, int wait_frames,
+-                                   unsigned limit) {
++                                   unsigned limit, bool wait_active = true) {
+     constexpr std::uint32_t child_secondary = 0x2000000;
+     std::uint64_t updates = 0;
+     int index = next_index;
+     int timer = wait_frames;
+-    bool wait_active = true;
+     while (updates < limit) {
+         if (wait_active) {
+             // Native checks allowWhileActive before transformFlags. A disabled
+@@ -362,12 +361,37 @@ bool active_transform_stays_single(const Bullet &bullet) {
+     return true;
+ }
+ 
++bool unit_bullet_motion_clock() {
++    return g_Supervisor.framerateMultiplier == 1.f && !g_GameManager.scriptedUpdateFreeze &&
++           !g_GameManager.flags.deathbombFreezeActive;
++}
++
++unsigned vector_acceleration_updates(const Bullet &bullet) {
++    const auto &state = bullet.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION];
++    if (!unit_bullet_motion_clock() || bullet.state != BULLET_STATE_FIRED ||
++        bullet.activeTransformFlags != BULLET_TRANSFORM_ACCELERATE_VECTOR ||
++        !active_transform_stays_single(bullet) || state.timer.current < 0 ||
++        state.timer.current == std::numeric_limits<int>::max() || state.timer.subFrame != 0.f ||
++        !std::isfinite(bullet.position.x) || !std::isfinite(bullet.position.y) ||
++        !std::isfinite(bullet.velocity.x) || !std::isfinite(bullet.velocity.y) ||
++        !std::isfinite(state.vector.x) || !std::isfinite(state.vector.y))
++        return 0;
++    // AdvanceTransformProgram precedes UpdateVectorAcceleration. A blocked
++    // record cannot start until the update after the final clear movement.
++    // Every active update, including clear, increments the signed timer. Stop
++    // before overflow without discarding a valid short prefix of a long duration.
++    const auto remaining =
++        std::max<std::int64_t>(0, std::int64_t(state.durationFrames) - state.timer.current);
++    const auto safe_increments =
++        std::int64_t(std::numeric_limits<int>::max()) - state.timer.current;
++    return unsigned(std::min(remaining + 1, safe_increments));
++}
++
+ RelativeDirectionView relative_direction_view(const Bullet &bullet) {
+     RelativeDirectionView view;
+     if (bullet.state != BULLET_STATE_FIRED ||
+         bullet.activeTransformFlags != BULLET_TRANSFORM_CHANGE_DIRECTION_RELATIVE ||
+-        !active_transform_stays_single(bullet) || g_Supervisor.framerateMultiplier != 1.f ||
+-        g_GameManager.scriptedUpdateFreeze)
++        !active_transform_stays_single(bullet) || !unit_bullet_motion_clock())
+         return view;
+     const auto &state = bullet.exStates[BULLET_TRANSFORM_STATE_DIRECTION_CHANGE];
+     if (state.timer.current < 0 || state.timer.subFrame != 0.f ||
+@@ -396,9 +420,8 @@ WaitVectorView wait_vector_view(const Bullet &bullet) {
+     const auto &wait = bullet.exStates[BULLET_TRANSFORM_STATE_WAIT];
+     if (bullet.state != BULLET_STATE_FIRED ||
+         bullet.activeTransformFlags != BULLET_TRANSFORM_WAIT || bullet.transformIndex < 0 ||
+-        bullet.transformIndex >= 17 || wait.timer.subFrame != 0.f ||
+-        g_Supervisor.framerateMultiplier != 1.f || g_GameManager.scriptedUpdateFreeze ||
+-        g_GameManager.flags.deathbombFreezeActive || g_Supervisor.flags.forceExtraTimerStep)
++        bullet.transformIndex >= 17 || wait.timer.subFrame != 0.f || !unit_bullet_motion_clock() ||
++        g_Supervisor.flags.forceExtraTimerStep)
+         return view;
+     const auto &record = bullet.transforms[bullet.transformIndex];
+     // This narrow certificate accepts one already-copied, blocked vector record
+@@ -434,9 +457,8 @@ BoundaryBounceView boundary_bounce_view(const Bullet &bullet) {
+     if (bullet.state != BULLET_STATE_FIRED ||
+         (flags != BULLET_TRANSFORM_BOUNCE_ALL_EDGES &&
+          flags != BULLET_TRANSFORM_BOUNCE_EXCEPT_BOTTOM) ||
+-        !active_transform_stays_single(bullet) || g_Supervisor.framerateMultiplier != 1.f ||
+-        g_GameManager.scriptedUpdateFreeze || !bullet.sprites.bulletVm.loadedSprite ||
+-        bullet.sprites.bulletVm.currentInstruction)
++        !active_transform_stays_single(bullet) || !unit_bullet_motion_clock() ||
++        !bullet.sprites.bulletVm.loadedSprite || bullet.sprites.bulletVm.currentInstruction)
+         return view;
+     const auto &state = bullet.exStates[BULLET_TRANSFORM_STATE_BOUNDARY_BOUNCE];
+     const auto &sprite = *bullet.sprites.bulletVm.loadedSprite;
+@@ -565,18 +587,44 @@ const std::vector<BulletView> &Session::bullets() {
+         if (b.state) {
+             const auto &acceleration = b.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION];
+             int wait_linear_updates = 0;
+-            if (b.activeTransformFlags == BULLET_TRANSFORM_WAIT) {
++            unsigned linear_updates = 0;
++            const bool clock_supported = unit_bullet_motion_clock();
++            const bool linear_state = clock_supported && b.state == BULLET_STATE_FIRED &&
++                                      b.transformIndex >= 0 &&
++                                      !g_Supervisor.flags.forceExtraTimerStep &&
++                                      std::isfinite(b.position.x) && std::isfinite(b.position.y) &&
++                                      std::isfinite(b.velocity.x) && std::isfinite(b.velocity.y);
++            if (linear_state && b.activeTransformFlags == BULLET_TRANSFORM_WAIT &&
++                b.exStates[BULLET_TRANSFORM_STATE_WAIT].timer.subFrame == 0.f) {
+                 const int timer = b.exStates[BULLET_TRANSFORM_STATE_WAIT].timer.current;
+                 wait_linear_updates = int(
+                     linear_updates_after_wait(b.transforms, b.transformFlags, b.transformIndex,
+                                               timer, unsigned(std::numeric_limits<int>::max())));
+             }
+-            views_.push_back({b.position.x, b.position.y, b.velocity.x, b.velocity.y, b.state, slot,
+-                              b.sprites.collisionSize.x, b.sprites.collisionSize.y,
+-                              b.activeTransformFlags, acceleration.vector.x, acceleration.vector.y,
+-                              acceleration.timer.current, acceleration.durationFrames,
+-                              wait_linear_updates, relative_direction_view(b),
+-                              boundary_bounce_view(b), wait_vector_view(b)});
++            if (linear_state && b.activeTransformFlags == 0)
++                linear_updates =
++                    linear_updates_after_wait(b.transforms, b.transformFlags, b.transformIndex, 0,
++                                              std::numeric_limits<unsigned>::max(), false);
++            views_.push_back({b.position.x,
++                              b.position.y,
++                              b.velocity.x,
++                              b.velocity.y,
++                              b.state,
++                              slot,
++                              b.sprites.collisionSize.x,
++                              b.sprites.collisionSize.y,
++                              b.activeTransformFlags,
++                              acceleration.vector.x,
++                              acceleration.vector.y,
++                              acceleration.timer.current,
++                              acceleration.durationFrames,
++                              wait_linear_updates,
++                              relative_direction_view(b),
++                              boundary_bounce_view(b),
++                              wait_vector_view(b),
++                              vector_acceleration_updates(b),
++                              linear_updates,
++                              clock_supported});
+         }
+         ++slot;
+     }
+diff --git a/third_party/th08/src/modern/headless/session.hpp b/third_party/th08/src/modern/headless/session.hpp
+index a0314c1..25cdba9 100644
+--- a/third_party/th08/src/modern/headless/session.hpp
++++ b/third_party/th08/src/modern/headless/session.hpp
+@@ -42,6 +42,12 @@ struct BulletView {
+     RelativeDirectionView relative_direction;
+     BoundaryBounceView boundary_bounce;
+     WaitVectorView wait_vector;
++    // Conditional kinematic bounds under an unchanged unit-step clock. Export
++    // zero when the current clock, state or next transform already breaks that
++    // model. A future ECL clock change remains outside this local certificate.
++    unsigned vector_acceleration_updates = 0;
++    unsigned linear_updates = 0;
++    bool motion_clock_supported = false;
+ };
+ // Raw source-owned laser state after an update. Consumers may forecast existing
+ // lasers, but newly spawned/aimed lasers still belong to the next native update.

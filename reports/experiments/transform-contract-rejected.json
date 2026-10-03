@@ -1,0 +1,284 @@
+{
+  "status": "rejected-not-applied",
+  "base_commit": "fdc8f8fb0ccd4119e7c9cf0b17b5eb84961a9337",
+  "reason": "Two training-seed clears regress; stop requested before further integration or tuning.",
+  "patch_sha256": "86ac1b3b955eaafdca1829783a3c945981c8e84c7e8d1799dae4f00d572e4def",
+  "sweep_binary_sha256": "202634ee071d89df7af386adf66e506dba012de4555556c84ff699d863c7340e",
+  "patch_after_sweep": "Final INT_MAX safe-prefix clamp was tested separately; full matrix used the preceding ordinary-state-equivalent draft. No full-suite pass is claimed.",
+  "holdouts_unrun": [
+    7,
+    2026
+  ],
+  "training": [
+    {
+      "seed": 0,
+      "spell_clears": 54,
+      "stage_clears": 8,
+      "total_native_updates_including_replay": 1160688,
+      "source_summary_sha256": "dbc7bbe098af31709ed44e6771fcf4e478402c104a18667a7d788f8187684f81",
+      "all_fresh_replays_agree": true,
+      "failures": [
+        {
+          "case": "spell-202",
+          "outcome": "collision",
+          "frames": 4212,
+          "trace_digest": "8401078765713344327"
+        },
+        {
+          "case": "spell-203",
+          "outcome": "collision",
+          "frames": 788,
+          "trace_digest": "12658750064283982140"
+        },
+        {
+          "case": "stage-extra",
+          "outcome": "collision",
+          "frames": 67899,
+          "trace_digest": "6633758168999898977"
+        }
+      ]
+    },
+    {
+      "seed": 1,
+      "spell_clears": 51,
+      "stage_clears": 7,
+      "total_native_updates_including_replay": 1050036,
+      "source_summary_sha256": "24ed2aff0ee4eb74f50a5bd39d1f9e40a8617b112c933f98659627b9148c8043",
+      "all_fresh_replays_agree": true,
+      "failures": [
+        {
+          "case": "spell-192",
+          "outcome": "collision",
+          "frames": 788,
+          "trace_digest": "4438791124886163731"
+        },
+        {
+          "case": "spell-200",
+          "outcome": "collision",
+          "frames": 4161,
+          "trace_digest": "7138568974373900992"
+        },
+        {
+          "case": "spell-202",
+          "outcome": "collision",
+          "frames": 4216,
+          "trace_digest": "14351009072477069282"
+        },
+        {
+          "case": "spell-203",
+          "outcome": "collision",
+          "frames": 788,
+          "trace_digest": "372568530981739069"
+        },
+        {
+          "case": "spell-204",
+          "outcome": "collision",
+          "frames": 3008,
+          "trace_digest": "2896725892835740745"
+        },
+        {
+          "case": "stage-6a",
+          "outcome": "collision",
+          "frames": 36696,
+          "trace_digest": "251496131370243114"
+        },
+        {
+          "case": "stage-extra",
+          "outcome": "collision",
+          "frames": 44396,
+          "trace_digest": "8758108674057860753"
+        }
+      ]
+    },
+    {
+      "seed": 42,
+      "spell_clears": 47,
+      "stage_clears": 6,
+      "total_native_updates_including_replay": 928750,
+      "source_summary_sha256": "0c60b8cf240c61987fd889c1db0d290570ccc6a82a7a4349d9186a8c2eee4eec",
+      "all_fresh_replays_agree": true,
+      "failures": [
+        {
+          "case": "spell-147",
+          "outcome": "collision",
+          "frames": 742,
+          "trace_digest": "8603222706041265609"
+        },
+        {
+          "case": "spell-192",
+          "outcome": "collision",
+          "frames": 727,
+          "trace_digest": "15406962186466629804"
+        },
+        {
+          "case": "spell-194",
+          "outcome": "collision",
+          "frames": 907,
+          "trace_digest": "12468110073880930218"
+        },
+        {
+          "case": "spell-195",
+          "outcome": "collision",
+          "frames": 2752,
+          "trace_digest": "7265816170363479238"
+        },
+        {
+          "case": "spell-200",
+          "outcome": "collision",
+          "frames": 1018,
+          "trace_digest": "1841729093058842324"
+        },
+        {
+          "case": "spell-201",
+          "outcome": "collision",
+          "frames": 987,
+          "trace_digest": "4439721575621918373"
+        },
+        {
+          "case": "spell-202",
+          "outcome": "collision",
+          "frames": 4197,
+          "trace_digest": "1142531885767798894"
+        },
+        {
+          "case": "spell-203",
+          "outcome": "collision",
+          "frames": 788,
+          "trace_digest": "17273035399346844340"
+        },
+        {
+          "case": "spell-204",
+          "outcome": "collision",
+          "frames": 3431,
+          "trace_digest": "108736410374677071"
+        },
+        {
+          "case": "stage-4b",
+          "outcome": "collision",
+          "frames": 35571,
+          "trace_digest": "14624899721909528094"
+        },
+        {
+          "case": "stage-6b",
+          "outcome": "collision",
+          "frames": 35675,
+          "trace_digest": "15555318907607879468"
+        },
+        {
+          "case": "stage-extra",
+          "outcome": "collision",
+          "frames": 3463,
+          "trace_digest": "3384416805564494938"
+        }
+      ]
+    },
+    {
+      "seed": 65535,
+      "spell_clears": 49,
+      "stage_clears": 5,
+      "total_native_updates_including_replay": 981256,
+      "source_summary_sha256": "424f1145bd731b2afa7a11b384f8c761283c2d6249c178f75b36b78c9bae1ea6",
+      "all_fresh_replays_agree": true,
+      "failures": [
+        {
+          "case": "spell-119",
+          "outcome": "collision",
+          "frames": 1511,
+          "trace_digest": "9972959367470671609"
+        },
+        {
+          "case": "spell-127",
+          "outcome": "collision",
+          "frames": 3964,
+          "trace_digest": "5985364856755615945"
+        },
+        {
+          "case": "spell-192",
+          "outcome": "collision",
+          "frames": 2631,
+          "trace_digest": "5656960966012446347"
+        },
+        {
+          "case": "spell-194",
+          "outcome": "collision",
+          "frames": 3236,
+          "trace_digest": "13406556137706855852"
+        },
+        {
+          "case": "spell-201",
+          "outcome": "collision",
+          "frames": 700,
+          "trace_digest": "16590548139502676364"
+        },
+        {
+          "case": "spell-202",
+          "outcome": "collision",
+          "frames": 3613,
+          "trace_digest": "11335659347349204154"
+        },
+        {
+          "case": "spell-203",
+          "outcome": "collision",
+          "frames": 788,
+          "trace_digest": "14295772573541179368"
+        },
+        {
+          "case": "stage-4b",
+          "outcome": "collision",
+          "frames": 36984,
+          "trace_digest": "8838521130900963828"
+        },
+        {
+          "case": "stage-6a",
+          "outcome": "collision",
+          "frames": 37111,
+          "trace_digest": "4979793483957272267"
+        },
+        {
+          "case": "stage-6b",
+          "outcome": "collision",
+          "frames": 34437,
+          "trace_digest": "5947193320141547523"
+        },
+        {
+          "case": "stage-extra",
+          "outcome": "collision",
+          "frames": 40891,
+          "trace_digest": "14491175008902101080"
+        }
+      ]
+    }
+  ],
+  "repairs": [
+    {
+      "spell": 202,
+      "outcome": "complete",
+      "candidate_limit": 144,
+      "candidate_update_budget": 2160000,
+      "search_seconds": 600,
+      "candidates": 6,
+      "candidate_native_updates": 25764,
+      "verification_native_updates": 4712,
+      "selected_case": "r1k1a132",
+      "frames": 4712,
+      "trace_digest": "17905529101022474536",
+      "source_summary_sha256": "dbfc080e92b2d157b0be34fc193c03d6b17c42e3859fa08bac0f922c7708c586",
+      "independent_o0_not_run": true
+    },
+    {
+      "spell": 203,
+      "outcome": "complete",
+      "candidate_limit": 144,
+      "candidate_update_budget": 2160000,
+      "search_seconds": 600,
+      "candidates": 77,
+      "candidate_native_updates": 85144,
+      "verification_native_updates": 5492,
+      "selected_case": "r2k1a4",
+      "frames": 5492,
+      "trace_digest": "5345634839313805165",
+      "source_summary_sha256": "ad022d737359e64b46c6a2ff1fc20dcbabfdbd248599e74d5977343e716548bb",
+      "independent_o0_not_run": true
+    }
+  ]
+}
