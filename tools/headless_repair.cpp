@@ -222,14 +222,23 @@ Record record(const fs::path &stem, int code, unsigned cap, bool trace) {
     }
     return result;
 }
-unsigned terminal_unsafe_onset(const Record &source) {
-    // Only a witnessed safe-to-unsafe transition in the terminal H32 run is
-    // eligible. Unknown/no-policy rows break the run rather than imply safety.
+struct RepairTrigger {
+    unsigned onset = 0, horizon = 0;
+};
+RepairTrigger terminal_unsafe_onset(const Record &source) {
+    // Derive the intervention duration from this selected failure's actual
+    // proposal profile. A horizon change breaks the observed run: an H12 safe
+    // observation cannot certify an H32 transition (or vice versa). Unknown
+    // rows likewise supply no safety evidence. The next round derives anew;
+    // candidates within this round all use this fixed source and duration.
+    const unsigned horizon = source.observations.back().horizon;
+    if (horizon != 12 && horizon != 32)
+        return {};
     unsigned onset = 0;
     bool safe = false, unsafe = false;
     for (unsigned frame = 1; frame <= source.frames; ++frame) {
         const auto &sample = source.observations.at(frame);
-        if (sample.horizon != 32 || !sample.overlap) {
+        if (sample.horizon != horizon || !sample.overlap) {
             onset = 0;
             safe = false;
             unsafe = false;
@@ -242,7 +251,7 @@ unsigned terminal_unsafe_onset(const Record &source) {
             unsafe = true;
         }
     }
-    return unsafe ? onset : 0;
+    return {unsafe ? onset : 0, horizon};
 }
 void agree(const Record &a, const Record &b) {
     for (const char *key : {"source_revision",
@@ -376,16 +385,16 @@ int main(int argc, char **argv) {
                 break;
             }
             const auto trigger = terminal_unsafe_onset(current);
-            if (!trigger) {
+            if (!trigger.onset) {
                 reason = "no-supported-unsafe-transition";
                 break;
             }
             auto best = current;
             for (unsigned rollback = 1; rollback <= 8 && !stop; ++rollback) {
-                constexpr unsigned segment = 16;
-                if (trigger <= rollback * segment)
+                const unsigned segment = trigger.horizon / 2;
+                if (trigger.onset <= rollback * segment)
                     continue;
-                const unsigned branch = trigger - rollback * segment;
+                const unsigned branch = trigger.onset - rollback * segment;
                 if (branch - 1 + segment > cap)
                     continue;
                 for (int y = -1; y <= 1 && !stop; ++y)
@@ -453,7 +462,7 @@ int main(int argc, char **argv) {
                             if (candidate.actions.at(i) != current.actions[i])
                                 throw std::runtime_error("candidate prefix action mismatch");
                         audit->validated(candidate.frames);
-                        ledger << round << '\t' << trigger << '\t' << rollback << '\t' << branch
+                        ledger << round << '\t' << trigger.onset << '\t' << rollback << '\t' << branch
                                << '\t' << action << '\t' << candidate.frames << '\t'
                                << candidate.outcome << '\t' << process.wall_ms << '\t'
                                << process.rss_kib << '\t'

@@ -54,8 +54,11 @@ int main(int argc, char **argv) {
     if (args.count("--policy-log")) {
         std::ofstream log(args["--policy-log"]);
         log << "frame\toverlap\thorizon\ttrace_digest\n";
-        for (unsigned f = 1; f <= frames; ++f)
-            log << f << '\t' << (f < 32 ? 33 : 1) << "\t32\t" << f << '\n';
+        for (unsigned f = 1; f <= frames; ++f) {
+            const unsigned horizon = seed == 10 ? 12 : seed == 11 ? 20 :
+                                     seed == 12 && f >= 32 ? 12 : 32;
+            log << f << '\t' << (f < 32 ? horizon + 1 : 1) << '\t' << horizon << '\t' << f << '\n';
+        }
     }
     const unsigned prefix = args.count("--prefix-frame") ? std::stoul(args["--prefix-frame"]) : 0;
     std::ofstream out(args["--output"]);
