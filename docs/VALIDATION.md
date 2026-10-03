@@ -532,3 +532,58 @@ creates regressions: seed zero ID108/147 hit enemy bodies and ID175 hits an
 unsupported polar transform. It is rejected as a general fix. No seed/frame or
 new spell-ID branch is introduced to hide those failures. Seeds 7 and 2026 remain
 reserved, uninspected holdouts until a justified candidate is frozen.
+
+
+### Paused transform-contract experiment
+
+The owner requested a tidy, published stopping point. The active source remains
+at the reviewed body-observation/multi-seed checkpoint; the following experiment
+was rejected rather than silently changing failure fixtures or tuning seeds.
+The existing seed-zero completion report remains historical evidence for its
+recorded native binary, not a newly regenerated search under this experiment.
+
+Native-linked probes established three forecast defects:
+- A VECTOR clearing at update 2 followed by a blocked POLAR produces x=2,4,8;
+  the old unbounded vector projection gives 2,4,6. An allowed concurrent POLAR
+  already changes the first update from predicted x=2 to actual x=4
+- Native float recurrence gives x=8.480000496 at update 32 for vx=.1, ax=.01;
+  the closed form gives 8.479999542. Exact float equivalence is not established
+- WAIT timer 2 with the extra timer step and a subsequent POLAR gives x=1,2,6,
+  whereas the nominal three-update linear certificate incorrectly gives x=1,2,3
+
+The draft adds bounded VECTOR recurrence, explicit supported-clock checks and an
+inactive-program linear certificate. It does not enable generic WAIT/POLAR or H32.
+Focused core tests pass 26/26 and native bounds checks pass O3/O0 before the final
+INT_MAX safe-prefix clamp; that final clamp has a focused O3 pass. The full normal
+suite was **not** completed for this draft. Its old ID202 boundary assertion failed
+because rolling collision moved from 4204 to 4212; it was not rebaselined.
+
+The already-started four-seed, 65-route sweep completed with fresh replay agreement
+for all 260 routes. Compared with the published rolling baseline:
+
+| Seed | Draft spell clears | Draft stage clears | Published spell/stage clears |
+|---|---|---|---|
+| 0 | 54/56 | 8/9 | 54/56, 8/9 |
+| 1 | 51/56 | 7/9 | 51/56, 7/9 |
+| 42 | 47/56 | 6/9 | 48/56, 6/9 |
+| 65535 | 49/56 | 5/9 | 50/56, 5/9 |
+
+New failures are ID195 seed42 at 2752 and ID192 seed65535 at 2631. The unchanged
+seed-zero bounded repair budgets still complete ID202 (4712 updates, six candidates,
+25764 candidate updates) and ID203 (5492 updates, 77 candidates, 85144 candidate
+updates), with built-in fresh replay. Independent O0 comparison of these draft
+repair tapes was not run. No repaired Extra search or new completion claim follows.
+
+[Compact results](../reports/experiments/transform-contract-rejected.json) record
+binary/report hashes, failures, costs and verification limits. The accompanying
+[archived patch](../reports/experiments/transform-contract-rejected.patch) applies
+to fdc8f8fb0ccd4119e7c9cf0b17b5eb84961a9337, but is not compiled or applied.
+The sweep binary precedes its final INT_MAX clamp; that edge change must not be
+mistaken for a fully swept final binary. Do not apply it without integration review
+and the same regression matrix. No DAT, extracted assets or action tapes are included.
+
+Remaining work is bounded and separate: fix the demonstrated transform contracts
+without losing successful scenes; cover lethal body motion only with valid
+lifecycle/child/timeline certificates; improve the two late laser warnings without
+hardcoded frames or unsupported geometry. Global H32 remains rejected. Holdout
+seeds 7 and 2026 remain uninspected, and work is paused until requested again.

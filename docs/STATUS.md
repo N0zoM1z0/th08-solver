@@ -1,7 +1,7 @@
 # Current handoff status
 
 Reviewed: 2026-10-03. Native headless adaptation and complete real-data solver experiments
-are active again at the owner's request. Earlier subset/component evidence remains separate.
+are paused at the owner's request after publishing the reviewed checkpoint. Earlier subset/component evidence remains separate.
 
 ## Verified coverage
 
@@ -212,7 +212,7 @@ cross-host or retail bit-equivalence claim.
   The observed beam expands at most 16533 prefixes per decision, with stable original
   score ordering and deterministic first-action-family retention
 
-## Completion and optional future work
+## Completion and paused follow-up work
 
 The requested seed-0 checkpoint/stage goal is complete: 56/56 checkpoint recipes
 and nine continuous stage routes. Final integrated CTest: 29/29 in 692.31 seconds.
@@ -235,12 +235,21 @@ No all-seed, all-character, retail-equivalence or optimal-policy claim is made.
    still needs a justified envelope or branch-owned RNG/state evidence
 4. Keep the historical cross-host numerical-profile limitation explicit; its named
    semantic contract does not detect every possible intermediate float drift
-5. Optional ID201 multi-seed robustness remains future work. Seed 1's random child
-   pattern needs owned RNG/order evidence or a justified conservative envelope; never
-   reuse one sampled future across action-dependent branches. Recheck seeds 0/1/65535
+5. Optional ID201 multi-seed robustness remains future work. Seed 1 now passes;
+   seeds 42/65535 still fail. Random child patterns need owned RNG/order evidence or
+   a justified conservative envelope; never reuse one sampled future across
+   action-dependent branches. Recheck all retained training seeds
 6. After each isolated fix, rerun its baseline, full wrapper, fresh replay, the 56-case
    sweep and the affected continuous stage. Record failed seeds as failures rather than
    changing budgets, tie-breaking or RNG consumption to improve the count
 
 Do not return to full camera/menu reconstruction merely to unblock a controlled
 benchmark. Do not concatenate isolated spell fixtures and label the result an actual stage.
+
+
+The final transform-contract experiment is **not applied**: it proves real forecast
+boundary/clock defects, but loses two previously successful training cases. Its
+exact reviewable patch and compact results are archived under
+[reports/experiments](../reports/experiments/transform-contract-rejected.json).
+See [Validation](VALIDATION.md#paused-transform-contract-experiment) before resuming.
+No new solver campaign is running; holdout seeds 7 and 2026 remain unrun.
