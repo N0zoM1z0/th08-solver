@@ -263,7 +263,7 @@ transforms remain counted soft projections, never certified empty future space.
 The rolling beam still collides at 787 for seeds 0/1/65535.
 
 `th08_headless_repair` first executes that policy from the requested original checkpoint.
-For a collision with an observed terminal safe-to-unsafe transition, it enumerates
+For ID203's H32 collision with an observed terminal safe-to-unsafe transition, it enumerates
 rollback counts 1..8 times 16 updates and nine row-major direction holds of 16 updates.
 The first replaced action is one-based; earlier tape actions and the hold's non-direction
 bits are preserved. Each child process replays its exact prefix, executes its intervention,
@@ -271,14 +271,16 @@ then resumes the unchanged policy. Source-prefix projection digests and all forc
 are checked, so action-dependent native aiming, feedback and RNG belong to that child.
 No native memory snapshot or shared future world is used.
 
-After each full round, only the longest genuine collision survivor advances, with first
+After each full or budget-interrupted round, only the longest validated collision survivor advances, with first
 candidate winning equal-frame ties. Search stops on the first full completion, no progress,
 unsupported trigger or explicit budget. The fixed tested family is two rounds, 144 candidates,
 2160000 native candidate updates and 600 seconds; the CLI exposes frame/update/wall budgets
 for longer scenes. Initial execution and final verification replay are counted separately.
 The seed 0 ID203 run automatically finds a complete 5492-update tape after 91 candidates;
 none of its intervention frames are encoded in the algorithm. This does not establish
-other seeds or a continuous Extra clear, which still stops earlier in ID202.
+other seeds or a continuous Extra clear. The rolling stage route stops in ID202;
+the first stage-sized native repair reaches ID203 at 69227, still a collision.
+The verified resumed episode subsequently completes the continuous stage at 92339.
 
 Strict `--replay` stops at its tape boundary. Explicit `--resume-prefix` continues
 with the selected policy; a 50-update control prefix reproduces the original 787 tape.
@@ -408,3 +410,21 @@ RNG, input-latch semantics and collision authority remain unchanged.
 The isolated ID202 seed-0 recipe retains H12 and completes 4712 updates after 24
 native candidates. This does not solve its other seeds or permit deterministic
 preview to omit random shots. ID203 retains its H32/63-prefix proposal profile.
+
+### Resuming a bounded native search
+
+`--resume-search` requires the previous output directory and `--resume-producer`
+requires the exact previous repair executable. Native executable bytes must also
+match. Only a strictly improved collision frontier is eligible: unchanged progress
+would repeat the same finite family. The selected greatest-survival/first-tie case,
+ledger costs, embedded report and all required artifacts are checked. A confined,
+hash-verified snapshot records the exact prior inputs before new work begins.
+
+The selected prefix is reexecuted from the original stage start in a fresh process;
+the remaining unchanged adaptive policy must reproduce the entire action tape,
+report, prefix provenance and per-update policy/digest history. Only then may a new
+bounded episode use the resulting terminal horizon. No native memory is copied.
+Prior costs, new regeneration/search/verification costs and cumulative totals stay
+separate. Missing historical cost fields reject resume rather than imply free work.
+A budget/time stop retains the best fully validated candidate already found; the
+interrupted child cannot replace it and retains its full frame-cap uncertainty charge.

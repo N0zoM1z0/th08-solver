@@ -2,6 +2,7 @@
 #include <array>
 #include <cerrno>
 #include <chrono>
+#include <cmath>
 #include <csignal>
 #include <cstdint>
 #include <filesystem>
@@ -284,12 +285,13 @@ void agree(const Record &a, const Record &b) {
         a.report.substr(ca) != b.report.substr(cb) || a.actions != b.actions)
         throw std::runtime_error("fresh replay collision/tape differs");
 }
+#include "headless_resume.hpp"
 } // namespace
 
 int main(int argc, char **argv) {
     std::unique_ptr<Audit> audit;
     try {
-        fs::path executable, directory;
+        fs::path executable, directory, resume_directory, resume_producer;
         std::vector<std::string> scene;
         std::map<std::string, std::string> seen;
         unsigned cap = 15000, seconds = 600, rounds = 2;
@@ -304,6 +306,10 @@ int main(int argc, char **argv) {
                 executable = fs::absolute(value);
             else if (key == "--output-dir")
                 directory = fs::absolute(value);
+            else if (key == "--resume-search")
+                resume_directory = fs::absolute(value);
+            else if (key == "--resume-producer")
+                resume_producer = fs::absolute(value);
             else if (key == "--frames")
                 cap = unsigned(integer(value, 1000000));
             else if (key == "--seconds")
@@ -327,6 +333,8 @@ int main(int argc, char **argv) {
                 "executable, scene, fresh output directory and positive budgets required");
         if (!update_budget)
             update_budget = std::uint64_t(rounds) * 72 * cap;
+        if (resume_directory.empty() != resume_producer.empty())
+            throw std::runtime_error("resume-search requires its original producer binary");
         if (!fs::create_directory(directory))
             throw std::runtime_error("output directory must be new");
         audit = std::make_unique<Audit>(directory);
@@ -337,6 +345,10 @@ int main(int argc, char **argv) {
         audit->native_hash = file_hash(executable);
         audit->repair_hash = file_hash("/proc/self/exe");
         const auto overall_start = Clock::now();
+        std::unique_ptr<Resume> resumed;
+        if (!resume_directory.empty())
+            resumed = std::make_unique<Resume>(snapshot_resume(
+                resume_directory, directory / "prior", resume_producer, audit->native_hash, cap));
         auto arguments = [&](const fs::path &stem, bool trace) {
             std::vector<std::string> args{executable.string()};
             args.insert(args.end(), scene.begin(), scene.end());
@@ -350,12 +362,30 @@ int main(int argc, char **argv) {
         const fs::path initial = directory / "initial";
         auto args = arguments(initial, true);
         args.insert(args.end(), {"--strategy", "spell-portfolio"});
+        if (resumed && !resumed->prefix.empty())
+            args.insert(args.end(), {"--resume-prefix", resumed->prefix.string(), "--prefix-frame",
+                                     field(resumed->selected.report, "prefix_frame")});
         const auto initial_process =
             audit->execute(0, initial, cap, args, Clock::now() + std::chrono::seconds(seconds));
         if (initial_process.interrupted)
             throw std::runtime_error(
                 "initial run exceeded wall budget; updates bounded by frame cap");
         auto current = record(initial, initial_process.code, cap, true);
+        if (resumed) {
+            agree(resumed->selected, current);
+            for (const auto *key : {"prefix_frame", "prefix_trace_digest", "unused_actions"})
+                if (field(resumed->selected.report, key) != field(current.report, key))
+                    throw std::runtime_error("resume prefix provenance differs");
+            if (resumed->selected.observations.size() != current.observations.size())
+                throw std::runtime_error("resume policy history length differs");
+            for (std::size_t i = 0; i < current.observations.size(); ++i) {
+                const auto &old = resumed->selected.observations[i];
+                const auto &fresh = current.observations[i];
+                if (old.overlap != fresh.overlap || old.horizon != fresh.horizon ||
+                    old.digest != fresh.digest)
+                    throw std::runtime_error("resume policy history differs");
+            }
+        }
         for (const auto &entry : std::map<std::string, std::pair<std::string, std::string>>{
                  {"--stage", {"stage", "1"}},
                  {"--spell-id", {"requested_spell_id", "-1"}},
@@ -389,6 +419,7 @@ int main(int argc, char **argv) {
                 reason = "no-supported-unsafe-transition";
                 break;
             }
+            const auto source_stem = current.stem;
             auto best = current;
             for (unsigned rollback = 1; rollback <= 8 && !stop; ++rollback) {
                 const unsigned segment = trigger.horizon / 2;
@@ -462,8 +493,8 @@ int main(int argc, char **argv) {
                             if (candidate.actions.at(i) != current.actions[i])
                                 throw std::runtime_error("candidate prefix action mismatch");
                         audit->validated(candidate.frames);
-                        ledger << round << '\t' << trigger.onset << '\t' << rollback << '\t' << branch
-                               << '\t' << action << '\t' << candidate.frames << '\t'
+                        ledger << round << '\t' << trigger.onset << '\t' << rollback << '\t'
+                               << branch << '\t' << action << '\t' << candidate.frames << '\t'
                                << candidate.outcome << '\t' << process.wall_ms << '\t'
                                << process.rss_kib << '\t'
                                << field(candidate.report, "prefix_trace_digest") << '\n';
@@ -480,12 +511,17 @@ int main(int argc, char **argv) {
                             best = std::move(candidate);
                     }
             }
+            // Budget interruption does not erase an earlier fully validated
+            // improvement. Never promote the interrupted child, and retain the
+            // first candidate on equal survival. A complete winner already owns
+            // current and must not be overwritten by an earlier failed best.
+            if (reason != "complete" && best.frames > current.frames)
+                current = best;
             if (!stop) {
-                if (best.frames <= current.frames) {
+                if (best.stem == source_stem) {
                     reason = "no-progress-finite-family";
                     break;
                 }
-                current = std::move(best);
             }
         }
         const double search_ms =
@@ -506,10 +542,28 @@ int main(int argc, char **argv) {
             audit->validated(verified.frames);
         }
         audit->write(reason);
+        const double total_ms =
+            std::chrono::duration<double, std::milli>(Clock::now() - overall_start).count();
         std::ofstream output(directory / "summary.json");
         // Keep phase costs distinct; embed the selected native report.
         output << "{\"producer\":\"th08_headless_repair\",\"outcome\":\"" << reason
-               << "\",\"candidate_limit\":" << rounds * 72 << ",\"child_executable_sha256\":\""
+               << "\",\"prior_verified_native_updates\":" << (resumed ? resumed->known : 0)
+               << ",\"prior_unverified_update_upper_bound\":" << (resumed ? resumed->uncertain : 0)
+               << ",\"prior_wall_ms\":" << (resumed ? resumed->wall_ms : 0)
+               << ",\"cumulative_wall_ms\":" << total_ms + (resumed ? resumed->wall_ms : 0)
+               << ",\"initial_kind\":\"" << (resumed ? "fresh-prefix-regeneration" : "fresh-policy")
+               << "\""
+               << ",\"prior_manifest_sha256\":\""
+               << (resumed ? file_hash(directory / "prior" / "manifest.tsv") : "") << "\""
+               << ",\"cumulative_verified_native_updates\":"
+               << checked_add(
+                      resumed ? resumed->known : 0,
+                      checked_add(audit->known[0], checked_add(audit->known[1], audit->known[2])))
+               << ",\"cumulative_unverified_update_upper_bound\":"
+               << checked_add(resumed ? resumed->uncertain : 0,
+                              checked_add(audit->uncertain[0],
+                                          checked_add(audit->uncertain[1], audit->uncertain[2])))
+               << ",\"candidate_limit\":" << rounds * 72 << ",\"child_executable_sha256\":\""
                << audit->native_hash << "\",\"repair_executable_sha256\":\"" << audit->repair_hash
                << "\""
                << ",\"candidate_update_budget\":" << update_budget
@@ -522,8 +576,7 @@ int main(int argc, char **argv) {
                << ",\"initial_wall_ms\":" << initial_process.wall_ms
                << ",\"search_wall_ms\":" << search_ms
                << ",\"verification_native_updates\":" << replay_updates
-               << ",\"verification_wall_ms\":" << replay_ms << ",\"total_wall_ms\":"
-               << std::chrono::duration<double, std::milli>(Clock::now() - overall_start).count()
+               << ",\"verification_wall_ms\":" << replay_ms << ",\"total_wall_ms\":" << total_ms
                << ",\"selected_case\":\"" << current.stem.filename().string()
                << "\",\"execution\":" << current.report << "}\n";
         if (!output)

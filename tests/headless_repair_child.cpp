@@ -43,7 +43,14 @@ int main(int argc, char **argv) {
         while (f >> a)
             actions.push_back(a);
     }
-    const unsigned frames = (resume || replay || seed == 5) ? 80 : 64;
+    if (seed == 14 && resume && !actions.empty() && actions.back() != 84) {
+        signal(SIGTERM, SIG_IGN);
+        for (;;)
+            pause();
+    }
+    const unsigned frames = (seed == 13 || seed == 14) && (resume || replay) ? 90
+                            : (resume || replay || seed == 5)                ? 80
+                                                                             : 64;
     const bool complete = frames == 80;
     actions.resize(frames, 4);
     if (seed == 6 && resume)
@@ -55,8 +62,10 @@ int main(int argc, char **argv) {
         std::ofstream log(args["--policy-log"]);
         log << "frame\toverlap\thorizon\ttrace_digest\n";
         for (unsigned f = 1; f <= frames; ++f) {
-            const unsigned horizon = seed == 10 ? 12 : seed == 11 ? 20 :
-                                     seed == 12 && f >= 32 ? 12 : 32;
+            const unsigned horizon = seed == 10              ? 12
+                                     : seed == 11            ? 20
+                                     : seed == 12 && f >= 32 ? 12
+                                                             : 32;
             log << f << '\t' << (f < 32 ? horizon + 1 : 1) << '\t' << horizon << '\t' << f << '\n';
         }
     }
