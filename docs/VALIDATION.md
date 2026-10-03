@@ -417,3 +417,30 @@ Generated source-oracle translation units belong only in ignored build directori
 Their maintained generators share `source_probe_support.*`, not another tool's main().
 Game DAT/EXE/assets are not distributed. Keep [third-party notices](THIRD_PARTY_NOTICES.md)
 and the original preparation attribution; do not assign those artifacts a new license.
+
+### Restored full verification (2026-10-03)
+
+The H12/H32 repair adapter derives half-horizon holds from the selected failure's
+homogeneous terminal unsafe run. It does not relabel ID202 as H32. The rebuilt
+GCC14 O3/O0 run completes ID202 at 4712: 24 candidates, 102001 candidate updates,
+100602 replayed-prefix updates, digest `7360258866840071988`. ID203 reproduces
+5492 with 91 candidates and 138198 candidate updates. Both reports preserve their
+rolling failures and independently replay at O0/O3. These two bounded repairs plus
+the unchanged 54 rolling successes establish 56/56 seed-0 checkpoint recipes.
+The fresh full CTest run passed 29/29 in 732.98 seconds, including native real-DAT,
+O0 comparison and the historical Stage6b semantic-contract/18-probe checks.
+Earlier timing paragraphs are historical measurements, not this run's timings.
+
+The optional broad sweep now has a maintained producer. It records compact current
+results, literal tape hashes and native executable identity while retaining the
+full reports/tapes in the local output directory:
+
+```sh
+cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" \
+  -DDAT="$PWD/game_data_donottrack/th08.dat" \
+  -DWORK="$PWD/reports/local/full-sweep" -P tests/headless_sweep.cmake
+```
+
+Its fixed 56-case rolling sweep and nine actual stage entries are independent of
+the repair searches. A collision remains a collision in this report; adding two
+isolated repair successes does not imply continuous Extra is complete.

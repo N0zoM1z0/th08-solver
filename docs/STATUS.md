@@ -1,6 +1,6 @@
 # Current handoff status
 
-Reviewed: 2026-10-02. Native headless adaptation and complete real-data solver experiments
+Reviewed: 2026-10-03. Native headless adaptation and complete real-data solver experiments
 are active again at the owner's request. Earlier subset/component evidence remains separate.
 
 ## Verified coverage
@@ -25,7 +25,7 @@ has its own profile and evidence:
 |---|---|
 | Complete stages | Easy Stages 1, 2, 3, 4a, 4b, 5, 6a and 6b, Reimu/Yukari, seed 0, `spell-portfolio`; every tape freshly replayed |
 | Complete spell survival | Raw ID179 Easy, stage 6b, seeds 0/1/65535; 1292 updates including wrapper |
-| Spell solver sweep | 55/56 enumerated Easy standard and Extra checkpoints, seed 0: 54 rolling-portfolio clears plus bounded native-prefix repair for ID203; every selected tape freshly replayed |
+| Spell solver sweep | 56/56 enumerated Easy standard and Extra checkpoints, seed 0: 54 rolling-portfolio clears plus bounded native-prefix repair for IDs202/203; every selected tape freshly replayed |
 | Transform/profile cross-check | IDs 85/198 pooled-laser motion, ID89 direct ECL, ID93 imminent pooled laser, IDs 193/195 source-vector and ID199 linear ranking complete for seeds 0/1/65535; ID201 bounded WAIT/ECL-shot profile complete for seed 0; ID204 relative-direction profile complete for seeds 0/65535; IDs32/139/167/183 two-leg profiles complete for seeds 0/1/65535 |
 | Genuine failed baseline | Focused stationary ID179, seed 0; collision at update 382 |
 | Stage 6b failure diagnosis | Easy seed 0 reactive; update 854, bullet slot 664; late intervention fails 9/9, one-update-earlier leftward intervention survives 3/9 |
@@ -58,7 +58,7 @@ passing component tests are not completion percentages.
 - On the fixed seed-0 Easy/Extra matrix, the simple reactive policy completed 19/56
   checkpoints. `spell-portfolio` completed 54/56 with no lost baseline completion;
   all 56 success/failure tapes replayed with matching terminal, RNG, feedback, collision
-  and trace projection. ID202 remains unsolved; ID203 additionally completes through the bounded repair recipe
+  and trace projection. IDs202/203 additionally complete through the bounded repair recipe
 - Vector-acceleration projection fixed ID193's transform-0x10 collision and completed
   IDs 193/195 for seeds 0, 1 and 65535. ID199 instead completed all three seeds with
   constant-velocity ranking; its isolated selector lives outside the generic kernel

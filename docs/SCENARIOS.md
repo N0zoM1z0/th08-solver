@@ -393,3 +393,18 @@ hashes and routes are in [reports](../reports/native/README.md).
 The adapter's immutable Program must outlive World copies. Its digest covers the owned
 projection and hazard trace, not every field of a full game. This is a complete controlled
 survival segment, not retail capture, x87 equivalence or full-stage completion.
+
+### Bounded H12/H32 repair extension
+
+For each selected collision, use the actual final policy horizon (only 12 or 32).
+A horizon change or unknown row breaks the safe/unsafe history. Only a witnessed
+safe-to-unsafe transition within that homogeneous terminal run supplies an onset.
+Hold duration is H/2; enumerate eight rollback segments and nine direction holds
+in existing order. Each candidate replays its exact prefix in a fresh native
+process, then resumes the unchanged portfolio. A later selected round derives its
+own horizon; candidates do not change the source horizon mid-round. Native state,
+RNG, input-latch semantics and collision authority remain unchanged.
+
+The isolated ID202 seed-0 recipe retains H12 and completes 4712 updates after 24
+native candidates. This does not solve its other seeds or permit deterministic
+preview to omit random shots. ID203 retains its H32/63-prefix proposal profile.

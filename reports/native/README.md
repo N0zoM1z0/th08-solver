@@ -54,3 +54,9 @@ digest mismatch without claiming cross-environment trajectory equality (see Vali
 Experiment in ignored `reports/local/`; regenerate tracked records deliberately from
 their maintained C++ producer. Do not commit raw game assets. Preserve large digests
 without floating-point rounding and compare semantic outcomes before wall-clock time.
+
+The 2026-10-03 regenerated ID202/ID203 group reports include bounded native repair
+and fresh O0/O3 replay. ID202's rolling failures remain, alongside its new 4712-frame
+seed-0 completion. `tests/headless_sweep.cmake` produces the compact current 56-spell
+and nine-stage sweep report; repair-search costs remain in their respective group
+reports instead of duplicating all full reports into another large aggregate.
