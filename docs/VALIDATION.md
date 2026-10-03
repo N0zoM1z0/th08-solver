@@ -495,3 +495,40 @@ This verifies three repaired tapes afresh at O3/O0, checks binary/data identitie
 and embeds the rolling failures, prior Extra search, hash-bound lineage, successful
 searches and replay reports. The primary totals are 56 checkpoint recipes and nine
 continuous stage recipes. The nested rolling-only totals remain 54/56 and 8/9.
+
+### Multi-seed robustness baseline (2026-10-03)
+
+The requested additional seeds were fixed before inspection: 1, 42 and 65535.
+Each ran the same 56-checkpoint plus nine-continuous-stage rolling matrix and
+frame caps, without automatic repair searches. All 195 fresh replays agree.
+Use `-DSEED=<value>` with `tests/headless_sweep.cmake`; the default remains zero.
+
+| Seed | Rolling spell clears | Rolling stage clears | Native updates including replay | Decision time, all 65 runs |
+|---|---|---|---|---|
+| 0 | 54/56 | 8/9 | 1160236 | 147.16 s |
+| 1 | 51/56 | 7/9 | 1046086 | 113.64 s |
+| 42 | 48/56 | 6/9 | 934060 | 100.44 s |
+| 65535 | 50/56 | 5/9 | 916710 | 102.17 s |
+
+These are rolling-only comparisons, not comparisons with seed zero's additional
+repair wins. Earlier failed termination reduces work, so lower elapsed time is not
+an efficiency improvement. Seed zero also ran alongside other verification;
+these host timings are descriptive, not isolated performance benchmarks.
+
+Retained spell failures (ID@update):
+- Seed 1: 192@1470, 200@4161, 202@4216, 203@787, 204@3008
+- Seed 42: 147@742, 192@727, 194@907, 200@1018, 201@2317, 202@4197, 203@787, 204@3008
+- Seed 65535: 119@1511, 127@3964, 194@3236, 201@700, 202@3613, 203@787
+
+Continuous-stage failures expose carried-world differences: ID127 in Stage6a
+(seeds 1/65535), ID155 in Stage6b (42/65535), direct/imminent lasers in Stage4b
+(42/65535), and different Extra failures. An isolated successful spell is not a
+promise that the same spell clears inside a stage. ID201 seed 1 now completes on
+this current native build; the earlier 3455 failure is historical evidence.
+
+A diagnostic-only global H32 control, with the same nine focused constant paths,
+avoids four local ID127/155 wall traps from identical replayed prefixes. It also
+creates regressions: seed zero ID108/147 hit enemy bodies and ID175 hits an
+unsupported polar transform. It is rejected as a general fix. No seed/frame or
+new spell-ID branch is introduced to hide those failures. Seeds 7 and 2026 remain
+reserved, uninspected holdouts until a justified candidate is frozen.

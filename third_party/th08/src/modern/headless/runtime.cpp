@@ -12,6 +12,7 @@ namespace th08::headless {
 namespace {
 CollisionEvent observed_collision;
 std::vector<LaserHitboxView> observed_laser_hitboxes;
+std::vector<LethalRegionView> observed_lethal_regions;
 struct LaserSnapshot {
     float origin_x = 0, origin_y = 0, angle = 0;
     bool in_use = false;
@@ -28,6 +29,7 @@ int pooled_laser_slot(const Float3 *owner_position) {
 void begin_update_observation() {
     observed_collision = {};
     observed_laser_hitboxes.clear();
+    observed_lethal_regions.clear();
     for (int i = 0; i < 256; ++i) {
         const auto &laser = g_BulletManager.lasers[i];
         laser_snapshots[i] =
@@ -40,6 +42,9 @@ CollisionEvent current_collision() {
 }
 const std::vector<LaserHitboxView> &current_laser_hitboxes() {
     return observed_laser_hitboxes;
+}
+const std::vector<LethalRegionView> &current_lethal_regions() {
+    return observed_lethal_regions;
 }
 LaserMotionObservation current_laser_motion(int slot) {
     if (slot < 0 || slot >= 256)
@@ -62,11 +67,17 @@ void prepare_observation_storage() {
     // enemies can add direct ECL calls. This avoids growth in measured scenes;
     // vector ownership still preserves every call if a later scene exceeds it.
     observed_laser_hitboxes.reserve(1536);
+    // Trails can submit more regions than active enemies. Reserve only avoids
+    // common reallocations; vector ownership retains every call without a cap.
+    observed_lethal_regions.reserve(512);
 }
 void record_laser_hitbox(const Float3 &center, const Float3 &size, const Float3 &origin,
                          float angle, bool graze_enabled) {
     observed_laser_hitboxes.push_back({center.x, center.y, size.x, size.y, origin.x, origin.y,
                                        angle, pooled_laser_slot(&origin), graze_enabled});
+}
+void record_lethal_region(const Float3 &minimum, const Float3 &maximum) {
+    observed_lethal_regions.push_back({{minimum.x, minimum.y, maximum.x, maximum.y}});
 }
 void record_collision(CollisionKind kind, const Float3 &pmin, const Float3 &pmax,
                       const Float3 &hmin, const Float3 &hmax, const Float3 *owner_position) {

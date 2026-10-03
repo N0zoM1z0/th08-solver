@@ -604,6 +604,9 @@ const std::vector<LaserView> &Session::lasers() {
 const std::vector<LaserHitboxView> &Session::laser_hitboxes() const {
     return current_laser_hitboxes();
 }
+const std::vector<LethalRegionView> &Session::lethal_regions() const {
+    return current_lethal_regions();
+}
 const std::vector<EclContextView> &Session::ecl_contexts() {
     ecl_views_.clear();
     auto append = [&](const Enemy &enemy, const EnemyEclContext &context, int child_slot) {

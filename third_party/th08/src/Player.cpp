@@ -353,6 +353,11 @@ i32 Player::CheckLethalCollision(Float3 *position, Float3 *size)
     boundsMin.y = position->y - size->y / 2.0f;
     boundsMax.x = size->x / 2.0f + position->x;
     boundsMax.y = size->y / 2.0f + position->y;
+#ifdef TH08_HEADLESS
+    // Observe all submitted bodies/trails, not only the region that killed the
+    // player. Reuse native rounded endpoints; do not reconstruct eligibility.
+    headless::record_lethal_region(boundsMin, boundsMax);
+#endif
 
     if (this->hurtboxBoundsMin.x > boundsMax.x ||
         this->hurtboxBoundsMin.y > boundsMax.y ||

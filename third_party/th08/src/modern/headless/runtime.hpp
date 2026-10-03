@@ -20,10 +20,12 @@ struct LaserMotionObservation {
 void begin_update_observation();
 CollisionEvent current_collision();
 const std::vector<LaserHitboxView> &current_laser_hitboxes();
+const std::vector<LethalRegionView> &current_lethal_regions();
 LaserMotionObservation current_laser_motion(int slot);
 void prepare_observation_storage();
 void record_laser_hitbox(const Float3 &center, const Float3 &size, const Float3 &origin,
                          float angle, bool graze_enabled);
+void record_lethal_region(const Float3 &minimum, const Float3 &maximum);
 void record_collision(CollisionKind, const Float3 &player_min, const Float3 &player_max,
                       const Float3 &hazard_min, const Float3 &hazard_max,
                       const Float3 *owner_position = nullptr);

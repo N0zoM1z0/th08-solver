@@ -97,8 +97,8 @@ passing component tests are not completion percentages.
   ECL shots over a 32-update horizon. Its seed-0 wrapper completes at update 4292;
   15140 source-decoded spawn observations produced 184616 warnings, 638 decisions were
   constrained and no unsupported future was substituted. Fresh replay matches digest
-  `954752188841509475`. Seed 1 still collides at 3455 and seed 65535 at 700; seed 1's
-  confirmed gap is an RNG-dependent child pattern, so this is not multi-seed coverage
+  `954752188841509475`. At the earlier checkpoint, seed 1 collided at 3455 and seed 65535 at 700; seed 1's
+  confirmed gap is an RNG-dependent child pattern, so that checkpoint was not multi-seed coverage. The current multi-seed sweep additionally clears seed 1; seed 65535 still fails
 - ID202's generic policy collides at update 3265 with slot 1369, a random child already
   born on update 3258. Its copied WAIT program proves unchanged velocity through that
   hit; enabling only the existing bounded WAIT projection avoids it without changing

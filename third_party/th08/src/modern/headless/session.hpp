@@ -121,6 +121,12 @@ enum class CollisionKind { None, Bullet, LethalRegion, Laser };
 struct Bounds {
     float left = 0, top = 0, right = 0, bottom = 0;
 };
+// Exact rectangles submitted to CheckLethalCollision in the most recent native
+// update, including enemy bodies and trails. This is observation only: no claim
+// that an actor stays here or remains lethal on a future update.
+struct LethalRegionView {
+    Bounds bounds;
+};
 // Captured at the successful original collision test, before death feedback.
 // Laser bounds are in its rotated test coordinates; other bounds are world pixels.
 struct CollisionEvent {
@@ -181,6 +187,9 @@ class Session {
     const std::vector<LaserView> &lasers();
     // Calls observed in the most recent native update; invalidated by step().
     const std::vector<LaserHitboxView> &laser_hitboxes() const;
+    // Preserves every submitted native region, even when the player did not hit
+    // it or was invulnerable. Invalidated by the next step(), not a forecast.
+    const std::vector<LethalRegionView> &lethal_regions() const;
     // Reused post-update ECL cursor storage; invalidated by the next call.
     const std::vector<EclContextView> &ecl_contexts();
     // Reused source-owned spawn previews; this read never resolves RNG operands.

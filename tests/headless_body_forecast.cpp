@@ -3,6 +3,7 @@
 #include "Player.hpp"
 #include "Supervisor.hpp"
 #include "modern/headless/body_math.hpp"
+#include "modern/headless/runtime.hpp"
 #include "modern/headless/session.hpp"
 #include <cstdio>
 #include <cstdlib>
@@ -136,6 +137,28 @@ int main(int argc, char **argv) {
     }
         interval_cases();
         expect("baseline", false);
+        {
+            // A pending timeline can create the first body: no active owner
+            // must not be mistaken for certified empty future space.
+            std::vector<unsigned> flags;
+            for (auto &enemy : g_EnemyManager.enemies) {
+                flags.push_back(enemy.flags1);
+                enemy.flags1 = 0;
+            }
+            auto &timeline = g_EnemyManager.timelines[0];
+            auto *instruction = timeline.instruction;
+            const auto opcode = instruction->opcode;
+            const auto time = instruction->time;
+            instruction->time = timeline.timer.current;
+            instruction->opcode = ECL_TIMELINE_OPCODE_SPAWN_ENEMY;
+            expect("empty world imminent timeline spawn", true);
+            instruction->opcode = ECL_TIMELINE_OPCODE_WAIT_FOR_BOSS_DEFEAT;
+            expect("empty world unprotected boss wait", true);
+            instruction->opcode = opcode;
+            instruction->time = time;
+            for (std::size_t i = 0; i < flags.size(); ++i)
+                g_EnemyManager.enemies[i].flags1 = flags[i];
+        }
         CHECK(g_Supervisor.flags.forceExtraTimerStep, 1, "extra timer step");
         CHECK(g_Supervisor.framerateMultiplier, .5f, "nonunit clock");
         CHECK(boss->flags2, boss->flags2 | ENEMY_FLAG2_FORCE_PAUSE, "force pause");
@@ -267,6 +290,35 @@ int main(int argc, char **argv) {
             boss->deathCallbackSubId = callback;
         }
         expect("restored", false);
+        {
+            // Native observation includes a miss and an invulnerable overlap;
+            // neither should disappear merely because no death was recorded.
+            headless::begin_update_observation();
+            const auto player_state = g_Player.playerState;
+            g_Player.playerState = PLAYER_STATE_INVULNERABLE;
+            Float3 far{-1000.f, -1000.f, 0.f}, size{5.f, 7.f, 0.f};
+            const auto missed = g_Player.CheckLethalCollision(&far, &size);
+            Float3 touching = g_Player.position;
+            const auto overlapped = g_Player.CheckLethalCollision(&touching, &size);
+            const auto &regions = s.lethal_regions();
+            ++tests;
+            if (missed != 0 || overlapped != 1 || regions.size() != 2 ||
+                regions[0].bounds.left != far.x - size.x / 2.f ||
+                regions[0].bounds.bottom != size.y / 2.f + far.y ||
+                regions[1].bounds.right != size.x / 2.f + touching.x ||
+                regions[1].bounds.top != touching.y - size.y / 2.f ||
+                s.collision().kind != headless::CollisionKind::None) {
+                printf("FAIL native lethal-region observation\n");
+                ++fails;
+            }
+            headless::begin_update_observation();
+            ++tests;
+            if (!s.lethal_regions().empty()) {
+                printf("FAIL stale lethal-region observation\n");
+                ++fails;
+            }
+            g_Player.playerState = player_state;
+        }
         printf("tests=%u failures=%u\n", tests, fails);
         return fails ? 1 : 0;
     } catch (const std::exception &error) {
