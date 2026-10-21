@@ -1,9 +1,9 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 26
+Core CTest cases: 27
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (28 total). A native build with private DAT adds one full-scene CTest.
+add two CTests (29 total). A native build with private DAT adds one full-scene CTest.
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.

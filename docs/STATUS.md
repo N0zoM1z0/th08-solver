@@ -178,8 +178,8 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 26 core CTests without private data, plus two optional pinned-source tests
-(28 total), optional headless process-protocol/semantic-contract tests and one optional native real-data CTest. The native test covers complete
+There are 27 core CTests without private data, plus two optional pinned-source tests
+(29 total), optional headless process-protocol/semantic-contract tests and one optional native real-data CTest. The native test covers complete
 duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, bounded repairs for IDs202/203 and their retained rolling failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
