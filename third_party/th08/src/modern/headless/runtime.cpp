@@ -1,14 +1,44 @@
 #include "runtime.hpp"
 #include "BulletManager.hpp"
 #include "Gui.hpp"
+#include "Player.hpp"
 #include "modern/windows_runtime.hpp"
 #include <array>
+#include <cassert>
 
 uint16_t th08_headless_input = 0;
 uint64_t th08_headless_frame = 0;
 uint64_t th08::headless::file_io_ns = 0;
 
 namespace th08::headless {
+CancelRegionScope *CancelRegionScope::current_ = nullptr;
+CancelRegionScope::CancelRegionScope(Player &player) : player_(&player), previous_(current_) {
+    for (const auto &region : player.cancelRegions)
+        if (region.active) {
+            empty_ = false;
+            break;
+        }
+    current_ = this;
+}
+CancelRegionScope::~CancelRegionScope() {
+    current_ = previous_;
+}
+bool CancelRegionScope::known_empty(const Player *player) {
+    if (!current_ || current_->player_ != player || !current_->empty_)
+        return false;
+#ifndef NDEBUG
+    // Catch a new writer that bypasses the two source-owned creation APIs.
+    for (const auto &region : player->cancelRegions)
+        assert(!region.active);
+#endif
+    return true;
+}
+void CancelRegionScope::invalidate(const Player *player) {
+    for (auto *scope = current_; scope; scope = scope->previous_)
+        if (scope->player_ == player)
+            scope->empty_ = false;
+}
+
 namespace {
 CollisionEvent observed_collision;
 std::vector<LaserHitboxView> observed_laser_hitboxes;

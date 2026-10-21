@@ -830,6 +830,9 @@ ChainCallbackResult BulletManager::OnUpdate(BulletManager *bulletManager)
         return CHAIN_CALLBACK_RESULT_CONTINUE;
 
     g_ItemManager.OnUpdate();
+#ifdef TH08_HEADLESS
+    headless::CancelRegionScope cancelRegions(g_Player);
+#endif
     bulletManager->activeBulletCount = 0;
     bulletManager->ClearDrawBuckets();
 

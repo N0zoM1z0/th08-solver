@@ -5,6 +5,7 @@
 
 namespace th08 {
 struct Float3;
+struct Player;
 }
 
 // One original game instance per process. These are explicit input/clock ports,
@@ -13,6 +14,28 @@ extern uint16_t th08_headless_input;
 extern uint64_t th08_headless_frame;
 
 namespace th08::headless {
+// On the single calc thread, one bullet-manager callback owns this read scope.
+// Its empty-region proof removes repeated per-bullet scans; either creation API
+// invalidates it.
+// Active/invalidated scopes and calls outside a scope use the original predicate.
+// No scope survives a native update or a planner checkpoint. Nested scopes keep
+// their own owners, and creation invalidates every matching enclosing scope.
+class CancelRegionScope {
+  public:
+    explicit CancelRegionScope(Player &);
+    ~CancelRegionScope();
+    CancelRegionScope(const CancelRegionScope &) = delete;
+    CancelRegionScope &operator=(const CancelRegionScope &) = delete;
+    static bool known_empty(const Player *);
+    static void invalidate(const Player *);
+
+  private:
+    static CancelRegionScope *current_;
+    const Player *player_;
+    CancelRegionScope *previous_;
+    bool empty_ = true;
+};
+
 struct LaserMotionObservation {
     float origin_delta_x = 0, origin_delta_y = 0, angle_delta = 0;
     bool continuous = false;

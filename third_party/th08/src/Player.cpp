@@ -242,6 +242,10 @@ PlayerBombWorkItem::PlayerBombWorkItem() {}
 #pragma var_order(halfSize, yDelta, xDelta, i, rotated, delta, slot, boundsMax)
 i32 Player::CheckBulletCancelCollision(Float3 *position, Float3 *position2)
 {
+#ifdef TH08_HEADLESS
+    if (headless::CancelRegionScope::known_empty(this))
+        return 0;
+#endif
     Float3 delta;
     Float3 rotated;
     Float3 halfSize;
@@ -1813,6 +1817,9 @@ ZunResult Player::LoadShtFile(PlayerRawShtFile **header, const char *path)
 PlayerCollisionRegion *Player::CreateRectCancelRegion(const Float3 *center, f32 width, f32 height,
                                                       i32 collisionValue, i32 lifetime)
 {
+#ifdef TH08_HEADLESS
+    headless::CancelRegionScope::invalidate(this);
+#endif
     PlayerCollisionRegion *slot = this->cancelRegions;
     i32 index;
 
@@ -1840,6 +1847,9 @@ PlayerCollisionRegion *Player::CreateCircleCancelRegion(const Float3 *center, f3
                                                         f32 radiusGrowthPerFrame, i32 lifetime,
                                                         i32 collisionValue)
 {
+#ifdef TH08_HEADLESS
+    headless::CancelRegionScope::invalidate(this);
+#endif
     PlayerCollisionRegion *slot = this->cancelRegions;
     i32 index;
 

@@ -82,6 +82,18 @@ In recording mode the supervisor samples controller input at priority 0, Player 
 at 9, BulletManager updates/collides at 14, and ReplayManager latches movement input
 at 17. Player therefore reads the previous latch. The headless adapter preserves this
 order; proposals must account for the pending input rather than reorder the game.
+
+Within `BulletManager::OnUpdate`, after item updates, a stack-owned
+`CancelRegionScope` checks whether all player cancel regions are inactive. That
+proof allows each bullet to return the original empty-scan result immediately.
+The two source creation APIs invalidate every enclosing scope for that player;
+active or invalidated scopes keep the original ordered scan, geometry and hit/item
+side effects. Existing lifetime/bomb-pointer updates only alter or deactivate
+regions. A new activation writer must invalidate the proof; Debug queries assert
+its invariant. The scope belongs to the single calc thread, restores its parent
+on exit and never survives a native update/checkpoint. It stores no gameplay state,
+advances no clock and consumes no RNG.
+
 `Session::collision()` owns a value copy captured at the successful source collision
 test before death effects alter RNG/state. It identifies bullets, lethal regions or
 lasers and records the exact checked bounds and input values. Every native

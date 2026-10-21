@@ -86,6 +86,11 @@ set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH
   "Optional native executable built at another optimization level")
 
 if(BUILD_TESTING)
+  add_executable(th08_headless_cancel_regions tests/headless_cancel_regions.cpp)
+  target_link_libraries(th08_headless_cancel_regions PRIVATE th08_native_headless)
+  target_compile_options(th08_headless_cancel_regions PRIVATE -ffp-contract=off
+    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+  add_test(NAME headless_cancel_regions COMMAND th08_headless_cancel_regions)
   add_executable(th08_headless_opcode_guards tests/headless_opcode_guards.cpp)
   target_link_libraries(th08_headless_opcode_guards PRIVATE th08_native_headless)
   target_compile_options(th08_headless_opcode_guards PRIVATE -ffp-contract=off
