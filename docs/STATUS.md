@@ -13,6 +13,12 @@ fork rollouts and verified commits; it adds no spell-92 strategy branch. The
 and failed searches, fresh verification, budgets, executable identities and total
 native costs. Unfinished processes contribute only a pending identifier.
 
+The current scope prioritizes full-story seed robustness; online control is deferred.
+Eight seeds were drawn before inspection under the
+[frozen story-seed protocol](../reports/native/planner_seed_protocol.json). Independent
+cell16/cell32 attempts are running with unchanged per-attempt budgets. Pending
+attempts are not completions; successful tapes still require fresh full verification.
+
 | Current Lunatic native-profile result | Evidence |
 |---|---|
 | Spell 92, stage 4b | Training seeds 0/1/42/65535 complete and freshly replay with spatial/focus beam retention. Frozen R64/cell16/shoot1 also passes holdouts 7/2026. Training takes 2756–2835 updates and about 15–17 seconds in the concurrent campaign; these are not isolated timing samples |

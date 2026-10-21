@@ -1,0 +1,56 @@
+{
+  "source_commit": "0215b7f028f78d3a91b28105c8877706b8a5e413",
+  "candidate_frozen_before_any_case": true,
+  "draw_method": "eight uint16 values read once from OS entropy before running cases",
+  "draw_values": [
+    4455,
+    12525,
+    30504,
+    31338,
+    24196,
+    35540,
+    1763,
+    2138
+  ],
+  "training_seeds": [
+    4455,
+    12525,
+    30504,
+    31338
+  ],
+  "holdout_seeds": [
+    24196,
+    35540,
+    1763,
+    2138
+  ],
+  "frozen_profiles": [
+    {
+      "rollout": 64,
+      "beam": 384,
+      "diversity_cell": 16
+    },
+    {
+      "rollout": 64,
+      "beam": 384,
+      "diversity_cell": 32
+    }
+  ],
+  "per_attempt": {
+    "story": 1,
+    "stage": 0,
+    "difficulty": 3,
+    "shot": 0,
+    "shoot": 1,
+    "commit": 8,
+    "checkpoint": 120,
+    "keep": 64,
+    "attempts": 4,
+    "cegar": 4,
+    "frames": 250000,
+    "seconds": 2400
+  },
+  "holdout_rule": "No holdout feedback before candidate freeze; changes require a separate frozen evaluation",
+  "all_attempts_and_failures_retained": true,
+  "proves_all_uint16_seeds": false
+}

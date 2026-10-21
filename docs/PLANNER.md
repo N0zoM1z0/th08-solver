@@ -127,6 +127,17 @@ candidate is frozen. The R64/beam384/cell16/shoot1 spell-92 candidate was frozen
 all four training seeds passed, with checkpoint60/keep12/180-second budgets; both
 holdouts then completed and freshly replayed without tuning. This evaluates that
 checkpoint/profile, not a continuous story or all-seed robustness.
+
+The subsequent [story-seed protocol](../reports/native/planner_seed_protocol.json)
+draws eight uint16 seeds once from OS entropy before inspecting outcomes. Training
+seeds 4455/12525/30504/31338 support diagnosis; 24196/35540/1763/2138 are reserved
+for the frozen candidate's holdout evaluation. Both existing seed-zero story
+profiles, R64/beam384/cell16 and cell32, are frozen before these cases. Each attempt
+keeps its 250000-update/2400-second budget and all native retry costs; running two
+profiles costs two attempts, not one. Any tuned successor must be frozen before
+using holdout feedback. Require full-story fresh action and natural replay proofs;
+a finite seed sample cannot certify all 65536 initial seeds.
+
 The reviewed handoff records Lunatic practice Stages 1–3 and a
 story prefix blocked at spell 92; local/integrated reproductions must be labeled
 separately. A practice clear, partial story or sampled seed success is not a full run.
