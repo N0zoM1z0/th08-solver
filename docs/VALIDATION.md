@@ -81,6 +81,21 @@ in the ledger. The checked originals are tracked under
 [native replays](../reports/native/replays/); fresh-verification copies and raw rows
 remain ignored.
 
+For new batches, pass repeatable `--group NAME` arguments; each named directory must
+exist. Explicit groups require `<case>-verify.exit` and, for whole scenes,
+`<case>-rpy.exit` to be zero in addition to their successful JSON reports. Legacy
+default groups remain reproducible without these previously unrecorded sidecars.
+The suffixes `-verify`, `-rpy` and `-accounting` are reserved for validation sidecars.
+Use `--failed-actions-dir reports/native/failed-actions` to retain each failed
+attempt's final emitted tape with a hash, parsed NMNB input/count checks and the
+role `failed_search_prefix`. These tapes are execution-unverified prefixes, not
+successful demonstrations or all rejected internal rollouts. Existing artifact
+names are idempotent only for identical bytes; conflicts fail without overwriting.
+
+```sh
+./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --replay-dir reports/native/replays --failed-actions-dir reports/native/failed-actions --output reports/native/planner_seed_summary.json
+```
+
 One full source/adapter differential additionally plays the archived
 `story-prefix-v1--p132200-r64-b384-c16.rpy` through the pinned full native Debug/O0
 build, retaining production draw callbacks with private Xvfb, dummy audio and

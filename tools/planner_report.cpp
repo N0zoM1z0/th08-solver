@@ -2,6 +2,7 @@
 // fields and private paths never become public evidence; unfinished jobs supply
 // only a pending ID. Verification checks execution agreement, not retail physics.
 #include "headless_report.hpp"
+#include "th08/plan_prefix.hpp"
 #include <openssl/evp.h>
 
 #include <algorithm>
@@ -454,7 +455,8 @@ std::uint64_t accounting_receipt(Case &result, const fs::path &root, std::uint64
 Fields replay_summary(const Fields &input) {
     auto result = scalars(input, {"rows", "finished", "natural", "steps", "runtime_error",
                                   "io_error", "death_rows", "bomb_input_rows", "replay_sha256",
-                                  "dat_sha256", "source_revision"});
+                                  "dat_sha256", "source_revision", "replay_target_exe_size",
+                                  "replay_target_exe_checksum", "replay_target_version"});
     if (input.count("binary_sha256")) {
         const auto identity = scalars(input, {"binary_sha256"});
         result.emplace("checker_sha256", field(identity, "binary_sha256"));
@@ -512,7 +514,23 @@ void bind_replay(const Fields &receipt, const Case &result, const std::string &r
     replay_identity(receipt, result, replay_hash);
 }
 
-void verify_complete(Case &result, const fs::path &root) {
+void check_process_exit(const fs::path &path, Fields &summary, const char *failure, bool required) {
+    // Older campaigns used checked shell commands without sidecar receipts.
+    // If a receipt exists, successful JSON cannot override a failed process.
+    require(!required || fs::exists(path), "missing_process_receipt");
+    if (!fs::exists(path))
+        return;
+    require(fs::is_regular_file(path) && !fs::is_symlink(path), "invalid_process_receipt");
+    auto text = read(path);
+    while (!text.empty() && (text.back() == '\n' || text.back() == '\r'))
+        text.pop_back();
+    const auto code = integer(text);
+    require(code <= 255, "invalid_process_exit_code");
+    summary.emplace("process_exit_code", std::to_string(code));
+    require(code == 0, failure);
+}
+
+void verify_complete(Case &result, const fs::path &root, bool require_process_receipts) {
     const auto directory = result.group == "spell92-diversity-v3"
                                ? root / "spell92-verified" / result.id
                                : root / result.group / (result.id + "-verify");
@@ -522,6 +540,8 @@ void verify_complete(Case &result, const fs::path &root) {
     result.verify_sha256 = digest(text);
     result.verification = scalars(verification, verify_keys);
     add_calculations(result.verification, verification);
+    check_process_exit(root / result.group / (result.id + "-verify.exit"), result.verification,
+                       "verification_process_failed", require_process_receipts);
     if (verification.count("options"))
         result.verification_options = scalars(parse(field(verification, "options")), option_keys);
     require(field(verification, "verified") == "true", "verification_failed");
@@ -587,6 +607,8 @@ void verify_complete(Case &result, const fs::path &root) {
         require(fs::is_regular_file(path), "missing_natural_replay");
         const auto replay = parse(read(path));
         result.rpy = replay_summary(replay);
+        check_process_exit(root / result.group / (result.id + "-rpy.exit"), result.rpy,
+                           "natural_replay_process_failed", require_process_receipts);
         replay_identity(result.rpy, result, "");
         const auto rows = integer(field(replay, "rows"));
         require(rows == expected_rows || observed_calculations, "missing_calculation_accounting");
@@ -608,28 +630,11 @@ void verify_complete(Case &result, const fs::path &root) {
     }
 }
 
-void archive_complete(Case &result, const fs::path &root, const fs::path &destination) {
-    if (destination.empty() || numeric(field(result.plan, "spell")) >= 0)
-        return;
-    const auto directory = root / result.group / result.id;
-    const auto replay = read(directory / "th8_solver.rpy", 64 * 1024 * 1024);
-    const auto actions = read(directory / "plan.actions", 64 * 1024 * 1024);
-    const auto replay_hash = digest(replay), actions_hash = digest(actions);
-    bind_replay(result.archive_replay.empty() ? result.rpy : result.archive_replay, result,
-                replay_hash);
-    replay_identity(result.rpy, result, replay_hash);
-    bool bound_actions = false;
-    for (const auto *proof : {&result.verification, &result.accounting})
-        if (proof->count("actions_sha256")) {
-            require(field(*proof, "actions_sha256") == quote(actions_hash),
-                    "archive_actions_hash_mismatch");
-            bound_actions = true;
-        }
-    require(bound_actions, "missing_archive_actions_binding");
-    const auto basename = result.group + "--" + result.id;
-    const std::array<std::string, 2> names{basename + ".rpy", basename + ".actions"};
-    const std::array<std::string, 2> contents{replay, actions}, hashes{replay_hash, actions_hash};
-    std::array<bool, 2> existing{}, staged{}, created{};
+template <std::size_t N>
+void publish_artifacts(const fs::path &destination, const std::array<std::string, N> &names,
+                       const std::array<std::string, N> &contents,
+                       const std::array<std::string, N> &hashes) {
+    std::array<bool, N> existing{}, staged{}, created{};
     for (std::size_t i = 0; i < names.size(); ++i) {
         const auto path = destination / names[i];
         existing[i] = fs::exists(path);
@@ -667,15 +672,62 @@ void archive_complete(Case &result, const fs::path &root, const fs::path &destin
         }
         throw;
     }
+}
+
+void archive_complete(Case &result, const fs::path &root, const fs::path &destination) {
+    if (destination.empty() || numeric(field(result.plan, "spell")) >= 0)
+        return;
+    const auto directory = root / result.group / result.id;
+    const auto replay = read(directory / "th8_solver.rpy", 64 * 1024 * 1024);
+    const auto actions = read(directory / "plan.actions", 64 * 1024 * 1024);
+    const auto replay_hash = digest(replay), actions_hash = digest(actions);
+    bind_replay(result.archive_replay.empty() ? result.rpy : result.archive_replay, result,
+                replay_hash);
+    replay_identity(result.rpy, result, replay_hash);
+    bool bound_actions = false;
+    for (const auto *proof : {&result.verification, &result.accounting})
+        if (proof->count("actions_sha256")) {
+            require(field(*proof, "actions_sha256") == quote(actions_hash),
+                    "archive_actions_hash_mismatch");
+            bound_actions = true;
+        }
+    require(bound_actions, "missing_archive_actions_binding");
+    const auto basename = result.group + "--" + result.id;
+    const std::array<std::string, 2> names{basename + ".rpy", basename + ".actions"};
+    const std::array<std::string, 2> contents{replay, actions}, hashes{replay_hash, actions_hash};
+    publish_artifacts(destination, names, contents, hashes);
     result.artifacts = {{"rpy_file", quote(names[0])},
                         {"rpy_sha256", quote(replay_hash)},
                         {"actions_file", quote(names[1])},
                         {"actions_sha256", quote(actions_hash)}};
 }
 
+void archive_failed_actions(Case &result, const fs::path &root, const fs::path &destination) {
+    if (destination.empty())
+        return;
+    const auto actions = read(root / result.group / result.id / "plan.actions", 64 * 1024 * 1024);
+    const auto frames = integer(field(result.plan, "frames"));
+    require(frames <= 64 * 1024 * 1024, "invalid_failed_prefix_frames");
+    th08::plan::PrefixParser parser{std::size_t(frames)};
+    parser.append(actions.data(), actions.size());
+    require(parser.finish().size() == frames, "failed_prefix_count_mismatch");
+    const auto hash = digest(actions);
+    const std::array<std::string, 1> names{result.group + "--" + result.id + ".actions"};
+    publish_artifacts(destination, names, std::array<std::string, 1>{actions},
+                      std::array<std::string, 1>{hash});
+    // This is the final emitted search prefix, not a successful demonstration
+    // or an archive of every rejected internal rollout.
+    result.artifacts = {{"actions_file", quote(names[0])},
+                        {"actions_sha256", quote(hash)},
+                        {"actions_frames", std::to_string(frames)},
+                        {"artifact_role", quote("failed_search_prefix")},
+                        {"execution_verified", "false"}};
+}
+
 Case collect(const fs::path &root, const std::string &group, const std::string &id,
              const std::string &known_binary, const std::string &known_dat,
-             const fs::path &replay_directory, Totals &totals) {
+             const fs::path &replay_directory, const fs::path &failed_actions_directory,
+             bool require_process_receipts, Totals &totals) {
     Case result;
     result.group = group;
     result.id = id;
@@ -743,12 +795,13 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
             account(plan, key, totals.cost_totals[key]);
         if (outcome != "complete") {
             result.status = "failed";
+            archive_failed_actions(result, root, failed_actions_directory);
             ++totals.failed;
             return result;
         }
         result.status = "unverified_complete";
         require(result.exit_code == 0, "complete_process_failed");
-        verify_complete(result, root);
+        verify_complete(result, root, require_process_receipts);
         archive_complete(result, root, replay_directory);
         result.status = "verified_complete";
         ++totals.complete;
@@ -780,8 +833,10 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
 }
 
 struct Options {
-    fs::path root, fidelity, output, replay_directory;
+    fs::path root, fidelity, output, replay_directory, failed_actions_directory;
     std::string known_binary;
+    std::vector<std::string> groups;
+    bool explicit_groups = false;
 };
 
 Options options(int argc, char **argv) {
@@ -789,7 +844,7 @@ Options options(int argc, char **argv) {
     std::set<std::string> seen;
     for (int i = 1; i < argc; ++i) {
         const std::string key = argv[i];
-        require(i + 1 < argc && seen.insert(key).second, "invalid_options");
+        require(i + 1 < argc && (key == "--group" || seen.insert(key).second), "invalid_options");
         const std::string value = argv[++i];
         if (key == "--root")
             result.root = value;
@@ -799,7 +854,15 @@ Options options(int argc, char **argv) {
             result.output = value;
         else if (key == "--replay-dir")
             result.replay_directory = value;
-        else if (key == "--known-binary-sha256") {
+        else if (key == "--failed-actions-dir")
+            result.failed_actions_directory = value;
+        else if (key == "--group") {
+            require(identifier(value) && std::find(result.groups.begin(), result.groups.end(),
+                                                   value) == result.groups.end(),
+                    "invalid_group");
+            result.groups.push_back(value);
+            result.explicit_groups = true;
+        } else if (key == "--known-binary-sha256") {
             require(hex(value, 64), "invalid_known_binary_hash");
             result.known_binary = value;
         } else
@@ -807,6 +870,17 @@ Options options(int argc, char **argv) {
     }
     require(!result.root.empty() && !result.fidelity.empty() && !result.output.empty(),
             "required_options_missing");
+    if (result.groups.empty())
+        result.groups = {"spell92-v1",
+                         "spell92-diversity-v2",
+                         "spell92-diversity-v3",
+                         "spell92-training-v1",
+                         "spell92-efficiency-v1",
+                         "spell92-holdout-v1",
+                         "practice-v1",
+                         "advance-v1",
+                         "story-v2",
+                         "story-prefix-v1"};
     return result;
 }
 
@@ -827,31 +901,33 @@ int report(const Options &opt) {
                 failures.push_back(scalars(entry, {"id", "outcome", "failure", "rows", "sha256"}));
     Totals totals;
     std::vector<Case> cases;
-    for (const auto *group : {"spell92-v1", "spell92-diversity-v2", "spell92-diversity-v3",
-                              "spell92-training-v1", "spell92-efficiency-v1", "spell92-holdout-v1",
-                              "practice-v1", "advance-v1", "story-v2", "story-prefix-v1"}) {
+    for (const auto &group : opt.groups) {
         const auto directory = opt.root / group;
+        require(!opt.explicit_groups || fs::is_directory(directory), "missing_group");
         if (!fs::is_directory(directory))
             continue;
+        require(!fs::is_symlink(directory), "unsafe_group");
         std::set<std::string> ids;
         for (const auto &entry : fs::directory_iterator(directory)) {
             auto id = entry.path().filename().string();
-            if (entry.is_directory()) {
-                if ((id.size() >= 7 && id.compare(id.size() - 7, 7, "-verify") == 0) ||
-                    (id.size() >= 11 && id.compare(id.size() - 11, 11, "-accounting") == 0))
-                    continue;
-            } else if (entry.path().extension() == ".exit")
+            if (!entry.is_directory() && entry.path().extension() == ".exit")
                 id = entry.path().stem().string();
-            else
+            else if (!entry.is_directory())
+                continue;
+            // Both verification directories and their process receipts are
+            // sidecars, not additional solver attempts.
+            if ((id.size() >= 7 && id.compare(id.size() - 7, 7, "-verify") == 0) ||
+                (id.size() >= 4 && id.compare(id.size() - 4, 4, "-rpy") == 0) ||
+                (id.size() >= 11 && id.compare(id.size() - 11, 11, "-accounting") == 0))
                 continue;
             require(!entry.is_symlink() && identifier(id), "unsafe_case_id");
             ids.insert(id);
         }
         for (const auto &id : ids)
-            cases.push_back(
-                collect(opt.root, group, id, opt.known_binary,
-                        fidelity.count("dat_sha256") ? field(fidelity, "dat_sha256") : "",
-                        opt.replay_directory, totals));
+            cases.push_back(collect(
+                opt.root, group, id, opt.known_binary,
+                fidelity.count("dat_sha256") ? field(fidelity, "dat_sha256") : "",
+                opt.replay_directory, opt.failed_actions_directory, opt.explicit_groups, totals));
     }
     require(!cases.empty(), "no_campaign_cases");
     const bool valid = std::none_of(cases.begin(), cases.end(), [](const Case &entry) {

@@ -409,3 +409,86 @@ if(NOT archive_ledger MATCHES "\"accounting_native_updates\":5" OR
    NOT archive_ledger MATCHES "\"binary_origin\":\"retained_campaign_binary\"")
   message(FATAL_ERROR "Legacy receipt identity or separately incurred costs were lost")
 endif()
+
+# Explicit new batches require both successful process receipts. Sidecars must
+# never inflate the solver-attempt count, including their .exit files.
+file(MAKE_DIRECTORY "${WORK}/results/batch-c16/seed1" "${WORK}/results/batch-c16/seed1-verify"
+  "${WORK}/results/batch-c32/pending")
+file(WRITE "${WORK}/results/batch-c16/seed1/plan.json" "${stage_plan}")
+file(WRITE "${WORK}/results/batch-c16/seed1.exit" "0\n")
+file(WRITE "${WORK}/results/batch-c16/seed1-verify/verify.json" "${verify}")
+file(WRITE "${WORK}/results/batch-c16/seed1-verify.exit" "0\n")
+file(WRITE "${WORK}/results/batch-c16/seed1-rpy.json" "${natural_replay}")
+file(WRITE "${WORK}/results/batch-c16/seed1-rpy.exit" "0\n")
+function(run_selected name success)
+  execute_process(COMMAND "${REPORT}" --root "${WORK}/results" --fidelity "${WORK}/fidelity.json"
+    --output "${WORK}/selected-${name}.json" ${ARGN}
+    RESULT_VARIABLE result OUTPUT_VARIABLE output ERROR_VARIABLE error)
+  if((success AND NOT "${result}" STREQUAL "0") OR
+     (NOT success AND "${result}" STREQUAL "0"))
+    message(FATAL_ERROR "${name}: unexpected result ${result}: ${output}${error}")
+  endif()
+  if(EXISTS "${WORK}/selected-${name}.json")
+    file(READ "${WORK}/selected-${name}.json" selected)
+    set(selected "${selected}" PARENT_SCOPE)
+  endif()
+endfunction()
+run_selected(two-groups TRUE --group batch-c16 --group batch-c32)
+if(NOT selected MATCHES "\"finalized_cases\":1" OR
+   NOT selected MATCHES "\"pending_cases\":1" OR
+   NOT selected MATCHES "\"verified_complete_cases\":1" OR
+   NOT selected MATCHES "\"process_exit_code\":0")
+  message(FATAL_ERROR "Explicit groups lost a case or counted sidecars as solver attempts")
+endif()
+foreach(kind IN ITEMS verify rpy)
+  file(WRITE "${WORK}/results/batch-c16/seed1-${kind}.exit" "124\n")
+  run_selected("failed-${kind}-process" FALSE --group batch-c16)
+  if(NOT selected MATCHES "process_failed" OR NOT selected MATCHES "\"verified_complete_cases\":0")
+    message(FATAL_ERROR "Successful JSON hid a failed ${kind} process")
+  endif()
+  file(REMOVE "${WORK}/results/batch-c16/seed1-${kind}.exit")
+  run_selected("missing-${kind}-process" FALSE --group batch-c16)
+  if(NOT selected MATCHES "missing_process_receipt")
+    message(FATAL_ERROR "An explicit batch accepted missing ${kind} exit evidence")
+  endif()
+  file(WRITE "${WORK}/results/batch-c16/seed1-${kind}.exit" "0\n")
+endforeach()
+run_selected(missing-group FALSE --group nonexistent)
+run_selected(duplicate-group FALSE --group batch-c16 --group batch-c16)
+run_selected(unsafe-group FALSE --group ../batch-c16)
+
+# Retain the final emitted failed prefix separately, with byte hashes and an
+# explicit unverified label. It never contributes a successful demonstration.
+file(MAKE_DIRECTORY "${WORK}/results/batch-failed/seed1")
+string(REPLACE "\"outcome\":\"complete\"" "\"outcome\":\"budget\"" failed_plan "${stage_plan}")
+file(WRITE "${WORK}/results/batch-failed/seed1/plan.json" "${failed_plan}")
+file(WRITE "${WORK}/results/batch-failed/seed1.exit" "1\n")
+set(failed_actions "1\n1\n1\n1\n1\n")
+file(WRITE "${WORK}/results/batch-failed/seed1/plan.actions" "${failed_actions}")
+run_selected(failed-prefix TRUE --group batch-failed --failed-actions-dir "${WORK}/failed-actions")
+file(SHA256 "${WORK}/results/batch-failed/seed1/plan.actions" failed_hash)
+file(SHA256 "${WORK}/failed-actions/batch-failed--seed1.actions" archived_failed_hash)
+if(NOT selected MATCHES "\"failed_cases\":1" OR
+   NOT selected MATCHES "\"verified_complete_cases\":0" OR
+   NOT selected MATCHES "\"artifact_role\":\"failed_search_prefix\"" OR
+   NOT selected MATCHES "\"execution_verified\":false" OR
+   NOT selected MATCHES "${failed_hash}" OR NOT failed_hash STREQUAL archived_failed_hash)
+  message(FATAL_ERROR "A failed prefix lost its bytes, hash or unverified role")
+endif()
+run_selected(failed-prefix-repeat TRUE --group batch-failed --failed-actions-dir "${WORK}/failed-actions")
+file(WRITE "${WORK}/results/batch-failed/seed1/plan.actions" "1\n1\n1\n1\n")
+run_selected(failed-prefix-count FALSE --group batch-failed --failed-actions-dir "${WORK}/failed-actions")
+if(NOT selected MATCHES "failed_prefix_count_mismatch")
+  message(FATAL_ERROR "A truncated failed prefix was archived")
+endif()
+file(WRITE "${WORK}/results/batch-failed/seed1/plan.actions" "2\n1\n1\n1\n1\n")
+run_selected(failed-prefix-bomb FALSE --group batch-failed --failed-actions-dir "${WORK}/failed-actions")
+file(WRITE "${WORK}/results/batch-failed/seed1/plan.actions" "0\n1\n1\n1\n1\n")
+run_selected(failed-prefix-conflict FALSE --group batch-failed --failed-actions-dir "${WORK}/failed-actions")
+if(NOT selected MATCHES "archive_artifact_conflict")
+  message(FATAL_ERROR "A failed-prefix archive was silently overwritten")
+endif()
+file(SHA256 "${WORK}/failed-actions/batch-failed--seed1.actions" preserved_hash)
+if(NOT preserved_hash STREQUAL failed_hash)
+  message(FATAL_ERROR "A rejected failed prefix changed the retained original")
+endif()

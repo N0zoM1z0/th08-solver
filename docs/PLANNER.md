@@ -138,6 +138,21 @@ profiles costs two attempts, not one. Any tuned successor must be frozen before
 using holdout feedback. Require full-story fresh action and natural replay proofs;
 a finite seed sample cannot certify all 65536 initial seeds.
 
+Training-only progress also motivated one frozen 900-second continuation for each
+original `budget` result below the total frame cap. This is a separate episode with
+the same profile and exact parent prefix, not an extension of the original budget.
+It cannot revise earlier actions. Keep direct/continued results separate and charge
+all original attempts, prefix reconstruction and new verification.
+
+The later learning direction is recorded in
+[issue #3](https://github.com/N0zoM1z0/th08-solver/issues/3). Current work establishes
+the offline teacher's evidence: complete successful tapes and replay hashes,
+configuration, terminal checks, costs and distinctly labeled failed prefixes.
+Future imitation and student-state teacher corrections need predecision observations
+aligned with the native input latch. The teacher may use future rollouts but must
+keep the student's queried prefix immutable. Online policy and RL implementation
+remain deferred.
+
 The reviewed handoff records Lunatic practice Stages 1–3 and a
 story prefix blocked at spell 92; local/integrated reproductions must be labeled
 separately. A practice clear, partial story or sampled seed success is not a full run.

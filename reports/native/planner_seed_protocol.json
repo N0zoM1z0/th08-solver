@@ -51,6 +51,17 @@
     "seconds": 2400
   },
   "holdout_rule": "No holdout feedback before candidate freeze; changes require a separate frozen evaluation",
+  "continuation": {
+    "frozen_before_holdout_inspection": true,
+    "decision_basis": "Training-only progress at about 2060 seconds reached the final stage in both profiles; retain the original budget result and reconstruct each eligible emitted prefix in a separate episode",
+    "eligibility": "Original outcome budget, process exit 5, and frames below 250000; independently for every seed/profile, without best-result selection",
+    "maximum_episodes_per_original_attempt": 1,
+    "seconds": 900,
+    "frames": 250000,
+    "profile": "Same seed, story settings, rollout, beam, diversity cell, shoot, commit, checkpoint, keep, attempts and cegar as the parent",
+    "prefix_rule": "Replay the exact complete parent action prefix from the original start; preserve all native state and RNG, never roll back before the supplied prefix",
+    "cost_rule": "Retain original failures and sum both episodes, including prefix reconstruction and fresh validations; report direct and continued success separately"
+  },
   "all_attempts_and_failures_retained": true,
   "proves_all_uint16_seeds": false
 }
