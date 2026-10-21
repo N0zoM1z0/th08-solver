@@ -38,6 +38,15 @@ their recordings can guide another proposal. Only validated prefixes are committ
 Checkpoint-holder processes enable backtracking without replaying the whole prefix.
 All attempted rollouts, including failures and reconstruction, belong in cost totals.
 
+An API update is not always a gameplay calculation. Native stage handoff calls can
+return before the gameplay counter and replay callbacks; replay playback can instead
+restart the calculation chain within one API call. The planner observes actual
+gameplay-counter increments without changing the existing trace/RNG hook. Recording
+mode accepts one calculation or an observed control-only stage change and rejects
+unexplained skipped/batched calculations. Reports preserve exact event indices and
+separate path counts from costs over all attempted branches. Natural `.rpy` validation
+uses observed calculations, never an assumed offset based on the number of stages.
+
 `--prefix ACTIONS` reconstructs an earlier input tape through the same native
 session before checkpoint holders fork. Use its original stage/story/difficulty/
 seed/shot settings. Raw actions have no checkpoint header; another configuration
@@ -86,6 +95,11 @@ result files. Within a fork planner, rollout slots and process verdicts must als
 independent before concurrent children are enabled. The imported DAT entry reader
 closes/reopens its handle for each entry; audit other inherited descriptors rather
 than assuming all reads share or avoid offsets. Current fork rollouts remain serial.
+
+A measured spell-92 run spent about one quarter of search CPU time in collision
+queries; beam expansion/selection also mattered. That sample does not justify adding
+threads to the collision kernel. Independent complete solver jobs currently provide
+useful CPU parallelism while retaining separate native worlds and evidence.
 
 On shared hosts, bound jobs and process count using measured memory. Use low CPU/I/O
 weights, a hard memory limit and a lower high-water limit, with no additional swap;

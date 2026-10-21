@@ -27,7 +27,7 @@ inline bool same_observation(const headless::State &a, const headless::State &b)
            a.gauge == b.gauge && same_float(a.lives, b.lives) &&
            same_float(a.hurt_half_x, b.hurt_half_x) && same_float(a.hurt_half_y, b.hurt_half_y) &&
            a.latched_input == b.latched_input && a.sampled_input == b.sampled_input &&
-           a.youkai == b.youkai;
+           a.youkai == b.youkai && a.calculation_updates == b.calculation_updates;
 }
 
 } // namespace th08::plan

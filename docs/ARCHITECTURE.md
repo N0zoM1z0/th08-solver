@@ -26,6 +26,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
 | Native fork planner, proposals and process checkpoints | `tools/plan.cpp`; `plan_contracts.hpp`, `plan_observation.hpp`, `plan_beam.hpp` |
 | Replay projection and strict corpus gate | `modern/headless/replay_check.*`, `tools/replay_check.cpp`, `tools/replay_suite.cpp` |
+| Sanitized campaign evidence and verified replay export | `tools/planner_report.cpp`; retains original proofs, separate accounting/archive receipts and their costs |
 | Sampled hazard stability diagnosis | `tools/hazard_probe.cpp`, `hazard_probe.hpp` |
 | Independent native input interventions | `tools/headless_probe.cpp`; serial fresh-process branches over a fixed tape |
 
@@ -68,6 +69,14 @@ shared RNG consumption, with synchronous initialization and
 not the GUI/message update logic. This profile does not split visual RNG streams.
 Initialization and loading completion are explicit adapter boundaries, described in
 [Scenarios](SCENARIOS.md); no claim about original menu entry is needed.
+
+`State::calculation_updates` observes the actual `gameplayFrameCounter` increment,
+after native setup gates. The observer survives stage counter resets and process forks,
+consumes no RNG, and leaves the existing entry trace hook unchanged. Stage-control
+calls can return before that increment and all later replay callbacks. Accepted-path
+counts/events remain process-private and travel with checkpoint state; only effort
+over all branches uses shared atomic counters. [Planner](PLANNER.md) owns the recording
+and report contracts for these distinct counts.
 
 In recording mode the supervisor samples controller input at priority 0, Player moves
 at 9, BulletManager updates/collides at 14, and ReplayManager latches movement input

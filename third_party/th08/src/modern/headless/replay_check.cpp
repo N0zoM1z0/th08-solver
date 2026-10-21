@@ -12,6 +12,7 @@ constexpr int field_count = 25;
 std::FILE *rows_file = nullptr;
 bool initialized = false;
 ReplayCheckSummary summary;
+std::uint64_t calculation_count = 0;
 std::uint32_t float_bits(const f32 &value) {
     std::uint32_t bits;
     std::memcpy(&bits, &value, sizeof(bits));
@@ -23,6 +24,12 @@ void replay_check_enable(std::FILE *rows) {
 }
 const ReplayCheckSummary &replay_check_summary() {
     return summary;
+}
+void observe_gameplay_calculation() {
+    ++calculation_count;
+}
+std::uint64_t replay_calculation_updates() {
+    return calculation_count;
 }
 } // namespace th08::headless
 

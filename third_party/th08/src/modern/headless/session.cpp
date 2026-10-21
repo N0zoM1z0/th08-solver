@@ -584,7 +584,8 @@ State Session::state() const {
             g_Player.hurtboxHalfSize.y,
             g_GuiMessageInputCurrent,
             g_CurFrameInput,
-            bool(g_Player.IsYoukai())};
+            bool(g_Player.IsYoukai()),
+            replay_calculation_updates()};
 }
 const std::vector<BulletView> &Session::bullets() {
     views_.clear();

@@ -58,6 +58,12 @@ inline bool fits_tape(std::size_t bullets, std::size_t lasers, std::size_t regio
     return bullets <= bullet_capacity && lasers <= laser_capacity && regions <= region_capacity;
 }
 
+// Recording mode executes one GameManager calculation, or a controller-only
+// stage handoff. Playback may batch calculations and is outside this contract.
+inline bool supported_recording_step(std::uint64_t calculations, bool stage_changed) {
+    return calculations == 1 || (calculations == 0 && stage_changed);
+}
+
 struct ChildResult {
     bool waited = false;
     int status = 0;

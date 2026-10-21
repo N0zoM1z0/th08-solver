@@ -104,7 +104,7 @@ if(BUILD_TESTING)
 endif()
 
 add_executable(th08_replay_check tools/replay_check.cpp)
-target_link_libraries(th08_replay_check PRIVATE th08_native_headless)
+target_link_libraries(th08_replay_check PRIVATE th08_native_headless OpenSSL::Crypto)
 target_include_directories(th08_replay_check PRIVATE "${th08_native}/src")
 target_compile_options(th08_replay_check PRIVATE -ffp-contract=off "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 add_executable(th08_plan tools/plan.cpp)

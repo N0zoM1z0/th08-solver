@@ -161,6 +161,15 @@ void observation_contract() {
     committed.youkai = !expected.youkai;
     check(!th08::plan::same_observation(expected, committed),
           "same-input commit hid a source-owned player form change");
+    committed = expected;
+    ++committed.calculation_updates;
+    check(!th08::plan::same_observation(expected, committed),
+          "same-position commit hid a native calculation boundary change");
+    check(th08::plan::supported_recording_step(1, false) &&
+              th08::plan::supported_recording_step(0, true) &&
+              !th08::plan::supported_recording_step(0, false) &&
+              !th08::plan::supported_recording_step(2, true),
+          "unexplained skipped or batched recording calculations were accepted");
 }
 
 void spatial_beam_contract() {

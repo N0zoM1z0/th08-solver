@@ -177,6 +177,8 @@ struct State {
     std::uint16_t latched_input = 0, sampled_input = 0;
     // Actual source-owned form after the update, not inferred from focus input.
     bool youkai = false;
+    // Cumulative gameplayFrameCounter increments, excluding setup/control steps.
+    std::uint64_t calculation_updates = 0;
 };
 // Upstream managers are pointer-rich process globals. Exactly one noncopyable
 // session may be created per process; fresh processes provide fresh replay.

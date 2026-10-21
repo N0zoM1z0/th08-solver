@@ -25,6 +25,7 @@
 namespace {
 namespace fs = std::filesystem;
 using Fields = std::map<std::string, std::string>;
+constexpr const char *source_revision = "02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415";
 
 void require(bool condition, const char *reason) {
     if (!condition)
@@ -54,13 +55,13 @@ std::string string_value(const std::string &raw) {
     return raw.substr(1, raw.size() - 2);
 }
 
-std::string read(const fs::path &path) {
+std::string read(const fs::path &path, std::size_t limit = 2 * 1024 * 1024) {
     std::ifstream input(path, std::ios::binary);
     require(bool(input), "input_unreadable");
     std::string result;
     std::array<char, 8192> buffer{};
     while (input.read(buffer.data(), buffer.size()) || input.gcount()) {
-        require(result.size() + std::size_t(input.gcount()) <= 2 * 1024 * 1024, "input_too_large");
+        require(result.size() + std::size_t(input.gcount()) <= limit, "input_too_large");
         result.append(buffer.data(), std::size_t(input.gcount()));
     }
     require(input.eof(), "input_read_failed");
@@ -276,10 +277,92 @@ const std::vector<std::string> verify_keys = {"source_revision", "verified",
                                               "native_updates",  "native_seconds_excluding_file_io",
                                               "binary_sha256",   "dat_sha256"};
 
+const std::vector<std::string> calculation_keys = {
+    "calculation_updates",        "control_updates",
+    "stage_transition_count",     "actions_sha256",
+    "native_calculation_updates", "native_control_updates",
+    "native_stage_transitions",   "final_spell",
+    "final_spell_active"};
+
+void add_calculations(Fields &output, const Fields &input) {
+    const auto counters = scalars(input, calculation_keys);
+    output.insert(counters.begin(), counters.end());
+    if (input.count("stage_transitions")) {
+        std::ostringstream encoded;
+        encoded << '[';
+        bool first = true;
+        for (const auto &event : objects(field(input, "stage_transitions"))) {
+            if (!first)
+                encoded << ',';
+            emit(encoded,
+                 scalars(event, {"frame", "from_stage", "to_stage", "calculation_updates_before",
+                                 "calculation_updates_after"}));
+            first = false;
+        }
+        encoded << ']';
+        output.emplace("stage_transitions", encoded.str());
+    }
+}
+
+bool has_calculations(const Fields &input) {
+    for (const auto *key :
+         {"calculation_updates", "control_updates", "stage_transition_count", "stage_transitions"})
+        if (input.count(key))
+            return true;
+    return false;
+}
+
+std::uint64_t calculation_proof(const Fields &input, const Fields &plan, std::uint64_t frames) {
+    const auto calculations = integer(field(input, "calculation_updates"));
+    const auto controls = integer(field(input, "control_updates"));
+    require(calculations <= frames && controls == frames - calculations,
+            "calculation_update_count_mismatch");
+    const auto events = objects(field(input, "stage_transitions"));
+    require(integer(field(input, "stage_transition_count")) == events.size(),
+            "stage_transition_count_mismatch");
+    const auto initial_stage = integer(field(plan, "stage"));
+    const auto terminal_stage = integer(field(plan, "final_stage"));
+    require(initial_stage < 9 && terminal_stage < 9 &&
+                (events.empty() ? initial_stage == terminal_stage
+                                : integer(field(events.front(), "from_stage")) == initial_stage &&
+                                      integer(field(events.back(), "to_stage")) == terminal_stage),
+            "stage_transition_boundary_mismatch");
+    std::uint64_t previous_frame = 0, zero_calculation_events = 0, previous_stage = 0;
+    bool first = true;
+    for (const auto &event : events) {
+        const auto frame = integer(field(event, "frame"));
+        const auto from = integer(field(event, "from_stage"));
+        const auto to = integer(field(event, "to_stage"));
+        const auto before = integer(field(event, "calculation_updates_before"));
+        const auto after = integer(field(event, "calculation_updates_after"));
+        require(frame > previous_frame && frame <= frames && from < 9 && to < 9 && from != to &&
+                    (first || from == previous_stage) && after >= before && after - before <= 1 &&
+                    frame > zero_calculation_events &&
+                    before == frame - 1 - zero_calculation_events,
+                "invalid_stage_transition_accounting");
+        if (after == before)
+            ++zero_calculation_events;
+        previous_frame = frame;
+        previous_stage = to;
+        first = false;
+    }
+    require(zero_calculation_events == controls, "unaccounted_control_updates");
+    return calculations;
+}
+
+void bind_actions(const Fields &input, const fs::path &actions) {
+    // Hash the exact retained bytes, including whitespace, rather than a
+    // reserialized action sequence. The verifier hashes and parses the same stream.
+    require(field(input, "actions_sha256") == quote(digest(read(actions, 64 * 1024 * 1024))),
+            "accounting_actions_hash_mismatch");
+}
+
 struct Case {
     std::string group, id, status = "pending", failure;
-    Fields plan, options, verification, verification_options, rpy, identity;
-    std::string plan_sha256, verify_sha256;
+    Fields plan, options, verification, verification_options, accounting, accounting_options, rpy,
+        archive_replay, identity, artifacts;
+    std::string plan_sha256, verify_sha256, accounting_sha256, archive_replay_sha256;
+    std::string expected_dat_sha256;
     int exit_code = -1;
 };
 
@@ -287,7 +370,10 @@ struct Totals {
     std::uint64_t finalized = 0, pending = 0, complete = 0, failed = 0, unverified = 0;
     std::uint64_t setup_rejections = 0, missing_reports = 0;
     std::uint64_t solver_updates = 0, verification_updates = 0, rpy_rows = 0, rpy_steps = 0;
+    std::uint64_t archive_replay_rows = 0, archive_replay_steps = 0;
+    std::uint64_t accounting_updates = 0, accounting_receipts = 0;
     double solver_wall_seconds = 0, solver_native_seconds = 0, verification_native_seconds = 0;
+    double accounting_native_seconds = 0;
     std::map<std::string, std::uint64_t> cost_totals;
 };
 
@@ -306,6 +392,126 @@ void seconds(const Fields &fields, const std::string &key, double &total) {
     }
 }
 
+std::uint64_t accounting_receipt(Case &result, const fs::path &root, std::uint64_t frames) {
+    const auto path = root / result.group / (result.id + "-accounting") / "verify.json";
+    require(fs::is_regular_file(path), "missing_calculation_accounting");
+    const auto text = read(path);
+    const auto receipt = parse(text);
+    result.accounting_sha256 = digest(text);
+    result.accounting = scalars(receipt, verify_keys);
+    add_calculations(result.accounting, receipt);
+    result.accounting_options = scalars(parse(field(receipt, "options")), option_keys);
+    require(field(receipt, "verified") == "true" && integer(field(receipt, "frames")) == frames &&
+                integer(field(receipt, "complete_at")) == frames &&
+                integer(field(receipt, "death_updates")) == 0 &&
+                integer(field(receipt, "native_update_attempts")) == frames &&
+                integer(field(receipt, "native_updates")) == frames,
+            "accounting_verification_failed");
+    for (const auto *key : {"score", "rng_seed", "rng_draws"})
+        require(integer(field(receipt, key)) == integer(field(result.plan, key)) &&
+                    integer(field(receipt, key)) == integer(field(result.verification, key)),
+                "accounting_state_mismatch");
+    require(field(receipt, "source_revision") == quote(source_revision) &&
+                hex(string_value(field(receipt, "dat_sha256")), 64),
+            "accounting_identity_mismatch");
+    if (!result.expected_dat_sha256.empty())
+        require(field(receipt, "dat_sha256") == result.expected_dat_sha256,
+                "accounting_identity_mismatch");
+    bool legacy_identity = false;
+    for (const auto *original : {&result.plan, &result.verification}) {
+        for (const auto *key : {"source_revision", "dat_sha256"})
+            if (original->count(key))
+                require(field(receipt, key) == field(*original, key),
+                        "accounting_identity_mismatch");
+            else
+                legacy_identity = true;
+        legacy_identity = legacy_identity || !original->count("binary_sha256");
+    }
+    // Old practice reports predate producer identity fields. Their missing
+    // identity is explicit and requires the separately retained campaign binary.
+    if (legacy_identity)
+        require(field(result.identity, "binary_origin") == quote("retained_campaign_binary") &&
+                    hex(string_value(field(result.identity, "binary_sha256")), 64) &&
+                    !result.expected_dat_sha256.empty(),
+                "missing_legacy_accounting_identity");
+    require(hex(string_value(field(receipt, "binary_sha256")), 64),
+            "missing_accounting_binary_identity");
+    require(integer(field(receipt, "stage")) == integer(field(result.plan, "final_stage")) &&
+                integer(field(receipt, "stage")) == integer(field(result.verification, "stage")),
+            "accounting_terminal_mismatch");
+    for (const auto *key : {"final_spell", "final_spell_active"})
+        if (result.plan.count(key))
+            require(field(receipt, key) == field(result.plan, key), "accounting_terminal_mismatch");
+    for (const auto *key : {"stage", "spell", "difficulty", "seed", "shot", "story", "until_stage"})
+        require(field(result.accounting_options, key) == field(result.options, key) &&
+                    field(result.accounting_options, key) ==
+                        field(result.verification_options, key),
+                "accounting_checkpoint_mismatch");
+    bind_actions(receipt, root / result.group / result.id / "plan.actions");
+    return calculation_proof(result.accounting, result.plan, frames);
+}
+
+Fields replay_summary(const Fields &input) {
+    auto result = scalars(input, {"rows", "finished", "natural", "steps", "runtime_error",
+                                  "io_error", "death_rows", "bomb_input_rows", "replay_sha256",
+                                  "dat_sha256", "source_revision"});
+    if (input.count("binary_sha256")) {
+        const auto identity = scalars(input, {"binary_sha256"});
+        result.emplace("checker_sha256", field(identity, "binary_sha256"));
+    }
+    return result;
+}
+
+void natural_replay(Fields &summary, const Fields &input, const Fields &plan,
+                    std::uint64_t expected_rows) {
+    require(field(input, "finished") == "true" && field(input, "natural") == "true",
+            "natural_replay_mismatch");
+    require(integer(field(input, "rows")) == expected_rows, "natural_replay_calculation_mismatch");
+    for (const auto *key : {"runtime_error", "io_error"})
+        require(!input.count(key) || field(input, key) == "false", "natural_replay_error");
+    require(integer(field(input, "death_rows")) == 0 &&
+                integer(field(input, "bomb_input_rows")) == 0,
+            "natural_replay_not_nmnb");
+    const auto stages = objects(field(input, "stages"));
+    require(!stages.empty(), "natural_replay_missing_stages");
+    // A continuous story's terminal score and stage belong to its final summary.
+    const auto &last = stages.back();
+    require(integer(field(last, "endScore")) == integer(field(plan, "score")),
+            "natural_replay_score_mismatch");
+    if (plan.count("final_stage"))
+        require(integer(field(last, "stage")) == integer(field(plan, "final_stage")),
+                "natural_replay_terminal_mismatch");
+    summary.emplace("endScore", field(last, "endScore"));
+}
+
+void replay_identity(const Fields &receipt, const Case &result, const std::string &replay_hash) {
+    // A fresh checker may fill missing legacy identity, never contradict an
+    // identity the original proof already recorded. Checker binaries may differ.
+    if (receipt.count("replay_sha256") && !replay_hash.empty())
+        require(field(receipt, "replay_sha256") == quote(replay_hash),
+                "archive_replay_hash_mismatch");
+    if (receipt.count("source_revision"))
+        require(field(receipt, "source_revision") == quote(source_revision),
+                "archive_replay_identity_mismatch");
+    for (const auto *key : {"dat_sha256", "source_revision"})
+        if (receipt.count(key) && result.plan.count(key))
+            require(field(receipt, key) == field(result.plan, key),
+                    "archive_replay_identity_mismatch");
+    if (receipt.count("dat_sha256") && !result.expected_dat_sha256.empty())
+        require(field(receipt, "dat_sha256") == result.expected_dat_sha256,
+                "archive_replay_identity_mismatch");
+}
+
+void bind_replay(const Fields &receipt, const Case &result, const std::string &replay_hash) {
+    require(field(receipt, "replay_sha256") == quote(replay_hash), "archive_replay_hash_mismatch");
+    require(hex(string_value(field(receipt, "checker_sha256")), 64),
+            "missing_replay_checker_identity");
+    require(hex(string_value(field(receipt, "dat_sha256")), 64) &&
+                field(receipt, "source_revision") == quote(source_revision),
+            "missing_replay_input_identity");
+    replay_identity(receipt, result, replay_hash);
+}
+
 void verify_complete(Case &result, const fs::path &root) {
     const auto directory = result.group == "spell92-diversity-v3"
                                ? root / "spell92-verified" / result.id
@@ -315,6 +521,7 @@ void verify_complete(Case &result, const fs::path &root) {
     const auto verification = parse(text);
     result.verify_sha256 = digest(text);
     result.verification = scalars(verification, verify_keys);
+    add_calculations(result.verification, verification);
     if (verification.count("options"))
         result.verification_options = scalars(parse(field(verification, "options")), option_keys);
     require(field(verification, "verified") == "true", "verification_failed");
@@ -337,6 +544,13 @@ void verify_complete(Case &result, const fs::path &root) {
     for (const auto *key : {"score", "rng_seed", "rng_draws"})
         require(integer(field(result.plan, key)) == integer(field(verification, key)),
                 "verification_state_mismatch");
+    if (result.plan.count("final_stage"))
+        require(integer(field(verification, "stage")) == integer(field(result.plan, "final_stage")),
+                "verification_terminal_mismatch");
+    for (const auto *key : {"final_spell", "final_spell_active"})
+        if (result.plan.count(key) && verification.count(key))
+            require(field(result.plan, key) == field(verification, key),
+                    "verification_terminal_mismatch");
     for (const auto *key : {"source_revision", "binary_sha256", "dat_sha256"})
         if (result.plan.count(key) && verification.count(key))
             require(field(result.plan, key) == field(verification, key),
@@ -345,36 +559,127 @@ void verify_complete(Case &result, const fs::path &root) {
         if (result.options.count(key) && result.verification_options.count(key))
             require(field(result.options, key) == field(result.verification_options, key),
                     "verification_checkpoint_mismatch");
+    const bool new_plan = has_calculations(result.plan);
+    const bool new_verification = has_calculations(result.verification);
+    std::uint64_t expected_rows = frames;
+    bool observed_calculations = false;
+    if (new_plan || new_verification) {
+        require(new_plan && new_verification, "incomplete_calculation_accounting");
+        expected_rows = calculation_proof(result.plan, result.plan, frames);
+        require(calculation_proof(result.verification, result.plan, frames) == expected_rows,
+                "verification_calculation_mismatch");
+        for (const auto *key : {"calculation_updates", "control_updates", "stage_transition_count",
+                                "stage_transitions"})
+            require(field(result.plan, key) == field(result.verification, key),
+                    "verification_calculation_mismatch");
+        bind_actions(verification, root / result.group / result.id / "plan.actions");
+        if (result.plan.count("actions_sha256"))
+            bind_actions(result.plan, root / result.group / result.id / "plan.actions");
+        observed_calculations = true;
+    } else if (fs::exists(root / result.group / (result.id + "-accounting") / "verify.json")) {
+        // The original execution proof and its binary identities stay intact.
+        // This separately hashed fresh run only supplies missing observations.
+        expected_rows = accounting_receipt(result, root, frames);
+        observed_calculations = true;
+    }
     if (numeric(field(result.plan, "spell")) < 0) {
         const auto path = root / result.group / (result.id + "-rpy.json");
         require(fs::is_regular_file(path), "missing_natural_replay");
         const auto replay = parse(read(path));
-        result.rpy = scalars(replay, {"rows", "finished", "natural", "steps", "runtime_error",
-                                      "io_error", "death_rows", "bomb_input_rows"});
-        require(field(replay, "finished") == "true" && field(replay, "natural") == "true" &&
-                    integer(field(replay, "rows")) == frames,
-                "natural_replay_mismatch");
-        for (const auto *key : {"runtime_error", "io_error"})
-            require(!replay.count(key) || field(replay, key) == "false", "natural_replay_error");
-        require(integer(field(replay, "death_rows")) == 0 &&
-                    integer(field(replay, "bomb_input_rows")) == 0,
-                "natural_replay_not_nmnb");
-        const auto stages = objects(field(replay, "stages"));
-        require(!stages.empty(), "natural_replay_missing_stages");
-        // A continuous story has several stage summaries. Its terminal score
-        // belongs to the final stage, just as a practice run's only score does.
-        const auto &final_stage = stages.back();
-        require(integer(field(final_stage, "endScore")) == integer(field(result.plan, "score")),
-                "natural_replay_score_mismatch");
-        result.rpy.emplace("endScore", field(final_stage, "endScore"));
+        result.rpy = replay_summary(replay);
+        replay_identity(result.rpy, result, "");
+        const auto rows = integer(field(replay, "rows"));
+        require(rows == expected_rows || observed_calculations, "missing_calculation_accounting");
+        natural_replay(result.rpy, replay, result.plan, expected_rows);
+        const auto archive_path = root / result.group / (result.id + "-rpy-archive.json");
+        if (fs::exists(archive_path)) {
+            // Preserve the primary replay run and its work. This additional
+            // receipt supplies current checker identity and byte binding only.
+            const auto text = read(archive_path);
+            const auto fresh = parse(text);
+            result.archive_replay_sha256 = digest(text);
+            result.archive_replay = replay_summary(fresh);
+            natural_replay(result.archive_replay, fresh, result.plan, rows);
+            const auto replay_hash =
+                digest(read(root / result.group / result.id / "th8_solver.rpy", 64 * 1024 * 1024));
+            bind_replay(result.archive_replay, result, replay_hash);
+            replay_identity(result.rpy, result, replay_hash);
+        }
     }
 }
 
+void archive_complete(Case &result, const fs::path &root, const fs::path &destination) {
+    if (destination.empty() || numeric(field(result.plan, "spell")) >= 0)
+        return;
+    const auto directory = root / result.group / result.id;
+    const auto replay = read(directory / "th8_solver.rpy", 64 * 1024 * 1024);
+    const auto actions = read(directory / "plan.actions", 64 * 1024 * 1024);
+    const auto replay_hash = digest(replay), actions_hash = digest(actions);
+    bind_replay(result.archive_replay.empty() ? result.rpy : result.archive_replay, result,
+                replay_hash);
+    replay_identity(result.rpy, result, replay_hash);
+    bool bound_actions = false;
+    for (const auto *proof : {&result.verification, &result.accounting})
+        if (proof->count("actions_sha256")) {
+            require(field(*proof, "actions_sha256") == quote(actions_hash),
+                    "archive_actions_hash_mismatch");
+            bound_actions = true;
+        }
+    require(bound_actions, "missing_archive_actions_binding");
+    const auto basename = result.group + "--" + result.id;
+    const std::array<std::string, 2> names{basename + ".rpy", basename + ".actions"};
+    const std::array<std::string, 2> contents{replay, actions}, hashes{replay_hash, actions_hash};
+    std::array<bool, 2> existing{}, staged{}, created{};
+    for (std::size_t i = 0; i < names.size(); ++i) {
+        const auto path = destination / names[i];
+        existing[i] = fs::exists(path);
+        if (existing[i])
+            require(!fs::is_symlink(path) && digest(read(path, 64 * 1024 * 1024)) == hashes[i],
+                    "archive_artifact_conflict");
+        else
+            require(!fs::exists(destination / (names[i] + ".tmp")), "archive_temporary_conflict");
+    }
+    fs::create_directories(destination);
+    try {
+        for (std::size_t i = 0; i < names.size(); ++i) {
+            if (existing[i])
+                continue;
+            const auto temporary = destination / (names[i] + ".tmp");
+            std::ofstream output(temporary, std::ios::binary);
+            require(bool(output), "archive_write_failed");
+            staged[i] = true;
+            output.write(contents[i].data(), std::streamsize(contents[i].size()));
+            output.close();
+            require(bool(output), "archive_write_failed");
+        }
+        for (std::size_t i = 0; i < names.size(); ++i)
+            if (!existing[i]) {
+                fs::rename(destination / (names[i] + ".tmp"), destination / names[i]);
+                created[i] = true;
+            }
+    } catch (...) {
+        std::error_code ignored;
+        for (std::size_t i = 0; i < names.size(); ++i) {
+            if (created[i])
+                fs::remove(destination / names[i], ignored);
+            if (staged[i])
+                fs::remove(destination / (names[i] + ".tmp"), ignored);
+        }
+        throw;
+    }
+    result.artifacts = {{"rpy_file", quote(names[0])},
+                        {"rpy_sha256", quote(replay_hash)},
+                        {"actions_file", quote(names[1])},
+                        {"actions_sha256", quote(actions_hash)}};
+}
+
 Case collect(const fs::path &root, const std::string &group, const std::string &id,
-             const std::string &known_binary, Totals &totals) {
+             const std::string &known_binary, const std::string &known_dat,
+             const fs::path &replay_directory, Totals &totals) {
     Case result;
     result.group = group;
     result.id = id;
+    result.expected_dat_sha256 = known_dat;
     const auto exit = root / group / (id + ".exit");
     if (!fs::is_regular_file(exit)) {
         ++totals.pending;
@@ -411,6 +716,7 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
         const auto plan = parse(text);
         result.plan_sha256 = digest(text);
         result.plan = scalars(plan, plan_keys);
+        add_calculations(result.plan, plan);
         const auto costs = scalars(plan, cost_keys);
         result.plan.insert(costs.begin(), costs.end());
         if (plan.count("options"))
@@ -443,6 +749,7 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
         result.status = "unverified_complete";
         require(result.exit_code == 0, "complete_process_failed");
         verify_complete(result, root);
+        archive_complete(result, root, replay_directory);
         result.status = "verified_complete";
         ++totals.complete;
     } catch (const std::exception &error) {
@@ -459,13 +766,21 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
     account(result.verification, "native_updates", totals.verification_updates);
     seconds(result.verification, "native_seconds_excluding_file_io",
             totals.verification_native_seconds);
+    if (!result.accounting.empty()) {
+        ++totals.accounting_receipts;
+        account(result.accounting, "native_updates", totals.accounting_updates);
+        seconds(result.accounting, "native_seconds_excluding_file_io",
+                totals.accounting_native_seconds);
+    }
     account(result.rpy, "rows", totals.rpy_rows);
     account(result.rpy, "steps", totals.rpy_steps);
+    account(result.archive_replay, "rows", totals.archive_replay_rows);
+    account(result.archive_replay, "steps", totals.archive_replay_steps);
     return result;
 }
 
 struct Options {
-    fs::path root, fidelity, output;
+    fs::path root, fidelity, output, replay_directory;
     std::string known_binary;
 };
 
@@ -482,6 +797,8 @@ Options options(int argc, char **argv) {
             result.fidelity = value;
         else if (key == "--output")
             result.output = value;
+        else if (key == "--replay-dir")
+            result.replay_directory = value;
         else if (key == "--known-binary-sha256") {
             require(hex(value, 64), "invalid_known_binary_hash");
             result.known_binary = value;
@@ -520,7 +837,8 @@ int report(const Options &opt) {
         for (const auto &entry : fs::directory_iterator(directory)) {
             auto id = entry.path().filename().string();
             if (entry.is_directory()) {
-                if (id.size() >= 7 && id.compare(id.size() - 7, 7, "-verify") == 0)
+                if ((id.size() >= 7 && id.compare(id.size() - 7, 7, "-verify") == 0) ||
+                    (id.size() >= 11 && id.compare(id.size() - 11, 11, "-accounting") == 0))
                     continue;
             } else if (entry.path().extension() == ".exit")
                 id = entry.path().stem().string();
@@ -530,7 +848,10 @@ int report(const Options &opt) {
             ids.insert(id);
         }
         for (const auto &id : ids)
-            cases.push_back(collect(opt.root, group, id, opt.known_binary, totals));
+            cases.push_back(
+                collect(opt.root, group, id, opt.known_binary,
+                        fidelity.count("dat_sha256") ? field(fidelity, "dat_sha256") : "",
+                        opt.replay_directory, totals));
     }
     require(!cases.empty(), "no_campaign_cases");
     const bool valid = std::none_of(cases.begin(), cases.end(), [](const Case &entry) {
@@ -539,6 +860,7 @@ int report(const Options &opt) {
     });
     auto accounted_updates = totals.solver_updates;
     add(accounted_updates, totals.verification_updates);
+    add(accounted_updates, totals.accounting_updates);
     if (!opt.output.parent_path().empty())
         fs::create_directories(opt.output.parent_path());
     const auto temporary = fs::path(opt.output.string() + ".tmp");
@@ -567,13 +889,19 @@ int report(const Options &opt) {
         << ",\"unverified_complete_cases\":" << totals.unverified
         << ",\"solver_native_updates\":" << totals.solver_updates
         << ",\"verification_native_updates\":" << totals.verification_updates
+        << ",\"accounting_receipts\":" << totals.accounting_receipts
+        << ",\"accounting_native_updates\":" << totals.accounting_updates
         << ",\"native_updates\":" << accounted_updates
         << ",\"rpy_calculation_rows\":" << totals.rpy_rows
         << ",\"rpy_session_steps\":" << totals.rpy_steps
+        << ",\"archive_replay_rows\":" << totals.archive_replay_rows
+        << ",\"archive_replay_steps\":" << totals.archive_replay_steps
         << ",\"sum_solver_wall_seconds\":" << totals.solver_wall_seconds
         << ",\"solver_native_seconds_excluding_file_io\":" << totals.solver_native_seconds
         << ",\"verification_native_seconds_excluding_file_io\":"
-        << totals.verification_native_seconds << ",\"solver_costs\":{";
+        << totals.verification_native_seconds
+        << ",\"accounting_native_seconds_excluding_file_io\":" << totals.accounting_native_seconds
+        << ",\"solver_costs\":{";
     bool first = true;
     for (const auto &entry : totals.cost_totals) {
         out << (first ? "" : ",") << quote(entry.first) << ':' << entry.second;
@@ -598,8 +926,24 @@ int report(const Options &opt) {
             emit(out, entry.verification);
             out << ",\"verification_options\":";
             emit(out, entry.verification_options);
+            if (!entry.accounting.empty()) {
+                out << ",\"accounting_sha256\":" << quote(entry.accounting_sha256)
+                    << ",\"accounting\":";
+                emit(out, entry.accounting);
+                out << ",\"accounting_options\":";
+                emit(out, entry.accounting_options);
+            }
             out << ",\"rpy\":";
             emit(out, entry.rpy);
+            if (!entry.archive_replay.empty()) {
+                out << ",\"archive_replay_sha256\":" << quote(entry.archive_replay_sha256)
+                    << ",\"archive_replay\":";
+                emit(out, entry.archive_replay);
+            }
+            if (!entry.artifacts.empty()) {
+                out << ",\"artifacts\":";
+                emit(out, entry.artifacts);
+            }
         }
         out << '}';
         first = false;

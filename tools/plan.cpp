@@ -14,6 +14,7 @@
 // that it is stuck, retries from its own (older) state with a perturbed
 // variant. A subreaper root reaps the chain. No game state is serialized; fork
 // gives each branch its own copy of every process-global manager.
+#include "modern/headless/replay_check.hpp"
 #include "modern/headless/runtime.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/plan_beam.hpp"
@@ -88,6 +89,17 @@ enum ExitCode {
     kReleased = 4,
     kBudget = 5
 };
+struct StageTransition {
+    std::uint64_t frame = 0, calculations_before = 0, calculations_after = 0;
+    int from = 0, to = 0;
+};
+struct ExecutionAccounting {
+    std::uint64_t control_updates = 0;
+    int stage_transition_count = 0;
+    // A native story traverses at most the nine source-owned stage entries.
+    std::array<StageTransition, 9> stage_transitions{};
+};
+ExecutionAccounting accounting;
 struct Shared {
     std::atomic<long> rollouts, searches, cegar, backtracks, commits, releases;
     std::atomic<long> max_frame, model_breaks, retries, quiet;
@@ -98,6 +110,7 @@ struct Shared {
     // Attempted includes an update interrupted by an exception or signal. Every
     // retry, discarded rollout and committed update contributes to these totals.
     std::atomic<std::uint64_t> native_attempts, native_updates, native_ns;
+    std::atomic<std::uint64_t> native_calculations, native_controls, native_stage_transitions;
     std::atomic<std::uint64_t> rollout_attempts, rollout_updates, commit_updates;
     std::atomic<std::uint64_t> prefix_attempts, prefix_updates;
     std::atomic<bool> prefix_complete;
@@ -108,6 +121,7 @@ struct Shared {
     std::atomic<long> rollout_failures;
     std::atomic<bool> fatal_error, report_written;
     th08::headless::State report_state;
+    ExecutionAccounting report_accounting;
     long report_frames = 0;
     int depth_pids[4096];
     int holder_depth[4096];
@@ -128,7 +142,7 @@ Clock::time_point t_start;
 std::string scratch_path;
 // Populated once by the root before forking. Descendants inherit these immutable
 // hashes without repeating file I/O or charging it to native simulation timing.
-std::string dat_sha256, binary_sha256, prefix_sha256;
+std::string dat_sha256, binary_sha256, prefix_sha256, actions_sha256;
 std::vector<std::uint16_t> prefix_actions;
 
 std::string file_sha256(const std::string &path, const char *label,
@@ -180,6 +194,13 @@ void write_hashes(std::ostream &out) {
         out << "null";
     else
         out << '"' << prefix_sha256 << '"';
+    if (!opt.verify.empty()) {
+        out << ",\"actions_sha256\":";
+        if (actions_sha256.empty())
+            out << "null";
+        else
+            out << '"' << actions_sha256 << '"';
+    }
 }
 
 void cleanup_scratch() {
@@ -403,6 +424,7 @@ th08::headless::State native_step(std::uint16_t input, NativeUse use) {
         ++shared->rollout_attempts;
     if (use == NativeUse::Prefix)
         ++shared->prefix_attempts;
+    const auto before = session->state();
     const auto start = Clock::now();
     const auto io_start = th08::headless::file_io_ns;
     auto add_time = [&] {
@@ -416,6 +438,8 @@ th08::headless::State native_step(std::uint16_t input, NativeUse use) {
         st = session->step(input);
     } catch (...) {
         add_time();
+        shared->native_calculations +=
+            th08::headless::replay_calculation_updates() - before.calculation_updates;
         throw;
     }
     add_time();
@@ -426,6 +450,28 @@ th08::headless::State native_step(std::uint16_t input, NativeUse use) {
         ++shared->commit_updates;
     else if (use == NativeUse::Prefix)
         ++shared->prefix_updates;
+    const auto calculations = st.calculation_updates - before.calculation_updates;
+    shared->native_calculations += calculations;
+    const bool stage_changed = st.stage != before.stage;
+    if (calculations == 0) {
+        ++accounting.control_updates;
+        ++shared->native_controls;
+    }
+    if (stage_changed) {
+        ++shared->native_stage_transitions;
+        if (accounting.stage_transition_count >= int(accounting.stage_transitions.size()))
+            throw std::runtime_error("unsupported number of native stage transitions");
+        accounting.stage_transitions[accounting.stage_transition_count++] = {
+            st.frame, before.calculation_updates, st.calculation_updates, before.stage, st.stage};
+    }
+    if (!th08::plan::supported_recording_step(calculations, stage_changed)) {
+        std::fprintf(stderr,
+                     "unsupported recording calculation boundary at update %llu: "
+                     "%llu calculations, stage %d -> %d\n",
+                     static_cast<unsigned long long>(st.frame),
+                     static_cast<unsigned long long>(calculations), before.stage, st.stage);
+        throw std::runtime_error("unexplained native recording calculation boundary");
+    }
     // An explicit stage selects the DAT program; it does not establish that its
     // active spell matches the requested checkpoint. Check each native update
     // before rollout, commit or fresh verification can count it as progress.
@@ -702,7 +748,24 @@ void write_options(std::ostream &out) {
         << ",\"boss_follow\":" << opt.boss_follow << ",\"verify\":" << !opt.verify.empty() << "}";
 }
 
-void write_summary(const char *outcome, const th08::headless::State &st, long frames) {
+void write_accounting(std::ostream &out, const th08::headless::State &st,
+                      const ExecutionAccounting &record) {
+    out << ",\"calculation_updates\":" << st.calculation_updates
+        << ",\"control_updates\":" << record.control_updates
+        << ",\"stage_transition_count\":" << record.stage_transition_count
+        << ",\"stage_transitions\":[";
+    for (int i = 0; i < record.stage_transition_count; ++i) {
+        const auto &event = record.stage_transitions[i];
+        out << (i ? "," : "") << "{\"frame\":" << event.frame << ",\"from_stage\":" << event.from
+            << ",\"to_stage\":" << event.to
+            << ",\"calculation_updates_before\":" << event.calculations_before
+            << ",\"calculation_updates_after\":" << event.calculations_after << "}";
+    }
+    out << "]";
+}
+
+void write_summary(const char *outcome, const th08::headless::State &st, long frames,
+                   const ExecutionAccounting &record = accounting) {
     std::ofstream rep(fs::path(opt.out_dir) / "plan.json");
     rep.exceptions(std::ios::badbit | std::ios::failbit);
     rep << std::setprecision(std::numeric_limits<double>::max_digits10);
@@ -726,6 +789,9 @@ void write_summary(const char *outcome, const th08::headless::State &st, long fr
         << ",\"final_spell_active\":" << (st.spell_active ? "true" : "false")
         << ",\"native_update_attempts\":" << shared->native_attempts
         << ",\"native_updates\":" << shared->native_updates
+        << ",\"native_calculation_updates\":" << shared->native_calculations
+        << ",\"native_control_updates\":" << shared->native_controls
+        << ",\"native_stage_transitions\":" << shared->native_stage_transitions
         << ",\"incomplete_native_updates\":" << (shared->native_attempts - shared->native_updates)
         << ",\"rollout_update_attempts\":" << shared->rollout_attempts
         << ",\"rollout_updates\":" << shared->rollout_updates
@@ -760,6 +826,7 @@ void write_summary(const char *outcome, const th08::headless::State &st, long fr
     rep << ",\"options\":";
     write_options(rep);
     write_hashes(rep);
+    write_accounting(rep, st, record);
     rep << "}\n";
     rep.close();
 }
@@ -775,6 +842,7 @@ void write_result(const char *outcome, const th08::headless::State &st) {
     tape.close();
     write_summary(outcome, st, long(history.size()));
     shared->report_state = st;
+    shared->report_accounting = accounting;
     shared->report_frames = long(history.size());
     shared->report_written = true;
 }
@@ -1226,15 +1294,11 @@ int execute(int argc, char **argv) {
     config.shot = opt.shot;
     if (!opt.verify.empty()) {
         // Fresh-process strict replay of a committed tape; also writes a real .rpy.
-        std::ifstream in(opt.verify);
-        if (!in)
-            throw std::runtime_error("cannot read verification actions");
-        std::vector<std::uint16_t> tape;
-        for (std::string value; in >> value;) {
-            tape.push_back(th08::plan::nmnb_input(value));
-        }
-        if (!in.eof())
-            throw std::runtime_error("verification action read failed");
+        // Hash and decode the same bytes; a receipt must identify the exact
+        // immutable action input, independently of its private filesystem path.
+        th08::plan::PrefixParser parser(std::numeric_limits<std::size_t>::max());
+        actions_sha256 = file_sha256(opt.verify, "verification actions", &parser);
+        const auto tape = parser.finish();
         session = new th08::headless::Session(config);
         th08::headless::State st = session->state();
         long deaths = 0, done_at = -1;
@@ -1257,13 +1321,19 @@ int execute(int argc, char **argv) {
             << "\"verified\":" << (ok ? "true" : "false") << ",\"frames\":" << tape.size()
             << ",\"complete_at\":" << done_at << ",\"death_updates\":" << deaths
             << ",\"score\":" << st.score << ",\"stage\":" << st.stage
+            << ",\"final_spell\":" << st.spell
+            << ",\"final_spell_active\":" << (st.spell_active ? "true" : "false")
             << ",\"rng_seed\":" << st.rng_seed << ",\"rng_draws\":" << st.rng_draws
             << ",\"native_update_attempts\":" << shared->native_attempts
             << ",\"native_updates\":" << shared->native_updates
+            << ",\"native_calculation_updates\":" << shared->native_calculations
+            << ",\"native_control_updates\":" << shared->native_controls
+            << ",\"native_stage_transitions\":" << shared->native_stage_transitions
             << ",\"native_seconds_excluding_file_io\":" << double(shared->native_ns) / 1e9
             << ",\"rpy\":\"" << (rpy.empty() ? "" : "th8_verify.rpy") << "\",\"options\":";
         write_options(rep);
         write_hashes(rep);
+        write_accounting(rep, st, accounting);
         rep << "}\n";
         rep.close();
         std::printf("verify %s\n", ok ? "ok" : "FAILED");
@@ -1329,7 +1399,7 @@ int execute(int argc, char **argv) {
         write_result(outcome, {});
     // All holders and rollout children have now exited; include their final
     // aggregate costs even when the last worker's report preceded reaping.
-    write_summary(outcome, shared->report_state, shared->report_frames);
+    write_summary(outcome, shared->report_state, shared->report_frames, shared->report_accounting);
     std::printf("verdict %d\n", verdict);
     return verdict;
 }

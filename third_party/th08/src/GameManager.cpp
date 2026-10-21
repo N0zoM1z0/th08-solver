@@ -20,6 +20,9 @@
 #ifdef TH08_ENABLE_REPLAY_TRACE
 #include "modern/linux/replay_trace.hpp"
 #endif
+#ifdef TH08_HEADLESS
+#include "modern/headless/replay_check.hpp"
+#endif
 
 namespace th08
 {
@@ -583,6 +586,9 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
     }
 
     g_GameManager.IsTampered();
+#ifdef TH08_HEADLESS
+    headless::observe_gameplay_calculation();
+#endif
     gameManager->gameplayFrameCounter++;
     return CHAIN_CALLBACK_RESULT_CONTINUE;
 }

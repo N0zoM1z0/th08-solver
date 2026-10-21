@@ -19,4 +19,8 @@ struct ReplayCheckSummary {
 };
 void replay_check_enable(std::FILE *rows);
 const ReplayCheckSummary &replay_check_summary();
+// Observes the gameplayFrameCounter increment after all GameManager BREAK gates.
+// It neither resets across stages nor depends on replay row recording.
+void observe_gameplay_calculation();
+std::uint64_t replay_calculation_updates();
 } // namespace th08::headless
