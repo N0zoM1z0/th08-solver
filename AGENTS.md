@@ -34,6 +34,8 @@ this repository, not an ignored checkout, submodule or separate feature branch.
   data, own mutable state, reuse buffers where measurement justifies it
 - No fast-math, approximate collision shortcuts, speculative SIMD or unsafe state
   merging. Optimize against a measured workload while preserving stated semantics
+- The fork-based planner may approximate proposal search, pruning and cell merging.
+  Native rollouts decide safety; failed or incomplete rollouts cannot certify a prefix
 - Do not silently change budgets, tie-breaking, RNG consumption or failure meaning
   to improve a benchmark. Record additional retry/target-selection costs
 
@@ -62,7 +64,7 @@ this repository, not an ignored checkout, submodule or separate feature branch.
 - Raw DAT/EXE/assets, generated reference translation units and local experiments
   remain ignored. Do not force-add them; preserve third-party notices
 - For authorized assistant changes to this N0zoM1z0 repository, use
-  `gpt-dots: <English summary>`. Do not rewrite older commits solely for their prefix
+  `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requested direct main progress commits, not feature branches/PRs.
   Fetch first, preserve others' work, never force an unrelated change, and publish
   only tested scope. Do not infer permission to continue beyond the latest request

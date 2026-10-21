@@ -187,9 +187,10 @@ and feedback every frame. It is not a complete world serialization or independen
 physics oracle. `rng_draws` reports the native generation counter at the terminal
 update; original code can reset this counter, so it is not total run consumption.
 
-The current noncopyable session owns original process-global managers. It cannot
-provide independent candidate snapshots yet. Alternative futures must not share one
-mutating native world; exact branch ownership is required before adding beam/tree search.
+The noncopyable session owns original process-global managers. The fork planner
+creates independent candidate processes without copying the C++ session object.
+Alternative futures must not share one mutating native world; each fork owns its
+RNG, actors, bullets, feedback and lifecycle state. See [Planner](PLANNER.md).
 `th08_headless_probe` already provides candidate ownership through serial fresh
 processes: replace only the direction bits at one 1-based input update, retain focus,
 shoot/confirm and the common prefix, optionally observe a fixed unchanged suffix.

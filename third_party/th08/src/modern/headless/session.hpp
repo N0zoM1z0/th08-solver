@@ -7,6 +7,12 @@ struct Config {
     const char *dat_path = nullptr;
     int stage = 0, spell = -1, difficulty = 0;
     std::uint16_t seed = 0;
+    // Optional retail replay: story/practice state comes from the file, as in
+    // upstream TH08_AUTOPLAY_REPLAY. Input passed to step() is then ignored.
+    const char *replay = nullptr;
+    // Story mode: original non-practice initialization, stages chain natively.
+    bool story = false;
+    int shot = 0;
 };
 struct RelativeDirectionView {
     float angle = 0, speed = 0, turn_angle = 0, turn_speed = 0;
@@ -169,10 +175,12 @@ struct State {
     float hurt_half_x = 0, hurt_half_y = 0;
     // Recording mode latches movement input after Player/BulletManager update.
     std::uint16_t latched_input = 0, sampled_input = 0;
+    // Actual source-owned form after the update, not inferred from focus input.
+    bool youkai = false;
 };
 // Upstream managers are pointer-rich process globals. Exactly one noncopyable
 // session may be created per process; fresh processes provide fresh replay.
-// No world snapshot/branch independence is claimed by this adapter.
+// Forked processes own independent mutable worlds; the adapter is not copyable.
 class Session {
   public:
     explicit Session(const Config &);

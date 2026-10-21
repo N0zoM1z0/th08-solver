@@ -1,10 +1,17 @@
 # th08-solver
 
-Offline C++17 simulation and planning for Touhou 08. The immediate goal is to run
-complete, reproducible spell/scenario segments without starting the game, expose
-algorithm failures, and improve measured solve cost.
+Offline C++17 simulation and planning for Touhou 08. The target is a continuous
+Lunatic story No Miss No Bomb run, delivered as an input tape and a real `.rpy`.
+The fork-based native planner is being integrated and verified; full-story success
+is not yet established. [Planner](docs/PLANNER.md) owns the approach.
 
 ## Current direction
+
+The native runtime is both forecaster and collision oracle. Forked rollouts record
+native hazards; beam search proposes paths; fresh native rollouts verify each
+committed prefix. Checkpoint processes own complete branch state for backtracking.
+Approximation belongs to proposal search. Runtime failures never count as safety.
+The earlier kernels and spell-specific policies below remain historical baselines.
 
 - Start from an explicit spell/scenario checkpoint. Menus, practice preludes,
   camera and rendering are not prerequisites
@@ -15,7 +22,7 @@ algorithm failures, and improve measured solve cost.
 - Compare simple baselines and alternative planners under stated budgets. Search
   exhaustion is not a proof of impossibility, and a short route is not a full solution
 
-The tracked TH08 runtime now runs complete real-data scenes natively on Linux without
+The earlier tracked TH08 runtime ran complete real-data scenes natively on Linux without
 a display, Wine or a real-time frame limiter. The rolling hazard portfolio completes
 54 of the 56 enumerated Easy/Extra spell checkpoints at seed 0; bounded fresh-process
 native-prefix repair adds IDs202/203 for 56/56. The rolling portfolio clears
@@ -63,15 +70,17 @@ ctest --test-dir build-headless --output-on-failure
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 1 --strategy reactive --frames 30000 --actions reports/local/stage1.actions --output reports/local/stage1.json
 ```
 
-Each step still executes one original calc-chain update. Acceleration removes waiting;
-it does not enlarge time steps or skip gameplay frames. [Validation](docs/VALIDATION.md)
-includes complete-spell, replay and optimization comparison commands.
+Each Session step calls the original calc chain. Replay fast-forward can restart that
+chain internally, so API calls and recorded gameplay calculations are counted separately.
+Acceleration removes waiting without enlarging gameplay time steps.
+[Validation](docs/VALIDATION.md) includes complete-spell, replay and optimization commands.
 
 ## Documentation map
 
 | Document | Single responsibility |
 |---|---|
 | [Engineering rules](AGENTS.md) | Scope, code quality, tests and change discipline |
+| [Planner](docs/PLANNER.md) | Native branching, verification and experiment protocol |
 | [Status](docs/STATUS.md) | Verified progress, limits and next useful work |
 | [Architecture](docs/ARCHITECTURE.md) | Code map, ownership and correctness contracts |
 | [Scenarios](docs/SCENARIOS.md) | Checkpoints, RNG policy, exact profiles and terminal semantics |

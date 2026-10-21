@@ -1,12 +1,67 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 27
+Core CTest cases: 29
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (29 total). A native build with private DAT adds one full-scene CTest.
+add two CTests (31 total). Native builds add process, semantic and hazard-probe
+contracts; private DAT enables one full-scene CTest.
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
+
+## Native fork planner and replay gate
+
+The C++ replay suite requires the accepted corpus, manifest and schema from upstream
+`02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415`. Pass their locations explicitly; raw replay
+captures and game data remain local. The default full gate pins the 108-entry manifest
+and supported v4 schema, verifies replay hashes, creates a new output directory, and
+requires natural successful captures with every expected row/fingerprint.
+
+```sh
+./build-headless/th08_replay_suite --checker build-headless/th08_replay_check --dat game_data_donottrack/th08.dat --manifest reference/config/replay-fixtures.json --schema reference/scripts/replay-external-schema.json --corpus reference/tests/fixtures/replays/th08-1.00d/accepted --output reports/local/fidelity --jobs 8
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92 --stage 4b --spell 92 --difficulty 3 --seed 0 --rollout 64 --diversity-cell 16 --shoot 1 --checkpoint 60 --keep 12 --frames 10000 --seconds 180
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92-verify --stage 4b --spell 92 --difficulty 3 --seed 0 --verify reports/local/spell92/plan.actions
+./build-headless/th08_hazard_probe --dat game_data_donottrack/th08.dat --stage 4b --spell 92 --difficulty 3 --seed 0 --event-update 393 --leads 393,360,320,280,240,200,160 --output reports/local/spell92-probe.json
+./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --output reports/native/planner_current_summary.json
+```
+
+`reference/` above is a placeholder for supplied pinned corpus files, not a runtime
+dependency. `--case ID` selects an explicitly labeled subset but still validates the
+complete corpus. Explicit non-108 fixtures exist for synthetic protocol tests and do
+not count as a full gate. `--rows FILE --schema FILE` independently fingerprints an
+existing capture. One Session step can perform multiple replay calculations; capture
+rows and API call counts are checked separately.
+
+The current measured corpus result is **106/108**, not the handoff's recorded 108/108.
+`lunatic-1-b` ends early at 36200 rows; `lunatic-11-a` has all 116281 rows but a different
+fingerprint. Both reproduce with O0/O3 and a fresh pinned full native Debug build;
+restoring the draw chain does not fix them. Their retail-divergent row and cause remain
+unknown. Do not relax the gate or rewrite reference fingerprints. Matching projection
+fields do not establish every internal state or every input sequence.
+
+Planner reports include native attempts/completed updates, failed rollouts, checkpoint
+retry costs, options and capacity. New reports hash DAT and executable once before
+forking, outside native timing. The first recorded comparison campaigns predate this
+metadata addition; the retained spatial-planner binary is identified separately in
+their evidence. That explicit composer hash is specific to those archived campaigns;
+it must not be assigned to other builds. New campaigns use producer-recorded hashes.
+Concurrent campaign wall times are not isolated single-core benchmarks. The current
+remote campaigns use Linux x86_64, AMD EPYC 9654 and GCC 13.3 Release, with contraction
+disabled. Local diagnostic probes use AMD EPYC 7B12/GCC 12.2 Release. Independent jobs
+have task-specific scratch/output directories, low CPU/I/O weights, bounded memory
+and no additional swap; the shared host's other workloads are not modified.
+
+The ledger requires a finished process, matching fresh terminal/RNG/checkpoint and
+zero deaths before counting a completion. Practice/story cases additionally require
+a natural `.rpy`, matching calculation-row count and final score, and explicit zero
+`death_rows`/`bomb_input_rows`. These counters count observed rows, not death/bomb
+events. Refreshing them on the four practice tapes preserved every original row byte.
+Replay calculation rows and Session API calls are separate cost totals.
+
+The updated upstream polar math also changes four Stage6b collision values. The named
+`stage6b-02ff72f-semantic-v1` contract keeps the old `stage6b-semantic-v1` fixture intact,
+pins the new source/geometry, and retains strict fresh replay and all 18 latch probes.
+Neither contract asserts universal cross-host float identity.
 
 ## Local build and core checks
 
@@ -57,7 +112,8 @@ Platinum 8573C, GCC 14.2, Release; timing is not portable or a guarantee.
 - Component-oracle source: [N0zoM1z0/th08](https://github.com/N0zoM1z0/th08), pinned commit
   `a45e99fb1942714e6edded20847e32a654d56f97`
 - Tracked native runtime: same upstream, branch `port/portable-64bit`, commit
-  `861bec908b84fa4658382d7526e5a0075f520846`, adapted under `third_party/th08`
+  `02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415`, adapted under `third_party/th08`.
+  Earlier native reports identify the historical `861bec9` import and retain that profile
 - Original preparation archive `TH08_AllCase_20260911.zip`: SHA256
   `8913fffc96824c27b681ff1b1133a4385f7c7ca3e8e377fede17e552e535b199`
 - Older preparation reports mentioning a dirty worktree near `af72ca9` are historical

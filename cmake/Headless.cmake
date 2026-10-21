@@ -36,18 +36,21 @@ add_library(th08_native_headless STATIC ${th08_game_files}
   "${th08_native}/src/modern/headless/d3d_null.cpp"
   "${th08_native}/src/modern/headless/runtime.cpp")
 target_sources(th08_native_headless PRIVATE "${th08_native}/src/modern/headless/session.cpp"
-  "${th08_native}/src/modern/headless/body_forecast.cpp")
+  "${th08_native}/src/modern/headless/body_forecast.cpp"
+  "${th08_native}/src/modern/headless/replay_check.cpp")
 target_compile_features(th08_native_headless PUBLIC cxx_std_17)
 target_compile_definitions(th08_native_headless PUBLIC TH08_MODERN_PORT
   TH08_MODERN_LINUX TH08_PORTABLE_NATIVE_LAYOUT TH08_HEADLESS WIN32_LEAN_AND_MEAN
   _FILE_OFFSET_BITS=64 _TIME_BITS=64)
 target_compile_definitions(th08_native_headless PUBLIC
-  TH08_HEADLESS_OPTIMIZATION=${TH08_HEADLESS_OPTIMIZATION})
+  TH08_HEADLESS_OPTIMIZATION=${TH08_HEADLESS_OPTIMIZATION} TH08_ENABLE_REPLAY_TRACE)
 target_include_directories(th08_native_headless PUBLIC "${th08_native}/src"
   "${th08_native}/src/modern/linux/include" "${th08_generated}")
 # The headless experiment is optimized native float32. Do not apply fast-math.
+# The reconstructed TUs keep ZUN's intentional field-overruns (e.g. the 8-byte
+# replay player name); glibc fortify would abort on them at -O1+.
 target_compile_options(th08_native_headless PRIVATE -O${TH08_HEADLESS_OPTIMIZATION}
-  -fpermissive -fno-strict-aliasing
+  -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0 -fpermissive -fno-strict-aliasing
   -ffp-contract=off -Wno-write-strings -Wno-multichar -Wno-unknown-pragmas
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 target_link_libraries(th08_native_headless PUBLIC PkgConfig::TH08_SDL Threads::Threads dl)
@@ -83,6 +86,11 @@ set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH
   "Optional native executable built at another optimization level")
 
 if(BUILD_TESTING)
+  add_executable(th08_headless_opcode_guards tests/headless_opcode_guards.cpp)
+  target_link_libraries(th08_headless_opcode_guards PRIVATE th08_native_headless)
+  target_compile_options(th08_headless_opcode_guards PRIVATE -ffp-contract=off
+    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+  add_test(NAME headless_opcode_guards COMMAND th08_headless_opcode_guards)
   add_test(NAME headless_report_contract COMMAND ${CMAKE_COMMAND}
     -DROOT=${CMAKE_CURRENT_SOURCE_DIR}
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_stage6b_contract_tests.cmake)
@@ -93,4 +101,25 @@ if(BUILD_TESTING)
     -DCHILD=$<TARGET_FILE:th08_headless_repair_child>
     -DWORK=${CMAKE_CURRENT_BINARY_DIR}/repair-protocol
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_repair_protocol.cmake)
+endif()
+
+add_executable(th08_replay_check tools/replay_check.cpp)
+target_link_libraries(th08_replay_check PRIVATE th08_native_headless)
+target_include_directories(th08_replay_check PRIVATE "${th08_native}/src")
+target_compile_options(th08_replay_check PRIVATE -ffp-contract=off "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+add_executable(th08_plan tools/plan.cpp)
+target_link_libraries(th08_plan PRIVATE th08_native_headless OpenSSL::Crypto)
+target_include_directories(th08_plan PRIVATE "${th08_native}/src" "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_compile_options(th08_plan PRIVATE -O3 -ffp-contract=off -fpermissive -Wno-write-strings
+  -Wno-unknown-pragmas "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+
+add_executable(th08_hazard_probe tools/hazard_probe.cpp)
+target_link_libraries(th08_hazard_probe PRIVATE th08_native_headless OpenSSL::Crypto)
+target_include_directories(th08_hazard_probe PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+target_compile_options(th08_hazard_probe PRIVATE -ffp-contract=off)
+if(BUILD_TESTING)
+  add_executable(hazard_probe_tests tests/hazard_probe_tests.cpp)
+  target_include_directories(hazard_probe_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+  target_compile_features(hazard_probe_tests PRIVATE cxx_std_17)
+  add_test(NAME headless_hazard_probe_contract COMMAND hazard_probe_tests)
 endif()

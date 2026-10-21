@@ -2,8 +2,17 @@
 # but its report did not pin solver build, libm or CPU. Keep it as provenance,
 # not an unconditional promise of bit identity across numerical environments.
 function(stage6b_semantic_contract report metadata)
+  set(contract "stage6b-semantic-v1")
+  set(source "861bec908b84fa4658382d7526e5a0075f520846")
+  if(ARGC GREATER 2)
+    if(NOT ARGV2 STREQUAL "portable-02ff72f")
+      message(FATAL_ERROR "Unknown Stage6b native profile")
+    endif()
+    set(contract "stage6b-02ff72f-semantic-v1")
+    set(source "02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415")
+  endif()
   foreach(pair IN ITEMS
-      "source_revision;\"861bec908b84fa4658382d7526e5a0075f520846\""
+      "source_revision;\"${source}\""
       "dat_sha256;\"9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb\""
       "profile;\"native-headless-float32\"" "stage;\"6b\""
       "requested_spell_id;-1" "difficulty;0" "seed;0" "frame_budget;50000"
@@ -14,15 +23,23 @@ function(stage6b_semantic_contract report metadata)
     list(GET pair 1 expected)
     field("${report}" "${key}" actual)
     if(NOT actual STREQUAL expected)
-      message(FATAL_ERROR "stage6b-semantic-v1 changed ${key}: ${actual}, expected ${expected}")
+      message(FATAL_ERROR "${contract} changed ${key}: ${actual}, expected ${expected}")
     endif()
   endforeach()
   # Preserve all source collision endpoints, velocity, transforms and latch data.
   # The native JSON emitter's nine-digit float strings round-trip its float32s.
   set(expected "\"collision\":{\"kind\":\"bullet\",\"frame\":854,\"bullet_slot\":664,\"player_bounds\":[373.174988,431.174988,374.825012,432.825012],\"hazard_bounds\":[371.920898,428.774048,375.920898,432.774048],\"vx\":0.907954931,\"vy\":1.78202629,\"active_transforms\":0,\"laser_slot\":-1,\"laser_hitbox_call\":-1,\"laser_center\":[0,0],\"laser_size\":[0,0],\"laser_origin\":[0,0],\"laser_angle\":0,\"movement_input\":133,\"sampled_input\":4165}")
+  if(contract STREQUAL "stage6b-02ff72f-semantic-v1")
+    # Upstream double-product polar motion changes four rounded source values.
+    # Keep the 861bec9 literal above intact and pin this named source separately.
+    string(REPLACE "428.774048" "428.774017" expected "${expected}")
+    string(REPLACE "432.774048" "432.774017" expected "${expected}")
+    string(REPLACE "0.907954931" "0.907954514" expected "${expected}")
+    string(REPLACE "1.78202629" "1.78202653" expected "${expected}")
+  endif()
   string(REGEX MATCH "\"collision\":\\{[^}]+\\}" collision "${report}")
   if(NOT collision STREQUAL expected)
-    message(FATAL_ERROR "stage6b-semantic-v1 changed source collision geometry or input latch")
+    message(FATAL_ERROR "${contract} changed source collision geometry or input latch")
   endif()
   field("${report}" trace_digest digest)
   set(historical_match false)
@@ -30,6 +47,6 @@ function(stage6b_semantic_contract report metadata)
     set(historical_match true)
   endif()
   set(${metadata}
-    "{\"contract\":\"stage6b-semantic-v1\",\"historical_trace_digest\":\"4060221407534777929\",\"observed_trace_digest\":${digest},\"historical_digest_match\":${historical_match},\"numerical_profile_match\":\"unverified\"}"
+    "{\"contract\":\"${contract}\",\"source_revision\":\"${source}\",\"historical_trace_digest\":\"4060221407534777929\",\"observed_trace_digest\":${digest},\"historical_digest_match\":${historical_match},\"numerical_profile_match\":\"unverified\"}"
     PARENT_SCOPE)
 endfunction()

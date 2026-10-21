@@ -1,3 +1,4 @@
+cmake_minimum_required(VERSION 3.16)
 execute_process(COMMAND "${CHILD}" --parser-test RESULT_VARIABLE parser)
 if(NOT parser EQUAL 0)
   message(FATAL_ERROR "Strict child JSON grammar regression")

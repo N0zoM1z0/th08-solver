@@ -1,4 +1,8 @@
 #include "th_pch.h"
+#ifdef TH08_HEADLESS
+#include <stdexcept>
+#include <string>
+#endif
 
 #include "AnmManager.hpp"
 #include "Background.hpp"
@@ -223,8 +227,14 @@ ZunBool AnmManager::ExecuteScript(AnmVm *vm)
 
 #define GET_FLOAT_VAR_PTR(idx) vm->GetFloatVarPtr(&instruction->floatArgs[idx], instruction->varMask, idx)
 
-        switch (instruction->opcode)
-        {
+        switch (instruction->opcode) {
+#ifdef TH08_HEADLESS
+        case AnmOpcode_Nop:
+        case AnmOpcode_InterruptLabel:
+            // Labels have no effect during ordinary linear execution. Preserve
+            // both native no-ops while rejecting unknown executed instructions.
+            break;
+#endif
         case AnmOpcode_EndOfScript:
         case AnmOpcode_Delete:
             vm->visible = false;
@@ -564,8 +574,8 @@ ZunBool AnmManager::ExecuteScript(AnmVm *vm)
             vm->scaleFinal.y = GET_FLOAT_VAR(3);
             vm->updateScale = true;
             break;
-        case AnmOpcode_Ins83:
-            vm->playerBulletHitAnimationType = instruction->intArgs[0];
+        case AnmOpcode_SetPlayerBulletDrawMode:
+            vm->playerBulletDrawMode = instruction->intArgs[0];
             break;
         case AnmOpcode_ISet:
             *GET_INT_VAR_PTR(0) = GET_INT_VAR(1);
@@ -737,6 +747,12 @@ ZunBool AnmManager::ExecuteScript(AnmVm *vm)
             vm->currentInstruction = (AnmRawInstr *)(((u8 *)vm->beginningOfScript) + instruction->intArgs[2]);
             continue;
         default:
+#ifdef TH08_HEADLESS
+            throw std::runtime_error("unsupported ANM opcode " +
+                                     std::to_string(instruction->opcode) +
+                                     " script=" + std::to_string(vm->scriptIndex) +
+                                     " time=" + std::to_string(instruction->time));
+#endif
             break;
         }
 #undef GET_FLOAT_VAR_PTR
@@ -3172,7 +3188,7 @@ out:
 // FUNCTION: th08 0x45e960
 void AnmManager::DrawPlayerBullet(AnmVm *vm)
 {
-    switch (vm->playerBulletHitAnimationType)
+    switch (vm->playerBulletDrawMode)
     {
     case ANM_PLAYER_BULLET_DRAW_NO_ROTATION:
         this->DrawNoRotation(vm);

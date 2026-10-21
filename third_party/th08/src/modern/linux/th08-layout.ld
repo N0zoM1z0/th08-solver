@@ -23,14 +23,12 @@ SECTIONS
     _ZN4th0831g_AsciiManagerDrawChainHighPrioE = 0x004e3ff0;
     _ZN4th0829g_BackgroundDrawChainHighPrioE = 0x004e4010;
     _ZN4th0812g_BackgroundE = 0x004e4030;
-    _ZN4th0821g_GuiMessageStageModeE = 0x004e4b64;
     _ZN4th0828g_BackgroundDrawChainLowPrioE = 0x004ea630;
     _ZN4th0821g_BackgroundCalcChainE = 0x004ea650;
 
     /* ECL opcode 147 names Background::unk6260 as a standalone global. */
 
     _ZN4th0811g_SpellcardE = 0x004ea670;
-    _ZN4th0820g_SpellcardCalcChainE = 0x004eccac;
 
     _ZN4th0812g_EclManagerE = 0x004eccb8;
     _ZN4th089EclRunLow19g_EclCallParametersE = 0x004ece20;

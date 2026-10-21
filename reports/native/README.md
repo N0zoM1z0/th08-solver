@@ -1,6 +1,6 @@
 # Generated evidence index
 
-Current solver handoff: 2026-10-02. This directory mixes current solver records with
+Current solver handoff: 2026-10-21. This directory mixes current solver records with
 explicitly scoped older component baselines. A report's producer/input/scope controls
 its meaning; its presence is not a claim that every original spell or stage runs.
 See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
@@ -8,6 +8,9 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 
 | Producer | Records | Meaning |
 |---|---|---|
+| `th08_planner_report` | `planner_current_summary.json` | Current Lunatic fork-planner campaigns, verified completions and retained failures, all recorded search/replay costs, pending jobs, and unresolved 106/108 replay fidelity gate |
+| `th08_hazard_probe` | `planner_spell92_stability.json` | Sampled input-dependent direct-laser geometry before update 393; explicit native costs and failures, not a universal lock-time proof |
+| `th08_headless`, source `02ff72f` | `headless_02ff72f_stage6b.json` | New named source-profile collision fixture; the historical `861bec9` report and contract remain intact |
 | `th08_headless` + `th08_headless_probe` + `tests/headless_real_data.cmake` | `headless_summary.json` | Retained GCC12 native Stage 1, ID179, adapted IDs 85/89/93/198/201 and portfolio IDs 193/195/199, source collisions, Stage 6b input-latch witnesses, replay and O0/O3 comparison |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id202` | `headless_id202_summary.json` | GCC14 ID202 bounded WAIT improvement with three retained seed failures, preserved baseline, fresh replay and O0/O3 comparison; not a completed spell |
 | `tests/headless_real_data.cmake`, `CASE_GROUP=id204` | `headless_id204_summary.json` | GCC14 ID204 source-bounded relative-direction projection: complete seeds 0/65535, retained seed-1 collision and baseline, fresh replay and O0/O3 comparison |
@@ -64,4 +67,4 @@ full baseline reports into another large aggregate.
 
 | Current producer | Report | Scope |
 |---|---|---|
-| `tests/headless_completion.cmake` | `headless_current_summary.json` | Current 56/56 checkpoint and 9/9 continuous-stage recipes; nested rolling baseline, two Extra search episodes with cumulative costs, and fresh O3/O0 repaired-tape verification |
+| `tests/headless_completion.cmake` | `headless_current_summary.json` | Historical `861bec9` 56/56 checkpoint and 9/9 continuous-stage recipes; nested rolling baseline, two Extra search episodes with cumulative costs, and fresh O3/O0 repaired-tape verification |

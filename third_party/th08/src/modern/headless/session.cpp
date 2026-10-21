@@ -12,6 +12,8 @@
 #include "TextHelper.hpp"
 #include "pbg/PbgArchive.hpp"
 #include "runtime.hpp"
+#include "ReplayManager.hpp"
+#include "replay_check.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -488,15 +490,40 @@ Session::Session(const Config &config) {
     require(g_AnmManager->ServicePreloadedAnims() == ZUN_SUCCESS, "common ANM load failed");
     g_Supervisor.curState = g_Supervisor.wantedState = SupervisorState_GameManager;
     g_Supervisor.wantedState2 = SupervisorState_GameManager;
-    g_GameManager.flags.isPracticeMode = config.spell < 0;
-    g_GameManager.flags.isSpellPractice = config.spell >= 0;
-    g_GameManager.currentStage = config.stage;
-    g_GameManager.currentSpellCardNumber = config.spell;
-    g_GameManager.difficulty = config.difficulty;
-    g_GameManager.shotType = 0;
-    g_GameManager.fullShotType = 0;
-    g_Rng.SetSeed(config.seed);
-    g_Rng.ResetGenerationCount();
+    if (config.replay) {
+        // Same state as upstream StartDeveloperReplayIfRequested().
+        i32 file_size = 0;
+        auto *replay = reinterpret_cast<ReplayData *>(
+            FileSystem::OpenFile(const_cast<char *>(config.replay), &file_size, TRUE));
+        replay = ReplayManager::LoadReplayData(replay, file_size);
+        require(replay != nullptr, "cannot load replay");
+        int stage = config.stage;
+        while (stage < MAX_STAGES && TH08_REPLAY_STAGE_DATA(replay, stage) == NULL)
+            ++stage;
+        require(stage < MAX_STAGES, "replay has no playable stage");
+        g_GameManager.SetIsReplayWeird(TRUE);
+        std::strncpy(g_GameManager.replayFilename, config.replay,
+                     sizeof(g_GameManager.replayFilename) - 1);
+        g_GameManager.difficulty = replay->difficulty;
+        g_GameManager.shotType = replay->shotType;
+        g_GameManager.flags.isDemoMode = FALSE;
+        g_GameManager.flags.isPracticeMode = FALSE;
+        g_GameManager.flags.isSpellPractice = replay->spellcardNumber >= 0;
+        g_GameManager.currentSpellCardNumber = replay->spellcardNumber;
+        g_GameManager.currentStage = stage;
+        g_GameManager.replayMode = REPLAY_MODE_NORMAL;
+        g_ZunMemory.Free(replay);
+    } else {
+        g_GameManager.flags.isPracticeMode = !config.story && config.spell < 0;
+        g_GameManager.flags.isSpellPractice = !config.story && config.spell >= 0;
+        g_GameManager.currentStage = config.stage;
+        g_GameManager.currentSpellCardNumber = config.spell;
+        g_GameManager.difficulty = config.difficulty;
+        g_GameManager.shotType = config.shot;
+        g_GameManager.fullShotType = 0;
+        g_Rng.SetSeed(config.seed);
+        g_Rng.ResetGenerationCount();
+    }
     auto *supervisor = g_Chain.CreateElem(reinterpret_cast<ChainCallback>(Supervisor::OnUpdate));
     supervisor->arg = &g_Supervisor;
     require(g_Chain.AddToCalcChain(supervisor, CHAIN_PRIO_CALC_SUPERVISOR) == ZUN_SUCCESS,
@@ -556,7 +583,8 @@ State Session::state() const {
             g_Player.hurtboxHalfSize.x,
             g_Player.hurtboxHalfSize.y,
             g_GuiMessageInputCurrent,
-            g_CurFrameInput};
+            g_CurFrameInput,
+            bool(g_Player.IsYoukai())};
 }
 const std::vector<BulletView> &Session::bullets() {
     views_.clear();

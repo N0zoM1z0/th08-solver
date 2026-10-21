@@ -659,7 +659,7 @@ int main(int argc, char **argv) {
         if (!out)
             throw std::runtime_error("cannot open report");
         out << std::setprecision(std::numeric_limits<float>::max_digits10);
-        out << "{\"source_revision\":\"861bec908b84fa4658382d7526e5a0075f520846\","
+        out << "{\"source_revision\":\"02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415\","
             << "\"profile\":\"native-headless-float32\",\"dat_sha256\":\"" << identity
             << "\",\"stage\":\"" << stage_name << "\",\"requested_spell_id\":" << config.spell
             << ",\"difficulty\":" << config.difficulty << ",\"seed\":" << config.seed

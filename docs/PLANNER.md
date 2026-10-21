@@ -1,0 +1,107 @@
+# Native planner and experiment protocol
+
+The target is one continuous Lunatic story No Miss No Bomb run, with an input tape
+and a real `.rpy`. Final A comes first; Final B and other teams/seeds are separate
+coverage. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
+and provenance; [Architecture](ARCHITECTURE.md) maps ownership.
+
+## Truth and proposals
+
+The native runtime decides what happened. Its gameplay updates, shared RNG, input
+latch and collision predicates retain their original order. Observation hooks do
+not change those values. The actual Release binary must pass the pinned replay
+fingerprint corpus before its results are presented as matching that corpus.
+Fingerprints compare the published 25-field projection, not every internal state
+or every possible input. Fresh action replay alone is a determinism check.
+
+Proposal search may merge nearby positions, prune beams, use sampled futures and
+learn scores. These choices can lose a valid route. They cannot establish safety
+or prove impossibility. Every accepted proposal must survive a complete native
+rollout, or reach the actual case terminal, before a bounded prefix is committed.
+Capacity overflow, interrupted children and update exceptions are errors rather
+than empty hazard sets. A mismatch between verification and committed state stops
+the run. Search exhaustion, runtime failure and budget exhaustion remain distinct.
+
+## Execution and ownership
+
+`th08_plan` forks a single-threaded headless session. Each branch owns copied
+mutable managers, pointers, RNG and carried world state. Immutable resources share
+copy-on-write pages. A child records collision-enabled bullet boxes, direct and
+pooled laser calls, and lethal body/trail rectangles along a nominal input plan.
+The recording is exact for that branch; another input sequence may create different
+hazards, damage, cancellation, graze, items or RNG consumption.
+
+The movement proposal uses float32 SHT speeds, native arithmetic/clamping and the
+one-update recording-mode input latch. Beam search considers nine directions with
+both focus inputs. Native verification rejects path-dependent counterexamples;
+their recordings can guide another proposal. Only validated prefixes are committed.
+Checkpoint-holder processes enable backtracking without replaying the whole prefix.
+All attempted rollouts, including failures and reconstruction, belong in cost totals.
+
+Quiet windows withhold shots. This reduces shot-hit RNG draws; it does not freeze
+RNG or prove that hazards are path-independent. Existing shots, graze, collection,
+focus/form changes, damage and other source consumers still matter. Seed and shot/
+focus manipulation must be implemented through realizable inputs, never by changing
+the native RNG. Sampled hazard unions are heuristic constraints, not universal bounds.
+
+## Diagnose when information arrives
+
+For a blocking hazard, measure when its geometry becomes stable over sampled input
+variants, when the planner observes it, when it becomes lethal, and how much lead
+time is needed to escape from the current state. If observation arrives too late,
+test a longer native rollout. If the geometry remains input-dependent until escape
+is impossible, test earlier positioning or realizable shot/focus sequences.
+
+These measurements explain concrete failures; they are not a completeness theorem.
+Identical samples do not prove a global lock time. Preserve the sampled variants,
+failures, event times, geometry and consumed native updates. The hazard probe is a
+diagnostic tool; spell IDs belong in its configuration and regression cases, not in
+planner branches. Large-area hazards may justify a generic response after measurement.
+
+Long-horizon viability funnels, failure-directed checkpoint jumps and concurrent
+candidate verification are follow-up mechanisms, not assumed completed features.
+Keep finite failed families visible instead of repeatedly charging the same retry.
+
+`--diversity-cell N` optionally retains the best exact proposal per N-pixel spatial/
+focus bin before filling the beam by score. Zero preserves the global-score baseline.
+This can retain an early exit that center-seeking scores discard; it changes pruning,
+not collision semantics. Record bin/candidate counts and selection time. A larger
+rollout alone can worsen pruning, so compare complete outcomes and all retry costs.
+
+## Resource ownership and parallelism
+
+Independent executables can run in parallel with separate scratch directories and
+result files. Within a fork planner, rollout slots and process verdicts must also be
+independent before concurrent children are enabled. The imported DAT entry reader
+closes/reopens its handle for each entry; audit other inherited descriptors rather
+than assuming all reads share or avoid offsets. Current fork rollouts remain serial.
+
+On shared hosts, bound jobs and process count using measured memory. Use low CPU/I/O
+weights, a hard memory limit and a lower high-water limit, with no additional swap;
+check available memory before launch. CPU parallelism does not justify risking OOM
+or changing unrelated workloads. Keep machine addresses, usernames, private paths
+and raw logs out of public artifacts. Record technical profiles and sanitized results.
+
+## Acceptance and experiments
+
+Before publishing a checkpoint:
+
+1. Run focused contract regressions and the normal CTest suite, including docs.
+2. For native changes, run affected real-data cases and the complete pinned replay
+   fingerprint corpus. Require every expected fixture, matching input hash/row count/
+   fingerprint, successful child exit and natural replay completion.
+3. Run complete scenarios and freshly replay the resulting action tapes. Stage/story
+   results also need a `.rpy` round trip with matching terminal score and explicit
+   zero death/bomb-input rows.
+4. Record seed, difficulty, team, route, compiler/flags, upstream revision, source and
+   executable hashes, outcome, native-update/search budgets and wall time. Separate
+   file I/O and cross-build/environment comparisons from simulation measurements.
+
+Training seeds are 0, 1, 42 and 65535. Holdouts 7 and 2026 remain untouched until a
+candidate is frozen. The R64/beam384/cell16/shoot1 spell-92 candidate was frozen after
+all four training seeds passed, with checkpoint60/keep12/180-second budgets; both
+holdouts then completed and freshly replayed without tuning. This evaluates that
+checkpoint/profile, not a continuous story or all-seed robustness.
+The reviewed handoff records Lunatic practice Stages 1–3 and a
+story prefix blocked at spell 92; local/integrated reproductions must be labeled
+separately. A practice clear, partial story or sampled seed success is not a full run.

@@ -1,9 +1,38 @@
 # Current handoff status
 
-Reviewed: 2026-10-03. Native headless adaptation and complete real-data solver experiments
-are paused at the owner's request after publishing the reviewed checkpoint. Earlier subset/component evidence remains separate.
+Reviewed: 2026-10-21. Work resumed under issue #1: integrate the reviewed fork-based
+planner, reproduce the replay fingerprint gate, and diagnose the Lunatic story blocker.
+The tracked runtime imports upstream `02ff72f`; results below from
+`861bec9` remain historical native-profile evidence. They do not certify the new build.
 
-## Verified coverage
+## Active work
+
+The current approach is in [Planner](PLANNER.md). The generic planner uses native
+fork rollouts and verified commits; it adds no spell-92 strategy branch. The
+[campaign ledger](../reports/native/planner_current_summary.json) retains successful
+and failed searches, fresh verification, budgets, executable identities and total
+native costs. Unfinished processes contribute only a pending identifier.
+
+| Current Lunatic native-profile result | Evidence |
+|---|---|
+| Spell 92, stage 4b | Training seeds 0/1/42/65535 complete and freshly replay with spatial/focus beam retention. Frozen R64/cell16/shoot1 also passes holdouts 7/2026. Training takes 2756–2835 updates and about 15–17 seconds in the concurrent campaign; these are not isolated timing samples |
+| Complete practice Stages 1/2/3 | Seed 0: 24043/30481/38231 updates, fresh action replay and natural `.rpy` round trips |
+| Complete practice Stage 4b | Seed 0: 42588 updates with R128/cell16, fresh action replay and natural `.rpy` round trip |
+| Continuous story | Search remains in progress; no full-story completion is claimed |
+| Pinned replay corpus | 106/108; one early completion and one fingerprint mismatch remain unresolved, including in the pinned full native build |
+
+All four practice `.rpy` streams retain identical rows after adding explicit
+zero-death/zero-bomb-input checks. Whole-window verification rejects late deaths,
+incomplete/capacity-failed or interrupted rollouts, and commit agreement includes
+the actual human/youkai form. Search exhaustion is retained as a failure, not an
+impossibility proof. The baseline global-score pruning failures remain in the ledger.
+
+Keep training seeds 0/1/42/65535 separate from holdouts 7/2026. Published reports omit
+infrastructure addresses, account names and private paths. [Validation](VALIDATION.md)
+owns commands and the remaining fidelity limits; same-build native verification does
+not establish retail equivalence.
+
+## Historical verified coverage
 
 | Outcome | Verified count |
 |---|---|
@@ -178,8 +207,8 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 27 core CTests without private data, plus two optional pinned-source tests
-(29 total), optional headless process-protocol/semantic-contract tests and one optional native real-data CTest. The native test covers complete
+There are 29 core CTests without private data, plus two optional pinned-source tests
+(31 total), optional headless process-protocol/semantic-contract tests and one optional native real-data CTest. The native test covers complete
 duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, bounded repairs for IDs202/203 and their retained rolling failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
@@ -212,7 +241,7 @@ cross-host or retail bit-equivalence claim.
   The observed beam expands at most 16533 prefixes per decision, with stable original
   score ordering and deterministic first-action-family retention
 
-## Completion and paused follow-up work
+## Historical completion and follow-up work
 
 The requested seed-0 checkpoint/stage goal is complete: 56/56 checkpoint recipes
 and nine continuous stage routes. Final integrated CTest: 29/29 in 692.31 seconds.
@@ -252,4 +281,6 @@ boundary/clock defects, but loses two previously successful training cases. Its
 exact reviewable patch and compact results are archived under
 [reports/experiments](../reports/experiments/transform-contract-rejected.json).
 See [Validation](VALIDATION.md#paused-transform-contract-experiment) before resuming.
-No new solver campaign is running; holdout seeds 7 and 2026 remain unrun.
+That experiment remains unapplied during the new fork-planner integration. Its
+holdouts were not used to tune the rejected transform patch; the new fork planner's
+separate frozen-candidate evaluation is recorded above.

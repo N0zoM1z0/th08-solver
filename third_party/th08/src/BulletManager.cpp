@@ -1,4 +1,9 @@
 #include "th_pch.h"
+#ifdef TH08_HEADLESS
+#include "modern/headless/runtime.hpp"
+#include <stdexcept>
+#include <string>
+#endif
 
 #include "BulletManager.hpp"
 #include "GameManager.hpp"
@@ -20,16 +25,11 @@ void __fastcall CopyBulletAnmVmCore(AnmVm *dst, const AnmVm *src);
 void __fastcall SelectBulletSprite(AnmVm *dst, AnmVm *base, AnmVm *sizeSource, i32 offset);
 
 
+// Runtime implementation for the target x87 helper at 0x00433880.
 void __fastcall fsincos(f32 *sine, f32 *cosine, f32 angle)
 {
-    // Cancellation uses this geometry to create gameplay items, not just draw
-    // lasers. Reuse the established platform math path; never leave outputs
-    // dependent on stack contents or optimization level.
-    f32 sineValue;
-    f32 cosineValue;
-    sincos(angle, sineValue, cosineValue);
-    *sine = sineValue;
-    *cosine = cosineValue;
+    *sine = (f32)sin((f64)angle);
+    *cosine = (f32)cos((f64)angle);
 }
 
 // FUNCTION: th08 0x42a410
@@ -483,6 +483,20 @@ nextRecord:
         break;
 
     default:
+#ifdef TH08_HEADLESS
+        // These flags act at emission, collision/cancellation gates or ECL EX
+        // callbacks. A record containing only such flags keeps the source's
+        // no-op/cursor-advance behavior, including flag-only combinations.
+        const u32 passiveKinds =
+            BULLET_TRANSFORM_SPAWN_FAST | BULLET_TRANSFORM_SPAWN_NORMAL |
+            BULLET_TRANSFORM_SPAWN_SLOW | BULLET_TRANSFORM_PLAY_SPAWN_SOUND |
+            BULLET_TRANSFORM_CANCEL_IMMUNE | BULLET_TRANSFORM_ONLY_WHEN_PLAYER_YOUKAI |
+            BULLET_TRANSFORM_ONLY_WHEN_PLAYER_HUMAN | BULLET_TRANSFORM_ECL_EX_TRIGGER_MARKER;
+        if ((record->kind & ~passiveKinds) != 0)
+            throw std::runtime_error("unsupported bullet-transform kind " +
+                                     std::to_string(record->kind) +
+                                     " index=" + std::to_string(this->transformIndex));
+#endif
         break;
     }
 
@@ -907,6 +921,11 @@ updateBullet:
 
             if (bullet->collisionDisabled == 0)
             {
+#ifdef TH08_HEADLESS
+                // Every collision-enabled bullet, independent of where the player
+                // is: the graze gate below decides whether the lethal test runs.
+                headless::record_bullet_box(bullet->position, bullet->sprites.collisionSize);
+#endif
                 if (bullet->isGrazed == 0 &&
                     (i32)bullet->activeTimer >= 16)
                 {

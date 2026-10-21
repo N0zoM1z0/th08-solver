@@ -13,6 +13,7 @@ namespace {
 CollisionEvent observed_collision;
 std::vector<LaserHitboxView> observed_laser_hitboxes;
 std::vector<LethalRegionView> observed_lethal_regions;
+std::vector<BulletBoxRecord> observed_bullet_boxes;
 struct LaserSnapshot {
     float origin_x = 0, origin_y = 0, angle = 0;
     bool in_use = false;
@@ -30,6 +31,7 @@ void begin_update_observation() {
     observed_collision = {};
     observed_laser_hitboxes.clear();
     observed_lethal_regions.clear();
+    observed_bullet_boxes.clear();
     for (int i = 0; i < 256; ++i) {
         const auto &laser = g_BulletManager.lasers[i];
         laser_snapshots[i] =
@@ -75,6 +77,14 @@ void record_laser_hitbox(const Float3 &center, const Float3 &size, const Float3 
                          float angle, bool graze_enabled) {
     observed_laser_hitboxes.push_back({center.x, center.y, size.x, size.y, origin.x, origin.y,
                                        angle, pooled_laser_slot(&origin), graze_enabled});
+}
+bool record_bullet_boxes = false;
+void record_bullet_box(const Float3 &position, const Float3 &size) {
+    if (record_bullet_boxes)
+        observed_bullet_boxes.push_back({position.x, position.y, size.x, size.y});
+}
+const std::vector<BulletBoxRecord> &current_bullet_boxes() {
+    return observed_bullet_boxes;
 }
 void record_lethal_region(const Float3 &minimum, const Float3 &maximum) {
     observed_lethal_regions.push_back({{minimum.x, minimum.y, maximum.x, maximum.y}});

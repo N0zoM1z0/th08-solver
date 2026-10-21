@@ -13,6 +13,12 @@
 namespace th08
 {
 
+// Production owner for the Effect pool, template callbacks, and draw groups.
+// Public Effect/EffectManager declarations intentionally remain in
+// EclManager.hpp because that is the target-shaped shared owner.  Callback
+// vector fields are protocol-local scratch, not one global semantic layout;
+// see docs/EFFECT_STORAGE.md before renaming one across callback families.
+
 ZunBool IsDisableResourceReload();
 
 void __fastcall AdjustStageEffectDrawPosition(AnmVm *effect, D3DXVECTOR3 *base);
@@ -57,11 +63,6 @@ i32 __fastcall SyncAnchoredRadialTrail(Effect *effect);
 DIFFABLE_STATIC(EffectManager, g_EffectManager);
 DIFFABLE_STATIC(ChainElem, g_EffectManagerCalcChain);
 DIFFABLE_STATIC(ChainElem, g_EffectManagerDrawChain);
-
-// Target 0x004E4B64 is owned by Gui.cpp but participates in effect-resource setup.
-extern i32 g_GuiMessageStageMode;
-
-
 
 
 
@@ -1366,7 +1367,7 @@ ZunResult EffectManager::LoadEffectResources(EffectManager *effectManager)
 {
     effectManager->ResetEffects();
     effectManager->effectAnm = g_AnmManager->GetAnm(ANM_FILE_SLOT_BULLET_AND_EFFECT);
-    g_GuiMessageStageMode = 0;
+    g_Background.spellVmScriptBase = 0;
     g_Background.spellVmCount = 2;
 
     if (!IsDisableResourceReload())

@@ -26,6 +26,12 @@ void prepare_observation_storage();
 void record_laser_hitbox(const Float3 &center, const Float3 &size, const Float3 &origin,
                          float angle, bool graze_enabled);
 void record_lethal_region(const Float3 &minimum, const Float3 &maximum);
+// Bullet boxes exactly as passed to the graze/lethal tests of this update.
+struct BulletBoxRecord { float x, y, w, h; };
+void record_bullet_box(const Float3 &position, const Float3 &size);
+const std::vector<BulletBoxRecord> &current_bullet_boxes();
+// Planner rollouts toggle recording; normal sessions keep it off.
+extern bool record_bullet_boxes;
 void record_collision(CollisionKind, const Float3 &player_min, const Float3 &player_max,
                       const Float3 &hazard_min, const Float3 &hazard_max,
                       const Float3 *owner_position = nullptr);

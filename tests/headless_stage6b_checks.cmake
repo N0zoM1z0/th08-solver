@@ -4,7 +4,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/headless_stage6b_contract.cmake")
 set(stage6_tape "${WORK}/stage6b-reactive.actions")
 file(READ "${WORK}/stage6b-reactive.json" baseline)
 field("${baseline}" trace_digest baseline_digest)
-stage6b_semantic_contract("${baseline}" stage6b_contract)
+stage6b_semantic_contract("${baseline}" stage6b_contract "portable-02ff72f")
 run("${EXECUTABLE}" "${WORK}/stage6b-diagnostic.json" 2
   --stage 6b --frames 50000 --replay "${stage6_tape}" --trace "${WORK}/stage6b.tsv")
 file(READ "${WORK}/stage6b-diagnostic.json" diagnostic)

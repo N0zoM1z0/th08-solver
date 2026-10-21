@@ -24,6 +24,9 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Native proposal kernels | `include/th08/reactive.hpp`, `native_policy.hpp`, `direct_laser_policy.hpp`, `imminent_laser_policy.hpp`, `upcoming_bullet_policy.hpp`; actual game establishes collisions/outcomes |
 | Native spell policy selection | `include/th08/spell_policy.hpp`; case IDs do not enter generic kernels |
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
+| Native fork planner, proposals and process checkpoints | `tools/plan.cpp`; `plan_contracts.hpp`, `plan_observation.hpp`, `plan_beam.hpp` |
+| Replay projection and strict corpus gate | `modern/headless/replay_check.*`, `tools/replay_check.cpp`, `tools/replay_suite.cpp` |
+| Sampled hazard stability diagnosis | `tools/hazard_probe.cpp`, `hazard_probe.hpp` |
 | Independent native input interventions | `tools/headless_probe.cpp`; serial fresh-process branches over a fixed tape |
 
 Paths above are under `include/th08/` or `src/` unless qualified. Keep the generic
@@ -57,8 +60,10 @@ Only implement/claim the scheduling domain actually owned by the caller.
 
 ## Frame phases and RNG
 
-The native session executes the original ordered calc chain once per input. It keeps
-ANM updates and original shared RNG consumption, with synchronous initialization and
+The native session calls the original ordered calc chain once per supplied input.
+Replay fast-forward can restart the chain inside that call; replay calculation rows
+and Session API calls are separate counts. The session keeps ANM updates and original
+shared RNG consumption, with synchronous initialization and
 `timeGetTime = floor(frame * 1000 / 60)`. It omits the draw chain and text rasterization,
 not the GUI/message update logic. This profile does not split visual RNG streams.
 Initialization and loading completion are explicit adapter boundaries, described in
@@ -110,7 +115,12 @@ policy logs supply source-prefix projections and rollback triggers. The outer pr
 budgets, pinned executable provenance, artifact validation, failure ledger and replay.
 `observed_path_policy.hpp` owns only the H32/63-prefix player-path proposal beam.
 No native snapshot or global-state copying is introduced by either component.
-Branchable native snapshots remain future integration work.
+`th08_plan` separately branches that native state with process forks. Its shared
+tapes contain observations and counters; mutable managers remain private to each
+branch. `plan_contracts.hpp` rejects incomplete/failed rollouts, while
+`plan_observation.hpp` compares committed state/RNG/feedback with verification.
+`plan_beam.hpp` owns optional spatial proposal retention; its bins are not world
+equivalence classes. See [Planner](PLANNER.md) for verification and backtracking.
 
 Keep emission, transform installation, acceleration, displacement, culling and collision
 order explicit. A certified fast-spawn bullet can activate and perform fired motion in

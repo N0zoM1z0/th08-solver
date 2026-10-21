@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <vector>
+#if defined(__i386__)
+#include <fenv.h>
+#include <fpu_control.h>
+#endif
 
 namespace
 {
@@ -25,6 +29,7 @@ typedef void (APIENTRY *RenderbufferStorageFunction)(GLenum, GLenum, GLsizei, GL
 typedef void (APIENTRY *FramebufferRenderbufferFunction)(GLenum, GLenum, GLenum, GLuint);
 typedef void (APIENTRY *DeleteRenderbuffersFunction)(GLsizei, const GLuint *);
 typedef void (APIENTRY *FogCoordfFunction)(GLfloat);
+typedef void (APIENTRY *ClipControlFunction)(GLenum, GLenum);
 
 struct FramebufferApi
 {
@@ -85,6 +90,18 @@ struct FramebufferApi
 
 FramebufferApi g_framebufferApi;
 FogCoordfFunction g_fogCoordf;
+ClipControlFunction g_clipControl;
+
+void SetClipOrigin(GLenum origin)
+{
+    if (g_clipControl != NULL) g_clipControl(origin, GL_NEGATIVE_ONE_TO_ONE);
+}
+
+int BackbufferY(int height, int top, int rows)
+{
+    // The legacy FBO stores the logical top at OpenGL's lowest row.
+    return g_clipControl != NULL ? height - top - rows : top;
+}
 
 UINT BytesPerPixel(D3DFORMAT format)
 {
@@ -99,6 +116,17 @@ UINT BytesPerPixel(D3DFORMAT format)
     }
 }
 
+// D3D8 expands packed channels by copying their high bits into the low bits.
+BYTE Expand5(UINT value)
+{
+    return static_cast<BYTE>((value << 3) | (value >> 2));
+}
+
+BYTE Expand6(UINT value)
+{
+    return static_cast<BYTE>((value << 2) | (value >> 4));
+}
+
 void DecodePixel(const BYTE *source, D3DFORMAT format, BYTE *rgba)
 {
     WORD pixel;
@@ -108,15 +136,15 @@ void DecodePixel(const BYTE *source, D3DFORMAT format, BYTE *rgba)
         rgba[0] = source[2]; rgba[1] = source[1]; rgba[2] = source[0]; rgba[3] = 255; break;
     case D3DFMT_R5G6B5:
         memcpy(&pixel, source, sizeof(pixel));
-        rgba[0] = static_cast<BYTE>(((pixel >> 11) & 31) * 255 / 31);
-        rgba[1] = static_cast<BYTE>(((pixel >> 5) & 63) * 255 / 63);
-        rgba[2] = static_cast<BYTE>((pixel & 31) * 255 / 31); rgba[3] = 255; break;
+        rgba[0] = Expand5((pixel >> 11) & 31);
+        rgba[1] = Expand6((pixel >> 5) & 63);
+        rgba[2] = Expand5(pixel & 31); rgba[3] = 255; break;
     case D3DFMT_X1R5G5B5:
     case D3DFMT_A1R5G5B5:
         memcpy(&pixel, source, sizeof(pixel));
-        rgba[0] = static_cast<BYTE>(((pixel >> 10) & 31) * 255 / 31);
-        rgba[1] = static_cast<BYTE>(((pixel >> 5) & 31) * 255 / 31);
-        rgba[2] = static_cast<BYTE>((pixel & 31) * 255 / 31);
+        rgba[0] = Expand5((pixel >> 10) & 31);
+        rgba[1] = Expand5((pixel >> 5) & 31);
+        rgba[2] = Expand5(pixel & 31);
         rgba[3] = format == D3DFMT_A1R5G5B5 && !(pixel & 0x8000) ? 0 : 255; break;
     case D3DFMT_A4R4G4B4:
         memcpy(&pixel, source, sizeof(pixel));
@@ -138,14 +166,14 @@ void EncodePixel(BYTE *destination, D3DFORMAT format, const BYTE *rgba)
     case D3DFMT_R8G8B8:
         destination[0] = rgba[2]; destination[1] = rgba[1]; destination[2] = rgba[0]; break;
     case D3DFMT_R5G6B5:
-        pixel = static_cast<WORD>(((rgba[0] * 31 / 255) << 11) |
-                                  ((rgba[1] * 63 / 255) << 5) | (rgba[2] * 31 / 255));
+        pixel = static_cast<WORD>(((rgba[0] >> 3) << 11) |
+                                  ((rgba[1] >> 2) << 5) | (rgba[2] >> 3));
         memcpy(destination, &pixel, sizeof(pixel)); break;
     case D3DFMT_X1R5G5B5:
     case D3DFMT_A1R5G5B5:
         pixel = static_cast<WORD>(((format == D3DFMT_X1R5G5B5 || rgba[3] >= 128) ? 0x8000 : 0) |
-                                  ((rgba[0] * 31 / 255) << 10) |
-                                  ((rgba[1] * 31 / 255) << 5) | (rgba[2] * 31 / 255));
+                                  ((rgba[0] >> 3) << 10) |
+                                  ((rgba[1] >> 3) << 5) | (rgba[2] >> 3));
         memcpy(destination, &pixel, sizeof(pixel)); break;
     case D3DFMT_A4R4G4B4:
         pixel = static_cast<WORD>(((rgba[3] >> 4) << 12) | ((rgba[0] >> 4) << 8) |
@@ -168,7 +196,7 @@ class LinuxSurface : public IDirect3DSurface8
   public:
     LinuxSurface(UINT width_, UINT height_, D3DFORMAT format_, bool backbuffer_, LinuxTexture *owner_)
         : refs(1), width(width_), height(height_), format(format_), backbuffer(backbuffer_), owner(owner_),
-          dirty(!backbuffer_)
+          dirty(!backbuffer_), locked(false), lockedReadOnly(false)
     {
         pitch = width * BytesPerPixel(format);
         pixels.resize(pitch * height);
@@ -186,28 +214,37 @@ class LinuxSurface : public IDirect3DSurface8
     }
     HRESULT LockRect(D3DLOCKED_RECT *locked, const RECT *rect, DWORD flags)
     {
-        if (locked == NULL) return E_INVALIDARG;
-        if (backbuffer && (flags & D3DLOCK_READONLY)) ReadBackbuffer();
+        if (locked == NULL || this->locked) return E_INVALIDARG;
         UINT left = rect != NULL && rect->left > 0 ? static_cast<UINT>(rect->left) : 0;
         UINT top = rect != NULL && rect->top > 0 ? static_cast<UINT>(rect->top) : 0;
         if (left >= width || top >= height) return E_INVALIDARG;
+        if (backbuffer) ReadBackbuffer();
+        this->locked = true;
+        lockedReadOnly = (flags & D3DLOCK_READONLY) != 0;
         locked->Pitch = pitch;
         locked->pBits = &pixels[top * pitch + left * BytesPerPixel(format)]; return S_OK;
     }
-    HRESULT UnlockRect() { dirty = true; return S_OK; }
+    HRESULT UnlockRect()
+    {
+        if (!locked) return E_INVALIDARG;
+        locked = false;
+        if (!lockedReadOnly) th08_linux_surface_changed(this);
+        return S_OK;
+    }
     HRESULT GetDC(HDC *dc)
     { if (dc == NULL) return E_INVALIDARG; *dc = CreateCompatibleDC(NULL); return *dc ? S_OK : E_FAIL; }
     HRESULT ReleaseDC(HDC dc) { return DeleteDC(dc) ? S_OK : E_FAIL; }
     void ReadBackbuffer()
     {
         if (!backbuffer || width == 0 || height == 0) return;
+        FlushBackbuffer();
         std::vector<BYTE> rgba(width * height * 4);
         glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, &rgba[0]);
         const UINT bytes = BytesPerPixel(format);
         for (UINT y = 0; y < height; ++y)
             for (UINT x = 0; x < width; ++x)
                 EncodePixel(&pixels[y * pitch + x * bytes], format,
-                            &rgba[((height - 1 - y) * width + x) * 4]);
+                            &rgba[(BackbufferY(height, y, 1) * width + x) * 4]);
         dirty = false;
     }
     void FlushBackbuffer()
@@ -220,9 +257,14 @@ class LinuxSurface : public IDirect3DSurface8
                 DecodePixel(&pixels[y * pitch + x * bytes], format, &rgba[(y * width + x) * 4]);
 
         GLuint name = 0;
+        GLint previousOrigin = GL_LOWER_LEFT;
+        if (g_clipControl != NULL) glGetIntegerv(GL_CLIP_ORIGIN, &previousOrigin);
+        SetClipOrigin(GL_LOWER_LEFT);
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glDisable(GL_ALPHA_TEST); glDisable(GL_BLEND); glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST); glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_FOG); glDisable(GL_LIGHTING);
+        glViewport(0, 0, width, height);
         glDepthMask(GL_FALSE);
         glEnable(GL_TEXTURE_2D);
         glGenTextures(1, &name); glBindTexture(GL_TEXTURE_2D, name);
@@ -232,7 +274,9 @@ class LinuxSurface : public IDirect3DSurface8
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &rgba[0]);
-        glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity(); glOrtho(0.0, width, height, 0.0, -1.0, 1.0);
+        glMatrixMode(GL_PROJECTION); glPushMatrix(); glLoadIdentity();
+        if (g_clipControl != NULL) glOrtho(0.0, width, height, 0.0, -1.0, 1.0);
+        else glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
         glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
         glColor4ub(255, 255, 255, 255);
         glBegin(GL_TRIANGLE_STRIP);
@@ -244,6 +288,7 @@ class LinuxSurface : public IDirect3DSurface8
         glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW);
         glDeleteTextures(1, &name);
         glPopAttrib();
+        SetClipOrigin(previousOrigin);
         dirty = false;
     }
     ULONG refs;
@@ -251,7 +296,7 @@ class LinuxSurface : public IDirect3DSurface8
     D3DFORMAT format;
     bool backbuffer;
     LinuxTexture *owner;
-    bool dirty;
+    bool dirty, locked, lockedReadOnly;
     std::vector<BYTE> pixels;
 };
 
@@ -280,7 +325,7 @@ class LinuxTexture : public IDirect3DTexture8
     HRESULT LockRect(UINT level, D3DLOCKED_RECT *locked, const RECT *rect, DWORD flags)
     { return level == 0 ? surface->LockRect(locked, rect, flags) : E_INVALIDARG; }
     HRESULT UnlockRect(UINT level)
-    { if (level != 0) return E_INVALIDARG; uploaded = false; return surface->UnlockRect(); }
+    { return level == 0 ? surface->UnlockRect() : E_INVALIDARG; }
     void Upload()
     {
         if (uploaded && !surface->dirty) return;
@@ -424,6 +469,8 @@ class LinuxDevice : public IDirect3DDevice8
         context = SDL_GL_CreateContext(window);
         if (context == NULL) return;
         SDL_GL_MakeCurrent(window, context);
+        g_clipControl = SDL_GL_ExtensionSupported("GL_ARB_clip_control") ?
+            reinterpret_cast<ClipControlFunction>(SDL_GL_GetProcAddress("glClipControl")) : NULL;
         g_fogCoordf = reinterpret_cast<FogCoordfFunction>(SDL_GL_GetProcAddress("glFogCoordf"));
         if (g_fogCoordf == NULL)
             g_fogCoordf = reinterpret_cast<FogCoordfFunction>(SDL_GL_GetProcAddress("glFogCoordfEXT"));
@@ -469,12 +516,14 @@ class LinuxDevice : public IDirect3DDevice8
         int drawableWidth, drawableHeight;
         SDL_GL_GetDrawableSize(window, &drawableWidth, &drawableHeight);
         g_framebufferApi.bindFramebuffer(GL_FRAMEBUFFER, 0);
+        SetClipOrigin(GL_LOWER_LEFT);
         glDrawBuffer(GL_BACK);
         glViewport(0, 0, drawableWidth, drawableHeight);
 
         glPushAttrib(GL_ALL_ATTRIB_BITS);
         glDisable(GL_ALPHA_TEST); glDisable(GL_BLEND); glDisable(GL_CULL_FACE);
         glDisable(GL_DEPTH_TEST); glDisable(GL_LIGHTING); glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_FOG);
         glDepthMask(GL_FALSE);
         glEnable(GL_TEXTURE_2D); glBindTexture(GL_TEXTURE_2D, renderColorTexture);
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
@@ -484,11 +533,13 @@ class LinuxDevice : public IDirect3DDevice8
         glOrtho(0.0, drawableWidth, drawableHeight, 0.0, -1.0, 1.0);
         glMatrixMode(GL_MODELVIEW); glPushMatrix(); glLoadIdentity();
         glColor4ub(255, 255, 255, 255);
+        const float topV = g_clipControl != NULL ? 1.0f : 0.0f;
+        const float bottomV = 1.0f - topV;
         glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(0.0f, 0.0f);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f(static_cast<float>(drawableWidth), 0.0f);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(0.0f, static_cast<float>(drawableHeight));
-        glTexCoord2f(1.0f, 0.0f); glVertex2f(static_cast<float>(drawableWidth),
+        glTexCoord2f(0.0f, topV); glVertex2f(0.0f, 0.0f);
+        glTexCoord2f(1.0f, topV); glVertex2f(static_cast<float>(drawableWidth), 0.0f);
+        glTexCoord2f(0.0f, bottomV); glVertex2f(0.0f, static_cast<float>(drawableHeight));
+        glTexCoord2f(1.0f, bottomV); glVertex2f(static_cast<float>(drawableWidth),
                                             static_cast<float>(drawableHeight));
         glEnd();
         glPopMatrix(); glMatrixMode(GL_PROJECTION); glPopMatrix(); glMatrixMode(GL_MODELVIEW);
@@ -587,7 +638,7 @@ class LinuxDevice : public IDirect3DDevice8
         const int targetWidth = backbuffer != NULL ? backbuffer->width : viewport.Width;
         const int targetHeight = backbuffer != NULL ? backbuffer->height : viewport.Height;
         const int left = static_cast<int>(viewport.X);
-        const int bottom = targetHeight - static_cast<int>(viewport.Y + viewport.Height);
+        const int bottom = BackbufferY(targetHeight, viewport.Y, viewport.Height);
         const int width = static_cast<int>(viewport.Width);
         const int height = static_cast<int>(viewport.Height);
         glViewport(0, 0, targetWidth, targetHeight);
@@ -671,7 +722,7 @@ class LinuxDevice : public IDirect3DDevice8
             return false;
 
         probeLeft = left;
-        probeBottom = static_cast<int>(backbuffer->height) - bottom;
+        probeBottom = BackbufferY(backbuffer->height, top, bottom - top);
         probeWidth = right - left;
         probeHeight = bottom - top;
         probePixels.resize(probeWidth * probeHeight * 4);
@@ -803,13 +854,15 @@ class LinuxDevice : public IDirect3DDevice8
         return true;
     }
     void TransformPosition(const float *position, bool transformed, float *xOut, float *yOut,
-                           float *zOut, float *fogCoordinateOut)
+                           float *zOut, float *wOut, float *fogCoordinateOut)
     {
         if (transformed)
         {
-            // D3D8 pre-transformed vertices use integer pixel centers, while
-            // OpenGL samples at half-integer centers.
-            *xOut = position[0] + 0.5f; *yOut = position[1] + 0.5f; *zOut = position[2];
+            const float w = position[3] != 0.0f ? 1.0f / position[3] : 1.0f;
+            *xOut = (position[0] + 0.5f) * w;
+            *yOut = (position[1] + 0.5f) * w;
+            *zOut = position[2] * w;
+            *wOut = w;
             *fogCoordinateOut = 0.0f;
             return;
         }
@@ -826,10 +879,13 @@ class LinuxDevice : public IDirect3DDevice8
             if (index == 1)
                 *fogCoordinateOut = fabsf(vector[2]);
         }
-        float reciprocal = fabsf(vector[3]) > 1.0e-8f ? 1.0f / vector[3] : 1.0f;
-        *xOut = viewport.X + (vector[0] * reciprocal + 1.0f) * viewport.Width * 0.5f;
-        *yOut = viewport.Y + (1.0f - vector[1] * reciprocal) * viewport.Height * 0.5f;
-        *zOut = viewport.MinZ + vector[2] * reciprocal * (viewport.MaxZ - viewport.MinZ);
+        // Keep homogeneous W through OpenGL interpolation and clipping.
+        // D3D8 pixel centers are integers; OpenGL samples half-integers.
+        const float w = vector[3];
+        *xOut = (viewport.X + 0.5f) * w + (vector[0] + w) * viewport.Width * 0.5f;
+        *yOut = (viewport.Y + 0.5f) * w + (w - vector[1]) * viewport.Height * 0.5f;
+        *zOut = viewport.MinZ * w + vector[2] * (viewport.MaxZ - viewport.MinZ);
+        *wOut = w;
     }
     void PrepareState()
     {
@@ -839,10 +895,14 @@ class LinuxDevice : public IDirect3DDevice8
         const int drawableHeight = height;
         glEnable(GL_SCISSOR_TEST);
         glScissor(static_cast<int>(viewport.X * drawableWidth / width),
-                  drawableHeight - static_cast<int>((viewport.Y + viewport.Height) * drawableHeight / height),
+                  BackbufferY(drawableHeight, viewport.Y * drawableHeight / height,
+                              viewport.Height * drawableHeight / height),
                   static_cast<int>(viewport.Width * drawableWidth / width),
                   static_cast<int>(viewport.Height * drawableHeight / height));
-        glMatrixMode(GL_PROJECTION); glLoadIdentity(); glOrtho(0.0, width, height, 0.0, -1.0, 1.0);
+        // Both paths map logical top edges to OpenGL's inclusive edge convention.
+        SetClipOrigin(g_clipControl != NULL ? GL_UPPER_LEFT : GL_LOWER_LEFT);
+        glMatrixMode(GL_PROJECTION); glLoadIdentity();
+        glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
         glMatrixMode(GL_MODELVIEW); glLoadIdentity();
         if (renderStates[D3DRS_ALPHABLENDENABLE])
         { glEnable(GL_BLEND); glBlendFunc(BlendFunction(renderStates[D3DRS_SRCBLEND]), BlendFunction(renderStates[D3DRS_DESTBLEND])); }
@@ -951,8 +1011,8 @@ class LinuxDevice : public IDirect3DDevice8
         PrepareState(); glBegin(PrimitiveMode(type));
         for (UINT index = 0; index < count; ++index)
         {
-            const BYTE *vertex = data + index * stride; float x, y, z, fogCoordinate;
-            TransformPosition(reinterpret_cast<const float *>(vertex), transformed, &x, &y, &z,
+            const BYTE *vertex = data + index * stride; float x, y, z, w, fogCoordinate;
+            TransformPosition(reinterpret_cast<const float *>(vertex), transformed, &x, &y, &z, &w,
                               &fogCoordinate);
             D3DCOLOR color = hasDiffuse ? *reinterpret_cast<const D3DCOLOR *>(vertex + colorOffset) : 0xffffffffu;
             color = EffectiveColor(color);
@@ -970,7 +1030,7 @@ class LinuxDevice : public IDirect3DDevice8
             glColor4ub((color >> 16) & 255, (color >> 8) & 255, color & 255, (color >> 24) & 255);
             if (g_fogCoordf != NULL)
                 g_fogCoordf(fogCoordinate);
-            glVertex3f(x, y, 1.0f - 2.0f * z);
+            glVertex4f(x, y, w - 2.0f * z, w);
         }
         glEnd(); return S_OK;
     }
@@ -1004,13 +1064,24 @@ class LinuxDirect3D : public IDirect3D8
         mode->Width = 640; mode->Height = 480; mode->RefreshRate = 60; mode->Format = D3DFMT_X8R8G8B8; return S_OK;
     }
     HRESULT CheckDeviceFormat(UINT, D3DDEVTYPE, D3DFORMAT, DWORD, D3DRESOURCETYPE, D3DFORMAT) { return S_OK; }
-    HRESULT CreateDevice(UINT, D3DDEVTYPE, HWND window, DWORD, D3DPRESENT_PARAMETERS *parameters,
+    HRESULT CreateDevice(UINT, D3DDEVTYPE, HWND window, DWORD behaviorFlags, D3DPRESENT_PARAMETERS *parameters,
                          IDirect3DDevice8 **result)
     {
         if (window == NULL || parameters == NULL || result == NULL) return E_INVALIDARG;
         LinuxDevice *device = new(std::nothrow) LinuxDevice(reinterpret_cast<SDL_Window *>(window), *parameters);
         if (device == NULL) return E_OUTOFMEMORY;
         if (!device->Ready()) { delete device; *result = NULL; return E_FAIL; }
+#if defined(__i386__)
+        if ((behaviorFlags & D3DCREATE_FPU_PRESERVE) == 0)
+        {
+            fenv_t environment;
+            if (fegetenv(&environment) != 0)
+            { delete device; *result = NULL; return E_FAIL; }
+            environment.__control_word = (environment.__control_word & ~_FPU_EXTENDED) | _FPU_SINGLE;
+            if (fesetenv(&environment) != 0 || fesetround(FE_TONEAREST) != 0 || fedisableexcept(FE_ALL_EXCEPT) < 0)
+            { delete device; *result = NULL; return E_FAIL; }
+        }
+#endif
         *result = device; return S_OK;
     }
   private: ULONG refs;

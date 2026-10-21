@@ -220,8 +220,8 @@ void __fastcall UpdateFantasyOrbBomb(Player *player)
             workItem->angle = AddNormalizeAngle(
                 workItem->angle, (i & 1) ? 0.052359879016876221f : -0.052359879016876221f);
             previousPosition = workItem->position;
-            workItem->position.x = cosf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].x;
-            workItem->position.y = sinf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].y;
+            workItem->position.x = sinf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].x;
+            workItem->position.y = cosf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].y;
             workItem->motionStep += 3.2f;
             workItem->motion = workItem->position - previousPosition;
         }
@@ -327,7 +327,12 @@ void __fastcall UpdateFantasyOrbBomb(Player *player)
 // FUNCTION: th08 0x40c7b0
 f32 VectorAngle(f32 y, f32 x)
 {
+#ifdef TH08_MODERN_PORT
+    // The retail CRT uses the double atan2 path before the float result.
+    return static_cast<f32>(atan2(static_cast<f64>(y), static_cast<f64>(x)));
+#else
     return (f32)atan2(y, x);
+#endif
 }
 
 // FUNCTION: th08 0x40c7d0
@@ -415,8 +420,8 @@ void __fastcall UpdateFantasySealBlinkDeathbomb(Player *player)
             workItem->angle = AddNormalizeAngle(
                 workItem->angle, (i & 1) ? 0.052359879016876221f : -0.052359879016876221f);
             previousPosition = workItem->position;
-            workItem->position.x = cosf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].x;
-            workItem->position.y = sinf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].y;
+            workItem->position.x = sinf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].x;
+            workItem->position.y = cosf(workItem->angle) * workItem->motionStep + workItem->pathPoints[0].y;
             if (bomb->timer < 40)
             {
                 if (i & 1)
