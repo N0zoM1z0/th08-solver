@@ -95,11 +95,14 @@ debugger, display setup and trace I/O, outside the solver campaign totals. This
 checks that adapter/profile for one tape; the two paths share source and numerical
 behavior, so it is not an independent retail physics oracle.
 
-The completed Release native suite passes 35/35 CTests in 751.96 seconds. After
-report-only receipt hardening, all 34 tests excluding the unchanged long complete-scene
-test pass again; the local core suite passes 29/29. The new observer/checker full
-108-fixture run retains exactly the prior row counts, fingerprints and outcomes:
+The export fix's full Release native suite passes 36/36 CTests in 950.99 seconds,
+including complete real-data scenes. Earlier receipt hardening passed 35/35 in
+751.96 seconds before the export regression was added. Concurrent host workloads
+make these suite wall times unsuitable as isolated solver benchmarks. The current
+full 108-fixture run retains exactly the prior row counts, fingerprints and outcomes:
 106 pass and the same two failures remain. No expected fingerprint is changed.
+After the repair utility and its additional contracts, all 35 tests excluding the
+unchanged long scene pass again in 21.67 seconds; the core suite passes 29/29.
 
 Prefix continuation is a new planning episode over a natively reconstructed world,
 not a stage reset. Its raw input hash and reconstruction costs remain in the ledger;
@@ -115,6 +118,41 @@ The updated upstream polar math also changes four Stage6b collision values. The 
 `stage6b-02ff72f-semantic-v1` contract keeps the old `stage6b-semantic-v1` fixture intact,
 pins the new source/geometry, and retains strict fresh replay and all 18 latch probes.
 Neither contract asserts universal cross-host float identity.
+
+### Retail replay export identity
+
+The first Wine audit found a real export defect: archived native replays declared
+`0100d` but serialized executable size/checksum as `0/0`. The native loader's
+`TH08_MODERN_PORT` version bypass accepted them. Retail 1.00d instead failed its
+`th08_0100d.ver` whitelist and crashed while listing the replay; its unterminated
+last-line traversal reached address 1 in `strncmp`. A known accepted retail replay
+loaded and played under the same Wine configuration. Native round trips alone had
+therefore missed an incompatible file header.
+
+Recording now declares the pinned retail target explicitly: size `840704`, checksum
+`2724749753`, version `0100d`. Reports keep that declaration separate from the native
+producer's SHA256. It neither changes gameplay/RNG nor certifies retail execution.
+`headless_replay_export_contract` first failed with serialized size zero, then passed
+after the fix. It checks a complete fresh practice export, exact tape/replay outcome,
+legacy repair row identity, idempotence, malformed input and refused output overwrite.
+
+Preserve archived originals. To produce a separately named copy:
+
+```sh
+./build-headless/th08_replay_target reports/native/replays/story-v2--r64-b384-c16.rpy reports/local/story-retail-1.00d.rpy
+```
+
+This C++ tool accepts only a validated zero-identity or already-targeted 1.00d stream.
+It changes the two decoded identity fields at `[0x124,0x12c)`, rebuilds compression
+and the enclosing checksum, and refuses an existing output. All other decoded bytes,
+stage offsets and trailing user data persist; already-targeted files copy byte for
+byte. It reports hashes and never claims gameplay validation. The
+[repair receipt](../reports/native/planner_story_retail_target.json) binds the original
+to the separately saved
+[retail-targeted copy](../reports/native/replays/story-v2--r64-b384-c16-retail-1.00d.rpy).
+Both produce the same 232069 native calculation rows, SHA256
+`ad7d90ea5d36904d75498c621f18d7be88ca4f42554eb9100ddd306a3eb1c3b5`.
+Original archived replay hashes and the campaign ledger remain unchanged.
 
 ## Local build and core checks
 

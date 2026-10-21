@@ -6,14 +6,14 @@
 #include "GameManager.hpp"
 #include "Gui.hpp"
 #include "Player.hpp"
+#include "ReplayManager.hpp"
 #include "SoundPlayer.hpp"
 #include "Spellcard.hpp"
 #include "Supervisor.hpp"
 #include "TextHelper.hpp"
 #include "pbg/PbgArchive.hpp"
-#include "runtime.hpp"
-#include "ReplayManager.hpp"
 #include "replay_check.hpp"
+#include "runtime.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -514,6 +514,12 @@ Session::Session(const Config &config) {
         g_GameManager.replayMode = REPLAY_MODE_NORMAL;
         g_ZunMemory.Free(replay);
     } else {
+        // The recorder serializes these fields into its Windows replay. Zero
+        // passes the native version bypass but makes retail's whitelist walk
+        // fail (and its missing-newline bug can crash). Declare the pinned
+        // compatibility target; producer identity remains the native binary.
+        g_Supervisor.exeSize = static_cast<i32>(replay_executable_target.size);
+        g_Supervisor.exeChecksum = static_cast<i32>(replay_executable_target.checksum);
         g_GameManager.flags.isPracticeMode = !config.story && config.spell < 0;
         g_GameManager.flags.isSpellPractice = !config.story && config.spell >= 0;
         g_GameManager.currentStage = config.stage;

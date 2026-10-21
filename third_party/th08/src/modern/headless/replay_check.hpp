@@ -8,6 +8,14 @@
 #include <cstdio>
 
 namespace th08::headless {
+// Replay compatibility target from the pinned 1.00d DAT version whitelist.
+// This is the Windows format target, not the identity of the native producer.
+struct ReplayExecutableTarget {
+    std::uint32_t size, checksum;
+    const char *version;
+};
+inline constexpr ReplayExecutableTarget replay_executable_target{840704, 2724749753u, "0100d"};
+
 struct ReplayCheckSummary {
     std::uint32_t rows = 0;
     // Cumulative observation counts across all recorded calculation rows.

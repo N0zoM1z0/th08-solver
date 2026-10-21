@@ -255,6 +255,16 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/planner-prefix-regression
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/planner_prefix_real_data.cmake)
     set_tests_properties(headless_planner_prefix PROPERTIES TIMEOUT 300)
+    add_test(NAME headless_replay_export_contract COMMAND ${CMAKE_COMMAND}
+      -DEXECUTABLE=$<TARGET_FILE:th08_plan>
+      -DCHECKER=$<TARGET_FILE:th08_replay_check>
+      -DTARGETER=$<TARGET_FILE:th08_replay_target>
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/practice-v1--stage1-d3-s0.actions
+      -DLEGACY_REPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/practice-v1--stage1-d3-s0.rpy
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/replay-export-regression
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/replay_export_real_data.cmake)
+    set_tests_properties(headless_replay_export_contract PROPERTIES TIMEOUT 120)
   endif()
 endif()
 add_executable(geometry_bench benchmarks/geometry_bench.cpp)

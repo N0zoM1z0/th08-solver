@@ -1,10 +1,12 @@
 // Stream the pinned upstream replay-state rows from the native playback path.
 // Process exit, natural completion and successful row writes are all required.
 #include "modern/headless/replay_check.hpp"
+#include "ReplayManager.hpp"
 #include "modern/headless/session.hpp"
 #include <array>
 #include <charconv>
 #include <cstdio>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iomanip>
@@ -75,6 +77,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     std::uint64_t steps = 0;
+    std::uint32_t target_size = 0, target_checksum = 0;
+    std::array<char, 7> target_version{};
     bool runtime_error = false;
     try {
         fs::current_path(scratch);
@@ -86,6 +90,12 @@ int main(int argc, char **argv) {
         // The title screen may install a headless-incompatible setup thread at
         // replay end. The process owns this session until _exit, without teardown.
         auto *session = new th08::headless::Session(config);
+        if (th08::g_ReplayManager && th08::g_ReplayManager->replayData) {
+            const auto &header = *th08::g_ReplayManager->replayData;
+            target_size = std::uint32_t(header.exeSize);
+            target_checksum = std::uint32_t(header.exeChecksum);
+            std::memcpy(target_version.data(), header.exeVersion, 6);
+        }
         while (!th08::headless::replay_check_summary().finished && steps < 400000) {
             session->step(0);
             ++steps;
@@ -99,12 +109,20 @@ int main(int argc, char **argv) {
     const bool io_error = summary.write_failed || !flush_ok || !close_ok;
     const bool ok =
         !runtime_error && !io_error && summary.finished && summary.natural && summary.rows > 0;
+    // Do not interpolate arbitrary replay bytes into JSON. Only the pinned
+    // target has a public version label; other bytes remain unsupported.
+    const bool known_target_version =
+        std::memcmp(target_version.data(), th08::headless::replay_executable_target.version, 6) ==
+        0;
     std::printf("{\"source_revision\":\"02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415\","
                 "\"replay_sha256\":\"%s\",\"dat_sha256\":\"%s\",\"binary_sha256\":\"%s\","
+                "\"replay_target_exe_size\":%u,\"replay_target_exe_checksum\":%u,"
+                "\"replay_target_version\":\"%s\","
                 "\"rows\":%u,\"finished\":%s,\"natural\":%s,\"steps\":%llu,"
                 "\"runtime_error\":%s,\"io_error\":%s,\"death_rows\":%u,"
                 "\"bomb_input_rows\":%u,\"stages\":[",
-                replay_sha256.c_str(), dat_sha256.c_str(), binary_sha256.c_str(), summary.rows,
+                replay_sha256.c_str(), dat_sha256.c_str(), binary_sha256.c_str(), target_size,
+                target_checksum, known_target_version ? "0100d" : "unsupported", summary.rows,
                 summary.finished ? "true" : "false", summary.natural ? "true" : "false",
                 static_cast<unsigned long long>(steps), runtime_error ? "true" : "false",
                 io_error ? "true" : "false", summary.death_rows, summary.bomb_input_rows);

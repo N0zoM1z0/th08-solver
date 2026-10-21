@@ -113,6 +113,12 @@ target_include_directories(th08_plan PRIVATE "${th08_native}/src" "${CMAKE_CURRE
 target_compile_options(th08_plan PRIVATE -O3 -ffp-contract=off -fpermissive -Wno-write-strings
   -Wno-unknown-pragmas "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 
+add_executable(th08_replay_target tools/replay_target.cpp)
+target_link_libraries(th08_replay_target PRIVATE th08_native_headless th08_resources)
+target_include_directories(th08_replay_target PRIVATE "${th08_native}/src")
+target_compile_options(th08_replay_target PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+
 add_executable(th08_hazard_probe tools/hazard_probe.cpp)
 target_link_libraries(th08_hazard_probe PRIVATE th08_native_headless OpenSSL::Crypto)
 target_include_directories(th08_hazard_probe PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")

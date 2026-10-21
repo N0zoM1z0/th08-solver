@@ -37,6 +37,15 @@ The report retains failed episodes, prefix reconstruction and additional receipt
 costs. The requested replays and full action tapes are tracked in
 [native replays](../reports/native/replays/), with hashes in the campaign ledger.
 
+The retail Wine audit exposed an export-header defect: original native `.rpy`
+files declare executable size/checksum `0/0`, accepted by the native version bypass
+but crashing retail's whitelist traversal. New recording declares the pinned 1.00d
+target explicitly. Originals stay unchanged; a separate
+[retail-targeted story copy](../reports/native/replays/story-v2--r64-b384-c16-retail-1.00d.rpy)
+has a [repair receipt](../reports/native/planner_story_retail_target.json), with all
+232069 native calculation rows unchanged. The target declaration alone is not a
+retail gameplay result. [Validation](VALIDATION.md) owns reproduction and evidence.
+
 Keep training seeds 0/1/42/65535 separate from holdouts 7/2026. Published reports omit
 infrastructure addresses, account names and private paths. [Validation](VALIDATION.md)
 owns commands and the remaining fidelity limits; same-build native verification does

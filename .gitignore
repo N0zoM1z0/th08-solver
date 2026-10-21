@@ -1,4 +1,5 @@
 /game_data_donottrack/
+/game_exe/
 /.cache/
 # Generated reference TUs stay local; reusable probes live in tools/ and tests/.
 /build*/

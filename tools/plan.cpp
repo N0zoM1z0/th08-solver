@@ -201,6 +201,10 @@ void write_hashes(std::ostream &out) {
         else
             out << '"' << actions_sha256 << '"';
     }
+    const auto &target = th08::headless::replay_executable_target;
+    out << ",\"replay_target_exe_size\":" << target.size
+        << ",\"replay_target_exe_checksum\":" << target.checksum << ",\"replay_target_version\":\""
+        << target.version << '"';
 }
 
 void cleanup_scratch() {
