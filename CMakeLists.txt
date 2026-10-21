@@ -249,6 +249,12 @@ if(BUILD_TESTING)
     # Complete scenes plus the bounded ID203 search/replay run in this aggregate.
     # This is only the aggregate test process timeout, not a solver/frame budget.
     set_tests_properties(headless_real_data PROPERTIES TIMEOUT 1200)
+    add_test(NAME headless_planner_prefix COMMAND ${CMAKE_COMMAND}
+      -DEXECUTABLE=$<TARGET_FILE:th08_plan>
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/planner-prefix-regression
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/planner_prefix_real_data.cmake)
+    set_tests_properties(headless_planner_prefix PROPERTIES TIMEOUT 300)
   endif()
 endif()
 add_executable(geometry_bench benchmarks/geometry_bench.cpp)

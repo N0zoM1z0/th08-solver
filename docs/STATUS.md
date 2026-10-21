@@ -63,7 +63,7 @@ has its own profile and evidence:
 No universal solver or retail executable equivalence is claimed. Opcode counts and
 passing component tests are not completion percentages.
 
-## Results that matter
+## Historical results that matter
 
 - The imported production calc chain runs without video/audio initialization or a
   wall-clock limiter. It retains gameplay and ANM updates, original shared RNG,
@@ -213,7 +213,7 @@ duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See
 [Validation](VALIDATION.md) for commands and evidence limits.
-The historical GCC12 Stage6b digest differs on this GCC14 host. Its old numerical
+The historical GCC12 Stage6b digest differed in the earlier GCC14 run. Its old numerical
 profile did not pin the complete solver build, libm or CPU, so it cannot promise
 cross-environment trajectory-bit equality. The named stage6b-semantic-v1 contract
 retains the historical literal/report, asserts the full scene/terminal/RNG/feedback

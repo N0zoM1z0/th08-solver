@@ -19,6 +19,7 @@
 #include "th08/plan_beam.hpp"
 #include "th08/plan_contracts.hpp"
 #include "th08/plan_observation.hpp"
+#include "th08/plan_prefix.hpp"
 
 #include "EnemyManager.hpp"
 #include "GameManager.hpp"
@@ -79,7 +80,14 @@ struct Tape : th08::plan::RolloutSummary {
     int death_kind = 0;          // headless::CollisionKind of the native hit
     FrameTape f[kMaxFrames + 1]; // 1-based
 };
-enum ExitCode { kOk = 0, kRuntimeError = 1, kBacktrack = 3, kReleased = 4, kBudget = 5 };
+enum ExitCode {
+    kOk = 0,
+    kRuntimeError = 1,
+    kPrefixRejected = 2,
+    kBacktrack = 3,
+    kReleased = 4,
+    kBudget = 5
+};
 struct Shared {
     std::atomic<long> rollouts, searches, cegar, backtracks, commits, releases;
     std::atomic<long> max_frame, model_breaks, retries, quiet;
@@ -91,6 +99,8 @@ struct Shared {
     // retry, discarded rollout and committed update contributes to these totals.
     std::atomic<std::uint64_t> native_attempts, native_updates, native_ns;
     std::atomic<std::uint64_t> rollout_attempts, rollout_updates, commit_updates;
+    std::atomic<std::uint64_t> prefix_attempts, prefix_updates;
+    std::atomic<bool> prefix_complete;
     // Sums across enabled, over-budget layers, including discarded searches and
     // retried branches. Bin counts are per-layer work, not distinct world states.
     std::atomic<std::uint64_t> diversity_selections, diversity_candidates, diversity_bins,
@@ -118,9 +128,11 @@ Clock::time_point t_start;
 std::string scratch_path;
 // Populated once by the root before forking. Descendants inherit these immutable
 // hashes without repeating file I/O or charging it to native simulation timing.
-std::string dat_sha256, binary_sha256;
+std::string dat_sha256, binary_sha256, prefix_sha256;
+std::vector<std::uint16_t> prefix_actions;
 
-std::string file_sha256(const std::string &path, const char *label) {
+std::string file_sha256(const std::string &path, const char *label,
+                        th08::plan::PrefixParser *prefix = nullptr) {
     std::ifstream input(path, std::ios::binary);
     if (!input)
         throw std::runtime_error(std::string("cannot read ") + label + " for SHA256");
@@ -129,9 +141,12 @@ std::string file_sha256(const std::string &path, const char *label) {
     if (!context || EVP_DigestInit_ex(context.get(), EVP_sha256(), nullptr) != 1)
         throw std::runtime_error("SHA256 initialization failed");
     std::array<char, 65536> buffer;
-    while (input.read(buffer.data(), buffer.size()) || input.gcount())
+    while (input.read(buffer.data(), buffer.size()) || input.gcount()) {
         if (EVP_DigestUpdate(context.get(), buffer.data(), std::size_t(input.gcount())) != 1)
             throw std::runtime_error("SHA256 update failed");
+        if (prefix)
+            prefix->append(buffer.data(), std::size_t(input.gcount()));
+    }
     if (!input.eof())
         throw std::runtime_error("SHA256 input read failed");
     std::array<unsigned char, EVP_MAX_MD_SIZE> digest;
@@ -160,6 +175,11 @@ void write_hashes(std::ostream &out) {
         out << "null";
     else
         out << '"' << binary_sha256 << '"';
+    out << ",\"prefix_sha256\":";
+    if (prefix_sha256.empty())
+        out << "null";
+    else
+        out << '"' << prefix_sha256 << '"';
 }
 
 void cleanup_scratch() {
@@ -373,12 +393,16 @@ bool is_complete(const th08::headless::State &st) {
     }
     return st.stage_complete;
 }
-th08::headless::State native_step(std::uint16_t input, bool recording) {
+enum class NativeUse { Rollout, Commit, Verify, Prefix };
+
+th08::headless::State native_step(std::uint16_t input, NativeUse use) {
     if (shared->fatal_error)
         throw std::runtime_error("another planner process failed");
     ++shared->native_attempts;
-    if (recording)
+    if (use == NativeUse::Rollout)
         ++shared->rollout_attempts;
+    if (use == NativeUse::Prefix)
+        ++shared->prefix_attempts;
     const auto start = Clock::now();
     const auto io_start = th08::headless::file_io_ns;
     auto add_time = [&] {
@@ -396,10 +420,12 @@ th08::headless::State native_step(std::uint16_t input, bool recording) {
     }
     add_time();
     ++shared->native_updates;
-    if (recording)
+    if (use == NativeUse::Rollout)
         ++shared->rollout_updates;
-    else
+    else if (use == NativeUse::Commit)
         ++shared->commit_updates;
+    else if (use == NativeUse::Prefix)
+        ++shared->prefix_updates;
     // An explicit stage selects the DAT program; it does not establish that its
     // active spell matches the requested checkpoint. Check each native update
     // before rollout, commit or fresh verification can count it as progress.
@@ -434,7 +460,7 @@ void rollout(const std::vector<std::uint16_t> &plan, int slot) {
         for (int j = 1; j <= opt.rollout; ++j) {
             th08::headless::State st;
             try {
-                st = native_step(plan[j - 1], true);
+                st = native_step(plan[j - 1], NativeUse::Rollout);
                 if (!record_frame(t.f[j], st)) {
                     t.status = RolloutStatus::Capacity;
                     _exit(kRuntimeError);
@@ -672,8 +698,8 @@ void write_options(std::ostream &out) {
         << ",\"seconds\":" << opt.seconds << ",\"shoot\":" << opt.shoot
         << ",\"story\":" << opt.story << ",\"until_stage\":" << opt.until_stage
         << ",\"shot\":" << opt.shot << ",\"measure\":" << opt.measure_every
-        << ",\"diversity_cell\":" << opt.diversity_cell << ",\"boss_follow\":" << opt.boss_follow
-        << ",\"verify\":" << !opt.verify.empty() << "}";
+        << ",\"diversity_cell\":" << opt.diversity_cell << ",\"prefix\":" << !opt.prefix.empty()
+        << ",\"boss_follow\":" << opt.boss_follow << ",\"verify\":" << !opt.verify.empty() << "}";
 }
 
 void write_summary(const char *outcome, const th08::headless::State &st, long frames) {
@@ -696,12 +722,18 @@ void write_summary(const char *outcome, const th08::headless::State &st, long fr
         << ",\"rollout\":" << opt.rollout << ",\"beam\":" << opt.beam
         << ",\"commit\":" << opt.commit << ",\"checkpoint\":" << opt.checkpoint
         << ",\"story\":" << opt.story << ",\"final_stage\":" << st.stage
+        << ",\"final_spell\":" << st.spell
+        << ",\"final_spell_active\":" << (st.spell_active ? "true" : "false")
         << ",\"native_update_attempts\":" << shared->native_attempts
         << ",\"native_updates\":" << shared->native_updates
         << ",\"incomplete_native_updates\":" << (shared->native_attempts - shared->native_updates)
         << ",\"rollout_update_attempts\":" << shared->rollout_attempts
         << ",\"rollout_updates\":" << shared->rollout_updates
         << ",\"commit_updates\":" << shared->commit_updates
+        << ",\"prefix_requested_frames\":" << prefix_actions.size()
+        << ",\"prefix_native_update_attempts\":" << shared->prefix_attempts
+        << ",\"prefix_native_updates\":" << shared->prefix_updates
+        << ",\"prefix_complete\":" << (shared->prefix_complete ? "true" : "false")
         << ",\"rollout_failures\":" << shared->rollout_failures << ",\"beam_retention\":\""
         << (opt.diversity_cell ? "spatial-focus-bins" : "global-score")
         << "\",\"diversity_selections\":" << shared->diversity_selections
@@ -745,6 +777,47 @@ void write_result(const char *outcome, const th08::headless::State &st) {
     shared->report_state = st;
     shared->report_frames = long(history.size());
     shared->report_written = true;
+}
+
+// Reconstruct once before checkpoint holders fork. This episode may replace only
+// the continuation: game objects, RNG and latched input all carry natively, while
+// planner tie RNG/quiet windows start fresh rather than reconstructing a search.
+int replay_prefix() {
+    if (opt.prefix.empty())
+        return -1;
+    auto st = session->state();
+    for (std::size_t i = 0; i < prefix_actions.size(); ++i) {
+        if (frame_now >= opt.frame_limit ||
+            std::chrono::duration<double>(Clock::now() - t_start).count() > opt.seconds) {
+            write_result("budget", st);
+            return kBudget;
+        }
+        st = native_step(prefix_actions[i], NativeUse::Prefix);
+        history.push_back(prefix_actions[i]);
+        ++frame_now;
+        if (frame_now > shared->max_frame)
+            shared->max_frame = frame_now;
+        if (st.player_state == 2 || st.deaths != 0) {
+            std::fprintf(stderr, "prefix rejected: death at update %ld\n", frame_now);
+            write_result("prefix_rejected", st);
+            return kPrefixRejected;
+        }
+        const auto boundary =
+            th08::plan::prefix_boundary(prefix_actions.size(), i + 1, is_complete(st));
+        if (boundary == th08::plan::PrefixBoundary::TrailingTerminal) {
+            std::fprintf(stderr, "prefix rejected: actions follow terminal update %ld\n",
+                         frame_now);
+            write_result("prefix_rejected", st);
+            return kPrefixRejected;
+        }
+        if (boundary == th08::plan::PrefixBoundary::Complete) {
+            shared->prefix_complete = true;
+            write_result("complete", st);
+            return kOk;
+        }
+    }
+    shared->prefix_complete = true;
+    return -1;
 }
 
 // ---------------------------------------------------------------- checkpoints
@@ -1068,7 +1141,7 @@ int run_worker() {
             throw std::logic_error("attempted to commit an unverified rollout");
         const int k = std::min({opt.commit, ta.frames, int(opt.frame_limit - frame_now)});
         for (int j = 1; j <= k; ++j) {
-            st = native_step(plan[j - 1], false);
+            st = native_step(plan[j - 1], NativeUse::Commit);
             history.push_back(plan[j - 1]);
             ++frame_now;
             if (frame_now > shared->max_frame)
@@ -1116,6 +1189,8 @@ int execute(int argc, char **argv) {
     opt.out_dir = fs::absolute(opt.out_dir).string();
     if (!opt.verify.empty())
         opt.verify = fs::absolute(opt.verify).string();
+    if (!opt.prefix.empty())
+        opt.prefix = fs::absolute(opt.prefix).string();
     t_start = Clock::now();
     void *mem =
         mmap(nullptr, sizeof(Shared), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -1131,6 +1206,11 @@ int execute(int argc, char **argv) {
     fs::create_directories(opt.out_dir);
     binary_sha256 = file_sha256("/proc/self/exe", "executing binary");
     dat_sha256 = file_sha256(opt.dat, "DAT");
+    if (!opt.prefix.empty()) {
+        th08::plan::PrefixParser parser(std::size_t(opt.frame_limit));
+        prefix_sha256 = file_sha256(opt.prefix, "prefix", &parser);
+        prefix_actions = parser.finish();
+    }
     char scratch[] = "/tmp/th08-plan-XXXXXX";
     if (!mkdtemp(scratch))
         throw std::runtime_error("planner scratch creation failed");
@@ -1159,7 +1239,7 @@ int execute(int argc, char **argv) {
         th08::headless::State st = session->state();
         long deaths = 0, done_at = -1;
         for (std::size_t i = 0; i < tape.size(); ++i) {
-            st = native_step(tape[i], false);
+            st = native_step(tape[i], NativeUse::Verify);
             if (st.player_state == 2)
                 ++deaths;
             if (done_at < 0 && is_complete(st))
@@ -1200,6 +1280,9 @@ int execute(int argc, char **argv) {
     if (first == 0) {
         try {
             session = new th08::headless::Session(config);
+            const int prefix_code = replay_prefix();
+            if (prefix_code >= 0)
+                _exit(prefix_code);
             checkpoint(); // depth-1 holder above the first worker
             _exit(run_worker());
         } catch (const std::exception &error) {
@@ -1228,7 +1311,7 @@ int execute(int argc, char **argv) {
         const int code = WIFEXITED(status) ? WEXITSTATUS(status) : kRuntimeError;
         if (code == kReleased)
             continue;
-        if (code != kOk && code != kBacktrack && code != kBudget) {
+        if (code != kOk && code != kBacktrack && code != kBudget && code != kPrefixRejected) {
             shared->fatal_error = true;
             verdict = kRuntimeError;
         } else if (verdict < 0 || (code == kOk && verdict != kRuntimeError))
@@ -1237,10 +1320,11 @@ int execute(int argc, char **argv) {
     cleanup_scratch();
     if (shared->fatal_error || verdict < 0)
         verdict = kRuntimeError;
-    const char *outcome = verdict == kOk          ? "complete"
-                          : verdict == kBacktrack ? "exhausted"
-                          : verdict == kBudget    ? "budget"
-                                                  : "runtime_error";
+    const char *outcome = verdict == kOk               ? "complete"
+                          : verdict == kPrefixRejected ? "prefix_rejected"
+                          : verdict == kBacktrack      ? "exhausted"
+                          : verdict == kBudget         ? "budget"
+                                                       : "runtime_error";
     if (!shared->report_written)
         write_result(outcome, {});
     // All holders and rollout children have now exited; include their final
@@ -1261,6 +1345,11 @@ int main(int argc, char **argv) {
                 rep << "{\"verified\":false,\"outcome\":\"invalid_input\"";
                 write_hashes(rep);
                 rep << "}\n";
+            } catch (...) {
+            }
+        } else if (shared && !opt.prefix.empty()) {
+            try {
+                write_summary("prefix_rejected", {}, 0);
             } catch (...) {
             }
         }

@@ -89,11 +89,14 @@ template <class Integer> Integer integer(std::string_view value, std::string_vie
     return result;
 }
 
-inline std::uint16_t nmnb_input(std::string_view value) {
-    const auto input = integer<unsigned>(value, "action");
+inline std::uint16_t nmnb_input_value(unsigned input) {
     if (input > 65535 || (input & ~0x10f5u))
         throw std::invalid_argument("verification requires supported NMNB input bits");
     return std::uint16_t(input);
+}
+
+inline std::uint16_t nmnb_input(std::string_view value) {
+    return nmnb_input_value(integer<unsigned>(value, "action"));
 }
 
 inline double real(const std::string &value, std::string_view option) {
@@ -107,7 +110,7 @@ inline double real(const std::string &value, std::string_view option) {
 }
 
 struct Options {
-    std::string dat, out_dir, verify;
+    std::string dat, out_dir, verify, prefix;
     int stage = 0, spell = -1, difficulty = 0, seed = 0;
     int rollout = 64, beam = 384, commit = 8, checkpoint = 240, keep = 32;
     int attempts = 4, cegar = 4;
@@ -127,7 +130,8 @@ inline void range(bool ok, const char *message) {
 inline Options parse_options(int argc, const char *const *argv) {
     range(argc % 2 == 1, "each option requires a value");
     Options o;
-    bool stage_given = false, spell_given = false;
+    bool stage_given = false, spell_given = false, frames_given = false, seconds_given = false,
+         prefix_given = false;
     for (int i = 1; i < argc; i += 2) {
         const std::string key = argv[i], value = argv[i + 1];
         if (key == "--dat")
@@ -136,7 +140,10 @@ inline Options parse_options(int argc, const char *const *argv) {
             o.out_dir = value;
         else if (key == "--verify")
             o.verify = value;
-        else if (key == "--stage") {
+        else if (key == "--prefix") {
+            prefix_given = true;
+            o.prefix = value;
+        } else if (key == "--stage") {
             stage_given = true;
             constexpr std::string_view names[] = {"1", "2",  "3",  "4a",   "4b",
                                                   "5", "6a", "6b", "extra"};
@@ -145,13 +152,15 @@ inline Options parse_options(int argc, const char *const *argv) {
                 if (value == names[s])
                     o.stage = s;
             range(o.stage >= 0, "unknown stage name");
-        } else if (key == "--seconds")
+        } else if (key == "--seconds") {
+            seconds_given = true;
             o.seconds = real(value, key);
-        else if (key == "--boss-follow")
+        } else if (key == "--boss-follow")
             o.boss_follow = float(real(value, key));
-        else if (key == "--frames")
+        else if (key == "--frames") {
+            frames_given = true;
             o.frame_limit = integer<long>(value, key);
-        else {
+        } else {
             // Recognize before parsing so malformed unknown options remain errors.
             int *field = nullptr;
             if (key == "--spell") {
@@ -195,6 +204,10 @@ inline Options parse_options(int argc, const char *const *argv) {
     }
     range(!o.dat.empty() && !o.out_dir.empty(), "--dat and --out are required");
     range(!spell_given || stage_given, "--spell requires an explicit --stage");
+    range(!prefix_given || !o.prefix.empty(), "--prefix requires a nonempty actions path");
+    range(o.prefix.empty() || o.verify.empty(), "--prefix conflicts with --verify");
+    range(o.prefix.empty() || (frames_given && seconds_given),
+          "--prefix requires explicit --frames and --seconds budgets");
     range(o.spell >= -1 && o.spell < 222, "--spell must be -1..221");
     range(o.difficulty >= 0 && o.difficulty <= 4, "--difficulty must be 0..4");
     range(o.seed >= 0 && o.seed <= 65535, "--seed must be 0..65535");

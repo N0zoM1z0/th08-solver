@@ -38,6 +38,17 @@ their recordings can guide another proposal. Only validated prefixes are committ
 Checkpoint-holder processes enable backtracking without replaying the whole prefix.
 All attempted rollouts, including failures and reconstruction, belong in cost totals.
 
+`--prefix ACTIONS` reconstructs an earlier input tape through the same native
+session before checkpoint holders fork. Use its original stage/story/difficulty/
+seed/shot settings. Raw actions have no checkpoint header; another configuration
+defines a different experiment. Mutable world/RNG/input state carries through every
+update; planner tie RNG, quiet windows and proposal history start a new episode.
+The final tape includes the prefix. Its raw SHA and attempted/completed native
+reconstruction counts are reported separately and included in total native work.
+Explicit `--frames` and `--seconds` are required; frames include the whole prefix.
+Deaths, invalid input bits, checkpoint mismatch and actions after terminal reject
+the episode. A prefix ending exactly at terminal may complete without new search.
+
 Quiet windows withhold shots. This reduces shot-hit RNG draws; it does not freeze
 RNG or prove that hazards are path-independent. Existing shots, graze, collection,
 focus/form changes, damage and other source consumers still matter. Seed and shot/

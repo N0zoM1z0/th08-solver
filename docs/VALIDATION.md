@@ -3,8 +3,9 @@
 Core CTest cases: 29
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (31 total). Native builds add process, semantic and hazard-probe
-contracts; private DAT enables one full-scene CTest.
+add two CTests (31 total). Native builds add process, semantic, hazard-probe and
+unsupported-instruction contracts; private DAT enables the complete-scene and
+planner-prefix CTests.
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
@@ -21,6 +22,7 @@ requires natural successful captures with every expected row/fingerprint.
 ./build-headless/th08_replay_suite --checker build-headless/th08_replay_check --dat game_data_donottrack/th08.dat --manifest reference/config/replay-fixtures.json --schema reference/scripts/replay-external-schema.json --corpus reference/tests/fixtures/replays/th08-1.00d/accepted --output reports/local/fidelity --jobs 8
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92 --stage 4b --spell 92 --difficulty 3 --seed 0 --rollout 64 --diversity-cell 16 --shoot 1 --checkpoint 60 --keep 12 --frames 10000 --seconds 180
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92-verify --stage 4b --spell 92 --difficulty 3 --seed 0 --verify reports/local/spell92/plan.actions
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/story-resumed --stage 1 --story 1 --difficulty 3 --seed 0 --prefix reports/local/story/plan.actions --rollout 64 --diversity-cell 16 --checkpoint 120 --keep 64 --frames 350000 --seconds 1800
 ./build-headless/th08_hazard_probe --dat game_data_donottrack/th08.dat --stage 4b --spell 92 --difficulty 3 --seed 0 --event-update 393 --leads 393,360,320,280,240,200,160 --output reports/local/spell92-probe.json
 ./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --output reports/native/planner_current_summary.json
 ```
@@ -57,6 +59,16 @@ a natural `.rpy`, matching calculation-row count and final score, and explicit z
 `death_rows`/`bomb_input_rows`. These counters count observed rows, not death/bomb
 events. Refreshing them on the four practice tapes preserved every original row byte.
 Replay calculation rows and Session API calls are separate cost totals.
+
+Prefix continuation is a new planning episode over a natively reconstructed world,
+not a stage reset. Its raw input hash and reconstruction costs remain in the ledger;
+the final full tape must replay from its original start. Contract checks cover
+chunked/malformed/bomb inputs, explicit budgets and terminal boundaries. Native
+checks cover successful continuation, exact-terminal completion with no rollouts,
+trailing-action rejection, a death at update 382 and budget exhaustion before update 1.
+`--verify` executes the entire supplied tape and records its actual native cost;
+search frame/time limits apply to planning episodes. Bound verification separately
+with a process timeout when running a campaign.
 
 The updated upstream polar math also changes four Stage6b collision values. The named
 `stage6b-02ff72f-semantic-v1` contract keeps the old `stage6b-semantic-v1` fixture intact,
@@ -119,8 +131,10 @@ Platinum 8573C, GCC 14.2, Release; timing is not portable or a guarantee.
 - Older preparation reports mentioning a dirty worktree near `af72ca9` are historical
   evidence, not the pinned source or current runtime. `preparations/` remains unchanged
 
-DAT tools check the expected input hash. Scenario reports retain relevant member/ANM/SHT
-hashes and instruction identities. Source probe generators enforce per-file hashes before
+Legacy DAT analysis tools check the expected input hash. Native experiment tools
+record the supplied DAT hash; compare evidence only for the stated input/profile.
+Scenario reports retain relevant member/ANM/SHT hashes and instruction identities.
+Source probe generators enforce per-file hashes before
 extracting reviewed unchanged bodies; those maintained constants are the authoritative
 file-hash list. Do not bypass a mismatch or use aggregate pass rates to hide it.
 

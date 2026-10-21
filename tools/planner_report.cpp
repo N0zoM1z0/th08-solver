@@ -173,6 +173,8 @@ Fields scalars(const Fields &input, const std::vector<std::string> &keys) {
         if (found == input.end())
             continue;
         const auto &value = found->second;
+        if (key == "prefix_sha256" && value == "null")
+            continue; // Non-prefix episodes have no input-prefix identity.
         // String-valued allowlisted fields must be identifiers or actual hashes.
         // Numeric/bool producer fields cannot smuggle private strings/objects.
         if (!value.empty() && value.front() == '"') {
@@ -196,7 +198,7 @@ const std::vector<std::string> option_keys = {
     "stage",          "spell",       "difficulty", "seed",        "rollout", "beam",
     "commit",         "checkpoint",  "keep",       "attempts",    "cegar",   "frames",
     "seconds",        "shoot",       "story",      "until_stage", "shot",    "measure",
-    "diversity_cell", "boss_follow", "verify"};
+    "diversity_cell", "boss_follow", "prefix",     "verify"};
 
 const std::vector<std::string> cost_keys = {"rollouts",
                                             "searches",
@@ -212,6 +214,8 @@ const std::vector<std::string> cost_keys = {"rollouts",
                                             "rollout_update_attempts",
                                             "rollout_updates",
                                             "commit_updates",
+                                            "prefix_native_update_attempts",
+                                            "prefix_native_updates",
                                             "rollout_failures",
                                             "diversity_selections",
                                             "diversity_candidates",
@@ -242,6 +246,11 @@ const std::vector<std::string> plan_keys = {"outcome",
                                             "checkpoint",
                                             "story",
                                             "final_stage",
+                                            "final_spell",
+                                            "final_spell_active",
+                                            "prefix_requested_frames",
+                                            "prefix_complete",
+                                            "prefix_sha256",
                                             "beam_retention",
                                             "diversity_selection_seconds",
                                             "native_seconds_excluding_file_io",
@@ -316,6 +325,15 @@ void verify_complete(Case &result, const fs::path &root) {
     require(integer(field(verification, "death_updates")) == 0 &&
                 numeric(field(result.plan, "deaths")) == 0,
             "verification_deaths");
+    if (result.options.count("prefix") && integer(field(result.options, "prefix")) != 0) {
+        require(field(result.plan, "prefix_complete") == "true" &&
+                    result.plan.count("prefix_sha256") &&
+                    integer(field(result.plan, "prefix_requested_frames")) ==
+                        integer(field(result.plan, "prefix_native_updates")) &&
+                    integer(field(result.plan, "prefix_native_update_attempts")) ==
+                        integer(field(result.plan, "prefix_native_updates")),
+                "incomplete_prefix_reconstruction");
+    }
     for (const auto *key : {"score", "rng_seed", "rng_draws"})
         require(integer(field(result.plan, key)) == integer(field(verification, key)),
                 "verification_state_mismatch");
@@ -492,9 +510,9 @@ int report(const Options &opt) {
                 failures.push_back(scalars(entry, {"id", "outcome", "failure", "rows", "sha256"}));
     Totals totals;
     std::vector<Case> cases;
-    for (const auto *group :
-         {"spell92-v1", "spell92-diversity-v2", "spell92-diversity-v3", "spell92-training-v1",
-          "spell92-efficiency-v1", "spell92-holdout-v1", "practice-v1", "advance-v1", "story-v2"}) {
+    for (const auto *group : {"spell92-v1", "spell92-diversity-v2", "spell92-diversity-v3",
+                              "spell92-training-v1", "spell92-efficiency-v1", "spell92-holdout-v1",
+                              "practice-v1", "advance-v1", "story-v2", "story-prefix-v1"}) {
         const auto directory = opt.root / group;
         if (!fs::is_directory(directory))
             continue;

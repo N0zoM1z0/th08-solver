@@ -160,3 +160,27 @@ if(NOT ledger MATCHES "\"verified_complete_cases\":4" OR
    NOT ledger MATCHES "\"group\":\"spell92-efficiency-v1\",\"id\":\"efficient\",\"status\":\"verified_complete\"[^}]*\"binary_sha256\":\"${new_binary}\"")
   message(FATAL_ERROR "Efficiency group or its producer binary identity was lost")
 endif()
+
+# A successful continuation must prove that every requested prefix action was
+# reconstructed before search, in addition to replaying the full final tape.
+file(MAKE_DIRECTORY "${WORK}/results/story-prefix-v1/resumed"
+  "${WORK}/results/story-prefix-v1/resumed-verify")
+string(REPLACE "\"seconds\":180" "\"seconds\":180,\"prefix\":1" resumed_plan "${stage_plan}")
+string(REPLACE "\"outcome\":\"complete\""
+  "\"prefix_complete\":true,\"prefix_sha256\":\"${dat}\",\"prefix_requested_frames\":3,\"prefix_native_updates\":3,\"prefix_native_update_attempts\":3,\"outcome\":\"complete\""
+  resumed_plan "${resumed_plan}")
+file(WRITE "${WORK}/results/story-prefix-v1/resumed/plan.json" "${resumed_plan}")
+file(WRITE "${WORK}/results/story-prefix-v1/resumed.exit" "0")
+file(WRITE "${WORK}/results/story-prefix-v1/resumed-verify/verify.json" "${verify}")
+file(WRITE "${WORK}/results/story-prefix-v1/resumed-rpy.json" "${natural_replay}")
+run_report(resumed TRUE)
+if(NOT ledger MATCHES "\"verified_complete_cases\":5" OR
+   NOT ledger MATCHES "\"prefix_native_updates\":3")
+  message(FATAL_ERROR "Resumed completion or its reconstruction costs were lost")
+endif()
+string(REPLACE "\"prefix_complete\":true" "\"prefix_complete\":false" incomplete_prefix "${resumed_plan}")
+file(WRITE "${WORK}/results/story-prefix-v1/resumed/plan.json" "${incomplete_prefix}")
+run_report(incomplete-prefix FALSE)
+if(NOT ledger MATCHES "incomplete_prefix_reconstruction")
+  message(FATAL_ERROR "An incomplete prefix was counted as a completed continuation")
+endif()

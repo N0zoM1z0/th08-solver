@@ -2,6 +2,7 @@
 #include "th08/plan_beam.hpp"
 #include "th08/plan_contracts.hpp"
 #include "th08/plan_observation.hpp"
+#include "th08/plan_prefix.hpp"
 
 #include <csignal>
 #include <new>
@@ -57,6 +58,15 @@ void cli_contract() {
     rejected({"--unknown", "1"});
     rejected({"--unknown"});
     rejected({"--seconds"});
+    rejected({"--prefix", ""});
+    rejected({"--prefix", "prefix.actions"});
+    rejected({"--prefix", "prefix.actions", "--frames", "100"});
+    rejected({"--prefix", "prefix.actions", "--seconds", "10"});
+    rejected({"--prefix", "prefix.actions", "--frames", "100", "--seconds", "10", "--verify",
+              "verify.actions"});
+    check(options({"--prefix", "prefix.actions", "--frames", "100", "--seconds", "10"}).prefix ==
+              "prefix.actions",
+          "explicit bounded prefix option was rejected");
     check(options({}).diversity_cell == 0 &&
               options({"--diversity-cell", "48"}).diversity_cell == 48,
           "spatial diversity is not an explicit opt-in");
@@ -193,6 +203,38 @@ void spatial_beam_contract() {
     check(focus.bins == 2 && focus_bins[0].parent == 1 && focus_bins[1].parent == 2,
           "focus diversity or stable equal-score ordering was lost");
 }
+
+void prefix_contract() {
+    th08::plan::PrefixParser parser(3);
+    // Simulate the file/hash buffer ending in the middle of a decimal input.
+    parser.append("5\r\n41", 5);
+    parser.append("01 000000128", 12);
+    const auto actions = parser.finish();
+    check(actions == std::vector<std::uint16_t>({5, 4101, 128}),
+          "streamed prefix parsing changed an action at a buffer boundary");
+    auto invalid = [](const char *text, std::size_t maximum) {
+        try {
+            th08::plan::PrefixParser reader(maximum);
+            reader.append(text, std::char_traits<char>::length(text));
+            reader.finish();
+        } catch (const std::invalid_argument &) {
+            return;
+        }
+        check(false, "invalid or over-budget prefix was accepted");
+    };
+    invalid("5 2", 3);
+    invalid("5 65536", 3);
+    invalid("5 -1", 3);
+    invalid("5 1junk", 3);
+    invalid("5 5 5", 2);
+    using th08::plan::PrefixBoundary;
+    check(th08::plan::prefix_boundary(3, 2, true) == PrefixBoundary::TrailingTerminal &&
+              th08::plan::prefix_boundary(3, 2, false) == PrefixBoundary::Incomplete,
+          "a truncated or terminal-with-trailing-input prefix could resume planning");
+    check(th08::plan::prefix_boundary(3, 3, true) == PrefixBoundary::Complete &&
+              th08::plan::prefix_boundary(3, 3, false) == PrefixBoundary::Resume,
+          "an exact prefix boundary was misclassified");
+}
 } // namespace
 
 int main() {
@@ -201,4 +243,5 @@ int main() {
     child_contract();
     observation_contract();
     spatial_beam_contract();
+    prefix_contract();
 }
