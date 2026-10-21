@@ -3,11 +3,15 @@
 Offline C++17 simulation and planning for Touhou 08. The target is a continuous
 Lunatic story No Miss No Bomb run, delivered as an input tape and a real `.rpy`.
 The fork-based native planner completes seed-0 Lunatic Final A under the documented
-native source profile, with fresh action and natural replay verification. Retail
-equivalence remains unresolved. [Planner](docs/PLANNER.md) owns the approach.
+native source profile, with fresh action and natural replay verification. One repaired
+seed-0 Final A replay also clears NMNB in retail 1.00d under Wine. The full replay
+fidelity gate remains 106/108. [Planner](docs/PLANNER.md) owns the approach.
 
-The [complete story replay](reports/native/replays/story-v2--r64-b384-c16.rpy) and
+The [retail-tested story replay](reports/native/replays/story-v2--r64-b384-c16-retail-1.00d.rpy) and
 [full action tape](reports/native/replays/story-v2--r64-b384-c16.actions) are tracked.
+The [retail audit](reports/native/retail_story_validation.json) records the original
+export-header failure, identity-only repair and actual complete playback. The
+[original native export](reports/native/replays/story-v2--r64-b384-c16.rpy) stays unchanged.
 The [campaign ledger](reports/native/planner_current_summary.json) records their
 configuration, hashes, verification and retained search costs.
 

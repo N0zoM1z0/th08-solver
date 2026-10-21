@@ -154,6 +154,45 @@ Both produce the same 232069 native calculation rows, SHA256
 `ad7d90ea5d36904d75498c621f18d7be88ca4f42554eb9100ddd306a3eb1c3b5`.
 Original archived replay hashes and the campaign ledger remain unchanged.
 
+The separately recorded [retail audit](../reports/native/retail_story_validation.json)
+plays this exact repaired file from Stage 1 through Final A in retail 1.00d under
+Debian Wine 8.0. It observes the final stage-clear sequence, cumulative deaths/bombs
+both zero, internal score `167865093` (display `1678650930`), and natural return to
+the replay menu. The retail EXE SHA256 is
+`330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`;
+all 728064 loaded executable-code bytes match the original before and after playback.
+No executable, gameplay memory or RNG patch is used.
+
+This is a manual interoperability audit with read-only process sampling at a nominal
+20 ms interval. The continuous sampler attached in Stage 2 at gameplay frame 14651;
+the genuine Stage-1/frame-0 menu-start receipt is separate. Its original all-stage
+coverage gate therefore reports `terminal_mismatch` (mask 118, missing Stage 1),
+retained in the audit. Cumulative death/bomb counters persist through stage handoffs.
+The separate terminal receipt observes the actual final clear and menu return;
+replay's terminal branch does not set the normal game's `gameCleared` bit. It uses
+`GUI_MSG_SHOW_STAGE_RESULTS` / `stageClearSequenceActive` instead. Retail also
+continues fade calculations after the recorded input ends; these are not equated
+with native capture rows. Recorded score and selected state restore at replay stage
+handoffs, so matching terminal scores are not a complete physics differential.
+
+To repeat the manual test, place an owned retail copy under ignored
+`game_exe/retail-audit/game/`, put the repaired file in its `replay/` directory as
+`th8_01.rpy`, and use a private 32-bit Wine prefix and display. Start windowed with
+audio off, effects maximum, frameskip zero and slow mode off. Select Replay, the
+first stage and the built-in Boss playback mode (2), which fast-forwards nonboss
+sections without enlarging gameplay steps. The audit bounds its process group to
+2 then 4 CPU cores, low CPU/I/O weight 10, nice 10, memory high/max 3/4 GiB and no
+additional swap. Peak Wine-group memory is 429535232 bytes (about 410 MiB), with
+zero memory-limit/OOM events. A prior black fullscreen startup was stopped before
+the memory cap; that setup failure and the original header crash remain recorded.
+The owned Wine/display processes are stopped after collecting terminal evidence.
+
+Read-only probes are specific to the hashed x86 EXE: flags `0x0164d0b4`, current
+stage `0x0164d2cc`, globals pointer `0x0160f510`, cumulative float deaths/bombs-used
+at globals offsets `0x64/0x84`, and replay/title pointers `0x018b8a28/0x018bde08`.
+No full per-frame retail projection or all-eleven-file retail validation is claimed.
+Private raw game data, screenshots and diagnostic logs remain ignored.
+
 ## Local build and core checks
 
 Requires CMake 3.16+, C++17 and OpenSSL development libraries. Linux x86_64 is tested.

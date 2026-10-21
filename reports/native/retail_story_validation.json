@@ -1,0 +1,153 @@
+{
+  "producer": "manual-retail-wine-audit",
+  "recorded_date": "2026-10-21",
+  "scope": "one complete menu-started seed-0 Lunatic Final A replay under Wine",
+  "certifies_full_corpus_equivalence": false,
+  "original_export": {
+    "path": "reports/native/replays/story-v2--r64-b384-c16.rpy",
+    "sha256": "0efa890634c5ed418a519c34fc93dd3ab9118a12af7f05cf9b23b011bbfec093",
+    "exe_size": 0,
+    "exe_checksum": 0,
+    "retail_outcome": "crash_while_listing_replay",
+    "fault_instruction": "0x004a5cff",
+    "fault_read_address": "0x00000001",
+    "original_preserved": true
+  },
+  "control": {
+    "fixture": "th8_ud2cdc.rpy",
+    "sha256": "79739491e1cb1d735ef9a14814a79dfe8e2c4872d5f2bf0174c79f40ada36989",
+    "loaded_and_played": true,
+    "complete_playback_verified": false
+  },
+  "tested_replay": {
+    "path": "reports/native/replays/story-v2--r64-b384-c16-retail-1.00d.rpy",
+    "sha256": "c7b9e66d465353392e1d7c01a5895986bb490447fa0dc35ba93b9b4aab048a7b",
+    "repair_receipt": "reports/native/planner_story_retail_target.json",
+    "producer_commit": "0ac821d",
+    "difficulty": 3,
+    "seed": 0,
+    "stage_route_zero_based": [
+      0,
+      1,
+      2,
+      4,
+      5,
+      6
+    ]
+  },
+  "retail": {
+    "version": "1.00d",
+    "exe_bytes": 840704,
+    "exe_sha256": "330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924",
+    "dat_sha256": "9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb",
+    "wine": "8.0 (Debian 8.0~repack-4)",
+    "host_architecture": "Linux x86_64",
+    "private_prefix_and_display": true,
+    "renderer": "Wine D3D8 with llvmpipe",
+    "replay_mode": 2,
+    "replay_mode_name": "built-in Boss playback",
+    "windowed_startup": true,
+    "audio_disabled": true,
+    "startup_config_sha256": "bcd6286bc188e8b58f1c9522975fe721c7cb03c203d96151a7dd897a7cd6290b",
+    "executable_or_gameplay_patches": false,
+    "gameplay_or_rng_memory_writes": false,
+    "loaded_code_bytes_compared": 728064,
+    "loaded_code_identical_to_original": true
+  },
+  "observation": {
+    "method": "read-only process memory; menu navigation and visual inspection",
+    "nominal_sample_period_ms": 20,
+    "continuous_sampler_first_stage_zero_based": 1,
+    "continuous_sampler_first_gameplay_frame": 14651,
+    "stage_one_start_receipt_separate": true,
+    "counters": "cumulative deaths and bombsUsed persist across replay stage handoffs",
+    "complete_per_frame_retail_differential": false,
+    "score_comparison_limit": "retail restores recorded score and selected state at stage handoffs",
+    "raw_late_sampler": {
+      "observation": "read-only sampled cumulative retail counters",
+      "outcome": "failed",
+      "failure": "terminal_mismatch",
+      "finished": true,
+      "clear_flag_observed": false,
+      "seen_stage_mask": 118,
+      "final_stage": 6,
+      "final_score": 167865093,
+      "final_gameplay_frame": 54002,
+      "max_deaths": 0,
+      "max_bombs_used": 0,
+      "samples": 106972
+    },
+    "raw_late_sampler_interpretation": "Its terminal_mismatch coverage gate fails because attachment began in Stage 2 (mask 118, missing Stage 1). The separate genuine Stage-1 start receipt and actual final clear/menu receipt determine this audit. The gameCleared bit is not set by the replay terminal branch; GUI_MSG_SHOW_STAGE_RESULTS sets the observed clear-sequence bit instead.",
+    "private_sample_log_sha256": "d3cc2fe1936c8d63a5cf6278ce672819a7e620dedafd510c40f1524cbaff1a15"
+  },
+  "native_repair_comparison": {
+    "rows": 232069,
+    "bytes": 23206900,
+    "raw_rows_sha256": "ad7d90ea5d36904d75498c621f18d7be88ca4f42554eb9100ddd306a3eb1c3b5",
+    "original_and_repaired_byte_identical": true,
+    "independent_retail_physics_oracle": false
+  },
+  "resource_limits": {
+    "cpu_quota_cores_initial": 2,
+    "cpu_quota_cores_maximum": 4,
+    "cpu_weight": 10,
+    "io_weight": 10,
+    "nice": 10,
+    "memory_high_bytes": 3221225472,
+    "memory_max_bytes": 4294967296,
+    "memory_swap_max_bytes": 0,
+    "observed_wine_group_memory_peak_bytes": 429535232,
+    "memory_high_events": 0,
+    "memory_max_events": 0,
+    "oom_events": 0,
+    "oom_kill_events": 0
+  },
+  "retained_setup_failures": [
+    "fullscreen startup stayed black and was stopped before its memory cap; windowed startup succeeded",
+    "original zero-identity replay crashed retail; accepted control and identity-only repaired file loaded"
+  ],
+  "verification": {
+    "native_ctest_passed": 36,
+    "native_ctest_total": 36,
+    "native_ctest_wall_seconds": 950.99,
+    "final_native_ctest_excluding_unchanged_long_scene_passed": 35,
+    "final_native_ctest_excluding_unchanged_long_scene_total": 35,
+    "core_ctest_passed": 29,
+    "core_ctest_total": 29,
+    "pinned_corpus_passed": 106,
+    "pinned_corpus_total": 108,
+    "all_prior_corpus_rows_hashes_and_outcomes_unchanged": true
+  },
+  "outcome": "passed_this_retail_playback",
+  "terminal_recorded_utc": "2026-10-21T14:22:37Z",
+  "observed_playback_wall_seconds_approx": 2589,
+  "menu_start": {
+    "stage_zero_based": 0,
+    "difficulty": 3,
+    "replay_frame": 0,
+    "score": 0,
+    "cumulative_deaths": 0,
+    "cumulative_bombs_used": 0
+  },
+  "retail_terminal": {
+    "method": "read-only sampled retail terminal",
+    "final_stage_clear_sequence_observed": true,
+    "flags_on_clear": 8972,
+    "game_cleared_flag_observed": false,
+    "returned_to_replay_menu": true,
+    "title_mode": 7,
+    "title_substate": 1,
+    "final_stage": 6,
+    "final_score": 167865093,
+    "final_gameplay_frame": 54002,
+    "max_deaths": 0,
+    "max_bombs_used": 0,
+    "active_effect_quality": 2,
+    "active_slow_mode": 0,
+    "active_frameskip": 0,
+    "final_recorded_input_frame": 53502,
+    "post_input_gameplay_counter_updates": 500
+  },
+  "final_display_score": 1678650930,
+  "native_final_score_agrees": true
+}

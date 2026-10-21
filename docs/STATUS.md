@@ -19,6 +19,7 @@ native costs. Unfinished processes contribute only a pending identifier.
 | Complete practice Stages 1/2/3 | Seed 0: 24043/30481/38231 updates, fresh action replay and natural `.rpy` round trips |
 | Complete practice Stage 4b | Seed 0: 42588 updates with R128/cell16, fresh action replay and natural `.rpy` round trip |
 | Continuous Lunatic Final A story | Seven seed-0 routes complete with zero deaths/bomb inputs and natural `.rpy` playback: two from Stage 1 directly, five through native prefix reconstruction. Direct R64/beam384/cell16 takes 232074 API updates (232069 calculations), score 167865093; cell32 takes 230748 updates (230743 calculations), score 166093360 |
+| Actual retail playback | The separately repaired direct R64/beam384/cell16 seed-0 story replay clears all six stages through Final A in unmodified retail 1.00d under Wine 8.0: cumulative deaths/bombs zero, internal score 167865093 and natural return to the replay menu. One tested file/profile, without a complete per-frame retail differential |
 | Pinned replay corpus | 106/108; one early completion and one fingerprint mismatch remain unresolved, including in the pinned full native build |
 
 All four practice `.rpy` streams retain identical rows after adding explicit
@@ -43,8 +44,11 @@ but crashing retail's whitelist traversal. New recording declares the pinned 1.0
 target explicitly. Originals stay unchanged; a separate
 [retail-targeted story copy](../reports/native/replays/story-v2--r64-b384-c16-retail-1.00d.rpy)
 has a [repair receipt](../reports/native/planner_story_retail_target.json), with all
-232069 native calculation rows unchanged. The target declaration alone is not a
-retail gameplay result. [Validation](VALIDATION.md) owns reproduction and evidence.
+232069 native calculation rows unchanged. Its separate
+[retail audit](../reports/native/retail_story_validation.json) records the successful
+complete Wine playback, read-only observation limits and retained failures. It does
+not validate every saved replay or resolve the two corpus discrepancies.
+[Validation](VALIDATION.md) owns reproduction and evidence.
 
 Keep training seeds 0/1/42/65535 separate from holdouts 7/2026. Published reports omit
 infrastructure addresses, account names and private paths. [Validation](VALIDATION.md)
