@@ -1,0 +1,24 @@
+{
+  "workload_commit": "dab251acec28556f32b608d90cabd320b0469fed",
+  "frozen_before_candidate_timing": true,
+  "baseline_native_source_commit": "0215b7f028f78d3a91b28105c8877706b8a5e413",
+  "baseline_planner_sha256": "905d65f8492379eeb435fc6dff2096cd4b8fa06c16e01eb0d152e80dc9e62eb2",
+  "timing_metric": "fresh full-action verification native_seconds_excluding_file_io",
+  "paired_repetitions": 3,
+  "order": "Alternate baseline/candidate order by repetition; process the listed workloads in fixed order",
+  "workloads": [
+    {"id": "story-seed0", "seed": 0, "actions": "replays/story-v2--r64-b384-c16.actions", "frames": 232074},
+    {"id": "story-seed4455", "seed": 4455, "actions": "replays/training-resume-c16--s4455.actions", "frames": 231097},
+    {"id": "story-seed31338", "seed": 31338, "actions": "replays/training-resume-c16--s31338.actions", "frames": 230864}
+  ],
+  "failure_case": {
+    "seed": 31338,
+    "actions": "failed-actions/training-c16--s31338.actions",
+    "frames": 217888,
+    "expected": "Incomplete whole-story verification, zero deaths, no complete terminal"
+  },
+  "first_candidate": "Identical source and Release flags with CMake interprocedural optimization enabled",
+  "source_optimization_gate": "Use a measured hotspot, preserve all arithmetic/update/RNG/collision behavior, and validate mutation/terminal boundaries before publishing",
+  "verification": "Exact full-action terminal/score/RNG/calculation/control agreement; complete 108-fixture baseline comparison without relaxing reference failures; normal and relevant full CTest",
+  "interpretation": "Shared-host paired timings, not an isolated benchmark or proof over all seeds; instrumented profiling is diagnostic and excluded from production timing"
+}

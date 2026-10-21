@@ -153,6 +153,13 @@ aligned with the native input latch. The teacher may use future rollouts but mus
 keep the student's queried prefix immutable. Online policy and RL implementation
 remain deferred.
 
+Measured execution acceleration is tracked in
+[issue #4](https://github.com/N0zoM1z0/th08-solver/issues/4). Its
+[frozen workloads](../reports/native/runtime_perf_protocol.json) use complete
+archived stories and an incomplete prefix, with paired Release timings and
+unchanged replay/collision/terminal checks. Runtime and search costs remain separate;
+headless execution already removes display/audio initialization and frame waiting.
+
 The reviewed handoff records Lunatic practice Stages 1–3 and a
 story prefix blocked at spell 92; local/integrated reproductions must be labeled
 separately. A practice clear, partial story or sampled seed success is not a full run.
