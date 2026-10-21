@@ -9,6 +9,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 | Producer | Records | Meaning |
 |---|---|---|
 | `th08_planner_report` | `planner_current_summary.json` | Current Lunatic fork-planner campaigns, verified completions and retained failures, all recorded search/replay costs, pending jobs, and unresolved 106/108 replay fidelity gate |
+| `th08_plan`, archived by `th08_planner_report --replay-dir` | `replays/*.rpy`, `replays/*.actions` | Verified original practice/story replays and full action tapes; case identifiers, byte hashes, natural replay and separate accounting evidence are in `planner_current_summary.json` |
 | `th08_hazard_probe` | `planner_spell92_stability.json` | Sampled input-dependent direct-laser geometry before update 393; explicit native costs and failures, not a universal lock-time proof |
 | `th08_headless`, source `02ff72f` | `headless_02ff72f_stage6b.json` | New named source-profile collision fixture; the historical `861bec9` report and contract remain intact |
 | `th08_headless` + `th08_headless_probe` + `tests/headless_real_data.cmake` | `headless_summary.json` | Retained GCC12 native Stage 1, ID179, adapted IDs 85/89/93/198/201 and portfolio IDs 193/195/199, source collisions, Stage 6b input-latch witnesses, replay and O0/O3 comparison |

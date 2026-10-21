@@ -22,9 +22,10 @@ requires natural successful captures with every expected row/fingerprint.
 ./build-headless/th08_replay_suite --checker build-headless/th08_replay_check --dat game_data_donottrack/th08.dat --manifest reference/config/replay-fixtures.json --schema reference/scripts/replay-external-schema.json --corpus reference/tests/fixtures/replays/th08-1.00d/accepted --output reports/local/fidelity --jobs 8
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92 --stage 4b --spell 92 --difficulty 3 --seed 0 --rollout 64 --diversity-cell 16 --shoot 1 --checkpoint 60 --keep 12 --frames 10000 --seconds 180
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92-verify --stage 4b --spell 92 --difficulty 3 --seed 0 --verify reports/local/spell92/plan.actions
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/story --stage 1 --story 1 --difficulty 3 --seed 0 --rollout 64 --beam 384 --diversity-cell 16 --checkpoint 120 --keep 64 --shoot 1 --frames 250000 --seconds 2400
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/story-resumed --stage 1 --story 1 --difficulty 3 --seed 0 --prefix reports/local/story/plan.actions --rollout 64 --diversity-cell 16 --checkpoint 120 --keep 64 --frames 350000 --seconds 1800
 ./build-headless/th08_hazard_probe --dat game_data_donottrack/th08.dat --stage 4b --spell 92 --difficulty 3 --seed 0 --event-update 393 --leads 393,360,320,280,240,200,160 --output reports/local/spell92-probe.json
-./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --output reports/native/planner_current_summary.json
+./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --replay-dir reports/native/replays --output reports/native/planner_current_summary.json
 ```
 
 `reference/` above is a placeholder for supplied pinned corpus files, not a runtime
@@ -59,6 +60,46 @@ a natural `.rpy`, matching calculation-row count and final score, and explicit z
 `death_rows`/`bomb_input_rows`. These counters count observed rows, not death/bomb
 events. Refreshing them on the four practice tapes preserved every original row byte.
 Replay calculation rows and Session API calls are separate cost totals.
+
+For continuous story, five native stage-control calls can complete without a
+gameplay calculation. The observer is beside `gameplayFrameCounter++`, after the
+setup early-return gates; the earlier trace/RNG hook stays at its original boundary.
+Reports bind `frames = calculation_updates + control_updates` to explicit ordered
+stage-transition events, and natural replay rows must equal the observed calculation
+count. The measured 232408-action route has exactly 232403 calculations, with control
+calls at 24158, 56541, 95948, 138845 and 178264. This is measured source behavior,
+not permission to subtract the number of stages from an arbitrary replay.
+
+For older completed campaigns, retain the original plan and same-binary verification.
+A separate `<case>-accounting/verify.json` supplies missing observations from a new
+fresh run, bound to exact raw action SHA, source/DAT/configuration, terminal, score
+and RNG. Its executable and costs remain separate. New plan/verification pairs must
+agree directly on counts and events. `th08_replay_check` also hashes its actual replay,
+DAT and executable before capture. `--replay-dir` archives only verified whole-scene
+originals and full action tapes, checks the replay hash, and emits both artifact hashes
+in the ledger. The checked originals are tracked under
+[native replays](../reports/native/replays/); fresh-verification copies and raw rows
+remain ignored.
+
+One full source/adapter differential additionally plays the archived
+`story-prefix-v1--p132200-r64-b384-c16.rpy` through the pinned full native Debug/O0
+build, retaining production draw callbacks with private Xvfb, dummy audio and
+llvmpipe rasterization disabled. All 232403 calculation rows (23240300 bytes)
+match the headless capture byte for byte: SHA256
+`c560ef53295b9a62e949e8fd79fd5c2c6b576d137e3398b108caa4252bb913ea`.
+Both captures end naturally with score 169789855, zero death/bomb-input rows and
+the same six-stage route. The full-native executable SHA256 is
+`9aae4ce60d1a5e8426b1675b7fe7504e0a74f7ed70610ada5c4d692e5a456b00`.
+The additional validation costs 232403 calculations and 356.01 seconds including
+debugger, display setup and trace I/O, outside the solver campaign totals. This
+checks that adapter/profile for one tape; the two paths share source and numerical
+behavior, so it is not an independent retail physics oracle.
+
+The completed Release native suite passes 35/35 CTests in 751.96 seconds. After
+report-only receipt hardening, all 34 tests excluding the unchanged long complete-scene
+test pass again; the local core suite passes 29/29. The new observer/checker full
+108-fixture run retains exactly the prior row counts, fingerprints and outcomes:
+106 pass and the same two failures remain. No expected fingerprint is changed.
 
 Prefix continuation is a new planning episode over a natively reconstructed world,
 not a stage reset. Its raw input hash and reconstruction costs remain in the ledger;

@@ -18,7 +18,7 @@ native costs. Unfinished processes contribute only a pending identifier.
 | Spell 92, stage 4b | Training seeds 0/1/42/65535 complete and freshly replay with spatial/focus beam retention. Frozen R64/cell16/shoot1 also passes holdouts 7/2026. Training takes 2756–2835 updates and about 15–17 seconds in the concurrent campaign; these are not isolated timing samples |
 | Complete practice Stages 1/2/3 | Seed 0: 24043/30481/38231 updates, fresh action replay and natural `.rpy` round trips |
 | Complete practice Stage 4b | Seed 0: 42588 updates with R128/cell16, fresh action replay and natural `.rpy` round trip |
-| Continuous story | Search remains in progress; no full-story completion is claimed |
+| Continuous Lunatic Final A story | Seven seed-0 routes complete with zero deaths/bomb inputs and natural `.rpy` playback: two from Stage 1 directly, five through native prefix reconstruction. Direct R64/beam384/cell16 takes 232074 API updates (232069 calculations), score 167865093; cell32 takes 230748 updates (230743 calculations), score 166093360 |
 | Pinned replay corpus | 106/108; one early completion and one fingerprint mismatch remain unresolved, including in the pinned full native build |
 
 All four practice `.rpy` streams retain identical rows after adding explicit
@@ -26,6 +26,16 @@ zero-death/zero-bomb-input checks. Whole-window verification rejects late deaths
 incomplete/capacity-failed or interrupted rollouts, and commit agreement includes
 the actual human/youkai form. Search exhaustion is retained as a failure, not an
 impossibility proof. The baseline global-score pruning failures remain in the ledger.
+
+Story verification counts actual gameplay calculations separately from API updates.
+Five source-owned stage handoffs return before the gameplay/replay callbacks. An
+inert hook beside the native gameplay counter records those boundaries; fresh
+accounting receipts bind the exact raw actions, configuration, source, DAT, terminal,
+score and RNG without replacing the original solver/verification binary identities.
+Every story `.rpy` must match that observed count, with no stage-count tolerance.
+The report retains failed episodes, prefix reconstruction and additional receipt
+costs. The requested replays and full action tapes are tracked in
+[native replays](../reports/native/replays/), with hashes in the campaign ledger.
 
 Keep training seeds 0/1/42/65535 separate from holdouts 7/2026. Published reports omit
 infrastructure addresses, account names and private paths. [Validation](VALIDATION.md)
@@ -208,7 +218,9 @@ are optional component evidence, not prerequisites or the next integration roadm
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 29 core CTests without private data, plus two optional pinned-source tests
-(31 total), optional headless process-protocol/semantic-contract tests and one optional native real-data CTest. The native test covers complete
+(31 total). The current headless/DAT configuration has 35 CTests, including native
+process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
+continuation test. The complete-scene test covers complete
 duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, bounded repairs for IDs202/203 and their retained rolling failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See

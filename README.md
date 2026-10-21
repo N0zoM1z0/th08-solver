@@ -2,8 +2,14 @@
 
 Offline C++17 simulation and planning for Touhou 08. The target is a continuous
 Lunatic story No Miss No Bomb run, delivered as an input tape and a real `.rpy`.
-The fork-based native planner is being integrated and verified; full-story success
-is not yet established. [Planner](docs/PLANNER.md) owns the approach.
+The fork-based native planner completes seed-0 Lunatic Final A under the documented
+native source profile, with fresh action and natural replay verification. Retail
+equivalence remains unresolved. [Planner](docs/PLANNER.md) owns the approach.
+
+The [complete story replay](reports/native/replays/story-v2--r64-b384-c16.rpy) and
+[full action tape](reports/native/replays/story-v2--r64-b384-c16.actions) are tracked.
+The [campaign ledger](reports/native/planner_current_summary.json) records their
+configuration, hashes, verification and retained search costs.
 
 ## Current direction
 
@@ -89,5 +95,8 @@ Acceleration removes waiting without enlarging gameplay time steps.
 | [Third-party notices](docs/THIRD_PARTY_NOTICES.md) | Required attribution/license |
 
 Old entry-first roadmaps were consolidated or removed; Git history retains them.
-`preparations/` is preserved original research, not current instructions or verified
-coverage. Game assets, generated binaries/source and experiments stay ignored.
+`preparations/` preserves historical research, not current instructions or verified
+coverage. Public handoff copies redact private links/paths; their
+[publication manifest](preparations/10.21-with-claude-important/PUBLICATION.json)
+records original/public hashes, with exact inputs preserved locally. Game assets,
+generated binaries/source and experiments stay ignored.
