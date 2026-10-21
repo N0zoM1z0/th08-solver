@@ -16,8 +16,12 @@ native costs. Unfinished processes contribute only a pending identifier.
 The current scope prioritizes full-story seed robustness; online control is deferred.
 Eight seeds were drawn before inspection under the
 [frozen story-seed protocol](../reports/native/planner_seed_protocol.json). Independent
-cell16/cell32 attempts are running with unchanged per-attempt budgets. Pending
-attempts are not completions; successful tapes still require fresh full verification.
+cell16/cell32 attempts all reached Final A but exhausted their unchanged 2400-second
+budgets: 16 failures, zero direct completions, 213720–228336 emitted actions each.
+The [seed ledger](../reports/native/planner_seed_summary.json) and separately tracked
+failed prefixes retain every attempt, configuration, hash and native cost. The
+previously frozen 900-second prefix continuations are running as separate episodes;
+pending results are not completions and successful tapes require fresh verification.
 
 | Current Lunatic native-profile result | Evidence |
 |---|---|

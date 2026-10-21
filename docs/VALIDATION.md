@@ -79,7 +79,8 @@ DAT and executable before capture. `--replay-dir` archives only verified whole-s
 originals and full action tapes, checks the replay hash, and emits both artifact hashes
 in the ledger. The checked originals are tracked under
 [native replays](../reports/native/replays/); fresh-verification copies and raw rows
-remain ignored.
+remain ignored. Git newline conversion is disabled for `.actions` and `.rpy` so
+platform checkout settings preserve the exact bytes bound by these hashes.
 
 For new batches, pass repeatable `--group NAME` arguments; each named directory must
 exist. Explicit groups require `<case>-verify.exit` and, for whole scenes,
