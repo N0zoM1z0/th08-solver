@@ -20,8 +20,14 @@ cell16/cell32 attempts all reached Final A but exhausted their unchanged 2400-se
 budgets: 16 failures, zero direct completions, 213720–228336 emitted actions each.
 The [seed ledger](../reports/native/planner_seed_summary.json) and separately tracked
 failed prefixes retain every attempt, configuration, hash and native cost. The
-previously frozen 900-second prefix continuations are running as separate episodes;
-pending results are not completions and successful tapes require fresh verification.
+previously frozen 900-second prefix continuations all complete: 16 freshly verified
+NMNB routes, covering every sampled seed with both unchanged generic profiles.
+Each continuation takes 41.70–187.89 seconds including prefix reconstruction;
+all original failures and costs remain charged. This is 8/8 sampled seeds, not a
+guarantee over all uint16 seeds or retail validation of these new files. The
+[environment and lineage audit](../reports/native/planner_seed_environment.json)
+records compiler, executable identities, bounded resources and 16 byte-identical
+parent prefixes. No seed-specific strategy branches were added.
 
 | Current Lunatic native-profile result | Evidence |
 |---|---|
@@ -29,6 +35,7 @@ pending results are not completions and successful tapes require fresh verificat
 | Complete practice Stages 1/2/3 | Seed 0: 24043/30481/38231 updates, fresh action replay and natural `.rpy` round trips |
 | Complete practice Stage 4b | Seed 0: 42588 updates with R128/cell16, fresh action replay and natural `.rpy` round trip |
 | Continuous Lunatic Final A story | Seven seed-0 routes complete with zero deaths/bomb inputs and natural `.rpy` playback: two from Stage 1 directly, five through native prefix reconstruction. Direct R64/beam384/cell16 takes 232074 API updates (232069 calculations), score 167865093; cell32 takes 230748 updates (230743 calculations), score 166093360 |
+| Frozen random-seed Final A story | Training 4455/12525/30504/31338 and holdouts 24196/35540/1763/2138: both R64/beam384/cell16 and cell32 complete via the predeclared continuation rule, with zero deaths/bomb inputs, exact full-action replay and natural `.rpy` checks. Each route has 230864–232790 API updates; original 2400-second failures remain recorded |
 | Actual retail playback | The separately repaired direct R64/beam384/cell16 seed-0 story replay clears all six stages through Final A in unmodified retail 1.00d under Wine 8.0: cumulative deaths/bombs zero, internal score 167865093 and natural return to the replay menu. One tested file/profile, without a complete per-frame retail differential |
 | Pinned replay corpus | 106/108; one early completion and one fingerprint mismatch remain unresolved, including in the pinned full native build |
 

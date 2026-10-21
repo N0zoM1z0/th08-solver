@@ -1,0 +1,44 @@
+{
+  "evidence_profile": "native-headless-projection",
+  "protocol": "planner_seed_protocol.json",
+  "ledger": "planner_seed_summary.json",
+  "os": "Linux x86_64",
+  "cpu": "AMD EPYC 9654",
+  "compiler": "GCC 13.3.0",
+  "build_type": "Release",
+  "native_flags": ["-O3", "-DNDEBUG", "-fno-strict-aliasing", "-ffp-contract=off"],
+  "planner_flags": ["-O3", "-DNDEBUG", "-ffp-contract=off"],
+  "planner_sha256": "905d65f8492379eeb435fc6dff2096cd4b8fa06c16e01eb0d152e80dc9e62eb2",
+  "checker_sha256": "4ec0a68920e7c1d77defc7540ea0a9d4cae00e503580a9c6bac16c3f7b2945b2",
+  "concurrent_attempts": 16,
+  "scope_limits": {
+    "aggregate_cpu_cores": 32,
+    "cpu_weight": 10,
+    "io_weight": 10,
+    "nice": 10,
+    "memory_high_bytes": 51539607552,
+    "memory_max_bytes": 68719476736,
+    "swap_max_bytes": 0
+  },
+  "resource_observation": "Last live cgroup sample at two-second intervals; CPU includes setup/build where applicable, not isolated simulation timing",
+  "original_scope": {
+    "includes_release_build": true,
+    "memory_peak_bytes": 14314414080,
+    "cpu_usage_microseconds": 38883553584,
+    "memory_events": {"low": 0, "high": 0, "max": 0, "oom": 0, "oom_kill": 0, "oom_group_kill": 0}
+  },
+  "continuation_scope": {
+    "includes_release_build": false,
+    "memory_peak_bytes": 8542609408,
+    "cpu_usage_microseconds": 2006673782,
+    "memory_events": {"low": 0, "high": 0, "max": 0, "oom": 0, "oom_kill": 0, "oom_group_kill": 0}
+  },
+  "lineage_audit": {
+    "checked_parent_child_pairs": 16,
+    "parent_action_sha256_matches_requested_prefix": true,
+    "requested_prefix_frame_count_matches_parent": true,
+    "complete_output_begins_with_identical_parent_bytes": true,
+    "complete_output_freshly_verified": true
+  },
+  "timing_limits": "Shared host; per-attempt wall budgets and extra continuation/reconstruction/validation costs remain in the ledger. Diagnostic profiling is separate."
+}

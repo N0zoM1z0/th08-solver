@@ -94,7 +94,7 @@ successful demonstrations or all rejected internal rollouts. Existing artifact
 names are idempotent only for identical bytes; conflicts fail without overwriting.
 
 ```sh
-./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --replay-dir reports/native/replays --failed-actions-dir reports/native/failed-actions --output reports/native/planner_seed_summary.json
+./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --group training-resume-c16 --group training-resume-c32 --group holdout-resume-c16 --group holdout-resume-c32 --replay-dir reports/native/replays --failed-actions-dir reports/native/failed-actions --output reports/native/planner_seed_summary.json
 ```
 
 One full source/adapter differential additionally plays the archived

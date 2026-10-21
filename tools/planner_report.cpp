@@ -177,6 +177,11 @@ Fields scalars(const Fields &input, const std::vector<std::string> &keys) {
         const auto &value = found->second;
         if (key == "prefix_sha256" && value == "null")
             continue; // Non-prefix episodes have no input-prefix identity.
+        if (key == "replay_target_version") {
+            require(hex(string_value(value), 5), "invalid_replay_target_version");
+            result.emplace(key, value);
+            continue;
+        }
         // String-valued allowlisted fields must be identifiers or actual hashes.
         // Numeric/bool producer fields cannot smuggle private strings/objects.
         if (!value.empty() && value.front() == '"') {

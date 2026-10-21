@@ -7,6 +7,13 @@ native source profile, with fresh action and natural replay verification. One re
 seed-0 Final A replay also clears NMNB in retail 1.00d under Wine. The full replay
 fidelity gate remains 106/108. [Planner](docs/PLANNER.md) owns the approach.
 
+The first frozen unseen-seed batch adds 16 complete native-profile NMNB routes:
+eight randomly drawn seeds, both generic profiles, each through a separately
+budgeted exact-prefix continuation. All 16 original 2400-second attempts exhausted
+their budgets; the [seed ledger](reports/native/planner_seed_summary.json) retains
+them and all continuation/validation costs. This sample does not prove every seed
+or add retail validation for these new files.
+
 The [retail-tested story replay](reports/native/replays/story-v2--r64-b384-c16-retail-1.00d.rpy) and
 [full action tape](reports/native/replays/story-v2--r64-b384-c16.actions) are tracked.
 The [retail audit](reports/native/retail_story_validation.json) records the original
