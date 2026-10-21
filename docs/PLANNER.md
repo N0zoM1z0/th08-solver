@@ -160,6 +160,17 @@ archived stories and an incomplete prefix, with paired Release timings and
 unchanged replay/collision/terminal checks. Runtime and search costs remain separate;
 headless execution already removes display/audio initialization and frame waiting.
 
+The [execution audit](../reports/native/runtime_perf_summary.json) adopts the
+callback-local empty cancel-region proof described in [Architecture](ARCHITECTURE.md).
+On the frozen three-story workload, native update medians fall from 11.27–11.39
+seconds to 7.84–8.03 seconds: 1.42–1.45x baseline throughput, with no discarded samples.
+An unchanged-source IPO experiment separately saves about 9%; it is not enabled by
+default, and the two gains are not combined. One additional complete prefix-resumed
+planning pair falls from 40.30 to 33.58 seconds with identical actions and deterministic
+search counts. That diagnostic includes prefix reconstruction and is not a general
+whole-solver speed guarantee. Original episode budgets/failures and additional
+profiling, execution, planning and capture costs stay distinct.
+
 The reviewed handoff records Lunatic practice Stages 1–3 and a
 story prefix blocked at spell 92; local/integrated reproductions must be labeled
 separately. A practice clear, partial story or sampled seed success is not a full run.

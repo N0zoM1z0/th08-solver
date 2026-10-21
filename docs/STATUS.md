@@ -29,6 +29,15 @@ guarantee over all uint16 seeds or retail validation of these new files. The
 records compiler, executable identities, bounded resources and 16 byte-identical
 parent prefixes. No seed-specific strategy branches were added.
 
+The default headless runtime now proves cancel regions empty within each native
+bullet callback, avoiding repeated inactive-slot scans while preserving the original
+predicate for active/invalidated state. The
+[execution audit](../reports/native/runtime_perf_summary.json) measures 1.42–1.45x
+baseline native update throughput across three complete tapes with three paired repeats.
+All 108 corpus outcomes/fingerprints and all 16 random-seed raw captures match the
+baseline; the two reference discrepancies remain. Full native CTest passes 37/37.
+This execution gain is separate from whole-solver speed and all-seed success.
+
 | Current Lunatic native-profile result | Evidence |
 |---|---|
 | Spell 92, stage 4b | Training seeds 0/1/42/65535 complete and freshly replay with spatial/focus beam retention. Frozen R64/cell16/shoot1 also passes holdouts 7/2026. Training takes 2756–2835 updates and about 15–17 seconds in the concurrent campaign; these are not isolated timing samples |

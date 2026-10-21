@@ -97,6 +97,39 @@ names are idempotent only for identical bytes; conflicts fail without overwritin
 ./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --group training-resume-c16 --group training-resume-c32 --group holdout-resume-c16 --group holdout-resume-c32 --replay-dir reports/native/replays --failed-actions-dir reports/native/failed-actions --output reports/native/planner_seed_summary.json
 ```
 
+The [execution protocol](../reports/native/runtime_perf_protocol.json) fixes three
+complete archived tapes, an incomplete prefix and three alternating paired repeats.
+The [audit](../reports/native/runtime_perf_summary.json) records every timing sample,
+raw receipt hash and normalized execution contract. Its baseline is native source
+`0215b7f`; the default cache candidate is `2b30ad1`, both GCC 13.3 Release with the
+same floating-point flags. An independent IPO build uses the baseline source and
+`-DCMAKE_INTERPROCEDURAL_OPTIMIZATION=ON`. IPO is not enabled by default or combined
+with the measured cache gain.
+
+Build each source snapshot into its own measurement directory. For example, the
+seed-4455 full-tape workload on the current build is:
+
+```sh
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/perf-seed4455 --stage 1 --story 1 --difficulty 3 --seed 4455 --verify reports/native/replays/training-resume-c16--s4455.actions
+```
+
+Use fresh output directories for each repeat and check process exits as well as the
+JSON. Verification consumes the entire supplied tape; search-only option defaults
+in its receipt do not cap that tape. Compare every execution field after excluding
+only native timing and binary identity. Require identical frames, terminal, source,
+DAT/action hashes, score, RNG and ordered calculation/control events. The incomplete
+prefix must retain exit 2, `verified:false` and no complete terminal.
+
+The cache build and the separate IPO build reproduce all 108 baseline case tuples
+without changing the two reference failures. Additional raw captures of both failing
+fixtures match byte for byte, as do all 3706547 calculation rows from the 16 new
+seed routes. The additional training-only planning pair uses the original cell16
+seed-4455 prefix and unchanged 900-second continuation profile; its full actions and
+all deterministic plan fields match after excluding timing/producer identity.
+Native timing excludes file I/O; shared-host scope CPU includes compilation and
+validation, and recorded capture/API counts are separate units. These are execution
+agreement checks, not independent physics or retail proofs.
+
 One full source/adapter differential additionally plays the archived
 `story-prefix-v1--p132200-r64-b384-c16.rpy` through the pinned full native Debug/O0
 build, retaining production draw callbacks with private Xvfb, dummy audio and
