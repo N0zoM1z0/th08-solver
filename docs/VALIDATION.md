@@ -73,6 +73,12 @@ Reports add `turn_hint_records`, `unsupported_turn_hints` and
 `turn_envelope_frames`; these count a partial heuristic, not certified future
 geometry. Observe both complete outcomes and controller latency.
 
+The queued pooled-laser regression starts from a harmless birth update and
+requires movement before the first long active hitbox. A one-update-late snapshot
+cannot recover that escape through the latched input. It also checks reach-filter
+agreement and rejects a purported spawn whose timer has already advanced. Source
+preview contracts remain independently exercised by the native planner tests.
+
 For an always-shoot student's offline teacher queries, add `--shoot 1
 --quiet-retries 0` to `th08_plan` with the original checkpoint, immutable
 `--prefix` and explicit total frame/time budgets. Inspect every generated suffix

@@ -208,6 +208,43 @@ void queued_direct_laser() {
     o.queued_lasers[0].last_update = 0;
     rejects([&] { on::Policy(config).decide(o); }, "invalid queued laser interval was accepted");
 }
+void queued_pooled_laser() {
+    auto o = scene();
+    on::LaserState laser;
+    laser.position = {o.x, 448, 0};
+    laser.angle = -1.57079632679f;
+    laser.speed = 30;
+    laser.width = 16;
+    laser.startLength = 2400;
+    laser.startTime = laser.hitboxStartTime = 1;
+    laser.duration = laser.despawnDuration = 40;
+    laser.hitboxEndDelay = 20;
+    laser.flags = 6;
+    o.queued_pooled_lasers = {laser};
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    const auto baseline = on::Policy(config).decide(o);
+    config.queued_lasers = true;
+    const auto warned = on::Policy(config).decide(o);
+    check((baseline.action & 0xf0) == 0 && (warned.action & 0xf0) != 0 &&
+              warned.depth == config.horizon,
+          "current-cursor pooled laser was not forecast before its birth");
+    config.reach_filter = true;
+    const auto pruned = on::Policy(config).decide(o);
+    check(pruned.action == warned.action && pruned.depth == warned.depth,
+          "reach pruning lost a queued pooled laser");
+    // At birth this source is still harmless. Starting the copy one callback
+    // late loses the only extra controllable update before the growing beam.
+    o.queued_pooled_lasers.clear();
+    laser.endOffset = 30;
+    laser.timer = 1;
+    o.lasers = {laser};
+    check(on::Policy(config).decide(o).depth < config.horizon,
+          "late observation unexpectedly bypassed the input latch");
+    o.queued_pooled_lasers = {laser};
+    rejects([&] { on::Policy(config).decide(o); }, "noninitial queued pooled laser was accepted");
+}
 void held_escape() {
     auto o = scene();
     o.x = 316.374908f;
@@ -356,6 +393,7 @@ int main(int argc, char **argv) {
         spatial_retention();
         queued_birth();
         queued_direct_laser();
+        queued_pooled_laser();
         held_escape();
         reversing_direct_laser();
         current_program_turn_cues();

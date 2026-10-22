@@ -242,6 +242,7 @@ int run(const Options &o) {
     on::SearchStatistics search_stats;
     std::uint64_t queued_records = 0, unsupported_queued = 0;
     std::uint64_t queued_laser_records = 0, unsupported_queued_lasers = 0;
+    std::uint64_t queued_pooled_records = 0, unsupported_queued_pooled = 0;
     std::uint64_t turn_hint_records = 0, unsupported_turn_hints = 0;
     int failed_input = -1;
     bool started_spell = false;
@@ -315,6 +316,8 @@ int run(const Options &o) {
             unsupported_queued += observation.unsupported_queued_shots;
             queued_laser_records += observation.queued_lasers.size();
             unsupported_queued_lasers += observation.unsupported_queued_lasers;
+            queued_pooled_records += observation.queued_pooled_lasers.size();
+            unsupported_queued_pooled += observation.unsupported_queued_pooled_lasers;
             turn_hint_records += observation.turn_hint_records;
             unsupported_turn_hints += observation.unsupported_turn_hints;
             const auto decision = policy.decide(observation);
@@ -417,6 +420,9 @@ int run(const Options &o) {
            << ",\"queued_laser_records\":" << queued_laser_records
            << ",\"unsupported_queued_lasers\":" << unsupported_queued_lasers
            << ",\"queued_laser_coverage\":\"partial-current-ecl-cursors\""
+           << ",\"queued_pooled_laser_records\":" << queued_pooled_records
+           << ",\"unsupported_queued_pooled_lasers\":" << unsupported_queued_pooled
+           << ",\"queued_pooled_laser_coverage\":\"partial-imminent-main-cursor\""
            << ",\"held_fallback\":" << o.policy.held_fallback
            << ",\"direct_turn_envelope\":" << o.policy.direct_turn_envelope
            << ",\"turn_envelope_frames\":" << search_stats.turn_envelope_frames

@@ -228,6 +228,27 @@ including 129772 prefix updates, and 52.68 summed wall seconds remain charged.
 That isolated prototype is not promoted into the maintained policy. The remaining
 4B seed-57392 hit is a pooled laser, separate from the reactive direct-turn model.
 
+The online adapter now includes the session's supported imminent pooled-laser
+preview under `--queued-lasers 1`, with an owned timer-zero birth state and
+separate unsupported counters. Its regression covers pre-birth escape and the
+input latch. A frozen seed-57392 T-128 pair reproduces death at 36960 in spell 96
+without the adapter addition and advances to 39055 in 99 with it. Both episodes
+fail; work totals 76015 native updates, including 73664 prefix updates, and
+35.39 summed wall seconds. In the ongoing three-seed full-stage repeat, seed 57392
+strictly verifies at 46385, while seed zero regresses from a completion to death
+at 40190 in 99. The remaining case is unfinished, not a completion. All 40
+native/DAT CTests pass in 783.37 seconds with the default Stage 2 action hash unchanged.
+
+A separate private bounded-relative-turn prototype uses already exposed current
+transform state and the existing pure direction-change kernel. Six T-128 episodes
+repeat all three Extra diagnosis cases with the option off/on. Seed zero changes
+from death at 74212 to a strict verified complete tape at 90722, score 119445663,
+with matching natural rows and zero death/bomb rows. Seed 49063 dies at 74243 in
+both variants; seed 9696 advances from 74208 to 75081 and still dies. All end in
+spell 204. Total work is 462709 native updates, including 403070 prefix updates,
+and 259.37 summed wall seconds, plus fresh verification/replay. This is one
+verified prefix continuation, not a full-stage start or a promoted universal policy.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

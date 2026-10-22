@@ -94,6 +94,10 @@ struct Observation {
     std::uint32_t unsupported_queued_shots = 0;
     std::vector<QueuedLaser> queued_lasers;
     std::uint32_t unsupported_queued_lasers = 0;
+    // Source-decoded main-cursor pooled spawns, immediately before their first
+    // laser update. Origin/later script behavior remain a snapshot hypothesis.
+    std::vector<LaserState> queued_pooled_lasers;
+    std::uint32_t unsupported_queued_pooled_lasers = 0;
     std::uint32_t turn_hint_records = 0, unsupported_turn_hints = 0;
 };
 struct Configuration {

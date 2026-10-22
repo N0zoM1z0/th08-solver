@@ -325,12 +325,22 @@ struct Policy::Impl {
             if (b.full_width < 0 || b.full_height < 0)
                 throw std::runtime_error("unsupported_online_observation");
         }
-        for (const auto &l : o.lasers) {
+        const auto validate_laser = [&](const LaserState &l) {
             for (float v :
                  {l.endOffset, l.startOffset, l.startLength, l.width, l.position.x, l.position.y,
                   l.angle, l.speed, l.origin_delta_x, l.origin_delta_y, l.angle_delta})
                 finite(v);
             if (l.state < 0 || l.state > 2 || l.timer > std::numeric_limits<int>::max() - 201)
+                throw std::runtime_error("unsupported_online_observation");
+        };
+        for (const auto &l : o.lasers)
+            validate_laser(l);
+        for (const auto &l : o.queued_pooled_lasers) {
+            validate_laser(l);
+            if (l.timer != 0 || l.state != (l.startTime == 0 ? 1 : 0) || l.startOffset < 0 ||
+                l.endOffset < l.startOffset || l.startLength < 0 || l.width < 0 || l.speed < 0 ||
+                l.startTime < 0 || l.hitboxStartTime < 0 || l.duration < 0 ||
+                l.despawnDuration < 0 || l.hitboxEndDelay < 0 || l.motion_observed)
                 throw std::runtime_error("unsupported_online_observation");
         }
         for (const auto &l : o.laser_hitboxes)
@@ -628,6 +638,11 @@ struct Policy::Impl {
                            src.motion_observed ? src.origin_delta_y : 0.f,
                            src.motion_observed ? src.angle_delta : 0.f, horizon, frames);
         }
+        // This copied spawn has not received its first laser callback yet.
+        // Project from timer zero, with update one equal to the birth update.
+        if (opt.queued_lasers)
+            for (const auto &src : observation.queued_pooled_lasers)
+                laser_forecast(src, 0, 0, 0, horizon, frames);
         // Direct (ECL) laser calls drawn this update persist with their observed rotation.
         std::vector<DirectCall> direct;
         for (const auto &c : observation.laser_hitboxes)

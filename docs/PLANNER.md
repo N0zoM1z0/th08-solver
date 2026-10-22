@@ -150,6 +150,15 @@ uninspected control flow remains outside this partial preview. No spell or seed
 chooses the decoder. Its owned rotated rectangles enter the same proposal collision
 queries as observed laser calls, with the input latch unchanged.
 
+The same option also copies supported, unsuppressed pooled-laser spawns decoded
+by the native session's imminent main-cursor preview. The owned laser starts at
+timer zero before update one, so its birth callback is included exactly once;
+later updates use the existing pooled-laser proposal lifecycle. No native update
+or operand resolver runs in the policy. Aimed/unsupported previews are counted
+separately, not promoted into known geometry. The current origin and subsequent
+script behavior remain partial assumptions; `queued_pooled_laser_records` and
+`unsupported_queued_pooled_lasers` report this additional coverage.
+
 `--direct-turn-envelope 1` replaces a matched direct laser's single signed turn
 with both turn signs up to its last observed angular speed. Before first
 visibility, `--queued-lasers 1` can also supply a cue from absolute literal writes

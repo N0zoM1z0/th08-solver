@@ -134,9 +134,35 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
         }
     o.queued_lasers.clear();
     o.unsupported_queued_lasers = 0;
+    o.queued_pooled_lasers.clear();
+    o.unsupported_queued_pooled_lasers = 0;
     o.turn_hint_records = 0;
     o.unsupported_turn_hints = 0;
     if (queued_laser_horizon) {
+        for (const auto &v : session.imminent_laser_spawns()) {
+            if (!v.supported) {
+                ++o.unsupported_queued_pooled_lasers;
+                continue;
+            }
+            if (v.suppressed)
+                continue;
+            LaserState l;
+            l.endOffset = v.end_offset;
+            l.startOffset = v.start_offset;
+            l.startLength = v.start_length;
+            l.width = v.width;
+            l.position = {v.origin_x, v.origin_y, 0};
+            l.angle = v.angle;
+            l.speed = v.speed;
+            l.startTime = v.start_time;
+            l.hitboxStartTime = v.hitbox_start_time;
+            l.duration = v.duration;
+            l.despawnDuration = v.despawn_duration;
+            l.hitboxEndDelay = v.hitbox_end_delay;
+            l.flags = v.flags;
+            l.state = v.start_time == 0 ? 1 : 0;
+            o.queued_pooled_lasers.push_back(l);
+        }
         std::vector<policy::DirectLaserWarning> warnings;
         policy::DirectLaserStats stats;
         const auto append = [&](const TurnHint &hint) {
