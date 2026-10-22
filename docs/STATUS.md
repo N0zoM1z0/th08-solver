@@ -291,6 +291,31 @@ that needed correction. This checks cursor consumption, not successful child-poo
 allocation or future RNG. The feature remains private pending lifecycle filtering
 and a uniform multi-seed repeat; no additional full-stage clear is established.
 
+The lifecycle-filtered private repeat now finishes 0/3 from stage start: seeds
+zero/49063/9696 die at 66303/74686/67532 in spells 202/204/202. Two advance beyond
+their relative-turn parent, but the previously complete seed regresses; the
+positioning heuristic is not promoted. Work totals 208521 native updates and
+896.13 summed solver wall seconds, with a 189333504-byte unit memory peak. The
+filter separately counts 14791 predicted-cull preview observations and 1715105 pure
+origin-projection updates. A further three-tape check matches all 15100 retained
+predictions, costing 188091 reconstruction updates. Two independently reproduced
+deaths add 133835 updates: one bullet appears eight updates before death while
+forecast depth abruptly drops from 32 to seven; the other appears one update
+before death. Correct cursor geometry does not close unmodeled birth coverage.
+
+A separate generic previous-plan fallback is under full-stage comparison on the
+three existing 4B seeds, with an additional disabled seed-zero control repeat.
+It rechecks a single shifted proposal against the current forecast and replaces
+only a shorter beam; the input latch, depth ties and additional-query costs stay
+explicit. Synthetic crossing-bullet checks pass, including changed forecasts and
+cache-alignment failures. The disabled control reproduces the preceding seed-zero
+action hash, score, RNG and death at 40190. The enabled seed-zero case strictly
+verifies a complete 46501-update tape, score 20407686, with matching natural rows
+and zero death/bomb rows. The other two seeds remain pending; this is not a
+completed batch or a released holdout result. All 40 native/DAT CTests pass in
+665.09 seconds with two workers, and the default Stage 2 action hash is unchanged.
+The option remains off by default. No pending run counts as a completion.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

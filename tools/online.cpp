@@ -125,6 +125,8 @@ Options parse(int argc, char **argv) {
             o.policy.queued_lasers = boolean();
         else if (key == "--held-fallback")
             o.policy.held_fallback = boolean();
+        else if (key == "--warm-fallback")
+            o.policy.warm_fallback = boolean();
         else if (key == "--direct-turn-envelope")
             o.policy.direct_turn_envelope = boolean();
         else if (key == "--relative-turns")
@@ -338,6 +340,10 @@ int run(const Options &o) {
             search_stats.held_paths += decision.search.held_paths;
             search_stats.held_updates += decision.search.held_updates;
             search_stats.held_selected += decision.search.held_selected;
+            search_stats.warm_paths += decision.search.warm_paths;
+            search_stats.warm_updates += decision.search.warm_updates;
+            search_stats.warm_selected += decision.search.warm_selected;
+            search_stats.warm_invalidated += decision.search.warm_invalidated;
             search_stats.turn_envelope_frames += decision.search.turn_envelope_frames;
             search_stats.relative_turn_frames += decision.search.relative_turn_frames;
             auto input = decision.action;
@@ -447,6 +453,11 @@ int run(const Options &o) {
            << ",\"held_paths\":" << search_stats.held_paths
            << ",\"held_forecast_updates\":" << search_stats.held_updates
            << ",\"held_selected\":" << search_stats.held_selected
+           << ",\"warm_fallback\":" << o.policy.warm_fallback
+           << ",\"warm_paths\":" << search_stats.warm_paths
+           << ",\"warm_forecast_updates\":" << search_stats.warm_updates
+           << ",\"warm_selected\":" << search_stats.warm_selected
+           << ",\"warm_invalidated\":" << search_stats.warm_invalidated
            << ",\"seconds_budget\":" << o.seconds << ",\"frames\":" << actions.size()
            << ",\"native_update_attempts\":" << attempts << ",\"native_updates\":" << actions.size()
            << ",\"calculation_updates\":" << hl::replay_calculation_updates() - initial_calculations

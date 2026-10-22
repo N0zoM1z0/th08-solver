@@ -188,6 +188,18 @@ certificate. The option defaults off; reports retain cue/unsupported counts and
 the number of expanded laser forecast frames. Native execution still decides
 actual survival, and all stage/seed comparisons retain failed alternatives.
 
+`--warm-fallback 1` rechecks one suffix of the previous selected online proposal
+when the new beam returns a nonzero partial horizon. Decisions must be consecutive,
+and the current latched movement/focus must match the preceding sampled action.
+The suffix drops that action and repeats its last input to fill the new horizon;
+every position is recomputed from the actual current player state and checked
+against the new forecast. It reuses no old hazard forecast or native future state.
+A strictly longer prefix replaces the beam; depth ties keep the beam without extra
+tie RNG. This check precedes the optional held proposals. Reports separately count
+`warm_paths`, `warm_forecast_updates`, `warm_selected` and `warm_invalidated`.
+The cache belongs to one policy instance, and the option defaults off. A longer
+modeled prefix still depends on the partial forecast and is not a survival guarantee.
+
 `--held-fallback 1` checks all eighteen held direction/focus proposals only when
 the beam returns a nonzero partial horizon. Every proposal starts with the actual
 latched input and uses the same movement, bounds and forecast collision queries.

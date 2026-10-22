@@ -313,6 +313,74 @@ void held_escape() {
     check(latched.depth == 0 && latched.search.held_paths == 0,
           "held fallback claimed to avoid an already latched collision");
 }
+void warm_escape() {
+    // Two crossing linear bullets expose a full path discarded by a one-node
+    // beam after the observation boundary moves. No native future or route tape.
+    for (int variant = 0; variant < 7; ++variant) {
+        auto o = scene();
+        o.bullets = {bullet(1, 203, 396, -3, 0), bullet(10, 192, 370, 2.5f, 4)};
+        for (auto &b : o.bullets)
+            b.full_width = b.full_height = 4;
+        on::Configuration config;
+        config.horizon = 24;
+        config.beam = 1;
+        config.grow = 0;
+        config.queued_shots = true;
+        config.reach_filter = variant == 6;
+        on::Policy baseline(config);
+        config.warm_fallback = true;
+        on::Policy warmed(config);
+        const auto first = baseline.decide(o), first_warm = warmed.decide(o);
+        check(first.action == first_warm.action && first.depth == 24 &&
+                  first_warm.search.warm_paths == 0,
+              "warm fallback changed a full initial beam or reused another instance's plan");
+        ++o.update;
+        o.latched_input = first.action;
+        for (auto &b : o.bullets)
+            b.x += b.vx, b.y += b.vy;
+        if (variant == 1) {
+            baseline.observe(o);
+            warmed.observe(o);
+            ++o.update;
+            for (auto &b : o.bullets)
+                b.x += b.vx, b.y += b.vy;
+            o.queued_shots.push_back({20, 1, 192, 400, 0, 0, 1000, 1000});
+        }
+        if (variant == 2)
+            o.latched_input = 4;
+        if (variant == 3) {
+            o.queued_shots.push_back({2, 1, 193.4142135f, 401.4142135f, 0, 0, .1f, .1f});
+            o.queued_shots.push_back({13, 1, 192, 400, 0, 0, 1000, 1000});
+        }
+        if (variant == 4)
+            o.lethal_regions.push_back({0, 0, 384, 448});
+        if (variant == 5)
+            o.queued_shots.push_back({13, 1, 192, 400, 0, 0, 1000, 1000});
+        const auto before = baseline.decide(o), after = warmed.decide(o);
+        const auto &s = after.search;
+        if (variant == 0 || variant == 6)
+            check(before.depth == 13 && after.depth == 24 && before.action != after.action &&
+                      s.warm_paths == 1 && s.warm_selected == 1 && s.warm_updates == 24,
+                  "previous-plan suffix did not restore the full path or charge its checks");
+        else {
+            check(before.action == after.action && before.depth == after.depth &&
+                      s.warm_selected == 0,
+                  "unusable warm proposal changed the beam or its depth tie");
+            if (variant == 1 || variant == 2)
+                check(s.warm_paths == 0 && s.warm_invalidated == 1,
+                      "warm proposal survived a skipped decision or changed latched input");
+            if (variant == 3)
+                check(s.warm_paths == 1 && s.warm_updates == 2,
+                      "warm proposal bypassed a new collision in the current forecast");
+            if (variant == 4)
+                check(after.depth == 0 && s.warm_paths == 0,
+                      "warm fallback bypassed an already latched collision");
+            if (variant == 5)
+                check(s.warm_paths == 1 && s.warm_updates == 13,
+                      "warm depth tie omitted the terminating collision check");
+        }
+    }
+}
 void reversing_direct_laser() {
     auto previous = scene();
     previous.movement.axis[0] = previous.movement.axis[1] = 0;
@@ -434,6 +502,7 @@ int main(int argc, char **argv) {
         queued_pooled_laser();
         current_relative_turn();
         held_escape();
+        warm_escape();
         reversing_direct_laser();
         current_program_turn_cues();
         return 0;

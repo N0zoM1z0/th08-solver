@@ -119,6 +119,8 @@ struct Configuration {
     bool risk_phantoms = false;
     bool queued_shots = false, queued_lasers = false;
     bool held_fallback = false;
+    // Recheck one previous proposal only when the new beam cannot fill its horizon.
+    bool warm_fallback = false;
     bool direct_turn_envelope = false;
     bool relative_turns = false;
 };
@@ -139,6 +141,7 @@ struct SearchStatistics {
     std::uint64_t selections = 0, candidates = 0, bins = 0, retained_bins = 0;
     double selection_ms = 0;
     std::uint64_t held_paths = 0, held_updates = 0, held_selected = 0;
+    std::uint64_t warm_paths = 0, warm_updates = 0, warm_selected = 0, warm_invalidated = 0;
     std::uint64_t turn_envelope_frames = 0;
     std::uint64_t relative_turn_frames = 0;
 };

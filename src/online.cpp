@@ -821,6 +821,8 @@ struct Policy::Impl {
         std::vector<std::uint16_t> moves;
         int depth = 0;
     };
+    SearchResult previous_plan;
+    std::uint64_t previous_plan_update = UINT64_MAX;
     SearchResult search(const std::vector<HFrame> &frames, int horizon, const Speeds &sp,
                         std::uint16_t latched, float x0, float y0, float pref_x, float pref_y) {
         const std::array<float, 24 * 28> *nw = nullptr;
@@ -941,6 +943,42 @@ struct Policy::Impl {
         return r;
     }
 
+    void check_warm_path(SearchResult &result, const Observation &observation) {
+        if (!opt.warm_fallback || result.depth == 0 || result.depth == opt.horizon ||
+            previous_plan.moves.empty())
+            return;
+        if (previous_plan_update == UINT64_MAX || observation.update != previous_plan_update + 1 ||
+            (observation.latched_input & 0xf4) != previous_plan.moves.front()) {
+            ++search_stats.warm_invalidated;
+            return;
+        }
+        ++search_stats.warm_paths;
+        float x = observation.x, y = observation.y;
+        SearchResult candidate;
+        // moves[0] was sampled last time and is now latched: it owns update one.
+        // Shift the remaining proposal and repeat its last input to fill the new
+        // horizon. Every position is checked again; the old forecast is not reused.
+        for (int update = 1; update <= opt.horizon; ++update) {
+            const auto action =
+                update == 1
+                    ? observation.latched_input
+                    : previous_plan
+                          .moves[std::min(std::size_t(update - 1), previous_plan.moves.size() - 1)];
+            move(observation.movement, x, y, action);
+            ++search_stats.warm_updates;
+            if (probe(frames[update], observation.movement.half, x, y, false) == 2)
+                break;
+            candidate.depth = update;
+            if (update > 1)
+                candidate.moves.push_back(action);
+        }
+        if (candidate.depth > result.depth) {
+            // Keep the beam on depth ties, without consuming another tie RNG draw.
+            result = std::move(candidate);
+            ++search_stats.warm_selected;
+        }
+    }
+
     void check_held_directions(SearchResult &result, const Observation &observation) {
         // A finite beam can discard an escape even in a static forecast. Keep
         // this cheap independent proposal family when it extends modeled life.
@@ -993,7 +1031,12 @@ struct Policy::Impl {
         pref_x = std::clamp(pref_x, 48.f, 336.f);
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
                              observation.y, pref_x, 400.f);
+        check_warm_path(result, observation);
         check_held_directions(result, observation);
+        if (opt.warm_fallback) {
+            previous_plan = result;
+            previous_plan_update = observation.update;
+        }
         return {std::uint16_t(result.moves.front() | 1), result.depth, search_stats};
     }
 };

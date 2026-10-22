@@ -25,6 +25,8 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Native spell policy selection | `include/th08/spell_policy.hpp`; case IDs do not enter generic kernels |
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
 | Native fork planner, proposals and process checkpoints | `tools/plan.cpp`; `plan_contracts.hpp`, `plan_observation.hpp`, `plan_beam.hpp` |
+| Owned current-memory observations and online proposal history | `online.hpp`, `online.cpp`, `online_model.cpp`; the optional previous-plan cache belongs to each `Policy` and is rechecked against new observations |
+| Native observation adapter and online execution/reporting | `online_native.*`, `tools/online.cpp`; no native future updates or live rewinds |
 | Replay projection and strict corpus gate | `modern/headless/replay_check.*`, `tools/replay_check.cpp`, `tools/replay_suite.cpp` |
 | Sanitized campaign evidence and verified replay export | `tools/planner_report.cpp`; retains original proofs, separate accounting/archive receipts and their costs |
 | Sampled hazard stability diagnosis | `tools/hazard_probe.cpp`, `hazard_probe.hpp` |

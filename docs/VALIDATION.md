@@ -64,6 +64,13 @@ and counts the extra forecast work. A lethal first latched update still returns
 depth zero. Complete-world outcomes are evaluated separately from this proposal
 contract.
 
+The optional `--warm-fallback 1` regression uses two crossing linear bullets and
+a one-node beam. Rechecking the previous plan suffix restores a full 24-update
+proposal after ordinary replanning discards it at depth 13. The same check covers
+reach pruning, skipped decisions, changed latched focus, a new forecast collision,
+depth ties, an already-latched death and the exact additional-query counts. These
+are synthetic proposal contracts; complete native outcomes remain separate gates.
+
 `--direct-turn-envelope 1` tests a current-memory angular uncertainty model.
 Its policy contract includes opposite-turn escapes from signed extrapolation,
 sixteen orientations around the full circle, reachable-envelope agreement and
