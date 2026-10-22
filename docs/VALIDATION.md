@@ -57,6 +57,12 @@ decoder; reports count warnings and unsupported dynamic/variable geometry. Its
 regression checks escape before a rotated beam appears, the already-latched first
 update and rejection of a reversed lethal interval. These forecasts are partial;
 actual native execution, fresh actions and natural replay remain the outcome gates.
+`--held-fallback 1` adds eighteen checked constant-input proposals after an
+incomplete beam. Its synthetic two-beam regression retains a complete rightward
+escape that the default beam prunes at depth eight, checks reach-filter agreement
+and counts the extra forecast work. A lethal first latched update still returns
+depth zero. Complete-world outcomes are evaluated separately from this proposal
+contract.
 
 `online.json` binds executable, DAT, exact action/prefix bytes and each risk file;
 the local protocol additionally binds the source archive and environment. Decision

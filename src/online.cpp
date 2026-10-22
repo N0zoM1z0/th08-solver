@@ -824,6 +824,35 @@ struct Policy::Impl {
         return r;
     }
 
+    void check_held_directions(SearchResult &result, const Observation &observation) {
+        // A finite beam can discard an escape even in a static forecast. Keep
+        // this cheap independent proposal family when it extends modeled life.
+        // Equal depths retain the beam; held ties use the existing action order.
+        if (!opt.held_fallback || result.depth == 0 || result.depth == opt.horizon)
+            return;
+        bool selected = false;
+        for (int focus = 0; focus < 2; ++focus)
+            for (const auto direction : kDirs) {
+                const auto action = std::uint16_t(direction | (focus ? 4 : 0));
+                float x = observation.x, y = observation.y;
+                int depth = 0;
+                ++search_stats.held_paths;
+                for (int j = 1; j <= opt.horizon; ++j) {
+                    move(observation.movement, x, y, j == 1 ? observation.latched_input : action);
+                    ++search_stats.held_updates;
+                    if (probe(frames[j], observation.movement.half, x, y, false) == 2)
+                        break;
+                    depth = j;
+                }
+                if (depth > result.depth) {
+                    result.depth = depth;
+                    result.moves.assign(std::max(1, depth - 1), action);
+                    selected = true;
+                }
+            }
+        search_stats.held_selected = selected;
+    }
+
     Decision choose(const Observation &observation) {
         if (last_decided == observation.update)
             throw std::runtime_error("duplicate_online_decision");
@@ -847,6 +876,7 @@ struct Policy::Impl {
         pref_x = std::clamp(pref_x, 48.f, 336.f);
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
                              observation.y, pref_x, 400.f);
+        check_held_directions(result, observation);
         return {std::uint16_t(result.moves.front() | 1), result.depth, search_stats};
     }
 };

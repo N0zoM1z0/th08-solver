@@ -150,6 +150,16 @@ uninspected control flow remains outside this partial preview. No spell or seed
 chooses the decoder. Its owned rotated rectangles enter the same proposal collision
 queries as observed laser calls, with the input latch unchanged.
 
+`--held-fallback 1` checks all eighteen held direction/focus proposals only when
+the beam returns a nonzero partial horizon. Every proposal starts with the actual
+latched input and uses the same movement, bounds and forecast collision queries.
+A strictly longer surviving prefix replaces the beam result; equal depths retain
+the beam, and held ties follow the existing unfocused/focused direction order.
+This proposal family consumes no search tie RNG. Reports count checked paths,
+forecast updates and selections separately from native work. It can retain an
+escape lost by finite beam pruning; it cannot make an incorrect forecast safe or
+avoid an already-latched collision. It defaults off for controlled comparisons.
+
 Optional risk files use complete TSV rows, explicit horizons 4/8/16/32 and the
 prototype's minimum count of 200 for fine/segment entries. Global entries retain
 all sample counts. Malformed/truncated rows and duplicate key/horizon records fail

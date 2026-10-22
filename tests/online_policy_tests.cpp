@@ -206,6 +206,36 @@ void queued_direct_laser() {
     o.queued_lasers[0].last_update = 0;
     rejects([&] { on::Policy(config).decide(o); }, "invalid queued laser interval was accepted");
 }
+void held_escape() {
+    auto o = scene();
+    o.x = 316.374908f;
+    o.y = 405.144501f;
+    o.latched_input = 145;
+    o.movement.half = {.825f, .825f, 0};
+    o.queued_lasers = {
+        {9, 64, {531.404175f, 70.4011536f, 590, 160, 236.404205f, 70.4011536f, 1.50952911f, -1}},
+        {9, 64, {531.404175f, 70.4011536f, 590, 160, 236.404205f, 70.4011536f, 1.77132845f, -1}}};
+    on::Configuration config;
+    config.horizon = 64;
+    config.beam = 192;
+    config.diversity_cell = 16;
+    config.queued_lasers = true;
+    const auto baseline = on::Policy(config).decide(o);
+    config.held_fallback = true;
+    const auto escaped = on::Policy(config).decide(o);
+    config.reach_filter = true;
+    const auto pruned = on::Policy(config).decide(o);
+    check(baseline.depth == 8 && baseline.search.held_paths == 0 &&
+              escaped.depth == config.horizon && escaped.action == 129 &&
+              escaped.action == pruned.action && escaped.depth == pruned.depth &&
+              escaped.search.held_paths == 18 && escaped.search.held_selected == 1 &&
+              escaped.search.held_updates <= 18 * unsigned(config.horizon),
+          "pruning discarded a full held-direction escape or fallback work was uncounted");
+    o.queued_lasers[0].first_update = o.queued_lasers[1].first_update = 1;
+    const auto latched = on::Policy(config).decide(o);
+    check(latched.depth == 0 && latched.search.held_paths == 0,
+          "held fallback claimed to avoid an already latched collision");
+}
 } // namespace
 int main(int argc, char **argv) {
     try {
@@ -217,6 +247,7 @@ int main(int argc, char **argv) {
         spatial_retention();
         queued_birth();
         queued_direct_laser();
+        held_escape();
         return 0;
     } catch (const std::exception &error) {
         std::cerr << error.what() << '\n';

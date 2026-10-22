@@ -123,6 +123,8 @@ Options parse(int argc, char **argv) {
             o.policy.queued_shots = boolean();
         else if (key == "--queued-lasers")
             o.policy.queued_lasers = boolean();
+        else if (key == "--held-fallback")
+            o.policy.held_fallback = boolean();
         else if (key == "--log-every")
             o.log_every = int(integer(value));
         else if (key == "--commit")
@@ -315,6 +317,9 @@ int run(const Options &o) {
             search_stats.bins += decision.search.bins;
             search_stats.retained_bins += decision.search.retained_bins;
             search_stats.selection_ms += decision.search.selection_ms;
+            search_stats.held_paths += decision.search.held_paths;
+            search_stats.held_updates += decision.search.held_updates;
+            search_stats.held_selected += decision.search.held_selected;
             auto input = decision.action;
             if (o.spell < 0 && ((actions.size() + 1) % 2))
                 input |= 4096;
@@ -405,6 +410,10 @@ int run(const Options &o) {
            << ",\"queued_laser_records\":" << queued_laser_records
            << ",\"unsupported_queued_lasers\":" << unsupported_queued_lasers
            << ",\"queued_laser_coverage\":\"partial-current-ecl-cursors\""
+           << ",\"held_fallback\":" << o.policy.held_fallback
+           << ",\"held_paths\":" << search_stats.held_paths
+           << ",\"held_forecast_updates\":" << search_stats.held_updates
+           << ",\"held_selected\":" << search_stats.held_selected
            << ",\"seconds_budget\":" << o.seconds << ",\"frames\":" << actions.size()
            << ",\"native_update_attempts\":" << attempts << ",\"native_updates\":" << actions.size()
            << ",\"calculation_updates\":" << hl::replay_calculation_updates() - initial_calculations

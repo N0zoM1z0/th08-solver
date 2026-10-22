@@ -107,9 +107,33 @@ seconds. A separate alive-only probe costs 35573 native updates; none of twelve
 held-input variants at leads 32/16/10/9 survives the complete post-event window.
 An unfocused right input avoids the beam and later dies to bullets. The probe's
 `event-not-observed` result reflects censored windows, not absent hazards or proof
-of impossibility. Full-stage direct-warning trials remain separate from this pilot.
-A fixed-radius follow-up and separately named non-practice 6A/6B checkpoints
-continue on diagnosis cases with frozen binaries and budgets.
+of impossibility. Full-stage direct-warning trials finish 0/3: seed zero dies at
+34827 in 92, the other two in 88. A separate 32-pixel actor-radius comparison on
+three Extra seeds advances one seed to 204; the others die in 202 and 201. All
+remain failed cases.
+
+The separately named non-practice 6A/6B starts finish 6/6 strict verified, three
+diagnosis seeds per entry, using the unchanged H32 uniform policy and model. Fresh
+actions and natural replay agree on each terminal score and all 402530 calculation
+rows, with zero death/bomb rows. Solver work totals 402530 native updates and
+1913.80 summed wall seconds; verification/replay costs are additional. There are
+154 measured deadline misses. This different power-zero checkpoint does not
+relabel the six failed practice artifacts, certify all 25 replay fields or change
+the retained 106/108 retail-reference gate.
+
+At a later 4B checkpoint, widths 192/384/768 all return depth eight. Removing all
+other hazards leaves an independently checked constant-right path safe for the
+whole forecast, yet the beam discards it. This motivates an optional generic
+held-direction fallback with an explicit extra-work ledger and a focused synthetic
+regression. Full-world comparisons use the same three 4B and three Extra diagnosis
+seeds and retain their parent configurations; this is not a stage-specific kernel.
+Paired new-policy continuations from update 34818 reproduce death at 34827 with
+the fallback off and advance to 39230 in spell 99 with it on. Fresh native
+execution matches the latter's score/RNG and identifies a direct medium-width
+laser. The pair costs 74057 native updates including reconstruction and 59.31
+summed wall seconds; 792 held paths, 32457 extra forecast updates and 44 selected
+fallbacks are recorded. Both episodes fail, and the later hit follows a full-depth
+forecast: retaining proposals alone does not close the remaining model gap.
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

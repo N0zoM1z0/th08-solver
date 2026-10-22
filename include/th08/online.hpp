@@ -103,6 +103,7 @@ struct Configuration {
     bool risk_hard = false, reach_filter = false, risk_stop_age = false;
     bool risk_phantoms = false;
     bool queued_shots = false, queued_lasers = false;
+    bool held_fallback = false;
 };
 struct RiskTables {
     std::map<std::uint64_t, std::array<float, 4>> fine, segment, global;
@@ -120,6 +121,7 @@ RiskTables load_risk_tables(const std::string &directory);
 struct SearchStatistics {
     std::uint64_t selections = 0, candidates = 0, bins = 0, retained_bins = 0;
     double selection_ms = 0;
+    std::uint64_t held_paths = 0, held_updates = 0, held_selected = 0;
 };
 struct Decision {
     std::uint16_t action = 1;
