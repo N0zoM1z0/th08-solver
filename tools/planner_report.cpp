@@ -2,6 +2,7 @@
 // fields and private paths never become public evidence; unfinished jobs supply
 // only a pending ID. Verification checks execution agreement, not retail physics.
 #include "headless_report.hpp"
+#include "th08/plan_matrix.hpp"
 #include "th08/plan_prefix.hpp"
 #include <openssl/evp.h>
 
@@ -477,7 +478,7 @@ Fields replay_summary(const Fields &input) {
 }
 
 void natural_replay(Fields &summary, const Fields &input, const Fields &plan,
-                    std::uint64_t expected_rows) {
+                    std::uint64_t expected_rows, const Fields *checkpoint = nullptr) {
     require(field(input, "finished") == "true" && field(input, "natural") == "true",
             "natural_replay_mismatch");
     require(integer(field(input, "rows")) == expected_rows, "natural_replay_calculation_mismatch");
@@ -495,6 +496,14 @@ void natural_replay(Fields &summary, const Fields &input, const Fields &plan,
     if (plan.count("final_stage"))
         require(integer(field(last, "stage")) == integer(field(plan, "final_stage")),
                 "natural_replay_terminal_mismatch");
+    if (checkpoint) {
+        std::string path = "[";
+        for (const auto &stage : stages)
+            path += (path.size() == 1 ? "" : ",") + std::to_string(integer(field(stage, "stage")));
+        path += ']';
+        require(path == field(*checkpoint, "expected_stages"), "matrix_replay_stage_path_mismatch");
+        summary.emplace("stage_path", path);
+    }
     summary.emplace("endScore", field(last, "endScore"));
 }
 
@@ -542,7 +551,8 @@ void check_process_exit(const fs::path &path, Fields &summary, const char *failu
     require(code == 0, failure);
 }
 
-void verify_complete(Case &result, const fs::path &root, bool require_process_receipts) {
+void verify_complete(Case &result, const fs::path &root, bool require_process_receipts,
+                     const Fields *checkpoint) {
     const auto directory = result.group == "spell92-diversity-v3"
                                ? root / "spell92-verified" / result.id
                                : root / result.group / (result.id + "-verify");
@@ -628,7 +638,7 @@ void verify_complete(Case &result, const fs::path &root, bool require_process_re
         replay_identity(result.rpy, result, "");
         const auto rows = integer(field(replay, "rows"));
         require(rows == expected_rows || observed_calculations, "missing_calculation_accounting");
-        natural_replay(result.rpy, replay, result.plan, expected_rows);
+        natural_replay(result.rpy, replay, result.plan, expected_rows, checkpoint);
         const auto archive_path = root / result.group / (result.id + "-rpy-archive.json");
         if (fs::exists(archive_path)) {
             // Preserve the primary replay run and its work. This additional
@@ -637,7 +647,7 @@ void verify_complete(Case &result, const fs::path &root, bool require_process_re
             const auto fresh = parse(text);
             result.archive_replay_sha256 = digest(text);
             result.archive_replay = replay_summary(fresh);
-            natural_replay(result.archive_replay, fresh, result.plan, rows);
+            natural_replay(result.archive_replay, fresh, result.plan, rows, checkpoint);
             const auto replay_hash =
                 digest(read(root / result.group / result.id / "th8_solver.rpy", 64 * 1024 * 1024));
             bind_replay(result.archive_replay, result, replay_hash);
@@ -740,16 +750,91 @@ void archive_failed_actions(Case &result, const fs::path &root, const fs::path &
                         {"execution_verified", "false"}};
 }
 
+// This immutable, report-owned manifest supplies checkpoints and the coverage
+// denominator. Repeated attempts retain separate costs and share one route ID.
+struct RouteMatrix {
+    std::string sha256;
+    std::map<std::string, Fields> checkpoints;
+};
+
+RouteMatrix route_matrix(const fs::path &path) {
+    RouteMatrix result;
+    if (path.empty())
+        return result;
+    const auto text = read(path);
+    const auto manifest = parse(text);
+    require(integer(field(manifest, "schema_version")) == 1, "matrix_schema_mismatch");
+    const auto seed = integer(field(manifest, "seed"));
+    require(seed <= 65535, "matrix_seed_out_of_range");
+    std::map<std::string, Fields> entries;
+    for (const auto &entry : objects(field(manifest, "cases"))) {
+        const auto id = string_value(field(entry, "id"));
+        require(identifier(id) && entries.emplace(id, entry).second,
+                "matrix_duplicate_or_unsafe_id");
+    }
+    const auto catalog = th08::plan::full_run_matrix();
+    require(entries.size() == catalog.size(), "matrix_case_count_mismatch");
+    for (const auto &entry : catalog) {
+        const std::string route = entry.route == th08::plan::FinalRoute::A   ? "a"
+                                  : entry.route == th08::plan::FinalRoute::B ? "b"
+                                                                             : "natural";
+        const std::string difficulty = th08::plan::difficulty_names[entry.difficulty];
+        const auto id = difficulty + "-t" + std::to_string(entry.shot) + '-' + route + "-s" +
+                        std::to_string(seed);
+        const auto found = entries.find(id);
+        require(found != entries.end(), "matrix_catalog_mismatch");
+        const auto &input = found->second;
+        Fields checkpoint{{"shot", std::to_string(entry.shot)},
+                          {"difficulty", std::to_string(entry.difficulty)},
+                          {"seed", std::to_string(seed)},
+                          {"story", "1"}};
+        for (const auto &value : checkpoint)
+            require(integer(field(input, value.first)) == integer(value.second),
+                    "matrix_checkpoint_mismatch");
+        require(
+            string_value(field(input, "shot_name")) == th08::plan::shot_names[entry.shot] &&
+                string_value(field(input, "difficulty_name")) == difficulty &&
+                string_value(field(input, "stage")) == (entry.stage() == 8 ? "extra" : "1") &&
+                string_value(field(input, "final_route")) == route &&
+                string_value(field(input, "unlock_profile")) ==
+                    (entry.difficulty == 4 ? "original-extra-entry" : "both-finals-clearState-2"),
+            "matrix_profile_mismatch");
+        std::string stages = "[";
+        if (entry.difficulty != 4)
+            stages += "0,1,2," + std::to_string(entry.fourth_stage()) + ",5,";
+        stages += std::to_string(entry.final_stage()) + ']';
+        auto supplied_stages = field(input, "expected_stages");
+        supplied_stages.erase(
+            std::remove_if(supplied_stages.begin(), supplied_stages.end(),
+                           [](char c) { return c == ' ' || c == '\t' || c == '\r' || c == '\n'; }),
+            supplied_stages.end());
+        require(supplied_stages == stages, "matrix_expected_stage_path_mismatch");
+        checkpoint.emplace("stage", std::to_string(entry.stage()));
+        checkpoint.emplace("spell", "-1");
+        checkpoint.emplace("until_stage", "8");
+        checkpoint.emplace("final_route", std::to_string(int(entry.route)));
+        checkpoint.emplace("expected_stages", stages);
+        result.checkpoints.emplace(id, std::move(checkpoint));
+    }
+    result.sha256 = digest(text);
+    return result;
+}
+
 Case collect(const fs::path &root, const std::string &group, const std::string &id,
              const std::string &known_binary, const std::string &known_dat,
              const fs::path &replay_directory, const fs::path &failed_actions_directory,
-             bool require_process_receipts, Totals &totals) {
+             bool require_process_receipts, const RouteMatrix &matrix, Totals &totals) {
     Case result;
     result.group = group;
     result.id = id;
     result.expected_dat_sha256 = known_dat;
     const auto exit = root / group / (id + ".exit");
     if (!fs::is_regular_file(exit)) {
+        if (!matrix.sha256.empty() && !matrix.checkpoints.count(id)) {
+            result.status = "invalid";
+            result.failure = "matrix_unknown_case";
+            return result;
+        }
         ++totals.pending;
         return result;
     }
@@ -809,6 +894,21 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
         seconds(plan, "native_seconds_excluding_file_io", totals.solver_native_seconds);
         for (const auto &key : cost_keys)
             account(plan, key, totals.cost_totals[key]);
+        const Fields *checkpoint = nullptr;
+        if (!matrix.sha256.empty()) {
+            const auto found = matrix.checkpoints.find(id);
+            require(found != matrix.checkpoints.end(), "matrix_unknown_case");
+            checkpoint = &found->second;
+            for (const auto &value : *checkpoint) {
+                if (value.first == "expected_stages")
+                    continue;
+                require(field(result.options, value.first) == value.second,
+                        "matrix_options_mismatch");
+                if (value.first != "final_route" && value.first != "until_stage")
+                    require(field(result.plan, value.first) == value.second,
+                            "matrix_plan_checkpoint_mismatch");
+            }
+        }
         if (outcome != "complete") {
             result.status = "failed";
             archive_failed_actions(result, root, failed_actions_directory);
@@ -817,7 +917,15 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
         }
         result.status = "unverified_complete";
         require(result.exit_code == 0, "complete_process_failed");
-        verify_complete(result, root, require_process_receipts);
+        verify_complete(result, root, require_process_receipts, checkpoint);
+        if (checkpoint) {
+            auto path = '[' + field(result.plan, "stage");
+            for (const auto &transition : objects(field(result.plan, "stage_transitions")))
+                path += ',' + std::to_string(integer(field(transition, "to_stage")));
+            path += ']';
+            require(path == field(*checkpoint, "expected_stages"),
+                    "matrix_native_stage_path_mismatch");
+        }
         archive_complete(result, root, replay_directory);
         result.status = "verified_complete";
         ++totals.complete;
@@ -849,7 +957,7 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
 }
 
 struct Options {
-    fs::path root, fidelity, output, replay_directory, failed_actions_directory;
+    fs::path root, fidelity, output, replay_directory, failed_actions_directory, matrix;
     std::string known_binary;
     std::vector<std::string> groups;
     bool explicit_groups = false;
@@ -872,6 +980,8 @@ Options options(int argc, char **argv) {
             result.replay_directory = value;
         else if (key == "--failed-actions-dir")
             result.failed_actions_directory = value;
+        else if (key == "--matrix")
+            result.matrix = value;
         else if (key == "--group") {
             require(identifier(value) && std::find(result.groups.begin(), result.groups.end(),
                                                    value) == result.groups.end(),
@@ -901,6 +1011,7 @@ Options options(int argc, char **argv) {
 }
 
 int report(const Options &opt) {
+    const auto matrix = route_matrix(opt.matrix);
     const auto fidelity_text = read(opt.fidelity);
     const auto source_fidelity = parse(fidelity_text);
     const auto fidelity =
@@ -940,10 +1051,11 @@ int report(const Options &opt) {
             ids.insert(id);
         }
         for (const auto &id : ids)
-            cases.push_back(collect(
-                opt.root, group, id, opt.known_binary,
-                fidelity.count("dat_sha256") ? field(fidelity, "dat_sha256") : "",
-                opt.replay_directory, opt.failed_actions_directory, opt.explicit_groups, totals));
+            cases.push_back(
+                collect(opt.root, group, id, opt.known_binary,
+                        fidelity.count("dat_sha256") ? field(fidelity, "dat_sha256") : "",
+                        opt.replay_directory, opt.failed_actions_directory,
+                        opt.explicit_groups || !opt.matrix.empty(), matrix, totals));
     }
     require(!cases.empty(), "no_campaign_cases");
     const bool valid = std::none_of(cases.begin(), cases.end(), [](const Case &entry) {
@@ -965,6 +1077,21 @@ int report(const Options &opt) {
         << (valid ? "true" : "false")
         << ",\"fidelity_input_sha256\":" << quote(digest(fidelity_text)) << ",\"fidelity\":";
     emit(out, fidelity);
+    if (!matrix.sha256.empty()) {
+        std::set<std::string> observed, verified;
+        for (const auto &entry : cases) {
+            if (matrix.checkpoints.count(entry.id))
+                observed.insert(entry.id);
+            if (entry.status == "verified_complete")
+                verified.insert(entry.id);
+        }
+        out << ",\"coverage\":{\"matrix_sha256\":" << quote(matrix.sha256)
+            << ",\"expected_combinations\":" << matrix.checkpoints.size()
+            << ",\"observed_combinations\":" << observed.size()
+            << ",\"verified_combinations\":" << verified.size()
+            << ",\"not_yet_verified_combinations\":" << matrix.checkpoints.size() - verified.size()
+            << '}';
+    }
     out << ",\"fidelity_failures\":[";
     for (std::size_t i = 0; i < failures.size(); ++i) {
         if (i)

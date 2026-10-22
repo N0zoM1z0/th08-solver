@@ -41,17 +41,21 @@ files retain their hashes. Active build/data and failure evidence remain availab
 later successful raw rows are removed after recording their hashes and receipts.
 
 The replacement [route ledger](../reports/native/planner_route_summary.json)
-archives 16 directly completed combinations: all nine seed-0 Reimu/Yukari entries
-and seven Marisa/Alice entries. Reimu/Yukari clears all four standard difficulties,
-both final routes and full Extra. All 16 full tapes freshly verify, and their natural
-replays match all expected stages, scores and 3521930 calculation rows with zero
+archives 18 directly completed combinations: all nine seed-0 entries for each of
+Reimu/Yukari and Marisa/Alice. Both teams clear all four standard difficulties,
+both final routes and full Extra. All 18 full tapes freshly verify, and their natural
+replays match all expected stages, scores and 3844994 calculation rows with zero
 death/bomb input rows. The checked Easy/Normal Reimu/Yukari A/B tape pairs first
 differ at their actual Stage-5 Up/Down selection; the
 [audit](../reports/native/planner_route_environment.json) binds raw capture hashes
-and exact manifest/profile agreement. This is 16/108 new baseline combinations;
-the other 92 remain unverified in the running queue. Random evaluation has not
-started. The ledger exports only finished combinations; its zero pending count
-does not count the active/queued combinations outside that export.
+and exact manifest/profile agreement. The C++ report's optional `--matrix` mode
+now checks every attempt's checkpoint and each successful native/replay stage path,
+binds the manifest hash, and counts unique combinations without discarding retry
+costs. This is 18/108 new baseline combinations; the other 90 remain unverified
+in the running queue. Random evaluation has not started. The ledger exports only
+finished combinations; its zero attempt-level pending count does not count the
+active/queued combinations outside that export. Historical ledgers still reproduce
+byte-for-byte without the optional matrix mode.
 
 The preceding full-story seed-robustness campaign is separate historical coverage.
 Eight seeds were drawn before inspection under the

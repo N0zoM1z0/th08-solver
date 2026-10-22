@@ -64,7 +64,7 @@ this repository, not an ignored checkout, submodule or separate feature branch.
 - Raw DAT/EXE/assets, generated reference translation units and local experiments
   remain ignored. Do not force-add them; preserve third-party notices
 - For authorized assistant changes to this N0zoM1z0 repository, use
-  `gpt-dots: <English summary>`. Do not rewrite older commits solely for their prefix
+  `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. Follow the active
   campaign resource revision; the current limit is four concurrent solver jobs and
   320 total campaign tasks. Do not raise concurrency merely because CPU/RAM are free

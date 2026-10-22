@@ -127,8 +127,10 @@ generic profiles, per-episode budgets and a single eligible budget-prefix
 continuation. Run the second profile only if the first has no verified completion;
 retain all original failures and costs. First finalize the seed-0 matrix, including
 failures, then freeze fresh random seed draws across the same complete coverage.
-Require each successful replay's ordered stage list to match its manifest entry.
-Missing, budget-limited and runtime-failed cases remain visible in coverage totals.
+Use `th08_planner_report --matrix` to require each attempt's checkpoint and each
+successful native/replay stage path to match the manifest. Its coverage denominator
+includes every catalog entry, and repeated attempts cannot inflate the distinct
+verified count. Missing, budget-limited and runtime-failed cases remain unverified.
 
 Before publishing a checkpoint:
 

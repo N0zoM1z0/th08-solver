@@ -14,6 +14,7 @@ target_include_directories(th08_plan_matrix PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 if(BUILD_TESTING)
   add_test(NAME planner_report_contract COMMAND ${CMAKE_COMMAND}
     -DREPORT=$<TARGET_FILE:th08_planner_report>
+    -DMATRIX=$<TARGET_FILE:th08_plan_matrix>
     -DWORK=${CMAKE_CURRENT_BINARY_DIR}/planner-report-contract
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/planner_report_tests.cmake)
 endif()

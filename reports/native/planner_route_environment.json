@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "producer": "manual-native-route-campaign-audit",
-  "reviewed_utc": "2026-10-22T04:48:00Z",
+  "reviewed_utc": "2026-10-22T05:05:59Z",
   "scope": "108 full-run baseline combinations; first-launch resource failure and bounded replacement queue; random evaluation has not started",
   "source": {
     "validated_commit": "12c39d63168e0cc373926c816118c9ebb597822a",
@@ -10,7 +10,7 @@
     "native_source_file_manifest_sha256": "ecccbd6aec95720ba4ce8b0a7188167094272a50e82656cd4a77b2e56d6bfea0",
     "native_source_matches_validated_commit": true,
     "source_check_exit": 0,
-    "source_note": "The source snapshot predates the final documentation/resource edits; every native/build/tool/test source file matches the validated commit."
+    "source_note": "The frozen campaign source matches the validated commit. Later local report changes add optional manifest validation without changing the campaign native executables."
   },
   "environment": {
     "platform": "Linux x86_64",
@@ -28,7 +28,7 @@
     "native_dat_ctest": {
       "passed": 38,
       "total": 38,
-      "wall_seconds": 667.28
+      "wall_seconds": 729.79
     },
     "pinned_replay_gate": {
       "passed": 106,
@@ -55,6 +55,11 @@
       "receipt_sha256": "b146093cd42f475e0bfd7c5be022f4a0576b51b0316fd82327901956dda094e0",
       "binary_sha256": "26a780e7565839e6cb0ac8f49ac50269764558f0a2d1fdacfa038f83915e0605",
       "environment": "Local GCC 12.2 Release; separate executable from the campaign"
+    },
+    "manifest_report_contract": {
+      "passed": true,
+      "checked_combinations": 18,
+      "legacy_ledger_byte_identical": true
     }
   },
   "initial_launch": {
@@ -105,12 +110,12 @@
     "same_native_executables": true,
     "solver_profile_or_episode_budget_changed": false,
     "last_live_sample": {
-      "sample_utc": "2026-10-22T04:46:07Z",
-      "memory_bytes": 2826371072,
+      "sample_utc": "2026-10-22T05:05:53Z",
+      "memory_bytes": 2697576448,
       "memory_peak_bytes": 3757850624,
-      "cpu_usage_usec": 33823993465,
-      "host_available_kib": 557600848,
-      "user_tasks": 328,
+      "cpu_usage_usec": 38577833477,
+      "host_available_kib": 624193704,
+      "user_tasks": 307,
       "memory_events": {
         "low": 0,
         "high": 0,
@@ -156,17 +161,19 @@
     "additional_success_raw_bytes_removed": 89093500,
     "accepted_capture_cleanup_exit": 0,
     "accepted_capture_cleanup_journal_sha256": "e96d973eff2152d8c794a6ced60151fe0b26a9950d2fb2b452287a42e179e582",
-    "ongoing_capture_policy": "Keep complete action tapes, .rpy files and all process/verification receipts. Retain raw SHA/size; remove reconstructible successful raw rows after validation, and retain failed captures for diagnosis."
+    "ongoing_capture_policy": "Keep complete action tapes, .rpy files and all process/verification receipts. Retain raw SHA/size; remove reconstructible successful raw rows after validation, and retain failed captures for diagnosis.",
+    "completed_transfer_archive_bytes_removed": 16640000,
+    "completed_transfer_archive_sha256": "1cfbd04f08408c7e91a02dbc5c46b9497bcf44efb27f3650f1d44e22923f1f0e"
   },
   "coverage_snapshot": {
-    "as_of_utc": "2026-10-22T04:48:00Z",
+    "as_of_utc": "2026-10-22T05:05:59Z",
     "manifest": "planner_route_matrix.json",
     "ledger": "planner_route_summary.json",
-    "ledger_sha256": "a886bb0a3b08c23b4193be406edc3b52fb7a5f82ba5e954eb257b3e1007c0595",
+    "ledger_sha256": "b04c119b86f2d735a8ee2249f2e59853d19e132facc54c0760b6c3a7905af34a",
     "ledger_scope": "Finished combinations only; active/queued combinations are outside this exported ledger.",
     "expected_combinations": 108,
-    "unique_verified_combinations": 16,
-    "not_yet_verified_combinations": 92,
+    "unique_verified_combinations": 18,
+    "not_yet_verified_combinations": 90,
     "all_checkpoint_profile_and_stage_paths_match_manifest": true,
     "random_seed_evaluation_started": false,
     "raw_capture_receipts": [
@@ -239,6 +246,16 @@
         ],
         "raw_sha256": "a237cf6f0a2abfb7ba80c0e79b9a81f75ad57b6036cf8b9537c916ffd918ecdc",
         "raw_bytes": 8516400
+      },
+      {
+        "id": "extra-t1-natural-s0",
+        "rows": 87674,
+        "steps": 47968,
+        "stage_path": [
+          8
+        ],
+        "raw_sha256": "4e70199755bbdec85eb6124b4f28207e3a9a86c162961730805b31174df4d38f",
+        "raw_bytes": 8767400
       },
       {
         "id": "hard-t0-a-s0",
@@ -346,6 +363,21 @@
         "raw_bytes": 23518000
       },
       {
+        "id": "lunatic-t1-b-s0",
+        "rows": 235390,
+        "steps": 124537,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          7
+        ],
+        "raw_sha256": "1efbf061a44494819977afc9a02291edcc775d6c07924b59438aaf73bb8df686",
+        "raw_bytes": 23539000
+      },
+      {
         "id": "normal-t0-a-s0",
         "rows": 227747,
         "steps": 117416,
@@ -426,7 +458,10 @@
         "final_a_stage6_entry_action": 173996
       }
     ],
-    "prefix_check_meaning": "The listed A/B tape pairs are byte-identical through the input preceding each first difference. Their first difference is the original Up/Down dialogue selection during Stage 5; both complete their expected natural replay path."
+    "prefix_check_meaning": "The listed A/B tape pairs are byte-identical through the input preceding each first difference. Their first difference is the original Up/Down dialogue selection during Stage 5; both complete their expected natural replay path.",
+    "coverage_producer": "th08_planner_report --matrix",
+    "reporter_sha256": "d50e732f2b719f824283c649290ed850cfca12b4a9ce02c3684fd14a9b16e485",
+    "reporter_environment": "Local GCC 12.2 Release; the native campaign executables remain unchanged"
   },
   "limits": [
     "No full-matrix or new random-seed completion is claimed by this environment audit.",

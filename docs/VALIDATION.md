@@ -104,8 +104,32 @@ role `failed_search_prefix`. These tapes are execution-unverified prefixes, not
 successful demonstrations or all rejected internal rollouts. Existing artifact
 names are idempotent only for identical bytes; conflicts fail without overwriting.
 
+For full-run batches, add `--matrix reports/native/planner_route_matrix.json`.
+The report checks the complete generated catalog, each attempt's checkpoint and
+every successful native/replay stage path before archiving, and requires validation
+process receipts in this mode. Its `coverage` object
+binds the manifest SHA and counts distinct route IDs across all selected groups;
+retries retain their separate attempt costs. `expected_combinations` includes the
+whole manifest, while `observed_combinations` includes only IDs present in the
+input groups. A zero attempt-level pending count does not imply full coverage.
+Omitting `--matrix` preserves the historical report format.
+
 ```sh
 ./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --group training-resume-c16 --group training-resume-c32 --group holdout-resume-c16 --group holdout-resume-c32 --replay-dir reports/native/replays --failed-actions-dir reports/native/failed-actions --output reports/native/planner_seed_summary.json
+```
+
+The current full-run ledger uses all four portfolio groups:
+
+```sh
+./build-headless/th08_planner_report \
+  --root reports/local/route-matrix-v2/results \
+  --fidelity reports/local/route-matrix-v1/results/fidelity-v1/summary.json \
+  --matrix reports/native/planner_route_matrix.json \
+  --group matrix0-v2-c16 --group matrix0-v2-resume-c16 \
+  --group matrix0-v2-c32 --group matrix0-v2-resume-c32 \
+  --replay-dir reports/native/replays \
+  --failed-actions-dir reports/native/failed-actions \
+  --output reports/native/planner_route_summary.json
 ```
 
 The [execution protocol](../reports/native/runtime_perf_protocol.json) fixes three
