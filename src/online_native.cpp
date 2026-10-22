@@ -5,10 +5,11 @@
 #include "Player.hpp"
 #include "Supervisor.hpp"
 #include "modern/headless/session.hpp"
+#include "th08/direct_laser_policy.hpp"
 
 namespace th08::online {
 void capture_memory(headless::Session &session, std::uint64_t update, Observation &o,
-                    bool include_actors, unsigned queued_horizon) {
+                    bool include_actors, unsigned queued_horizon, unsigned queued_laser_horizon) {
     const auto state = session.state();
     o.update = update;
     o.stage = state.stage;
@@ -99,5 +100,20 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
                                           shot.vy, shot.full_width, shot.full_height});
             }
         }
+    o.queued_lasers.clear();
+    o.unsupported_queued_lasers = 0;
+    if (queued_laser_horizon) {
+        std::vector<policy::DirectLaserWarning> warnings;
+        policy::DirectLaserStats stats;
+        policy::collect_direct_laser_warnings(session.ecl_contexts(), queued_laser_horizon,
+                                              warnings, stats);
+        o.unsupported_queued_lasers = stats.variable_selectors + stats.dynamic_geometry;
+        for (const auto &warning : warnings)
+            o.queued_lasers.push_back(
+                {warning.first_update,
+                 warning.last_update,
+                 {warning.center_x, warning.center_y, warning.full_width, warning.full_height,
+                  warning.origin_x, warning.origin_y, warning.angle, -1}});
+    }
 }
 } // namespace th08::online

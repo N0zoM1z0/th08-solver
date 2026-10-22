@@ -188,6 +188,24 @@ void queued_birth() {
     check(on::Policy(config).decide(o).depth == 0,
           "queued birth incorrectly bypassed the already latched movement");
 }
+void queued_direct_laser() {
+    auto o = scene();
+    o.queued_lasers = {{3, 6, {487, 100, 590, 8, 192, 100, 1.57079632679f, -1}}};
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    const auto baseline = on::Policy(config).decide(o);
+    config.queued_lasers = true;
+    const auto warned = on::Policy(config).decide(o);
+    check((baseline.action & 0xf0) == 0 && (warned.action & 0xf0) != 0 &&
+              warned.depth == config.horizon,
+          "queued rotated direct laser did not induce an early escape");
+    o.queued_lasers[0].first_update = 1;
+    check(on::Policy(config).decide(o).depth == 0,
+          "queued direct laser incorrectly bypassed latched movement");
+    o.queued_lasers[0].last_update = 0;
+    rejects([&] { on::Policy(config).decide(o); }, "invalid queued laser interval was accepted");
+}
 } // namespace
 int main(int argc, char **argv) {
     try {
@@ -198,6 +216,7 @@ int main(int argc, char **argv) {
         actor_risk();
         spatial_retention();
         queued_birth();
+        queued_direct_laser();
         return 0;
     } catch (const std::exception &error) {
         std::cerr << error.what() << '\n';

@@ -89,9 +89,28 @@ decreasing search depth, unlike the no-model new-bullet death above. Two bounded
 teacher rescues from T-2/T-8 both exhaust, costing 63153 native updates including
 prefix reconstruction; these failures are not impossibility proofs.
 
-A predeclared H64/spatial-retention comparison and a partial current-program
-shot-prefix comparison continue on diagnosis cases; no winning seeds are spliced
-into a universal profile. Eighteen additional distinct holdout seeds, two per
+A predeclared joint H64/spatial-retention comparison completes the same nine
+diagnosis cases: 4A is 3/3 strictly verified, 4B remains 0/3 (seed zero advances to
+92, the other seeds die in 88), and Extra remains 0/3 in 201. Its seed-zero 4B
+controller mean is 13.65 ms, including 225.25 seconds of spatial selection work;
+longer search is not a universal success or deadline guarantee. A separate H32
+current-program shot-prefix ablation on three Extra seeds advances seed zero to
+202; the other two still die in 201. All three failures remain charged. No winning
+seeds are spliced into a universal profile.
+
+The source-cursor investigation identifies a constant timed callback before the
+new Stage 4B direct-beam death. Paired new-policy episodes reconstruct the same
+34239-update prefix: without direct warnings, death is at 34335; with them, the
+first beam is avoided but a later beam kills at 34827. These two failed bounded
+episodes cost 69162 native updates including reconstruction and 12.65 summed wall
+seconds. A separate alive-only probe costs 35573 native updates; none of twelve
+held-input variants at leads 32/16/10/9 survives the complete post-event window.
+An unfocused right input avoids the beam and later dies to bullets. The probe's
+`event-not-observed` result reflects censored windows, not absent hazards or proof
+of impossibility. Full-stage direct-warning trials remain separate from this pilot.
+A fixed-radius follow-up and separately named non-practice 6A/6B checkpoints
+continue on diagnosis cases with frozen binaries and budgets.
+Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;
 each low-priority unit has 96 tasks, six CPU cores, 6-GiB high/8-GiB hard memory

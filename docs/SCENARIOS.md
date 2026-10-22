@@ -33,6 +33,14 @@ require difficulties 0..3. Practice and spell checkpoints retain their separate
 interfaces and evidence below. The 108-case matrix concerns full stage-1 stories
 and full Extra, not a sum of independent practice clears.
 
+Online validation also distinguishes an explicit non-practice standalone final-stage
+start (`--story 1 --stage 6a|6b --final-route natural`) from stage practice. It starts
+with original non-practice setup, including power zero instead of practice power
+128, and stops at that final stage's native clear terminal. It carries no invented
+earlier-stage score or world state and does not count as a full story. This separate
+checkpoint tests recording/playback mode agreement while retaining failed practice
+results; it cannot repair or relabel their artifacts.
+
 `th08_headless` links the tracked reconstructed game at revision recorded in
 [Validation](VALIDATION.md). It runs production ECL, timeline, player, enemy, bullet,
 laser, item, effect, spell, background and GUI/message updates. This is a native

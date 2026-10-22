@@ -123,7 +123,7 @@ a new policy episode, not a bit-identical resumption of an earlier search.
 The finite coordinate profile rejects NaN/infinity or magnitudes beyond 2^20
 pixels instead of silently dropping unindexable hazards.
 
-Three optional mechanisms have explicit, default-off configuration. `--spawn-guard
+Optional mechanisms have explicit, default-off configuration. `--spawn-guard
 N` adds soft risk around current actor shot origins, extrapolated by observed
 displacement. It does not predict an emission schedule. `--diversity-cell N` uses
 the same stable spatial/focus proposal retention as the offline planner and
@@ -140,6 +140,15 @@ prove no future births. Reports name this current-program profile, count emitted
 and unsupported preview records, and retain `future_native_updates:0`. Actual
 unsupported gameplay execution still stops the case. This option adds no future
 native rollout or branch-independent safety certificate.
+
+`--queued-lasers 1` separately copies timed direct-hitbox warnings from the
+existing current-ECL decoder. It recognizes the source callback selectors for
+narrow, medium and wide beams, requiring observed stationary geometry and constant
+selectors. Both the first lethal update and a currently visible disable boundary
+are retained. Dynamic geometry and variable selectors are counted as unsupported;
+uninspected control flow remains outside this partial preview. No spell or seed
+chooses the decoder. Its owned rotated rectangles enter the same proposal collision
+queries as observed laser calls, with the input latch unchanged.
 
 Optional risk files use complete TSV rows, explicit horizons 4/8/16/32 and the
 prototype's minimum count of 200 for fine/segment entries. Global entries retain

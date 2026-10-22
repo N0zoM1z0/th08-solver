@@ -121,6 +121,8 @@ Options parse(int argc, char **argv) {
             o.policy.risk_phantoms = boolean();
         else if (key == "--queued-shots")
             o.policy.queued_shots = boolean();
+        else if (key == "--queued-lasers")
+            o.policy.queued_lasers = boolean();
         else if (key == "--log-every")
             o.log_every = int(integer(value));
         else if (key == "--commit")
@@ -235,6 +237,7 @@ int run(const Options &o) {
     std::uint64_t attempts = 0, controls = 0, native_ns = 0, deadline_misses = 0, full_depth = 0;
     on::SearchStatistics search_stats;
     std::uint64_t queued_records = 0, unsupported_queued = 0;
+    std::uint64_t queued_laser_records = 0, unsupported_queued_lasers = 0;
     int failed_input = -1;
     bool started_spell = false;
     std::string outcome = "budget", failure;
@@ -300,9 +303,12 @@ int run(const Options &o) {
                std::chrono::duration<double>(Clock::now() - started).count() < o.seconds) {
             const auto begin = Clock::now();
             on::capture_memory(session, actions.size(), observation, o.policy.spawn_guard > 0,
-                               o.policy.queued_shots ? unsigned(o.policy.horizon) : 0);
+                               o.policy.queued_shots ? unsigned(o.policy.horizon) : 0,
+                               o.policy.queued_lasers ? unsigned(o.policy.horizon) : 0);
             queued_records += observation.queued_shots.size();
             unsupported_queued += observation.unsupported_queued_shots;
+            queued_laser_records += observation.queued_lasers.size();
+            unsupported_queued_lasers += observation.unsupported_queued_lasers;
             const auto decision = policy.decide(observation);
             search_stats.selections += decision.search.selections;
             search_stats.candidates += decision.search.candidates;
@@ -364,7 +370,8 @@ int run(const Options &o) {
     std::ofstream report(o.out / "online.json");
     report.exceptions(std::ios::badbit | std::ios::failbit);
     report << std::setprecision(17) << "{\"schema_version\":1,\"profile\":\""
-           << (o.policy.queued_shots      ? "native-memory-kinematic-current-program-v1"
+           << (o.policy.queued_shots || o.policy.queued_lasers
+                   ? "native-memory-kinematic-current-program-v1"
                : o.policy.spawn_guard > 0 ? "native-memory-kinematic-actor-risk-v1"
                                           : "native-memory-kinematic-v1")
            << "\",\"execution_mode\":"
@@ -394,6 +401,10 @@ int run(const Options &o) {
            << ",\"queued_shot_records\":" << queued_records
            << ",\"unsupported_queued_shots\":" << unsupported_queued
            << ",\"queued_forecast_coverage\":\"partial-current-main-cursors\""
+           << ",\"queued_lasers\":" << o.policy.queued_lasers
+           << ",\"queued_laser_records\":" << queued_laser_records
+           << ",\"unsupported_queued_lasers\":" << unsupported_queued_lasers
+           << ",\"queued_laser_coverage\":\"partial-current-ecl-cursors\""
            << ",\"seconds_budget\":" << o.seconds << ",\"frames\":" << actions.size()
            << ",\"native_update_attempts\":" << attempts << ",\"native_updates\":" << actions.size()
            << ",\"calculation_updates\":" << hl::replay_calculation_updates() - initial_calculations

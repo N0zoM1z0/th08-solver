@@ -302,6 +302,14 @@ struct Policy::Impl {
             for (float v : {shot.x, shot.y, shot.vx, shot.vy, shot.width, shot.height})
                 finite(v);
         }
+        for (const auto &laser : o.queued_lasers) {
+            const auto &l = laser.hitbox;
+            if (laser.first_update == 0 || laser.last_update < laser.first_update ||
+                laser.last_update > unsigned(opt.horizon) || l.w < 0 || l.h < 0)
+                throw std::runtime_error("unsupported_online_observation");
+            for (float v : {l.cx, l.cy, l.w, l.h, l.ox, l.oy, l.angle})
+                finite(v);
+        }
     }
 
     void observe(const Observation &observation) {
@@ -633,6 +641,12 @@ struct Policy::Impl {
                     x += shot.vx;
                     y += shot.vy;
                 }
+            }
+        if (opt.queued_lasers)
+            for (const auto &laser : observation.queued_lasers) {
+                const auto &l = laser.hitbox;
+                for (unsigned j = laser.first_update; j <= laser.last_update; ++j)
+                    frames[j].l.push_back({l.cx, l.cy, l.w, l.h, l.ox, l.oy, l.angle});
             }
     }
 

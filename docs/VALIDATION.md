@@ -52,6 +52,11 @@ seed from different profiles. Queued coverage is partial and counts unsupported
 preview records; zero records is not an empty-future certificate. The policy
 contract also checks early avoidance of a queued birth, the unavoidable latched
 update, soft actor risk without a learned table and deterministic spatial retention.
+`--queued-lasers 1` independently enables the existing timed direct-ECL warning
+decoder; reports count warnings and unsupported dynamic/variable geometry. Its
+regression checks escape before a rotated beam appears, the already-latched first
+update and rejection of a reversed lethal interval. These forecasts are partial;
+actual native execution, fresh actions and natural replay remain the outcome gates.
 
 `online.json` binds executable, DAT, exact action/prefix bytes and each risk file;
 the local protocol additionally binds the source archive and environment. Decision

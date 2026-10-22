@@ -63,6 +63,12 @@ struct QueuedShot {
     unsigned update = 0, linear_updates = 0;
     float x = 0, y = 0, vx = 0, vy = 0, width = 0, height = 0;
 };
+struct QueuedLaser {
+    // Inclusive one-based lethal interval from the current observation boundary.
+    // Geometry is an adapter hypothesis, not a complete future-world guarantee.
+    unsigned first_update = 0, last_update = 0;
+    LaserHitbox hitbox;
+};
 
 // Owned current-memory snapshot. The native adapter may reuse its vector capacity
 // after decide() returns. No simulator, manager pointer or future rollout enters
@@ -85,6 +91,8 @@ struct Observation {
     // is partial coverage: zero records never proves that no shot will spawn.
     std::vector<QueuedShot> queued_shots;
     std::uint32_t unsupported_queued_shots = 0;
+    std::vector<QueuedLaser> queued_lasers;
+    std::uint32_t unsupported_queued_lasers = 0;
 };
 struct Configuration {
     int horizon = 32, beam = 192;
@@ -94,7 +102,7 @@ struct Configuration {
     float spawn_guard = 0; // soft risk radius in pixels around current actor shot origins
     bool risk_hard = false, reach_filter = false, risk_stop_age = false;
     bool risk_phantoms = false;
-    bool queued_shots = false;
+    bool queued_shots = false, queued_lasers = false;
 };
 struct RiskTables {
     std::map<std::uint64_t, std::array<float, 4>> fine, segment, global;
