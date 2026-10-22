@@ -394,12 +394,38 @@ corner confinement and falling forecast depth before a known descending bullet
 hits; the second first observes its collider one update before the fatal latched
 movement. Neither failure is a solved or successful replay case. The candidate
 was not retuned or given replacement evaluation seeds.
-A separately frozen post-evaluation diagnosis now tests all five known Extra
+The separately frozen post-evaluation diagnosis tests all five known Extra
 seeds with the maintained collision-mode correction and one uniform H32/T32,
 cell16 profile. Branch depth stays 32 while capture/forecast extends to 64;
 endpoint, held-tail, spatial-selection and native costs remain charged. These
 five cases are known diagnosis inputs for the new candidate, not independent
-evaluation. The comparison is pending, with no new completion claimed.
+evaluation. It finishes 0/5: seeds zero/9696/49063/17735/7575 die at
+55422/66703/66696/66512/54659. All three previously complete diagnosis seeds
+regress. Work totals 309992 native updates and 2319.52 summed solver wall seconds;
+unit memory peaks at 295944192 bytes. This joint profile is not promoted.
+
+Independent short-window native interventions retain all failed branches and
+their own action-dependent RNG futures. For seed 7575, changing only the fatal
+update's sampled input still hits for all 18 direction/focus choices; starting
+one input update earlier avoids that local hit for 10/18. Seed 17735's 18 earlier
+16-update holds all fail by the original terminal. These are bounded local
+witnesses, not stage solutions or impossibility proofs. Two original-tape controls
+match score/RNG; the 56 total processes cost 3626995 native updates. A further
+65845-update emitter trace shows a currently visible WAIT/child program near the
+new collider. Its conditional emission-point cue matches 816 native points,
+including 17 observations near the collider's first position from updates
+65827 through 65843 before birth at 65844. The old adapter, its private port to
+current history/clock code and the remote preflight each replay 65845 updates,
+197535 additional updates total, with matching terminal score/RNG and no RNG or
+calculation mutation during reads. This establishes an available positioning cue,
+not child direction/RNG, cancellation or complete future-world coverage.
+A new private frozen H32/cell0/guard32 child-positioning comparison now runs the
+same five known seeds plus a disabled seed-zero control. It reuses the existing
+motion/cull kernel and guard/grow/risk weights as soft cost; the source cue is not
+a hard child-collision certificate. All new prediction/cull/unsupported/risk work
+is separately counted. Its pure contracts and real-data preflight pass; complete
+cases remain pending, without a new solver completion or independent-evaluation
+claim. The original eighteen reserved holdouts remain untouched.
 
 The maintained `--tail-check T` option defaults to zero and retains H-update
 branching/depth while checking held suffixes through H+T. The narrow direct-laser
@@ -489,7 +515,7 @@ source-derived regression fails on the parent and passes after the correction,
 agrees with reach pruning, and preserves real acceleration under an unchanged
 mode/mask. All 40 native/DAT CTests pass in 642.89 seconds with two workers,
 including a full Stage 2 solve, fresh execution and natural replay with unchanged
-action SHA. The frozen story/Extra results above predate this correction and do
+action SHA. The successful frozen story/Extra results above predate this correction and do
 not certify its full-story or Extra coverage.
 
 Eighteen additional distinct holdout seeds, two per
