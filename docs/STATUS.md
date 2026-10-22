@@ -74,10 +74,10 @@ protocol hashes first. It stops for review on incomplete or invalid results.
 Manifests, protocol, results and failure evidence stay under ignored
 `reports/local/seed-generalization-v2/`. The new `--sample` report mode binds explicit
 seed-case pairs and counts distinct seeds separately, retaining each attempt's costs.
-The 08:04 UTC local snapshot verifies four new-seed cases: Extra with Marisa/Alice,
-Youmu/Yuyuko and solo Yukari, plus Lunatic Final A with Reimu/Yukari. All complete
-in the original c16 episode, with fresh full-action replay, natural replay and
-exact stage-path checks over 491470 calculation rows. The other eight diagnosis
+The 08:10 UTC local snapshot verifies five new-seed cases: Extra with Marisa/Alice,
+Youmu/Yuyuko and solo Yukari, plus Lunatic Final A with Reimu/Yukari and Final B
+with Sakuya/Remilia. All complete in the original c16 episode, with fresh full-action
+replay, natural replay and exact stage-path checks over 739996 calculation rows. The other seven diagnosis
 pairs are not yet verified. Pending progress is not a completed route.
 The report changes pass all 38 native/DAT CTests and reproduce the historical
 campaign ledger byte-for-byte. [Planner](PLANNER.md) owns the method.
