@@ -24,6 +24,9 @@ requires natural successful captures with every expected row/fingerprint.
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92-verify --stage 4b --spell 92 --difficulty 3 --seed 0 --verify reports/local/spell92/plan.actions
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/story --stage 1 --story 1 --difficulty 3 --seed 0 --rollout 64 --beam 384 --diversity-cell 16 --checkpoint 120 --keep 64 --shoot 1 --frames 250000 --seconds 2400
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/story-resumed --stage 1 --story 1 --difficulty 3 --seed 0 --prefix reports/local/story/plan.actions --rollout 64 --diversity-cell 16 --checkpoint 120 --keep 64 --frames 350000 --seconds 1800
+./build-headless/th08_plan_matrix --seed 0 --output reports/local/matrix.json
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/final-b --stage 1 --story 1 --difficulty 1 --shot 1 --seed 0 --final-route b --rollout 64 --beam 384 --diversity-cell 16 --checkpoint 120 --keep 64 --frames 350000 --seconds 3000
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/extra --stage extra --story 1 --difficulty 4 --shot 11 --seed 0 --frames 350000 --seconds 3000 --diversity-cell 16
 ./build-headless/th08_hazard_probe --dat game_data_donottrack/th08.dat --stage 4b --spell 92 --difficulty 3 --seed 0 --event-update 393 --leads 393,360,320,280,240,200,160 --output reports/local/spell92-probe.json
 ./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --replay-dir reports/native/replays --output reports/native/planner_current_summary.json
 ```

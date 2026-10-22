@@ -21,6 +21,7 @@
 #include "th08/plan_contracts.hpp"
 #include "th08/plan_observation.hpp"
 #include "th08/plan_prefix.hpp"
+#include "th08/plan_route.hpp"
 
 #include "EnemyManager.hpp"
 #include "GameManager.hpp"
@@ -72,6 +73,7 @@ struct Laser {
 struct FrameTape {
     int nb, nl, nr;
     th08::headless::State state; // Full public observation after this native update.
+    std::uint16_t input;         // Actual sampled command, including dialogue choices.
     bool complete;
     Box b[kMaxBullets];
     Laser l[kMaxLasers];
@@ -409,8 +411,7 @@ bool record_frame(FrameTape &f, const th08::headless::State &st) {
 bool started_spell = false;
 bool is_complete(const th08::headless::State &st) {
     if (opt.story) // Final A/B clear, or the requested partial-run boundary
-        return st.stage > opt.until_stage ||
-               ((st.stage == 6 || st.stage == 7) && st.stage_complete);
+        return th08::plan::story_terminal(st.stage, st.stage_complete, opt.until_stage);
     if (opt.spell >= 0) {
         if (st.spell_active)
             started_spell = true;
@@ -476,6 +477,9 @@ th08::headless::State native_step(std::uint16_t input, NativeUse use) {
                      static_cast<unsigned long long>(calculations), before.stage, st.stage);
         throw std::runtime_error("unexplained native recording calculation boundary");
     }
+    if (opt.final_route != th08::plan::FinalRoute::Natural && (st.stage == 6 || st.stage == 7) &&
+        st.stage != (opt.final_route == th08::plan::FinalRoute::A ? 6 : 7))
+        throw std::runtime_error("native story entered a different final route");
     // An explicit stage selects the DAT program; it does not establish that its
     // active spell matches the requested checkpoint. Check each native update
     // before rollout, commit or fresh verification can count it as progress.
@@ -505,28 +509,24 @@ void rollout(const std::vector<std::uint16_t> &plan, int slot) {
     }
     if (pid == 0) {
         th08::headless::record_bullet_boxes = true;
-        bool spell_seen = started_spell;
         const float initial_deaths = session->state().deaths;
         for (int j = 1; j <= opt.rollout; ++j) {
             th08::headless::State st;
             try {
-                st = native_step(plan[j - 1], NativeUse::Rollout);
+                const auto input =
+                    th08::plan::final_route_input(opt.final_route, session->state(), frame_now + j)
+                        .value_or(plan[j - 1]);
+                st = native_step(input, NativeUse::Rollout);
                 if (!record_frame(t.f[j], st)) {
                     t.status = RolloutStatus::Capacity;
                     _exit(kRuntimeError);
                 }
+                t.f[j].input = input;
             } catch (...) {
                 t.status = RolloutStatus::StepError;
                 _exit(kRuntimeError);
             }
-            if (opt.spell >= 0) {
-                if (st.spell_active)
-                    spell_seen = true;
-                t.f[j].complete = spell_seen && !st.spell_active;
-            }
-            if (opt.story)
-                t.f[j].complete = st.stage > opt.until_stage ||
-                                  ((st.stage == 6 || st.stage == 7) && st.stage_complete);
+            t.f[j].complete = is_complete(st);
             t.frames = j;
             if (st.player_state == 2 || st.deaths != initial_deaths) {
                 t.death = j;
@@ -747,9 +747,10 @@ void write_options(std::ostream &out) {
         << ",\"cegar\":" << opt.cegar << ",\"frames\":" << opt.frame_limit
         << ",\"seconds\":" << opt.seconds << ",\"shoot\":" << opt.shoot
         << ",\"story\":" << opt.story << ",\"until_stage\":" << opt.until_stage
-        << ",\"shot\":" << opt.shot << ",\"measure\":" << opt.measure_every
-        << ",\"diversity_cell\":" << opt.diversity_cell << ",\"prefix\":" << !opt.prefix.empty()
-        << ",\"boss_follow\":" << opt.boss_follow << ",\"verify\":" << !opt.verify.empty() << "}";
+        << ",\"final_route\":" << int(opt.final_route) << ",\"shot\":" << opt.shot
+        << ",\"measure\":" << opt.measure_every << ",\"diversity_cell\":" << opt.diversity_cell
+        << ",\"prefix\":" << !opt.prefix.empty() << ",\"boss_follow\":" << opt.boss_follow
+        << ",\"verify\":" << !opt.verify.empty() << "}";
 }
 
 void write_accounting(std::ostream &out, const th08::headless::State &st,
@@ -1045,7 +1046,7 @@ int run_worker() {
                         ++shared->model_breaks;
                         break;
                     }
-                    lat = plan[j - 1];
+                    lat = t0.f[j].input;
                 }
             }
             const bool calm = it == 0 && !t0.death && valid >= needed;
@@ -1213,8 +1214,8 @@ int run_worker() {
             throw std::logic_error("attempted to commit an unverified rollout");
         const int k = std::min({opt.commit, ta.frames, int(opt.frame_limit - frame_now)});
         for (int j = 1; j <= k; ++j) {
-            st = native_step(plan[j - 1], NativeUse::Commit);
-            history.push_back(plan[j - 1]);
+            st = native_step(ta.f[j].input, NativeUse::Commit);
+            history.push_back(ta.f[j].input);
             ++frame_now;
             if (frame_now > shared->max_frame)
                 shared->max_frame = frame_now;
@@ -1296,6 +1297,7 @@ int execute(int argc, char **argv) {
     config.seed = std::uint16_t(opt.seed);
     config.story = opt.story;
     config.shot = opt.shot;
+    config.unlock_final_routes = opt.final_route != th08::plan::FinalRoute::Natural;
     if (!opt.verify.empty()) {
         // Fresh-process strict replay of a committed tape; also writes a real .rpy.
         // Hash and decode the same bytes; a receipt must identify the exact

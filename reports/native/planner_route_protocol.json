@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "scope": "full-route-matrix-before-random-seeds",
+  "frozen_utc": "2026-10-22T02:09:00Z",
+  "case_manifest": "planner_route_matrix.json",
+  "case_count": 108,
+  "coverage": {
+    "shot_types": 12,
+    "standard_difficulties": [
+      "easy",
+      "normal",
+      "hard",
+      "lunatic"
+    ],
+    "standard_final_routes": [
+      "a",
+      "b"
+    ],
+    "extra_full_runs": 12,
+    "stage4": "original character-dependent routing; no alternate Stage 4 override",
+    "last_words": "not a selectable story route; not part of this 108-run matrix"
+  },
+  "initial_seed": 0,
+  "initial_checkpoint": {
+    "standard": "Stage 1, non-practice, both final choices unlocked through one explicit prior Final B clear; clearState 2 is recorded",
+    "extra": "Extra stage, difficulty 4, non-practice original Extra initialization"
+  },
+  "profiles": [
+    {
+      "id": "c16",
+      "rollout": 64,
+      "beam": 384,
+      "diversity_cell": 16
+    },
+    {
+      "id": "c32",
+      "rollout": 64,
+      "beam": 384,
+      "diversity_cell": 32
+    }
+  ],
+  "shared_options": {
+    "commit": 8,
+    "checkpoint": 120,
+    "keep": 64,
+    "attempts": 4,
+    "cegar": 4,
+    "shoot": 1,
+    "frames": 350000,
+    "seconds": 3000,
+    "boss_follow": 0.25
+  },
+  "continuation": {
+    "eligibility": "original outcome budget, a nonempty emitted prefix and frames below the unchanged total frame cap",
+    "maximum_episodes_per_profile": 1,
+    "seconds": 1200,
+    "frames": 350000,
+    "rule": "reconstruct every exact parent action from the same checkpoint; no earlier input changes; prefix work and original failed attempt stay charged"
+  },
+  "portfolio_order": "try c16 and its eligible continuation; if still not verified complete, try c32 and its eligible continuation independently from the original checkpoint; retain all results",
+  "acceptance": [
+    "solver process exit 0 and complete outcome",
+    "fresh full action replay from identical checkpoint, terminal, score, RNG and exact calculation/control events",
+    "natural .rpy replay with exact calculation rows, final score, zero death rows and zero bomb-input rows",
+    "observed complete ordered stage list equals each manifest expected_stages",
+    "full actions and .rpy byte hashes archived; failed emitted prefixes separately labeled and archived"
+  ],
+  "random_seed_phase": {
+    "start_after": "all 108 baseline combinations have finalized bounded attempts and their validation/failures have been recorded",
+    "draw": "fresh OS-entropy uint16 draws for a new complete matrix, frozen before any outcomes; seed identity belongs to every case",
+    "tuning": "freeze any algorithm changes before random evaluation; an inspected seed is not a future holdout",
+    "implementation": "offline; online/RL remains deferred"
+  },
+  "resources": {
+    "cpu_quota_cores": 96,
+    "concurrent_cases": 108,
+    "cpu_weight": 10,
+    "io_weight": 10,
+    "nice": 10,
+    "memory_high_gib": 128,
+    "memory_max_gib": 160,
+    "memory_swap_max": 0,
+    "tasks_max": 32768,
+    "host_prelaunch_available_gib": 614,
+    "stop_rule": "stop only campaign-owned work if host headroom becomes unsafe; retain partial outputs and costs"
+  },
+  "resource_revisions": [
+    {
+      "revision": 1,
+      "recorded_utc": "2026-10-22T02:24:00Z",
+      "reason": "The first launch hit the shared user's hard RLIMIT_NPROC of 4096 (fork failed), without an OOM. The owner requested much less process concurrency. The campaign-owned unit was stopped; its failures, interrupted cases and measured costs are retained.",
+      "concurrent_cases": 4,
+      "cpu_quota_cores": 4,
+      "cpu_weight": 10,
+      "io_weight": 10,
+      "nice": 10,
+      "memory_high_gib": 8,
+      "memory_max_gib": 12,
+      "memory_swap_max": 0,
+      "tasks_max": 320,
+      "user_task_abort_threshold": 3000,
+      "solver_profile_changes": false,
+      "episode_budget_changes": false,
+      "rerun": "new isolated result groups; no overwriting initial failures"
+    }
+  ],
+  "evidence_limits": [
+    "same-source verification is not an independent physics oracle",
+    "the preexisting pinned replay gate is 106/108; do not relax or rewrite its reference",
+    "a finite seed sample cannot prove all uint16 seeds",
+    "a budget or exhausted result is not a proof of impossibility",
+    "one previously retail-tested file does not retail-validate this matrix"
+  ]
+}

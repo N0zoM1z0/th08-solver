@@ -202,10 +202,10 @@ Fields scalars(const Fields &input, const std::vector<std::string> &keys) {
 }
 
 const std::vector<std::string> option_keys = {
-    "stage",          "spell",       "difficulty", "seed",        "rollout", "beam",
-    "commit",         "checkpoint",  "keep",       "attempts",    "cegar",   "frames",
-    "seconds",        "shoot",       "story",      "until_stage", "shot",    "measure",
-    "diversity_cell", "boss_follow", "prefix",     "verify"};
+    "stage",          "spell",       "difficulty", "seed",        "rollout",    "beam",
+    "commit",         "checkpoint",  "keep",       "attempts",    "cegar",      "frames",
+    "seconds",        "shoot",       "story",      "until_stage", "shot",       "measure",
+    "diversity_cell", "boss_follow", "prefix",     "verify",      "final_route"};
 
 const std::vector<std::string> cost_keys = {"rollouts",
                                             "searches",
@@ -453,6 +453,13 @@ std::uint64_t accounting_receipt(Case &result, const fs::path &root, std::uint64
                     field(result.accounting_options, key) ==
                         field(result.verification_options, key),
                 "accounting_checkpoint_mismatch");
+    if (result.options.count("final_route") || result.verification_options.count("final_route") ||
+        result.accounting_options.count("final_route"))
+        require(field(result.accounting_options, "final_route") ==
+                        field(result.options, "final_route") &&
+                    field(result.accounting_options, "final_route") ==
+                        field(result.verification_options, "final_route"),
+                "accounting_checkpoint_mismatch");
     bind_actions(receipt, root / result.group / result.id / "plan.actions");
     return calculation_proof(result.accounting, result.plan, frames);
 }
@@ -584,6 +591,10 @@ void verify_complete(Case &result, const fs::path &root, bool require_process_re
         if (result.options.count(key) && result.verification_options.count(key))
             require(field(result.options, key) == field(result.verification_options, key),
                     "verification_checkpoint_mismatch");
+    if (result.options.count("final_route") || result.verification_options.count("final_route"))
+        require(field(result.options, "final_route") ==
+                    field(result.verification_options, "final_route"),
+                "verification_checkpoint_mismatch");
     const bool new_plan = has_calculations(result.plan);
     const bool new_verification = has_calculations(result.verification);
     std::uint64_t expected_rows = frames;

@@ -1,8 +1,10 @@
 #include "test_support.hpp"
 #include "th08/plan_beam.hpp"
 #include "th08/plan_contracts.hpp"
+#include "th08/plan_matrix.hpp"
 #include "th08/plan_observation.hpp"
 #include "th08/plan_prefix.hpp"
+#include "th08/plan_route.hpp"
 
 #include <csignal>
 #include <new>
@@ -37,6 +39,15 @@ void cli_contract() {
           "explicit large horizon or zero retry budget changed");
     check(options({"--stage", "extra", "--difficulty", "4", "--seed", "65535"}).stage == 8,
           "valid native checkpoint rejected");
+    check(options({"--stage", "extra", "--difficulty", "4", "--story", "1"}).story,
+          "a full Extra run was rejected");
+    check(options({"--story", "1", "--final-route", "b"}).final_route == th08::plan::FinalRoute::B,
+          "explicit Final B target was lost");
+    rejected({"--final-route", "b"});
+    rejected({"--story", "1", "--final-route", "unknown"});
+    rejected({"--story", "1", "--stage", "extra", "--difficulty", "3"});
+    rejected({"--story", "1", "--difficulty", "4"});
+    rejected({"--story", "1", "--stage", "extra", "--difficulty", "4", "--final-route", "a"});
     rejected({"--rollout", "241"});
     rejected({"--rollout", "0"});
     rejected({"--beam", "-1"});
@@ -165,11 +176,58 @@ void observation_contract() {
     ++committed.calculation_updates;
     check(!th08::plan::same_observation(expected, committed),
           "same-position commit hid a native calculation boundary change");
+    committed = expected;
+    committed.final_route_selection = true;
+    check(!th08::plan::same_observation(expected, committed),
+          "a dialogue controller boundary was omitted from commit agreement");
     check(th08::plan::supported_recording_step(1, false) &&
               th08::plan::supported_recording_step(0, true) &&
               !th08::plan::supported_recording_step(0, false) &&
               !th08::plan::supported_recording_step(2, true),
           "unexplained skipped or batched recording calculations were accepted");
+}
+
+void route_contract() {
+    using th08::plan::FinalRoute;
+    th08::headless::State state;
+    check(!th08::plan::final_route_input(FinalRoute::B, state, 1),
+          "route control replaced gameplay input outside the choice");
+    state.final_route_selection = true;
+    check(!th08::plan::final_route_input(FinalRoute::Natural, state, 1),
+          "legacy automatic route behavior changed");
+    check(th08::plan::final_route_input(FinalRoute::A, state, 1) == 20 &&
+              th08::plan::final_route_input(FinalRoute::B, state, 1) == 36 &&
+              th08::plan::final_route_input(FinalRoute::B, state, 2) == 5,
+          "route choice must alternate direction and shoot edges in the recorded tape");
+    check(th08::plan::story_terminal(8, true, 8) && !th08::plan::story_terminal(8, false, 8) &&
+              !th08::plan::story_terminal(5, true, 8) && th08::plan::story_terminal(7, true, 8),
+          "Extra or regular full-run terminal boundary is incorrect");
+}
+
+void matrix_contract() {
+    int counts[12][5]{};
+    int final_counts[12][2]{};
+    int fourth_counts[2]{};
+    for (const auto &entry : th08::plan::full_run_matrix()) {
+        ++counts[entry.shot][entry.difficulty];
+        if (entry.difficulty == 4) {
+            check(entry.stage() == 8 && entry.final_stage() == 8 &&
+                      entry.route == th08::plan::FinalRoute::Natural,
+                  "Extra must be one independent full run per shot");
+        } else {
+            ++final_counts[entry.shot][entry.final_stage() - 6];
+            ++fourth_counts[entry.fourth_stage() - 3];
+        }
+    }
+    for (int shot = 0; shot < 12; ++shot) {
+        for (int difficulty = 0; difficulty < 5; ++difficulty)
+            check(counts[shot][difficulty] == (difficulty == 4 ? 1 : 2),
+                  "full-run matrix omitted or duplicated a shot/difficulty/route");
+        check(final_counts[shot][0] == 4 && final_counts[shot][1] == 4,
+              "both final routes must exist at all four standard difficulties");
+    }
+    check(fourth_counts[0] == 48 && fourth_counts[1] == 48,
+          "native character-dependent Stage 4 partition changed");
 }
 
 void spatial_beam_contract() {
@@ -251,6 +309,8 @@ int main() {
     tape_contract();
     child_contract();
     observation_contract();
+    route_contract();
+    matrix_contract();
     spatial_beam_contract();
     prefix_contract();
 }

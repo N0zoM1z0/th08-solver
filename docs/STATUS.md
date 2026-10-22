@@ -1,6 +1,6 @@
 # Current handoff status
 
-Reviewed: 2026-10-21. Work resumed under issue #1: integrate the reviewed fork-based
+Reviewed: 2026-10-22. Work resumed under issue #1: integrate the reviewed fork-based
 planner, reproduce the replay fingerprint gate, and diagnose the Lunatic story blocker.
 The tracked runtime imports upstream `02ff72f`; results below from
 `861bec9` remain historical native-profile evidence. They do not certify the new build.
@@ -13,7 +13,24 @@ fork rollouts and verified commits; it adds no spell-92 strategy branch. The
 and failed searches, fresh verification, budgets, executable identities and total
 native costs. Unfinished processes contribute only a pending identifier.
 
-The current scope prioritizes full-story seed robustness; online control is deferred.
+The latest scope covers all 108 full runs: twelve team/solo shots, each with Final
+A/B at Easy/Normal/Hard/Lunatic and a full Extra entry. The
+[matrix](../reports/native/planner_route_matrix.json) and
+[protocol](../reports/native/planner_route_protocol.json) fix coverage and generic
+budgets before outcomes. Final routes use original dialogue inputs with an explicit
+recorded unlock-history checkpoint; Extra uses non-practice initialization. The
+baseline seed-0 matrix precedes fresh random-seed evaluation. Online control remains
+deferred; enumerating a case does not establish its completion.
+
+The route interfaces pass all 38 native/DAT CTests; all 108 replay-corpus outcome,
+row-count and fingerprint tuples match the preceding runtime (106/108 against the
+retained reference). The old seed-0 full story freshly replays with unchanged
+terminal, score, RNG and calculation events. The first broad launch hit the shared
+user's 4096-process limit without OOM and was stopped. Its failures/interrupted work
+are retained separately. The replacement queue limits the whole campaign to four
+concurrent solvers, 320 tasks, four CPU cores and 12 GiB RAM at low priority.
+
+The preceding full-story seed-robustness campaign is separate historical coverage.
 Eight seeds were drawn before inspection under the
 [frozen story-seed protocol](../reports/native/planner_seed_protocol.json). Independent
 cell16/cell32 attempts all reached Final A but exhausted their unchanged 2400-second

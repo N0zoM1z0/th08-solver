@@ -115,6 +115,8 @@ inline double real(const std::string &value, std::string_view option) {
     return result;
 }
 
+enum class FinalRoute { Natural = 0, A = 1, B = 2 };
+
 struct Options {
     std::string dat, out_dir, verify, prefix;
     int stage = 0, spell = -1, difficulty = 0, seed = 0;
@@ -123,6 +125,7 @@ struct Options {
     long frame_limit = 120000;
     double seconds = 3600;
     bool shoot = true, story = false;
+    FinalRoute final_route = FinalRoute::Natural;
     int until_stage = 8, shot = 0, measure_every = 0;
     int diversity_cell = 0; // Pixels; zero preserves the existing global score beam.
     float boss_follow = 0.25f;
@@ -149,6 +152,12 @@ inline Options parse_options(int argc, const char *const *argv) {
         else if (key == "--prefix") {
             prefix_given = true;
             o.prefix = value;
+        } else if (key == "--final-route") {
+            range(value == "natural" || value == "a" || value == "b",
+                  "--final-route must be natural, a or b");
+            o.final_route = value == "a"   ? FinalRoute::A
+                            : value == "b" ? FinalRoute::B
+                                           : FinalRoute::Natural;
         } else if (key == "--stage") {
             stage_given = true;
             constexpr std::string_view names[] = {"1", "2",  "3",  "4a",   "4b",
@@ -234,8 +243,11 @@ inline Options parse_options(int argc, const char *const *argv) {
     range(o.diversity_cell >= 0 && o.diversity_cell <= 1024,
           "--diversity-cell must be 0..1024 pixels");
     range(o.boss_follow >= 0 && o.boss_follow <= 1, "--boss-follow must be 0..1");
-    range(!o.story || (o.spell < 0 && o.stage < 8),
-          "--story requires a standard stage and no spell checkpoint");
+    range(!o.story || o.spell < 0, "--story cannot use a spell checkpoint");
+    range(!o.story || ((o.stage == 8) == (o.difficulty == 4)),
+          "full Extra requires --stage extra --difficulty 4; standard stories require 0..3");
+    range(o.final_route == FinalRoute::Natural || (o.story && o.stage < 6),
+          "--final-route requires a standard story starting before its final stage");
     return o;
 }
 

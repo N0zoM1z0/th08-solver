@@ -19,6 +19,20 @@ Distinguish synthetic scenes, actual-DAT controlled projections and source-faith
 
 ## Native headless complete scenes
 
+The current fork planner additionally supports continuous full runs for all twelve
+shots through original stage handoffs. `--final-route a|b` requires a non-practice
+standard story beginning before its final stage. Its explicit checkpoint provides
+one prior normal Final B clear for the selected shot, enables both original choices
+and records `clearState` 2. Actual direction/shoot edges choose the requested route;
+no gameplay flag is forced during a run and no RNG is replaced. The default
+`--final-route natural` preserves the earlier empty-history profile.
+
+Full Extra uses `--story 1 --stage extra --difficulty 4`: original two-life,
+06:00 non-practice initialization and native Extra clear terminal. Standard stories
+require difficulties 0..3. Practice and spell checkpoints retain their separate
+interfaces and evidence below. The 108-case matrix concerns full stage-1 stories
+and full Extra, not a sum of independent practice clears.
+
 `th08_headless` links the tracked reconstructed game at revision recorded in
 [Validation](VALIDATION.md). It runs production ECL, timeline, player, enemy, bullet,
 laser, item, effect, spell, background and GUI/message updates. This is a native

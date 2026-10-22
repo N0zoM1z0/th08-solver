@@ -1,7 +1,8 @@
 # th08-solver
 
-Offline C++17 simulation and planning for Touhou 08. The target is a continuous
-Lunatic story No Miss No Bomb run, delivered as an input tape and a real `.rpy`.
+Offline C++17 simulation and planning for Touhou 08. The target is continuous
+No Miss No Bomb runs across all teams/solo shots, standard difficulties and Final
+A/B routes, plus Extra, delivered as input tapes and real `.rpy` files.
 The fork-based native planner completes seed-0 Lunatic Final A under the documented
 native source profile, with fresh action and natural replay verification. One repaired
 seed-0 Final A replay also clears NMNB in retail 1.00d under Wine. The full replay
@@ -23,6 +24,12 @@ The [campaign ledger](reports/native/planner_current_summary.json) records their
 configuration, hashes, verification and retained search costs.
 
 ## Current direction
+
+The owner requested all 108 full-run combinations before expanding random seeds.
+The [route manifest](reports/native/planner_route_matrix.json) fixes those entries;
+the [protocol](reports/native/planner_route_protocol.json) records identical generic
+profiles, explicit final-choice unlock history and bounded continuation costs.
+Enumeration and successful initialization are not completion evidence.
 
 The native runtime is both forecaster and collision oracle. Forked rollouts record
 native hazards; beam search proposes paths; fresh native rollouts verify each

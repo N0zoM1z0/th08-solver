@@ -8,6 +8,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 
 | Producer | Records | Meaning |
 |---|---|---|
+| `th08_plan_matrix` and frozen experiment configuration | `planner_route_matrix.json`, `planner_route_protocol.json` | All 108 team/solo, difficulty, Final A/B and Extra full-run combinations, explicit unlock/entry profiles and generic bounded portfolio; enumeration is not completion evidence |
 | `th08_planner_report` | `planner_current_summary.json` | Current Lunatic fork-planner campaigns, verified completions and retained failures, all recorded search/replay costs, pending jobs, and unresolved 106/108 replay fidelity gate |
 | OS-entropy draw and frozen experiment configuration | `planner_seed_protocol.json` | Eight unseen story seeds split into diagnosis/holdout groups, two preselected generic profiles and unchanged explicit budgets; the protocol itself is not completion evidence |
 | `th08_planner_report`, explicit seed groups | `planner_seed_summary.json` | Random-seed story ledger: original 16 attempts exhausted their 2400-second budgets in Final A; all 16 separately frozen continuations complete with fresh full-action and natural replay checks; original failures and all recorded costs remain charged |

@@ -1,8 +1,8 @@
 # Native planner and experiment protocol
 
-The target is one continuous Lunatic story No Miss No Bomb run, with an input tape
-and a real `.rpy`. Final A comes first; Final B and other teams/seeds are separate
-coverage. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
+The target is continuous No Miss No Bomb runs for all twelve team/solo shots,
+four standard difficulties and both final routes, plus Extra, with input tapes
+and real `.rpy` files. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
 and provenance; [Architecture](ARCHITECTURE.md) maps ownership.
 
 ## Truth and proposals
@@ -49,7 +49,7 @@ uses observed calculations, never an assumed offset based on the number of stage
 
 `--prefix ACTIONS` reconstructs an earlier input tape through the same native
 session before checkpoint holders fork. Use its original stage/story/difficulty/
-seed/shot settings. Raw actions have no checkpoint header; another configuration
+seed/shot/final-route settings. Raw actions have no checkpoint header; another configuration
 defines a different experiment. Mutable world/RNG/input state carries through every
 update; planner tie RNG, quiet windows and proposal history start a new episode.
 The final tape includes the prefix. Its raw SHA and attempted/completed native
@@ -106,8 +106,29 @@ weights, a hard memory limit and a lower high-water limit, with no additional sw
 check available memory before launch. CPU parallelism does not justify risking OOM
 or changing unrelated workloads. Keep machine addresses, usernames, private paths
 and raw logs out of public artifacts. Record technical profiles and sanitized results.
+The owner's current campaign limit is four simultaneous solver jobs, with 320 tasks,
+four CPU cores and 12 GiB memory for the entire batch. Check process limits as well
+as memory before launch: each fork checkpoint holder consumes a process. The
+[resource revision](../reports/native/planner_route_protocol.json) retains the
+initial oversubscribed launch instead of concealing its fork failures.
 
 ## Acceptance and experiments
+
+The [full-run matrix](../reports/native/planner_route_matrix.json) enumerates 108
+valid combinations. Stage 4 follows the source's character partition; it is not an
+independent cross-product axis. Final A/B selection is a recorded dialogue
+controller outside beam search, with original preexisting-clear history recorded
+as replay `clearState` 2. Rollouts store their actual commands and commits consume
+those same commands. Prefix reconstruction and fresh action verification never
+replace inputs. Full Extra starts with `--story 1 --stage extra --difficulty 4`.
+
+The [route protocol](../reports/native/planner_route_protocol.json) freezes two
+generic profiles, per-episode budgets and a single eligible budget-prefix
+continuation. Run the second profile only if the first has no verified completion;
+retain all original failures and costs. First finalize the seed-0 matrix, including
+failures, then freeze fresh random seed draws across the same complete coverage.
+Require each successful replay's ordered stage list to match its manifest entry.
+Missing, budget-limited and runtime-failed cases remain visible in coverage totals.
 
 Before publishing a checkpoint:
 

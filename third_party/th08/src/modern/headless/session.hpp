@@ -13,6 +13,9 @@ struct Config {
     // Story mode: original non-practice initialization, stages chain natively.
     bool story = false;
     int shot = 0;
+    // Explicit preexisting clear history enables both original final-stage
+    // choices. It changes no gameplay state/RNG and is serialized as clearState 2.
+    bool unlock_final_routes = false;
 };
 struct RelativeDirectionView {
     float angle = 0, speed = 0, turn_angle = 0, turn_speed = 0;
@@ -179,6 +182,8 @@ struct State {
     bool youkai = false;
     // Cumulative gameplayFrameCounter increments, excluding setup/control steps.
     std::uint64_t calculation_updates = 0;
+    bool final_route_selection = false;
+    int selected_final_route = 0;
 };
 // Upstream managers are pointer-rich process globals. Exactly one noncopyable
 // session may be created per process; fresh processes provide fresh replay.

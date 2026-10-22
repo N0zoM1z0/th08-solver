@@ -467,6 +467,21 @@ run_selected(missing-group FALSE --group nonexistent)
 run_selected(duplicate-group FALSE --group batch-c16 --group batch-c16)
 run_selected(unsafe-group FALSE --group ../batch-c16)
 
+# A replay of the other final route is not a verification of this checkpoint.
+file(READ "${WORK}/results/batch-c16/seed1/plan.json" route_plan)
+file(READ "${WORK}/results/batch-c16/seed1-verify/verify.json" route_verify)
+string(REPLACE "\"options\":{" "\"options\":{\"final_route\":2," explicit_route_plan "${route_plan}")
+string(REPLACE "\"options\":{" "\"options\":{\"final_route\":1," wrong_route_verify "${route_verify}")
+file(WRITE "${WORK}/results/batch-c16/seed1/plan.json" "${explicit_route_plan}")
+file(WRITE "${WORK}/results/batch-c16/seed1-verify/verify.json" "${wrong_route_verify}")
+run_selected(wrong-final-route FALSE --group batch-c16)
+if(NOT selected MATCHES "verification_checkpoint_mismatch")
+  message(FATAL_ERROR "Verification silently changed the requested final route")
+endif()
+file(WRITE "${WORK}/results/batch-c16/seed1-verify/verify.json" "${route_verify}")
+run_selected(missing-final-route FALSE --group batch-c16)
+file(WRITE "${WORK}/results/batch-c16/seed1/plan.json" "${route_plan}")
+
 # Retain the final emitted failed prefix separately, with byte hashes and an
 # explicit unverified label. It never contributes a successful demonstration.
 file(MAKE_DIRECTORY "${WORK}/results/batch-failed/seed1")

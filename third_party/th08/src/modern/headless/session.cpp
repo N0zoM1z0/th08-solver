@@ -464,7 +464,10 @@ Session::Session(const Config &config) {
     require(!used, "one native session per process; start a fresh process for replay");
     used = true;
     require(config.dat_path && config.stage >= 0 && config.stage < 9 && config.spell >= -1 &&
-                config.spell < 222 && config.difficulty >= 0 && config.difficulty < 5,
+                config.spell < 222 && config.difficulty >= 0 && config.difficulty < 5 &&
+                config.shot >= 0 && config.shot < 12 &&
+                (!config.unlock_final_routes ||
+                 (config.story && config.stage < 6 && !config.replay)),
             "invalid native checkpoint");
     g_Supervisor.InitializeCriticalSections();
     require(g_Supervisor.LoadConfig(const_cast<char *>("th08.cfg")) == ZUN_SUCCESS,
@@ -538,6 +541,17 @@ Session::Session(const Config &config) {
                 g_GameManager.gameplaySetupState == GAMEPLAY_SETUP_COMPLETE,
             "native gameplay setup failed");
     require(g_AnmManager->ServicePreloadedAnims() == ZUN_SUCCESS, "stage ANM load failed");
+    if (config.unlock_final_routes) {
+        // Score initialization has now loaded the checkpoint's history. Mirror
+        // one prior Final B clear, and keep the already-created recorder header
+        // consistent with BeginRecordingStage's original clearState expression.
+        // Playback restores that history selector from the replay itself.
+        g_GameManager.clrdData[config.shot].difficultiesClearedWithoutRetries[NORMAL] |=
+            ZUN_BIT(STAGE6B);
+        require(g_ReplayManager && g_ReplayManager->replayData,
+                "route checkpoint has no replay recorder");
+        g_ReplayManager->replayData->clearState = 2;
+    }
     prepare_observation_storage();
     views_.reserve(1536);
     laser_views_.reserve(256);
@@ -591,7 +605,11 @@ State Session::state() const {
             g_GuiMessageInputCurrent,
             g_CurFrameInput,
             bool(g_Player.IsYoukai()),
-            replay_calculation_updates()};
+            replay_calculation_updates(),
+            g_GameManager.currentStage == STAGE5 && g_Gui.impl &&
+                g_Gui.impl->message.currentInstr &&
+                g_Gui.impl->message.currentInstr->opcode == GUI_MSG_SHOW_SELECTION,
+            g_Gui.impl ? g_Gui.impl->message.selectedOption : 0};
 }
 const std::vector<BulletView> &Session::bullets() {
     views_.clear();

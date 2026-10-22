@@ -8,6 +8,9 @@ add_executable(th08_planner_report tools/planner_report.cpp)
 target_compile_features(th08_planner_report PRIVATE cxx_std_17)
 target_include_directories(th08_planner_report PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(th08_planner_report PRIVATE OpenSSL::Crypto)
+add_executable(th08_plan_matrix tools/plan_matrix.cpp)
+target_compile_features(th08_plan_matrix PRIVATE cxx_std_17)
+target_include_directories(th08_plan_matrix PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 if(BUILD_TESTING)
   add_test(NAME planner_report_contract COMMAND ${CMAKE_COMMAND}
     -DREPORT=$<TARGET_FILE:th08_planner_report>
