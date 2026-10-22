@@ -270,10 +270,26 @@ The separately frozen H96 pair strictly verifies both variants at 46563/46806:
 93369 native updates including 79628 prefix updates and 231.94 summed solver wall
 seconds, plus 4.73/4.39 seconds for fresh verification/natural replay. Because the
 larger horizon also succeeds without this preview, the extra pose feature remains
-unpromoted. A full-stage H96 repeat now uses the exact preceding H64 executable,
-model, other parameters and total budgets for all three diagnosis seeds. It began
-after the Extra batch and permits at most three controllers within the existing
-resource limits. Unfinished runs are not counted as successes.
+unpromoted. The full-stage H96 repeat uses the exact preceding H64 executable,
+model, other parameters and total budgets for all three diagnosis seeds. It
+finishes 0/3: seeds zero/57392 die at 31949/31656 in spell 88, and seed 32124
+dies at 39297 in 99. Work totals 102902 native updates and 2068.57 summed solver
+wall seconds; memory peaks at 200712192 bytes. The local continuation gains do
+not survive a full-stage restart. Increasing horizon with a fixed beam is not a
+monotonic improvement; the failed candidate is retained without releasing holdouts.
+
+A private current-WAIT/child-program positioning-risk prototype repeats Extra
+seed zero from stage start. The disabled control reproduces the preceding action
+hash and death at 62697 in spell 201; enabling the hint advances to 66423 in 202
+but still fails. Both attempts cost 129120 native updates and 524.84 summed solver
+wall seconds. Three-tape differential probes match 15100 predicted child-cursor
+consumption times/positions exactly; another 866 predictions are cancelled because
+their parent bullets leave the playfield before emission. Checking only the final
+birth position misses parents culled on their way back into view. Probe work totals
+564273 reconstruction updates, including an initial terminal-boundary diagnostic
+that needed correction. This checks cursor consumption, not successful child-pool
+allocation or future RNG. The feature remains private pending lifecycle filtering
+and a uniform multi-seed repeat; no additional full-stage clear is established.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
