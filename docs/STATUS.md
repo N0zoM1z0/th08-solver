@@ -41,13 +41,15 @@ files retain their hashes. Active build/data and failure evidence remain availab
 later successful raw rows are removed after recording their hashes and receipts.
 
 The replacement [route ledger](../reports/native/planner_route_summary.json)
-archives four directly completed combinations: seed-0 Reimu/Yukari Easy Final A/B
-and Normal Final A/B. All four full tapes freshly verify, and their natural replays
-match all expected stages, scores and 890935 calculation rows with zero death/bomb
-input rows. A/B tapes first differ at their actual Stage-5 Up/Down selection; the
+archives 16 directly completed combinations: all nine seed-0 Reimu/Yukari entries
+and seven Marisa/Alice entries. Reimu/Yukari clears all four standard difficulties,
+both final routes and full Extra. All 16 full tapes freshly verify, and their natural
+replays match all expected stages, scores and 3521930 calculation rows with zero
+death/bomb input rows. The checked Easy/Normal Reimu/Yukari A/B tape pairs first
+differ at their actual Stage-5 Up/Down selection; the
 [audit](../reports/native/planner_route_environment.json) binds raw capture hashes
-and exact manifest/profile agreement. This is 4/108 new baseline combinations;
-the other 104 remain unverified in the running queue. Random evaluation has not
+and exact manifest/profile agreement. This is 16/108 new baseline combinations;
+the other 92 remain unverified in the running queue. Random evaluation has not
 started. The ledger exports only finished combinations; its zero pending count
 does not count the active/queued combinations outside that export.
 

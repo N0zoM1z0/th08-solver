@@ -31,9 +31,9 @@ the [protocol](reports/native/planner_route_protocol.json) records identical gen
 profiles, explicit final-choice unlock history and bounded continuation costs.
 Enumeration and successful initialization are not completion evidence.
 The [route ledger](reports/native/planner_route_summary.json) currently archives
-4/108 combinations: seed-0 Reimu/Yukari, Easy and Normal, both final routes,
-with fresh full-action and natural `.rpy` validation. The remaining combinations
-continue through the four-solver queue before random-seed evaluation.
+16/108 combinations, including all nine seed-0 Reimu/Yukari entries and seven
+Marisa/Alice entries, with fresh full-action and natural `.rpy` validation. The
+remaining combinations continue through the four-solver queue before random-seed evaluation.
 
 The native runtime is both forecaster and collision oracle. Forked rollouts record
 native hazards; beam search proposes paths; fresh native rollouts verify each

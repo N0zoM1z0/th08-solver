@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "producer": "manual-native-route-campaign-audit",
-  "reviewed_utc": "2026-10-22T02:51:00Z",
+  "reviewed_utc": "2026-10-22T04:48:00Z",
   "scope": "108 full-run baseline combinations; first-launch resource failure and bounded replacement queue; random evaluation has not started",
   "source": {
     "validated_commit": "12c39d63168e0cc373926c816118c9ebb597822a",
@@ -105,12 +105,12 @@
     "same_native_executables": true,
     "solver_profile_or_episode_budget_changed": false,
     "last_live_sample": {
-      "sample_utc": "2026-10-22T02:50:51Z",
-      "memory_bytes": 2619039744,
-      "memory_peak_bytes": 3185483776,
-      "cpu_usage_usec": 6177104773,
-      "host_available_kib": 583162688,
-      "user_tasks": 341,
+      "sample_utc": "2026-10-22T04:46:07Z",
+      "memory_bytes": 2826371072,
+      "memory_peak_bytes": 3757850624,
+      "cpu_usage_usec": 33823993465,
+      "host_available_kib": 557600848,
+      "user_tasks": 328,
       "memory_events": {
         "low": 0,
         "high": 0,
@@ -159,14 +159,14 @@
     "ongoing_capture_policy": "Keep complete action tapes, .rpy files and all process/verification receipts. Retain raw SHA/size; remove reconstructible successful raw rows after validation, and retain failed captures for diagnosis."
   },
   "coverage_snapshot": {
-    "as_of_utc": "2026-10-22T03:15:00Z",
+    "as_of_utc": "2026-10-22T04:48:00Z",
     "manifest": "planner_route_matrix.json",
     "ledger": "planner_route_summary.json",
-    "ledger_sha256": "ea097ca48c9e08c64965b124afae01176be47b4cd0a8f38dad8690bfd0c59e56",
+    "ledger_sha256": "a886bb0a3b08c23b4193be406edc3b52fb7a5f82ba5e954eb257b3e1007c0595",
     "ledger_scope": "Finished combinations only; active/queued combinations are outside this exported ledger.",
     "expected_combinations": 108,
-    "unique_verified_combinations": 4,
-    "not_yet_verified_combinations": 104,
+    "unique_verified_combinations": 16,
+    "not_yet_verified_combinations": 92,
     "all_checkpoint_profile_and_stage_paths_match_manifest": true,
     "random_seed_evaluation_started": false,
     "raw_capture_receipts": [
@@ -174,8 +174,6 @@
         "id": "easy-t0-a-s0",
         "rows": 217544,
         "steps": 107210,
-        "raw_bytes": 21754400,
-        "raw_sha256": "ccf01a47498e1369553f9fb3d592ce517dac884c59e786e3e68ddd63db61d9e5",
         "stage_path": [
           0,
           1,
@@ -183,14 +181,14 @@
           4,
           5,
           6
-        ]
+        ],
+        "raw_sha256": "ccf01a47498e1369553f9fb3d592ce517dac884c59e786e3e68ddd63db61d9e5",
+        "raw_bytes": 21754400
       },
       {
         "id": "easy-t0-b-s0",
         "rows": 217619,
         "steps": 106694,
-        "raw_bytes": 21761900,
-        "raw_sha256": "406239cf130a2fa05a06f7f4fd31f5dfda663081be66c86258a382189a0482b3",
         "stage_path": [
           0,
           1,
@@ -198,14 +196,54 @@
           4,
           5,
           7
-        ]
+        ],
+        "raw_sha256": "406239cf130a2fa05a06f7f4fd31f5dfda663081be66c86258a382189a0482b3",
+        "raw_bytes": 21761900
       },
       {
-        "id": "normal-t0-a-s0",
-        "rows": 227747,
-        "steps": 117416,
-        "raw_bytes": 22774700,
-        "raw_sha256": "f1da0b2500b59c484b9d2f676ffafb2e20afdb42db578f24c8110ebade57f262",
+        "id": "easy-t1-a-s0",
+        "rows": 226505,
+        "steps": 118444,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "raw_sha256": "d45242bf1ff0b9ccaf1d23c231624babb5d645a9e78a82b5910fa4678fd6089d",
+        "raw_bytes": 22650500
+      },
+      {
+        "id": "easy-t1-b-s0",
+        "rows": 228238,
+        "steps": 117384,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          7
+        ],
+        "raw_sha256": "b5045802e84ac984204cd5f57da2ab50701c645f7649139d6fc4c4eaa22aec75",
+        "raw_bytes": 22823800
+      },
+      {
+        "id": "extra-t0-natural-s0",
+        "rows": 85164,
+        "steps": 47595,
+        "stage_path": [
+          8
+        ],
+        "raw_sha256": "a237cf6f0a2abfb7ba80c0e79b9a81f75ad57b6036cf8b9537c916ffd918ecdc",
+        "raw_bytes": 8516400
+      },
+      {
+        "id": "hard-t0-a-s0",
+        "rows": 229631,
+        "steps": 119305,
         "stage_path": [
           0,
           1,
@@ -213,14 +251,14 @@
           4,
           5,
           6
-        ]
+        ],
+        "raw_sha256": "1714e35c70a597791d55efbd5bb6029caa26339e1f20b8625433454cce48b458",
+        "raw_bytes": 22963100
       },
       {
-        "id": "normal-t0-b-s0",
-        "rows": 228025,
-        "steps": 117102,
-        "raw_bytes": 22802500,
-        "raw_sha256": "7d0f506b41a24f4a4706b4abdd70d8eb5c451e2729044a4f99904356588eaf63",
+        "id": "hard-t0-b-s0",
+        "rows": 228853,
+        "steps": 117936,
         "stage_path": [
           0,
           1,
@@ -228,7 +266,144 @@
           4,
           5,
           7
-        ]
+        ],
+        "raw_sha256": "436844ea60f9ff02cfcbbd837a2ec6cb517739e44f55d0db98924ec38203a73b",
+        "raw_bytes": 22885300
+      },
+      {
+        "id": "hard-t1-a-s0",
+        "rows": 232710,
+        "steps": 124653,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "raw_sha256": "56ea3a3cb9cb645a171a0e153eb7e59b5868e24ece8d30470143791400a8d48d",
+        "raw_bytes": 23271000
+      },
+      {
+        "id": "hard-t1-b-s0",
+        "rows": 233801,
+        "steps": 122949,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          7
+        ],
+        "raw_sha256": "cd0646296a193555cb85831a61d731121bcb899cc2949920f1785f7d24d17339",
+        "raw_bytes": 23380100
+      },
+      {
+        "id": "lunatic-t0-a-s0",
+        "rows": 232675,
+        "steps": 122345,
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6
+        ],
+        "raw_sha256": "f846b9c2bb89d939b274b0033b55edd9dcbeaf95e17cd11f1889f2359c23b1c0",
+        "raw_bytes": 23267500
+      },
+      {
+        "id": "lunatic-t0-b-s0",
+        "rows": 231780,
+        "steps": 120858,
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          7
+        ],
+        "raw_sha256": "db347816c253d0ed960464bb078be105fef26d6f50e426a24627e327f6120f86",
+        "raw_bytes": 23178000
+      },
+      {
+        "id": "lunatic-t1-a-s0",
+        "rows": 235180,
+        "steps": 127122,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "raw_sha256": "d39f1a388e1aaa178ccd7534e33c8c56bd773eb320a2c6e5908002a6bf59a2f4",
+        "raw_bytes": 23518000
+      },
+      {
+        "id": "normal-t0-a-s0",
+        "rows": 227747,
+        "steps": 117416,
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6
+        ],
+        "raw_sha256": "f1da0b2500b59c484b9d2f676ffafb2e20afdb42db578f24c8110ebade57f262",
+        "raw_bytes": 22774700
+      },
+      {
+        "id": "normal-t0-b-s0",
+        "rows": 228025,
+        "steps": 117102,
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          7
+        ],
+        "raw_sha256": "7d0f506b41a24f4a4706b4abdd70d8eb5c451e2729044a4f99904356588eaf63",
+        "raw_bytes": 22802500
+      },
+      {
+        "id": "normal-t1-a-s0",
+        "rows": 232539,
+        "steps": 124477,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "raw_sha256": "cc6399ad97ca9777a6900c6237cae1ef647ac8776206f059652276ede984b820",
+        "raw_bytes": 23253900
+      },
+      {
+        "id": "normal-t1-b-s0",
+        "rows": 233919,
+        "steps": 123067,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          7
+        ],
+        "raw_sha256": "030375b210cbc25cccc35842c3d4cd958b7633d4afce45bfe3dec1ae45f8a4a8",
+        "raw_bytes": 23391900
       }
     ],
     "route_choice_prefix_checks": [
@@ -251,7 +426,7 @@
         "final_a_stage6_entry_action": 173996
       }
     ],
-    "prefix_check_meaning": "A/B action tapes are byte-identical through the input preceding each first difference. Their first difference is the original Up/Down dialogue selection during Stage 5; both complete their expected natural replay path."
+    "prefix_check_meaning": "The listed A/B tape pairs are byte-identical through the input preceding each first difference. Their first difference is the original Up/Down dialogue selection during Stage 5; both complete their expected natural replay path."
   },
   "limits": [
     "No full-matrix or new random-seed completion is claimed by this environment audit.",
