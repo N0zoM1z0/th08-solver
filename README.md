@@ -31,8 +31,9 @@ the [protocol](reports/native/planner_route_protocol.json) records identical gen
 profiles, explicit final-choice unlock history and bounded continuation costs.
 Enumeration and successful initialization are not completion evidence.
 The [route ledger](reports/native/planner_route_summary.json) currently archives
-18/108 combinations: every seed-0 Reimu/Yukari and Marisa/Alice entry, with fresh
-full-action and natural `.rpy` validation. The report checks complete stage paths
+24/108 combinations: every seed-0 Reimu/Yukari and Marisa/Alice entry, plus
+Sakuya/Remilia Easy/Normal/Hard Final A/B, with fresh full-action and natural `.rpy`
+validation. The report checks complete stage paths
 against the manifest and counts distinct combinations across retries. The remaining
 combinations continue through the four-solver queue before random-seed evaluation.
 

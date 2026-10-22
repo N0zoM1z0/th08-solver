@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "producer": "manual-native-route-campaign-audit",
-  "reviewed_utc": "2026-10-22T05:05:59Z",
+  "reviewed_utc": "2026-10-22T05:58:08Z",
   "scope": "108 full-run baseline combinations; first-launch resource failure and bounded replacement queue; random evaluation has not started",
   "source": {
     "validated_commit": "12c39d63168e0cc373926c816118c9ebb597822a",
@@ -58,7 +58,7 @@
     },
     "manifest_report_contract": {
       "passed": true,
-      "checked_combinations": 18,
+      "checked_combinations": 24,
       "legacy_ledger_byte_identical": true
     }
   },
@@ -110,12 +110,12 @@
     "same_native_executables": true,
     "solver_profile_or_episode_budget_changed": false,
     "last_live_sample": {
-      "sample_utc": "2026-10-22T05:05:53Z",
-      "memory_bytes": 2697576448,
+      "sample_utc": "2026-10-22T05:56:18Z",
+      "memory_bytes": 2992119808,
       "memory_peak_bytes": 3757850624,
-      "cpu_usage_usec": 38577833477,
-      "host_available_kib": 624193704,
-      "user_tasks": 307,
+      "cpu_usage_usec": 50651099733,
+      "host_available_kib": 554717872,
+      "user_tasks": 331,
       "memory_events": {
         "low": 0,
         "high": 0,
@@ -162,18 +162,18 @@
     "accepted_capture_cleanup_exit": 0,
     "accepted_capture_cleanup_journal_sha256": "e96d973eff2152d8c794a6ced60151fe0b26a9950d2fb2b452287a42e179e582",
     "ongoing_capture_policy": "Keep complete action tapes, .rpy files and all process/verification receipts. Retain raw SHA/size; remove reconstructible successful raw rows after validation, and retain failed captures for diagnosis.",
-    "completed_transfer_archive_bytes_removed": 16640000,
-    "completed_transfer_archive_sha256": "1cfbd04f08408c7e91a02dbc5c46b9497bcf44efb27f3650f1d44e22923f1f0e"
+    "completed_transfer_archive_bytes_removed": 22906880,
+    "completed_transfer_archive_sha256": "56604e3ba263dda468087b54ff5010c1aee67780800059661e350bbdbaa19953"
   },
   "coverage_snapshot": {
-    "as_of_utc": "2026-10-22T05:05:59Z",
+    "as_of_utc": "2026-10-22T05:58:08Z",
     "manifest": "planner_route_matrix.json",
     "ledger": "planner_route_summary.json",
-    "ledger_sha256": "b04c119b86f2d735a8ee2249f2e59853d19e132facc54c0760b6c3a7905af34a",
+    "ledger_sha256": "8da7be2336c1b6d4d44b8d53687dec11eb7af0e703cba7b65f31356feed89331",
     "ledger_scope": "Finished combinations only; active/queued combinations are outside this exported ledger.",
     "expected_combinations": 108,
-    "unique_verified_combinations": 18,
-    "not_yet_verified_combinations": 90,
+    "unique_verified_combinations": 24,
+    "not_yet_verified_combinations": 84,
     "all_checkpoint_profile_and_stage_paths_match_manifest": true,
     "random_seed_evaluation_started": false,
     "raw_capture_receipts": [
@@ -236,6 +236,36 @@
         ],
         "raw_sha256": "b5045802e84ac984204cd5f57da2ab50701c645f7649139d6fc4c4eaa22aec75",
         "raw_bytes": 22823800
+      },
+      {
+        "id": "easy-t2-a-s0",
+        "rows": 245683,
+        "steps": 132480,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "raw_sha256": "61c67520a806e14142e0c8304cfc574276c5843edc5f5520d63e62f2fff4d83b",
+        "raw_bytes": 24568300
+      },
+      {
+        "id": "easy-t2-b-s0",
+        "rows": 243193,
+        "steps": 129001,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          7
+        ],
+        "raw_sha256": "90d6b0f61644b54a5ecfcdb65b3942867c4d8e574d3d360e16aa4aa1709034ea",
+        "raw_bytes": 24319300
       },
       {
         "id": "extra-t0-natural-s0",
@@ -316,6 +346,36 @@
         ],
         "raw_sha256": "cd0646296a193555cb85831a61d731121bcb899cc2949920f1785f7d24d17339",
         "raw_bytes": 23380100
+      },
+      {
+        "id": "hard-t2-a-s0",
+        "rows": 249804,
+        "steps": 136601,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "raw_sha256": "93728972d16578295eef0d343c0c909ccdf828da72dd59a3e8f720b845e16976",
+        "raw_bytes": 24980400
+      },
+      {
+        "id": "hard-t2-b-s0",
+        "rows": 249459,
+        "steps": 135263,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          7
+        ],
+        "raw_sha256": "d9859cba46894f981c880711362fffb11f0494917beca51b5e42b4a6ac5571cb",
+        "raw_bytes": 24945900
       },
       {
         "id": "lunatic-t0-a-s0",
@@ -436,6 +496,36 @@
         ],
         "raw_sha256": "030375b210cbc25cccc35842c3d4cd958b7633d4afce45bfe3dec1ae45f8a4a8",
         "raw_bytes": 23391900
+      },
+      {
+        "id": "normal-t2-a-s0",
+        "rows": 249619,
+        "steps": 136418,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          6
+        ],
+        "raw_sha256": "8a8b2334ac6b2d0c7f8228418b75a505e5f47a86a556a5520ee3a232d64c0a49",
+        "raw_bytes": 24961900
+      },
+      {
+        "id": "normal-t2-b-s0",
+        "rows": 248889,
+        "steps": 134700,
+        "stage_path": [
+          0,
+          1,
+          2,
+          3,
+          5,
+          7
+        ],
+        "raw_sha256": "9a82f17273ccedd9affff64e470f1f56f8cbe4db2e353e212bcb20991905307e",
+        "raw_bytes": 24888900
       }
     ],
     "route_choice_prefix_checks": [
