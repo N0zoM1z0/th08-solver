@@ -392,24 +392,39 @@ hit. Source-order tests cover narrow, wide and full-circle arcs. The real failed
 snapshot after this geometry correction; three diagnostic replays cost 121521
 native updates in total. These are modeled-prefix checks, not full-stage rescues.
 All 40 native/DAT CTests pass in 654.80 seconds with two workers; default Stage 2
-actions remain unchanged. A complete three-seed 4B repeat with both corrections
-is running: seed zero regresses to death at 40131 in spell 99; the others are
-pending. The preceding frozen 2/3 result remains separately identified.
+actions remain unchanged. The complete three-seed 4B repeat with both corrections
+finishes 0/3: seeds zero/57392/32124 die at 40131/40326/40310 in spell 99. The
+preceding frozen 2/3 result remains separately identified; more accurate boundary
+geometry does not establish a better complete controller under a partial forecast.
+Work totals 120767 native updates and 1683.07 summed solver wall seconds, with a
+191856640-byte unit memory peak. A separate private continuation hypothesis now
+retains positive pre-birth literal rate cues through geometry-matched active
+laser observations instead of immediately replacing them with the last measured
+rate. Owned-cache checks cover birth timing, missing observations, stages,
+weaker cues and idempotent prefix warming. Its three-seed repeat plus a disabled
+control is pending; it establishes no new clear.
 
-A complete shot-1 Lunatic Final A story through natural 4A remains pending.
-The story uses a uniform existing H64/spatial profile,
+The shot-1 Lunatic Final A story through natural 4A strictly verifies seed zero.
+The batch uses a uniform existing H64/spatial profile,
 seed zero and two new diagnosis seeds, starting at power zero in Stage 1 without
 checkpoint concatenation. Its unchanged learned model was trained on shot 0, so
 this also tests transfer to a different shot. Completion requires fresh actions,
 natural replay and the exact ordered six-stage path; no pending run is a clear.
+The complete path is 1/2/3/4A/5/6A, with 231306 API updates, 231301 calculations,
+five control-only handoffs and score 175595107. Fresh actions match score, RNG and
+all five transition events; natural playback has all 231301 expected rows and zero
+death/bomb rows. The policy uses no native lookahead or rewind and no reconstructed
+prefix. Solver wall time is 3624.21 seconds; concurrent remote controller
+mean/p99/max are 15.60/22.44/33.26 ms, with 56530 deadline misses and no enforced
+deadline. This is one native-profile story, not retail or all-seed certification.
 Seed 60950 dies at 166518 in Stage 5 spell 107. Three diagnostic executions
 (499554 additional native updates) reproduce score/RNG and show a long-observed
 phantom becoming real with a velocity change on the fatal update. The main
 current ECL cursor points to a future literal batch that selects two bullet masks
 and calls the source freeze/restore function; static subroutine inspection costs
 zero native calculations. The current phantom-risk forecast does not model that
-scheduled switch. Seed zero has reached Final A; the third diagnosis case remains
-in progress. These partial paths do not establish a verified complete story.
+scheduled switch. The third diagnosis case remains in progress; the batch is not
+complete and the retained failed seed is not relabeled as a clear.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
@@ -417,8 +432,8 @@ queues reserve slots to keep at most four controllers and 320 tasks overall;
 controller units have 96 tasks, six CPU cores, 6-GiB high/8-GiB hard memory
 limits and no extra swap. Teacher corrections use at most two planners, 192 tasks,
 four CPU cores and 8-GiB high/16-GiB hard memory limits; the successor is serial.
-Measured teacher memory peaks stay below 1.3 GB. No continuous online NMNB story or retail live controller
-is established. New tapes, replays, models, JSON reports and process receipts stay
+Measured teacher memory peaks stay below 1.3 GB. No enforced-deadline or retail live
+controller is established. New tapes, replays, models, JSON reports and process receipts stay
 under ignored local storage.
 
 The route interfaces pass all 38 native/DAT CTests; all 108 replay-corpus outcome,

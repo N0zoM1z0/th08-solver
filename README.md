@@ -36,6 +36,10 @@ owned current observations without future native steps or rewinds. Its first har
 measures latency and deadline misses but waits for each decision, so completion does
 not establish a 60 FPS controller.
 
+One complete Lunatic Final A story through natural 4A now strictly verifies with
+the uniform current-memory controller. Multi-seed story diagnosis retains a
+Stage 5 failure; [Status](docs/STATUS.md) owns the exact profile and validation.
+
 The preceding random-seed evaluation is complete: all 12 diagnosis and 12 held-out
 cases pass fresh native/replay checks under the frozen offline solver. This finite
 24-seed sample is separate from online capability. The seed-0 coverage run was
