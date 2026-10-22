@@ -114,6 +114,12 @@ stops on death; it never rewinds. The kinematic forecast and risk regions are
 heuristic proposals. The next actual native calculation determines survival;
 online choices lack the offline planner's precommit native verification.
 
+Future birth-cue work must distinguish emission time, first collision and the
+earliest responsive movement. Pool order can defer a child's first update until
+the following calculation, while the root player movement is already latched.
+A matching emission point does not supply the child's flight/collision geometry;
+complete frozen-seed execution and replay gates still decide controller coverage.
+
 Float32 movement retains the one-update recording latch. The policy searches 18
 movement/focus inputs with half-pixel proposal deduplication, per-instance tie RNG
 and optional reachable-envelope pruning. Deduplication is not equivalent-world

@@ -381,7 +381,7 @@ Solver work totals 272826 native updates and 1228.69 summed wall seconds; fresh
 execution adds 272826 updates and natural playback adds 272826 calculation rows.
 The exited unit's memory-peak property is unavailable; its 6-GiB high/8-GiB hard
 limits and successful process result are retained.
-A separately frozen evaluation now runs two fresh CSPRNG seeds, 17735/7575,
+A separately frozen evaluation draws two fresh CSPRNG seeds, 17735/7575,
 against that exact binary/model/profile after the three-case diagnosis gate.
 Both seeds are absent from retained manifests and tracked seed reports. They are
 new evaluation cases, not releases of the original eighteen reserved holdouts.
@@ -441,8 +441,22 @@ post-birth update, clipped to the forecast horizon, passes with reach pruning
 and counts the added risk frames. This also covers a child first processed on
 the next pool pass. A new private six-case comparison freezes this correction
 with the same seeds, weights and budgets, plus another 65845-update native
-preflight. Full results are pending; child direction/RNG and later world effects
-remain unmodeled. The original eighteen reserved holdouts remain untouched.
+preflight. It finishes 0/5: zero/9696/49063/17735/7575 die at
+66565/66452/67009/66253/66068, losing the preceding candidate's new clear as well
+as all three original clears. The disabled control again exactly repeats the
+parent's complete seed-zero tape, score and RNG. Including that control, work
+totals 423035 native updates and 1836.46 summed solver wall seconds, with
+325300224-byte unit peak memory; fresh execution and natural playback add 90688
+updates/rows with zero death/bomb rows. Candidate counters retain 239004 cues,
+zero unsupported / 18241 culled points, 1639776 pure projection updates and
+2027589 risk frames. A separate 66565-update death reconstruction matches
+score/RNG and again first observes the collider one update before the fatal
+latched movement. Fixing a cue's causal timing does not supply the missing birth
+and flight geometry or establish a complete controller gain. Both child-risk
+variants remain private and unpromoted; successful seeds across different
+profiles are not pooled. All comparison queues in this continuation are
+complete, audited and stopped, with temporary transfer packages removed. The
+original eighteen reserved holdouts remain untouched.
 
 The maintained `--tail-check T` option defaults to zero and retains H-update
 branching/depth while checking held suffixes through H+T. The narrow direct-laser
