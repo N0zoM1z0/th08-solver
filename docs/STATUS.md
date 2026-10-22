@@ -419,13 +419,30 @@ current history/clock code and the remote preflight each replay 65845 updates,
 197535 additional updates total, with matching terminal score/RNG and no RNG or
 calculation mutation during reads. This establishes an available positioning cue,
 not child direction/RNG, cancellation or complete future-world coverage.
-A new private frozen H32/cell0/guard32 child-positioning comparison now runs the
+A private frozen H32/cell0/guard32 child-positioning comparison runs the
 same five known seeds plus a disabled seed-zero control. It reuses the existing
 motion/cull kernel and guard/grow/risk weights as soft cost; the source cue is not
 a hard child-collision certificate. All new prediction/cull/unsupported/risk work
-is separately counted. Its pure contracts and real-data preflight pass; complete
-cases remain pending, without a new solver completion or independent-evaluation
-claim. The original eighteen reserved holdouts remain untouched.
+is separately counted. It strictly completes only seed 17735 at 91179 updates,
+score 118632595; zero/9696/49063/7575 die at 66280/66356/66433/66111. This 1/5
+diagnosis loses all three original clears and remains private. Its disabled
+seed-zero control exactly repeats the parent's complete action SHA, score and
+RNG at 90688. Including that control, work totals 447047 native updates and
+1944.68 summed solver wall seconds, plus the 65845-update preflight; fresh checks
+and natural playback each add 181867 updates/rows with zero death/bomb rows.
+Unit memory peaks at 393273344 bytes. Candidate counters retain 273555 cues,
+zero unsupported / 19567 culled points, 1873563 pure projection updates and
+2052188 risk frames. A new clear from a known evaluation failure does not change
+the frozen predecessor's 0/2 fresh evaluation.
+A focused synthetic regression exposes a timing defect in that soft cue:
+an imminent emission expires on the already latched root update, before a new
+sampled input can move. The parent fails; retaining the same point through one
+post-birth update, clipped to the forecast horizon, passes with reach pruning
+and counts the added risk frames. This also covers a child first processed on
+the next pool pass. A new private six-case comparison freezes this correction
+with the same seeds, weights and budgets, plus another 65845-update native
+preflight. Full results are pending; child direction/RNG and later world effects
+remain unmodeled. The original eighteen reserved holdouts remain untouched.
 
 The maintained `--tail-check T` option defaults to zero and retains H-update
 branching/depth while checking held suffixes through H+T. The narrow direct-laser
