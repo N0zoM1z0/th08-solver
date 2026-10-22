@@ -384,8 +384,22 @@ limits and successful process result are retained.
 A separately frozen evaluation now runs two fresh CSPRNG seeds, 17735/7575,
 against that exact binary/model/profile after the three-case diagnosis gate.
 Both seeds are absent from retained manifests and tracked seed reports. They are
-new evaluation cases, not releases of the original eighteen reserved holdouts;
-the candidate cannot be retuned on these outcomes. Both are pending.
+new evaluation cases, not releases of the original eighteen reserved holdouts.
+The frozen candidate fails both: 17735 at 62706 in spell 201, and 7575 at 65845
+in 202. This **0/2 fresh evaluation** remains separate from the 3/3 diagnosis
+result. Work totals 128551 native updates and 588.06 summed solver wall seconds;
+unit memory peaks at 136683520 bytes. Independent execution reproduces both
+deaths, score and RNG for 128551 additional native updates. The first trace shows
+corner confinement and falling forecast depth before a known descending bullet
+hits; the second first observes its collider one update before the fatal latched
+movement. Neither failure is a solved or successful replay case. The candidate
+was not retuned or given replacement evaluation seeds.
+A separately frozen post-evaluation diagnosis now tests all five known Extra
+seeds with the maintained collision-mode correction and one uniform H32/T32,
+cell16 profile. Branch depth stays 32 while capture/forecast extends to 64;
+endpoint, held-tail, spatial-selection and native costs remain charged. These
+five cases are known diagnosis inputs for the new candidate, not independent
+evaluation. The comparison is pending, with no new completion claimed.
 
 The maintained `--tail-check T` option defaults to zero and retains H-update
 branching/depth while checking held suffixes through H+T. The narrow direct-laser
