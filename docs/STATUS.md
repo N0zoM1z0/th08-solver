@@ -303,7 +303,7 @@ deaths add 133835 updates: one bullet appears eight updates before death while
 forecast depth abruptly drops from 32 to seven; the other appears one update
 before death. Correct cursor geometry does not close unmodeled birth coverage.
 
-A separate generic previous-plan fallback is under full-stage comparison on the
+A separate generic previous-plan fallback has completed full-stage comparison on the
 three existing 4B seeds, with an additional disabled seed-zero control repeat.
 It rechecks a single shifted proposal against the current forecast and replaces
 only a shorter beam; the input latch, depth ties and additional-query costs stay
@@ -311,10 +311,23 @@ explicit. Synthetic crossing-bullet checks pass, including changed forecasts and
 cache-alignment failures. The disabled control reproduces the preceding seed-zero
 action hash, score, RNG and death at 40190. The enabled seed-zero case strictly
 verifies a complete 46501-update tape, score 20407686, with matching natural rows
-and zero death/bomb rows. The other two seeds remain pending; this is not a
-completed batch or a released holdout result. All 40 native/DAT CTests pass in
+and zero death/bomb rows. Seeds 32124/57392 die at 40287/40337 in spell 99; the
+previously complete seed regresses, so the candidate stays 1/3 and does not
+replace the parent profile. Including the disabled control repeat, work totals
+167315 native updates and 2316.05 summed solver wall seconds, plus validation.
+The unit peaks at 183959552 bytes. The candidate checks 924 warm paths / 51234
+forecast updates and makes 647 replacements before the optional held fallback.
+All 40 native/DAT CTests pass in
 665.09 seconds with two workers, and the default Stage 2 action hash is unchanged.
 The option remains off by default. No pending run counts as a completion.
+
+A private current-terminal-ANM clock probe matches 66040 first activation-time
+predictions across three existing Extra tapes. It reads one currently pointed
+termination header and its clock, without scanning or executing future code.
+Diagnostic work totals 260056 native reconstruction updates, including an earlier
+weaker end-state check. Timing does not certify activation transforms or later
+velocity/cancellation. A separate full-stage three-seed comparison, with one
+disabled control repeat and unchanged budgets, is running; it is not a new clear.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
