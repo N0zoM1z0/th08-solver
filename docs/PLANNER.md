@@ -150,6 +150,25 @@ uninspected control flow remains outside this partial preview. No spell or seed
 chooses the decoder. Its owned rotated rectangles enter the same proposal collision
 queries as observed laser calls, with the input latch unchanged.
 
+`--direct-turn-envelope 1` replaces a matched direct laser's single signed turn
+with both turn signs up to its last observed angular speed. Before first
+visibility, `--queued-lasers 1` can also supply a cue from absolute literal writes
+to the main ANM angle in the currently visible same-time ECL batch. The read-only
+decoder includes both forward conditional paths, filters difficulty and rejects
+variable angle writes, backward loops, unsupported instructions and truncated
+records. It inspects at most 64 records inside an adjacent-sub-table byte bound;
+the final subroutine has no such bound in this interface and supplies no cue.
+No operand/RNG evaluation or native future update occurs.
+
+The model intersects the player's local circle arc with the laser rectangle;
+the broad phase includes a radial envelope and float rounding allowance. This
+is proposal uncertainty under a last-speed/repeated-literal-batch hypothesis,
+with the existing linear origin/static geometry assumptions retained. Later
+scripts can change rates, origins or lifetimes. A zero cue is not an empty-future
+certificate. The option defaults off; reports retain cue/unsupported counts and
+the number of expanded laser forecast frames. Native execution still decides
+actual survival, and all stage/seed comparisons retain failed alternatives.
+
 `--held-fallback 1` checks all eighteen held direction/focus proposals only when
 the beam returns a nonzero partial horizon. Every proposal starts with the actual
 latched input and uses the same movement, bounds and forecast collision queries.

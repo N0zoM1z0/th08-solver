@@ -125,6 +125,8 @@ Options parse(int argc, char **argv) {
             o.policy.queued_lasers = boolean();
         else if (key == "--held-fallback")
             o.policy.held_fallback = boolean();
+        else if (key == "--direct-turn-envelope")
+            o.policy.direct_turn_envelope = boolean();
         else if (key == "--log-every")
             o.log_every = int(integer(value));
         else if (key == "--commit")
@@ -240,6 +242,7 @@ int run(const Options &o) {
     on::SearchStatistics search_stats;
     std::uint64_t queued_records = 0, unsupported_queued = 0;
     std::uint64_t queued_laser_records = 0, unsupported_queued_lasers = 0;
+    std::uint64_t turn_hint_records = 0, unsupported_turn_hints = 0;
     int failed_input = -1;
     bool started_spell = false;
     std::string outcome = "budget", failure;
@@ -306,11 +309,14 @@ int run(const Options &o) {
             const auto begin = Clock::now();
             on::capture_memory(session, actions.size(), observation, o.policy.spawn_guard > 0,
                                o.policy.queued_shots ? unsigned(o.policy.horizon) : 0,
-                               o.policy.queued_lasers ? unsigned(o.policy.horizon) : 0);
+                               o.policy.queued_lasers ? unsigned(o.policy.horizon) : 0,
+                               o.policy.direct_turn_envelope);
             queued_records += observation.queued_shots.size();
             unsupported_queued += observation.unsupported_queued_shots;
             queued_laser_records += observation.queued_lasers.size();
             unsupported_queued_lasers += observation.unsupported_queued_lasers;
+            turn_hint_records += observation.turn_hint_records;
+            unsupported_turn_hints += observation.unsupported_turn_hints;
             const auto decision = policy.decide(observation);
             search_stats.selections += decision.search.selections;
             search_stats.candidates += decision.search.candidates;
@@ -320,6 +326,7 @@ int run(const Options &o) {
             search_stats.held_paths += decision.search.held_paths;
             search_stats.held_updates += decision.search.held_updates;
             search_stats.held_selected += decision.search.held_selected;
+            search_stats.turn_envelope_frames += decision.search.turn_envelope_frames;
             auto input = decision.action;
             if (o.spell < 0 && ((actions.size() + 1) % 2))
                 input |= 4096;
@@ -411,6 +418,11 @@ int run(const Options &o) {
            << ",\"unsupported_queued_lasers\":" << unsupported_queued_lasers
            << ",\"queued_laser_coverage\":\"partial-current-ecl-cursors\""
            << ",\"held_fallback\":" << o.policy.held_fallback
+           << ",\"direct_turn_envelope\":" << o.policy.direct_turn_envelope
+           << ",\"turn_envelope_frames\":" << search_stats.turn_envelope_frames
+           << ",\"turn_hint_records\":" << turn_hint_records
+           << ",\"unsupported_turn_hints\":" << unsupported_turn_hints
+           << ",\"direct_turn_coverage\":\"observed-or-literal-batch-rate-hypothesis\""
            << ",\"held_paths\":" << search_stats.held_paths
            << ",\"held_forecast_updates\":" << search_stats.held_updates
            << ",\"held_selected\":" << search_stats.held_selected

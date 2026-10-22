@@ -68,6 +68,7 @@ struct QueuedLaser {
     // Geometry is an adapter hypothesis, not a complete future-world guarantee.
     unsigned first_update = 0, last_update = 0;
     LaserHitbox hitbox;
+    float turn_hint = 0; // radians per batch, from literal current-program writes
 };
 
 // Owned current-memory snapshot. The native adapter may reuse its vector capacity
@@ -93,6 +94,7 @@ struct Observation {
     std::uint32_t unsupported_queued_shots = 0;
     std::vector<QueuedLaser> queued_lasers;
     std::uint32_t unsupported_queued_lasers = 0;
+    std::uint32_t turn_hint_records = 0, unsupported_turn_hints = 0;
 };
 struct Configuration {
     int horizon = 32, beam = 192;
@@ -104,6 +106,7 @@ struct Configuration {
     bool risk_phantoms = false;
     bool queued_shots = false, queued_lasers = false;
     bool held_fallback = false;
+    bool direct_turn_envelope = false;
 };
 struct RiskTables {
     std::map<std::uint64_t, std::array<float, 4>> fine, segment, global;
@@ -122,6 +125,7 @@ struct SearchStatistics {
     std::uint64_t selections = 0, candidates = 0, bins = 0, retained_bins = 0;
     double selection_ms = 0;
     std::uint64_t held_paths = 0, held_updates = 0, held_selected = 0;
+    std::uint64_t turn_envelope_frames = 0;
 };
 struct Decision {
     std::uint16_t action = 1;

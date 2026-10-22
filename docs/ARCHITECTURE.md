@@ -173,6 +173,14 @@ per candidate or otherwise proven equivalent before sharing it.
 
 ## Search and replay
 
+The online native adapter optionally reads a bounded current ECL byte batch into
+a scalar turn cue (`ecl_turn_hint.hpp`). It copies only the resulting value into
+an owned queued laser; no native pointer enters the policy. The pure decoder
+never evaluates variables or RNG, and unsupported/bounds-limited reads remain
+counted. `online.cpp` owns the optional two-sign angular proposal envelope and
+its radial index bound. This does not replace native collision or establish
+future pose/lifetime validity.
+
 `solver::Model` is fixed collision geometry after each frame's action/world update.
 Only candidate-independent models accept exact-position successor merging. The planner
 keeps the explicit comparator-winning predecessor, caches blocked as well as safe

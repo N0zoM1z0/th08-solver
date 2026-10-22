@@ -13,7 +13,12 @@ namespace th08::online {
 namespace {
 using Float3 = Vector;
 using Speeds = Movement;
-using Laser = LaserHitbox;
+struct Laser {
+    float cx, cy, w, h, ox, oy, angle;
+    // Proposal uncertainty only: all turn signs up to the last observed speed.
+    // This does not certify that future scripts preserve that speed or origin.
+    double angle_reach = 0, reach_cos = 1, reach_sin = 0;
+};
 void rotate(Float3 *out, const Float3 *point, float angle) {
     const float sine = std::sin(angle), cosine = std::cos(angle);
     out->x = cosine * point->x - sine * point->y;
@@ -95,7 +100,19 @@ void build_grid(const std::vector<Box> &boxes, const Float3 &half, std::vector<i
     for (int i = 0; i < int(boxes.size()); ++i)
         each(boxes[i], [&](int c) { items[pos[c]++] = i; });
 }
-Box laser_aabb(const Laser &l) {
+Box laser_aabb(const Laser &l, float padding = 0) {
+    if (l.angle_reach > 0) {
+        // The query rotates the player's center, then expands in local axes.
+        // A full radial bound includes that rotated hurtbox and every turn sign.
+        const double round = 16 * std::numeric_limits<float>::epsilon() *
+                             (1 + 2 * 1048576.0 + std::abs(double(l.ox)) + std::abs(double(l.oy)) +
+                              std::abs(double(l.cx)) + std::abs(double(l.cy)));
+        const double x = std::abs(double(l.cx) - l.ox) + l.w / 2 + padding + round;
+        const double y = std::abs(double(l.cy) - l.oy) + l.h / 2 + padding + round;
+        const float radius =
+            std::nextafter(float(std::hypot(x, y) + 1), std::numeric_limits<float>::infinity());
+        return {l.ox - radius, l.oy - radius, l.ox + radius, l.oy + radius};
+    }
     const float c = std::cos(l.angle), s = std::sin(l.angle);
     const float xs[2] = {l.cx - l.w / 2, l.cx + l.w / 2}, ys[2] = {l.cy - l.h / 2, l.cy + l.h / 2};
     Box b{1e9f, 1e9f, -1e9f, -1e9f};
@@ -114,7 +131,7 @@ void build_index(HFrame &f, const Float3 &half) {
     build_grid(f.risk, half, f.rstart, f.ritems);
     f.laabb.resize(f.l.size());
     for (std::size_t i = 0; i < f.l.size(); ++i)
-        f.laabb[i] = laser_aabb(f.l[i]);
+        f.laabb[i] = laser_aabb(f.l[i], std::max(half.x, half.y) + kMargin);
     build_grid(f.laabb, half, f.lstart, f.litems);
     const float ex = half.x + kMargin + 0.01f, ey = half.y + kMargin + 0.01f;
     std::vector<int> cnt(kGW * kGH + 1, 0);
@@ -145,6 +162,44 @@ inline bool laser_hit(const Laser &l, const Float3 &p, const Float3 &half, float
     size.x = l.w, size.y = l.h, size.z = 0;
     in_min = p - origin;
     rotate(&in_max, &in_min, -l.angle);
+    if (l.angle_reach > 0) {
+        // A circle arc intersects a rectangle either at an arc endpoint or a
+        // rectangle edge. Dot products test arc membership without atan2.
+        // Outward padding covers float Rotate/store rounding between poses.
+        const double scale = 1 + std::abs(double(p.x)) + std::abs(double(p.y)) +
+                             std::abs(double(l.ox)) + std::abs(double(l.oy)) +
+                             std::abs(double(l.cx)) + std::abs(double(l.cy));
+        const double round = 16 * std::numeric_limits<float>::epsilon() * scale;
+        const double ex = half.x + margin + round, ey = half.y + margin + round;
+        const double x0 = double(l.cx) - l.w / 2 - l.ox - ex;
+        const double x1 = double(l.cx) + l.w / 2 - l.ox + ex;
+        const double y0 = double(l.cy) - l.h / 2 - l.oy - ey;
+        const double y1 = double(l.cy) + l.h / 2 - l.oy + ey;
+        const double u = in_max.x, v = in_max.y, radius2 = u * u + v * v;
+        const double arc_round = round * (1 + std::sqrt(radius2));
+        const auto inside = [&](double x, double y) {
+            return x >= x0 && x <= x1 && y >= y0 && y <= y1;
+        };
+        if (inside(u * l.reach_cos - v * l.reach_sin, v * l.reach_cos + u * l.reach_sin) ||
+            inside(u * l.reach_cos + v * l.reach_sin, v * l.reach_cos - u * l.reach_sin))
+            return true;
+        const auto in_arc = [&](double x, double y) {
+            return u * x + v * y >= radius2 * l.reach_cos - arc_round;
+        };
+        for (double x : {x0, x1})
+            if (x * x <= radius2) {
+                const double y = std::sqrt(std::max(0.0, radius2 - x * x));
+                if ((y >= y0 && y <= y1 && in_arc(x, y)) || (-y >= y0 && -y <= y1 && in_arc(x, -y)))
+                    return true;
+            }
+        for (double y : {y0, y1})
+            if (y * y <= radius2) {
+                const double x = std::sqrt(std::max(0.0, radius2 - y * y));
+                if ((x >= x0 && x <= x1 && in_arc(x, y)) || (-x >= x0 && -x <= x1 && in_arc(-x, y)))
+                    return true;
+            }
+        return false;
+    }
     in_max.z = 0.0f;
     in_min = in_max + origin;
     pmin = in_min - half;
@@ -305,8 +360,10 @@ struct Policy::Impl {
         for (const auto &laser : o.queued_lasers) {
             const auto &l = laser.hitbox;
             if (laser.first_update == 0 || laser.last_update < laser.first_update ||
-                laser.last_update > unsigned(opt.horizon) || l.w < 0 || l.h < 0)
+                laser.last_update > unsigned(opt.horizon) || l.w < 0 || l.h < 0 ||
+                laser.turn_hint < 0)
                 throw std::runtime_error("unsupported_online_observation");
+            finite(laser.turn_hint);
             for (float v : {l.cx, l.cy, l.w, l.h, l.ox, l.oy, l.angle})
                 finite(v);
         }
@@ -591,9 +648,18 @@ struct Policy::Impl {
                     dox = c.ox - p.ox, doy = c.oy - p.oy;
                     break;
                 }
-            for (int j = 1; j <= horizon; ++j)
-                frames[j].l.push_back({c.cx + dox * j, c.cy + doy * j, c.w, c.h, c.ox + dox * j,
-                                       c.oy + doy * j, c.angle + dang * j});
+            for (int j = 1; j <= horizon; ++j) {
+                Laser laser{c.cx + dox * j, c.cy + doy * j,    c.w, c.h, c.ox + dox * j,
+                            c.oy + doy * j, c.angle + dang * j};
+                if (opt.direct_turn_envelope && dang != 0) {
+                    laser.angle = c.angle;
+                    laser.angle_reach = std::min(std::abs(double(dang)) * j, std::acos(-1.0));
+                    laser.reach_cos = std::cos(laser.angle_reach);
+                    laser.reach_sin = std::sin(laser.angle_reach);
+                    ++search_stats.turn_envelope_frames;
+                }
+                frames[j].l.push_back(laser);
+            }
         }
         // Lethal bodies drawn this update, extrapolated with their matched displacement.
         std::vector<Box> regions;
@@ -645,8 +711,18 @@ struct Policy::Impl {
         if (opt.queued_lasers)
             for (const auto &laser : observation.queued_lasers) {
                 const auto &l = laser.hitbox;
-                for (unsigned j = laser.first_update; j <= laser.last_update; ++j)
-                    frames[j].l.push_back({l.cx, l.cy, l.w, l.h, l.ox, l.oy, l.angle});
+                for (unsigned j = laser.first_update; j <= laser.last_update; ++j) {
+                    Laser projected{l.cx, l.cy, l.w, l.h, l.ox, l.oy, l.angle};
+                    if (opt.direct_turn_envelope && laser.turn_hint > 0) {
+                        projected.angle_reach =
+                            std::min(double(laser.turn_hint) * (j - laser.first_update + 1),
+                                     std::acos(-1.0));
+                        projected.reach_cos = std::cos(projected.angle_reach);
+                        projected.reach_sin = std::sin(projected.angle_reach);
+                        ++search_stats.turn_envelope_frames;
+                    }
+                    frames[j].l.push_back(projected);
+                }
             }
     }
 
@@ -676,7 +752,7 @@ struct Policy::Impl {
             auto &L = frames[j].l;
             std::size_t o = 0;
             for (std::size_t i = 0; i < L.size(); ++i) {
-                const Box b = laser_aabb(L[i]);
+                const Box b = laser_aabb(L[i], std::max(sp.half.x, sp.half.y) + kMargin);
                 const float dx = std::max({b.x0 - px, px - b.x1, 0.f});
                 const float dy = std::max({b.y0 - py, py - b.y1, 0.f});
                 if (dx <= reach && dy <= reach)

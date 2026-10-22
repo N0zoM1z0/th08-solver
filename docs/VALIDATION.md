@@ -64,6 +64,15 @@ and counts the extra forecast work. A lethal first latched update still returns
 depth zero. Complete-world outcomes are evaluated separately from this proposal
 contract.
 
+`--direct-turn-envelope 1` tests a current-memory angular uncertainty model.
+Its policy contract includes opposite-turn escapes from signed extrapolation,
+sixteen orientations around the full circle, reachable-envelope agreement and
+pre-birth cue timing through the input latch. Raw-batch tests cover difficulty,
+both forward branch paths, truncation, variable writes and backward-loop rejection.
+Reports add `turn_hint_records`, `unsupported_turn_hints` and
+`turn_envelope_frames`; these count a partial heuristic, not certified future
+geometry. Observe both complete outcomes and controller latency.
+
 For an always-shoot student's offline teacher queries, add `--shoot 1
 --quiet-retries 0` to `th08_plan` with the original checkpoint, immutable
 `--prefix` and explicit total frame/time budgets. Inspect every generated suffix

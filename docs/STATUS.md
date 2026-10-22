@@ -196,6 +196,38 @@ retention/warm starts must retain native verification and keep recorded routes
 outside the online policy. No seed/spell-specific strategy branch was added;
 these repeated diagnosis cases do not provide unseen-seed validation.
 
+The optional current-memory direct-turn envelope now covers both turn signs under
+an observed-rate or literal-current-batch hypothesis. It reads no future native
+state and adds no seed/spell branch. A frozen paired continuation from update
+38983 dies at 39239 with the option off and strictly verifies a complete 46846-update
+tape with it on. Fresh execution agrees on score/RNG; natural replay has 46846
+calculation rows and zero death/bomb rows. Both reconstructions remain charged:
+86085 native updates, including 77966 prefix updates, and 93.36 summed wall seconds.
+An earlier observed-rate-only diagnostic fails both ways at 39239; its additional
+78478 updates and 9.86 wall seconds remain recorded, with no frozen source archive.
+
+The subsequent frozen full-stage comparison repeats all three existing 4B
+diagnosis seeds with H64/beam192/cell16, the same model, warnings and held fallback.
+Seed zero strictly verifies at 46757 updates, score 20329969; seed 32124 dies at
+40326 in spell 99, and seed 57392 still dies at 36960 in 96. Thus the parent 0/3
+becomes 1/3, not a solved stage or unseen-seed result. Work totals 124043 native
+updates and 1630.36 summed solver wall seconds, plus verification/replay. On the
+concurrent EPYC 9654/GCC 13.3 Release sample, the successful controller's
+mean/p99/max are 13.01/17.54/21.43 ms with 1150 deadline misses. The unit's memory
+peak is 585760768 bytes including its build. All 40 native/DAT CTests pass in
+784.43 seconds; the default Stage 2 action hash is unchanged. The option remains
+off by default and its partial geometry assumptions remain explicit in [Planner](PLANNER.md).
+
+Independent execution reproduces all three Extra diagnosis deaths with matching
+score/RNG. Their local causes differ: a newly born bullet, missing fractional
+spawn movement on activation, and an existing bullet's timed relative turn.
+A private activation-order prototype rejects a synthetic missed collision but
+does not improve a paired continuation: baseline reaches 74243 in spell 204,
+whereas the prototype dies at 67021 in 202. Both fail; 141264 native updates,
+including 129772 prefix updates, and 52.68 summed wall seconds remain charged.
+That isolated prototype is not promoted into the maintained policy. The remaining
+4B seed-57392 hit is a pooled laser, separate from the reactive direct-turn model.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

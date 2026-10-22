@@ -6,10 +6,42 @@
 #include "Supervisor.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/direct_laser_policy.hpp"
+#include "th08/ecl_turn_hint.hpp"
 
 namespace th08::online {
+namespace {
+TurnHint native_turn_hint(const headless::EclContextView &view) {
+    if (view.enemy_index < 0 || view.enemy_index >= int(std::size(g_EnemyManager.enemies)))
+        return {};
+    const auto &enemy = g_EnemyManager.enemies[view.enemy_index];
+    if (enemy.enemyIndex != view.enemy_index)
+        return {};
+    const auto *context = &enemy.mainEclContextStorage;
+    if (view.child_slot) {
+        if (view.child_slot < 1 || view.child_slot > 4 ||
+            !enemy.childEclBlocks[view.child_slot - 1])
+            return {};
+        context = &enemy.childEclBlocks[view.child_slot - 1]->eclContext;
+    }
+    // Adjacent sub-table entries bound the immutable byte span. The final sub
+    // has no following bound in this native interface and supplies no cue.
+    if (!g_EclManager.eclFile || !g_EclManager.subTable || context->subId < 0 ||
+        context->subId + 1 >= g_EclManager.eclFile->subCount)
+        return {};
+    const auto begin = std::uintptr_t(g_EclManager.subTable[context->subId]);
+    const auto end = std::uintptr_t(g_EclManager.subTable[context->subId + 1]);
+    const auto cursor = reinterpret_cast<std::uintptr_t>(context->currentInstr);
+    if (cursor < begin || cursor >= end || end - cursor > 1048576)
+        return {};
+    const auto difficulty =
+        std::uint32_t(g_GameManager.difficultyMask) | enemy.eclDifficultyMaskOverride;
+    return current_batch_turn_hint(reinterpret_cast<const std::uint8_t *>(cursor),
+                                   std::size_t(end - cursor), difficulty);
+}
+} // namespace
 void capture_memory(headless::Session &session, std::uint64_t update, Observation &o,
-                    bool include_actors, unsigned queued_horizon, unsigned queued_laser_horizon) {
+                    bool include_actors, unsigned queued_horizon, unsigned queued_laser_horizon,
+                    bool include_turn_hints) {
     const auto state = session.state();
     o.update = update;
     o.stage = state.stage;
@@ -102,18 +134,38 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
         }
     o.queued_lasers.clear();
     o.unsupported_queued_lasers = 0;
+    o.turn_hint_records = 0;
+    o.unsupported_turn_hints = 0;
     if (queued_laser_horizon) {
         std::vector<policy::DirectLaserWarning> warnings;
         policy::DirectLaserStats stats;
-        policy::collect_direct_laser_warnings(session.ecl_contexts(), queued_laser_horizon,
-                                              warnings, stats);
+        const auto append = [&](const TurnHint &hint) {
+            for (const auto &warning : warnings) {
+                o.queued_lasers.push_back(
+                    {warning.first_update,
+                     warning.last_update,
+                     {warning.center_x, warning.center_y, warning.full_width, warning.full_height,
+                      warning.origin_x, warning.origin_y, warning.angle, -1},
+                     hint.supported ? hint.radians : 0.f});
+                if (include_turn_hints) {
+                    o.turn_hint_records += hint.supported && hint.radians > 0;
+                    o.unsupported_turn_hints += !hint.supported;
+                }
+            }
+        };
+        if (include_turn_hints) {
+            for (const auto &view : session.ecl_contexts()) {
+                const std::array<headless::EclContextView, 1> context{view};
+                policy::collect_direct_laser_warnings(context, queued_laser_horizon, warnings,
+                                                      stats);
+                append(warnings.empty() ? TurnHint{} : native_turn_hint(view));
+            }
+        } else {
+            policy::collect_direct_laser_warnings(session.ecl_contexts(), queued_laser_horizon,
+                                                  warnings, stats);
+            append({});
+        }
         o.unsupported_queued_lasers = stats.variable_selectors + stats.dynamic_geometry;
-        for (const auto &warning : warnings)
-            o.queued_lasers.push_back(
-                {warning.first_update,
-                 warning.last_update,
-                 {warning.center_x, warning.center_y, warning.full_width, warning.full_height,
-                  warning.origin_x, warning.origin_y, warning.angle, -1}});
     }
 }
 } // namespace th08::online

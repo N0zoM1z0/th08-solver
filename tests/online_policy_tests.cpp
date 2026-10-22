@@ -1,6 +1,8 @@
 #include "test_support.hpp"
+#include "th08/ecl_turn_hint.hpp"
 #include "th08/online.hpp"
 
+#include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -236,6 +238,113 @@ void held_escape() {
     check(latched.depth == 0 && latched.search.held_paths == 0,
           "held fallback claimed to avoid an already latched collision");
 }
+void reversing_direct_laser() {
+    auto previous = scene();
+    previous.movement.axis[0] = previous.movement.axis[1] = 0;
+    previous.movement.diag[0] = previous.movement.diag[1] = 0;
+    const float ox = previous.x - 300 * std::cos(1.3f);
+    const float oy = previous.y - 300 * std::sin(1.3f);
+    previous.laser_hitboxes = {{ox + 295, oy, 590, 8, ox, oy, 1.22f, -1}};
+    auto current = previous;
+    current.update = 1;
+    current.laser_hitboxes[0].angle = 1.2f;
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    on::Policy baseline(config);
+    baseline.observe(previous);
+    const auto fixed_turn = baseline.decide(current);
+    config.direct_turn_envelope = true;
+    on::Policy guarded(config);
+    guarded.observe(previous);
+    const auto both_turns = guarded.decide(current);
+    config.reach_filter = true;
+    on::Policy pruned(config);
+    pruned.observe(previous);
+    const auto filtered = pruned.decide(current);
+    check(fixed_turn.depth == config.horizon && both_turns.depth < config.horizon &&
+              both_turns.depth > 0 && both_turns.depth == filtered.depth &&
+              both_turns.action == filtered.action &&
+              both_turns.search.turn_envelope_frames == unsigned(config.horizon) &&
+              fixed_turn.search.turn_envelope_frames == 0,
+          "an observed reverse turn was omitted, pruned or uncounted");
+    // Rotate the entire construction around the origin. A sampled opposite turn
+    // reaches this stationary hurtbox at update three in every orientation;
+    // signed extrapolation moves away. Include the +/-pi observation boundary.
+    for (int k = 0; k < 16; ++k) {
+        const float angle = float(-std::acos(-1.0) + k * (2 * std::acos(-1.0) / 16));
+        auto before = scene();
+        before.x = 192 + 60 * std::cos(angle + .08f);
+        before.y = 200 + 60 * std::sin(angle + .08f);
+        before.movement.axis[0] = before.movement.axis[1] = 0;
+        before.movement.diag[0] = before.movement.diag[1] = 0;
+        before.laser_hitboxes = {{487, 200, 590, 2, 192, 200, angle + .02f, -1}};
+        auto after = before;
+        after.update = 1;
+        after.laser_hitboxes[0].angle = angle;
+        on::Policy oriented(config);
+        oriented.observe(before);
+        const auto result = oriented.decide(after);
+        check(result.depth == 2, "turn envelope missed a sampled native rectangle pose");
+    }
+}
+void current_program_turn_cues() {
+    std::vector<std::uint8_t> bytes;
+    const auto word = [](float value) {
+        std::uint32_t bits;
+        std::memcpy(&bits, &value, 4);
+        return bits;
+    };
+    const auto append = [&](std::int32_t time, std::int16_t opcode, std::uint16_t flags,
+                            std::uint8_t mask, std::initializer_list<std::uint32_t> operands) {
+        const auto start = bytes.size();
+        const auto length = std::int16_t(12 + 4 * operands.size());
+        bytes.resize(start + length);
+        std::memcpy(bytes.data() + start, &time, 4);
+        std::memcpy(bytes.data() + start + 4, &opcode, 2);
+        std::memcpy(bytes.data() + start + 6, &length, 2);
+        bytes[start + 9] = mask;
+        std::memcpy(bytes.data() + start + 10, &flags, 2);
+        std::size_t offset = start + 12;
+        for (auto value : operands) {
+            std::memcpy(bytes.data() + offset, &value, 4);
+            offset += 4;
+        }
+    };
+    append(120, 137, 0, 0xff, {11});
+    append(120, 51, 1, 0xff, {word(10018.f), word(0), 120, 48});
+    append(120, 15, 1, 8, {word(10094.f), word(.02f)});
+    append(120, 16, 1, 8, {word(10094.f), word(.03f)});
+    append(120, 17, 3, 1, {word(10094.f), word(10020.f)}); // Disabled rank.
+    append(121, 0, 0, 0xff, {});
+    const auto hint = on::current_batch_turn_hint(bytes.data(), bytes.size(), 8);
+    check(hint.supported && hint.records == 5 && std::abs(hint.radians - .05f) < 1e-7f,
+          "literal branch union or difficulty filtering lost the turn cue");
+    check(!on::current_batch_turn_hint(bytes.data(), bytes.size() - 1, 8).supported &&
+              !on::current_batch_turn_hint(bytes.data(), bytes.size(), 1).supported,
+          "truncated or variable turn writes supplied a supported cue");
+    const std::int32_t backward = -20;
+    std::memcpy(bytes.data() + 16 + 12 + 12, &backward, 4);
+    check(!on::current_batch_turn_hint(bytes.data(), bytes.size(), 8).supported,
+          "a backward current-batch loop supplied an unbounded cue");
+
+    auto o = scene();
+    o.movement.axis[0] = o.movement.axis[1] = 0;
+    o.movement.diag[0] = o.movement.diag[1] = 0;
+    const float ox = o.x - 300 * std::cos(1.3f), oy = o.y - 300 * std::sin(1.3f);
+    o.queued_lasers = {{3, 12, {ox + 295, oy, 590, 8, ox, oy, 1.2f, -1}, .1f}};
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    config.queued_lasers = true;
+    const auto unguarded = on::Policy(config).decide(o);
+    config.direct_turn_envelope = true;
+    const auto guarded = on::Policy(config).decide(o);
+    check(unguarded.depth == 12 && guarded.depth == 2 && guarded.search.turn_envelope_frames == 10,
+          "a pre-birth turn cue was ignored or applied before its lethal interval");
+    o.queued_lasers[0].turn_hint = -1;
+    rejects([&] { on::Policy(config).decide(o); }, "a negative turn cue was accepted");
+}
 } // namespace
 int main(int argc, char **argv) {
     try {
@@ -248,6 +357,8 @@ int main(int argc, char **argv) {
         queued_birth();
         queued_direct_laser();
         held_escape();
+        reversing_direct_laser();
+        current_program_turn_cues();
         return 0;
     } catch (const std::exception &error) {
         std::cerr << error.what() << '\n';
