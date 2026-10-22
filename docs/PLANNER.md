@@ -121,11 +121,12 @@ merging. Observations must cover consecutive API updates, including control-only
 stage transitions. Explicit prefix reconstruction warms bullet velocity, spawn,
 direct-laser and body history without consuming search tie RNG; a continuation is
 a new policy episode, not a bit-identical resumption of an earlier search.
-Velocity-rate estimation requires the same fired phase and active-transform mask
-on both observations. Installing or clearing a transform may change velocity
-discretely; the difference across that boundary is not continued as acceleration
-or angular speed. Current supported transform state still takes precedence. An
-unchanged mask does not certify linear motion or exclude external program writes;
+Velocity-rate estimation requires the same fired phase, collision-enabled mode
+and active-transform mask on both observations. Installing or clearing a transform,
+or a source ghost-to-real switch, may change velocity discretely; the difference
+across that boundary is not continued as acceleration or angular speed. Current
+supported transform state still takes precedence. Matching mode/mask does not
+certify linear motion or exclude external program writes;
 the remaining finite-difference forecast stays a proposal hypothesis.
 The finite coordinate profile rejects NaN/infinity or magnitudes beyond 2^20
 pixels instead of silently dropping unindexable hazards.

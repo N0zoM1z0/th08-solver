@@ -381,6 +381,11 @@ Solver work totals 272826 native updates and 1228.69 summed wall seconds; fresh
 execution adds 272826 updates and natural playback adds 272826 calculation rows.
 The exited unit's memory-peak property is unavailable; its 6-GiB high/8-GiB hard
 limits and successful process result are retained.
+A separately frozen evaluation now runs two fresh CSPRNG seeds, 17735/7575,
+against that exact binary/model/profile after the three-case diagnosis gate.
+Both seeds are absent from retained manifests and tracked seed reports. They are
+new evaluation cases, not releases of the original eighteen reserved holdouts;
+the candidate cannot be retuned on these outcomes. Both are pending.
 
 The maintained `--tail-check T` option defaults to zero and retains H-update
 branching/depth while checking held suffixes through H+T. The narrow direct-laser
@@ -412,7 +417,8 @@ updates and natural playback has 46513 rows with zero death/bomb rows.
 
 The shot-1 Lunatic Final A story through natural 4A strictly verifies two of its
 three diagnosis seeds under one unchanged profile.
-The batch uses a uniform existing H64/spatial profile,
+The batch uses the frozen spawn-clock artifact with that option disabled, before
+the later transform-history and arc corrections, and a uniform H64/spatial profile:
 seed zero and two new diagnosis seeds, starting at power zero in Stage 1 without
 checkpoint concatenation. Its unchanged learned model was trained on shot 0, so
 this also tests transfer to a different shot. Completion requires fresh actions,
@@ -450,8 +456,27 @@ only that exact same-update collision slot and reports it separately. Both full
 three-tape audits preserve score/RNG and cost 1260988 additional native updates.
 A paired disabled/enabled comparison reconstructs the same prefix
 ending two API updates before death, then starts two fresh policy episodes with
-the same H64 profile. That comparison is pending; a successful continuation would
-not be a new full-start online story. The original failed seed remains failed.
+the same H64 profile. Both arms include the transform-mask history/arc corrections,
+before the separate collision-mode correction below, and share new tie-RNG
+episodes. Both strictly complete: disabled/enabled at 232336/232975 API updates,
+scores 181261416/182841964. Fresh actions agree on score/RNG/counts/transitions;
+natural playback totals 465301 rows with zero death/bomb rows. Work totals 465311
+native updates, including 333032 prefix updates, and 2119.29 summed solver wall
+seconds; fresh execution adds 465311 updates. Unit memory peaks at 264937472 bytes.
+The enabled arm records 5697 positive cues, 325054 unsupported requests/motions and
+295140 pure projection updates. Both arms pass, so this does not establish a cue
+benefit; the source preview remains private. Neither continuation adds a full-start
+online story, and the original failed seed remains failed.
+
+The maintained rate history additionally requires matching collision-enabled
+mode. Source freeze/restore can change velocity while the active-transform mask
+stays unchanged; that jump is not a continuing speed/angular rate. A synthetic
+source-derived regression fails on the parent and passes after the correction,
+agrees with reach pruning, and preserves real acceleration under an unchanged
+mode/mask. All 40 native/DAT CTests pass in 642.89 seconds with two workers,
+including a full Stage 2 solve, fresh execution and natural replay with unchanged
+action SHA. The frozen story/Extra results above predate this correction and do
+not certify its full-story or Extra coverage.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping

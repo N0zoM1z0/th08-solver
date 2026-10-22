@@ -429,7 +429,7 @@ int run(const Options &o) {
                                           : "native-memory-kinematic-v1")
            << "\",\"execution_mode\":"
               "\"forward-measured\",\"risk_parser\":\"line-tsv-v1\","
-              "\"motion_history\":\"same-phase-and-active-transform-mask\",\"future_native_"
+              "\"motion_history\":\"same-phase-mode-and-active-transform-mask\",\"future_native_"
               "updates\":0,"
               "\"rewinds\":0,\"deadline_enforced\":false,\"outcome\":\""
            << outcome << "\",\"failure\":\"" << failure << "\",\"binary_sha256\":\"" << binary_hash

@@ -106,8 +106,25 @@ void transform_motion_history() {
     check(filtered.depth == decision.depth && filtered.action == decision.action,
           "transform-history invalidation differs under reach pruning");
 
+    // A source freeze/restore callback may change velocity without changing the
+    // active transform mask. Its ghost-to-real boundary is also discontinuous.
+    previous.bullets[0].active_transforms = current.bullets[0].active_transforms = 0x400000u;
+    previous.bullets[0].collision_disabled = true;
+    on::Policy restored(config);
+    restored.observe(previous);
+    const auto real = restored.decide(current);
+    check(real.depth == 12 && (real.action & 0xf0),
+          "a collision-mode velocity jump became continuing acceleration");
+    config.reach_filter = false;
+    on::Policy unpruned_restore(config);
+    unpruned_restore.observe(previous);
+    const auto unfiltered = unpruned_restore.decide(current);
+    check(unfiltered.depth == real.depth && unfiltered.action == real.action,
+          "collision-mode history invalidation differs under reach pruning");
+
     // A vector transform that remains active can really accelerate from rest.
     // Keep that measured rate rather than treating every zero-speed jump alike.
+    previous.bullets[0].collision_disabled = false;
     previous.bullets[0].active_transforms = current.bullets[0].active_transforms = 0x10u;
     for (auto *o : {&previous, &current}) {
         o->bullets[0].vector_acceleration_x = 4;
