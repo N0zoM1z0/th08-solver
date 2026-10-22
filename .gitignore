@@ -4,6 +4,9 @@
 # Generated reference TUs stay local; reusable probes live in tools/ and tests/.
 /build*/
 /reports/local/
+# Exact private preparation inputs and their complete local extraction.
+/preparations/10.22-with-claude-online/originals/
+/preparations/10.22-with-claude-online/extracted/
 # New experiment artifacts stay local; previously tracked snapshots remain tracked.
 /reports/native/**/*.json
 /reports/native/**/*.rpy

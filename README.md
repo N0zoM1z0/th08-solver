@@ -135,7 +135,11 @@ Acceleration removes waiting without enlarging gameplay time steps.
 
 Old entry-first roadmaps were consolidated or removed; Git history retains them.
 `preparations/` preserves historical research, not current instructions or verified
-coverage. Public handoff copies redact private links/paths; their
-[publication manifest](preparations/10.21-with-claude-important/PUBLICATION.json)
-records original/public hashes, with exact inputs preserved locally. Game assets,
-generated binaries/source and experiments stay ignored.
+coverage. Public handoff copies redact private links/paths; the
+[offline preparation manifest](preparations/10.21-with-claude-important/PUBLICATION.json)
+and [online preparation manifest](preparations/10.22-with-claude-online/PUBLICATION.json)
+record original/public hashes, with exact inputs preserved locally. The online
+handoff ZIP retains its source patch, research notes and analysis scripts; generated
+models, results, replays and action tapes remain in the complete local extraction.
+Historical analysis scripts are not a maintained runtime dependency. Game assets,
+generated binaries/source and new experiments stay ignored.
