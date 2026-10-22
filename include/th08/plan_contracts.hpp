@@ -125,6 +125,9 @@ struct Options {
     long frame_limit = 120000;
     double seconds = 3600;
     bool shoot = true, story = false;
+    // Disable every planner-generated quiet proposal to match an always-shoot
+    // student's action set. Recorded prefixes and route control remain literal.
+    bool quiet_retries = true;
     FinalRoute final_route = FinalRoute::Natural;
     int until_stage = 8, shot = 0, measure_every = 0;
     int diversity_cell = 0; // Pixels; zero preserves the existing global score beam.
@@ -207,10 +210,15 @@ inline Options parse_options(int argc, const char *const *argv) {
                 field = &o.measure_every;
             else if (key == "--diversity-cell")
                 field = &o.diversity_cell;
-            else if (key == "--shoot" || key == "--story") {
+            else if (key == "--shoot" || key == "--story" || key == "--quiet-retries") {
                 const int flag = integer<int>(value, key);
                 range(flag == 0 || flag == 1, "boolean options require 0 or 1");
-                (key == "--shoot" ? o.shoot : o.story) = flag != 0;
+                if (key == "--shoot")
+                    o.shoot = flag != 0;
+                else if (key == "--story")
+                    o.story = flag != 0;
+                else
+                    o.quiet_retries = flag != 0;
                 continue;
             } else
                 throw std::invalid_argument("unknown option: " + key);

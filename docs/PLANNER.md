@@ -200,6 +200,15 @@ inputs and output-space metadata, then either add a learned low-frequency shooti
 decision or obtain appropriately constrained teacher labels. Never translate quiet
 input into an unrecorded RNG change.
 
+`th08_plan --shoot 1 --quiet-retries 0` constrains every newly generated gameplay
+input to include shooting: it disables the local quiet fallback, checkpoint quiet
+windows and short retry delays. Movement/focus retries, budgets and native
+verification remain active. The default is `--quiet-retries 1`, retaining the
+existing planner. The option is reported and survives sanitized report collection.
+Supplied prefixes and route-choice control are executed literally; a constrained
+continuation cannot retroactively alter a quiet prefix or certify full information
+matching with the student. Teacher lookahead remains privileged offline evidence.
+
 ## Resource ownership and parallelism
 
 Independent executables can run in parallel with separate scratch directories and

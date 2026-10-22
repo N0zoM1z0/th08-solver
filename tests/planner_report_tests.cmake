@@ -6,7 +6,7 @@ set(binary "01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8")
 set(revision "02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415")
 file(WRITE "${WORK}/fidelity.json"
   "{\"outcome\":\"failed\",\"passed\":106,\"selected_fixtures\":108,\"full_suite\":true,\"dat_sha256\":\"${dat}\",\"private_path\":\"/private/sensitive\",\"cases\":[{\"id\":\"lunatic-1-b\",\"outcome\":\"failed\",\"failure\":\"reported_row_count_mismatch\",\"rows\":0,\"sha256\":\"\"}]}")
-set(plan "{\"source_revision\":\"${revision}\",\"outcome\":\"complete\",\"frames\":5,\"deaths\":0,\"spell\":92,\"score\":10,\"rng_seed\":1,\"rng_draws\":2,\"native_updates\":9,\"options\":{\"seed\":0,\"seconds\":180,\"private_path\":\"/private/sensitive\"},\"secret\":\"203.0.113.42\"}")
+set(plan "{\"source_revision\":\"${revision}\",\"outcome\":\"complete\",\"frames\":5,\"deaths\":0,\"spell\":92,\"score\":10,\"rng_seed\":1,\"rng_draws\":2,\"native_updates\":9,\"options\":{\"seed\":0,\"seconds\":180,\"quiet_retries\":0,\"private_path\":\"/private/sensitive\"},\"secret\":\"203.0.113.42\"}")
 set(verify "{\"source_revision\":\"${revision}\",\"verified\":true,\"frames\":5,\"complete_at\":5,\"death_updates\":0,\"score\":10,\"rng_seed\":1,\"rng_draws\":2,\"native_updates\":5,\"options\":{\"seed\":0},\"private_path\":\"/private/sensitive\"}")
 file(WRITE "${WORK}/results/spell92-diversity-v3/case0/plan.json" "${plan}")
 file(WRITE "${WORK}/results/spell92-diversity-v3/case0.exit" "0\n")
@@ -46,6 +46,7 @@ if(NOT ledger MATCHES "\"verified_complete_cases\":1" OR
    NOT ledger MATCHES "\"selected_fixtures\":108" OR
    NOT ledger MATCHES "\"outcome\":\"failed\"" OR
    NOT ledger MATCHES "\"native_updates\":14" OR
+   NOT ledger MATCHES "\"quiet_retries\":0" OR
    NOT ledger MATCHES "\"binary_sha256\":\"${binary}\"")
   message(FATAL_ERROR "Verified/pending counts, costs, binary provenance or fidelity changed")
 endif()

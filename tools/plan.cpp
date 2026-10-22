@@ -377,7 +377,7 @@ std::uint16_t decorate(std::uint16_t move_bits, long frame_index, int shot_off) 
     std::uint16_t a = move_bits;
     // Withholding shots reduces shot-hit effect RNG coupling. Grazing, existing
     // shots and character/focus changes can still make futures path-dependent.
-    if (opt.shoot && shot_off <= 0 && frame_index > quiet_until)
+    if (opt.shoot && (!opt.quiet_retries || (shot_off <= 0 && frame_index > quiet_until)))
         a |= 1;
     if (opt.spell < 0 && (frame_index % 2))
         a |= 4096; // advance real dialogue scripts
@@ -746,11 +746,11 @@ void write_options(std::ostream &out) {
         << ",\"keep\":" << opt.keep << ",\"attempts\":" << opt.attempts
         << ",\"cegar\":" << opt.cegar << ",\"frames\":" << opt.frame_limit
         << ",\"seconds\":" << opt.seconds << ",\"shoot\":" << opt.shoot
-        << ",\"story\":" << opt.story << ",\"until_stage\":" << opt.until_stage
-        << ",\"final_route\":" << int(opt.final_route) << ",\"shot\":" << opt.shot
-        << ",\"measure\":" << opt.measure_every << ",\"diversity_cell\":" << opt.diversity_cell
-        << ",\"prefix\":" << !opt.prefix.empty() << ",\"boss_follow\":" << opt.boss_follow
-        << ",\"verify\":" << !opt.verify.empty() << "}";
+        << ",\"quiet_retries\":" << opt.quiet_retries << ",\"story\":" << opt.story
+        << ",\"until_stage\":" << opt.until_stage << ",\"final_route\":" << int(opt.final_route)
+        << ",\"shot\":" << opt.shot << ",\"measure\":" << opt.measure_every
+        << ",\"diversity_cell\":" << opt.diversity_cell << ",\"prefix\":" << !opt.prefix.empty()
+        << ",\"boss_follow\":" << opt.boss_follow << ",\"verify\":" << !opt.verify.empty() << "}";
 }
 
 void write_accounting(std::ostream &out, const th08::headless::State &st,
@@ -924,7 +924,7 @@ void checkpoint() {
             // Odd retries withhold shots up to and past the remembered failure, so
             // one source of RNG coupling is reduced. Native verification remains
             // mandatory because movement/focus/graze can still change the future.
-            if (attempt % 2 == 1)
+            if (opt.quiet_retries && attempt % 2 == 1)
                 quiet_until = std::max(quiet_until, shared->future_valid
                                                         ? shared->future_base + 2L * opt.rollout
                                                         : frame_now + 4L * opt.rollout);
@@ -980,7 +980,7 @@ int run_worker() {
             write_result("budget", st);
             return kBudget;
         }
-        if (variant && frame_now == last_checkpoint && shot_off == 0)
+        if (opt.quiet_retries && variant && frame_now == last_checkpoint && shot_off == 0)
             shot_off = 3 * variant;
         sp = read_speeds();
         auto plan = expand(nominal, frame_now);
@@ -1139,7 +1139,7 @@ int run_worker() {
             else
                 slots.back() = slot;
         }
-        if (accepted < 0 && quiet_until < frame_now + opt.rollout) {
+        if (opt.quiet_retries && accepted < 0 && quiet_until < frame_now + opt.rollout) {
             // Quiet input reduces one source of RNG coupling. Each candidate still
             // owns a native future and must survive the entire requested window.
             const long saved = quiet_until;

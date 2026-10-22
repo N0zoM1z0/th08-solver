@@ -60,6 +60,11 @@ void cli_contract() {
     rejected({"--seconds", "0"});
     rejected({"--boss-follow", "-0.1"});
     rejected({"--story", "2"});
+    check(options({}).quiet_retries &&
+              !options({"--quiet-retries", "0", "--shoot", "1"}).quiet_retries &&
+              options({"--quiet-retries", "1"}).quiet_retries,
+          "teacher shooting constraints changed the legacy default or lost the opt-in");
+    rejected({"--quiet-retries", "2"});
     rejected({"--story", "1", "--spell", "92", "--stage", "4b"});
     rejected({"--spell", "92"});
     const auto spell = options({"--stage", "4b", "--spell", "92"});

@@ -64,6 +64,17 @@ and counts the extra forecast work. A lethal first latched update still returns
 depth zero. Complete-world outcomes are evaluated separately from this proposal
 contract.
 
+For an always-shoot student's offline teacher queries, add `--shoot 1
+--quiet-retries 0` to `th08_plan` with the original checkpoint, immutable
+`--prefix` and explicit total frame/time budgets. Inspect every generated suffix
+input's shoot bit, the byte-identical prefix, `options.quiet_retries:0` and
+`quiet_windows:0`; a zero quiet-window counter alone does not cover checkpoint
+or short retry delays. The prefix CTest completes a real spell from a supplied
+quiet input, retains that input exactly, checks every continuation input and
+freshly verifies the result. The default planner retains adaptive quiet retries.
+Matching output actions does not remove the offline teacher's privileged future
+rollouts or establish online completion.
+
 `online.json` binds executable, DAT, exact action/prefix bytes and each risk file;
 the local protocol additionally binds the source archive and environment. Decision
 timing includes observation copying, policy and input decoration, excluding native

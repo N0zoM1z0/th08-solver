@@ -203,10 +203,10 @@ Fields scalars(const Fields &input, const std::vector<std::string> &keys) {
 }
 
 const std::vector<std::string> option_keys = {
-    "stage",          "spell",       "difficulty", "seed",        "rollout",    "beam",
-    "commit",         "checkpoint",  "keep",       "attempts",    "cegar",      "frames",
-    "seconds",        "shoot",       "story",      "until_stage", "shot",       "measure",
-    "diversity_cell", "boss_follow", "prefix",     "verify",      "final_route"};
+    "stage",          "spell",       "difficulty", "seed",        "rollout",     "beam",
+    "commit",         "checkpoint",  "keep",       "attempts",    "cegar",       "frames",
+    "seconds",        "shoot",       "story",      "until_stage", "shot",        "measure",
+    "diversity_cell", "boss_follow", "prefix",     "verify",      "final_route", "quiet_retries"};
 
 const std::vector<std::string> cost_keys = {"rollouts",
                                             "searches",
