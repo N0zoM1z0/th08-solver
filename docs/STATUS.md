@@ -401,10 +401,17 @@ Work totals 120767 native updates and 1683.07 summed solver wall seconds, with a
 retains positive pre-birth literal rate cues through geometry-matched active
 laser observations instead of immediately replacing them with the last measured
 rate. Owned-cache checks cover birth timing, missing observations, stages,
-weaker cues and idempotent prefix warming. Its three-seed repeat plus a disabled
-control is pending; it establishes no new clear.
+weaker cues and idempotent prefix warming. Its complete repeat verifies only seed
+57392 at 46513 updates, score 20814017; seeds zero/32124 still die at 40137/40315
+in spell 99. The disabled seed-zero control exactly repeats its parent's action
+hash, score, RNG and death at 40131. This 1/3 candidate remains private and
+unpromoted; it does not recover the preceding frozen profile's 2/3 coverage.
+Including the control, work totals 167096 native updates and 2318.82 summed solver
+wall seconds; unit memory peaks at 199639040 bytes. Fresh execution adds 46513
+updates and natural playback has 46513 rows with zero death/bomb rows.
 
-The shot-1 Lunatic Final A story through natural 4A strictly verifies seed zero.
+The shot-1 Lunatic Final A story through natural 4A strictly verifies two of its
+three diagnosis seeds under one unchanged profile.
 The batch uses a uniform existing H64/spatial profile,
 seed zero and two new diagnosis seeds, starting at power zero in Stage 1 without
 checkpoint concatenation. Its unchanged learned model was trained on shot 0, so
@@ -416,15 +423,29 @@ all five transition events; natural playback has all 231301 expected rows and ze
 death/bomb rows. The policy uses no native lookahead or rewind and no reconstructed
 prefix. Solver wall time is 3624.21 seconds; concurrent remote controller
 mean/p99/max are 15.60/22.44/33.26 ms, with 56530 deadline misses and no enforced
-deadline. This is one native-profile story, not retail or all-seed certification.
-Seed 60950 dies at 166518 in Stage 5 spell 107. Three diagnostic executions
-(499554 additional native updates) reproduce score/RNG and show a long-observed
+deadline. Seed 29768 also strictly completes at 232670 API updates, with 232665
+calculations, five handoffs and score 186628562. Its fresh transition tuples and
+natural stage path agree, with zero death/bomb rows. It costs 3647.43 solver wall
+seconds, with controller mean/p99 15.61/22.70 ms and 57997 deadline misses.
+The complete 2/3 batch costs 630494 native updates and 9843.38 summed solver wall
+seconds; fresh checks add 463976 updates and natural playback adds 463966 rows.
+Unit memory peaks at 268288000 bytes. These are native-profile completions,
+without enforced deadlines, retail equivalence or all-seed certification.
+Seed 60950 dies at 166518 in Stage 5 spell 107. Five diagnostic executions
+(832590 additional native updates) reproduce score/RNG and show a long-observed
 phantom becoming real with a velocity change on the fatal update. The main
 current ECL cursor points to a future literal batch that selects two bullet masks
 and calls the source freeze/restore function; static subroutine inspection costs
 zero native calculations. The current phantom-risk forecast does not model that
-scheduled switch. The third diagnosis case remains in progress; the batch is not
-complete and the retained failed seed is not relabeled as a clear.
+scheduled switch. A private current-main literal-batch census predicts 895
+existing-bullet activations with exact first-update position/velocity agreement;
+the adapter integration also matches the actual collider. Its pure projection
+checks cost 55901 updates at that observation and separately report 103 unsupported
+requests/motions. This supports a conditional source cue, not arbitrary future
+world coverage. A paired disabled/enabled comparison reconstructs the same prefix
+ending two API updates before death, then starts two fresh policy episodes with
+the same H64 profile. That comparison is pending; a successful continuation would
+not be a new full-start online story. The original failed seed remains failed.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
