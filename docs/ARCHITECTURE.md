@@ -143,6 +143,18 @@ branch. `plan_contracts.hpp` rejects incomplete/failed rollouts, while
 `plan_beam.hpp` owns optional spatial proposal retention; its bins are not world
 equivalence classes. See [Planner](PLANNER.md) for verification and backtracking.
 
+`include/th08/online.hpp` defines a separate owned current-memory observation and
+CPU policy. `src/online_native.cpp` copies native views and permitted source fields
+without retaining their pointers or stepping a Session. `src/online.cpp` owns
+per-instance observation history, forecast/search buffers and tie RNG;
+`src/online_model.cpp` parses immutable risk tables before execution. The policy
+library does not link the native runtime. `tools/online.cpp` owns the single live
+Session, checkpoint/prefix reconstruction, route inputs, clocks, action tape and
+report. No forked future or rewind enters this controller. Current-memory forecasts
+are heuristic and actual native execution can reject them by death. See
+[Planner](PLANNER.md#current-memory-online-policy) for the observation, history,
+deadline and evidence contracts.
+
 Keep emission, transform installation, acceleration, displacement, culling and collision
 order explicit. A certified fast-spawn bullet can activate and perform fired motion in
 its final spawning update. Do not advance transform clocks prematurely at creation.

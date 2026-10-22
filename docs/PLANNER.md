@@ -14,7 +14,7 @@ fingerprint corpus before its results are presented as matching that corpus.
 Fingerprints compare the published 25-field projection, not every internal state
 or every possible input. Fresh action replay alone is a determinism check.
 
-Proposal search may merge nearby positions, prune beams, use sampled futures and
+Offline proposal search may merge nearby positions, prune beams, use sampled futures and
 learn scores. These choices can lose a valid route. They cannot establish safety
 or prove impossibility. Every accepted proposal must survive a complete native
 rollout, or reach the actual case terminal, before a bounded prefix is committed.
@@ -88,6 +88,63 @@ This can retain an early exit that center-seeking scores discard; it changes pru
 not collision semantics. Record bin/candidate counts and selection time. A larger
 rollout alone can worsen pruning, so compare complete outcomes and all retry costs.
 
+## Current-memory online policy
+
+[Issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5) records the integration
+order: complete the standalone-stage baseline over different seeds, diagnose Stage
+4B, add student-state teacher corrections, then evaluate continuous routes and actual
+deadline behavior. Every standalone entry must be validated before full-story work.
+The first uniform learned-risk candidate fixes nine entries, shot 0, Lunatic
+(Extra difficulty for Extra), a seed-zero control and two fresh diagnosis seeds
+per entry. Two additional distinct seeds per entry remain held out until the
+candidate passes diagnosis and its identities are frozen. Earlier failed candidates
+and costs remain evidence after tuning. This does not cover other shots/difficulties.
+Current
+process memory is an authorized input. Pixel recognition, menus and a strict
+human-visible information boundary are not prerequisites.
+
+`online::Observation` owns copied current player/movement state, active offscreen
+bullets, collision-disabled flags, transform/acceleration fields, pooled-laser
+timers and measured motion, direct collision calls and lethal body rectangles.
+The native adapter skips the pool sentinel. The policy receives no Session or
+native manager pointer and does not read current RNG/ECL cursors or execute future
+native calculations. A live native session advances once per submitted input and
+stops on death; it never rewinds. The kinematic forecast and risk regions are
+heuristic proposals. The next actual native calculation determines survival;
+online choices lack the offline planner's precommit native verification.
+
+Float32 movement retains the one-update recording latch. The policy searches 18
+movement/focus inputs with half-pixel proposal deduplication, per-instance tie RNG
+and optional reachable-envelope pruning. Deduplication is not equivalent-world
+merging. Observations must cover consecutive API updates, including control-only
+stage transitions. Explicit prefix reconstruction warms bullet velocity, spawn,
+direct-laser and body history without consuming search tie RNG; a continuation is
+a new policy episode, not a bit-identical resumption of an earlier search.
+The finite coordinate profile rejects NaN/infinity or magnitudes beyond 2^20
+pixels instead of silently dropping unindexable hazards.
+
+Optional risk files use complete TSV rows, explicit horizons 4/8/16/32 and the
+prototype's minimum count of 200 for fine/segment entries. Global entries retain
+all sample counts. Malformed/truncated rows and duplicate key/horizon records fail
+setup. This corrects a prototype parser that read across record boundaries and
+silently lost alternate segment/global horizons. Missing model entries remain
+unknown to this heuristic, not certified empty space. Prototype tables are legacy
+training data; new experiments bind each file's SHA and must not call reused
+training seeds unseen. Teacher-conditioned futures, rounded funnel paths and
+retrospectively selected predictors remain diagnostic evidence.
+
+The initial execution mode is `forward-measured`: observation copying, policy and
+route-input decoration are timed through input submission, with mean, p99, p99.9,
+maximum and deadline misses. Native execution excluding measured file I/O, setup,
+prefix cost and whole-loop wall time are separate. It waits for late decisions;
+`deadline_enforced:false` is explicit. A future bounded-work/fallback policy must
+be evaluated under its actual execution behavior before any real-time claim.
+Full configuration and executable/DAT/action/prefix/model hashes accompany the
+result. Source archives, model provenance, process receipts and failed tapes remain
+in ignored local experiments. Success requires fresh complete action execution,
+terminal/RNG/calculation agreement and natural replay with zero death/bomb rows;
+this does not independently certify native physics or retail compatibility.
+
 ## Resource ownership and parallelism
 
 Independent executables can run in parallel with separate scratch directories and
@@ -106,8 +163,12 @@ weights, a hard memory limit and a lower high-water limit, with no additional sw
 check available memory before launch. CPU parallelism does not justify risking OOM
 or changing unrelated workloads. Keep machine addresses, usernames, private paths
 and raw logs out of public artifacts. Record technical profiles and sanitized results.
-The owner's current campaign limit is four simultaneous solver jobs, with 320 tasks,
-four CPU cores and 12 GiB memory for the entire batch. Check process limits as well
+The existing offline campaign retains four simultaneous solver jobs, with 320 tasks,
+four CPU cores and 12 GiB memory for the entire batch. The online baseline uses a
+separate low-priority unit with at most two independent controllers, 96 tasks,
+6 CPU cores, 6 GiB memory high-water and 8 GiB hard limit; compilation uses six jobs.
+The combined solver count stays at most four while the older cohort finishes.
+These are task-specific limits, not changes to shared user limits. Check process limits as well
 as memory before launch: each fork checkpoint holder consumes a process. The
 [resource revision](../reports/native/planner_route_protocol.json) retains the
 initial oversubscribed launch instead of concealing its fork failures.
@@ -200,8 +261,9 @@ the offline teacher's evidence: complete successful tapes and replay hashes,
 configuration, terminal checks, costs and distinctly labeled failed prefixes.
 Future imitation and student-state teacher corrections need predecision observations
 aligned with the native input latch. The teacher may use future rollouts but must
-keep the student's queried prefix immutable. Online policy and RL implementation
-remain deferred.
+keep the student's queried prefix immutable. The current online policy is described
+above. Teacher corrections, learned reactive models and RL remain later work,
+with successful and failed episodes kept distinct.
 
 Measured execution acceleration is tracked in
 [issue #4](https://github.com/N0zoM1z0/th08-solver/issues/4). Its

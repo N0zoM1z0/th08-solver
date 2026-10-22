@@ -1,0 +1,11 @@
+#pragma once
+#include "th08/online.hpp"
+
+namespace th08::headless {
+class Session;
+}
+namespace th08::online {
+// Read the current native world without stepping it. Snapshot storage belongs
+// to the caller; no pointer into a reused Session view survives this call.
+void capture_memory(headless::Session &session, std::uint64_t update, Observation &observation);
+} // namespace th08::online

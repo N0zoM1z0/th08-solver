@@ -1,7 +1,10 @@
 # Current handoff status
 
-Reviewed: 2026-10-22. Work resumed under issue #1: integrate the reviewed fork-based
-planner, reproduce the replay fingerprint gate, and diagnose the Lunatic story blocker.
+Reviewed: 2026-10-22. Current work is
+[issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5): integrate and validate a
+forward-only CPU controller using authorized current process memory, then diagnose
+generic failures and build the offline-teacher/student loop. The earlier issue #1
+work integrated the fork planner and retained its replay fidelity limitations.
 The tracked runtime imports upstream `02ff72f`; results below from
 `861bec9` remain historical native-profile evidence. They do not certify the new build.
 
@@ -21,7 +24,46 @@ Easy/Normal/Hard/Lunatic and a full Extra entry. The
 budgets before outcomes. Final routes use original dialogue inputs with an explicit
 recorded unlock-history checkpoint; Extra uses non-practice initialization. The
 owner stopped the remaining baseline work to start random evaluation immediately.
-Online control remains deferred; enumerating a case does not establish completion.
+The owner has now moved implementation to the online controller; enumerating an
+offline case does not establish completion.
+
+The first maintained `th08_online` separates owned observations, policy, native
+adapter and reporting. It performs no future native updates or rewinds and ends
+on death. The corrected TSV parser preserves all four backoff horizons; prefix
+observations warm motion history without choosing actions. Focused regressions
+cover these contracts, the input latch, policy-instance isolation and reach pruning.
+A complete Lunatic Stage 2 practice run (shot 0, seed 0, H32/beam192, reach filter,
+no learned model) completes in 32993 updates. Fresh action execution agrees on
+terminal, score 11880554, RNG and calculation count; natural replay has 32993 rows
+and zero death/bomb-input rows. On the local AMD EPYC 7B12/GCC 12.2 Release profile,
+controller mean/p99/p99.9/max are 3.24/4.79/5.47/7.51 ms, with zero 16.67-ms misses.
+This concurrent test sample is not an isolated benchmark or a general deadline
+guarantee. The harness waits for decisions (`deadline_enforced:false`). Learned-risk
+Stage 5 also completes and freshly verifies at 44136 updates, score 23100049,
+with matching natural replay rows and zero death/bomb rows. On the remote
+EPYC 9654/GCC 13.3 Release profile, mean/p99/max are 4.61/7.24/8.78 ms, zero misses.
+The no-model Stage 4B control dies at update 30593 in spell 88; fresh execution
+matches score/RNG and identifies a bullet first observed at 30592. At that point
+all 12 sampled held-input variants die because movement is already latched.
+At checkpoint 30591 one sampled variant survives a 32-update post-event window.
+This motivates earlier spawn/positioning knowledge; it is not a full-stage rescue.
+
+Stage 6B's no-model candidate clears at 59927 updates and matches fresh actions,
+but natural replay ends at score 129080308 instead of 95330308. It remains an
+unverified candidate; the score gate is not relaxed. The same sample has 41
+16.67-ms misses and a 19.75-ms maximum. Final-stage practice/replay bonus semantics
+need investigation before certifying it. All 40 native/DAT CTests pass, including
+the new complete-stage and policy contracts; documentation checks also pass.
+
+The latest scope requires all nine standalone entries over different seeds before
+full story. A frozen uniform learned-risk diagnosis batch uses shot 0 and Lunatic
+(Extra difficulty for Extra): seed-zero controls plus two fresh random seeds per
+entry, 27 pairs total. The existing Stage 5 control is reused with its original
+receipts and costs. Eighteen additional distinct holdout seeds, two per entry,
+remain unexecuted until a frozen candidate passes diagnosis. The queue uses four
+controllers at most, with a 96-task/6-core/8-GiB low-priority bound and no extra swap.
+No continuous online NMNB story or retail live controller is established. New tapes, replays,
+models, JSON reports and process receipts stay under ignored local storage.
 
 The route interfaces pass all 38 native/DAT CTests; all 108 replay-corpus outcome,
 row-count and fingerprint tuples match the preceding runtime (106/108 against the
@@ -70,16 +112,17 @@ and 12 held-out cases. Each split covers all 12 shots once; Lunatic/Extra assign
 swap between splits, and Lunatic A/B routes balance over the batch. All 12 diagnosis
 cases pass. The checked phase gate recorded the evaluated executable, runner,
 report and protocol hashes, then released holdouts at 08:59 UTC. The native
-executables and budgets are unchanged between phases. Holdout evaluation is running;
-the gate stops for review on incomplete or invalid results.
+executables and budgets are unchanged between phases. Holdout evaluation completed
+at 10:34 UTC; the checked phase gate reports both phases verified.
 Manifests, protocol, results and failure evidence stay under ignored
 `reports/local/seed-generalization-v2/`. The new `--sample` report mode binds explicit
 seed-case pairs and counts distinct seeds separately, retaining each attempt's costs.
-The collected snapshot verifies all 12 diagnosis pairs and two held-out Extra pairs:
-14 distinct new seeds, all completing in the original c16 episode. Fresh full-action
+The collected final snapshot verifies all 12 diagnosis and all 12 holdout pairs:
+24 distinct new seeds, all completing in the original c16 episode. Fresh full-action
 replay, natural replay and exact stage-path checks cover 2004150 diagnosis calculation
-rows and 172150 holdout rows. The local diagnosis ledger reproduces the frozen
-phase-gate ledger byte-for-byte. The other ten holdout pairs are not yet verified.
+rows and 1968169 holdout rows. The local diagnosis ledger reproduces the frozen
+phase-gate ledger byte-for-byte. All profile, ordered-stage and raw-capture receipt
+audits pass; no retry/continuation or second profile was needed in this batch.
 Pending progress is not a completed route; this finite sample does not prove all seeds.
 The report changes pass all 38 native/DAT CTests and reproduce the historical
 campaign ledger byte-for-byte. [Planner](PLANNER.md) owns the method.
@@ -328,9 +371,10 @@ are optional component evidence, not prerequisites or the next integration roadm
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 29 core CTests without private data, plus two optional pinned-source tests
-(31 total). The current headless/DAT configuration has 35 CTests, including native
+(31 total). The current headless/DAT configuration has 40 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
-continuation test. The complete-scene test covers complete
+continuation test, online policy contracts and a complete online-stage/replay test.
+The complete-scene test covers complete
 duration, original boss transitions, the adapted IDs 32/85/89/93/139/167/183/192/198/201/204, bounded repairs for IDs202/203 and their retained rolling failures, fresh replay, and the Stage 6b
 input-latch counterfactuals.
 Public CI excludes DAT and reconstruction; it cannot certify those profiles. See

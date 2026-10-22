@@ -4,6 +4,14 @@ find_package(OpenSSL REQUIRED COMPONENTS Crypto)
 include(CTest)
 include(cmake/ReplaySuite.cmake)
 include(cmake/PlannerTests.cmake)
+add_library(th08_online_policy src/online.cpp src/online_model.cpp)
+target_compile_features(th08_online_policy PUBLIC cxx_std_17)
+target_include_directories(th08_online_policy PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+if(MSVC)
+  target_compile_options(th08_online_policy PRIVATE /fp:strict)
+else()
+  target_compile_options(th08_online_policy PRIVATE -ffp-contract=off)
+endif()
 add_executable(th08_planner_report tools/planner_report.cpp)
 target_compile_features(th08_planner_report PRIVATE cxx_std_17)
 target_include_directories(th08_planner_report PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -240,6 +248,14 @@ if(BUILD_TESTING)
     if(NOT EXISTS "${TH08_HEADLESS_DAT}")
       message(FATAL_ERROR "TH08_HEADLESS_DAT does not exist")
     endif()
+    add_test(NAME headless_online_real_data COMMAND ${CMAKE_COMMAND}
+      -DEXECUTABLE=$<TARGET_FILE:th08_online>
+      -DVERIFIER=$<TARGET_FILE:th08_plan>
+      -DCHECKER=$<TARGET_FILE:th08_replay_check>
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-regression
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_real_data.cmake)
+    set_tests_properties(headless_online_real_data PROPERTIES TIMEOUT 1100)
     add_test(NAME headless_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_headless>
       -DPROBE_EXECUTABLE=$<TARGET_FILE:th08_headless_probe>

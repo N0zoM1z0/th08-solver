@@ -127,6 +127,15 @@ target_include_directories(th08_plan PRIVATE "${th08_native}/src" "${CMAKE_CURRE
 target_compile_options(th08_plan PRIVATE -O3 -ffp-contract=off -fpermissive -Wno-write-strings
   -Wno-unknown-pragmas "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 
+add_library(th08_online_native src/online_native.cpp)
+target_link_libraries(th08_online_native PUBLIC th08_online_policy th08_native_headless)
+target_compile_options(th08_online_native PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+add_executable(th08_online tools/online.cpp)
+target_link_libraries(th08_online PRIVATE th08_online_native OpenSSL::Crypto)
+target_compile_options(th08_online PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+
 add_executable(th08_replay_target tools/replay_target.cpp)
 target_link_libraries(th08_replay_target PRIVATE th08_native_headless th08_resources)
 target_include_directories(th08_replay_target PRIVATE "${th08_native}/src")
@@ -138,6 +147,10 @@ target_link_libraries(th08_hazard_probe PRIVATE th08_native_headless OpenSSL::Cr
 target_include_directories(th08_hazard_probe PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 target_compile_options(th08_hazard_probe PRIVATE -ffp-contract=off)
 if(BUILD_TESTING)
+  add_executable(online_policy_tests tests/online_policy_tests.cpp)
+  target_link_libraries(online_policy_tests PRIVATE th08_online_policy)
+  add_test(NAME headless_online_policy_contract COMMAND online_policy_tests
+    ${CMAKE_CURRENT_BINARY_DIR}/online-policy-test)
   add_executable(hazard_probe_tests tests/hazard_probe_tests.cpp)
   target_include_directories(hazard_probe_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
   target_compile_features(hazard_probe_tests PRIVATE cxx_std_17)

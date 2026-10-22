@@ -1,6 +1,6 @@
 # th08-solver
 
-Offline C++17 simulation and planning for Touhou 08. The target is continuous
+C++17 simulation, offline planning and current-memory CPU control for Touhou 08. The target is continuous
 No Miss No Bomb runs across all teams/solo shots, standard difficulties and Final
 A/B routes, plus Extra, delivered as input tapes and real `.rpy` files.
 The fork-based native planner completes seed-0 Lunatic Final A under the documented
@@ -25,7 +25,19 @@ configuration, hashes, verification and retained search costs.
 
 ## Current direction
 
-The owner now prioritizes random-seed generalization. The seed-0 coverage run was
+The current implementation phase is the
+[memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5):
+complete every standalone stage over different seeds, diagnose action-dependent
+failures, then close the offline-teacher/student loop before full-story and real-time
+evaluation. Reading current
+process memory is permitted; image recognition is not required. `th08_online` consumes
+owned current observations without future native steps or rewinds. Its first harness
+measures latency and deadline misses but waits for each decision, so completion does
+not establish a 60 FPS controller.
+
+The preceding random-seed evaluation is complete: all 12 diagnosis and 12 held-out
+cases pass fresh native/replay checks under the frozen offline solver. This finite
+24-seed sample is separate from online capability. The seed-0 coverage run was
 stopped after all 36 double-team combinations completed; four active solo attempts
 were interrupted. The [108-case catalog](reports/native/planner_route_matrix.json)
 remains the coverage reference. Its [original protocol](reports/native/planner_route_protocol.json)

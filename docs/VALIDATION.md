@@ -4,11 +4,62 @@ Core CTest cases: 29
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
 add two CTests (31 total). Native builds add process, semantic, hazard-probe and
-unsupported-instruction contracts; private DAT enables the complete-scene and
-planner-prefix CTests.
+unsupported-instruction and online-policy contracts; private DAT enables the
+complete-scene, online-stage/replay and planner-prefix CTests (40 total).
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
+
+## Current-memory CPU controller
+
+Build `th08_online` with the native Release configuration described in the README.
+The owner permits current process memory, including current transform and laser
+lifetime state. This baseline is `native-memory-kinematic-v1`, not an image-only
+agent. It makes no future Session updates and does not rewind the live game.
+
+```sh
+./build-headless/th08_online --dat game_data_donottrack/th08.dat --out reports/local/online-stage2 --stage 2 --difficulty 3 --seed 0 --shot 0 --horizon 32 --beam 192 --reach-filter 1 --frames 60000 --seconds 900 --log-every 1
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/online-stage2-verify --stage 2 --difficulty 3 --seed 0 --shot 0 --verify reports/local/online-stage2/online.actions
+./build-headless/th08_replay_check game_data_donottrack/th08.dat reports/local/online-stage2-verify/th8_verify.rpy reports/local/online-stage2.rows
+ctest --test-dir build-headless -R headless_online --output-on-failure
+```
+
+Stage names use the repository convention `1/2/3/4a/4b/5/6a/6b/extra`, rather than
+the preparation prototype's zero-based numeric CLI. `--story 1 --final-route a|b`
+uses the existing native dialogue/unlock-history checkpoint contract. For a
+continuation, pass `--prefix` with its original checkpoint; frame budgets include
+that prefix, and observer history is warmed without replaying past search ties.
+Only one-update commits and the kinematic forecast are supported. Outcomes have
+distinct exits: complete 0, setup/output error 2, budget 3, death 4, runtime error 5.
+Output directories must be empty; failed tapes remain evidence, not successes.
+
+Optional `--risk-dir` requires all four files: `risk_table_merged.tsv`,
+`risk_backoff_seg.tsv`, `risk_backoff_global.tsv`, `nowarn_merged.tsv`.
+`--risk-phantoms 1` additionally uses collision-disabled bullets as soft risk.
+The maintained line parser fixes the preparation's cross-row backoff parsing, so
+those results need new reproduction rather than assigning old outcome/timing
+claims to the corrected model. New model hashes and training lineage belong in
+the local experiment protocol. No learned model is required by the complete-stage
+CTest. Its unit companion also rejects truncated/duplicate risk rows, checks
+latched movement and prefix velocity history, and compares pruned/unpruned search
+with interleaved independent policy instances.
+
+`online.json` binds executable, DAT, exact action/prefix bytes and each risk file;
+the local protocol additionally binds the source archive and environment. Decision
+timing includes observation copying, policy and input decoration, excluding native
+execution and file serialization. Prefix reconstruction contributes to native and
+whole-loop costs; setup is separate. Buffered `decisions.tsv` records predecision
+state and the submitted input when requested. Reports retain mean, p99, p99.9,
+maximum and misses against the configured deadline. `forward-measured` waits for
+late decisions and explicitly reports `deadline_enforced:false`. A passing stage
+or a low mean is not proof of a real 60 FPS controller.
+
+Fresh verification must match exact terminal, score, RNG, action hash and
+calculation/control events. Natural replay must finish with the same score and
+observed calculation rows, zero death rows and zero bomb-input rows. These checks
+establish native execution agreement, not an independent physics/retail oracle.
+Source, model, process receipts, timings and all failures stay local; publish only
+sanitized conclusions and maintained code/prose.
 
 ## Native fork planner and replay gate
 
