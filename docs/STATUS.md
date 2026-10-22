@@ -63,22 +63,24 @@ combinations while retaining attempt costs. The baseline's four pending records
 carry the owner-interruption meaning described above. Historical ledgers still
 reproduce byte-for-byte without matrix mode.
 
-Random diagnosis is running under the same four-solver/320-task/four-core/12-GiB
+Random evaluation uses the same four-solver/320-task/four-core/12-GiB
 limits and unchanged native executables. The frozen batch draws 24 distinct,
 previously unseen OS-entropy seeds: one complete run each, split into 12 diagnosis
 and 12 held-out cases. Each split covers all 12 shots once; Lunatic/Extra assignments
-swap between splits, and Lunatic A/B routes balance over the batch. Only diagnosis
-is currently dispatched. The checked phase gate releases holdouts only after all
-12 diagnosis cases pass, recording the evaluated executable, runner, report and
-protocol hashes first. It stops for review on incomplete or invalid results.
+swap between splits, and Lunatic A/B routes balance over the batch. All 12 diagnosis
+cases pass. The checked phase gate recorded the evaluated executable, runner,
+report and protocol hashes, then released holdouts at 08:59 UTC. The native
+executables and budgets are unchanged between phases. Holdout evaluation is running;
+the gate stops for review on incomplete or invalid results.
 Manifests, protocol, results and failure evidence stay under ignored
 `reports/local/seed-generalization-v2/`. The new `--sample` report mode binds explicit
 seed-case pairs and counts distinct seeds separately, retaining each attempt's costs.
-The 08:10 UTC local snapshot verifies five new-seed cases: Extra with Marisa/Alice,
-Youmu/Yuyuko and solo Yukari, plus Lunatic Final A with Reimu/Yukari and Final B
-with Sakuya/Remilia. All complete in the original c16 episode, with fresh full-action
-replay, natural replay and exact stage-path checks over 739996 calculation rows. The other seven diagnosis
-pairs are not yet verified. Pending progress is not a completed route.
+The collected snapshot verifies all 12 diagnosis pairs and two held-out Extra pairs:
+14 distinct new seeds, all completing in the original c16 episode. Fresh full-action
+replay, natural replay and exact stage-path checks cover 2004150 diagnosis calculation
+rows and 172150 holdout rows. The local diagnosis ledger reproduces the frozen
+phase-gate ledger byte-for-byte. The other ten holdout pairs are not yet verified.
+Pending progress is not a completed route; this finite sample does not prove all seeds.
 The report changes pass all 38 native/DAT CTests and reproduce the historical
 campaign ledger byte-for-byte. [Planner](PLANNER.md) owns the method.
 
