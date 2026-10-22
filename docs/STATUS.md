@@ -252,10 +252,28 @@ spell 204. Total work is 462709 native updates, including 403070 prefix updates,
 and 259.37 summed wall seconds, plus fresh verification/replay. This is one
 verified prefix continuation. The maintained `--relative-turns 1` model now adds
 owned-state validation and supported/unsupported/projected-work counters; it
-defaults off. Its full-stage three-seed repeat has one strict completion so far:
-seed 9696 at 90718, while seed zero still dies at 62697 in spell 201. The third
-case is pending, not a completion. All 40 native/DAT CTests pass in 617.70 seconds
-with two test workers; the default Stage 2 action hash remains unchanged.
+defaults off. Its full-stage three-seed repeat finishes 1/3: seed 9696 strictly
+verifies at 90718, score 121185863, with matching natural rows and zero death/bomb
+rows. Seed zero still dies at 62697 in spell 201 and seed 49063 at 65014 in 202.
+Work totals 218429 native updates and 934.74 summed solver wall seconds, plus
+verification/replay; unit memory peaks at 579276800 bytes including compilation.
+On the concurrent remote Release sample, the successful controller's mean/p99/max
+are 4.19/7.22/9.31 ms with zero deadline misses; no deadline is enforced.
+All 40 native/DAT CTests pass in 617.70 seconds with two test workers; the default
+Stage 2 action hash remains unchanged.
+
+A private settled-position preview matches 348 first-callback geometry predictions
+over three existing 4B tapes (120000 reconstruction updates, maximum origin error
+0.00003052 pixels). Its H64 T-512 off/on pair still dies at 40328/40331, costing
+80659 native updates including 79628 prefix updates and 15.25 summed wall seconds.
+The separately frozen H96 pair strictly verifies both variants at 46563/46806:
+93369 native updates including 79628 prefix updates and 231.94 summed solver wall
+seconds, plus 4.73/4.39 seconds for fresh verification/natural replay. Because the
+larger horizon also succeeds without this preview, the extra pose feature remains
+unpromoted. A full-stage H96 repeat now uses the exact preceding H64 executable,
+model, other parameters and total budgets for all three diagnosis seeds. It began
+after the Extra batch and permits at most three controllers within the existing
+resource limits. Unfinished runs are not counted as successes.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
