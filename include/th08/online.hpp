@@ -54,6 +54,15 @@ struct LaserState {
     float origin_delta_x = 0, origin_delta_y = 0, angle_delta = 0;
     bool motion_observed = false;
 };
+struct Actor {
+    int slot = -1;
+    float origin_x = 0, origin_y = 0;
+    float delta_x = 0, delta_y = 0;
+};
+struct QueuedShot {
+    unsigned update = 0, linear_updates = 0;
+    float x = 0, y = 0, vx = 0, vy = 0, width = 0, height = 0;
+};
 
 // Owned current-memory snapshot. The native adapter may reuse its vector capacity
 // after decide() returns. No simulator, manager pointer or future rollout enters
@@ -71,13 +80,21 @@ struct Observation {
     std::vector<LaserState> lasers;
     std::vector<LaserHitbox> laser_hitboxes;
     std::vector<Box> lethal_regions;
+    std::vector<Actor> actors;
+    // Positive prefixes from the existing narrow current-cursor adapter. This
+    // is partial coverage: zero records never proves that no shot will spawn.
+    std::vector<QueuedShot> queued_shots;
+    std::uint32_t unsupported_queued_shots = 0;
 };
 struct Configuration {
     int horizon = 32, beam = 192;
+    int diversity_cell = 0;
     float grow = 0.02f, boss_follow = 0.25f;
     float risk_weight = 20, nowarn_weight = 30, focus_bias = 0;
+    float spawn_guard = 0; // soft risk radius in pixels around current actor shot origins
     bool risk_hard = false, reach_filter = false, risk_stop_age = false;
     bool risk_phantoms = false;
+    bool queued_shots = false;
 };
 struct RiskTables {
     std::map<std::uint64_t, std::array<float, 4>> fine, segment, global;
@@ -92,9 +109,14 @@ inline std::uint64_t risk_key(long segment, long sprite, long size10, long speed
 // Parse complete TSV rows before planning. Truncated/malformed rows fail; they
 // must never consume columns from the following record or silently end a model.
 RiskTables load_risk_tables(const std::string &directory);
+struct SearchStatistics {
+    std::uint64_t selections = 0, candidates = 0, bins = 0, retained_bins = 0;
+    double selection_ms = 0;
+};
 struct Decision {
     std::uint16_t action = 1;
     int depth = 0;
+    SearchStatistics search;
 };
 class Policy {
   public:

@@ -97,6 +97,8 @@ Options parse(int argc, char **argv) {
             o.policy.horizon = int(integer(value));
         else if (key == "--beam")
             o.policy.beam = int(integer(value));
+        else if (key == "--diversity-cell")
+            o.policy.diversity_cell = integer(value);
         else if (key == "--grow")
             o.policy.grow = float(number(value));
         else if (key == "--boss-follow")
@@ -107,6 +109,8 @@ Options parse(int argc, char **argv) {
             o.policy.nowarn_weight = float(number(value));
         else if (key == "--focus-bias")
             o.policy.focus_bias = float(number(value));
+        else if (key == "--spawn-guard")
+            o.policy.spawn_guard = float(number(value));
         else if (key == "--risk-hard")
             o.policy.risk_hard = boolean();
         else if (key == "--reach-filter")
@@ -115,6 +119,8 @@ Options parse(int argc, char **argv) {
             o.policy.risk_stop_age = boolean();
         else if (key == "--risk-phantoms")
             o.policy.risk_phantoms = boolean();
+        else if (key == "--queued-shots")
+            o.policy.queued_shots = boolean();
         else if (key == "--log-every")
             o.log_every = int(integer(value));
         else if (key == "--commit")
@@ -227,6 +233,8 @@ int run(const Options &o) {
     std::vector<Transition> transitions;
     on::Observation observation;
     std::uint64_t attempts = 0, controls = 0, native_ns = 0, deadline_misses = 0, full_depth = 0;
+    on::SearchStatistics search_stats;
+    std::uint64_t queued_records = 0, unsupported_queued = 0;
     int failed_input = -1;
     bool started_spell = false;
     std::string outcome = "budget", failure;
@@ -280,6 +288,7 @@ int run(const Options &o) {
     try {
         for (std::size_t i = 0; i < prefix.size(); ++i) {
             step(prefix[i]);
+            // Warming needs motion history only; do not compute unused forecasts.
             on::capture_memory(session, actions.size(), observation);
             policy.observe(observation);
             if (terminal()) {
@@ -290,8 +299,16 @@ int run(const Options &o) {
         while (outcome != "complete" && actions.size() < o.frames &&
                std::chrono::duration<double>(Clock::now() - started).count() < o.seconds) {
             const auto begin = Clock::now();
-            on::capture_memory(session, actions.size(), observation);
+            on::capture_memory(session, actions.size(), observation, o.policy.spawn_guard > 0,
+                               o.policy.queued_shots ? unsigned(o.policy.horizon) : 0);
+            queued_records += observation.queued_shots.size();
+            unsupported_queued += observation.unsupported_queued_shots;
             const auto decision = policy.decide(observation);
+            search_stats.selections += decision.search.selections;
+            search_stats.candidates += decision.search.candidates;
+            search_stats.bins += decision.search.bins;
+            search_stats.retained_bins += decision.search.retained_bins;
+            search_stats.selection_ms += decision.search.selection_ms;
             auto input = decision.action;
             if (o.spell < 0 && ((actions.size() + 1) % 2))
                 input |= 4096;
@@ -346,8 +363,11 @@ int run(const Options &o) {
     };
     std::ofstream report(o.out / "online.json");
     report.exceptions(std::ios::badbit | std::ios::failbit);
-    report << std::setprecision(17)
-           << "{\"schema_version\":1,\"profile\":\"native-memory-kinematic-v1\",\"execution_mode\":"
+    report << std::setprecision(17) << "{\"schema_version\":1,\"profile\":\""
+           << (o.policy.queued_shots      ? "native-memory-kinematic-current-program-v1"
+               : o.policy.spawn_guard > 0 ? "native-memory-kinematic-actor-risk-v1"
+                                          : "native-memory-kinematic-v1")
+           << "\",\"execution_mode\":"
               "\"forward-measured\",\"risk_parser\":\"line-tsv-v1\",\"future_native_updates\":0,"
               "\"rewinds\":0,\"deadline_enforced\":false,\"outcome\":\""
            << outcome << "\",\"failure\":\"" << failure << "\",\"binary_sha256\":\"" << binary_hash
@@ -359,6 +379,7 @@ int run(const Options &o) {
            << ",\"final_route\":" << int(o.route)
            << ",\"unlock_final_routes\":" << config.unlock_final_routes
            << ",\"horizon\":" << o.policy.horizon << ",\"beam\":" << o.policy.beam
+           << ",\"diversity_cell\":" << o.policy.diversity_cell
            << ",\"commit\":1,\"grow\":" << o.policy.grow
            << ",\"boss_follow\":" << o.policy.boss_follow
            << ",\"reach_filter\":" << o.policy.reach_filter << ",\"risk\":" << !o.risk.empty()
@@ -367,7 +388,12 @@ int run(const Options &o) {
            << ",\"risk_stop_age\":" << o.policy.risk_stop_age
            << ",\"risk_weight\":" << o.policy.risk_weight
            << ",\"nowarn_weight\":" << o.policy.nowarn_weight
-           << ",\"focus_bias\":" << o.policy.focus_bias << ",\"frame_budget\":" << o.frames
+           << ",\"focus_bias\":" << o.policy.focus_bias
+           << ",\"spawn_guard\":" << o.policy.spawn_guard << ",\"frame_budget\":" << o.frames
+           << ",\"queued_shots\":" << o.policy.queued_shots
+           << ",\"queued_shot_records\":" << queued_records
+           << ",\"unsupported_queued_shots\":" << unsupported_queued
+           << ",\"queued_forecast_coverage\":\"partial-current-main-cursors\""
            << ",\"seconds_budget\":" << o.seconds << ",\"frames\":" << actions.size()
            << ",\"native_update_attempts\":" << attempts << ",\"native_updates\":" << actions.size()
            << ",\"calculation_updates\":" << hl::replay_calculation_updates() - initial_calculations
@@ -382,6 +408,11 @@ int run(const Options &o) {
            << ",\"max_controller_ms\":" << quantile(1) << ",\"deadline_ms\":" << o.deadline_ms
            << ",\"deadline_misses\":" << deadline_misses
            << ",\"full_depth_decisions\":" << full_depth
+           << ",\"diversity_selections\":" << search_stats.selections
+           << ",\"diversity_candidates\":" << search_stats.candidates
+           << ",\"diversity_bins\":" << search_stats.bins
+           << ",\"diversity_retained_bins\":" << search_stats.retained_bins
+           << ",\"diversity_selection_ms\":" << search_stats.selection_ms
            << ",\"native_seconds_excluding_file_io\":" << double(native_ns) / 1e9
            << ",\"setup_seconds\":" << setup_seconds << ",\"wall_seconds\":" << wall_seconds
            << ",\"stage_transitions\":[";

@@ -51,19 +51,53 @@ This motivates earlier spawn/positioning knowledge; it is not a full-stage rescu
 Stage 6B's no-model candidate clears at 59927 updates and matches fresh actions,
 but natural replay ends at score 129080308 instead of 95330308. It remains an
 unverified candidate; the score gate is not relaxed. The same sample has 41
-16.67-ms misses and a 19.75-ms maximum. Final-stage practice/replay bonus semantics
-need investigation before certifying it. All 40 native/DAT CTests pass, including
-the new complete-stage and policy contracts; documentation checks also pass.
+16.67-ms misses and a 19.75-ms maximum. Static retail inspection and a separately
+checked supplied Stage 6A tape reproduce the final-practice clear-bonus difference;
+clear-tail input also diverges. [Validation](VALIDATION.md) owns that evidence and
+its limits. These candidates remain validation failures. All 40 native/DAT CTests
+pass, including complete-stage and policy contracts; documentation checks also pass.
 
 The latest scope requires all nine standalone entries over different seeds before
 full story. A frozen uniform learned-risk diagnosis batch uses shot 0 and Lunatic
 (Extra difficulty for Extra): seed-zero controls plus two fresh random seeds per
 entry, 27 pairs total. The existing Stage 5 control is reused with its original
-receipts and costs. Eighteen additional distinct holdout seeds, two per entry,
-remain unexecuted until a frozen candidate passes diagnosis. The queue uses four
-controllers at most, with a 96-task/6-core/8-GiB low-priority bound and no extra swap.
-No continuous online NMNB story or retail live controller is established. New tapes, replays,
-models, JSON reports and process receipts stay under ignored local storage.
+receipts and costs. The batch is complete: 14 strict verified completions, seven
+deaths and six replay-validation failures. All 20 native completions agree with
+fresh action execution. The same candidate and 100000-update/1800-second budgets
+apply to every pair:
+
+| Standalone entry | Strict verified / attempted | Remaining failure |
+|---|---|---|
+| 1, 2, 3, 5 | 3/3 each | None in this diagnosis sample |
+| 4A | 2/3 | Death in spell 76 |
+| 4B | 0/3 | Death in spell 88 |
+| 6A, 6B | 0/3 each | Native complete; natural replay score equality fails |
+| Extra | 0/3 | Death in spell 199 |
+
+This is 19 distinct diagnosis seeds (seed zero is shared across entries), not 27
+unseen seeds. The candidate consumes 1139521 native updates and 5048.74 summed
+solver wall seconds, counting the reused control once; fresh verification and
+replay work are additional retained costs. It has 103 measured deadline misses.
+No strict real-time deadline is enforced.
+
+A separate optional 16-pixel actor-origin soft-risk ablation repeats all nine
+4A/4B/Extra diagnosis pairs under the same H32/beam192/model/budgets. Extra advances
+from spell 199 to 201 on all three seeds but still dies. Stage 4A stays 2/3, fixing
+seed zero while regressing another seed; Stage 4B stays 0/3. Fresh collision traces
+show the learned-risk Stage 4B seed-zero death is a known pooled-laser trap with
+decreasing search depth, unlike the no-model new-bullet death above. Two bounded
+teacher rescues from T-2/T-8 both exhaust, costing 63153 native updates including
+prefix reconstruction; these failures are not impossibility proofs.
+
+A predeclared H64/spatial-retention comparison and a partial current-program
+shot-prefix comparison continue on diagnosis cases; no winning seeds are spliced
+into a universal profile. Eighteen additional distinct holdout seeds, two per
+entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
+queues reserve slots to keep at most four controllers and 320 tasks overall;
+each low-priority unit has 96 tasks, six CPU cores, 6-GiB high/8-GiB hard memory
+limits and no extra swap. No continuous online NMNB story or retail live controller
+is established. New tapes, replays, models, JSON reports and process receipts stay
+under ignored local storage.
 
 The route interfaces pass all 38 native/DAT CTests; all 108 replay-corpus outcome,
 row-count and fingerprint tuples match the preceding runtime (106/108 against the

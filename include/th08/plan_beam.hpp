@@ -54,13 +54,14 @@ inline int bin_coordinate(float coordinate, int cell_size) {
 // the remaining beam. More bins than slots keeps the best ranked bin winners.
 // Equal scores retain their source order, and hash iteration never determines
 // a selection. Coordinates, actions and exact parent indices are copied intact.
-inline BeamSelection retain_spatial_beam(std::vector<BeamNode> &nodes, std::size_t width,
+template <class Node>
+inline BeamSelection retain_spatial_beam(std::vector<Node> &nodes, std::size_t width,
                                          int cell_size) {
     if (width == 0 || cell_size <= 0)
         throw std::invalid_argument("spatial beam requires positive width and cell size");
     BeamSelection stats{nodes.size(), 0, 0};
     std::stable_sort(nodes.begin(), nodes.end(),
-                     [](const BeamNode &a, const BeamNode &b) { return a.score < b.score; });
+                     [](const Node &a, const Node &b) { return a.score < b.score; });
     const auto limit = std::min(width, nodes.size());
     std::vector<unsigned char> selected(nodes.size(), 0);
     std::unordered_set<detail::SpatialBin, detail::SpatialHash> bins;

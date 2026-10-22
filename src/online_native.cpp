@@ -1,12 +1,14 @@
 #include "th08/online_native.hpp"
 #include "BulletManager.hpp"
+#include "EnemyManager.hpp"
 #include "GameManager.hpp"
 #include "Player.hpp"
 #include "Supervisor.hpp"
 #include "modern/headless/session.hpp"
 
 namespace th08::online {
-void capture_memory(headless::Session &session, std::uint64_t update, Observation &o) {
+void capture_memory(headless::Session &session, std::uint64_t update, Observation &o,
+                    bool include_actors, unsigned queued_horizon) {
     const auto state = session.state();
     o.update = update;
     o.stage = state.stage;
@@ -72,5 +74,30 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
     o.lethal_regions.clear();
     for (const auto &r : session.lethal_regions())
         o.lethal_regions.push_back({r.bounds.left, r.bounds.top, r.bounds.right, r.bounds.bottom});
+    o.actors.clear();
+    if (include_actors) {
+        int slot = 0;
+        for (const auto &enemy : g_EnemyManager.enemies) {
+            if ((enemy.flags1 & ENEMY_FLAG_ACTIVE) && enemy.life > 0) {
+                // DispatchShotInstruction uses the cached world position plus
+                // shootOffset. Motion is observed, not a certified future origin.
+                o.actors.push_back({slot, enemy.worldPosition.x + enemy.shootOffset.x,
+                                    enemy.worldPosition.y + enemy.shootOffset.y,
+                                    enemy.lastFrameDisplacement.x, enemy.lastFrameDisplacement.y});
+            }
+            ++slot;
+        }
+    }
+    o.queued_shots.clear();
+    o.unsupported_queued_shots = 0;
+    if (queued_horizon)
+        for (const auto &shot : session.upcoming_bullet_spawns(queued_horizon)) {
+            if (!shot.supported) {
+                ++o.unsupported_queued_shots;
+            } else if (!shot.suppressed) {
+                o.queued_shots.push_back({shot.update, shot.linear_updates, shot.x, shot.y, shot.vx,
+                                          shot.vy, shot.full_width, shot.full_height});
+            }
+        }
 }
 } // namespace th08::online

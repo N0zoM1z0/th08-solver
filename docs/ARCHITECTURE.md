@@ -151,7 +151,11 @@ per-instance observation history, forecast/search buffers and tie RNG;
 library does not link the native runtime. `tools/online.cpp` owns the single live
 Session, checkpoint/prefix reconstruction, route inputs, clocks, action tape and
 report. No forked future or rewind enters this controller. Current-memory forecasts
-are heuristic and actual native execution can reject them by death. See
+are heuristic and actual native execution can reject them by death. Optional actor
+origins and bounded current-program shot prefixes are copied by the adapter; their
+native storage never enters the policy. Unknown preview coverage is explicit.
+Online and offline searches share the typed spatial/focus proposal-retention helper;
+each search owns its nodes and records selection costs. See
 [Planner](PLANNER.md#current-memory-online-policy) for the observation, history,
 deadline and evidence contracts.
 

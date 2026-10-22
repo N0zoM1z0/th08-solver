@@ -107,8 +107,8 @@ human-visible information boundary are not prerequisites.
 bullets, collision-disabled flags, transform/acceleration fields, pooled-laser
 timers and measured motion, direct collision calls and lethal body rectangles.
 The native adapter skips the pool sentinel. The policy receives no Session or
-native manager pointer and does not read current RNG/ECL cursors or execute future
-native calculations. A live native session advances once per submitted input and
+native manager pointer and does not execute future native calculations or sample
+gameplay RNG. A live native session advances once per submitted input and
 stops on death; it never rewinds. The kinematic forecast and risk regions are
 heuristic proposals. The next actual native calculation determines survival;
 online choices lack the offline planner's precommit native verification.
@@ -122,6 +122,24 @@ direct-laser and body history without consuming search tie RNG; a continuation i
 a new policy episode, not a bit-identical resumption of an earlier search.
 The finite coordinate profile rejects NaN/infinity or magnitudes beyond 2^20
 pixels instead of silently dropping unindexable hazards.
+
+Three optional mechanisms have explicit, default-off configuration. `--spawn-guard
+N` adds soft risk around current actor shot origins, extrapolated by observed
+displacement. It does not predict an emission schedule. `--diversity-cell N` uses
+the same stable spatial/focus proposal retention as the offline planner and
+records candidate/bin counts and selection time. Neither option changes native
+collision semantics or guarantees improvement.
+
+`--queued-shots 1` asks the existing native observation adapter for bounded linear
+shot prefixes decoded from current main ECL cursors. The adapter copies geometry
+into owned values; the policy never follows an ECL pointer. Supported prefixes
+become proposal constraints; a constant-velocity soft tail remains after their
+bounded duration. Coverage is partial: child contexts, dynamic operands, aimed
+patterns and other unsupported emissions may be absent. Empty output does not
+prove no future births. Reports name this current-program profile, count emitted
+and unsupported preview records, and retain `future_native_updates:0`. Actual
+unsupported gameplay execution still stops the case. This option adds no future
+native rollout or branch-independent safety certificate.
 
 Optional risk files use complete TSV rows, explicit horizons 4/8/16/32 and the
 prototype's minimum count of 200 for fine/segment entries. Global entries retain
@@ -165,9 +183,11 @@ or changing unrelated workloads. Keep machine addresses, usernames, private path
 and raw logs out of public artifacts. Record technical profiles and sanitized results.
 The existing offline campaign retains four simultaneous solver jobs, with 320 tasks,
 four CPU cores and 12 GiB memory for the entire batch. The online baseline uses a
-separate low-priority unit with at most two independent controllers, 96 tasks,
+separate low-priority units with at most four independent controllers in total,
+96 tasks per unit,
 6 CPU cores, 6 GiB memory high-water and 8 GiB hard limit; compilation uses six jobs.
-The combined solver count stays at most four while the older cohort finishes.
+When ablations overlap, reduce the older queue and reserve a solver slot before
+starting another. The combined task limits remain at most 320; holdout work is gated.
 These are task-specific limits, not changes to shared user limits. Check process limits as well
 as memory before launch: each fork checkpoint holder consumes a process. The
 [resource revision](../reports/native/planner_route_protocol.json) retains the

@@ -44,6 +44,15 @@ CTest. Its unit companion also rejects truncated/duplicate risk rows, checks
 latched movement and prefix velocity history, and compares pruned/unpruned search
 with interleaved independent policy instances.
 
+Optional `--spawn-guard 16` adds actor-origin soft risk, `--diversity-cell 16`
+retains spatial/focus beam alternatives, and `--queued-shots 1` uses positive
+bounded shot prefixes from current main program cursors. All default to zero/off;
+record each setting and compare complete outcomes rather than combining the best
+seed from different profiles. Queued coverage is partial and counts unsupported
+preview records; zero records is not an empty-future certificate. The policy
+contract also checks early avoidance of a queued birth, the unavoidable latched
+update, soft actor risk without a learned table and deterministic spatial retention.
+
 `online.json` binds executable, DAT, exact action/prefix bytes and each risk file;
 the local protocol additionally binds the source archive and environment. Decision
 timing includes observation copying, policy and input decoration, excluding native
@@ -60,6 +69,21 @@ observed calculation rows, zero death rows and zero bomb-input rows. These check
 establish native execution agreement, not an independent physics/retail oracle.
 Source, model, process receipts, timings and all failures stay local; publish only
 sanitized conclusions and maintained code/prose.
+
+Final-stage practice recording and natural playback currently differ at the
+clear-bonus branch. Native practice sets `isPracticeMode`; playback clears it and
+uses a separate replay-practice predicate. Static inspection of the unchanged
+retail 1.00d executable (SHA256
+`330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`)
+agrees with the native GUI branch: final-stage non-practice clear adds
+`2500000*lives + 500000*bombs` before difficulty scaling. A separately checked
+supplied Stage 6A tape predicts and reproduces the same 33750000-point Lunatic
+offset seen in the Stage 6B control; it starts at the clear-bonus update. Position
+also diverges later in the clear tail, where playback freezes input while live
+control continues. This explains the observed mode difference without changing
+the score gate, and does not certify a complete retail replay or all 25 fields.
+Keep the failed equality results. Any non-practice final-stage checkpoint must be
+named and evaluated separately rather than relabelling a failed practice result.
 
 ## Native fork planner and replay gate
 

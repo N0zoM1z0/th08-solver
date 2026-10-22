@@ -2,7 +2,9 @@
 // current-memory fields are copied by the adapter; this policy owns only its
 // observation history, immutable risk model and heuristic proposal search.
 #include "th08/online.hpp"
+#include "th08/plan_beam.hpp"
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <limits>
 #include <stdexcept>
@@ -204,7 +206,9 @@ struct Policy::Impl {
             !std::isfinite(opt.grow) || opt.grow < 0 || !std::isfinite(opt.boss_follow) ||
             !std::isfinite(opt.risk_weight) || opt.risk_weight < 0 ||
             !std::isfinite(opt.nowarn_weight) || opt.nowarn_weight < 0 ||
-            !std::isfinite(opt.focus_bias))
+            !std::isfinite(opt.focus_bias) || !std::isfinite(opt.spawn_guard) ||
+            opt.spawn_guard < 0 || opt.spawn_guard > 128 || opt.diversity_cell < 0 ||
+            opt.diversity_cell > 128)
             throw std::runtime_error("invalid_online_configuration");
         frames.resize(opt.horizon + 1);
     }
@@ -282,6 +286,21 @@ struct Policy::Impl {
                 finite(v);
             if (b.x0 > b.x1 || b.y0 > b.y1)
                 throw std::runtime_error("unsupported_online_observation");
+        }
+        std::array<bool, 480> actors{};
+        for (const auto &actor : o.actors) {
+            if (actor.slot < 0 || actor.slot >= int(actors.size()) || actors[actor.slot])
+                throw std::runtime_error("unsupported_online_observation");
+            actors[actor.slot] = true;
+            for (float v : {actor.origin_x, actor.origin_y, actor.delta_x, actor.delta_y})
+                finite(v);
+        }
+        for (const auto &shot : o.queued_shots) {
+            if (shot.update == 0 || shot.update > unsigned(opt.horizon) ||
+                shot.linear_updates == 0 || shot.width < 0 || shot.height < 0)
+                throw std::runtime_error("unsupported_online_observation");
+            for (float v : {shot.x, shot.y, shot.vx, shot.vy, shot.width, shot.height})
+                finite(v);
         }
     }
 
@@ -587,6 +606,34 @@ struct Policy::Impl {
                     {r.x0 + dx * j - g, r.y0 + dy * j - g, r.x1 + dx * j + g, r.y1 + dy * j + g});
             }
         }
+        // Unobserved births can be lethal before a newly sampled input moves the
+        // player. Use current actor origins as an optional soft positioning cost;
+        // this neither predicts a shot schedule nor certifies a safe future.
+        if (opt.spawn_guard > 0)
+            for (const auto &actor : observation.actors)
+                for (int j = 1; j <= horizon; ++j) {
+                    const float x = actor.origin_x + actor.delta_x * j;
+                    const float y = actor.origin_y + actor.delta_y * j;
+                    const float radius = opt.spawn_guard + opt.grow * j;
+                    frames[j].risk.push_back({x - radius, y - radius, x + radius, y + radius});
+                }
+        if (opt.queued_shots)
+            for (const auto &shot : observation.queued_shots) {
+                float x = shot.x, y = shot.y;
+                for (unsigned j = shot.update; j <= unsigned(horizon); ++j) {
+                    const float grow = opt.grow * j;
+                    const Box box{x - shot.width / 2 - grow, y - shot.height / 2 - grow,
+                                  x + shot.width / 2 + grow, y + shot.height / 2 + grow};
+                    if (j - shot.update < shot.linear_updates)
+                        frames[j].b.push_back(box);
+                    else
+                        // Past the bounded linear prefix, keep a soft constant-
+                        // velocity hypothesis rather than treating the tail as empty.
+                        frames[j].risk.push_back(box);
+                    x += shot.vx;
+                    y += shot.vy;
+                }
+            }
     }
 
     // Exact pruning: a box farther (Chebyshev) than the player's maximum displacement
@@ -634,6 +681,7 @@ struct Policy::Impl {
     };
     const std::uint16_t kDirs[9] = {0, 16, 32, 64, 128, 16 | 64, 16 | 128, 32 | 64, 32 | 128};
     std::uint64_t tie = 88172645463325252ULL;
+    SearchStatistics search_stats;
     inline std::uint64_t xrand() {
         tie ^= tie << 13, tie ^= tie >> 7, tie ^= tie << 17;
         return tie;
@@ -700,7 +748,8 @@ struct Policy::Impl {
                             continue;
                         Node n{x, y, pi, a, p.score};
                         const float dx = (x - pref_x) / 96.f, dy = (y - pref_y) / 96.f;
-                        if (risk.loaded && probe_risk(frames[j + 1], sp.half, x, y))
+                        if ((risk.loaded || opt.spawn_guard > 0 || opt.queued_shots) &&
+                            probe_risk(frames[j + 1], sp.half, x, y))
                             n.score += opt.risk_weight * (j < 16 ? 1.f : 0.5f);
                         if (nw) {
                             // expected no-warning spawns in the 3x3 cells around the node
@@ -721,9 +770,23 @@ struct Policy::Impl {
                     }
             }
             if (int(next.size()) > opt.beam) {
-                std::nth_element(next.begin(), next.begin() + opt.beam, next.end(),
-                                 [](const Node &a, const Node &b) { return a.score < b.score; });
-                next.resize(opt.beam);
+                if (opt.diversity_cell > 0) {
+                    const auto begin = std::chrono::steady_clock::now();
+                    const auto stats =
+                        plan::retain_spatial_beam(next, opt.beam, opt.diversity_cell);
+                    search_stats.selection_ms += std::chrono::duration<double, std::milli>(
+                                                     std::chrono::steady_clock::now() - begin)
+                                                     .count();
+                    ++search_stats.selections;
+                    search_stats.candidates += stats.candidates;
+                    search_stats.bins += stats.bins;
+                    search_stats.retained_bins += stats.retained_bins;
+                } else {
+                    std::nth_element(
+                        next.begin(), next.begin() + opt.beam, next.end(),
+                        [](const Node &a, const Node &b) { return a.score < b.score; });
+                    next.resize(opt.beam);
+                }
             }
             if (!next.empty())
                 deepest = j + 1;
@@ -752,6 +815,7 @@ struct Policy::Impl {
             throw std::runtime_error("duplicate_online_decision");
         observe(observation);
         last_decided = observation.update;
+        search_stats = {};
         current_movement = observation.movement;
         current_segment = observation.spell_active ? observation.spell : 300 + observation.stage;
         kinematic_forecast(observation, opt.horizon, frames);
@@ -769,7 +833,7 @@ struct Policy::Impl {
         pref_x = std::clamp(pref_x, 48.f, 336.f);
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
                              observation.y, pref_x, 400.f);
-        return {std::uint16_t(result.moves.front() | 1), result.depth};
+        return {std::uint16_t(result.moves.front() | 1), result.depth, search_stats};
     }
 };
 Policy::Policy(Configuration configuration, RiskTables risk)

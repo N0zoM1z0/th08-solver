@@ -140,6 +140,54 @@ void pruning_and_isolation() {
         o.latched_input = a.action;
     }
 }
+void actor_risk() {
+    auto o = scene();
+    o.actors = {{0, o.x, o.y, 0, 0}, {1, -10000, -10000, 0, 0}};
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    const auto baseline = on::Policy(config).decide(o);
+    config.spawn_guard = 16;
+    config.risk_hard = true;
+    const auto guarded = on::Policy(config).decide(o);
+    config.reach_filter = true;
+    const auto pruned = on::Policy(config).decide(o);
+    check((baseline.action & 0xf0) == 0 && (guarded.action & 0xf0) != 0,
+          "current actor risk was ignored without a learned table");
+    check(guarded.depth == config.horizon && guarded.action == pruned.action &&
+              guarded.depth == pruned.depth,
+          "actor proximity became a hard collision or pruning changed the decision");
+}
+void spatial_retention() {
+    const auto o = scene();
+    on::Configuration config;
+    config.horizon = 16;
+    config.beam = 48;
+    config.diversity_cell = 16;
+    const auto a = on::Policy(config).decide(o), b = on::Policy(config).decide(o);
+    check(a.depth == config.horizon && a.action == b.action && a.depth == b.depth &&
+              a.search.selections > 0 && a.search.selections == b.search.selections &&
+              a.search.candidates == b.search.candidates && a.search.bins == b.search.bins &&
+              a.search.retained_bins == b.search.retained_bins &&
+              a.search.candidates >= a.search.bins && a.search.bins >= a.search.retained_bins,
+          "spatial pruning changed determinism or omitted selection costs");
+}
+void queued_birth() {
+    auto o = scene();
+    o.queued_shots = {{3, 2, o.x, o.y, 0, 0, 8, 8}};
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    const auto baseline = on::Policy(config).decide(o);
+    config.queued_shots = true;
+    const auto warned = on::Policy(config).decide(o);
+    check((baseline.action & 0xf0) == 0 && (warned.action & 0xf0) != 0 &&
+              warned.depth == config.horizon,
+          "known queued birth was ignored before it became an observable bullet");
+    o.queued_shots[0].update = 1;
+    check(on::Policy(config).decide(o).depth == 0,
+          "queued birth incorrectly bypassed the already latched movement");
+}
 } // namespace
 int main(int argc, char **argv) {
     try {
@@ -147,6 +195,9 @@ int main(int argc, char **argv) {
         risk_rows(argv[1]);
         observation_history();
         pruning_and_isolation();
+        actor_risk();
+        spatial_retention();
+        queued_birth();
         return 0;
     } catch (const std::exception &error) {
         std::cerr << error.what() << '\n';
