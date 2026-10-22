@@ -134,11 +134,44 @@ laser. The pair costs 74057 native updates including reconstruction and 59.31
 summed wall seconds; 792 held paths, 32457 extra forecast updates and 44 selected
 fallbacks are recorded. Both episodes fail, and the later hit follows a full-depth
 forecast: retaining proposals alone does not close the remaining model gap.
+
+The complete held-fallback ablation also finishes 0/6. All three 4B cases advance
+past 88/92, ending in 96/99/99. Extra ends in 201/202/204: one seed regresses and
+another advances relative to its parent profile. Work totals 317130 native updates,
+2407.03 summed wall seconds, 3312 held paths, 96532 extra forecast updates and
+181 selections. The option remains off by default. A current-program probe of the
+later beam finds player-position operands in the arithmetic after callback
+installation; observed static geometry is insufficient for that reactive motion.
+
+Offline teacher queries reconstruct each failed student's exact prefix up to
+128 updates before death, then use unchanged R64/beam384/cell16 native search
+with a separately frozen 900-second budget. Five of six corrections freshly verify;
+one Extra episode exhausts. A separately budgeted successor starts that trajectory
+512 updates before death and verifies. Its inputs diverge before the original
+late checkpoint, so it does not establish that the original checkpoint was
+rescuable. The original failure remains charged. These six corrected trajectories
+produce 412252 verified natural-replay rows with zero death/bomb rows. Seven teacher
+episodes consume 2328699 native updates, including 380864 prefix updates, and
+855.47 summed planner wall seconds; fresh verification and natural replay add
+16.55 and 15.71 seconds. These are privileged offline corrections, with zero
+additional online clears. They provide student-state expert data for the next
+model improvement, without demonstrating a universal or real-time policy.
+An input-space audit finds 7938 non-shoot frames across the six verified teacher
+suffixes; every suffix uses some. The present student always sets the shoot bit.
+These labels therefore describe a larger teacher action space and cannot be
+directly imitated by the current student. Preserve shooting as an explicit label,
+or constrain future teacher queries to the student's legal output set. Quiet
+inputs alter damage and RNG consumption through ordinary native execution; no
+gameplay RNG state is substituted. This observation does not prove quiet input
+is necessary for every successful route.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;
-each low-priority unit has 96 tasks, six CPU cores, 6-GiB high/8-GiB hard memory
-limits and no extra swap. No continuous online NMNB story or retail live controller
+controller units have 96 tasks, six CPU cores, 6-GiB high/8-GiB hard memory
+limits and no extra swap. Teacher corrections use at most two planners, 192 tasks,
+four CPU cores and 8-GiB high/16-GiB hard memory limits; the successor is serial.
+Measured teacher memory peaks stay below 1.3 GB. No continuous online NMNB story or retail live controller
 is established. New tapes, replays, models, JSON reports and process receipts stay
 under ignored local storage.
 
@@ -159,6 +192,9 @@ directories: 70 raw captures are losslessly compressed with restored SHA checks,
 and 1428 old compile intermediates are removed. All 1131 protected replay/action
 files retain their hashes. Active build/data and failure evidence remain available;
 later successful raw rows are removed after recording their hashes and receipts.
+Six finalized online failure captures are additionally losslessly compressed after
+matching the collected local SHA values, reclaiming 30535680 allocated bytes.
+Every protected replay/action hash in that scope remains unchanged.
 
 The stopped local baseline ledger verifies 36 directly completed combinations:
 all nine seed-0 entries for each of the four double teams. Each team clears all four

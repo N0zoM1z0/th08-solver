@@ -182,6 +182,24 @@ in ignored local experiments. Success requires fresh complete action execution,
 terminal/RNG/calculation agreement and natural replay with zero death/bomb rows;
 this does not independently certify native physics or retail compatibility.
 
+Teacher corrections are separate offline episodes from immutable student prefixes.
+The first diagnosis protocol queries all six remaining failed 4B/Extra trajectories
+at T-128. A later frozen phase selects every unverified correction and quadruples
+the prefix lead to T-512, retaining the earlier failures and costs. It uses the
+same R64/beam384/cell16/commit8/checkpoint120/keep64/attempts4/CEGAR4 planner, with
+100000 total updates and 900 seconds per episode, including reconstruction.
+Fresh actions, natural replay and byte-identical parent prefixes gate labels.
+An earlier-prefix success labels that earlier state; it does not certify a later
+state after the trajectories have diverged. Do not count teacher repairs as online
+clears or use them as held-out evaluation.
+The native teacher's `--shoot 1` still permits bounded quiet-window proposals;
+the current student's action always includes shooting. All six corrected suffixes
+exercise this mismatch. An action/value label derived under the teacher's larger
+action set need not be attainable by the student. Keep the full shooting/focus
+inputs and output-space metadata, then either add a learned low-frequency shooting
+decision or obtain appropriately constrained teacher labels. Never translate quiet
+input into an unrecorded RNG change.
+
 ## Resource ownership and parallelism
 
 Independent executables can run in parallel with separate scratch directories and
@@ -207,6 +225,9 @@ separate low-priority units with at most four independent controllers in total,
 6 CPU cores, 6 GiB memory high-water and 8 GiB hard limit; compilation uses six jobs.
 When ablations overlap, reduce the older queue and reserve a solver slot before
 starting another. The combined task limits remain at most 320; holdout work is gated.
+Student-state teacher corrections use two planners at most, a 192-task/four-core
+unit with 8-GiB high/16-GiB hard memory bounds; the serial successor uses 96 tasks,
+two cores and 6-GiB high/8-GiB hard bounds. Both retain low weights and zero swap.
 These are task-specific limits, not changes to shared user limits. Check process limits as well
 as memory before launch: each fork checkpoint holder consumes a process. The
 [resource revision](../reports/native/planner_route_protocol.json) retains the
