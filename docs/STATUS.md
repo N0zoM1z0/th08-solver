@@ -165,6 +165,37 @@ inputs alter damage and RNG consumption through ordinary native execution; no
 gameplay RNG state is substituted. This observation does not prove quiet input
 is necessary for every successful route.
 
+The action-constrained teacher now supports `--shoot 1 --quiet-retries 0` across
+all scenes. It disables all three quiet retry mechanisms while retaining native
+RNG semantics, movement/focus proposals, budgets and the adaptive default. The real-data
+regression preserves a supplied quiet prefix and freshly verifies a complete
+2728-update spell with shooting on every generated input. All 40 native/DAT CTests
+pass in 780.79 seconds; the default spell-92 and online Stage 2 action hashes are
+unchanged. Report and documentation checks pass.
+
+Repeating the same six T-128 diagnosis queries with this constraint verifies all
+three 4B continuations; all three Extra queries exhaust. A separately frozen
+T-512 successor selects every unverified case and verifies one Extra continuation,
+leaving two exhausted cases. Its inputs change before the original late prefix;
+it does not rescue that same late state. These nine episodes yield four verified
+trajectories and five retained failures, with zero additional online clears.
+They consume 1380479 native updates, including 516745 prefix updates, and 340.97
+summed planner wall seconds; fresh checks and natural replay add 10.31 and 9.61
+seconds. The four successful tapes cover 231308 natural rows with zero death/bomb
+rows, and every generated suffix input includes shooting. This is action-matched
+offline evidence, with privileged teacher lookahead retained.
+
+All three original Extra student tapes independently reconstruct through the
+first 64 updates after their T-128 query boundary without death, using the same
+native build and shooting throughout. This bounded witness costs 201727 prefix
+updates and 8.44 summed wall seconds. The constrained teacher exhausted before
+committing even one update despite an available surviving first window: its
+finite proposal family misses known paths. This is a generic coverage gap, not
+an impossibility result or evidence that quiet input is required. Future candidate
+retention/warm starts must retain native verification and keep recorded routes
+outside the online policy. No seed/spell-specific strategy branch was added;
+these repeated diagnosis cases do not provide unseen-seed validation.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

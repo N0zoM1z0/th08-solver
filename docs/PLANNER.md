@@ -208,6 +208,14 @@ existing planner. The option is reported and survives sanitized report collectio
 Supplied prefixes and route-choice control are executed literally; a constrained
 continuation cannot retroactively alter a quiet prefix or certify full information
 matching with the student. Teacher lookahead remains privileged offline evidence.
+Constrained Extra diagnosis also exposes proposal coverage: a recorded student
+path survives the first R64 window under the same native build, while the finite
+teacher search exhausts without a commit. Preserving a known proposal or warming
+the search from student behavior is future generic teacher work. Any such path
+must receive its own native rollout; a recorded future cannot certify another
+action branch or become an embedded online route. Diagnosis seeds remain tuning
+data, and every algorithm/configuration change must pass one frozen stage/seed
+evaluation covering all nine entries before releasing the untouched holdouts.
 
 ## Resource ownership and parallelism
 
