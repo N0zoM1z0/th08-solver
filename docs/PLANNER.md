@@ -125,18 +125,37 @@ replace inputs. Full Extra starts with `--story 1 --stage extra --difficulty 4`.
 The [route protocol](../reports/native/planner_route_protocol.json) freezes two
 generic profiles, per-episode budgets and a single eligible budget-prefix
 continuation. Run the second profile only if the first has no verified completion;
-retain all original failures and costs. First finalize the seed-0 matrix, including
-failures. Random evaluation then uses many fresh OS-entropy seeds with a small
+retain all original failures and costs. The owner switched to random evaluation
+after 36 verified seed-0 combinations, stopping the remaining baseline queue.
+Random evaluation uses many fresh OS-entropy seeds with a small
 predeclared selection of complete runs per seed, rotating team/solo shot, difficulty,
 Final A/B and Extra. Freeze the exact seeds, assignments, sample size, algorithm and
 budgets before evaluation. Report distinct seeds and planned/completed seed-case
 pairs separately, including all successes, failures and retry costs. This sampling
-scope supersedes the frozen protocol's original per-seed complete-matrix wording.
+scope supersedes the frozen protocol's original per-seed complete-matrix wording
+and its requirement to finish all 108 baseline entries first.
+
+The first batch fixes 24 distinct, previously unobserved seeds and one run per seed.
+Diagnosis covers each of the 12 shots once, alternating Lunatic and Extra by shot
+parity. Holdout covers the same shots with the opposite difficulty assignments;
+Lunatic Final A/B alternates across shot pairs. This yields 12 diagnosis and 12
+holdout cases, with 12 Lunatic and 12 Extra runs overall. Execute diagnosis first.
+The phase gate requires all 12 diagnosis pairs to verify under the frozen native
+executables and options. It records executable, runner, report and protocol hashes
+before releasing holdouts with the same resource limits. Any incomplete or invalid
+diagnosis result stops promotion for review. Retain failed holdout outcomes if
+later debugging turns those seeds into training evidence.
+For a failing solo shot without an existing baseline, compare the same configuration
+at seed 0 as a separately charged diagnostic control before attributing the failure
+to RNG. Preserve original failures and rerun costs after a generic fix.
 
 For baseline matrices, use `th08_planner_report --matrix` to require each attempt's
 checkpoint and each successful native/replay stage path to match the manifest. Its coverage denominator
 includes every catalog entry, and repeated attempts cannot inflate the distinct
 verified count. Missing, budget-limited and runtime-failed cases remain unverified.
+For sparse multi-seed manifests, use `--sample` instead. Its coverage unit is an
+explicit seed-case pair; unique-seed counts and repeated attempts remain separate.
+Both modes require exact native/replay stage paths and successful process receipts.
 Keep new replays, actions, generated ledgers and receipt JSON in ignored
 `reports/local/`; existing published snapshots remain historical evidence.
 

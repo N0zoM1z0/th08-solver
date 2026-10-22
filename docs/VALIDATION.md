@@ -116,6 +116,18 @@ whole manifest, while `observed_combinations` includes only IDs present in the
 input groups. A zero attempt-level pending count does not imply full coverage.
 Omitting `--matrix` preserves the historical report format.
 
+For sparse random evaluations, pass `--sample FILE` instead of `--matrix`. A sample
+manifest has `schema_version: 1`, `sampling_unit: "seed-case-pair"` and an explicit
+`cases` array using the catalog descriptors, with each case's own seed. It may mix
+seeds and omit unselected combinations. Optional `sample_phase` is `diagnosis` or
+`holdout`; when present, every case must carry the same phase. The report checks
+the canonical case IDs, initialization profiles and full stage paths, binds the
+sample SHA, and reports pair coverage separately from distinct-seed coverage.
+`verified_unique_seeds` counts seeds with at least one verified selected pair;
+use pair coverage to assess completion of every planned run for a repeated seed.
+The two manifest options are mutually exclusive. A zero pending count does not
+mean that every planned sample pair has been observed.
+
 ```sh
 ./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --group training-resume-c16 --group training-resume-c32 --group holdout-resume-c16 --group holdout-resume-c32 --replay-dir reports/local/seed-campaign/archive/replays --failed-actions-dir reports/local/seed-campaign/archive/failed-actions --output reports/local/seed-campaign/planner_seed_summary.json
 ```
@@ -132,6 +144,20 @@ The current full-run ledger uses all four portfolio groups:
   --replay-dir reports/local/route-matrix-v2/archive/replays \
   --failed-actions-dir reports/local/route-matrix-v2/archive/failed-actions \
   --output reports/local/route-matrix-v2/planner_route_summary.json
+```
+
+The first random diagnosis ledger uses its frozen 12-pair sample:
+
+```sh
+./build-headless/th08_planner_report \
+  --root reports/local/seed-generalization-v2/results \
+  --fidelity reports/local/route-matrix-v1/results/fidelity-v1/summary.json \
+  --sample reports/local/seed-generalization-v2/diagnosis.json \
+  --group random1-diagnosis-c16 --group random1-diagnosis-resume-c16 \
+  --group random1-diagnosis-c32 --group random1-diagnosis-resume-c32 \
+  --replay-dir reports/local/seed-generalization-v2/archive/replays \
+  --failed-actions-dir reports/local/seed-generalization-v2/archive/failed-actions \
+  --output reports/local/seed-generalization-v2/diagnosis-summary.json
 ```
 
 The [execution protocol](../reports/native/runtime_perf_protocol.json) fixes three

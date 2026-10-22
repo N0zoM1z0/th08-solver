@@ -67,7 +67,7 @@ this repository, not an ignored checkout, submodule or separate feature branch.
   `reports/local/`. Preserve the existing tracked artifacts as historical snapshots;
   progress commits contain code and maintained prose, not new or refreshed run artifacts
 - For authorized assistant changes to this N0zoM1z0 repository, use
-  `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
+  `gpt-dots: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. Follow the active
   campaign resource revision; the current limit is four concurrent solver jobs and
   320 total campaign tasks. Do not raise concurrency merely because CPU/RAM are free

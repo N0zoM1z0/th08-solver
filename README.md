@@ -25,18 +25,20 @@ configuration, hashes, verification and retained search costs.
 
 ## Current direction
 
-The owner requested all 108 full-run combinations before expanding random seeds.
-The [route manifest](reports/native/planner_route_matrix.json) fixes those entries;
-the [protocol](reports/native/planner_route_protocol.json) records identical generic
-profiles, explicit final-choice unlock history and bounded continuation costs.
-Enumeration and successful initialization are not completion evidence.
+The owner now prioritizes random-seed generalization. The seed-0 coverage run was
+stopped after all 36 double-team combinations completed; four active solo attempts
+were interrupted. The [108-case catalog](reports/native/planner_route_matrix.json)
+remains the coverage reference. Its [original protocol](reports/native/planner_route_protocol.json)
+retains the baseline profiles, unlock history and bounded continuation costs.
 The [published route ledger](reports/native/planner_route_summary.json) retains a
 24-combination snapshot. New replays, action tapes and experiment JSON stay in
 ignored `reports/local/`; [Status](docs/STATUS.md) owns current verified coverage.
 The report checks complete stage paths against the manifest and counts distinct
-combinations across retries. The four-solver queue completes the baseline before
-random evaluation, which samples many independent seeds with a small rotating
-selection of combinations per seed.
+combinations across retries. The first sparse random batch freezes 24 independent
+seeds with one complete run each: 12 diagnosis cases and 12 held-out cases, rotating
+all shots through Lunatic and Extra. Diagnosis runs first; a checked phase gate
+freezes the evaluated version and budgets before releasing holdouts. An incomplete
+or invalid diagnosis case requires review. [Planner](docs/PLANNER.md) owns the method.
 
 The native runtime is both forecaster and collision oracle. Forked rollouts record
 native hazards; beam search proposes paths; fresh native rollouts verify each

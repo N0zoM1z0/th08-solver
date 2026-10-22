@@ -13,14 +13,15 @@ fork rollouts and verified commits; it adds no spell-92 strategy branch. The
 and failed searches, fresh verification, budgets, executable identities and total
 native costs. Unfinished processes contribute only a pending identifier.
 
-The latest scope covers all 108 full runs: twelve team/solo shots, each with Final
-A/B at Easy/Normal/Hard/Lunatic and a full Extra entry. The
+The latest scope prioritizes random-seed generalization. The reference catalog
+covers 108 full runs: twelve team/solo shots, each with Final A/B at
+Easy/Normal/Hard/Lunatic and a full Extra entry. The
 [matrix](../reports/native/planner_route_matrix.json) and
 [protocol](../reports/native/planner_route_protocol.json) fix coverage and generic
 budgets before outcomes. Final routes use original dialogue inputs with an explicit
 recorded unlock-history checkpoint; Extra uses non-practice initialization. The
-baseline seed-0 matrix precedes fresh random-seed evaluation. Online control remains
-deferred; enumerating a case does not establish its completion.
+owner stopped the remaining baseline work to start random evaluation immediately.
+Online control remains deferred; enumerating a case does not establish completion.
 
 The route interfaces pass all 38 native/DAT CTests; all 108 replay-corpus outcome,
 row-count and fingerprint tuples match the preceding runtime (106/108 against the
@@ -40,13 +41,16 @@ and 1428 old compile intermediates are removed. All 1131 protected replay/action
 files retain their hashes. Active build/data and failure evidence remain available;
 later successful raw rows are removed after recording their hashes and receipts.
 
-The current local route ledger verifies 27 directly completed combinations: all nine
-seed-0 entries for each of Reimu/Yukari, Marisa/Alice and Sakuya/Remilia. Each team
-clears all four standard difficulties, both final routes and full Extra. All 27 full
-tapes freshly verify, and their natural replays match all expected stages, scores
-and 5916278 calculation rows with zero death/bomb input rows. All finish in the
-original c16 episode; the ledger retains their internal backtracking/retry costs.
-This is 27/108 baseline combinations, with the other 81 unverified in the queue.
+The stopped local baseline ledger verifies 36 directly completed combinations:
+all nine seed-0 entries for each of the four double teams. Each team clears all four
+standard difficulties, both final routes and full Extra. Full tapes and natural
+replays agree on all expected stages, scores and 7837191 calculation rows with zero
+death/bomb input rows. All finish in the original c16 episode, retaining internal
+backtracking/retry costs. Four solo attempts were stopped by the owner without final
+process reports or action tapes; their four `pending` ledger records are interrupted,
+not live jobs or algorithm failures. Native counters for this interrupted work are
+unavailable; retained progress and the last scope CPU sample are lower-bound evidence.
+The other 68 catalog entries were not started. The old queue is inactive.
 
 Following the owner's artifact policy, new replays, actions and generated JSON stay
 under ignored `reports/local/route-matrix-v2/`, including the verified archive,
@@ -55,15 +59,28 @@ under ignored `reports/local/route-matrix-v2/`, including the verified archive,
 [audit](../reports/native/planner_route_environment.json) remain a 24-combination
 snapshot. The C++ report's optional `--matrix` mode checks each attempt's checkpoint
 and successful native/replay stage path, binds the manifest hash, and counts unique
-combinations while retaining attempt costs. Its zero pending count covers only the
-finished export, not every active/queued combination. Historical ledgers still
+combinations while retaining attempt costs. The baseline's four pending records
+carry the owner-interruption meaning described above. Historical ledgers still
 reproduce byte-for-byte without matrix mode.
 
-Random evaluation has not started. After the 108-case baseline, evaluate many new
-independent seeds using a small, predeclared rotating set of combinations per seed.
-Freeze the assignments and budgets before outcomes and report seed coverage and
-seed-case coverage separately. This sampling scope replaces the original plan to
-run a complete matrix for each new seed; [Planner](PLANNER.md) owns the method.
+Random diagnosis is running under the same four-solver/320-task/four-core/12-GiB
+limits and unchanged native executables. The frozen batch draws 24 distinct,
+previously unseen OS-entropy seeds: one complete run each, split into 12 diagnosis
+and 12 held-out cases. Each split covers all 12 shots once; Lunatic/Extra assignments
+swap between splits, and Lunatic A/B routes balance over the batch. Only diagnosis
+is currently dispatched. The checked phase gate releases holdouts only after all
+12 diagnosis cases pass, recording the evaluated executable, runner, report and
+protocol hashes first. It stops for review on incomplete or invalid results.
+Manifests, protocol, results and failure evidence stay under ignored
+`reports/local/seed-generalization-v2/`. The new `--sample` report mode binds explicit
+seed-case pairs and counts distinct seeds separately, retaining each attempt's costs.
+The 08:04 UTC local snapshot verifies four new-seed cases: Extra with Marisa/Alice,
+Youmu/Yuyuko and solo Yukari, plus Lunatic Final A with Reimu/Yukari. All complete
+in the original c16 episode, with fresh full-action replay, natural replay and
+exact stage-path checks over 491470 calculation rows. The other eight diagnosis
+pairs are not yet verified. Pending progress is not a completed route.
+The report changes pass all 38 native/DAT CTests and reproduce the historical
+campaign ledger byte-for-byte. [Planner](PLANNER.md) owns the method.
 
 The preceding full-story seed-robustness campaign is separate historical coverage.
 Eight seeds were drawn before inspection under the
