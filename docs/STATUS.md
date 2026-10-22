@@ -57,8 +57,9 @@ clear-tail input also diverges. [Validation](VALIDATION.md) owns that evidence a
 its limits. These candidates remain validation failures. All 40 native/DAT CTests
 pass, including complete-stage and policy contracts; documentation checks also pass.
 
-The latest scope requires all nine standalone entries over different seeds before
-full story. A frozen uniform learned-risk diagnosis batch uses shot 0 and Lunatic
+The current scope targets all nine standalone entries over different seeds. The
+owner also authorizes a continuous story through the natural 4A branch while the
+remaining 4B/Extra failures are investigated. A frozen uniform learned-risk diagnosis batch uses shot 0 and Lunatic
 (Extra difficulty for Extra): seed-zero controls plus two fresh random seeds per
 entry, 27 pairs total. The existing Stage 5 control is reused with its original
 receipts and costs. The batch is complete: 14 strict verified completions, seven
@@ -326,8 +327,18 @@ predictions across three existing Extra tapes. It reads one currently pointed
 termination header and its clock, without scanning or executing future code.
 Diagnostic work totals 260056 native reconstruction updates, including an earlier
 weaker end-state check. Timing does not certify activation transforms or later
-velocity/cancellation. A separate full-stage three-seed comparison, with one
-disabled control repeat and unchanged budgets, is running; it is not a new clear.
+velocity/cancellation. The optional `--spawn-clock 1` full-stage comparison finishes
+1/3 under unchanged budgets: Extra seed zero strictly verifies at 90900 updates,
+score 118208081, with matching fresh actions/natural replay and zero death/bomb
+rows. Seed 49063 advances to 74237 in spell 204; seed 9696 regresses to 61856 in
+201, losing the preceding profile's clear. The disabled control reproduces that
+profile's seed-49063 action hash, score, RNG and death at 65014. Including this
+control, work totals 292007 native updates and 1340.82 summed solver wall seconds;
+the unit peaks at 185782272 bytes. Candidate clock observations total 2191203
+supported / zero unsupported, with 14881544 phase forecast updates. These timing
+matches do not establish the post-activation velocity hypothesis or an aggregate
+success improvement. The option remains off by default. All 40 native/DAT CTests
+pass in 628.52 seconds with two workers; the default Stage 2 action hash is unchanged.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping

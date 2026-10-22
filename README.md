@@ -28,8 +28,9 @@ configuration, hashes, verification and retained search costs.
 The current implementation phase is the
 [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5):
 complete every standalone stage over different seeds, diagnose action-dependent
-failures, then close the offline-teacher/student loop before full-story and real-time
-evaluation. Reading current
+failures and close the offline-teacher/student loop. A continuous story through
+the natural 4A branch is also authorized while 4B/Extra work continues; real-time
+evaluation remains separate. Reading current
 process memory is permitted; image recognition is not required. `th08_online` consumes
 owned current observations without future native steps or rewinds. Its first harness
 measures latency and deadline misses but waits for each decision, so completion does

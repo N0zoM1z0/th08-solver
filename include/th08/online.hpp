@@ -52,6 +52,9 @@ struct Bullet {
     int vector_acceleration_timer = 0, vector_acceleration_duration = 0;
     bool collision_disabled = false;
     RelativeTurn relative_turn;
+    // One-based future animation-completion update; zero leaves timing unknown.
+    // This owns no ANM pointer and does not certify activation transforms/motion.
+    unsigned activation_update = 0;
 };
 struct LaserState {
     float endOffset = 0, startOffset = 0, startLength = 0, width = 0;
@@ -121,6 +124,7 @@ struct Configuration {
     bool held_fallback = false;
     // Recheck one previous proposal only when the new beam cannot fill its horizon.
     bool warm_fallback = false;
+    bool spawn_clock = false;
     bool direct_turn_envelope = false;
     bool relative_turns = false;
 };
@@ -144,6 +148,7 @@ struct SearchStatistics {
     std::uint64_t warm_paths = 0, warm_updates = 0, warm_selected = 0, warm_invalidated = 0;
     std::uint64_t turn_envelope_frames = 0;
     std::uint64_t relative_turn_frames = 0;
+    std::uint64_t spawn_clock_frames = 0;
 };
 struct Decision {
     std::uint16_t action = 1;

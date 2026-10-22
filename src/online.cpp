@@ -324,6 +324,9 @@ struct Policy::Impl {
                 finite(v);
             if (b.full_width < 0 || b.full_height < 0)
                 throw std::runtime_error("unsupported_online_observation");
+            if (opt.spawn_clock && b.activation_update &&
+                (b.state < 2 || b.state > 4 || o.movement.frm != 1 || b.activation_update > 32768))
+                throw std::runtime_error("unsupported_online_spawn_clock");
             const auto &r = b.relative_turn;
             if (opt.relative_turns && r.updates) {
                 const auto &turn = r.state;
@@ -644,13 +647,26 @@ struct Policy::Impl {
             } else if (b.state >= 2 && b.state <= 4) {
                 const float div = b.state == 2 ? 2.0f : b.state == 3 ? 2.5f : 3.0f;
                 const long age = m.spawn_seen >= 0 ? now - m.spawn_seen : 0;
-                const int remaining = int(std::max(0L, spawn_duration(b.state, w) - age - 1));
+                // Prefer the observed ANM clock even in a first/late snapshot.
+                // Unsupported clocks retain the explicit empirical hypothesis.
+                const bool clock = opt.spawn_clock && b.activation_update;
+                const float fraction_x = clock ? b.vx * (1.0f / div) : b.vx / div;
+                const float fraction_y = clock ? b.vy * (1.0f / div) : b.vy / div;
+                const int remaining = clock
+                                          ? int(b.activation_update - 1)
+                                          : int(std::max(0L, spawn_duration(b.state, w) - age - 1));
                 float x = b.x, y = b.y;
                 for (int j = 1; j <= horizon; ++j) {
+                    if (clock && j <= remaining + 1)
+                        ++search_stats.spawn_clock_frames;
                     if (j <= remaining) {
-                        x += b.vx / div, y += b.vy / div;
+                        x += fraction_x, y += fraction_y;
                         continue; // not collidable while spawning
                     }
+                    if (clock && j == remaining + 1)
+                        // Source still performs the fractional spawning step on
+                        // its final animation call, then enters the FIRED branch.
+                        x += fraction_x, y += fraction_y;
                     x += b.vx, y += b.vy;
                     const float g = opt.grow * j + 1.0f; // unknown transform at activation
                     frames[j].b.push_back(

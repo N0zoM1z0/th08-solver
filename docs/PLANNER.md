@@ -159,6 +159,22 @@ separately, not promoted into known geometry. The current origin and subsequent
 script behavior remain partial assumptions; `queued_pooled_laser_records` and
 `unsupported_queued_pooled_lasers` report this additional coverage.
 
+`--spawn-clock 1` uses a spawning bullet's currently terminal ANM cursor and
+unit-rate clock instead of its empirical size/duration estimate when supported.
+The adapter copies only a one-based completion update into owned memory; it reads
+one terminal header, without scanning/executing future code or resolving operands.
+A null cursor completes on its next call. Blocked/interrupted clocks, variable
+masks, other instructions and non-unit/frozen contexts supply no clock support.
+Unsupported clocks retain the named legacy duration hypothesis and are counted
+separately; zero support is not an empty-future certificate.
+
+The final animation call still performs fractional spawn displacement before the
+FIRED update. Fractional motion follows the source reciprocal multiplication order.
+The existing current-velocity hypothesis resumes at activation: later transforms,
+external cancellation and future ANM changes remain partial, not certified physics.
+The option defaults off and reports `spawn_clock_records`,
+`unsupported_spawn_clocks` and `spawn_clock_frames` separately from native work.
+
 `--relative-turns 1` projects an existing bullet's source-owned relative turn
 before extrapolating observed velocity. The native session supplies a bounded
 single-transform view; the adapter copies angle, speed, timer, interval and repeat

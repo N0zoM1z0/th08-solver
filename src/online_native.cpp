@@ -5,11 +5,37 @@
 #include "Player.hpp"
 #include "Supervisor.hpp"
 #include "modern/headless/session.hpp"
+#include "th08/animation.hpp"
 #include "th08/direct_laser_policy.hpp"
 #include "th08/ecl_turn_hint.hpp"
 
 namespace th08::online {
 namespace {
+unsigned native_spawn_clock(const th08::Bullet &bullet) {
+    if (g_Supervisor.framerateMultiplier != 1 || g_GameManager.scriptedUpdateFreeze ||
+        g_GameManager.flags.deathbombFreezeActive)
+        return 0;
+    if (bullet.state < BULLET_STATE_SPAWNING_FAST || bullet.state > BULLET_STATE_SPAWNING_SLOW)
+        return 0;
+    const auto &vm = bullet.state == BULLET_STATE_SPAWNING_FAST     ? bullet.sprites.spawnFastVm
+                     : bullet.state == BULLET_STATE_SPAWNING_NORMAL ? bullet.sprites.spawnNormalVm
+                                                                    : bullet.sprites.spawnSlowVm;
+    animation::TerminalClock clock;
+    clock.context_supported = true;
+    clock.cursor =
+        vm.currentInstruction ? animation::Cursor::present : animation::Cursor::null_instruction;
+    clock.blocked = vm.flag19 || vm.stopped || vm.pendingInterrupt;
+    clock.current_time = vm.currentTimeInScript.current;
+    clock.subframe = vm.currentTimeInScript.subFrame;
+    if (vm.currentInstruction && !clock.blocked && clock.current_time >= 0 && clock.subframe == 0) {
+        const auto &instruction = *vm.currentInstruction;
+        clock.opcode = instruction.opcode;
+        clock.scheduled_time = instruction.time;
+        clock.size = instruction.instructionSize;
+        clock.mask = instruction.varMask;
+    }
+    return animation::remaining_terminal_calls(clock);
+}
 TurnHint native_turn_hint(const headless::EclContextView &view) {
     if (view.enemy_index < 0 || view.enemy_index >= int(std::size(g_EnemyManager.enemies)))
         return {};
@@ -75,6 +101,7 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
                              b.full_height, b.active_transforms, b.vector_acceleration_x,
                              b.vector_acceleration_y, b.vector_acceleration_timer,
                              b.vector_acceleration_duration, native.collisionDisabled != 0});
+        o.bullets.back().activation_update = native_spawn_clock(native);
         if (b.relative_direction.updates) {
             const auto &v = b.relative_direction;
             const auto &turn = native.exStates[BULLET_TRANSFORM_STATE_DIRECTION_CHANGE];

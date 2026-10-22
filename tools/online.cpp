@@ -127,6 +127,8 @@ Options parse(int argc, char **argv) {
             o.policy.held_fallback = boolean();
         else if (key == "--warm-fallback")
             o.policy.warm_fallback = boolean();
+        else if (key == "--spawn-clock")
+            o.policy.spawn_clock = boolean();
         else if (key == "--direct-turn-envelope")
             o.policy.direct_turn_envelope = boolean();
         else if (key == "--relative-turns")
@@ -249,6 +251,7 @@ int run(const Options &o) {
     std::uint64_t queued_pooled_records = 0, unsupported_queued_pooled = 0;
     std::uint64_t turn_hint_records = 0, unsupported_turn_hints = 0;
     std::uint64_t relative_turn_records = 0, unsupported_relative_turns = 0;
+    std::uint64_t spawn_clock_records = 0, unsupported_spawn_clocks = 0;
     int failed_input = -1;
     bool started_spell = false;
     std::string outcome = "budget", failure;
@@ -325,6 +328,12 @@ int run(const Options &o) {
             unsupported_queued_pooled += observation.unsupported_queued_pooled_lasers;
             turn_hint_records += observation.turn_hint_records;
             unsupported_turn_hints += observation.unsupported_turn_hints;
+            if (o.policy.spawn_clock)
+                for (const auto &b : observation.bullets)
+                    if (b.state >= 2 && b.state <= 4) {
+                        spawn_clock_records += b.activation_update > 0;
+                        unsupported_spawn_clocks += b.activation_update == 0;
+                    }
             if (o.policy.relative_turns)
                 for (const auto &b : observation.bullets) {
                     relative_turn_records += b.relative_turn.updates > 0;
@@ -344,6 +353,7 @@ int run(const Options &o) {
             search_stats.warm_updates += decision.search.warm_updates;
             search_stats.warm_selected += decision.search.warm_selected;
             search_stats.warm_invalidated += decision.search.warm_invalidated;
+            search_stats.spawn_clock_frames += decision.search.spawn_clock_frames;
             search_stats.turn_envelope_frames += decision.search.turn_envelope_frames;
             search_stats.relative_turn_frames += decision.search.relative_turn_frames;
             auto input = decision.action;
@@ -454,6 +464,12 @@ int run(const Options &o) {
            << ",\"held_forecast_updates\":" << search_stats.held_updates
            << ",\"held_selected\":" << search_stats.held_selected
            << ",\"warm_fallback\":" << o.policy.warm_fallback
+           << ",\"spawn_clock\":" << o.policy.spawn_clock
+           << ",\"spawn_clock_records\":" << spawn_clock_records
+           << ",\"unsupported_spawn_clocks\":" << unsupported_spawn_clocks
+           << ",\"spawn_clock_frames\":" << search_stats.spawn_clock_frames
+           << ",\"spawn_clock_coverage\":\"current-terminal-ANM-clock;activation-motion-then-"
+              "linear-hypothesis\""
            << ",\"warm_paths\":" << search_stats.warm_paths
            << ",\"warm_forecast_updates\":" << search_stats.warm_updates
            << ",\"warm_selected\":" << search_stats.warm_selected

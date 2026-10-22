@@ -6,6 +6,42 @@ namespace res = th08::resources;
 namespace anm = th08::animation;
 using th08::test::check;
 int main() {
+    anm::TerminalClock clock;
+    check(anm::remaining_terminal_calls(clock) == 0, "unknown current cursor invented timing");
+    clock.context_supported = true;
+    clock.cursor = anm::Cursor::present;
+    clock.size = 8;
+    clock.scheduled_time = 9;
+    clock.current_time = 1;
+    for (int opcode : {-1, 1, 2}) {
+        clock.opcode = opcode;
+        check(anm::remaining_terminal_calls(clock) == 9,
+              "current terminal clock has a one-update activation error");
+    }
+    clock.current_time = 10;
+    check(anm::remaining_terminal_calls(clock) == 1, "past terminal failed its next-call boundary");
+    for (int refusal = 0; refusal < 6; ++refusal) {
+        auto unsupported = clock;
+        if (refusal == 0)
+            unsupported.opcode = 4;
+        if (refusal == 1)
+            unsupported.mask = 1;
+        if (refusal == 2)
+            unsupported.size = 12;
+        if (refusal == 3)
+            unsupported.blocked = true;
+        if (refusal == 4)
+            unsupported.current_time = -1;
+        if (refusal == 5)
+            unsupported.subframe = .5f;
+        check(anm::remaining_terminal_calls(unsupported) == 0,
+              "unsupported current animation state was assigned a completion time");
+    }
+    clock.cursor = anm::Cursor::null_instruction;
+    clock.blocked = true;
+    check(anm::remaining_terminal_calls(clock) == 1, "null cursor tested blocking flags first");
+    clock.context_supported = false;
+    check(anm::remaining_terminal_calls(clock) == 0, "unsupported context acquired a unit clock");
     res::Bytes bytes(40);
     bytes[8] = 146;
     res::Anm program;

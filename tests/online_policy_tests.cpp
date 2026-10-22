@@ -313,6 +313,43 @@ void held_escape() {
     check(latched.depth == 0 && latched.search.held_paths == 0,
           "held fallback claimed to avoid an already latched collision");
 }
+void current_spawn_clock() {
+    auto o = scene();
+    auto b = bullet(0, 177.5f, 400, 5, 0);
+    b.state = 2;
+    b.full_width = b.full_height = 4;
+    b.activation_update = 3;
+    o.bullets = {b};
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 192;
+    config.grow = 0;
+    const auto legacy = on::Policy(config).decide(o);
+    config.spawn_clock = true;
+    const auto early = on::Policy(config).decide(o);
+    config.reach_filter = true;
+    const auto pruned = on::Policy(config).decide(o);
+    check((legacy.action & 0xf0) == 0 && (early.action & 0xf0) != 0 && early.depth == 12 &&
+              early.action == pruned.action && early.search.spawn_clock_frames == 3,
+          "source clock did not preserve an escape before animation completion");
+    // A late first snapshot has one call left. The final fractional plus full
+    // displacement is already lethal under the actual latched idle input.
+    o.bullets[0].x = 182.5f;
+    o.bullets[0].activation_update = 1;
+    const auto late = on::Policy(config).decide(o);
+    check(late.depth == 0 && late.search.spawn_clock_frames == 1,
+          "activation lost fractional movement or bypassed the input latch");
+    o.bullets[0].state = 1;
+    rejects([&] { on::Policy(config).decide(o); }, "fired bullet claimed a spawn clock");
+    o.bullets[0].state = 2;
+    o.movement.frm = .5f;
+    rejects([&] { on::Policy(config).decide(o); }, "unit spawn clock accepted a fractional update");
+    o.movement.frm = 1;
+    o.bullets[0].activation_update = 0;
+    o.bullets[0].x = 177.5f;
+    check(on::Policy(config).decide(o).action == legacy.action,
+          "unsupported spawn clock changed the named legacy hypothesis");
+}
 void warm_escape() {
     // Two crossing linear bullets expose a full path discarded by a one-node
     // beam after the observation boundary moves. No native future or route tape.
@@ -502,6 +539,7 @@ int main(int argc, char **argv) {
         queued_pooled_laser();
         current_relative_turn();
         held_escape();
+        current_spawn_clock();
         warm_escape();
         reversing_direct_laser();
         current_program_turn_cues();

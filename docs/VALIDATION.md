@@ -64,6 +64,15 @@ and counts the extra forecast work. A lethal first latched update still returns
 depth zero. Complete-world outcomes are evaluated separately from this proposal
 contract.
 
+The optional `--spawn-clock 1` regression requires an escape before a supported
+animation completes, checks reach pruning and rejects a purported spawn clock on
+a fired bullet. A late first snapshot with one animation call left must account
+for both fractional and full displacement, including an unavoidable latched hit.
+Unsupported timing retains the named legacy hypothesis. The pure ANM companion
+checks all three terminal opcodes, next-call/null-cursor order and refusals for
+unknown, masked, malformed, blocked, negative and fractional clocks. These timing
+contracts do not certify velocity changes at activation or later native state.
+
 The optional `--warm-fallback 1` regression uses two crossing linear bullets and
 a one-node beam. Rechecking the previous plan suffix restores a full 24-update
 proposal after ordinary replanning discards it at depth 13. The same check covers
