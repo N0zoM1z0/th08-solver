@@ -755,38 +755,82 @@ void archive_failed_actions(Case &result, const fs::path &root, const fs::path &
 struct RouteMatrix {
     std::string sha256;
     std::map<std::string, Fields> checkpoints;
+    bool sampled = false;
+    std::string sample_phase;
 };
 
-RouteMatrix route_matrix(const fs::path &path) {
+struct ManifestCase {
+    th08::plan::MatrixCase route;
+    std::uint64_t seed;
+};
+
+RouteMatrix route_matrix(const fs::path &path, bool sampled) {
     RouteMatrix result;
     if (path.empty())
         return result;
     const auto text = read(path);
     const auto manifest = parse(text);
     require(integer(field(manifest, "schema_version")) == 1, "matrix_schema_mismatch");
-    const auto seed = integer(field(manifest, "seed"));
+    result.sampled = sampled;
+    const auto seed = sampled ? 0 : integer(field(manifest, "seed"));
     require(seed <= 65535, "matrix_seed_out_of_range");
+    if (sampled) {
+        require(string_value(field(manifest, "sampling_unit")) == "seed-case-pair",
+                "sample_unit_mismatch");
+        if (manifest.count("sample_phase")) {
+            result.sample_phase = string_value(field(manifest, "sample_phase"));
+            require(result.sample_phase == "diagnosis" || result.sample_phase == "holdout",
+                    "sample_phase_invalid");
+        }
+    }
     std::map<std::string, Fields> entries;
     for (const auto &entry : objects(field(manifest, "cases"))) {
         const auto id = string_value(field(entry, "id"));
         require(identifier(id) && entries.emplace(id, entry).second,
                 "matrix_duplicate_or_unsafe_id");
     }
-    const auto catalog = th08::plan::full_run_matrix();
-    require(entries.size() == catalog.size(), "matrix_case_count_mismatch");
-    for (const auto &entry : catalog) {
+    std::vector<ManifestCase> selected;
+    if (sampled) {
+        require(!entries.empty(), "sample_empty_manifest");
+        for (const auto &item : entries) {
+            const auto &input = item.second;
+            const auto shot = integer(field(input, "shot"));
+            const auto difficulty = integer(field(input, "difficulty"));
+            const auto case_seed = integer(field(input, "seed"));
+            require(shot < 12 && difficulty < 5 && case_seed <= 65535,
+                    "sample_checkpoint_out_of_range");
+            const auto route = string_value(field(input, "final_route"));
+            require(difficulty == 4 ? route == "natural" : route == "a" || route == "b",
+                    "sample_invalid_route");
+            if (!result.sample_phase.empty())
+                require(string_value(field(input, "sample_phase")) == result.sample_phase,
+                        "sample_phase_mismatch");
+            const auto final_route = route == "a"   ? th08::plan::FinalRoute::A
+                                     : route == "b" ? th08::plan::FinalRoute::B
+                                                    : th08::plan::FinalRoute::Natural;
+            selected.push_back({{int(shot), int(difficulty), final_route}, case_seed});
+        }
+    } else {
+        const auto catalog = th08::plan::full_run_matrix();
+        require(entries.size() == catalog.size(), "matrix_case_count_mismatch");
+        for (const auto &entry : catalog)
+            selected.push_back({entry, seed});
+    }
+    for (const auto &selection : selected) {
+        const auto &entry = selection.route;
+        const auto case_seed = selection.seed;
         const std::string route = entry.route == th08::plan::FinalRoute::A   ? "a"
                                   : entry.route == th08::plan::FinalRoute::B ? "b"
                                                                              : "natural";
         const std::string difficulty = th08::plan::difficulty_names[entry.difficulty];
         const auto id = difficulty + "-t" + std::to_string(entry.shot) + '-' + route + "-s" +
-                        std::to_string(seed);
+                        std::to_string(case_seed);
         const auto found = entries.find(id);
         require(found != entries.end(), "matrix_catalog_mismatch");
         const auto &input = found->second;
         Fields checkpoint{{"shot", std::to_string(entry.shot)},
                           {"difficulty", std::to_string(entry.difficulty)},
-                          {"seed", std::to_string(seed)},
+                          {"seed", std::to_string(case_seed)},
                           {"story", "1"}};
         for (const auto &value : checkpoint)
             require(integer(field(input, value.first)) == integer(value.second),
@@ -814,7 +858,8 @@ RouteMatrix route_matrix(const fs::path &path) {
         checkpoint.emplace("until_stage", "8");
         checkpoint.emplace("final_route", std::to_string(int(entry.route)));
         checkpoint.emplace("expected_stages", stages);
-        result.checkpoints.emplace(id, std::move(checkpoint));
+        require(result.checkpoints.emplace(id, std::move(checkpoint)).second,
+                "matrix_duplicate_checkpoint");
     }
     result.sha256 = digest(text);
     return result;
@@ -957,7 +1002,7 @@ Case collect(const fs::path &root, const std::string &group, const std::string &
 }
 
 struct Options {
-    fs::path root, fidelity, output, replay_directory, failed_actions_directory, matrix;
+    fs::path root, fidelity, output, replay_directory, failed_actions_directory, matrix, sample;
     std::string known_binary;
     std::vector<std::string> groups;
     bool explicit_groups = false;
@@ -982,6 +1027,8 @@ Options options(int argc, char **argv) {
             result.failed_actions_directory = value;
         else if (key == "--matrix")
             result.matrix = value;
+        else if (key == "--sample")
+            result.sample = value;
         else if (key == "--group") {
             require(identifier(value) && std::find(result.groups.begin(), result.groups.end(),
                                                    value) == result.groups.end(),
@@ -996,6 +1043,7 @@ Options options(int argc, char **argv) {
     }
     require(!result.root.empty() && !result.fidelity.empty() && !result.output.empty(),
             "required_options_missing");
+    require(result.matrix.empty() || result.sample.empty(), "conflicting_case_manifests");
     if (result.groups.empty())
         result.groups = {"spell92-v1",
                          "spell92-diversity-v2",
@@ -1011,7 +1059,8 @@ Options options(int argc, char **argv) {
 }
 
 int report(const Options &opt) {
-    const auto matrix = route_matrix(opt.matrix);
+    const auto matrix =
+        route_matrix(opt.sample.empty() ? opt.matrix : opt.sample, !opt.sample.empty());
     const auto fidelity_text = read(opt.fidelity);
     const auto source_fidelity = parse(fidelity_text);
     const auto fidelity =
@@ -1051,11 +1100,11 @@ int report(const Options &opt) {
             ids.insert(id);
         }
         for (const auto &id : ids)
-            cases.push_back(
-                collect(opt.root, group, id, opt.known_binary,
-                        fidelity.count("dat_sha256") ? field(fidelity, "dat_sha256") : "",
-                        opt.replay_directory, opt.failed_actions_directory,
-                        opt.explicit_groups || !opt.matrix.empty(), matrix, totals));
+            cases.push_back(collect(
+                opt.root, group, id, opt.known_binary,
+                fidelity.count("dat_sha256") ? field(fidelity, "dat_sha256") : "",
+                opt.replay_directory, opt.failed_actions_directory,
+                opt.explicit_groups || !opt.matrix.empty() || !opt.sample.empty(), matrix, totals));
     }
     require(!cases.empty(), "no_campaign_cases");
     const bool valid = std::none_of(cases.begin(), cases.end(), [](const Case &entry) {
@@ -1085,12 +1134,37 @@ int report(const Options &opt) {
             if (entry.status == "verified_complete")
                 verified.insert(entry.id);
         }
-        out << ",\"coverage\":{\"matrix_sha256\":" << quote(matrix.sha256)
-            << ",\"expected_combinations\":" << matrix.checkpoints.size()
-            << ",\"observed_combinations\":" << observed.size()
-            << ",\"verified_combinations\":" << verified.size()
-            << ",\"not_yet_verified_combinations\":" << matrix.checkpoints.size() - verified.size()
-            << '}';
+        if (matrix.sampled) {
+            std::set<std::uint64_t> expected_seeds, observed_seeds, verified_seeds;
+            for (const auto &entry : matrix.checkpoints) {
+                const auto seed = integer(field(entry.second, "seed"));
+                expected_seeds.insert(seed);
+                if (observed.count(entry.first))
+                    observed_seeds.insert(seed);
+                if (verified.count(entry.first))
+                    verified_seeds.insert(seed);
+            }
+            out << ",\"coverage\":{\"sample_sha256\":" << quote(matrix.sha256)
+                << ",\"sampling_unit\":\"seed-case-pair\""
+                << ",\"expected_seed_case_pairs\":" << matrix.checkpoints.size()
+                << ",\"observed_seed_case_pairs\":" << observed.size()
+                << ",\"verified_seed_case_pairs\":" << verified.size()
+                << ",\"not_yet_verified_seed_case_pairs\":"
+                << matrix.checkpoints.size() - verified.size()
+                << ",\"expected_unique_seeds\":" << expected_seeds.size()
+                << ",\"observed_unique_seeds\":" << observed_seeds.size()
+                << ",\"verified_unique_seeds\":" << verified_seeds.size();
+            if (!matrix.sample_phase.empty())
+                out << ",\"sample_phase\":" << quote(matrix.sample_phase);
+            out << '}';
+        } else {
+            out << ",\"coverage\":{\"matrix_sha256\":" << quote(matrix.sha256)
+                << ",\"expected_combinations\":" << matrix.checkpoints.size()
+                << ",\"observed_combinations\":" << observed.size()
+                << ",\"verified_combinations\":" << verified.size()
+                << ",\"not_yet_verified_combinations\":"
+                << matrix.checkpoints.size() - verified.size() << '}';
+        }
     }
     out << ",\"fidelity_failures\":[";
     for (std::size_t i = 0; i < failures.size(); ++i) {

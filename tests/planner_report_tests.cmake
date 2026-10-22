@@ -632,3 +632,67 @@ file(READ "${WORK}/matrix-default.json" missing_process)
 if(matrix_result EQUAL 0 OR NOT missing_process MATCHES "missing_process_receipt")
   message(FATAL_ERROR "A legacy group bypassed process receipts in matrix mode")
 endif()
+
+# Sparse random evaluations bind explicit seed-case pairs. Distinct seeds and
+# pair coverage have different denominators, including planned but unrun pairs.
+string(JSON sample_first GET "${matrix_document}" cases 0)
+string(JSON sample_second SET "${sample_first}" seed 65535)
+string(JSON sample_second SET "${sample_second}" id "\"easy-t0-a-s65535\"")
+string(JSON sample_unrun SET "${sample_first}" seed 12340)
+string(JSON sample_unrun SET "${sample_unrun}" id "\"easy-t0-a-s12340\"")
+string(JSON sample_same_seed GET "${matrix_document}" cases 8)
+set(sample "{\"schema_version\":1,\"sampling_unit\":\"seed-case-pair\",\"cases\":[${sample_first},${sample_second},${sample_unrun},${sample_same_seed}]}")
+file(WRITE "${WORK}/sample.json" "${sample}")
+foreach(sample_seed IN ITEMS 0 65535)
+  set(sample_root "${WORK}/results/sample-c16/easy-t0-a-s${sample_seed}")
+  file(COPY "${route_root}/" DESTINATION "${sample_root}")
+  file(COPY "${route_root}-verify/" DESTINATION "${sample_root}-verify")
+  string(REPLACE "\"seed\":0" "\"seed\":${sample_seed}" sample_plan "${matrix_plan}")
+  string(REPLACE "\"seed\":0" "\"seed\":${sample_seed}" sample_verify "${matrix_verify}")
+  file(WRITE "${sample_root}/plan.json" "${sample_plan}")
+  file(WRITE "${sample_root}-verify/verify.json" "${sample_verify}")
+  file(WRITE "${sample_root}-rpy.json" "${matrix_replay}")
+  foreach(suffix IN ITEMS .exit -verify.exit -rpy.exit)
+    file(WRITE "${sample_root}${suffix}" "0\n")
+  endforeach()
+endforeach()
+run_selected(sample-multiple-seeds TRUE --group sample-c16 --sample "${WORK}/sample.json")
+file(SHA256 "${WORK}/sample.json" sample_hash)
+if(NOT selected MATCHES "\"sample_sha256\":\"${sample_hash}\"" OR
+   NOT selected MATCHES "\"expected_seed_case_pairs\":4" OR
+   NOT selected MATCHES "\"verified_seed_case_pairs\":2" OR
+   NOT selected MATCHES "\"not_yet_verified_seed_case_pairs\":2" OR
+   NOT selected MATCHES "\"expected_unique_seeds\":3" OR
+   NOT selected MATCHES "\"verified_unique_seeds\":2" OR
+   NOT selected MATCHES "\"native_updates\":90")
+  message(FATAL_ERROR "Sparse pair coverage, seed coverage or work accounting changed")
+endif()
+file(COPY "${WORK}/results/sample-c16/" DESTINATION "${WORK}/results/sample-c32")
+run_selected(sample-repeated-attempt TRUE --group sample-c16 --group sample-c32 --sample "${WORK}/sample.json")
+if(NOT selected MATCHES "\"verified_seed_case_pairs\":2" OR
+   NOT selected MATCHES "\"verified_unique_seeds\":2" OR
+   NOT selected MATCHES "\"verified_complete_cases\":4" OR
+   NOT selected MATCHES "\"native_updates\":180")
+  message(FATAL_ERROR "Repeated attempts inflated sampled coverage or lost their costs")
+endif()
+run_selected(sample-conflicting-manifests FALSE --group sample-c16 --sample "${WORK}/sample.json" --matrix "${WORK}/matrix.json")
+string(JSON duplicate_checkpoint SET "${sample}" cases 1 seed 0)
+file(WRITE "${WORK}/sample-duplicate.json" "${duplicate_checkpoint}")
+run_selected(sample-duplicate-checkpoint FALSE --group sample-c16 --sample "${WORK}/sample-duplicate.json")
+string(JSON invalid_extra SET "${sample}" cases 3 final_route "\"a\"")
+file(WRITE "${WORK}/sample-invalid-extra.json" "${invalid_extra}")
+run_selected(sample-invalid-extra FALSE --group sample-c16 --sample "${WORK}/sample-invalid-extra.json")
+string(JSON invalid_seed SET "${sample}" cases 2 seed 65536)
+file(WRITE "${WORK}/sample-invalid-seed.json" "${invalid_seed}")
+run_selected(sample-invalid-seed FALSE --group sample-c16 --sample "${WORK}/sample-invalid-seed.json")
+string(JSON phase_mismatch SET "${sample}" sample_phase "\"diagnosis\"")
+string(JSON phase_mismatch SET "${phase_mismatch}" cases 0 sample_phase "\"holdout\"")
+file(WRITE "${WORK}/sample-phase-mismatch.json" "${phase_mismatch}")
+run_selected(sample-phase-mismatch FALSE --group sample-c16 --sample "${WORK}/sample-phase-mismatch.json")
+execute_process(COMMAND "${REPORT}" --root "${WORK}/matrix-default"
+  --fidelity "${WORK}/fidelity.json" --sample "${WORK}/sample.json"
+  --output "${WORK}/sample-default.json" RESULT_VARIABLE sample_result)
+file(READ "${WORK}/sample-default.json" sample_missing_process)
+if(sample_result EQUAL 0 OR NOT sample_missing_process MATCHES "missing_process_receipt")
+  message(FATAL_ERROR "A legacy group bypassed process receipts in sparse sample mode")
+endif()
