@@ -416,7 +416,9 @@ int run(const Options &o) {
                : o.policy.spawn_guard > 0 ? "native-memory-kinematic-actor-risk-v1"
                                           : "native-memory-kinematic-v1")
            << "\",\"execution_mode\":"
-              "\"forward-measured\",\"risk_parser\":\"line-tsv-v1\",\"future_native_updates\":0,"
+              "\"forward-measured\",\"risk_parser\":\"line-tsv-v1\","
+              "\"motion_history\":\"same-phase-and-active-transform-mask\",\"future_native_"
+              "updates\":0,"
               "\"rewinds\":0,\"deadline_enforced\":false,\"outcome\":\""
            << outcome << "\",\"failure\":\"" << failure << "\",\"binary_sha256\":\"" << binary_hash
            << "\",\"dat_sha256\":\"" << dat_hash << "\",\"actions_sha256\":\""

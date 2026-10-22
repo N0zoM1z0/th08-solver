@@ -79,6 +79,45 @@ on::Bullet bullet(int slot, float x, float y, float vx, float vy) {
     b.full_width = b.full_height = 2;
     return b;
 }
+void transform_motion_history() {
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 192;
+    config.grow = 0;
+    auto previous = scene();
+    previous.bullets = {bullet(0, 180, 400, 0, 0)};
+    previous.bullets[0].full_height = 200;
+    previous.bullets[0].active_transforms = 0x40u;
+    auto current = previous;
+    current.update = 1;
+    current.bullets[0].x = 184;
+    current.bullets[0].vx = 4;
+    current.bullets[0].active_transforms = 0;
+    on::Policy policy(config);
+    policy.observe(previous);
+    const auto decision = policy.decide(current);
+    check(decision.depth == 12 && (decision.action & 0xf0),
+          "a completed turn's speed jump became continuing acceleration");
+    config.reach_filter = true;
+    on::Policy pruned(config);
+    pruned.observe(previous);
+    const auto filtered = pruned.decide(current);
+    check(filtered.depth == decision.depth && filtered.action == decision.action,
+          "transform-history invalidation differs under reach pruning");
+
+    // A vector transform that remains active can really accelerate from rest.
+    // Keep that measured rate rather than treating every zero-speed jump alike.
+    previous.bullets[0].active_transforms = current.bullets[0].active_transforms = 0x10u;
+    for (auto *o : {&previous, &current}) {
+        o->bullets[0].vector_acceleration_x = 4;
+        o->bullets[0].vector_acceleration_duration = 100;
+    }
+    current.bullets[0].vector_acceleration_timer = 1;
+    on::Policy accelerating(config);
+    accelerating.observe(previous);
+    check(accelerating.decide(current).depth == 0,
+          "an unchanged active acceleration lost its unavoidable latched hit");
+}
 void observation_history() {
     on::Configuration config;
     config.horizon = 8;
@@ -531,6 +570,7 @@ int main(int argc, char **argv) {
         check(argc == 2, "test needs an isolated scratch directory");
         risk_rows(argv[1]);
         observation_history();
+        transform_motion_history();
         pruning_and_isolation();
         actor_risk();
         spatial_retention();

@@ -93,7 +93,8 @@ rollout alone can worsen pruning, so compare complete outcomes and all retry cos
 [Issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5) records the integration
 order: complete the standalone-stage baseline over different seeds, diagnose Stage
 4B, add student-state teacher corrections, then evaluate continuous routes and actual
-deadline behavior. Every standalone entry must be validated before full-story work.
+deadline behavior. The owner also authorizes a continuous natural-4A story while
+the remaining standalone 4B/Extra failures are investigated.
 The first uniform learned-risk candidate fixes nine entries, shot 0, Lunatic
 (Extra difficulty for Extra), a seed-zero control and two fresh diagnosis seeds
 per entry. Two additional distinct seeds per entry remain held out until the
@@ -120,6 +121,12 @@ merging. Observations must cover consecutive API updates, including control-only
 stage transitions. Explicit prefix reconstruction warms bullet velocity, spawn,
 direct-laser and body history without consuming search tie RNG; a continuation is
 a new policy episode, not a bit-identical resumption of an earlier search.
+Velocity-rate estimation requires the same fired phase and active-transform mask
+on both observations. Installing or clearing a transform may change velocity
+discretely; the difference across that boundary is not continued as acceleration
+or angular speed. Current supported transform state still takes precedence. An
+unchanged mask does not certify linear motion or exclude external program writes;
+the remaining finite-difference forecast stays a proposal hypothesis.
 The finite coordinate profile rejects NaN/infinity or magnitudes beyond 2^20
 pixels instead of silently dropping unindexable hazards.
 

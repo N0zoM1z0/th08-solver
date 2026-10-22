@@ -346,12 +346,36 @@ velocity changes before the first fired displacement; the constant-velocity spaw
 hypothesis misses that update. A private owned WAIT/vector-motion prototype matches
 160 isolated native fixtures over 656 BulletManager callbacks, covering all three
 spawn phases, WAIT expiry, acceleration installation and final clear. These are
-source-order checks, not full-world improvements. Its three-seed Extra comparison
-is frozen to start after the current 4B queue, preserving the four-controller cap.
+source-order checks, not full-world improvements. Its full-stage Extra repeat
+finishes 0/3: seeds zero/49063/9696 die at 67580/67346/68259 in spell 202. The
+disabled seed-9696 control reproduces the preceding action hash, score, RNG and
+death at 61856. Including that control, work totals 265041 native updates and
+1211.98 summed solver wall seconds; memory peaks at 201986048 bytes. The earlier
+seed-zero clear regresses, so this motion feature remains private and unpromoted.
 
-Two other frozen comparisons are pending: a generic H64 search with 32 additional
-held-input tail checks on retained endpoints, and a complete shot-1 Lunatic Final A
-story through natural 4A. The story uses a uniform existing H64/spatial profile,
+The private joint H64 search / 32-update held-tail comparison finishes 2/3, retaining
+the parent's successful seed: seeds zero/57392 strictly verify at 46713/46728,
+scores 20401653/20632579, with 93441 matching natural rows and zero death/bomb rows.
+Seed 32124 still dies at 40509 in spell 99. The disabled control exactly reproduces
+the parent's seed-zero action hash, score, RNG and death at 40190. Including that
+control, cost is 174140 native updates and 2389.95 summed solver wall seconds;
+memory peaks at 231665664 bytes. Candidates check 193452 endpoints / 1318523 held
+tails / 10627995 forecast updates and select 1265 different endpoints; sorting and
+tail checking cost 1.62 seconds. Forecast/capture extends to 96 while branching
+stays at 64, so this is a joint candidate, not an isolated tail-ranking claim.
+
+The Extra death probes reproduce score/RNG over 136093 additional native updates.
+At a further 74234-update checkpoint, an already stopped relative turn has one
+supported turn update left; after it clears, speed jumps from zero to five. The
+finite-difference fallback wrongly continues that jump as acceleration. Requiring
+matching active-transform masks for rate history fixes the focused regression;
+the parent fails it, while an unchanged active vector acceleration keeps its
+unavoidable latched hit. All 40 native/DAT CTests pass in 617.74 seconds with two
+workers; the default Stage 2 action hash remains unchanged. The complete Extra
+repeat is running; this does not yet establish another complete stage.
+
+A complete shot-1 Lunatic Final A story through natural 4A remains pending.
+The story uses a uniform existing H64/spatial profile,
 seed zero and two new diagnosis seeds, starting at power zero in Stage 1 without
 checkpoint concatenation. Its unchanged learned model was trained on shot 0, so
 this also tests transfer to a different shot. Completion requires fresh actions,

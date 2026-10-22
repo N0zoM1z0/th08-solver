@@ -43,6 +43,12 @@ the local experiment protocol. No learned model is required by the complete-stag
 CTest. Its unit companion also rejects truncated/duplicate risk rows, checks
 latched movement and prefix velocity history, and compares pruned/unpruned search
 with interleaved independent policy instances.
+The transform-history regression observes a stopped relative turn followed by its
+final constant-velocity flight. Estimating continuing acceleration across that
+mask change incorrectly declares the first latched update lethal; resetting the
+rate history retains a complete escape, with reach-filter agreement. An unchanged
+active vector transform still accelerates from rest and keeps its genuinely
+unavoidable latched hit. No zero-speed or seed-specific strategy is substituted.
 
 Optional `--spawn-guard 16` adds actor-origin soft risk, `--diversity-cell 16`
 retains spatial/focus beam alternatives, and `--queued-shots 1` uses positive

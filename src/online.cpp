@@ -436,7 +436,7 @@ struct Policy::Impl {
             } else
                 m.stopped = -1;
             m.x = b.x, m.y = b.y, m.vx = b.vx, m.vy = b.vy, m.state = b.state;
-            current_vel[b.slot] = {true, b.vx, b.vy, b.state};
+            current_vel[b.slot] = {true, b.vx, b.vy, b.state, b.active_transforms};
         }
         for (int s = 0; s < kSlots; ++s)
             if (!seen[s])
@@ -479,6 +479,7 @@ struct Policy::Impl {
         bool valid = false;
         float vx = 0, vy = 0;
         std::uint16_t state = 0;
+        std::uint32_t active_transforms = 0;
     };
     std::array<Prev, kSlots> prev_vel{}; // previous-update velocity per slot for finite differences
     std::array<Prev, kSlots> current_vel{};
@@ -575,7 +576,10 @@ struct Policy::Impl {
                 const Prev &p = prev_vel[b.slot];
                 float x = b.x, y = b.y;
                 float s1 = std::hypot(b.vx, b.vy), a1 = std::atan2(b.vy, b.vx), ds = 0, da = 0;
-                const bool fd = p.valid && p.state == 1;
+                // Installing/clearing a transform can change velocity discretely.
+                // That difference is not a measured acceleration/rotation rate.
+                const bool fd =
+                    p.valid && p.state == 1 && p.active_transforms == b.active_transforms;
                 if (fd) {
                     const float s0 = std::hypot(p.vx, p.vy), a0 = std::atan2(p.vy, p.vx);
                     ds = s1 - s0;
