@@ -127,6 +127,8 @@ Options parse(int argc, char **argv) {
             o.policy.held_fallback = boolean();
         else if (key == "--warm-fallback")
             o.policy.warm_fallback = boolean();
+        else if (key == "--tail-check")
+            o.policy.tail_check = int(integer(value));
         else if (key == "--spawn-clock")
             o.policy.spawn_clock = boolean();
         else if (key == "--direct-turn-envelope")
@@ -252,6 +254,7 @@ int run(const Options &o) {
     std::uint64_t turn_hint_records = 0, unsupported_turn_hints = 0;
     std::uint64_t relative_turn_records = 0, unsupported_relative_turns = 0;
     std::uint64_t spawn_clock_records = 0, unsupported_spawn_clocks = 0;
+    std::uint64_t tail_depth_sum = 0, tail_full_decisions = 0;
     int failed_input = -1;
     bool started_spell = false;
     std::string outcome = "budget", failure;
@@ -316,10 +319,11 @@ int run(const Options &o) {
         while (outcome != "complete" && actions.size() < o.frames &&
                std::chrono::duration<double>(Clock::now() - started).count() < o.seconds) {
             const auto begin = Clock::now();
-            on::capture_memory(session, actions.size(), observation, o.policy.spawn_guard > 0,
-                               o.policy.queued_shots ? unsigned(o.policy.horizon) : 0,
-                               o.policy.queued_lasers ? unsigned(o.policy.horizon) : 0,
-                               o.policy.direct_turn_envelope);
+            on::capture_memory(
+                session, actions.size(), observation, o.policy.spawn_guard > 0,
+                o.policy.queued_shots ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
+                o.policy.queued_lasers ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
+                o.policy.direct_turn_envelope);
             queued_records += observation.queued_shots.size();
             unsupported_queued += observation.unsupported_queued_shots;
             queued_laser_records += observation.queued_lasers.size();
@@ -354,6 +358,14 @@ int run(const Options &o) {
             search_stats.warm_selected += decision.search.warm_selected;
             search_stats.warm_invalidated += decision.search.warm_invalidated;
             search_stats.spawn_clock_frames += decision.search.spawn_clock_frames;
+            search_stats.tail_nodes += decision.search.tail_nodes;
+            search_stats.tail_paths += decision.search.tail_paths;
+            search_stats.tail_updates += decision.search.tail_updates;
+            search_stats.tail_selected += decision.search.tail_selected;
+            search_stats.tail_selection_ms += decision.search.tail_selection_ms;
+            tail_depth_sum += decision.search.tail_best_depth;
+            tail_full_decisions += decision.search.tail_nodes &&
+                                   int(decision.search.tail_best_depth) == o.policy.tail_check;
             search_stats.turn_envelope_frames += decision.search.turn_envelope_frames;
             search_stats.relative_turn_frames += decision.search.relative_turn_frames;
             auto input = decision.action;
@@ -466,6 +478,17 @@ int run(const Options &o) {
            << ",\"held_forecast_updates\":" << search_stats.held_updates
            << ",\"held_selected\":" << search_stats.held_selected
            << ",\"warm_fallback\":" << o.policy.warm_fallback
+           << ",\"tail_check\":" << o.policy.tail_check
+           << ",\"forecast_horizon\":" << o.policy.horizon + o.policy.tail_check
+           << ",\"tail_nodes\":" << search_stats.tail_nodes
+           << ",\"tail_paths\":" << search_stats.tail_paths
+           << ",\"tail_updates\":" << search_stats.tail_updates
+           << ",\"tail_selected\":" << search_stats.tail_selected
+           << ",\"tail_selection_ms\":" << search_stats.tail_selection_ms
+           << ",\"tail_depth_sum\":" << tail_depth_sum
+           << ",\"tail_full_decisions\":" << tail_full_decisions
+           << ",\"tail_coverage\":\"retained-full-beam-endpoints;held-input-hypothesis;fallbacks-"
+              "unchecked\""
            << ",\"spawn_clock\":" << o.policy.spawn_clock
            << ",\"spawn_clock_records\":" << spawn_clock_records
            << ",\"unsupported_spawn_clocks\":" << unsupported_spawn_clocks

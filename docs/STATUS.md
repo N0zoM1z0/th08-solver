@@ -372,7 +372,29 @@ matching active-transform masks for rate history fixes the focused regression;
 the parent fails it, while an unchanged active vector acceleration keeps its
 unavoidable latched hit. All 40 native/DAT CTests pass in 617.74 seconds with two
 workers; the default Stage 2 action hash remains unchanged. The complete Extra
-repeat is running; this does not yet establish another complete stage.
+repeat strictly verifies all three diagnosis seeds under the unchanged H32,
+relative-turn/current-ANM-clock profile: seeds zero/49063/9696 complete at
+90688/91280/90858, scores 119762351/118148248/119100826. Fresh actions and natural
+replay agree, with zero death/bomb rows. This is 3/3 diagnosis coverage, not all
+uint16 seeds; the same current-memory policy adds no native lookahead or rewind.
+Solver work totals 272826 native updates and 1228.69 summed wall seconds; fresh
+execution adds 272826 updates and natural playback adds 272826 calculation rows.
+The exited unit's memory-peak property is unavailable; its 6-GiB high/8-GiB hard
+limits and successful process result are retained.
+
+The maintained `--tail-check T` option defaults to zero and retains H-update
+branching/depth while checking held suffixes through H+T. The narrow direct-laser
+arc predicate now uses oriented endpoint half-planes with the existing outward
+rounding allowance. Its legacy cosine/dot tolerance rejects a clear first update;
+10001 independent static-predicate samples across that angular interval have no
+hit. Source-order tests cover narrow, wide and full-circle arcs. The real failed
+4B prefix's family-isolation check changes from depth zero to 64 at the same
+snapshot after this geometry correction; three diagnostic replays cost 121521
+native updates in total. These are modeled-prefix checks, not full-stage rescues.
+All 40 native/DAT CTests pass in 654.80 seconds with two workers; default Stage 2
+actions remain unchanged. A complete three-seed 4B repeat with both corrections
+is running: seed zero regresses to death at 40131 in spell 99; the others are
+pending. The preceding frozen 2/3 result remains separately identified.
 
 A complete shot-1 Lunatic Final A story through natural 4A remains pending.
 The story uses a uniform existing H64/spatial profile,
@@ -380,6 +402,14 @@ seed zero and two new diagnosis seeds, starting at power zero in Stage 1 without
 checkpoint concatenation. Its unchanged learned model was trained on shot 0, so
 this also tests transfer to a different shot. Completion requires fresh actions,
 natural replay and the exact ordered six-stage path; no pending run is a clear.
+Seed 60950 dies at 166518 in Stage 5 spell 107. Three diagnostic executions
+(499554 additional native updates) reproduce score/RNG and show a long-observed
+phantom becoming real with a velocity change on the fatal update. The main
+current ECL cursor points to a future literal batch that selects two bullet masks
+and calls the source freeze/restore function; static subroutine inspection costs
+zero native calculations. The current phantom-risk forecast does not model that
+scheduled switch. Seed zero has reached Final A; the third diagnosis case remains
+in progress. These partial paths do not establish a verified complete story.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping

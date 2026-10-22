@@ -164,7 +164,7 @@ inline bool laser_hit(const Laser &l, const Float3 &p, const Float3 &half, float
     rotate(&in_max, &in_min, -l.angle);
     if (l.angle_reach > 0) {
         // A circle arc intersects a rectangle either at an arc endpoint or a
-        // rectangle edge. Dot products test arc membership without atan2.
+        // rectangle edge. Endpoint half-planes test membership without atan2.
         // Outward padding covers float Rotate/store rounding between poses.
         const double scale = 1 + std::abs(double(p.x)) + std::abs(double(p.y)) +
                              std::abs(double(l.ox)) + std::abs(double(l.oy)) +
@@ -184,7 +184,15 @@ inline bool laser_hit(const Laser &l, const Float3 &p, const Float3 &half, float
             inside(u * l.reach_cos + v * l.reach_sin, v * l.reach_cos - u * l.reach_sin))
             return true;
         const auto in_arc = [&](double x, double y) {
-            return u * x + v * y >= radius2 * l.reach_cos - arc_round;
+            const double dot = u * x + v * y, cross = u * y - v * x;
+            // Oriented endpoint half-planes stay well-conditioned for narrow
+            // arcs. A cosine/dot tolerance otherwise expands a tiny angle by
+            // much more than the intended coordinate rounding allowance.
+            const double from_begin = l.reach_cos * cross + l.reach_sin * dot;
+            const double to_end = l.reach_sin * dot - l.reach_cos * cross;
+            if (l.reach_cos >= 0)
+                return dot >= -arc_round && from_begin >= -arc_round && to_end >= -arc_round;
+            return from_begin >= -arc_round || to_end >= -arc_round;
         };
         for (double x : {x0, x1})
             if (x * x <= radius2) {
@@ -258,14 +266,14 @@ struct Policy::Impl {
     explicit Impl(Configuration configuration, RiskTables tables)
         : opt(configuration), risk(std::move(tables)) {
         if (opt.horizon < 2 || opt.horizon > 200 || opt.beam < 1 || opt.beam > 8192 ||
-            !std::isfinite(opt.grow) || opt.grow < 0 || !std::isfinite(opt.boss_follow) ||
-            !std::isfinite(opt.risk_weight) || opt.risk_weight < 0 ||
-            !std::isfinite(opt.nowarn_weight) || opt.nowarn_weight < 0 ||
+            opt.tail_check < 0 || opt.tail_check > 200 - opt.horizon || !std::isfinite(opt.grow) ||
+            opt.grow < 0 || !std::isfinite(opt.boss_follow) || !std::isfinite(opt.risk_weight) ||
+            opt.risk_weight < 0 || !std::isfinite(opt.nowarn_weight) || opt.nowarn_weight < 0 ||
             !std::isfinite(opt.focus_bias) || !std::isfinite(opt.spawn_guard) ||
             opt.spawn_guard < 0 || opt.spawn_guard > 128 || opt.diversity_cell < 0 ||
             opt.diversity_cell > 128)
             throw std::runtime_error("invalid_online_configuration");
-        frames.resize(opt.horizon + 1);
+        frames.resize(opt.horizon + opt.tail_check + 1);
     }
     static constexpr int kSlots = 0x601;
     struct SlotMemory {
@@ -376,7 +384,7 @@ struct Policy::Impl {
                 finite(v);
         }
         for (const auto &shot : o.queued_shots) {
-            if (shot.update == 0 || shot.update > unsigned(opt.horizon) ||
+            if (shot.update == 0 || shot.update > unsigned(opt.horizon + opt.tail_check) ||
                 shot.linear_updates == 0 || shot.width < 0 || shot.height < 0)
                 throw std::runtime_error("unsupported_online_observation");
             for (float v : {shot.x, shot.y, shot.vx, shot.vy, shot.width, shot.height})
@@ -385,7 +393,7 @@ struct Policy::Impl {
         for (const auto &laser : o.queued_lasers) {
             const auto &l = laser.hitbox;
             if (laser.first_update == 0 || laser.last_update < laser.first_update ||
-                laser.last_update > unsigned(opt.horizon) || l.w < 0 || l.h < 0 ||
+                laser.last_update > unsigned(opt.horizon + opt.tail_check) || l.w < 0 || l.h < 0 ||
                 laser.turn_hint < 0)
                 throw std::runtime_error("unsupported_online_observation");
             finite(laser.turn_hint);
@@ -843,6 +851,28 @@ struct Policy::Impl {
     };
     SearchResult previous_plan;
     std::uint64_t previous_plan_update = UINT64_MAX;
+    // These continuations rank retained endpoints only; the normal H-update
+    // branch budget and later partial-beam fallbacks keep their own contracts.
+    int check_terminal_tail(const Node &node, const Speeds &sp) {
+        ++search_stats.tail_nodes;
+        int longest = 0;
+        for (int focus = 0; focus < 2; ++focus)
+            for (const auto direction : kDirs) {
+                const auto action = std::uint16_t(direction | (focus ? 4 : 0));
+                float x = node.x, y = node.y;
+                ++search_stats.tail_paths;
+                for (int step = 1; step <= opt.tail_check; ++step) {
+                    move(sp, x, y, action);
+                    ++search_stats.tail_updates;
+                    if (probe(frames[opt.horizon + step], sp.half, x, y, false) == 2)
+                        break;
+                    longest = std::max(longest, step);
+                }
+                if (longest == opt.tail_check)
+                    return longest;
+            }
+        return longest;
+    }
     SearchResult search(const std::vector<HFrame> &frames, int horizon, const Speeds &sp,
                         std::uint16_t latched, float x0, float y0, float pref_x, float pref_y) {
         const std::array<float, 24 * 28> *nw = nullptr;
@@ -949,6 +979,28 @@ struct Policy::Impl {
         for (int i = 1; i < int(last.size()); ++i)
             if (last[i].score < last[best].score)
                 best = i;
+        if (opt.tail_check && deepest == horizon) {
+            const auto begin = std::chrono::steady_clock::now();
+            std::vector<int> order;
+            for (int i = 0; i < int(last.size()); ++i)
+                order.push_back(i);
+            std::stable_sort(order.begin(), order.end(),
+                             [&](int a, int b) { return last[a].score < last[b].score; });
+            int tail_depth = -1, selected = best;
+            for (const int index : order) {
+                const auto depth = check_terminal_tail(last[index], sp);
+                if (depth > tail_depth)
+                    tail_depth = depth, selected = index;
+                if (depth == opt.tail_check)
+                    break;
+            }
+            search_stats.tail_best_depth = unsigned(tail_depth);
+            search_stats.tail_selected = selected != best;
+            best = selected;
+            search_stats.tail_selection_ms +=
+                std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - begin)
+                    .count();
+        }
         std::vector<std::uint16_t> rev;
         int i = best;
         for (int j = deepest; j > 1; --j) {
@@ -1036,11 +1088,12 @@ struct Policy::Impl {
         search_stats = {};
         current_movement = observation.movement;
         current_segment = observation.spell_active ? observation.spell : 300 + observation.stage;
-        kinematic_forecast(observation, opt.horizon, frames);
+        const int forecast_horizon = opt.horizon + opt.tail_check;
+        kinematic_forecast(observation, forecast_horizon, frames);
         const auto &sp = observation.movement;
         if (opt.reach_filter)
-            prune_unreachable(frames, opt.horizon, sp, observation.x, observation.y);
-        for (int j = 1; j <= opt.horizon; ++j)
+            prune_unreachable(frames, forecast_horizon, sp, observation.x, observation.y);
+        for (int j = 1; j <= forecast_horizon; ++j)
             build_index(frames[j], sp.half);
         float pref_x = 192.f, area = 0;
         for (const auto &r : observation.lethal_regions) {

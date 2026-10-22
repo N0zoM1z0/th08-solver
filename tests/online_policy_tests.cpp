@@ -1,5 +1,6 @@
 #include "test_support.hpp"
 #include "th08/ecl_turn_hint.hpp"
+#include "th08/geometry.hpp"
 #include "th08/online.hpp"
 
 #include <cmath>
@@ -564,6 +565,92 @@ void current_program_turn_cues() {
     o.queued_lasers[0].turn_hint = -1;
     rejects([&] { on::Policy(config).decide(o); }, "a negative turn cue was accepted");
 }
+void terminal_tail_contract() {
+    auto o = scene();
+    o.queued_shots = {{9, 8, 192, 400, 0, 0, 40, 200}};
+    on::Configuration c;
+    c.horizon = 8;
+    c.beam = 192;
+    c.diversity_cell = 16;
+    c.grow = 0;
+    c.queued_shots = true;
+    auto parent = o;
+    parent.queued_shots.clear();
+    const auto base = on::Policy(c).decide(parent);
+    c.tail_check = 8;
+    const auto tail = on::Policy(c).decide(o);
+    c.reach_filter = true;
+    const auto pruned = on::Policy(c).decide(o);
+    check((base.action & 0xf0) == 0 && (tail.action & 0xf0) && base.depth == 8 && tail.depth == 8 &&
+              tail.search.tail_best_depth == 8 && tail.search.tail_selected == 1 &&
+              tail.action == pruned.action && tail.search.tail_updates >= tail.search.tail_paths,
+          "terminal checks failed to retain or count an early escape");
+    o = scene();
+    const auto clear = on::Policy(c).decide(o);
+    check(clear.search.tail_nodes == 1 && clear.search.tail_paths == 1 &&
+              clear.search.tail_updates == 8 && clear.search.tail_selected == 0,
+          "a complete first tail failed to stop endpoint enumeration");
+    o.lethal_regions = {{0, 0, 384, 448}};
+    const auto latched = on::Policy(c).decide(o);
+    check(latched.depth == 0 && latched.search.tail_paths == 0,
+          "tail checks bypassed a lethal latched movement");
+    c.horizon = 198;
+    c.tail_check = 3;
+    rejects([&] { on::Policy invalid(c); }, "an oversized forecast horizon was accepted");
+}
+
+void narrow_arc_contract() {
+    on::Observation o;
+    o.x = 10.343133f;
+    o.y = 271.997406f;
+    o.movement.minx = o.movement.miny = 0;
+    o.movement.maxx = 384;
+    o.movement.maxy = 448;
+    o.movement.half = {1, 1, 0};
+    constexpr float origin_x = 209.311523f, origin_y = 59.083252f;
+    constexpr float previous_angle = 1.88237405f, current_angle = 1.88802648f;
+    o.laser_hitboxes = {
+        {origin_x + 295, origin_y, 590, 240, origin_x, origin_y, previous_angle, -1}};
+    on::Configuration config;
+    config.horizon = 2;
+    config.beam = 8;
+    config.direct_turn_envelope = true;
+    on::Policy policy(config);
+    policy.observe(o);
+    o.update = 1;
+    o.laser_hitboxes.front().angle = current_angle;
+    const auto decision = policy.decide(o);
+    // Independently sample the static source predicate across the first-update
+    // arc. The second arc reaches the box, so a stationary policy stops at one.
+    unsigned hits = 0;
+    const auto delta = current_angle - previous_angle;
+    for (unsigned i = 0; i <= 10000; ++i) {
+        const float angle = current_angle - delta + 2 * delta * (float(i) / 10000);
+        th08::geometry::Laser laser{
+            {{origin_x + 295, origin_y}, {590, 240}}, {origin_x, origin_y}, angle};
+        hits += th08::geometry::laser_hit({o.x, o.y}, {1, 1}, laser);
+    }
+    check(decision.depth == 1 && hits == 0,
+          "narrow-arc rounding widened a clear first update into a collision");
+    // Wide arcs need a union of endpoint half-planes; narrow arcs need their
+    // intersection and a center-hemisphere check, including near-zero angles.
+    o.laser_hitboxes.clear();
+    o.movement.minx = o.movement.miny = 0;
+    o.movement.maxx = 384;
+    o.movement.maxy = 448;
+    config.queued_lasers = true;
+    auto depth = [&](float x, float y, float reach) {
+        o.x = x;
+        o.y = y;
+        o.queued_lasers = {{1, 1, {292, 200, 10, 10, 192, 200, 0, -1}, reach}};
+        return on::Policy(config).decide(o).depth;
+    };
+    check(depth(192, 300, 2) == 0 && depth(92, 200, 2) == 2,
+          "a wide arc lost its endpoint half-plane union");
+    check(depth(92, 200, 3.14159274f) == 0 && depth(92, 200, 1e-6f) == 2,
+          "full-circle or near-zero arc membership changed");
+}
+
 } // namespace
 int main(int argc, char **argv) {
     try {
@@ -583,6 +670,8 @@ int main(int argc, char **argv) {
         warm_escape();
         reversing_direct_laser();
         current_program_turn_cues();
+        terminal_tail_contract();
+        narrow_arc_contract();
         return 0;
     } catch (const std::exception &error) {
         std::cerr << error.what() << '\n';

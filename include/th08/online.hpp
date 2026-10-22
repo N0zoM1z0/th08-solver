@@ -114,6 +114,8 @@ struct Observation {
 };
 struct Configuration {
     int horizon = 32, beam = 192;
+    // Held-input updates beyond retained full-horizon endpoints; H + T <= 200.
+    int tail_check = 0;
     int diversity_cell = 0;
     float grow = 0.02f, boss_follow = 0.25f;
     float risk_weight = 20, nowarn_weight = 30, focus_bias = 0;
@@ -149,6 +151,9 @@ struct SearchStatistics {
     std::uint64_t turn_envelope_frames = 0;
     std::uint64_t relative_turn_frames = 0;
     std::uint64_t spawn_clock_frames = 0;
+    std::uint64_t tail_nodes = 0, tail_paths = 0, tail_updates = 0, tail_selected = 0;
+    unsigned tail_best_depth = 0;
+    double tail_selection_ms = 0;
 };
 struct Decision {
     std::uint16_t action = 1;

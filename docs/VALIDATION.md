@@ -70,6 +70,16 @@ and counts the extra forecast work. A lethal first latched update still returns
 depth zero. Complete-world outcomes are evaluated separately from this proposal
 contract.
 
+The optional terminal-tail regression keeps H8 branching/depth while previewing
+a birth at update nine through eight extra held-input checks. It verifies early
+escape, reach-filter agreement, stopping at a complete first suffix, separate
+query counts, a lethal latched update and rejection of H+T above 200. The narrow
+laser-arc regression retains a clear first update that the previous cosine/dot
+tolerance rejects, with 10001 independent static source-predicate samples across
+the angular interval. Companion checks cover wide arcs, full-circle reach and
+the opposite ray at near-zero reach. These geometry contracts are separate from
+full-world outcomes.
+
 The optional `--spawn-clock 1` regression requires an escape before a supported
 animation completes, checks reach pruning and rejects a purported spawn clock on
 a fired bullet. A late first snapshot with one animation call left must account

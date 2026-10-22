@@ -202,8 +202,12 @@ records. It inspects at most 64 records inside an adjacent-sub-table byte bound;
 the final subroutine has no such bound in this interface and supplies no cue.
 No operand/RNG evaluation or native future update occurs.
 
-The model intersects the player's local circle arc with the laser rectangle;
-the broad phase includes a radial envelope and float rounding allowance. This
+The model intersects the player's local circle arc with the laser rectangle.
+Oriented endpoint half-planes test arc membership; a cosine/dot tolerance would
+over-expand narrow arcs near zero angle. Narrow arcs intersect the half-planes,
+wide arcs use their union, and a hemisphere check excludes the opposite ray at
+near-zero reach. The broad phase retains its radial envelope and float rounding
+allowance. This
 is proposal uncertainty under a last-speed/repeated-literal-batch hypothesis,
 with the existing linear origin/static geometry assumptions retained. Later
 scripts can change rates, origins or lifetimes. A zero cue is not an empty-future
@@ -222,6 +226,18 @@ tie RNG. This check precedes the optional held proposals. Reports separately cou
 `warm_paths`, `warm_forecast_updates`, `warm_selected` and `warm_invalidated`.
 The cache belongs to one policy instance, and the option defaults off. A longer
 modeled prefix still depends on the partial forecast and is not a survival guarantee.
+
+`--tail-check T` extends forecast/capture to H+T while retaining the H-update beam
+and reported search depth; H+T is bounded by 200. A complete beam's retained
+endpoints are visited in stable score order. Each gets up to eighteen held-input
+continuations, with the longest modeled suffix preferred and score breaking ties.
+The first full suffix stops enumeration without extra tie RNG. Partial beams and
+held/warm fallback suffixes receive no terminal check. This is endpoint proposal
+retention under a partial forecast, not H+T branching or a native safety proof.
+The option defaults to zero. Reports count all endpoints, paths, checked updates
+including failed collision queries, replacements, attained tail depths and the
+sorting/check time separately. A longer tail also changes forecast coverage;
+compare complete cases and retain parent failures and costs.
 
 `--held-fallback 1` checks all eighteen held direction/focus proposals only when
 the beam returns a nonzero partial horizon. Every proposal starts with the actual
