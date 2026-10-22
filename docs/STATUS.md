@@ -442,7 +442,13 @@ existing-bullet activations with exact first-update position/velocity agreement;
 the adapter integration also matches the actual collider. Its pure projection
 checks cost 55901 updates at that observation and separately report 103 unsupported
 requests/motions. This supports a conditional source cue, not arbitrary future
-world coverage. A paired disabled/enabled comparison reconstructs the same prefix
+world coverage. A fixed-stride census over all three unchanged story tapes checks
+12625 predicted geometries across 20 scheduled activations with exact native
+agreement. Its initial fired-only filter omits the fatal bullet, which native
+collision feedback has already changed to despawning; the revised audit accepts
+only that exact same-update collision slot and reports it separately. Both full
+three-tape audits preserve score/RNG and cost 1260988 additional native updates.
+A paired disabled/enabled comparison reconstructs the same prefix
 ending two API updates before death, then starts two fresh policy episodes with
 the same H64 profile. That comparison is pending; a successful continuation would
 not be a new full-start online story. The original failed seed remains failed.
