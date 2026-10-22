@@ -26,9 +26,19 @@ The route interfaces pass all 38 native/DAT CTests; all 108 replay-corpus outcom
 row-count and fingerprint tuples match the preceding runtime (106/108 against the
 retained reference). The old seed-0 full story freshly replays with unchanged
 terminal, score, RNG and calculation events. The first broad launch hit the shared
-user's 4096-process limit without OOM and was stopped. Its failures/interrupted work
-are retained separately. The replacement queue limits the whole campaign to four
+user's 4096-process limit without OOM and was stopped. The
+[retired ledger](../reports/native/planner_route_initial_summary.json) retains 50
+finalized runtime failures and their exact failed prefixes. Its 58 `pending`
+records were interrupted without final process receipts; they are no longer running.
+The [environment audit](../reports/native/planner_route_environment.json) distinguishes
+their unavailable native counters from measured scope CPU. The replacement queue limits the whole campaign to four
 concurrent solvers, 320 tasks, four CPU cores and 12 GiB RAM at low priority.
+
+Storage cleanup reclaims 1084080128 allocated bytes from completed campaign
+directories: 70 raw captures are losslessly compressed with restored SHA checks,
+and 1428 old compile intermediates are removed. All 1131 protected replay/action
+files retain their hashes. Active build/data and failure evidence remain available;
+later successful raw rows are removed after recording their hashes and receipts.
 
 The preceding full-story seed-robustness campaign is separate historical coverage.
 Eight seeds were drawn before inspection under the

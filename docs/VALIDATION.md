@@ -85,6 +85,14 @@ in the ledger. The checked originals are tracked under
 remain ignored. Git newline conversion is disabled for `.actions` and `.rpy` so
 platform checkout settings preserve the exact bytes bound by these hashes.
 
+Completed remote captures may be retained as `.rows.gz`. The storage audit checks
+every restored raw SHA before removing its uncompressed copy; use
+`gzip -dc capture.rows.gz > capture.rows` before a raw-row comparison. Later
+successful captures retain raw SHA/size and native replay receipts, while their
+reconstructible raw rows are removed. Replay/action files and failed diagnostic
+captures remain available. The [route environment audit](../reports/native/planner_route_environment.json)
+records retained evidence, cleanup receipts and bounded shared-host resources.
+
 For new batches, pass repeatable `--group NAME` arguments; each named directory must
 exist. Explicit groups require `<case>-verify.exit` and, for whole scenes,
 `<case>-rpy.exit` to be zero in addition to their successful JSON reports. Legacy

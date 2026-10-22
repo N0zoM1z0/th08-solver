@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "producer": "manual-native-route-campaign-audit",
+  "reviewed_utc": "2026-10-22T02:51:00Z",
+  "scope": "108 full-run baseline combinations; first-launch resource failure and bounded replacement queue; random evaluation has not started",
+  "source": {
+    "validated_commit": "12c39d63168e0cc373926c816118c9ebb597822a",
+    "upstream_revision": "02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415",
+    "compiled_source_archive_sha256": "d628502e0ac17d275f676fc58b36985d073faea0ea007568175c54fe771d1491",
+    "native_source_file_manifest_sha256": "ecccbd6aec95720ba4ce8b0a7188167094272a50e82656cd4a77b2e56d6bfea0",
+    "native_source_matches_validated_commit": true,
+    "source_check_exit": 0,
+    "source_note": "The source snapshot predates the final documentation/resource edits; every native/build/tool/test source file matches the validated commit."
+  },
+  "environment": {
+    "platform": "Linux x86_64",
+    "processor": "AMD EPYC 9654",
+    "compiler": "GCC 13.3.0 (Ubuntu 24.04)",
+    "build": "Release",
+    "native_optimization": 3,
+    "fp_contract": "off",
+    "fast_math": false,
+    "dat_sha256": "9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb",
+    "planner_sha256": "2a62400bbec836631e9515843adb1b6fb826cd65aa39434bf9cd6c7e62c4f341",
+    "checker_sha256": "38d6594378cf01b871b20a6ac61bd510e2df6e83661a061a4d1329c9c7bc5b07"
+  },
+  "validation": {
+    "native_dat_ctest": {
+      "passed": 38,
+      "total": 38,
+      "wall_seconds": 667.28
+    },
+    "pinned_replay_gate": {
+      "passed": 106,
+      "total": 108,
+      "full_suite": true,
+      "summary_sha256": "8007bf3242a0bd3a8cf698d29674b1cfbdd28b014d958a93af0998b2a3d7bf29",
+      "all_baseline_outcome_row_fingerprint_tuples_match": true,
+      "tuple_comparison_exit": 0,
+      "unresolved_cases": [
+        "lunatic-1-b",
+        "lunatic-11-a"
+      ]
+    },
+    "legacy_ledger_byte_identical": true,
+    "legacy_seed0_full_tape": {
+      "verified": true,
+      "frames": 232074,
+      "calculation_updates": 232069,
+      "control_updates": 5,
+      "final_stage": 6,
+      "score": 167865093,
+      "rng_seed": 54330,
+      "rng_draws": 0,
+      "receipt_sha256": "b146093cd42f475e0bfd7c5be022f4a0576b51b0316fd82327901956dda094e0",
+      "binary_sha256": "26a780e7565839e6cb0ac8f49ac50269764558f0a2d1fdacfa038f83915e0605",
+      "environment": "Local GCC 12.2 Release; separate executable from the campaign"
+    }
+  },
+  "initial_launch": {
+    "status": "stopped_after_process_limit_failures",
+    "simultaneous_case_limit": 108,
+    "hard_user_process_limit": 4096,
+    "diagnosis": "RLIMIT_NPROC exhaustion, inferred from the hard limit, task counts and fork failures; fork errno was not recorded",
+    "ledger": "planner_route_initial_summary.json",
+    "ledger_sha256": "aea7511a0f46f33427341f1e0d8a71fda9e2719ae3692bb771e6cb2b7bbab323",
+    "finalized_runtime_failures": 50,
+    "interrupted_without_final_process_receipts": 58,
+    "verified_completions": 0,
+    "failed_action_prefixes_archived": 50,
+    "archived_prefix_frames": 266584,
+    "finalized_attempt_native_updates": 4552503,
+    "known_native_costs_exclude_interrupted_cases": true,
+    "interrupted_ledger_label": "pending means no final process receipt; these 58 retired records are interrupted, not live jobs",
+    "last_live_sample": {
+      "sample_utc": "2026-10-22T02:19:52Z",
+      "memory_peak_bytes": 44303339520,
+      "cpu_usage_usec": 13359541325,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    "scope_cpu_is_lower_bound": true,
+    "scope_cpu_note": "The last live cgroup sample includes all original cases, including interrupted work. Exact native counters for the interrupted cases and the final sampling tail are unavailable.",
+    "resource_receipt_sha256": "48b290b2421093b3de991ca934114c7de7f88cf261ad20b33e0ba9a0b8d35d32"
+  },
+  "replacement_queue": {
+    "status": "running",
+    "started_utc": "2026-10-22T02:24:48Z",
+    "resource_revision": 1,
+    "concurrent_cases": 4,
+    "total_tasks_max": 320,
+    "cpu_quota_cores": 4,
+    "memory_high_bytes": 8589934592,
+    "memory_max_bytes": 12884901888,
+    "memory_swap_max": 0,
+    "cpu_weight": 10,
+    "io_weight": 10,
+    "nice": 10,
+    "same_native_executables": true,
+    "solver_profile_or_episode_budget_changed": false,
+    "last_live_sample": {
+      "sample_utc": "2026-10-22T02:50:51Z",
+      "memory_bytes": 2619039744,
+      "memory_peak_bytes": 3185483776,
+      "cpu_usage_usec": 6177104773,
+      "host_available_kib": 583162688,
+      "user_tasks": 341,
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    "case_runner_initial_sha256": "39179fae38222cdfa71b1c9391da85e21dd3c5db66afa004091bd08dbc9f71f7",
+    "case_runner_retention_revision_sha256": "b53c16111b3374d2064d5c252cf337e3b0ef06b0211f46ceed9aa05a04c2b609",
+    "runner_retention_note": "The first four workers keep their original script descriptor. An atomic replacement changes only later workers: require natural NMNB replay/count/score checks, record raw SHA/size, and remove completed raw rows. Failure captures remain.",
+    "queue_runner_sha256": "0c9f70bc97d9b4b383d801de59a0c5cc8674e6c57cc07ca0694e9f5e227cfc93",
+    "resource_watcher_sha256": "eaa3b904e450d660b605f0f614bbe3ce794a24d4aed16cfc82f77cc1401c06f1"
+  },
+  "storage": {
+    "status": "complete",
+    "cleanup_exit": 0,
+    "before_allocated_bytes": 1822961664,
+    "after_allocated_bytes": 738881536,
+    "reclaimed_allocated_bytes": 1084080128,
+    "raw_captures_losslessly_compressed": 70,
+    "raw_bytes": 1152704202,
+    "compressed_bytes": 174494008,
+    "compression": "gzip -n -1; each restored raw SHA checked before original removal",
+    "compile_intermediates_removed": 1428,
+    "compile_intermediate_bytes_removed": 102895269,
+    "protected_replay_and_action_files": 1131,
+    "protected_file_hashes_unchanged": true,
+    "protected_file_manifest_sha256": "16f4fd8fd5140e38bceee1e00ca6ce04e3195dc2ba8f7ec5fc849b9591e22e34",
+    "cleanup_journal_sha256": "4ed3b386209416ee5a31a38bcec072c49de375e30d6061eb35daff9cc9f5e0c0",
+    "cleanup_script_sha256": "933cda5dc391b57466b3f23797c4e4900e436e5a8a1408da73c8c443c723c985",
+    "cleanup_scope": "Only three completed campaign directories; active build, dependencies, DAT, corpus, source, old executables, reports, replays and actions retained",
+    "cleanup_resource_limits": {
+      "cpu_quota_cores": 0.25,
+      "tasks_max": 16,
+      "memory_max_bytes": 268435456,
+      "nice": 19,
+      "cpu_weight": 10,
+      "io_weight": 10
+    },
+    "ongoing_capture_policy": "Keep complete action tapes, .rpy files and all process/verification receipts. Retain raw SHA/size; remove reconstructible successful raw rows after validation, and retain failed captures for diagnosis."
+  },
+  "limits": [
+    "No full-matrix or new random-seed completion is claimed by this environment audit.",
+    "Fresh same-source checks do not establish independent physics or retail equivalence.",
+    "The failed first launch remains charged; its 58 interrupted native-cost counters are unavailable."
+  ]
+}
