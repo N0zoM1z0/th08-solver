@@ -80,9 +80,11 @@ and RNG. Its executable and costs remain separate. New plan/verification pairs m
 agree directly on counts and events. `th08_replay_check` also hashes its actual replay,
 DAT and executable before capture. `--replay-dir` archives only verified whole-scene
 originals and full action tapes, checks the replay hash, and emits both artifact hashes
-in the ledger. The checked originals are tracked under
-[native replays](../reports/native/replays/); fresh-verification copies and raw rows
-remain ignored. Git newline conversion is disabled for `.actions` and `.rpy` so
+in the ledger. Previously published originals remain under
+[native replays](../reports/native/replays/). New replays, action tapes and generated
+JSON stay under ignored `reports/local/`, together with fresh-verification copies
+and retained raw rows. Code and maintained prose continue through progress commits.
+Git newline conversion is disabled for `.actions` and `.rpy` so
 platform checkout settings preserve the exact bytes bound by these hashes.
 
 Completed remote captures may be retained as `.rows.gz`. The storage audit checks
@@ -98,13 +100,13 @@ exist. Explicit groups require `<case>-verify.exit` and, for whole scenes,
 `<case>-rpy.exit` to be zero in addition to their successful JSON reports. Legacy
 default groups remain reproducible without these previously unrecorded sidecars.
 The suffixes `-verify`, `-rpy` and `-accounting` are reserved for validation sidecars.
-Use `--failed-actions-dir reports/native/failed-actions` to retain each failed
+Use a local `--failed-actions-dir`, as in the commands below, to retain each failed
 attempt's final emitted tape with a hash, parsed NMNB input/count checks and the
 role `failed_search_prefix`. These tapes are execution-unverified prefixes, not
 successful demonstrations or all rejected internal rollouts. Existing artifact
 names are idempotent only for identical bytes; conflicts fail without overwriting.
 
-For full-run batches, add `--matrix reports/native/planner_route_matrix.json`.
+For full-run baseline batches, add `--matrix reports/native/planner_route_matrix.json`.
 The report checks the complete generated catalog, each attempt's checkpoint and
 every successful native/replay stage path before archiving, and requires validation
 process receipts in this mode. Its `coverage` object
@@ -115,7 +117,7 @@ input groups. A zero attempt-level pending count does not imply full coverage.
 Omitting `--matrix` preserves the historical report format.
 
 ```sh
-./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --group training-resume-c16 --group training-resume-c32 --group holdout-resume-c16 --group holdout-resume-c32 --replay-dir reports/native/replays --failed-actions-dir reports/native/failed-actions --output reports/native/planner_seed_summary.json
+./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --group training-resume-c16 --group training-resume-c32 --group holdout-resume-c16 --group holdout-resume-c32 --replay-dir reports/local/seed-campaign/archive/replays --failed-actions-dir reports/local/seed-campaign/archive/failed-actions --output reports/local/seed-campaign/planner_seed_summary.json
 ```
 
 The current full-run ledger uses all four portfolio groups:
@@ -127,9 +129,9 @@ The current full-run ledger uses all four portfolio groups:
   --matrix reports/native/planner_route_matrix.json \
   --group matrix0-v2-c16 --group matrix0-v2-resume-c16 \
   --group matrix0-v2-c32 --group matrix0-v2-resume-c32 \
-  --replay-dir reports/native/replays \
-  --failed-actions-dir reports/native/failed-actions \
-  --output reports/native/planner_route_summary.json
+  --replay-dir reports/local/route-matrix-v2/archive/replays \
+  --failed-actions-dir reports/local/route-matrix-v2/archive/failed-actions \
+  --output reports/local/route-matrix-v2/planner_route_summary.json
 ```
 
 The [execution protocol](../reports/native/runtime_perf_protocol.json) fixes three

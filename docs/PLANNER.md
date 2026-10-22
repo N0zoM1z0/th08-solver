@@ -126,11 +126,19 @@ The [route protocol](../reports/native/planner_route_protocol.json) freezes two
 generic profiles, per-episode budgets and a single eligible budget-prefix
 continuation. Run the second profile only if the first has no verified completion;
 retain all original failures and costs. First finalize the seed-0 matrix, including
-failures, then freeze fresh random seed draws across the same complete coverage.
-Use `th08_planner_report --matrix` to require each attempt's checkpoint and each
-successful native/replay stage path to match the manifest. Its coverage denominator
+failures. Random evaluation then uses many fresh OS-entropy seeds with a small
+predeclared selection of complete runs per seed, rotating team/solo shot, difficulty,
+Final A/B and Extra. Freeze the exact seeds, assignments, sample size, algorithm and
+budgets before evaluation. Report distinct seeds and planned/completed seed-case
+pairs separately, including all successes, failures and retry costs. This sampling
+scope supersedes the frozen protocol's original per-seed complete-matrix wording.
+
+For baseline matrices, use `th08_planner_report --matrix` to require each attempt's
+checkpoint and each successful native/replay stage path to match the manifest. Its coverage denominator
 includes every catalog entry, and repeated attempts cannot inflate the distinct
 verified count. Missing, budget-limited and runtime-failed cases remain unverified.
+Keep new replays, actions, generated ledgers and receipt JSON in ignored
+`reports/local/`; existing published snapshots remain historical evidence.
 
 Before publishing a checkpoint:
 

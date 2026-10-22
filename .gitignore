@@ -4,6 +4,10 @@
 # Generated reference TUs stay local; reusable probes live in tools/ and tests/.
 /build*/
 /reports/local/
+# New experiment artifacts stay local; previously tracked snapshots remain tracked.
+/reports/native/**/*.json
+/reports/native/**/*.rpy
+/reports/native/**/*.actions
 **/private_resources/
 __pycache__/
 *.py[cod]

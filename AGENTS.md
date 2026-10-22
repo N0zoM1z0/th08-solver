@@ -63,6 +63,9 @@ this repository, not an ignored checkout, submodule or separate feature branch.
   Update report generators and affected outputs together; run the documentation CTest
 - Raw DAT/EXE/assets, generated reference translation units and local experiments
   remain ignored. Do not force-add them; preserve third-party notices
+- Keep new generated replays, action tapes and experiment JSON under ignored
+  `reports/local/`. Preserve the existing tracked artifacts as historical snapshots;
+  progress commits contain code and maintained prose, not new or refreshed run artifacts
 - For authorized assistant changes to this N0zoM1z0 repository, use
   `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. Follow the active

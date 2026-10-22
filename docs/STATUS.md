@@ -40,23 +40,30 @@ and 1428 old compile intermediates are removed. All 1131 protected replay/action
 files retain their hashes. Active build/data and failure evidence remain available;
 later successful raw rows are removed after recording their hashes and receipts.
 
-The replacement [route ledger](../reports/native/planner_route_summary.json)
-archives 24 directly completed combinations: all nine seed-0 entries for each of
-Reimu/Yukari and Marisa/Alice, plus Sakuya/Remilia Easy/Normal/Hard Final A/B.
-The first two teams clear all four standard difficulties, both final routes and
-full Extra. All 24 full tapes freshly verify, and their natural replays match all
-expected stages, scores and 5331641 calculation rows with zero
-death/bomb input rows. The checked Easy/Normal Reimu/Yukari A/B tape pairs first
-differ at their actual Stage-5 Up/Down selection; the
-[audit](../reports/native/planner_route_environment.json) binds raw capture hashes
-and exact manifest/profile agreement. The C++ report's optional `--matrix` mode
-now checks every attempt's checkpoint and each successful native/replay stage path,
-binds the manifest hash, and counts unique combinations without discarding retry
-costs. This is 24/108 new baseline combinations; the other 84 remain unverified
-in the running queue. Random evaluation has not started. The ledger exports only
-finished combinations; its zero attempt-level pending count does not count the
-active/queued combinations outside that export. Historical ledgers still reproduce
-byte-for-byte without the optional matrix mode.
+The current local route ledger verifies 27 directly completed combinations: all nine
+seed-0 entries for each of Reimu/Yukari, Marisa/Alice and Sakuya/Remilia. Each team
+clears all four standard difficulties, both final routes and full Extra. All 27 full
+tapes freshly verify, and their natural replays match all expected stages, scores
+and 5916278 calculation rows with zero death/bomb input rows. All finish in the
+original c16 episode; the ledger retains their internal backtracking/retry costs.
+This is 27/108 baseline combinations, with the other 81 unverified in the queue.
+
+Following the owner's artifact policy, new replays, actions and generated JSON stay
+under ignored `reports/local/route-matrix-v2/`, including the verified archive,
+`planner_route_summary.json` and `planner_route_environment.json`. The retained
+[published ledger](../reports/native/planner_route_summary.json) and
+[audit](../reports/native/planner_route_environment.json) remain a 24-combination
+snapshot. The C++ report's optional `--matrix` mode checks each attempt's checkpoint
+and successful native/replay stage path, binds the manifest hash, and counts unique
+combinations while retaining attempt costs. Its zero pending count covers only the
+finished export, not every active/queued combination. Historical ledgers still
+reproduce byte-for-byte without matrix mode.
+
+Random evaluation has not started. After the 108-case baseline, evaluate many new
+independent seeds using a small, predeclared rotating set of combinations per seed.
+Freeze the assignments and budgets before outcomes and report seed coverage and
+seed-case coverage separately. This sampling scope replaces the original plan to
+run a complete matrix for each new seed; [Planner](PLANNER.md) owns the method.
 
 The preceding full-story seed-robustness campaign is separate historical coverage.
 Eight seeds were drawn before inspection under the

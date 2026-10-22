@@ -30,12 +30,13 @@ The [route manifest](reports/native/planner_route_matrix.json) fixes those entri
 the [protocol](reports/native/planner_route_protocol.json) records identical generic
 profiles, explicit final-choice unlock history and bounded continuation costs.
 Enumeration and successful initialization are not completion evidence.
-The [route ledger](reports/native/planner_route_summary.json) currently archives
-24/108 combinations: every seed-0 Reimu/Yukari and Marisa/Alice entry, plus
-Sakuya/Remilia Easy/Normal/Hard Final A/B, with fresh full-action and natural `.rpy`
-validation. The report checks complete stage paths
-against the manifest and counts distinct combinations across retries. The remaining
-combinations continue through the four-solver queue before random-seed evaluation.
+The [published route ledger](reports/native/planner_route_summary.json) retains a
+24-combination snapshot. New replays, action tapes and experiment JSON stay in
+ignored `reports/local/`; [Status](docs/STATUS.md) owns current verified coverage.
+The report checks complete stage paths against the manifest and counts distinct
+combinations across retries. The four-solver queue completes the baseline before
+random evaluation, which samples many independent seeds with a small rotating
+selection of combinations per seed.
 
 The native runtime is both forecaster and collision oracle. Forked rollouts record
 native hazards; beam search proposes paths; fresh native rollouts verify each

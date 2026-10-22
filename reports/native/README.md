@@ -1,7 +1,9 @@
 # Generated evidence index
 
-Current solver handoff: 2026-10-21. This directory mixes current solver records with
-explicitly scoped older component baselines. A report's producer/input/scope controls
+This directory retains published solver snapshots and explicitly scoped older
+component baselines. New replays, action tapes and experiment JSON stay under ignored
+`reports/local/`; [Status](../../docs/STATUS.md) owns current campaign progress.
+A report's producer/input/scope controls
 its meaning; its presence is not a claim that every original spell or stage runs.
 See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 [Validation](../../docs/VALIDATION.md) for interpretation and reproduction.
