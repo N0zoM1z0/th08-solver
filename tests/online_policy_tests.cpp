@@ -245,6 +245,44 @@ void queued_pooled_laser() {
     o.queued_pooled_lasers = {laser};
     rejects([&] { on::Policy(config).decide(o); }, "noninitial queued pooled laser was accepted");
 }
+void current_relative_turn() {
+    auto o = scene();
+    o.bullets = {bullet(0, o.x, o.y - 17, 0, 0)};
+    o.bullets[0].full_width = o.bullets[0].full_height = 4;
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    on::Policy baseline(config);
+    config.relative_turns = true;
+    on::Policy projected(config);
+    baseline.observe(o);
+    projected.observe(o);
+    o.update = 1;
+    auto &b = o.bullets[0];
+    b.active_transforms = 0x40;
+    b.relative_turn.updates = 1;
+    b.relative_turn.state = {
+        th08::bullet::TurnMode::relative, true, 0, 1, 0, 0, 1.57079632679f, 5, 0};
+    const auto a = baseline.decide(o), p = projected.decide(o);
+    check((a.action & 0xf0) == 0 && (p.action & 0xf0) != 0 && p.depth == config.horizon &&
+              p.search.relative_turn_frames == 1,
+          "current timed turn was hidden by stationary velocity history");
+    config.reach_filter = true;
+    const auto pruned = on::Policy(config).decide(o);
+    check(pruned.action == p.action && pruned.depth == p.depth &&
+              pruned.search.relative_turn_frames == 1,
+          "reach pruning changed the bounded relative-turn proposal");
+    b.y = o.y - 5;
+    check(on::Policy(config).decide(o).depth == 0,
+          "relative turn bypassed the first latched movement");
+    b.relative_turn.state.mode = th08::bullet::TurnMode::aimed;
+    rejects([&] { on::Policy(config).decide(o); },
+            "target-dependent turn was accepted as an independent forecast");
+    b.relative_turn.state.mode = th08::bullet::TurnMode::relative;
+    b.relative_turn.state.active = false;
+    rejects([&] { on::Policy(config).decide(o); },
+            "inactive transform was accepted as a bounded relative turn");
+}
 void held_escape() {
     auto o = scene();
     o.x = 316.374908f;
@@ -394,6 +432,7 @@ int main(int argc, char **argv) {
         queued_birth();
         queued_direct_laser();
         queued_pooled_laser();
+        current_relative_turn();
         held_escape();
         reversing_direct_laser();
         current_program_turn_cues();

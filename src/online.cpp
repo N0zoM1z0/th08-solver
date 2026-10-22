@@ -324,6 +324,18 @@ struct Policy::Impl {
                 finite(v);
             if (b.full_width < 0 || b.full_height < 0)
                 throw std::runtime_error("unsupported_online_observation");
+            const auto &r = b.relative_turn;
+            if (opt.relative_turns && r.updates) {
+                const auto &turn = r.state;
+                for (float v : {r.angle, r.speed, turn.angle, turn.speed})
+                    finite(v);
+                if (b.state != 1 || b.active_transforms != 0x40u || o.movement.frm != 1 ||
+                    !turn.active || turn.mode != bullet::TurnMode::relative || turn.interval < 0 ||
+                    turn.timer < 0 || turn.timer > std::numeric_limits<int>::max() - 201 ||
+                    turn.completed < 0 || turn.completed > std::numeric_limits<int>::max() - 201 ||
+                    turn.subframe != 0)
+                    throw std::runtime_error("unsupported_online_relative_turn");
+            }
         }
         const auto validate_laser = [&](const LaserState &l) {
             for (float v :
@@ -583,6 +595,9 @@ struct Policy::Impl {
                                                     std::int64_t(0), std::int64_t(horizon)))
                                    : 0;
                 float s = s1, a = a1;
+                const auto &relative = b.relative_turn;
+                bullet::Flight flight{x, y, b.vx, b.vy, relative.angle, relative.speed};
+                auto turn = relative.state;
                 const std::array<float, 4> *rq = nullptr;
                 if (risk.loaded)
                     rq = lookup_risk(current_segment, int(nb.sprite), int(std::lround(w * 10)),
@@ -591,7 +606,18 @@ struct Policy::Impl {
                                                     ? now - m.stopped
                                                     : (m.born >= 0 ? now - m.born : 0)));
                 for (int j = 1; j <= horizon; ++j) {
-                    if (fd) {
+                    if (opt.relative_turns && relative.updates) {
+                        if (unsigned(j) <= relative.updates) {
+                            if (bullet::advance_direction(flight, turn, current_movement.frm) !=
+                                bullet::Status::advanced)
+                                throw std::runtime_error("unsupported_online_relative_turn");
+                            ++search_stats.relative_turn_frames;
+                        }
+                        // Past the certified transform boundary, constant velocity
+                        // resumes the proposal hypothesis, not a native guarantee.
+                        x += flight.velocity_x;
+                        y += flight.velocity_y;
+                    } else if (fd) {
                         s += ds, a += da;
                         if (s < 0)
                             s = 0;

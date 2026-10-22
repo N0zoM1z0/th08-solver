@@ -75,6 +75,23 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
                              b.full_height, b.active_transforms, b.vector_acceleration_x,
                              b.vector_acceleration_y, b.vector_acceleration_timer,
                              b.vector_acceleration_duration, native.collisionDisabled != 0});
+        if (b.relative_direction.updates) {
+            const auto &v = b.relative_direction;
+            const auto &turn = native.exStates[BULLET_TRANSFORM_STATE_DIRECTION_CHANGE];
+            auto &r = o.bullets.back().relative_turn;
+            r.updates = v.updates;
+            r.angle = v.angle;
+            r.speed = v.speed;
+            r.state = {bullet::TurnMode::relative,
+                       true,
+                       v.interval,
+                       turn.directionChangeRepeatCount,
+                       turn.directionChangesCompleted,
+                       v.timer,
+                       v.turn_angle,
+                       v.turn_speed,
+                       0};
+        }
     }
     o.lasers.clear();
     for (const auto &v : session.lasers()) {

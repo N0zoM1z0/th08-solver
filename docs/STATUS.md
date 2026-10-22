@@ -234,10 +234,13 @@ separate unsupported counters. Its regression covers pre-birth escape and the
 input latch. A frozen seed-57392 T-128 pair reproduces death at 36960 in spell 96
 without the adapter addition and advances to 39055 in 99 with it. Both episodes
 fail; work totals 76015 native updates, including 73664 prefix updates, and
-35.39 summed wall seconds. In the ongoing three-seed full-stage repeat, seed 57392
-strictly verifies at 46385, while seed zero regresses from a completion to death
-at 40190 in 99. The remaining case is unfinished, not a completion. All 40
-native/DAT CTests pass in 783.37 seconds with the default Stage 2 action hash unchanged.
+35.39 summed wall seconds. The full-stage repeat finishes 1/3: seed 57392 strictly
+verifies at 46385, seed zero regresses to death at 40190, and seed 32124 dies at
+40389, both in spell 99. It consumes 126964 native updates and 1673.27 summed
+solver wall seconds, plus verification/replay; unit memory peaks at 579760128 bytes
+including compilation. Different successful seeds from different profiles are
+not spliced into a universal result. All 40 native/DAT CTests pass in 783.37
+seconds with the default Stage 2 action hash unchanged.
 
 A separate private bounded-relative-turn prototype uses already exposed current
 transform state and the existing pure direction-change kernel. Six T-128 episodes
@@ -247,7 +250,12 @@ with matching natural rows and zero death/bomb rows. Seed 49063 dies at 74243 in
 both variants; seed 9696 advances from 74208 to 75081 and still dies. All end in
 spell 204. Total work is 462709 native updates, including 403070 prefix updates,
 and 259.37 summed wall seconds, plus fresh verification/replay. This is one
-verified prefix continuation, not a full-stage start or a promoted universal policy.
+verified prefix continuation. The maintained `--relative-turns 1` model now adds
+owned-state validation and supported/unsupported/projected-work counters; it
+defaults off. Its full-stage three-seed repeat has one strict completion so far:
+seed 9696 at 90718, while seed zero still dies at 62697 in spell 201. The third
+case is pending, not a completion. All 40 native/DAT CTests pass in 617.70 seconds
+with two test workers; the default Stage 2 action hash remains unchanged.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping

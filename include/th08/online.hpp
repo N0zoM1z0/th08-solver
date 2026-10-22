@@ -1,4 +1,5 @@
 #pragma once
+#include "th08/bullet_motion.hpp"
 
 #include <array>
 #include <cstdint>
@@ -34,6 +35,13 @@ struct Movement {
     float minx = 0, miny = 0, maxx = 0, maxy = 0;
     Vector half;
 };
+// Current source state, owned by the observation. updates includes the last
+// relative turn but stops before any subsequent/concurrent transform program.
+struct RelativeTurn {
+    unsigned updates = 0;
+    float angle = 0, speed = 0;
+    bullet::DirectionChange state;
+};
 struct Bullet {
     float x = 0, y = 0, vx = 0, vy = 0;
     std::uint16_t state = 0;
@@ -43,6 +51,7 @@ struct Bullet {
     float vector_acceleration_x = 0, vector_acceleration_y = 0;
     int vector_acceleration_timer = 0, vector_acceleration_duration = 0;
     bool collision_disabled = false;
+    RelativeTurn relative_turn;
 };
 struct LaserState {
     float endOffset = 0, startOffset = 0, startLength = 0, width = 0;
@@ -111,6 +120,7 @@ struct Configuration {
     bool queued_shots = false, queued_lasers = false;
     bool held_fallback = false;
     bool direct_turn_envelope = false;
+    bool relative_turns = false;
 };
 struct RiskTables {
     std::map<std::uint64_t, std::array<float, 4>> fine, segment, global;
@@ -130,6 +140,7 @@ struct SearchStatistics {
     double selection_ms = 0;
     std::uint64_t held_paths = 0, held_updates = 0, held_selected = 0;
     std::uint64_t turn_envelope_frames = 0;
+    std::uint64_t relative_turn_frames = 0;
 };
 struct Decision {
     std::uint16_t action = 1;

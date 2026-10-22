@@ -127,6 +127,8 @@ Options parse(int argc, char **argv) {
             o.policy.held_fallback = boolean();
         else if (key == "--direct-turn-envelope")
             o.policy.direct_turn_envelope = boolean();
+        else if (key == "--relative-turns")
+            o.policy.relative_turns = boolean();
         else if (key == "--log-every")
             o.log_every = int(integer(value));
         else if (key == "--commit")
@@ -244,6 +246,7 @@ int run(const Options &o) {
     std::uint64_t queued_laser_records = 0, unsupported_queued_lasers = 0;
     std::uint64_t queued_pooled_records = 0, unsupported_queued_pooled = 0;
     std::uint64_t turn_hint_records = 0, unsupported_turn_hints = 0;
+    std::uint64_t relative_turn_records = 0, unsupported_relative_turns = 0;
     int failed_input = -1;
     bool started_spell = false;
     std::string outcome = "budget", failure;
@@ -320,6 +323,12 @@ int run(const Options &o) {
             unsupported_queued_pooled += observation.unsupported_queued_pooled_lasers;
             turn_hint_records += observation.turn_hint_records;
             unsupported_turn_hints += observation.unsupported_turn_hints;
+            if (o.policy.relative_turns)
+                for (const auto &b : observation.bullets) {
+                    relative_turn_records += b.relative_turn.updates > 0;
+                    unsupported_relative_turns +=
+                        (b.active_transforms & 0x40u) && !b.relative_turn.updates;
+                }
             const auto decision = policy.decide(observation);
             search_stats.selections += decision.search.selections;
             search_stats.candidates += decision.search.candidates;
@@ -330,6 +339,7 @@ int run(const Options &o) {
             search_stats.held_updates += decision.search.held_updates;
             search_stats.held_selected += decision.search.held_selected;
             search_stats.turn_envelope_frames += decision.search.turn_envelope_frames;
+            search_stats.relative_turn_frames += decision.search.relative_turn_frames;
             auto input = decision.action;
             if (o.spell < 0 && ((actions.size() + 1) % 2))
                 input |= 4096;
@@ -425,6 +435,11 @@ int run(const Options &o) {
            << ",\"queued_pooled_laser_coverage\":\"partial-imminent-main-cursor\""
            << ",\"held_fallback\":" << o.policy.held_fallback
            << ",\"direct_turn_envelope\":" << o.policy.direct_turn_envelope
+           << ",\"relative_turns\":" << o.policy.relative_turns
+           << ",\"relative_turn_records\":" << relative_turn_records
+           << ",\"unsupported_relative_turns\":" << unsupported_relative_turns
+           << ",\"relative_turn_frames\":" << search_stats.relative_turn_frames
+           << ",\"relative_turn_coverage\":\"bounded-source-state-then-linear-hypothesis\""
            << ",\"turn_envelope_frames\":" << search_stats.turn_envelope_frames
            << ",\"turn_hint_records\":" << turn_hint_records
            << ",\"unsupported_turn_hints\":" << unsupported_turn_hints

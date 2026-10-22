@@ -79,6 +79,12 @@ cannot recover that escape through the latched input. It also checks reach-filte
 agreement and rejects a purported spawn whose timer has already advanced. Source
 preview contracts remain independently exercised by the native planner tests.
 
+The relative-turn policy regression warms a stationary velocity history, then
+installs an owned source turn. It requires an early escape, counts only the
+bounded kernel updates, checks reach-filter agreement and the first input latch,
+and rejects aimed/inactive state masquerading as an independent relative turn.
+The existing bullet-motion source differential remains a separate kernel check.
+
 For an always-shoot student's offline teacher queries, add `--shoot 1
 --quiet-retries 0` to `th08_plan` with the original checkpoint, immutable
 `--prefix` and explicit total frame/time budgets. Inspect every generated suffix

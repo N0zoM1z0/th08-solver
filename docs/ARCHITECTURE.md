@@ -181,6 +181,12 @@ counted. `online.cpp` owns the optional two-sign angular proposal envelope and
 its radial index bound. This does not replace native collision or establish
 future pose/lifetime validity.
 
+For `--relative-turns`, the adapter copies the native session's bounded relative
+direction view and current repeat state into `online::RelativeTurn`. The policy
+uses the existing pure bullet kernel within that source bound, then labels its
+linear continuation as a heuristic. No actor or native VM pointer crosses this
+interface, and aimed/concurrent transforms do not enter the independent model.
+
 `solver::Model` is fixed collision geometry after each frame's action/world update.
 Only candidate-independent models accept exact-position successor merging. The planner
 keeps the explicit comparator-winning predecessor, caches blocked as well as safe

@@ -159,6 +159,16 @@ separately, not promoted into known geometry. The current origin and subsequent
 script behavior remain partial assumptions; `queued_pooled_laser_records` and
 `unsupported_queued_pooled_lasers` report this additional coverage.
 
+`--relative-turns 1` projects an existing bullet's source-owned relative turn
+before extrapolating observed velocity. The native session supplies a bounded
+single-transform view; the adapter copies angle, speed, timer, interval and repeat
+state into the observation. The pure direction-change kernel runs only through
+that bound, including its last turn. Beyond it, constant velocity is explicitly
+a proposal hypothesis. Concurrent/aimed turns and subsequent transform programs
+are not certified. The option defaults off and reports supported/unsupported
+observation counts plus `relative_turn_frames`, without native lookahead or RNG
+evaluation. This also handles a stationary bullet whose turn is already installed.
+
 `--direct-turn-envelope 1` replaces a matched direct laser's single signed turn
 with both turn signs up to its last observed angular speed. Before first
 visibility, `--queued-lasers 1` can also supply a cue from absolute literal writes
