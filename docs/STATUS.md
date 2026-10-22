@@ -40,6 +40,17 @@ and 1428 old compile intermediates are removed. All 1131 protected replay/action
 files retain their hashes. Active build/data and failure evidence remain available;
 later successful raw rows are removed after recording their hashes and receipts.
 
+The replacement [route ledger](../reports/native/planner_route_summary.json)
+archives four directly completed combinations: seed-0 Reimu/Yukari Easy Final A/B
+and Normal Final A/B. All four full tapes freshly verify, and their natural replays
+match all expected stages, scores and 890935 calculation rows with zero death/bomb
+input rows. A/B tapes first differ at their actual Stage-5 Up/Down selection; the
+[audit](../reports/native/planner_route_environment.json) binds raw capture hashes
+and exact manifest/profile agreement. This is 4/108 new baseline combinations;
+the other 104 remain unverified in the running queue. Random evaluation has not
+started. The ledger exports only finished combinations; its zero pending count
+does not count the active/queued combinations outside that export.
+
 The preceding full-story seed-robustness campaign is separate historical coverage.
 Eight seeds were drawn before inspection under the
 [frozen story-seed protocol](../reports/native/planner_seed_protocol.json). Independent

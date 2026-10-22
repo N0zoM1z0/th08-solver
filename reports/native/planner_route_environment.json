@@ -152,7 +152,106 @@
       "cpu_weight": 10,
       "io_weight": 10
     },
+    "additional_success_captures_removed": 4,
+    "additional_success_raw_bytes_removed": 89093500,
+    "accepted_capture_cleanup_exit": 0,
+    "accepted_capture_cleanup_journal_sha256": "e96d973eff2152d8c794a6ced60151fe0b26a9950d2fb2b452287a42e179e582",
     "ongoing_capture_policy": "Keep complete action tapes, .rpy files and all process/verification receipts. Retain raw SHA/size; remove reconstructible successful raw rows after validation, and retain failed captures for diagnosis."
+  },
+  "coverage_snapshot": {
+    "as_of_utc": "2026-10-22T03:15:00Z",
+    "manifest": "planner_route_matrix.json",
+    "ledger": "planner_route_summary.json",
+    "ledger_sha256": "ea097ca48c9e08c64965b124afae01176be47b4cd0a8f38dad8690bfd0c59e56",
+    "ledger_scope": "Finished combinations only; active/queued combinations are outside this exported ledger.",
+    "expected_combinations": 108,
+    "unique_verified_combinations": 4,
+    "not_yet_verified_combinations": 104,
+    "all_checkpoint_profile_and_stage_paths_match_manifest": true,
+    "random_seed_evaluation_started": false,
+    "raw_capture_receipts": [
+      {
+        "id": "easy-t0-a-s0",
+        "rows": 217544,
+        "steps": 107210,
+        "raw_bytes": 21754400,
+        "raw_sha256": "ccf01a47498e1369553f9fb3d592ce517dac884c59e786e3e68ddd63db61d9e5",
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "easy-t0-b-s0",
+        "rows": 217619,
+        "steps": 106694,
+        "raw_bytes": 21761900,
+        "raw_sha256": "406239cf130a2fa05a06f7f4fd31f5dfda663081be66c86258a382189a0482b3",
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          7
+        ]
+      },
+      {
+        "id": "normal-t0-a-s0",
+        "rows": 227747,
+        "steps": 117416,
+        "raw_bytes": 22774700,
+        "raw_sha256": "f1da0b2500b59c484b9d2f676ffafb2e20afdb42db578f24c8110ebade57f262",
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          6
+        ]
+      },
+      {
+        "id": "normal-t0-b-s0",
+        "rows": 228025,
+        "steps": 117102,
+        "raw_bytes": 22802500,
+        "raw_sha256": "7d0f506b41a24f4a4706b4abdd70d8eb5c451e2729044a4f99904356588eaf63",
+        "stage_path": [
+          0,
+          1,
+          2,
+          4,
+          5,
+          7
+        ]
+      }
+    ],
+    "route_choice_prefix_checks": [
+      {
+        "difficulty": "easy",
+        "first_different_action": 160081,
+        "identical_preceding_raw_prefix_sha256": "f1ec9035515d3a9348449524159330f1d4429d14906cab6f42542e67a9003229",
+        "final_a_input": 20,
+        "final_b_input": 36,
+        "stage5_entry_action": 125628,
+        "final_a_stage6_entry_action": 163845
+      },
+      {
+        "difficulty": "normal",
+        "first_different_action": 170241,
+        "identical_preceding_raw_prefix_sha256": "8bb289ae5bd297953a86935efc20b903f2c98dedab3ad758d834c61cba9ad379",
+        "final_a_input": 20,
+        "final_b_input": 36,
+        "stage5_entry_action": 134500,
+        "final_a_stage6_entry_action": 173996
+      }
+    ],
+    "prefix_check_meaning": "A/B action tapes are byte-identical through the input preceding each first difference. Their first difference is the original Up/Down dialogue selection during Stage 5; both complete their expected natural replay path."
   },
   "limits": [
     "No full-matrix or new random-seed completion is claimed by this environment audit.",
