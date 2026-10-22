@@ -340,6 +340,23 @@ matches do not establish the post-activation velocity hypothesis or an aggregate
 success improvement. The option remains off by default. All 40 native/DAT CTests
 pass in 628.52 seconds with two workers; the default Stage 2 action hash is unchanged.
 
+A further three-tape source probe retains 226993 reconstruction updates with
+matching terminal score/RNG. It observes 12108 vector-acceleration activations whose
+velocity changes before the first fired displacement; the constant-velocity spawn
+hypothesis misses that update. A private owned WAIT/vector-motion prototype matches
+160 isolated native fixtures over 656 BulletManager callbacks, covering all three
+spawn phases, WAIT expiry, acceleration installation and final clear. These are
+source-order checks, not full-world improvements. Its three-seed Extra comparison
+is frozen to start after the current 4B queue, preserving the four-controller cap.
+
+Two other frozen comparisons are pending: a generic H64 search with 32 additional
+held-input tail checks on retained endpoints, and a complete shot-1 Lunatic Final A
+story through natural 4A. The story uses a uniform existing H64/spatial profile,
+seed zero and two new diagnosis seeds, starting at power zero in Stage 1 without
+checkpoint concatenation. Its unchanged learned model was trained on shot 0, so
+this also tests transfer to a different shot. Completion requires fresh actions,
+natural replay and the exact ordered six-stage path; no pending run is a clear.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;
