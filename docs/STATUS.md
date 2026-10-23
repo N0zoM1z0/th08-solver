@@ -558,65 +558,49 @@ including a full Stage 2 solve, fresh execution and natural replay with unchange
 action SHA. The successful frozen story/Extra results above predate this correction and do
 not certify its full-story or Extra coverage.
 
-The shared spatial selector now finds exact bin winners and partially ranks the
-remaining slots instead of fully sorting every candidate. Its 420-case differential
-contract preserves float fields, stable ties, output order, parents and statistics.
-Uninstrumented GCC 13.3/EPYC 9654 Release comparisons keep H64/beam192/cell16,
-guard16 and the unchanged learned model. Three alternating paired 2400-update
-measurements per workload reduce controller mean from 16.62--16.70 to
-13.77--13.78 ms at the shot-1 story start, and from 14.66--14.70 to 11.72--11.77 ms
-at the shot-1 Stage 4A start, seed 29768; selection time falls 38--39 percent.
-These fixed-length prefixes are timing samples, not completed stories/stages.
-Complete standalone Stage 1, shot 1/seed 0, and Stage 2, shot 0/seed 29768,
-both finish under each version with byte-identical full actions, score and RNG:
-23149/32843 updates and scores 3796648/11813854. Their controller means change
-15.45 to 12.53 ms and 14.27 to 11.81 ms. Fresh execution and natural playback of
-the two unique successful tapes add 55992 updates/rows, with zero death/bomb rows.
-All comparison runs cost 140784 native updates and 1924.16 summed solver wall
-seconds; the separate instrumented profile adds 2400 updates. Eight behavioral
-pair checks agree. At most four controllers use a separate 12-core CPU quota and
-8-GiB memory cap on the shared host; both versions retain the same budgets and
-failure meaning. All 40 native/DAT CTests pass in 697.28 seconds with two workers,
-including the unchanged default Stage 2 action SHA. No enforced-deadline or retail
-claim follows from these measurements; this changes speed without adding seed coverage.
+Exact controller optimizations now avoid full spatial ranking and per-call hash
+nodes, precompute spawn-grid sums in the original float addition order, reuse
+policy-owned search storage, and preserve half-pixel keys with an exact
+integer-significand path plus the original library fallback. The
+[planner](PLANNER.md) owns these mechanisms; [validation](VALIDATION.md) records the
+420-case full-sort oracle, fresh/reused workspace checks, failed-root isolation
+and 26165824 quantization comparisons. Budgets, node/tie ordering, learned weights,
+native physics and gameplay RNG are unchanged.
 
-Two subsequent exact changes precompute each decision's spawn-grid neighborhoods
-and reuse policy-owned beam/dedup storage. The grid keeps the original row-major
-float additions and node-score weights; scratch nodes and generation marks reset
-on every search, including early failure. Focused contracts guard clipped cells,
-rounding order, signed zero and a failed-root/observer-only control comparison.
-Isolated three-pair Release measurements over the same two 2400-update workloads
-retain identical full actions/behavior: grid preparation reduces the story-start
-mean from 13.76--13.82 to 12.43--12.57 ms, then storage reuse reduces it from
-12.42--12.47 to 12.16--12.20 ms. Stage 4A's latter comparison is 11.49--11.52 to
-11.19--11.25 ms. A separate combined full-stage gate against the published partial-rank
-baseline retains the exact earlier Stage 1/Stage 2 tapes, scores and RNG at
-23149/32843 updates. Controller means change 12.47/11.74 to 11.07/10.50 ms;
-p99 changes 15.93/16.59 to 14.32/15.77 ms. Fresh actions and natural playback again
-verify all 55992 calculations with zero death/bomb rows. The 28 micro/full runs
-cost 169584 native updates and 1984.41 summed solver wall seconds; fresh execution
-adds 55992 updates and natural replay adds 55992 rows. All 14 behavioral pairs
-agree, without changing budgets, models or tie RNG. The same GCC 13.3/EPYC 9654
-environment keeps at most four controllers: each micro unit has six-core/four-GiB
-limits, and the later full-stage unit has twelve-core/eight-GiB limits. There are
-no future native updates, rewinds or enforced deadlines. All 40 native/DAT CTests
-pass in 636.97 seconds with two workers; the default Stage 2 action SHA is unchanged.
+Uninstrumented GCC 13.3/EPYC 9654 Release comparisons use H64/beam192/cell16,
+guard16 and the same teacher-plus-student files. Complete standalone Stage 1,
+shot 1/seed 0, and Stage 2, shot 0/seed 29768, have 100000-update/7200-second
+budgets. Every version finishes with identical full action bytes and behavioral
+fields: 23149/32843 calculations, scores 3796648/11813854 and unchanged terminal RNG.
+Each row below compares its own baseline/candidate measurements; costs include
+all paired prefix and full-stage runs.
 
-The shared half-pixel proposal key additionally uses an exact integer-significand
-path on the tested glibc/x86-64 binary32 profile, with the original library fallback
-for other layouts and large/special values. Its standard-library oracle checks
-26165824 boundary/adjacent/finite-bit values and four rounding modes, including
-exception flags and errno. Three paired prefix samples reduce story-start mean
-12.15--12.18 to 11.97--12.03 ms and Stage 4A mean 11.219--11.224 to
-10.971--11.005 ms. Full Stage 1/Stage 2 means change 11.10/10.50 to 10.84/10.31 ms;
-the exact 23149/32843-update tapes, scores, RNG and all behavioral fields still
-agree. Fresh execution and natural NMNB playback each add 55992 updates/rows.
-The sixteen measured runs cost 140784 native updates and 1534.09 summed solver
-wall seconds; all eight behavioral pairs agree. This is a roughly two-percent
-controller gain on these workloads, not the larger isolated primitive speedup.
-All 40 native/DAT CTests pass in 688.80 seconds with two workers, including the
-unchanged default Stage 2 action SHA. Budgets, precision, model and collision
-semantics remain unchanged; no enforced-deadline or retail claim is added.
+| Exact change | Stage 1 controller mean (ms) | Stage 2 controller mean (ms) | Runs / native updates | Summed solver wall (s) |
+| --- | --- | --- | --- | --- |
+| Partial spatial rank | 15.45 → 12.53 | 14.27 → 11.81 | 16 / 140784 | 1924.16 |
+| Spawn-grid preparation + search storage | 12.47 → 11.07 | 11.74 → 10.50 | 28 / 169584 | 1984.41 |
+| Half-pixel conversion | 11.10 → 10.84 | 10.50 → 10.31 | 16 / 140784 | 1534.09 |
+| Flat spatial index + selection storage | 10.85 → 8.72 | 10.28 → 8.38 | 16 / 140784 | 1376.43 |
+
+Three alternating paired 2400-update prefixes per workload use the shot-1
+story start, seed 0, and standalone Stage 4A start, seed 29768. They are timing
+samples, not completed stories/stages. Isolated grid preparation reduces the
+story-start mean 13.76--13.82 to 12.43--12.57 ms; search-storage reuse then reduces
+12.42--12.47 to 12.16--12.20 ms. The latest flat-index comparison changes
+11.97--12.02 to 9.95--9.97 ms at the story start and 10.97--11.01 to
+8.93--8.99 ms at Stage 4A. All 8/14/8/8 behavioral pair checks agree. The initial
+separate instrumented profile adds 2400 native updates; its timing is excluded.
+
+Each full-stage gate freshly verifies the two unique tapes for another 55992
+native updates and 55992 natural replay rows, with zero death/bomb rows. All 40
+native/DAT CTests pass after each change in 697.28/636.97/688.80/662.47 seconds with
+two workers; the default Stage 2 action SHA remains unchanged. At most four
+controllers use a twelve-core CPU quota and eight-GiB memory cap on the shared
+host; the earlier isolated micro units each use six-core/four-GiB caps.
+The latest full-stage p99 is 12.16/13.91 ms, but maxima are 22.23/15.84 ms and
+2/0 decisions exceed the 1000/60-ms deadline. These clocks exclude native execution
+and file I/O, and the harness still waits for decisions. No enforced-deadline,
+live retail, new seed coverage or independent physics claim follows from this speedup.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping

@@ -373,9 +373,10 @@ th08::plan::BeamSelection reference_spatial_beam(std::vector<th08::plan::BeamNod
 
 void spatial_beam_rank_agreement() {
     using th08::plan::BeamNode;
+    th08::plan::SpatialBeamScratch<BeamNode> reusable;
     std::uint32_t random = 0x89abcdef;
     const auto draw = [&] { return random = random * 1664525u + 1013904223u; };
-    for (const int size : {0, 1, 2, 37, 193, 1024, 3500})
+    for (const int size : {3500, 0, 1, 1024, 2, 193, 37})
         for (const int width : {1, 2, 17, 192, 4096})
             for (const int cell : {1, 16, 48})
                 for (int mode = 0; mode < 4; ++mode) {
@@ -398,20 +399,30 @@ void spatial_beam_rank_agreement() {
                         actual[2].score = -std::numeric_limits<float>::infinity();
                         actual[3].score = std::numeric_limits<float>::infinity();
                     }
-                    auto expected = actual;
+                    auto expected = actual, reused = actual;
                     const auto reference = reference_spatial_beam(expected, width, cell);
                     const auto selected = th08::plan::retain_spatial_beam(actual, width, cell);
+                    const auto cached =
+                        th08::plan::retain_spatial_beam(reused, width, cell, reusable);
                     check(selected.candidates == reference.candidates &&
                               selected.bins == reference.bins &&
                               selected.retained_bins == reference.retained_bins &&
-                              actual.size() == expected.size(),
+                              actual.size() == expected.size() &&
+                              cached.candidates == reference.candidates &&
+                              cached.bins == reference.bins &&
+                              cached.retained_bins == reference.retained_bins &&
+                              reused.size() == expected.size(),
                           "partial spatial rank changed membership counts");
                     for (std::size_t i = 0; i < actual.size(); ++i) {
-                        const auto &a = actual[i], &e = expected[i];
+                        const auto &a = actual[i], &e = expected[i], &r = reused[i];
                         check(th08::plan::same_float(a.x, e.x) &&
                                   th08::plan::same_float(a.y, e.y) &&
                                   th08::plan::same_float(a.score, e.score) &&
-                                  a.parent == e.parent && a.act == e.act && a.viol == e.viol,
+                                  a.parent == e.parent && a.act == e.act && a.viol == e.viol &&
+                                  th08::plan::same_float(r.x, e.x) &&
+                                  th08::plan::same_float(r.y, e.y) &&
+                                  th08::plan::same_float(r.score, e.score) &&
+                                  r.parent == e.parent && r.act == e.act && r.viol == e.viol,
                               "partial spatial rank changed a node, stable tie or parent chain");
                     }
                 }

@@ -93,6 +93,12 @@ are sorted. Ranking by score and original source index preserves the former full
 stable sort's exact membership, output order, ties and parent/action fields;
 hash iteration never determines a selection. This reduces ranking work without
 changing the proposal budget or strategy.
+The bin index uses a flat, linearly probed table with full `(x,y,focus)` equality,
+so hash collisions cannot merge bins. A power-of-two table has at least twice as
+many slots as input nodes, so occupancy is at most one half. The online policy
+owns reusable selection buffers; all occupancy and logical contents reset on
+every call, including empty input. Private retained-node storage prevents input
+aliasing. The existing three-argument offline interface uses a fresh workspace.
 
 ## Current-memory online policy
 

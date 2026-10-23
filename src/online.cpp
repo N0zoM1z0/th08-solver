@@ -845,6 +845,7 @@ struct Policy::Impl {
     struct SearchScratch {
         std::vector<std::vector<Node>> layers;
         std::vector<std::uint32_t> seen_key, seen_gen;
+        plan::SpatialBeamScratch<Node> selection;
     } search_scratch;
     const std::uint16_t kDirs[9] = {0, 16, 32, 64, 128, 16 | 64, 16 | 128, 32 | 64, 32 | 128};
     std::uint64_t tie = 88172645463325252ULL;
@@ -970,8 +971,8 @@ struct Policy::Impl {
             if (int(next.size()) > opt.beam) {
                 if (opt.diversity_cell > 0) {
                     const auto begin = std::chrono::steady_clock::now();
-                    const auto stats =
-                        plan::retain_spatial_beam(next, opt.beam, opt.diversity_cell);
+                    const auto stats = plan::retain_spatial_beam(next, opt.beam, opt.diversity_cell,
+                                                                 search_scratch.selection);
                     search_stats.selection_ms += std::chrono::duration<double, std::milli>(
                                                      std::chrono::steady_clock::now() - begin)
                                                      .count();
