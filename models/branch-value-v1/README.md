@@ -76,5 +76,8 @@ separate frozen global tuning experiment, followed by independent-seed native
 comparisons against H24 and H64. The tested global penalties 0.25/1/4 each complete
 7/8 tuning episodes, so the predeclared smallest-weight tie rule selects **0.25**.
 This does not change the model weights or use independent evaluation outcomes.
-No new successful replay/route claim follows
-from saving this model. Future retraining needs a new snapshot and split ledger.
+The frozen independent comparison finds an encouraging 202 signal, with retained
+regressions and unresolved paired uncertainty. It does not establish a population
+reliability guarantee; [Status](../../docs/STATUS.md) owns exact native completion,
+timing and whole-stage verification evidence. Future retraining needs a new
+snapshot and split ledger. This experimental model remains explicitly opt-in.

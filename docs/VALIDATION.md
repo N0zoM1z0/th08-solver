@@ -93,6 +93,16 @@ agent. It makes no future Session updates and does not rewind the live game.
 ctest --test-dir build-headless -R headless_online --output-on-failure
 ```
 
+Natural replay `rows` counts recorded gameplay calculations; `stages[].frames`
+is the last observed `ReplayManager::frameCounter`, a replay input clock. They
+are different units. `ReplayTraceRecord` runs before input-enabled/clear gates
+that can prevent clock advancement. The complete Stage 2 regression, for example,
+has 32993 rows and last input-clock value 32924. Validate total row coverage against
+the tape/calculation count, plus natural terminal, score, ordered stage path and
+zero death/bomb rows. Do not require the last input-clock value to equal total rows
+or patch it with a guessed constant offset. Fresh action agreement, natural replay
+and independent retail comparison remain separate evidence levels.
+
 The optional branch-value experiment uses separate offline collection and C++
 training tools. Use new output paths; neither collector episodes nor saved model
 snapshots are overwritten. The collector's `--stage` is the native index 0..8

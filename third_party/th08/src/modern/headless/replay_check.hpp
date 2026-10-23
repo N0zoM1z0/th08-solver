@@ -23,6 +23,8 @@ struct ReplayCheckSummary {
     bool finished = false, natural = false, write_failed = false;
     int stage_count = 0;
     int stages[9] = {};
+    // Last replay input-clock value per stage, not calculation rows or API calls.
+    // Playback may record rows while replayInputEnabled prevents clock advance.
     std::uint32_t stage_frames[9] = {}, stage_scores[9] = {}, rng_origins[9] = {};
 };
 void replay_check_enable(std::FILE *rows);

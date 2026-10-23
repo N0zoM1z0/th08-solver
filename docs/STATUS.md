@@ -1,9 +1,9 @@
 # Current handoff status
 
-Reviewed: 2026-10-23. Current implementation is
-[issue #6](https://github.com/N0zoM1z0/th08-solver/issues/6): preserve compact learned
-artifacts, improve generic forecasting, prepare reproducible training data and
-compare small learned guidance. This continues
+Reviewed: 2026-10-23. The bounded
+[issue #6](https://github.com/N0zoM1z0/th08-solver/issues/6) experiment preserves compact
+learned artifacts, improves generic forecasting, prepares reproducible training
+data and completes the first small learned-guidance comparison. Ongoing scope is
 [issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5): integrate and validate a
 forward-only CPU controller using authorized current process memory, then diagnose
 generic failures and build the offline-teacher/student loop. The earlier issue #1
@@ -68,9 +68,7 @@ BCE/Brier are 0.65494/0.23135 on training and 0.65674/0.23217 on tuning. These l
 do not establish controller benefit. Global penalties 0.25/1/4 each complete 7/8
 tuning cases; the predeclared tie rule fixes 0.25. All 24 tuning episodes cost
 83312 native updates and 258.60 summed wall seconds. The independent 24-seed
-H24/H24-value/H64 comparison has now been released with frozen binaries, model,
-weight and manifests. Its full bank and two-seed standalone Stage 5 gate remain
-pending; no successful-route or real-time claim follows from training.
+H24/H24-value/H64 comparison uses frozen binaries, model, weight and manifests.
 The maintained collector now preserves explicit branch inputs as well as parent
 tapes. The first frozen producer predates this sidecar and retains exact source,
 binaries, parent tapes and checkpoint/rank identities for recovery. The current
@@ -78,6 +76,82 @@ trainer reproduces the first saved model byte-for-byte from the audited corpus.
 All 46 final-build native/DAT CTests pass in 677.87 seconds, including branch
 transparency on 107/Extra 202 and the unchanged complete Stage 2 execution/replay
 gate. Model-off and zero-weight policy contracts preserve ordinary behavior.
+
+The independent bank completes all 225 attempts: 24 new seeds on each of
+107/111/Extra 202 under three arms, plus three-seed dense 103 controls. Every
+configuration, action hash/count and decision-log row count is audited; the local
+strict pair analyzer reproduces the remote coverage/outcome summaries. There are
+187 native completions, 38 deaths and no exhausted budgets. Practice cases remain
+native proxies without fresh natural or retail replay claims.
+
+| Native spell proxy | H24 | H24 + value 0.25 | H64 |
+| --- | --- | --- | --- |
+| 107, each over 24 new seeds | 24/24 | 24/24 | 24/24 |
+| 111, each over the same 24 seeds | 24/24 | 24/24 | 24/24 |
+| Extra 202, same 24 seeds | 9/24 | 16/24 | 9/24 |
+| Dense 103 control, first three seeds | 3/3 | 3/3 | 3/3 |
+
+For 202, value versus H24 has nine candidate-only and two baseline-only successes;
+versus H64 the counts are ten and three. Exact two-sided McNemar p-values are
+0.06543/0.09229. The value success Wilson 95% interval is [0.4671, 0.8203], compared
+with [0.2116, 0.5729] for each baseline. This is an encouraging finite-sample signal,
+with real regressions and unresolved uncertainty. The three proxies share seeds:
+their 72 episodes per arm are not 72 independent seeds or full story trials.
+Each seed's all-three-proxy count is 9/24, 16/24 and 9/24 respectively.
+
+Whole-controller timing below pools every observed decision from the 72 main
+episodes per arm, including failed attempts and unequal episode lengths. Release
+GCC 13.3 on shared EPYC 9654 uses policy `-march=native` and `-ffp-contract=off`:
+
+| Arm | Mean / p99 / p99.9 / max (ms) | Observed 16.67-ms misses / decisions |
+| --- | --- | --- |
+| H24 | 2.964 / 4.517 / 5.926 / 18.044 | 1 / 265207 |
+| H24 + value | 2.995 / 4.610 / 6.012 / 8.832 | 0 / 273700 |
+| H64 | 7.478 / 10.974 / 14.192 / 24.123 | 48 / 264412 |
+
+The value arm charges 0.0332 ms per decision for feature preparation and ranking,
+included in its controller time. Dense controls also all complete, with pooled
+means 3.178/3.184/8.699 ms. All 225 attempts consume 825298 native updates and
+3751.70 summed loop wall seconds; setup adds 29.29 seconds. Native stepping costs
+57.94 seconds excluding file I/O. This harness waits for decisions; the latency
+sample does not establish unpaused 60 FPS, a general deadline guarantee or a
+50%-success full Lunatic story controller. The two-seed whole Stage 5 gate is
+recorded separately below.
+
+The prespecified first two evaluation seeds (22390/3464) each complete the whole
+standalone Lunatic Stage 5 under all three frozen arms: **6/6 strictly verified**.
+All six fresh action executions agree on terminal, score, RNG and counts. Natural
+replay covers all 262361 calculation rows with matching terminal scores, the exact
+Stage 5 path and zero death/bomb-input rows. There are no replacement seeds or
+successful-prefix substitutions. An experiment-only check initially equated the
+last replay input-clock value with total calculation rows; source inspection and
+the existing Stage 2 fixture establish that these are different units. The source-
+checked derived gate applies the existing row/score/stage/death/bomb contract to
+all six unchanged receipts, retaining the original false verdicts and adding no
+native execution or guessed clock offset. [Validation](VALIDATION.md) owns the
+counter definition. This is native execution/replay agreement, without new retail
+playback or a full-story claim.
+Each arm is 2/2 here, so this small whole-stage sample shows no completion-rate
+advantage for learned guidance. Pooled controller means are 2.383/2.412/6.154 ms
+for H24/H24-value/H64, with maxima 5.986/7.084/16.750 ms. Only H64 has an observed
+deadline miss (one); the harness still waits for every decision. Controllers cost
+262361 native updates and 973.23 summed wall seconds. Fresh execution adds another
+262361 updates; natural replay adds 143397 API calls for its 262361 recorded rows.
+All 310 top-level campaign tasks are now exercised, including failed acceptance
+attempts, training, tuning and separate verification. Ten reserved slots remain
+unused; native branch costs stay separately charged. The four-job cap was retained.
+Unused object files and empty child scratch directories are cleaned. Protected
+model, dataset, producer, DAT and native-library hashes remain unchanged; original
+source/binaries and parent/evaluation receipts are retained locally.
+
+The first learning experiment therefore supports further bounded investigation,
+not an algorithmic-limit claim or a default-policy change. Generic forecasting
+still misses some future lifecycle/transform behavior, longer search alone does
+not rescue 202, and the value target uses a held-last tail rather than a replanning
+expert continuation. Next work should diagnose the retained regressions, compare
+better continuation labels and broaden disjoint scenarios/shots with newly frozen
+evaluation seeds. A larger model or end-to-end RL is not yet justified by this
+finite first comparison. The optional model and all original snapshots stay saved.
 
 The current approach is in [Planner](PLANNER.md). The generic planner uses native
 fork rollouts and verified commits; it adds no spell-92 strategy branch. The
