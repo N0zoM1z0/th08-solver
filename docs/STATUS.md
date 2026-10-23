@@ -1,6 +1,6 @@
 # Current handoff status
 
-Reviewed: 2026-10-22. Current work is
+Reviewed: 2026-10-23. Current work is
 [issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5): integrate and validate a
 forward-only CPU controller using authorized current process memory, then diagnose
 generic failures and build the offline-teacher/student loop. The earlier issue #1
@@ -601,6 +601,23 @@ The latest full-stage p99 is 12.16/13.91 ms, but maxima are 22.23/15.84 ms and
 2/0 decisions exceed the 1000/60-ms deadline. These clocks exclude native execution
 and file I/O, and the harness still waits for decisions. No enforced-deadline,
 live retail, new seed coverage or independent physics claim follows from this speedup.
+
+The owner prioritizes further measured algorithmic speedups before model/training
+replacement. Native/replay correctness remains required even if a later stochastic
+policy accepts a finite complete-story success rate. The eventual initial policy
+target may be at least 50 percent full Lunatic NMNB runs; a stage clear rate or a few
+selected successful tapes does not establish that probability.
+Optional component diagnostics now separate capture, policy phases, live native
+work, prefix warming and output. A local GCC 12.2/EPYC 7B12 H64/cell16/guard16
+story-start sample, shot 1/seed 0 with the unchanged model, executes all 2400
+budgeted updates in 27.84 seconds. Of 27.33 controller seconds, search uses 25.15,
+indexing 1.47, forecast construction 0.61, history 0.050 and capture 0.047 seconds.
+Live native execution adds 0.505 seconds; post-loop output adds 0.00067 seconds.
+This instrumented concurrent sample locates search as the next target; it is not
+a solved story, a remote benchmark or a deadline claim. Raw reports stay local.
+All 40 native/DAT CTests pass in 1029.16 seconds under the current local load,
+including the new profiled/unprofiled and complete-prefix contracts; the default
+Stage 2 action SHA is unchanged. Documentation CTest also passes.
 
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping

@@ -164,6 +164,13 @@ struct Decision {
     int depth = 0;
     SearchStatistics search;
 };
+// Optional monotonic-clock diagnostics. These disjoint policy phases exclude
+// observation capture and native execution; spatial-selection time is nested
+// within search. The caller owns the output, reset even if decide() rejects input.
+struct DecisionTiming {
+    std::uint64_t history_ns = 0, forecast_ns = 0, index_ns = 0;
+    std::uint64_t search_ns = 0, fallback_ns = 0;
+};
 class Policy {
   public:
     explicit Policy(Configuration configuration, RiskTables risk = {});
@@ -174,7 +181,7 @@ class Policy {
     // actions or advancing the policy's search tie RNG. Re-observing the same
     // unchanged snapshot is allowed; deciding twice at one update is rejected.
     void observe(const Observation &observation);
-    Decision decide(const Observation &observation);
+    Decision decide(const Observation &observation, DecisionTiming *timing = nullptr);
 
   private:
     struct Impl;

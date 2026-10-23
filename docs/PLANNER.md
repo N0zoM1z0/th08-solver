@@ -300,6 +300,17 @@ maximum and deadline misses. Native execution excluding measured file I/O, setup
 prefix cost and whole-loop wall time are separate. It waits for late decisions;
 `deadline_enforced:false` is explicit. A future bounded-work/fallback policy must
 be evaluated under its actual execution behavior before any real-time claim.
+`--profile-components 1` additionally writes `components.json` and marks
+`online.json` as `component_profiled`. Optional policy clocks separate history,
+forecast construction, reach pruning/indexing, search and fallback work. Capture
+and policy totals are disjoint; policy phases are nested within the policy total,
+and spatial-selection time is nested within search. Do not add nested times.
+Prefix reconstruction, live native execution/file I/O, loop residual, setup and
+post-loop output have separate scopes. Post-loop output includes tape/log/report
+serialization, quantile sorting and hashes, but excludes the component report
+itself. These instrumented diagnostics locate work; uninstrumented Release pairs
+still decide performance improvements. Profiling changes no policy inputs, RNG,
+search budget or game pacing.
 The current driver calls the owned native Session directly and advances it only
 after a decision; it has no unpaused retail-memory/input bridge. A live 60 FPS
 gate must let the game advance on schedule, align snapshots and input sampling

@@ -666,6 +666,39 @@ void terminal_tail_contract() {
     rejects([&] { on::Policy invalid(c); }, "an oversized forecast horizon was accepted");
 }
 
+void phase_timing_contract() {
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    config.diversity_cell = 16;
+    config.reach_filter = config.held_fallback = config.warm_fallback = true;
+    config.tail_check = 8;
+    on::Policy reference(config), profiled(config);
+    on::DecisionTiming timing;
+    auto o = scene();
+    for (std::uint64_t i = 0; i < 20; ++i) {
+        o.update = i;
+        o.bullets = {bullet(0, 180 + i, 390, 1, 0), bullet(1, 220, 360 + i, 0, 1)};
+        if (i == 10)
+            o.bullets.push_back(bullet(2, o.x, o.y, 0, 0));
+        const auto a = reference.decide(o), b = profiled.decide(o, &timing);
+        check(a.action == b.action && a.depth == b.depth &&
+                  a.search.selections == b.search.selections &&
+                  a.search.candidates == b.search.candidates && a.search.bins == b.search.bins &&
+                  a.search.retained_bins == b.search.retained_bins &&
+                  a.search.held_updates == b.search.held_updates &&
+                  a.search.warm_updates == b.search.warm_updates &&
+                  a.search.tail_updates == b.search.tail_updates,
+              "phase clocks changed decisions, search order or reused policy state");
+        check(timing.history_ns + timing.forecast_ns + timing.index_ns + timing.search_ns > 0,
+              "enabled phase clocks did not record work");
+        rejects([&] { profiled.decide(o, &timing); }, "profiled duplicate decision was accepted");
+        check(timing.history_ns == 0 && timing.forecast_ns == 0 && timing.index_ns == 0 &&
+                  timing.search_ns == 0 && timing.fallback_ns == 0,
+              "a rejected decision retained an earlier timing sample");
+        o.latched_input = a.action;
+    }
+}
 void narrow_arc_contract() {
     on::Observation o;
     o.x = 10.343133f;
@@ -740,6 +773,7 @@ int main(int argc, char **argv) {
         reversing_direct_laser();
         current_program_turn_cues();
         terminal_tail_contract();
+        phase_timing_contract();
         narrow_arc_contract();
         return 0;
     } catch (const std::exception &error) {

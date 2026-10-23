@@ -1096,7 +1096,19 @@ struct Policy::Impl {
         search_stats.held_selected = selected;
     }
 
-    Decision choose(const Observation &observation) {
+    Decision choose(const Observation &observation, DecisionTiming *timing) {
+        using Timer = std::chrono::steady_clock;
+        if (timing)
+            *timing = {};
+        auto stamp = timing ? Timer::now() : Timer::time_point{};
+        const auto mark = [&](std::uint64_t DecisionTiming::*field) {
+            if (timing) {
+                const auto end = Timer::now();
+                timing->*field =
+                    std::chrono::duration_cast<std::chrono::nanoseconds>(end - stamp).count();
+                stamp = end;
+            }
+        };
         if (last_decided == observation.update)
             throw std::runtime_error("duplicate_online_decision");
         observe(observation);
@@ -1104,13 +1116,16 @@ struct Policy::Impl {
         search_stats = {};
         current_movement = observation.movement;
         current_segment = observation.spell_active ? observation.spell : 300 + observation.stage;
+        mark(&DecisionTiming::history_ns);
         const int forecast_horizon = opt.horizon + opt.tail_check;
         kinematic_forecast(observation, forecast_horizon, frames);
+        mark(&DecisionTiming::forecast_ns);
         const auto &sp = observation.movement;
         if (opt.reach_filter)
             prune_unreachable(frames, forecast_horizon, sp, observation.x, observation.y);
         for (int j = 1; j <= forecast_horizon; ++j)
             build_index(frames[j], sp.half);
+        mark(&DecisionTiming::index_ns);
         float pref_x = 192.f, area = 0;
         for (const auto &r : observation.lethal_regions) {
             const float a = (r.x1 - r.x0) * (r.y1 - r.y0);
@@ -1120,12 +1135,14 @@ struct Policy::Impl {
         pref_x = std::clamp(pref_x, 48.f, 336.f);
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
                              observation.y, pref_x, 400.f);
+        mark(&DecisionTiming::search_ns);
         check_warm_path(result, observation);
         check_held_directions(result, observation);
         if (opt.warm_fallback) {
             previous_plan = result;
             previous_plan_update = observation.update;
         }
+        mark(&DecisionTiming::fallback_ns);
         return {std::uint16_t(result.moves.front() | 1), result.depth, search_stats};
     }
 };
@@ -1135,7 +1152,7 @@ Policy::~Policy() = default;
 void Policy::observe(const Observation &observation) {
     impl_->observe(observation);
 }
-Decision Policy::decide(const Observation &observation) {
-    return impl_->choose(observation);
+Decision Policy::decide(const Observation &observation, DecisionTiming *timing) {
+    return impl_->choose(observation, timing);
 }
 } // namespace th08::online

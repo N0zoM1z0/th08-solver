@@ -29,6 +29,13 @@ The half-pixel key contract compares the optimized path with the original
 floats, plus one million finite bit samples (26165824 comparisons). Four rounding
 modes additionally check exact values, exception flags, errno and unchanged mode,
 including signed zero, subnormals and large/special-value library fallback.
+Optional component clocks are checked against an unprofiled policy through
+consecutive observations, a lethal root, recovery and duplicate-decision rejection.
+Actions, depth, proposal counts and fallback work must agree; rejected duplicate
+calls clear the caller-owned timing sample. The real-data contract also compares
+profiled/unprofiled budget tapes and checks a complete prefix with zero decisions
+and zero live-native time. `--profile-components 1` emits separate, explicitly
+instrumented scopes as described in [Planner](PLANNER.md).
 
 ## Current-memory CPU controller
 

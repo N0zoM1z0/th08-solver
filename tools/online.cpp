@@ -32,7 +32,7 @@ struct Options {
     fs::path dat, out, prefix, risk;
     on::Configuration policy;
     int stage = 0, difficulty = 3, shot = 0, seed = 0, spell = -1, log_every = 0;
-    bool story = false;
+    bool story = false, profile_components = false;
     th08::plan::FinalRoute route = th08::plan::FinalRoute::Natural;
     std::size_t frames = 400000;
     double seconds = 3600, deadline_ms = 1000.0 / 60;
@@ -137,6 +137,8 @@ Options parse(int argc, char **argv) {
             o.policy.relative_turns = boolean();
         else if (key == "--log-every")
             o.log_every = int(integer(value));
+        else if (key == "--profile-components")
+            o.profile_components = boolean();
         else if (key == "--commit")
             require(integer(value) == 1, "only_one_update_commits_supported");
         else if (key == "--forecast")
@@ -206,6 +208,17 @@ struct DecisionLog {
     std::uint16_t action;
     double milliseconds;
 };
+struct ComponentTotals {
+    std::uint64_t capture_ns = 0, policy_ns = 0;
+    on::DecisionTiming phases;
+    void add(const on::DecisionTiming &sample) {
+        phases.history_ns += sample.history_ns;
+        phases.forecast_ns += sample.forecast_ns;
+        phases.index_ns += sample.index_ns;
+        phases.search_ns += sample.search_ns;
+        phases.fallback_ns += sample.fallback_ns;
+    }
+};
 int run(const Options &o) {
     require(!fs::exists(o.out) || fs::is_empty(o.out), "output_already_exists");
     fs::create_directories(o.out);
@@ -246,7 +259,12 @@ int run(const Options &o) {
         logs.reserve(o.frames / std::size_t(o.log_every) + 1);
     std::vector<Transition> transitions;
     on::Observation observation;
-    std::uint64_t attempts = 0, controls = 0, native_ns = 0, deadline_misses = 0, full_depth = 0;
+    std::uint64_t attempts = 0, controls = 0, native_ns = 0, native_io_ns = 0;
+    std::uint64_t deadline_misses = 0, full_depth = 0;
+    ComponentTotals components;
+    double prefix_seconds = 0;
+    std::uint64_t prefix_native_ns = 0, prefix_io_ns = 0;
+    bool prefix_accounted = false;
     on::SearchStatistics search_stats;
     std::uint64_t queued_records = 0, unsupported_queued = 0;
     std::uint64_t queued_laser_records = 0, unsupported_queued_lasers = 0;
@@ -278,6 +296,7 @@ int run(const Options &o) {
                     .count();
             const auto io = session.file_io_time_ns() - io_begin;
             native_ns += std::uint64_t(elapsed) > io ? std::uint64_t(elapsed) - io : 0;
+            native_io_ns += io;
         };
         try {
             state = session.step(input);
@@ -305,6 +324,14 @@ int run(const Options &o) {
                 "final_route_mismatch");
         require(state.deaths == 0 && state.player_state != 2, "death");
     };
+    const auto account_prefix = [&] {
+        if (o.profile_components) {
+            prefix_seconds = std::chrono::duration<double>(Clock::now() - started).count();
+            prefix_native_ns = native_ns;
+            prefix_io_ns = native_io_ns;
+        }
+        prefix_accounted = true;
+    };
     try {
         for (std::size_t i = 0; i < prefix.size(); ++i) {
             step(prefix[i]);
@@ -316,6 +343,7 @@ int run(const Options &o) {
                 outcome = "complete";
             }
         }
+        account_prefix();
         while (outcome != "complete" && actions.size() < o.frames &&
                std::chrono::duration<double>(Clock::now() - started).count() < o.seconds) {
             const auto begin = Clock::now();
@@ -324,6 +352,10 @@ int run(const Options &o) {
                 o.policy.queued_shots ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
                 o.policy.queued_lasers ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
                 o.policy.direct_turn_envelope);
+            if (o.profile_components)
+                components.capture_ns +=
+                    std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin)
+                        .count();
             queued_records += observation.queued_shots.size();
             unsupported_queued += observation.unsupported_queued_shots;
             queued_laser_records += observation.queued_lasers.size();
@@ -344,7 +376,16 @@ int run(const Options &o) {
                     unsupported_relative_turns +=
                         (b.active_transforms & 0x40u) && !b.relative_turn.updates;
                 }
-            const auto decision = policy.decide(observation);
+            on::DecisionTiming phase_sample;
+            const auto policy_begin = o.profile_components ? Clock::now() : Clock::time_point{};
+            const auto decision =
+                policy.decide(observation, o.profile_components ? &phase_sample : nullptr);
+            if (o.profile_components) {
+                components.policy_ns += std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                            Clock::now() - policy_begin)
+                                            .count();
+                components.add(phase_sample);
+            }
             search_stats.selections += decision.search.selections;
             search_stats.candidates += decision.search.candidates;
             search_stats.bins += decision.search.bins;
@@ -391,12 +432,15 @@ int run(const Options &o) {
             }
         }
     } catch (const std::exception &error) {
+        if (!prefix_accounted)
+            account_prefix();
         failure = error.what();
         outcome = failure == "death" ? "death" : "runtime_error";
         if (failure.find_first_not_of("abcdefghijklmnopqrstuvwxyz_0123456789") != std::string::npos)
             failure = "execution_failed";
     }
     const double wall_seconds = std::chrono::duration<double>(Clock::now() - started).count();
+    const auto output_begin = o.profile_components ? Clock::now() : Clock::time_point{};
     {
         std::ofstream tape(o.out / "online.actions");
         tape.exceptions(std::ios::badbit | std::ios::failbit);
@@ -420,6 +464,7 @@ int run(const Options &o) {
                                : timings[std::min(timings.size() - 1,
                                                   std::size_t(std::ceil(q * timings.size())) - 1)];
     };
+    const auto action_hash = hash(o.out / "online.actions");
     std::ofstream report(o.out / "online.json");
     report.exceptions(std::ios::badbit | std::ios::failbit);
     report << std::setprecision(17) << "{\"schema_version\":1,\"profile\":\""
@@ -433,12 +478,11 @@ int run(const Options &o) {
               "updates\":0,"
               "\"rewinds\":0,\"deadline_enforced\":false,\"outcome\":\""
            << outcome << "\",\"failure\":\"" << failure << "\",\"binary_sha256\":\"" << binary_hash
-           << "\",\"dat_sha256\":\"" << dat_hash << "\",\"actions_sha256\":\""
-           << hash(o.out / "online.actions") << "\",\"prefix_sha256\":\"" << prefix_hash
-           << "\",\"prefix_frames\":" << prefix.size() << ",\"stage\":" << o.stage
-           << ",\"difficulty\":" << o.difficulty << ",\"seed\":" << o.seed << ",\"shot\":" << o.shot
-           << ",\"spell\":" << o.spell << ",\"story\":" << o.story
-           << ",\"final_route\":" << int(o.route)
+           << "\",\"dat_sha256\":\"" << dat_hash << "\",\"actions_sha256\":\"" << action_hash
+           << "\",\"prefix_sha256\":\"" << prefix_hash << "\",\"prefix_frames\":" << prefix.size()
+           << ",\"stage\":" << o.stage << ",\"difficulty\":" << o.difficulty
+           << ",\"seed\":" << o.seed << ",\"shot\":" << o.shot << ",\"spell\":" << o.spell
+           << ",\"story\":" << o.story << ",\"final_route\":" << int(o.route)
            << ",\"unlock_final_routes\":" << config.unlock_final_routes
            << ",\"horizon\":" << o.policy.horizon << ",\"beam\":" << o.policy.beam
            << ",\"diversity_cell\":" << o.policy.diversity_cell
@@ -519,6 +563,7 @@ int run(const Options &o) {
            << ",\"diversity_retained_bins\":" << search_stats.retained_bins
            << ",\"diversity_selection_ms\":" << search_stats.selection_ms
            << ",\"native_seconds_excluding_file_io\":" << double(native_ns) / 1e9
+           << ",\"component_profiled\":" << (o.profile_components ? "true" : "false")
            << ",\"setup_seconds\":" << setup_seconds << ",\"wall_seconds\":" << wall_seconds
            << ",\"stage_transitions\":[";
     for (std::size_t i = 0; i < transitions.size(); ++i) {
@@ -533,6 +578,37 @@ int run(const Options &o) {
                << model_hashes[i].second << "\"}";
     report << "]}\n";
     report.close();
+    if (o.profile_components) {
+        const double output_seconds =
+            std::chrono::duration<double>(Clock::now() - output_begin).count();
+        const double capture = double(components.capture_ns) / 1e9;
+        const double policy = double(components.policy_ns) / 1e9;
+        const double live_native = double(native_ns - prefix_native_ns) / 1e9;
+        const double live_io = double(native_io_ns - prefix_io_ns) / 1e9;
+        std::ofstream profile(o.out / "components.json");
+        profile.exceptions(std::ios::badbit | std::ios::failbit);
+        profile << std::setprecision(17)
+                << "{\"schema_version\":1,\"instrumented\":true,\"clock\":\"steady_clock\","
+                   "\"policy_phases_nested_within_policy\":true,"
+                   "\"spatial_selection_nested_within_search\":true,\"binary_sha256\":\""
+                << binary_hash << "\",\"dat_sha256\":\"" << dat_hash << "\",\"actions_sha256\":\""
+                << action_hash << "\",\"outcome\":\"" << outcome
+                << "\",\"decisions\":" << timings.size() << ",\"setup_seconds\":" << setup_seconds
+                << ",\"prefix_seconds\":" << prefix_seconds << ",\"capture_seconds\":" << capture
+                << ",\"policy_seconds\":" << policy
+                << ",\"history_seconds\":" << double(components.phases.history_ns) / 1e9
+                << ",\"forecast_seconds\":" << double(components.phases.forecast_ns) / 1e9
+                << ",\"index_seconds\":" << double(components.phases.index_ns) / 1e9
+                << ",\"search_seconds\":" << double(components.phases.search_ns) / 1e9
+                << ",\"fallback_seconds\":" << double(components.phases.fallback_ns) / 1e9
+                << ",\"controller_seconds\":" << sum / 1000
+                << ",\"controller_other_seconds\":" << sum / 1000 - capture - policy
+                << ",\"live_native_seconds_excluding_file_io\":" << live_native
+                << ",\"live_native_file_io_seconds\":" << live_io
+                << ",\"loop_seconds\":" << wall_seconds << ",\"loop_unassigned_seconds\":"
+                << wall_seconds - prefix_seconds - sum / 1000 - live_native - live_io
+                << ",\"post_loop_output_seconds\":" << output_seconds << "}\n";
+    }
     std::cout << outcome << " frames=" << actions.size() << " decisions=" << timings.size()
               << " deadline_misses=" << deadline_misses << '\n';
     return outcome == "complete" ? 0 : outcome == "death" ? 4 : outcome == "budget" ? 3 : 5;
