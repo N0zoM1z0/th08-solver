@@ -515,8 +515,29 @@ artifact hashes, decision timings and fresh publication checks in the
 published tapes freshly execute with matching score/RNG/counts and all five
 transition tuples; playback of the unchanged published replay bytes again
 matches the ordered stage path, calculation count and score with zero death/bomb
-rows. Neither new replay has been played in retail. Publication does not rerun
-the controller or transfer the frozen result to current main.
+rows. That publication snapshot predates the retail playback below; it does not
+rerun the controller or transfer the frozen result to current main.
+
+Both unchanged online-story replay files now complete in unmodified retail 1.00d
+under Wine 8.0, using separate private prefixes/displays and built-in Boss playback
+mode. Read-only sampling begins at actual Stage 1/frame 0 and observes the complete
+native-slot path `[0,1,2,3,5,6]`, the final clear sequence and natural replay-menu
+return. Seeds 0/29768 finish at internal scores 175595107/186628562 with cumulative
+deaths/bombs both zero. All 728064 loaded executable-code bytes match the pinned
+original before and after each playback. Active startup effects/slow/frameskip are
+2/0/0; no gameplay/RNG memory or executable patch is used.
+The original observers report `terminal_mismatch`: their redundant mask check
+incorrectly retains the old 4B route's `0x77`, while their already-correct expected
+4A path has mask `0x6f` (111). Original failed reports and sampled traces are retained.
+A separate audit derives the mask from the already-published frozen manifest,
+checks the recorded ordered path, logged counters and reported maxima, final score, clear flag,
+menu receipt and code integrity, and passes both files. A nonzero-death negative
+control is rejected. The observers count 122582/123992 active samples at a nominal
+20-ms period; the retained one-second/stage-change logs contain 2576/2607 rows.
+These are sampled interoperability evidence, not a complete per-frame
+physics differential. Each owned Wine group has four-core/four-GiB limits, low
+CPU/I/O priority and no additional swap. These tests certify the two frozen replay
+files, without establishing current-main story success or live 60 FPS decisions.
 Seed 60950 dies at 166518 in Stage 5 spell 107. Five diagnostic executions
 (832590 additional native updates) reproduce score/RNG and show a long-observed
 phantom becoming real with a velocity change on the fatal update. The main

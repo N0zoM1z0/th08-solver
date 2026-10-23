@@ -174,7 +174,9 @@ publish sanitized conclusions and maintained code/prose. The owner's explicit
 request for the two successful complete 4A story captures is a narrow exception:
 their [publication audit](../reports/native/online_story_4a_validation.json) retains
 sanitized provenance, timings and native verification receipts. It does not add
-retail playback or enforced-deadline evidence.
+retail playback or enforced-deadline evidence at its publication date. The later
+manual retail audit in [Status](STATUS.md) covers these exact two original files;
+the frozen publication JSON is not refreshed with new experiment artifacts.
 
 Final-stage practice recording and natural playback currently differ at the
 clear-bonus branch. Native practice sets `isPracticeMode`; playback clears it and
@@ -487,6 +489,17 @@ stage `0x0164d2cc`, globals pointer `0x0160f510`, cumulative float deaths/bombs-
 at globals offsets `0x64/0x84`, and replay/title pointers `0x018b8a28/0x018bde08`.
 No full per-frame retail projection or all-eleven-file retail validation is claimed.
 Private raw game data, screenshots and diagnostic logs remain ignored.
+
+The later online-story audit repeats the isolated retail procedure for the two
+tracked shot-1 natural-4A replays. Start the read-only observer before confirming
+Stage 1 so its first active sample covers frame 0. Derive the expected stage mask
+from the frozen manifest: `[0,1,2,3,5,6]` yields `0x6f`; the earlier shot-0 4B route's
+`0x77` is a different path. Preserve a failed observer report instead of rewriting
+it. Adjudication must independently check the unchanged replay hash, manifest path,
+logged cumulative death/bomb counters and reported sampled maxima, actual final clear sequence, expected
+internal score, natural menu return and executable-code identity. Keep sampled
+coverage distinct from a complete retail differential. A successful tape playback
+does not establish an unpaused controller, deadline compliance or all-seed success.
 
 ## Local build and core checks
 

@@ -42,8 +42,10 @@ failure; [Status](docs/STATUS.md) owns the exact profile and validation.
 The owner-requested [seed-0 replay](reports/native/replays/online-story-4a-v1--s0.rpy)
 and [seed-29768 replay](reports/native/replays/online-story-4a-v1--s29768.rpy), full
 action tapes and [publication audit](reports/native/online_story_4a_validation.json)
-are tracked. These two captures have fresh native verification; neither has been
-validated in retail or with enforced 60 FPS deadlines.
+are tracked. Both unchanged files now complete NMNB in unmodified retail 1.00d
+under Wine, with matching scores and natural replay-menu return; [Status](docs/STATUS.md)
+records the retained observer-mask failure and manifest-derived audit. These are
+playback checks, without an enforced 60 FPS controller or current-main story claim.
 
 The preceding random-seed evaluation is complete: all 12 diagnosis and 12 held-out
 cases pass fresh native/replay checks under the frozen offline solver. This finite
