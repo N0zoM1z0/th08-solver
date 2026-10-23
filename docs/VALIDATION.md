@@ -10,6 +10,14 @@ Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
 
+The shared spatial selector's `plan_contract` regression compares partial rank
+selection against the frozen former full-sort algorithm in 420 deterministic
+cases. It checks every retained float field, action, violation count, parent,
+output position and bin statistic across ties, signed zero, infinite scores,
+negative coordinates, focus bins and different widths/cell sizes. Invalid cells
+and non-finite coordinates still fail. Performance checks additionally require
+identical full action bytes and behavioral reports before comparing timings.
+
 ## Current-memory CPU controller
 
 Build `th08_online` with the native Release configuration described in the README.

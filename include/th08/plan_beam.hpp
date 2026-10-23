@@ -6,7 +6,7 @@
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
-#include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 namespace th08::plan {
@@ -60,35 +60,60 @@ inline BeamSelection retain_spatial_beam(std::vector<Node> &nodes, std::size_t w
     if (width == 0 || cell_size <= 0)
         throw std::invalid_argument("spatial beam requires positive width and cell size");
     BeamSelection stats{nodes.size(), 0, 0};
-    std::stable_sort(nodes.begin(), nodes.end(),
-                     [](const Node &a, const Node &b) { return a.score < b.score; });
     const auto limit = std::min(width, nodes.size());
-    std::vector<unsigned char> selected(nodes.size(), 0);
-    std::unordered_set<detail::SpatialBin, detail::SpatialHash> bins;
+    // Source indices make equal-score rank explicit without sorting all candidates.
+    // Select each bin's original winner before applying the unchanged global rank.
+    const auto rank = [&](std::size_t a, std::size_t b) {
+        if (nodes[a].score < nodes[b].score)
+            return true;
+        if (nodes[b].score < nodes[a].score)
+            return false;
+        return a < b;
+    };
+    std::unordered_map<detail::SpatialBin, std::size_t, detail::SpatialHash> bins;
     bins.reserve(nodes.size());
-    std::size_t count = 0;
+    std::vector<std::size_t> winners;
     for (std::size_t i = 0; i < nodes.size(); ++i) {
         const auto &node = nodes[i];
         const detail::SpatialBin bin{detail::bin_coordinate(node.x, cell_size),
                                      detail::bin_coordinate(node.y, cell_size),
                                      (node.act & 4) != 0};
-        if (bins.insert(bin).second && count < limit) {
-            selected[i] = 1;
-            ++count;
-        }
+        const auto entry = bins.emplace(bin, winners.size());
+        if (entry.second)
+            winners.push_back(i);
+        else if (node.score < nodes[winners[entry.first->second]].score)
+            winners[entry.first->second] = i;
     }
     stats.bins = bins.size();
-    stats.retained_bins = count;
-    for (std::size_t i = 0; i < nodes.size() && count < limit; ++i)
-        if (!selected[i]) {
-            selected[i] = 1;
-            ++count;
+    stats.retained_bins = std::min(limit, winners.size());
+    const auto retain_best = [&](std::vector<std::size_t> &indices, std::size_t count) {
+        if (indices.size() > count) {
+            std::nth_element(indices.begin(), indices.begin() + count, indices.end(), rank);
+            indices.resize(count);
         }
-    std::size_t output = 0;
-    for (std::size_t i = 0; i < nodes.size(); ++i)
-        if (selected[i])
-            nodes[output++] = nodes[i];
-    nodes.resize(output);
+    };
+    if (winners.size() < limit) {
+        std::vector<unsigned char> selected(nodes.size(), 0);
+        for (const auto i : winners)
+            selected[i] = 1;
+        std::vector<std::size_t> rest;
+        rest.reserve(nodes.size() - winners.size());
+        for (std::size_t i = 0; i < nodes.size(); ++i)
+            if (!selected[i])
+                rest.push_back(i);
+        retain_best(rest, limit - winners.size());
+        winners.insert(winners.end(), rest.begin(), rest.end());
+    } else {
+        retain_best(winners, limit);
+    }
+    std::sort(winners.begin(), winners.end(), rank);
+    // Preserve source storage until every selected parent/action has been copied.
+    std::vector<Node> retained;
+    retained.reserve(limit);
+    for (const auto i : winners)
+        retained.push_back(nodes[i]);
+    std::copy(retained.begin(), retained.end(), nodes.begin());
+    nodes.resize(retained.size());
     return stats;
 }
 

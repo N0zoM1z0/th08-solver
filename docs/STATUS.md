@@ -558,6 +558,28 @@ including a full Stage 2 solve, fresh execution and natural replay with unchange
 action SHA. The successful frozen story/Extra results above predate this correction and do
 not certify its full-story or Extra coverage.
 
+The shared spatial selector now finds exact bin winners and partially ranks the
+remaining slots instead of fully sorting every candidate. Its 420-case differential
+contract preserves float fields, stable ties, output order, parents and statistics.
+Uninstrumented GCC 13.3/EPYC 9654 Release comparisons keep H64/beam192/cell16,
+guard16 and the unchanged learned model. Three alternating paired 2400-update
+measurements per workload reduce controller mean from 16.62--16.70 to
+13.77--13.78 ms at the shot-1 story start, and from 14.66--14.70 to 11.72--11.77 ms
+at the shot-1 Stage 4A start, seed 29768; selection time falls 38--39 percent.
+These fixed-length prefixes are timing samples, not completed stories/stages.
+Complete standalone Stage 1, shot 1/seed 0, and Stage 2, shot 0/seed 29768,
+both finish under each version with byte-identical full actions, score and RNG:
+23149/32843 updates and scores 3796648/11813854. Their controller means change
+15.45 to 12.53 ms and 14.27 to 11.81 ms. Fresh execution and natural playback of
+the two unique successful tapes add 55992 updates/rows, with zero death/bomb rows.
+All comparison runs cost 140784 native updates and 1924.16 summed solver wall
+seconds; the separate instrumented profile adds 2400 updates. Eight behavioral
+pair checks agree. At most four controllers use a separate 12-core CPU quota and
+8-GiB memory cap on the shared host; both versions retain the same budgets and
+failure meaning. All 40 native/DAT CTests pass in 697.28 seconds with two workers,
+including the unchanged default Stage 2 action SHA. No enforced-deadline or retail
+claim follows from these measurements; this changes speed without adding seed coverage.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

@@ -87,6 +87,12 @@ focus bin before filling the beam by score. Zero preserves the global-score base
 This can retain an early exit that center-seeking scores discard; it changes pruning,
 not collision semantics. Record bin/candidate counts and selection time. A larger
 rollout alone can worsen pruning, so compare complete outcomes and all retry costs.
+The shared selector first finds each bin's best source node, then uses partial
+rank selection for bin winners and any score-fill slots. Only the retained nodes
+are sorted. Ranking by score and original source index preserves the former full
+stable sort's exact membership, output order, ties and parent/action fields;
+hash iteration never determines a selection. This reduces ranking work without
+changing the proposal budget or strategy.
 
 ## Current-memory online policy
 

@@ -7,10 +7,12 @@
 #include "th08/plan_route.hpp"
 
 #include <csignal>
+#include <limits>
 #include <new>
 #include <string>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <unordered_set>
 #include <vector>
 
 namespace {
@@ -276,6 +278,94 @@ void spatial_beam_contract() {
           "focus diversity or stable equal-score ordering was lost");
 }
 
+// Frozen full-sort selector: the independent oracle for partial rank selection.
+th08::plan::BeamSelection reference_spatial_beam(std::vector<th08::plan::BeamNode> &nodes,
+                                                 std::size_t width, int cell_size) {
+    std::stable_sort(nodes.begin(), nodes.end(),
+                     [](const auto &a, const auto &b) { return a.score < b.score; });
+    const auto limit = std::min(width, nodes.size());
+    std::vector<unsigned char> selected(nodes.size(), 0);
+    std::unordered_set<th08::plan::detail::SpatialBin, th08::plan::detail::SpatialHash> bins;
+    std::size_t count = 0;
+    for (std::size_t i = 0; i < nodes.size(); ++i) {
+        const auto &node = nodes[i];
+        const th08::plan::detail::SpatialBin bin{
+            th08::plan::detail::bin_coordinate(node.x, cell_size),
+            th08::plan::detail::bin_coordinate(node.y, cell_size), (node.act & 4) != 0};
+        if (bins.insert(bin).second && count < limit) {
+            selected[i] = 1;
+            ++count;
+        }
+    }
+    const th08::plan::BeamSelection result{nodes.size(), bins.size(), count};
+    for (std::size_t i = 0; i < nodes.size() && count < limit; ++i)
+        if (!selected[i]) {
+            selected[i] = 1;
+            ++count;
+        }
+    std::size_t output = 0;
+    for (std::size_t i = 0; i < nodes.size(); ++i)
+        if (selected[i])
+            nodes[output++] = nodes[i];
+    nodes.resize(output);
+    return result;
+}
+
+void spatial_beam_rank_agreement() {
+    using th08::plan::BeamNode;
+    std::uint32_t random = 0x89abcdef;
+    const auto draw = [&] { return random = random * 1664525u + 1013904223u; };
+    for (const int size : {0, 1, 2, 37, 193, 1024, 3500})
+        for (const int width : {1, 2, 17, 192, 4096})
+            for (const int cell : {1, 16, 48})
+                for (int mode = 0; mode < 4; ++mode) {
+                    std::vector<BeamNode> actual;
+                    for (int i = 0; i < size; ++i) {
+                        const auto coordinate = [&] {
+                            return (int(draw() % (mode & 1 ? 32 : 2048)) - 16) * 0.5f;
+                        };
+                        const float x = coordinate(), y = coordinate();
+                        const auto action = std::uint16_t(draw() & 0xf4);
+                        const auto violations = std::uint16_t(draw() & 15);
+                        const auto score = float(int(draw() % (mode & 2 ? 7 : 100000)) - 3);
+                        actual.push_back({x, y, i, action, violations, score});
+                    }
+                    if (size > 1) {
+                        actual[0].score = -0.f;
+                        actual[1].score = 0.f;
+                    }
+                    if (size > 3 && (mode & 2)) {
+                        actual[2].score = -std::numeric_limits<float>::infinity();
+                        actual[3].score = std::numeric_limits<float>::infinity();
+                    }
+                    auto expected = actual;
+                    const auto reference = reference_spatial_beam(expected, width, cell);
+                    const auto selected = th08::plan::retain_spatial_beam(actual, width, cell);
+                    check(selected.candidates == reference.candidates &&
+                              selected.bins == reference.bins &&
+                              selected.retained_bins == reference.retained_bins &&
+                              actual.size() == expected.size(),
+                          "partial spatial rank changed membership counts");
+                    for (std::size_t i = 0; i < actual.size(); ++i) {
+                        const auto &a = actual[i], &e = expected[i];
+                        check(th08::plan::same_float(a.x, e.x) &&
+                                  th08::plan::same_float(a.y, e.y) &&
+                                  th08::plan::same_float(a.score, e.score) &&
+                                  a.parent == e.parent && a.act == e.act && a.viol == e.viol,
+                              "partial spatial rank changed a node, stable tie or parent chain");
+                    }
+                }
+    for (const int cell : {0, 16}) {
+        std::vector<BeamNode> invalid{{std::numeric_limits<float>::infinity(), 0, 0, 0, 0, 0}};
+        try {
+            th08::plan::retain_spatial_beam(invalid, 1, cell);
+        } catch (const std::invalid_argument &) {
+            continue;
+        }
+        check(false, "invalid spatial cell or coordinate stopped failing");
+    }
+}
+
 void prefix_contract() {
     th08::plan::PrefixParser parser(3);
     // Simulate the file/hash buffer ending in the middle of a decimal input.
@@ -317,5 +407,6 @@ int main() {
     route_contract();
     matrix_contract();
     spatial_beam_contract();
+    spatial_beam_rank_agreement();
     prefix_contract();
 }
