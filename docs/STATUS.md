@@ -28,8 +28,10 @@ attachments arrived and are now being compared with them. The source analyses
 stay unchanged. Their two-core no-model VM results do not transfer to the current
 learned-risk profile. Fresh complete 6B controls identify spell-166 starts at
 updates 42681 (no model, 62020-update completion) and 45032 (unchanged model,
-64744-update completion); paired exact-kernel timing and replay gates are running.
-Pending experiments add no new verified coverage. [Planner](PLANNER.md) owns the
+64744-update completion). Exact-kernel paired timing, complete action comparison
+and all six fresh execution/natural-replay gates now pass; measured results are
+below. Ordered search/deduplication and pure-probe experiments are next, followed
+by the deterministic plan-lag model. [Planner](PLANNER.md) owns the
 algorithm-phase acceptance gates and current-memory boundary.
 
 The latest scope prioritizes random-seed generalization. The reference catalog
@@ -708,7 +710,7 @@ compilation, is 573657088 bytes under its eight-GiB hard limit. New raw artifact
 stay local. These known diagnosis entries add no unseen-seed, current-main story,
 retail or enforced 60 FPS claim.
 
-Private diagnosis of that 6B window counts 215996427 hard probes, 208114877 soft
+Private diagnosis of that spell-170 window counts 215996427 hard probes, 208114877 soft
 risk calls (170034826 nonempty), 850065867 AABB tests and zero indexed lasers.
 This rejects laser caching as that window's target. Shared query preparation and
 two exact spatial-quantizer layouts have no repeatable end-to-end win in local
@@ -716,6 +718,36 @@ pilots and remain unpublished. Including the successful AABB pilot, the four
 local pilot batches and two diagnostic passes cost 981600 native updates
 (900000 prefix updates) and 929.60 summed solver wall seconds. Their raw source,
 all outcomes and action comparisons remain local, outside the Release totals.
+
+The October 23 laser/selection campaign instead reproduces the actual spell-166
+workload. Prepared inverse rotations, bounded stable spatial selection and an
+optional policy CPU target preserve all complete actions. Three alternating-order
+2400-decision trials per model profile reduce mean 17.34–17.40 ms to 10.49–10.74 ms
+with portable kernels, then 9.40–9.53 ms with `native`. `x86-64-v3` also preserves
+both window tapes; it has no new complete-run claim. Separate instrumented
+no-model diagnostics put 86.6% of remaining controller work in search and 9.7% in
+indexing. Full controls and candidates on EPYC 9654/GCC 13.3 Release give:
+
+| Model / policy build | Mean (ms) | p99 (ms) | Max (ms) | >16.67 ms |
+| --- | --- | --- | --- | --- |
+| None / previous portable | 8.459 | 25.415 | 55.044 | 2041 |
+| None / exact portable | 7.866 | 12.848 | 18.296 | 23 |
+| None / exact native | 6.787 | 11.653 | 16.523 | 0 |
+| Existing risk / previous portable | 9.144 | 26.106 | 54.942 | 2957 |
+| Existing risk / exact portable | 8.472 | 13.328 | 18.289 | 17 |
+| Existing risk / exact native | 7.404 | 12.136 | 16.558 | 0 |
+
+Every row completes at 62020 (no model) or 64744 (risk model) updates. Action
+SHA prefixes remain `dfab51e6…` and `005d0ecd…`; score/RNG and all other behavioral
+fields agree. Six fresh executions and natural replays check 380292 calculation
+rows with zero death/bomb rows. All 40 native/DAT CTests pass in 704.22 seconds;
+documentation and both optional architecture contracts pass separately. The
+42 controller episodes cost 2045526 native updates, including 1578834 prefix
+updates, and 4191.97 summed wall seconds; fresh execution/playback costs are
+additional. Portable/native binaries are `323e8ad6…`/`70c9756a…`; the source archive,
+compiler flags, DAT/model hashes and full receipts remain in ignored local storage.
+These concurrent host measurements preserve behavior without enforcing deadlines;
+two zero-miss complete samples do not establish general 60 FPS or story reliability.
 
 The owner prioritizes further measured algorithmic speedups before model/training
 replacement. Native/replay correctness remains required even if a later stochastic

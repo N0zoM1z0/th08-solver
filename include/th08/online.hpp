@@ -9,6 +9,8 @@
 #include <vector>
 
 namespace th08::online {
+// Describes this policy library, independently of the native runtime/CLI build.
+const char *build_architecture();
 
 struct Vector {
     float x = 0, y = 0, z = 0;

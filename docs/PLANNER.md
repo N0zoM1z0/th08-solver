@@ -334,8 +334,20 @@ access removes the need for image recognition; it does not establish those gates
 The owner-supplied [realtime analysis](../preparations/10.23-with-claude/TH08_online_realtime_analysis.md)
 guides the next algorithm phase. Its no-model VM measurements are external
 evidence to reproduce on this build, including the actual spell-166 laser window.
-First test exact inverse rotations, bounded spatial retention and an optional
-policy architecture target against unchanged complete actions and the full suite.
+Exact inverse rotations are prepared once per retained forecast laser after all
+geometry/envelope changes, then shared by immutable queries in that frame. They
+are rebuilt at each observation, preserving the original negative-angle float
+products. Online spatial retention uses the observed movement bounds for a dense
+bin lookup, with packed binary32 score/source-index ranks. Signed zeros share a
+rank; infinities and stable source ties keep their original order and node bits.
+Unsupported layouts, oversized/invalid bounds and out-of-domain nodes delegate to
+the generic selector. No simulated states or exact coordinates are merged.
+The optional CMake `TH08_ONLINE_ARCH=native|x86-64-v3` targets only the policy
+library; an empty value retains the portable default. Reports identify that
+library's architecture. Both targets retain `-ffp-contract=off`, without fast-math;
+flags alone do not prove action equivalence or portability to another CPU.
+These kernels pass unchanged complete actions and the full suite under the
+measured profiles in [Status](STATUS.md).
 Then test owned plan reuse with deterministic lag 0/1/2: forced inputs must align
 with the recording latch, adopted plans must match the executed prefix, and stale
 results must be discarded after emergency replacement or lifecycle changes.

@@ -90,6 +90,29 @@ rate history retains a complete escape, with reach-filter agreement. An unchange
 active vector transform still accelerates from rest and keeps its genuinely
 unavoidable latched hit. No zero-speed or seed-specific strategy is substituted.
 
+The October 23 exact-kernel gate compares 200000 prepared laser rotations against
+the frozen original formula, including signed zeros, subnormals, large/axis angles
+and all four rounding modes, with batch exception/errno agreement. Bounded spatial
+selection adds 2100 dense/fallback comparisons to the frozen full-sort oracle,
+preserving all retained float bits, source ties, parent/action indices and counts.
+The complete Stage 2 CTest retains action SHA `c4acd20a…`; normal 40-test native/DAT
+coverage passes. Optional `TH08_ONLINE_ARCH=native` and `x86-64-v3` also pass local
+policy contracts; this is numerical evidence for those builds, not a flag guarantee.
+
+The independent Release campaign freezes shot 0, Lunatic, seed 0, non-practice
+6B story entry, H64/beam192/cell16/guard16, reach filter and soft phantom option.
+It tests both no-model and the unchanged four-file risk model. Actual spell-166
+prefixes have 42681/45032 updates; each measured continuation has 2400 decisions.
+Warming does not replay tie RNG, so compare each continuation with its own frozen
+control rather than demanding the original full run's suffix. Three alternating
+orders separate laser caching, bounded selection and each CPU target; component
+profiling is separate. Portable and native complete runs compare all actions and
+non-timing behavioral fields against full controls. Six fresh action executions
+and natural replays agree on score/RNG/calculations and 380292 rows, with zero
+death/bomb rows. Raw rows are removed only after retaining hashes/byte counts.
+This is execution agreement, not independent physics, retail or unpaused timing
+validation. [Status](STATUS.md) owns measured results and remaining work.
+
 Optional `--spawn-guard 16` adds actor-origin soft risk, `--diversity-cell 16`
 retains spatial/focus beam alternatives, and `--queued-shots 1` uses positive
 bounded shot prefixes from current main program cursors. All default to zero/off;

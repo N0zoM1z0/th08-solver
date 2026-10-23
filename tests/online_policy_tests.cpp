@@ -4,6 +4,7 @@
 #include "th08/online.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_movement.hpp"
+#include "th08/online_rotation.hpp"
 
 #include <cerrno>
 #include <cfenv>
@@ -758,6 +759,65 @@ void movement_kernel_contract() {
     }
     check(std::fesetenv(&saved) == 0, "cannot restore movement floating environment");
 }
+void reference_rotate(on::Vector *out, const on::Vector *point, float angle) {
+    const float sine = std::sin(angle), cosine = std::cos(angle);
+    out->x = cosine * point->x - sine * point->y;
+    out->y = cosine * point->y + sine * point->x;
+}
+void rotation_contract() {
+    using Rotate = void (*)(on::Vector *, const on::Vector *, float);
+    Rotate volatile reference = reference_rotate;
+    std::array<float, 50> angles{};
+    std::array<on::Vector, 1000> points{}, expected{};
+    std::uint32_t random = 0x7a31f092;
+    const auto draw = [&] { return random = random * 1664525u + 1013904223u; };
+    for (auto &angle : angles)
+        angle = float(int(draw() % 2097153) - 1048576) * .125f;
+    const float small = std::numeric_limits<float>::denorm_min();
+    const std::array<float, 13> special{
+        0,           -0.f,       small,       -small,  1.5707963f, -1.5707963f, 3.1415927f,
+        -3.1415927f, 6.2831855f, -6.2831855f, 1048576, -1048576,   .000001f};
+    std::copy(special.begin(), special.end(), angles.begin());
+    for (auto &point : points)
+        point = {float(int(draw() % 2097153) - 1048576) * .5f,
+                 float(int(draw() % 2097153) - 1048576) * .5f, 0};
+    points[0] = {0, -0.f, 0};
+    points[1] = {-0.f, 0, 0};
+    points[2] = {small, -small, 0};
+    points[3] = {1048576, -1048576, 0};
+    const auto bits = [](float value) {
+        std::uint32_t result;
+        std::memcpy(&result, &value, sizeof(result));
+        return result;
+    };
+    std::fenv_t saved;
+    check(std::fegetenv(&saved) == 0, "cannot capture rotation floating environment");
+    const int saved_errno = errno;
+    for (int mode : {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO}) {
+        check(std::fesetround(mode) == 0, "cannot set rotation rounding mode");
+        for (float angle : angles) {
+            std::feclearexcept(FE_ALL_EXCEPT);
+            errno = E2BIG;
+            for (std::size_t i = 0; i < points.size(); ++i)
+                reference(&expected[i], &points[i], -angle);
+            const int flags = std::fetestexcept(FE_ALL_EXCEPT), error = errno;
+            std::feclearexcept(FE_ALL_EXCEPT);
+            errno = E2BIG;
+            const auto rotation = on::detail::prepare_rotation(-angle);
+            for (std::size_t i = 0; i < points.size(); ++i) {
+                const auto actual = rotation.apply(points[i]);
+                check(bits(actual.x) == bits(expected[i].x) &&
+                          bits(actual.y) == bits(expected[i].y) && actual.z == 0,
+                      "prepared rotation changed float results");
+            }
+            check(std::fetestexcept(FE_ALL_EXCEPT) == flags && errno == error &&
+                      std::fegetround() == mode,
+                  "rotation batch changed floating environment");
+        }
+    }
+    check(std::fesetenv(&saved) == 0, "cannot restore rotation floating environment");
+    errno = saved_errno;
+}
 bool reference_box_hit(const on::Box &box, const on::Vector &minimum, const on::Vector &maximum) {
     return !(minimum.x > box.x1 || minimum.y > box.y1 || maximum.x < box.x0 || maximum.y < box.y0);
 }
@@ -928,6 +988,7 @@ int main(int argc, char **argv) {
         terminal_tail_contract();
         phase_timing_contract();
         movement_kernel_contract();
+        rotation_contract();
         box_predicate_contract();
         narrow_arc_contract();
         return 0;

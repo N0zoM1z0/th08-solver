@@ -399,6 +399,7 @@ void spatial_beam_rank_agreement() {
                         actual[2].score = -std::numeric_limits<float>::infinity();
                         actual[3].score = std::numeric_limits<float>::infinity();
                     }
+                    const auto source = actual;
                     auto expected = actual, reused = actual;
                     const auto reference = reference_spatial_beam(expected, width, cell);
                     const auto selected = th08::plan::retain_spatial_beam(actual, width, cell);
@@ -425,11 +426,38 @@ void spatial_beam_rank_agreement() {
                                   r.parent == e.parent && r.act == e.act && r.viol == e.viol,
                               "partial spatial rank changed a node, stable tie or parent chain");
                     }
+                    // Exercise dense selection, a node outside the domain, an
+                    // oversized grid and invalid hints through the same scratch.
+                    const float high = mode & 1 ? 7.5f : 1015.5f;
+                    for (const auto bounds : std::array<th08::plan::SpatialBeamBounds, 5>{
+                             {{-8, -8, high, high},
+                              {0, 0, 384, 448},
+                              {-1000000, -1000000, 1000000, 1000000},
+                              {1, 1, 0, 0},
+                              {-std::numeric_limits<float>::infinity(), -8, high, high}}}) {
+                        auto bounded = source;
+                        const auto dense = th08::plan::retain_spatial_beam_bounded(
+                            bounded, width, cell, bounds, reusable);
+                        check(dense.candidates == reference.candidates &&
+                                  dense.bins == reference.bins &&
+                                  dense.retained_bins == reference.retained_bins &&
+                                  bounded.size() == expected.size(),
+                              "bounded spatial rank changed membership counts");
+                        for (std::size_t i = 0; i < bounded.size(); ++i) {
+                            const auto &a = bounded[i], &e = expected[i];
+                            check(
+                                th08::plan::same_float(a.x, e.x) &&
+                                    th08::plan::same_float(a.y, e.y) &&
+                                    th08::plan::same_float(a.score, e.score) &&
+                                    a.parent == e.parent && a.act == e.act && a.viol == e.viol,
+                                "bounded spatial rank changed a node, stable tie or parent chain");
+                        }
+                    }
                 }
     for (const int cell : {0, 16}) {
         std::vector<BeamNode> invalid{{std::numeric_limits<float>::infinity(), 0, 0, 0, 0, 0}};
         try {
-            th08::plan::retain_spatial_beam(invalid, 1, cell);
+            th08::plan::retain_spatial_beam_bounded(invalid, 1, cell, {0, 0, 384, 448}, reusable);
         } catch (const std::invalid_argument &) {
             continue;
         }

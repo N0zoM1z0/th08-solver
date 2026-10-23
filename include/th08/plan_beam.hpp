@@ -7,6 +7,7 @@
 #include <cstring>
 #include <limits>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 namespace th08::plan {
@@ -21,6 +22,11 @@ struct BeamNode {
 
 struct BeamSelection {
     std::size_t candidates = 0, bins = 0, retained_bins = 0;
+};
+
+// An optional coordinate domain, not a different quantization or merge rule.
+struct SpatialBeamBounds {
+    float minx, miny, maxx, maxy;
 };
 
 namespace detail {
@@ -85,6 +91,10 @@ template <class Node> class SpatialBeamScratch {
     template <class Other>
     friend BeamSelection retain_spatial_beam(std::vector<Other> &, std::size_t, int,
                                              SpatialBeamScratch<Other> &);
+    template <class Other>
+    friend BeamSelection retain_spatial_beam_bounded(std::vector<Other> &, std::size_t, int,
+                                                     SpatialBeamBounds,
+                                                     SpatialBeamScratch<Other> &);
     struct Entry {
         detail::SpatialBin bin;
         std::size_t winner_slot;
@@ -93,6 +103,8 @@ template <class Node> class SpatialBeamScratch {
     std::vector<unsigned char> occupied, selected;
     std::vector<std::size_t> winners, rest;
     std::vector<Node> retained;
+    std::vector<std::uint32_t> dense_slots;
+    std::vector<std::uint64_t> winner_keys, rest_keys;
 
   public:
     SpatialBeamScratch() = default;
@@ -199,6 +211,110 @@ inline BeamSelection retain_spatial_beam(std::vector<Node> &nodes, std::size_t w
                                          int cell_size) {
     SpatialBeamScratch<Node> scratch;
     return retain_spatial_beam(nodes, width, cell_size, scratch);
+}
+
+// Use a small dense lookup only when the supplied domain and every node fit.
+// Binary32 score keys order finite values and infinities like float comparison;
+// signed zeros share a rank and source indices resolve all ties. The original
+// node bits are copied untouched. Unsupported domains/layouts delegate to the
+// generic selector, including its validation and error behavior.
+template <class Node>
+inline BeamSelection retain_spatial_beam_bounded(std::vector<Node> &nodes, std::size_t width,
+                                                 int cell_size, SpatialBeamBounds bounds,
+                                                 SpatialBeamScratch<Node> &scratch) {
+    const auto fallback = [&] { return retain_spatial_beam(nodes, width, cell_size, scratch); };
+    if constexpr (!std::is_same_v<decltype(Node::score), float> || sizeof(float) != 4 ||
+                  !std::numeric_limits<float>::is_iec559) {
+        return fallback();
+    } else {
+        if (width == 0 || cell_size <= 0 || nodes.size() >= UINT32_MAX)
+            return fallback();
+        const float one = 1.f;
+        std::uint32_t layout;
+        std::memcpy(&layout, &one, sizeof(layout));
+        if (layout != 0x3f800000u || !(bounds.minx <= bounds.maxx) || !(bounds.miny <= bounds.maxy))
+            return fallback();
+        const double coordinates[] = {std::floor(double(bounds.minx) / cell_size),
+                                      std::floor(double(bounds.miny) / cell_size),
+                                      std::floor(double(bounds.maxx) / cell_size),
+                                      std::floor(double(bounds.maxy) / cell_size)};
+        for (const auto value : coordinates)
+            if (!std::isfinite(value) || value < std::numeric_limits<int>::min() ||
+                value > std::numeric_limits<int>::max())
+                return fallback();
+        const int minx = int(coordinates[0]), miny = int(coordinates[1]);
+        const auto columns = std::uint64_t(std::int64_t(coordinates[2]) - minx + 1);
+        const auto rows = std::uint64_t(std::int64_t(coordinates[3]) - miny + 1);
+        // Bound scratch space and reset cost even for unusually small cells.
+        constexpr std::size_t max_slots = 1 << 16;
+        if (columns > max_slots / 2 || rows > max_slots / 2 || columns * rows > max_slots / 2)
+            return fallback();
+        auto &slots = scratch.dense_slots;
+        auto &winners = scratch.winner_keys;
+        auto &rest = scratch.rest_keys;
+        auto &retained = scratch.retained;
+        slots.assign(std::size_t(columns * rows * 2), UINT32_MAX);
+        winners.clear();
+        rest.clear();
+        retained.clear();
+        const auto key = [](float score, std::uint32_t index) {
+            std::uint32_t bits;
+            std::memcpy(&bits, &score, sizeof(bits));
+            if ((bits << 1) == 0)
+                bits = 0;
+            const auto rank = bits & 0x80000000u ? ~bits : bits ^ 0x80000000u;
+            return (std::uint64_t(rank) << 32) | index;
+        };
+        for (std::size_t i = 0; i < nodes.size(); ++i) {
+            const auto &node = nodes[i];
+            std::uint32_t score_bits;
+            std::memcpy(&score_bits, &node.score, sizeof(score_bits));
+            if (!(node.x >= bounds.minx && node.x <= bounds.maxx && node.y >= bounds.miny &&
+                  node.y <= bounds.maxy) ||
+                (score_bits & 0x7fffffffu) > 0x7f800000u)
+                return fallback();
+            const auto x =
+                std::size_t(std::int64_t(detail::bin_coordinate(node.x, cell_size)) - minx);
+            const auto y =
+                std::size_t(std::int64_t(detail::bin_coordinate(node.y, cell_size)) - miny);
+            auto &slot = slots[(y * columns + x) * 2 + ((node.act & 4) != 0)];
+            const auto ranked = key(node.score, std::uint32_t(i));
+            if (slot == UINT32_MAX) {
+                slot = std::uint32_t(winners.size());
+                winners.push_back(ranked);
+            } else if (ranked < winners[slot]) {
+                winners[slot] = ranked;
+            }
+        }
+        const auto limit = std::min(width, nodes.size());
+        const BeamSelection stats{nodes.size(), winners.size(), std::min(limit, winners.size())};
+        const auto retain_best = [](std::vector<std::uint64_t> &keys, std::size_t count) {
+            if (keys.size() > count) {
+                std::nth_element(keys.begin(), keys.begin() + count, keys.end());
+                keys.resize(count);
+            }
+        };
+        if (winners.size() < limit) {
+            scratch.selected.assign(nodes.size(), 0);
+            for (const auto ranked : winners)
+                scratch.selected[std::uint32_t(ranked)] = 1;
+            rest.reserve(nodes.size() - winners.size());
+            for (std::size_t i = 0; i < nodes.size(); ++i)
+                if (!scratch.selected[i])
+                    rest.push_back(key(nodes[i].score, std::uint32_t(i)));
+            retain_best(rest, limit - winners.size());
+            winners.insert(winners.end(), rest.begin(), rest.end());
+        } else {
+            retain_best(winners, limit);
+        }
+        std::sort(winners.begin(), winners.end());
+        retained.reserve(limit);
+        for (const auto ranked : winners)
+            retained.push_back(nodes[std::uint32_t(ranked)]);
+        std::copy(retained.begin(), retained.end(), nodes.begin());
+        nodes.resize(retained.size());
+        return stats;
+    }
 }
 
 } // namespace th08::plan

@@ -4,6 +4,7 @@
 #include "th08/online.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_movement.hpp"
+#include "th08/online_rotation.hpp"
 #include "th08/plan_beam.hpp"
 #include <algorithm>
 #include <chrono>
@@ -12,6 +13,13 @@
 #include <stdexcept>
 
 namespace th08::online {
+const char *build_architecture() {
+#ifdef TH08_ONLINE_ARCH_NAME
+    return TH08_ONLINE_ARCH_NAME;
+#else
+    return "portable";
+#endif
+}
 namespace {
 using Float3 = Vector;
 using Speeds = Movement;
@@ -21,12 +29,8 @@ struct Laser {
     // Proposal uncertainty only: all turn signs up to the last observed speed.
     // This does not certify that future scripts preserve that speed or origin.
     double angle_reach = 0, reach_cos = 1, reach_sin = 0;
+    detail::Rotation2 inverse;
 };
-void rotate(Float3 *out, const Float3 *point, float angle) {
-    const float sine = std::sin(angle), cosine = std::cos(angle);
-    out->x = cosine * point->x - sine * point->y;
-    out->y = cosine * point->y + sine * point->x;
-}
 // Player::UpdateMovementAndOptions direction priority and float operation order.
 inline void move(const Speeds &s, float &x, float &y, std::uint16_t in) {
     detail::apply_movement(s, x, y, detail::movement_delta(s, in));
@@ -99,8 +103,10 @@ Box laser_aabb(const Laser &l, float padding = 0) {
 void build_index(HFrame &f, const Float3 &half) {
     build_grid(f.risk, half, f.rstart, f.ritems);
     f.laabb.resize(f.l.size());
-    for (std::size_t i = 0; i < f.l.size(); ++i)
+    for (std::size_t i = 0; i < f.l.size(); ++i) {
+        f.l[i].inverse = detail::prepare_rotation(-f.l[i].angle);
         f.laabb[i] = laser_aabb(f.l[i], std::max(half.x, half.y) + kMargin);
+    }
     build_grid(f.laabb, half, f.lstart, f.litems);
     const float ex = half.x + kMargin + 0.01f, ey = half.y + kMargin + 0.01f;
     std::vector<int> cnt(kGW * kGH + 1, 0);
@@ -127,7 +133,7 @@ inline bool laser_hit(const Laser &l, const Float3 &p, const Float3 &half, float
     position.x = l.cx, position.y = l.cy, position.z = 0;
     size.x = l.w, size.y = l.h, size.z = 0;
     in_min = p - origin;
-    rotate(&in_max, &in_min, -l.angle);
+    in_max = l.inverse.apply(in_min);
     if (l.angle_reach > 0) {
         // A circle arc intersects a rectangle either at an arc endpoint or a
         // rectangle edge. Endpoint half-planes test membership without atan2.
@@ -944,8 +950,9 @@ struct Policy::Impl {
             if (int(next.size()) > opt.beam) {
                 if (opt.diversity_cell > 0) {
                     const auto begin = std::chrono::steady_clock::now();
-                    const auto stats = plan::retain_spatial_beam(next, opt.beam, opt.diversity_cell,
-                                                                 search_scratch.selection);
+                    const auto stats = plan::retain_spatial_beam_bounded(
+                        next, opt.beam, opt.diversity_cell, {sp.minx, sp.miny, sp.maxx, sp.maxy},
+                        search_scratch.selection);
                     search_stats.selection_ms += std::chrono::duration<double, std::milli>(
                                                      std::chrono::steady_clock::now() - begin)
                                                      .count();
