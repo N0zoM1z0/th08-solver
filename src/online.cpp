@@ -5,11 +5,13 @@
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
 #include "th08/online_movement.hpp"
+#include "th08/online_plan.hpp"
 #include "th08/online_rotation.hpp"
 #include "th08/plan_beam.hpp"
 #include <algorithm>
 #include <chrono>
 #include <cmath>
+#include <cstring>
 #include <limits>
 #include <stdexcept>
 
@@ -244,8 +246,15 @@ struct Policy::Impl {
             opt.risk_weight < 0 || !std::isfinite(opt.nowarn_weight) || opt.nowarn_weight < 0 ||
             !std::isfinite(opt.focus_bias) || !std::isfinite(opt.spawn_guard) ||
             opt.spawn_guard < 0 || opt.spawn_guard > 128 || opt.diversity_cell < 0 ||
-            opt.diversity_cell > 128)
+            opt.diversity_cell > 128 || opt.planner_lag < 0 ||
+            (opt.planner_lag > 0 &&
+             (opt.planner_lag >= opt.horizon - 1 || opt.executor_check < 2 ||
+              opt.executor_check > opt.horizon || opt.emergency_horizon < 2 ||
+              opt.emergency_horizon > opt.horizon || opt.emergency_beam < 1 ||
+              opt.emergency_beam > 8192)))
             throw std::runtime_error("invalid_online_configuration");
+        if (opt.planner_lag > 0 && (opt.held_fallback || opt.warm_fallback || opt.tail_check))
+            throw std::runtime_error("unsupported_online_lag_fallback");
         frames.resize(opt.horizon + opt.tail_check + 1);
     }
     static constexpr int kSlots = 0x601;
@@ -856,7 +865,10 @@ struct Policy::Impl {
         return longest;
     }
     SearchResult search(const std::vector<HFrame> &frames, int horizon, const Speeds &sp,
-                        std::uint16_t latched, float x0, float y0, float pref_x, float pref_y) {
+                        std::uint16_t latched, float x0, float y0, float pref_x, float pref_y,
+                        const std::vector<std::uint16_t> *forced = nullptr, int beam = 0) {
+        if (beam == 0)
+            beam = opt.beam;
         SpawnGrid summed_spawns;
         const SpawnGrid *nw = nullptr;
         if (risk.loaded && opt.nowarn_weight > 0) {
@@ -895,6 +907,19 @@ struct Policy::Impl {
         for (int j = 1; j < horizon && !layers[j].empty(); ++j) {
             auto &cur = layers[j];
             auto &next = layers[j + 1];
+            // j=1 is movement two: the first input submitted at this snapshot.
+            // Forced layers have one parent and cannot branch or draw tie RNG.
+            if (forced && j <= int(forced->size())) {
+                const auto &parent = cur.front();
+                float x = parent.x, y = parent.y;
+                const auto action = std::uint16_t((*forced)[j - 1] & 0xf4);
+                move(sp, x, y, action);
+                if (probe(frames[j + 1], sp.half, x, y, false) == 2)
+                    break;
+                next.push_back({x, y, 0, action, parent.score});
+                deepest = j + 1;
+                continue;
+            }
             Box bounds{cur.front().x, cur.front().y, cur.front().x, cur.front().y};
             for (const auto &node : cur) {
                 bounds.x0 = std::min(bounds.x0, node.x);
@@ -941,11 +966,11 @@ struct Policy::Impl {
                     }
             }
             search_stats.proposal_grid_expansions += search_scratch.seen.expansions();
-            if (int(next.size()) > opt.beam) {
+            if (int(next.size()) > beam) {
                 if (opt.diversity_cell > 0) {
                     const auto begin = std::chrono::steady_clock::now();
                     const auto stats = plan::retain_spatial_beam_bounded(
-                        next, opt.beam, opt.diversity_cell, {sp.minx, sp.miny, sp.maxx, sp.maxy},
+                        next, beam, opt.diversity_cell, {sp.minx, sp.miny, sp.maxx, sp.maxy},
                         search_scratch.selection);
                     search_stats.selection_ms += std::chrono::duration<double, std::milli>(
                                                      std::chrono::steady_clock::now() - begin)
@@ -956,9 +981,9 @@ struct Policy::Impl {
                     search_stats.retained_bins += stats.retained_bins;
                 } else {
                     std::nth_element(
-                        next.begin(), next.begin() + opt.beam, next.end(),
+                        next.begin(), next.begin() + beam, next.end(),
                         [](const Node &a, const Node &b) { return a.score < b.score; });
-                    next.resize(opt.beam);
+                    next.resize(beam);
                 }
             }
             if (!next.empty())
@@ -969,7 +994,7 @@ struct Policy::Impl {
         for (int i = 1; i < int(last.size()); ++i)
             if (last[i].score < last[best].score)
                 best = i;
-        if (opt.tail_check && deepest == horizon) {
+        if (opt.tail_check && deepest == horizon && horizon == opt.horizon) {
             const auto begin = std::chrono::steady_clock::now();
             std::vector<int> order;
             for (int i = 0; i < int(last.size()); ++i)
@@ -1003,6 +1028,174 @@ struct Policy::Impl {
         if (r.moves.empty())
             r.moves.push_back(std::uint16_t(latched & 0xF4));
         return r;
+    }
+
+    struct FollowedPlan {
+        std::vector<std::uint16_t> moves;
+        std::size_t offset = 0;
+        bool present() const {
+            return offset < moves.size();
+        }
+        std::uint16_t input(std::size_t ahead = 0) const {
+            return moves[std::min(offset + ahead, moves.size() - 1)];
+        }
+    };
+    struct PendingPlan {
+        std::vector<std::uint16_t> moves, forced;
+        std::uint64_t origin = 0, due = 0, epoch = 0;
+        Vector arrival;
+        bool present = false;
+    };
+    struct LagExecutor {
+        FollowedPlan active;
+        PendingPlan pending;
+        std::uint64_t epoch = 0, free_at = 0, last_update = 0;
+        bool anchored = false;
+        int stage = 0, spell = -1;
+        Movement movement;
+        Vector expected;
+        std::uint16_t last_input = 0;
+    } executor;
+    static bool same_bits(float a, float b) {
+        return std::memcmp(&a, &b, sizeof(float)) == 0;
+    }
+    static bool same_movement(const Movement &a, const Movement &b) {
+        const float av[] = {a.axis[0], a.axis[1], a.diag[0], a.diag[1], a.hmul,   a.vmul,  a.frm,
+                            a.minx,    a.miny,    a.maxx,    a.maxy,    a.half.x, a.half.y};
+        const float bv[] = {b.axis[0], b.axis[1], b.diag[0], b.diag[1], b.hmul,   b.vmul,  b.frm,
+                            b.minx,    b.miny,    b.maxx,    b.maxy,    b.half.x, b.half.y};
+        for (std::size_t i = 0; i < sizeof(av) / sizeof(av[0]); ++i)
+            if (!same_bits(av[i], bv[i]))
+                return false;
+        return true;
+    }
+    void drop_pending() {
+        if (executor.pending.present)
+            ++search_stats.pending_dropped;
+        executor.pending.present = false;
+        executor.pending.moves.clear();
+        executor.pending.forced.clear();
+    }
+    // Revalidate the latch and every followed movement using this observation's
+    // freshly built forecast. Beyond a finite proposal, hold its final input.
+    int checked_depth(const std::vector<std::uint16_t> &moves, std::size_t offset,
+                      const Observation &o) {
+        ++search_stats.executor_checks;
+        float x = o.x, y = o.y;
+        int depth = 0;
+        for (int step = 1; step <= opt.executor_check; ++step) {
+            const auto input =
+                step == 1 ? o.latched_input
+                          : moves[std::min(offset + std::size_t(step - 2), moves.size() - 1)];
+            move(o.movement, x, y, input);
+            if (probe(frames[step], o.movement.half, x, y, false) == 2)
+                break;
+            depth = step;
+        }
+        return depth;
+    }
+    struct ExecutedInput {
+        std::uint16_t action;
+        int depth;
+    };
+    ExecutedInput lag_decide(const Observation &o, float pref_x) {
+        auto &a = executor;
+        auto &p = a.pending;
+        const auto u = o.update;
+        const int spell = o.spell_active ? o.spell : -1;
+        if (a.anchored) {
+            const bool matches = u == a.last_update + 1 && o.stage == a.stage && spell == a.spell &&
+                                 same_movement(o.movement, a.movement) &&
+                                 (o.latched_input & 0xf7) == std::uint16_t(a.last_input | 1) &&
+                                 same_bits(o.x, a.expected.x) && same_bits(o.y, a.expected.y);
+            if (!matches) {
+                ++search_stats.executor_invalidations;
+                ++a.epoch;
+                drop_pending();
+                a.active.moves.clear();
+                a.active.offset = 0;
+                a.free_at = u;
+            } else if (a.active.present()) {
+                ++a.active.offset;
+            }
+        }
+        if (p.present) {
+            const auto elapsed = u - p.origin;
+            // Check the inputs actually latched, not merely those we proposed.
+            // Emergency/lifecycle replacement also changes the owning epoch.
+            const bool prefix_matches =
+                p.epoch == a.epoch && elapsed > 0 && elapsed <= p.forced.size() &&
+                (o.latched_input & 0xf7) == std::uint16_t(p.forced[elapsed - 1] | 1);
+            if (!prefix_matches) {
+                drop_pending();
+                a.free_at = u;
+            }
+        }
+        int checked = a.active.present() ? checked_depth(a.active.moves, a.active.offset, o) : -1;
+        if (p.present && u >= p.due) {
+            const bool arrived =
+                u == p.due && same_bits(o.x, p.arrival.x) && same_bits(o.y, p.arrival.y);
+            const int candidate = arrived ? checked_depth(p.moves, 0, o) : -1;
+            if (candidate >= opt.executor_check) {
+                a.active.moves = std::move(p.moves);
+                a.active.offset = 0;
+                p.present = false;
+                p.forced.clear();
+                checked = candidate;
+                ++search_stats.plan_adoptions;
+            } else {
+                drop_pending();
+            }
+        }
+        if (!a.active.present() || checked < opt.executor_check) {
+            ++search_stats.emergency_searches;
+            ++a.epoch;
+            drop_pending();
+            a.free_at = u;
+            auto rescue = search(frames, opt.emergency_horizon, o.movement, o.latched_input, o.x,
+                                 o.y, pref_x, 400.f, nullptr, opt.emergency_beam);
+            // A bounded rescue may be shallower than the plan just checked.
+            if (!a.active.present() || rescue.depth >= checked) {
+                a.active.moves = std::move(rescue.moves);
+                a.active.offset = 0;
+                checked = rescue.depth;
+            }
+        }
+        if (!p.present && u >= a.free_at && checked >= 2) {
+            std::vector<std::uint16_t> forced;
+            forced.reserve(opt.planner_lag);
+            for (int i = 0; i < opt.planner_lag; ++i)
+                forced.push_back(a.active.input(std::size_t(i)));
+            const auto begin = std::chrono::steady_clock::now();
+            auto full = search(frames, opt.horizon, o.movement, o.latched_input, o.x, o.y, pref_x,
+                               400.f, &forced);
+            search_stats.planner_ms =
+                std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - begin)
+                    .count();
+            ++search_stats.planner_searches;
+            a.free_at = u + std::uint64_t(opt.planner_lag);
+            if (full.moves.size() > forced.size()) {
+                p.moves.assign(full.moves.begin() + std::ptrdiff_t(forced.size()),
+                               full.moves.end());
+                p.arrival =
+                    detail::prefix_arrival(o.movement, {o.x, o.y, 0}, o.latched_input, forced);
+                p.forced = std::move(forced);
+                p.origin = u;
+                p.due = a.free_at;
+                p.epoch = a.epoch;
+                p.present = true;
+            }
+        }
+        const auto action = a.active.input();
+        a.anchored = true;
+        a.stage = o.stage;
+        a.spell = spell;
+        a.movement = o.movement;
+        a.last_update = u;
+        a.last_input = action;
+        a.expected = {o.x, o.y, 0};
+        move(o.movement, a.expected.x, a.expected.y, o.latched_input);
+        return {action, std::min(checked, opt.executor_check)};
     }
 
     void check_warm_path(SearchResult &result, const Observation &observation) {
@@ -1107,6 +1300,12 @@ struct Policy::Impl {
                 area = a, pref_x = 192.f + opt.boss_follow * ((r.x0 + r.x1) / 2 - 192.f);
         }
         pref_x = std::clamp(pref_x, 48.f, 336.f);
+        if (opt.planner_lag > 0) {
+            const auto executed = lag_decide(observation, pref_x);
+            mark(&DecisionTiming::search_ns);
+            mark(&DecisionTiming::fallback_ns);
+            return {std::uint16_t(executed.action | 1), executed.depth, search_stats};
+        }
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
                              observation.y, pref_x, 400.f);
         mark(&DecisionTiming::search_ns);

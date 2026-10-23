@@ -35,6 +35,9 @@ process memory is permitted; image recognition is not required. `th08_online` co
 owned current observations without future native steps or rewinds. Its first harness
 measures latency and deadline misses but waits for each decision, so completion does
 not establish a 60 FPS controller.
+An optional deterministic planner-delay model reuses checked owned plans and
+reports executor/search timing separately. Its searches still run synchronously;
+[Planner](docs/PLANNER.md) defines the latch, cancellation and timing contracts.
 
 Two of three Lunatic Final A stories through natural 4A now strictly verify with
 the same uniform current-memory controller. Story diagnosis retains a Stage 5

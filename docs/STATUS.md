@@ -31,8 +31,9 @@ updates 42681 (no model, 62020-update completion) and 45032 (unchanged model,
 64744-update completion). Exact-kernel paired timing, complete action comparison
 and all six fresh execution/natural-replay gates now pass; measured results are
 below. The subsequent local proposal bitset also passes the complete gates.
-Ordered probe/threading ablations remain local; the deterministic plan-lag model
-is now being implemented and tested. [Planner](PLANNER.md) owns the
+Ordered probe/threading ablations remain local. The owned deterministic plan-lag
+model passes all six complete 6B controls and replay gates; an index-scheduling
+prototype and a frozen 24-seed paired bank are next. [Planner](PLANNER.md) owns the
 algorithm-phase acceptance gates and current-memory boundary.
 
 The latest scope prioritizes random-seed generalization. The reference catalog
@@ -788,6 +789,34 @@ single-thread bitset. This does not reject all parallel planning designs. All ra
 sources, identities, costs and endpoints remain local; no new seed/story/retail
 or enforced-deadline claim is added by these optimization controls.
 
+The optional owned plan-delay model completes all six 6B cases: lag 0/1/2, with
+and without the unchanged model, under the same H64/beam192/cell16/guard16 profile.
+Lag zero retains the full `dfab51e6…`/`005d0ecd…` tapes and default Stage 2 retains
+`c4acd20a…`. Two repetitions of each lag-one/two spell-166 window have identical
+actions, behavior and executor event counts. All six complete tapes pass fresh
+action execution and natural playback, totaling 384516 rows without death/bomb
+rows. The delayed trajectories have different RNG/state histories; their latency
+rows are descriptive, not identical-workload speed comparisons:
+
+| Model / lag | Complete updates | Executor mean / p99.9 / max (ms) | Planner p99 (ms) | Planner overruns / searches | Emergencies |
+| --- | --- | --- | --- | --- | --- |
+| None / 1 | 63948 | 0.805 / 3.152 / 3.256 | 9.135 | 2 / 63948 | 26 |
+| None / 2 | 64472 | 0.793 / 3.106 / 3.263 | 9.197 | 0 / 32245 | 28 |
+| Existing risk / 1 | 64769 | 0.953 / 4.496 / 4.799 | 9.590 | 0 / 64769 | 24 |
+| Existing risk / 2 | 64563 | 0.935 / 4.436 / 4.656 | 9.479 | 0 / 32288 | 25 |
+
+All four modeled executor samples have zero deadline misses and 23 input/position/
+movement/phase invalidations apiece; no observer or carried native state is reset.
+The two lag-one planner overruns remain recorded: fixed-N accounting still adopts
+on schedule, so this is not an actual late-result policy. Whole synchronous
+controller latency remains separately reported. The 14 episodes cost 754568 native
+updates, including 350852 prefix updates, and 2311.47 summed wall seconds; fresh
+execution/playback costs are additional. Binary prefix is `5f72dee8…`. All 40
+non-documentation tests pass in the 41-test suite; the stale core-count declaration
+was fixed and documentation passed on recheck. The strict C++ paired-bank contract
+is the new core test. No fresh-seed reliability or complete-story result is added
+by these known-seed controls, and no actual asynchronous/retail bridge is claimed.
+
 The owner prioritizes further measured algorithmic speedups before model/training
 replacement. Native/replay correctness remains required even if a later stochastic
 policy accepts a finite complete-story success rate. The eventual initial policy
@@ -1131,7 +1160,7 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 29 core CTests without private data, plus two optional pinned-source tests
+There are 30 core CTests without private data, plus two optional pinned-source tests
 (31 total). The current headless/DAT configuration has 40 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
 continuation test, online policy contracts and a complete online-stage/replay test.

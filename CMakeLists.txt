@@ -34,7 +34,14 @@ target_link_libraries(th08_planner_report PRIVATE OpenSSL::Crypto)
 add_executable(th08_plan_matrix tools/plan_matrix.cpp)
 target_compile_features(th08_plan_matrix PRIVATE cxx_std_17)
 target_include_directories(th08_plan_matrix PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable(th08_spell_bank tools/spell_bank.cpp)
+target_compile_features(th08_spell_bank PRIVATE cxx_std_17)
+target_link_libraries(th08_spell_bank PRIVATE OpenSSL::Crypto)
 if(BUILD_TESTING)
+  add_test(NAME spell_bank_contract COMMAND ${CMAKE_COMMAND}
+    -DANALYZER=$<TARGET_FILE:th08_spell_bank>
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/spell-bank-contract
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/spell_bank_tests.cmake)
   add_test(NAME planner_report_contract COMMAND ${CMAKE_COMMAND}
     -DREPORT=$<TARGET_FILE:th08_planner_report>
     -DMATRIX=$<TARGET_FILE:th08_plan_matrix>

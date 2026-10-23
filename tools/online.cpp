@@ -135,6 +135,14 @@ Options parse(int argc, char **argv) {
             o.policy.direct_turn_envelope = boolean();
         else if (key == "--relative-turns")
             o.policy.relative_turns = boolean();
+        else if (key == "--planner-lag")
+            o.policy.planner_lag = integer(value);
+        else if (key == "--executor-check")
+            o.policy.executor_check = integer(value);
+        else if (key == "--emergency-horizon")
+            o.policy.emergency_horizon = integer(value);
+        else if (key == "--emergency-beam")
+            o.policy.emergency_beam = integer(value);
         else if (key == "--log-every")
             o.log_every = int(integer(value));
         else if (key == "--profile-components")
@@ -207,6 +215,8 @@ struct DecisionLog {
     bool youkai;
     std::uint16_t action;
     double milliseconds;
+    double executor_ms, planner_ms;
+    std::uint64_t searches, adoptions, checks, emergencies, dropped, invalidated;
 };
 struct ComponentTotals {
     std::uint64_t capture_ns = 0, policy_ns = 0;
@@ -254,6 +264,8 @@ int run(const Options &o) {
     actions.reserve(o.frames);
     std::vector<double> timings;
     timings.reserve(o.frames);
+    std::vector<double> executor_timings, planner_timings;
+    std::uint64_t executor_misses = 0, planner_overruns = 0;
     std::vector<DecisionLog> logs;
     if (o.log_every)
         logs.reserve(o.frames / std::size_t(o.log_every) + 1);
@@ -410,6 +422,12 @@ int run(const Options &o) {
                                    int(decision.search.tail_best_depth) == o.policy.tail_check;
             search_stats.turn_envelope_frames += decision.search.turn_envelope_frames;
             search_stats.relative_turn_frames += decision.search.relative_turn_frames;
+            search_stats.planner_searches += decision.search.planner_searches;
+            search_stats.plan_adoptions += decision.search.plan_adoptions;
+            search_stats.executor_checks += decision.search.executor_checks;
+            search_stats.emergency_searches += decision.search.emergency_searches;
+            search_stats.pending_dropped += decision.search.pending_dropped;
+            search_stats.executor_invalidations += decision.search.executor_invalidations;
             auto input = decision.action;
             if (o.spell < 0 && ((actions.size() + 1) % 2))
                 input |= 4096;
@@ -419,10 +437,25 @@ int run(const Options &o) {
             const auto ms = std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
             timings.push_back(ms);
             deadline_misses += ms > o.deadline_ms;
+            const double executor_ms = std::max(0.0, ms - decision.search.planner_ms);
+            if (o.policy.planner_lag > 0) {
+                executor_timings.push_back(executor_ms);
+                executor_misses += executor_ms > o.deadline_ms;
+                if (decision.search.planner_searches) {
+                    planner_timings.push_back(decision.search.planner_ms);
+                    planner_overruns +=
+                        decision.search.planner_ms > o.policy.planner_lag * o.deadline_ms;
+                }
+            }
             full_depth += decision.depth >= o.policy.horizon;
             if (o.log_every && ((timings.size() - 1) % std::size_t(o.log_every)) == 0)
                 logs.push_back({actions.size(), state.stage, state.spell_active ? state.spell : -1,
-                                decision.depth, state.x, state.y, state.youkai, input, ms});
+                                decision.depth, state.x, state.y, state.youkai, input, ms,
+                                executor_ms, decision.search.planner_ms,
+                                decision.search.planner_searches, decision.search.plan_adoptions,
+                                decision.search.executor_checks, decision.search.emergency_searches,
+                                decision.search.pending_dropped,
+                                decision.search.executor_invalidations});
             step(input);
             if (terminal())
                 outcome = "complete";
@@ -451,12 +484,16 @@ int run(const Options &o) {
     if (o.log_every) {
         std::ofstream log(o.out / "decisions.tsv");
         log.exceptions(std::ios::badbit | std::ios::failbit);
-        log << "update\tstage\tspell\tx\ty\tyoukai\taction\tdepth\tcontroller_ms\n"
+        log << "update\tstage\tspell\tx\ty\tyoukai\taction\tdepth\tcontroller_ms\t"
+               "executor_ms\tplanner_ms\tplanner_searches\tplan_adoptions\texecutor_checks\t"
+               "emergency_searches\tpending_dropped\texecutor_invalidations\n"
             << std::setprecision(9);
         for (const auto &l : logs)
             log << l.update << '\t' << l.stage << '\t' << l.spell << '\t' << l.x << '\t' << l.y
                 << '\t' << l.youkai << '\t' << l.action << '\t' << l.depth << '\t' << l.milliseconds
-                << '\n';
+                << '\t' << l.executor_ms << '\t' << l.planner_ms << '\t' << l.searches << '\t'
+                << l.adoptions << '\t' << l.checks << '\t' << l.emergencies << '\t' << l.dropped
+                << '\t' << l.invalidated << '\n';
     }
     const double sum = std::accumulate(timings.begin(), timings.end(), 0.0);
     std::sort(timings.begin(), timings.end());
@@ -466,6 +503,25 @@ int run(const Options &o) {
                                                   std::size_t(std::ceil(q * timings.size())) - 1)];
     };
     const auto action_hash = hash(o.out / "online.actions");
+    const auto summary = [](std::vector<double> values) {
+        std::array<double, 4> result{};
+        if (values.empty())
+            return result;
+        result[0] = std::accumulate(values.begin(), values.end(), 0.0) / values.size();
+        std::sort(values.begin(), values.end());
+        const auto q = [&](double p) {
+            return values[std::min(values.size() - 1,
+                                   std::size_t(std::ceil(p * values.size())) - 1)];
+        };
+        result[1] = q(.99), result[2] = q(.999), result[3] = values.back();
+        return result;
+    };
+    const auto executor_summary =
+        o.policy.planner_lag > 0
+            ? summary(executor_timings)
+            : std::array<double, 4>{timings.empty() ? 0 : sum / timings.size(), quantile(.99),
+                                    quantile(.999), quantile(1)};
+    const auto planner_summary = summary(planner_timings);
     std::ofstream report(o.out / "online.json");
     report.exceptions(std::ios::badbit | std::ios::failbit);
     report << std::setprecision(17) << "{\"schema_version\":1,\"profile\":\""
@@ -473,8 +529,9 @@ int run(const Options &o) {
                    ? "native-memory-kinematic-current-program-v1"
                : o.policy.spawn_guard > 0 ? "native-memory-kinematic-actor-risk-v1"
                                           : "native-memory-kinematic-v1")
-           << "\",\"execution_mode\":"
-              "\"forward-measured\",\"risk_parser\":\"line-tsv-v1\","
+           << "\",\"execution_mode\":\""
+           << (o.policy.planner_lag > 0 ? "forward-measured-planner-lag-model" : "forward-measured")
+           << "\",\"risk_parser\":\"line-tsv-v1\","
               "\"motion_history\":\"same-phase-mode-and-active-transform-mask\",\"future_native_"
               "updates\":0,"
               "\"rewinds\":0,\"deadline_enforced\":false,\"outcome\":\""
@@ -524,6 +581,28 @@ int run(const Options &o) {
            << ",\"held_forecast_updates\":" << search_stats.held_updates
            << ",\"held_selected\":" << search_stats.held_selected
            << ",\"warm_fallback\":" << o.policy.warm_fallback
+           << ",\"planner_lag\":" << o.policy.planner_lag << ",\"decision_depth_scope\":\""
+           << (o.policy.planner_lag > 0 ? "checked-executor-updates" : "beam-search-updates") << '"'
+           << ",\"executor_check\":" << o.policy.executor_check
+           << ",\"emergency_horizon\":" << o.policy.emergency_horizon
+           << ",\"emergency_beam\":" << o.policy.emergency_beam
+           << ",\"planner_searches\":" << search_stats.planner_searches
+           << ",\"plan_adoptions\":" << search_stats.plan_adoptions
+           << ",\"executor_checks\":" << search_stats.executor_checks
+           << ",\"emergency_searches\":" << search_stats.emergency_searches
+           << ",\"pending_dropped\":" << search_stats.pending_dropped
+           << ",\"executor_invalidations\":" << search_stats.executor_invalidations
+           << ",\"latency_split_applicable\":" << (o.policy.planner_lag > 0 ? "true" : "false")
+           << ",\"mean_executor_ms\":" << executor_summary[0]
+           << ",\"p99_executor_ms\":" << executor_summary[1]
+           << ",\"p999_executor_ms\":" << executor_summary[2]
+           << ",\"max_executor_ms\":" << executor_summary[3] << ",\"executor_deadline_misses\":"
+           << (o.policy.planner_lag > 0 ? executor_misses : deadline_misses)
+           << ",\"mean_planner_ms\":" << planner_summary[0]
+           << ",\"p99_planner_ms\":" << planner_summary[1]
+           << ",\"p999_planner_ms\":" << planner_summary[2]
+           << ",\"max_planner_ms\":" << planner_summary[3]
+           << ",\"planner_overruns\":" << planner_overruns
            << ",\"tail_check\":" << o.policy.tail_check
            << ",\"forecast_horizon\":" << o.policy.horizon + o.policy.tail_check
            << ",\"tail_nodes\":" << search_stats.tail_nodes

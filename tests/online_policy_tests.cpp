@@ -5,6 +5,7 @@
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
 #include "th08/online_movement.hpp"
+#include "th08/online_plan.hpp"
 #include "th08/online_rotation.hpp"
 
 #include <cerrno>
@@ -111,6 +112,149 @@ on::Bullet bullet(int slot, float x, float y, float vx, float vy) {
     b.vy = vy;
     b.full_width = b.full_height = 2;
     return b;
+}
+void committed_prefix_contract() {
+    auto o = scene();
+    o.x = o.y = 100;
+    o.latched_input = 128;
+    const std::vector<std::uint16_t> committed{32, 64};
+    const auto zero = on::detail::prefix_arrival(o.movement, {o.x, o.y, 0}, o.latched_input, {});
+    const auto one = on::detail::prefix_arrival(o.movement, {o.x, o.y, 0}, o.latched_input, {32});
+    const auto two =
+        on::detail::prefix_arrival(o.movement, {o.x, o.y, 0}, o.latched_input, committed);
+    check(zero.x == 100 && zero.y == 100 && one.x == 104 && one.y == 100 && two.x == 104 &&
+              two.y == 104,
+          "committed prefix moved its final input before adoption or skipped the old latch");
+}
+void planner_lag_contract() {
+    on::Configuration config;
+    config.horizon = 24;
+    config.beam = 64;
+    config.grow = 0;
+    config.planner_lag = 2;
+    config.executor_check = 12;
+    config.emergency_horizon = 12;
+    config.emergency_beam = 16;
+    auto advance = [](on::Observation &o, std::uint16_t action) {
+        on::detail::apply_movement(o.movement, o.x, o.y,
+                                   on::detail::movement_delta(o.movement, o.latched_input));
+        o.latched_input = action;
+        ++o.update;
+        for (auto &b : o.bullets)
+            b.x += b.vx, b.y += b.vy;
+    };
+    on::Policy policy(config);
+    auto o = scene();
+    const auto d0 = policy.decide(o);
+    check(d0.search.emergency_searches == 1 && d0.search.planner_searches == 1 &&
+              d0.search.plan_adoptions == 0 && d0.depth == config.emergency_horizon,
+          "lag execution did not bootstrap an emergency plan and delayed search");
+    auto shorter_check = config;
+    shorter_check.executor_check = 4;
+    const auto capped = on::Policy(shorter_check).decide(scene());
+    check(capped.depth == 4 && capped.search.emergency_searches == 1,
+          "a longer emergency search overstated the executor's configured check depth");
+    auto longer_check = config;
+    longer_check.executor_check = longer_check.horizon;
+    longer_check.queued_shots = true;
+    auto normal_check = longer_check;
+    normal_check.executor_check = normal_check.emergency_horizon;
+    on::Policy longer(longer_check), unchanged(normal_check);
+    auto boundary = scene();
+    const auto previous = longer.decide(boundary), retained = unchanged.decide(boundary);
+    check(previous.action == retained.action, "deeper-check fixture changed its initial plan");
+    advance(boundary, previous.action);
+    boundary.queued_shots.push_back({20, 1, boundary.x, boundary.y, 0, 0, 10000, 10000});
+    const auto deeper = longer.decide(boundary), old = unchanged.decide(boundary);
+    check(deeper.depth == 19 && deeper.action == old.action &&
+              deeper.search.emergency_searches == 1 && deeper.search.pending_dropped == 1,
+          "a shorter emergency replaced a deeper already checked plan");
+    advance(o, d0.action);
+    const auto d1 = policy.decide(o);
+    check(d1.search.executor_checks == 1 && d1.search.emergency_searches == 0 &&
+              d1.search.planner_searches == 0 && d1.search.plan_adoptions == 0,
+          "a pending plan was adopted early or a valid executor searched unnecessarily");
+    advance(o, d1.action);
+    const auto d2 = policy.decide(o);
+    check(d2.search.plan_adoptions == 1 && d2.search.planner_searches == 1 &&
+              d2.search.emergency_searches == 0 && d2.search.executor_invalidations == 0,
+          "a plan was not adopted at its exact committed-prefix boundary");
+    advance(o, d2.action);
+    auto incoming = bullet(5, o.x + 30, o.y, -6, 0);
+    incoming.full_width = incoming.full_height = 6;
+    o.bullets.push_back(incoming);
+    const auto d3 = policy.decide(o);
+    check(d3.search.emergency_searches == 1 && d3.search.pending_dropped == 1 &&
+              d3.depth == config.emergency_horizon && (d3.action & 0x30) != 0,
+          "a newly unsafe plan retained its pending result or lost the emergency escape");
+    for (int change = 0; change < 7; ++change) {
+        on::Policy isolated(config);
+        auto current = scene();
+        const auto first = isolated.decide(current);
+        advance(current, first.action);
+        if (change == 0)
+            current.latched_input = (first.action & 0xf4) == 128 ? 64 : 128;
+        if (change == 1)
+            current.x += 1;
+        if (change == 2)
+            current.movement.axis[0] += .25f;
+        if (change == 3) {
+            current.stage = 3;
+            current.spell_active = true;
+            current.spell = 22;
+        }
+        if (change == 4) {
+            // Observer warming may be consecutive even when decisions skip.
+            isolated.observe(current);
+            advance(current, first.action);
+        }
+        if (change == 5)
+            current.latched_input ^= 1;
+        if (change == 6)
+            current.latched_input |= 2;
+        const auto invalidated = isolated.decide(current);
+        check(invalidated.search.executor_invalidations == 1 &&
+                  invalidated.search.pending_dropped == 1 &&
+                  invalidated.search.plan_adoptions == 0 &&
+                  invalidated.search.emergency_searches == 1 &&
+                  invalidated.search.planner_searches == 1,
+              "stale prefix, position, movement, lifecycle or decision gap kept a plan");
+    }
+    auto blocked = scene();
+    blocked.bullets = {bullet(0, blocked.x, blocked.y, 0, 0)};
+    const auto doomed = on::Policy(config).decide(blocked);
+    check(doomed.depth == 0 && doomed.search.emergency_searches == 1 &&
+              doomed.search.planner_searches == 0 && doomed.search.plan_adoptions == 0,
+          "an unavoidable latched hit launched or certified a new delayed plan");
+    for (const auto &bad : {std::array<int, 3>{23, 12, 12}, std::array<int, 3>{2, 1, 12},
+                            std::array<int, 3>{2, 25, 12}, std::array<int, 3>{2, 12, 25},
+                            std::array<int, 3>{-1, 12, 12}}) {
+        auto invalid = config;
+        invalid.planner_lag = bad[0];
+        invalid.executor_check = bad[1];
+        invalid.emergency_horizon = bad[2];
+        rejects([&] { on::Policy p(invalid); }, "invalid lag budget was accepted");
+    }
+    for (int fallback = 0; fallback < 3; ++fallback) {
+        auto invalid = config;
+        invalid.held_fallback = fallback == 0;
+        invalid.warm_fallback = fallback == 1;
+        invalid.tail_check = fallback == 2;
+        rejects([&] { on::Policy p(invalid); }, "lag silently ignored a synchronous fallback");
+    }
+    auto sync = config;
+    sync.planner_lag = 0;
+    auto unused = sync;
+    unused.executor_check = unused.emergency_horizon = unused.emergency_beam = -1;
+    on::Policy original(sync), with_unused(unused);
+    auto current = scene();
+    for (int step = 0; step < 8; ++step) {
+        const auto a = original.decide(current), b = with_unused.decide(current);
+        check(a.action == b.action && a.depth == b.depth && a.search.planner_searches == 0 &&
+                  b.search.planner_searches == 0 && b.search.emergency_searches == 0,
+              "unused executor settings changed the synchronous policy");
+        advance(current, a.action);
+    }
 }
 void transform_motion_history() {
     on::Configuration config;
@@ -1044,6 +1188,8 @@ int main(int argc, char **argv) {
         check(argc == 2, "test needs an isolated scratch directory");
         risk_rows(argv[1]);
         spawn_neighborhood_contract();
+        committed_prefix_contract();
+        planner_lag_contract();
         observation_history();
         transform_motion_history();
         pruning_and_isolation();

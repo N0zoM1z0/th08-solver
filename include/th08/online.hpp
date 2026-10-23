@@ -131,6 +131,12 @@ struct Configuration {
     bool spawn_clock = false;
     bool direct_turn_envelope = false;
     bool relative_turns = false;
+    // Synchronous deterministic delay experiment, not a real background worker.
+    // Full searches force the N committed movement/focus inputs before their
+    // first new decision. Zero preserves the original synchronous policy.
+    int planner_lag = 0;
+    int executor_check = 32;
+    int emergency_horizon = 32, emergency_beam = 48;
 };
 using SpawnGrid = std::array<float, 24 * 28>;
 // Clipped 3x3 no-warning birth sums over 16-pixel cells. Preserve each center's
@@ -161,9 +167,14 @@ struct SearchStatistics {
     std::uint64_t tail_nodes = 0, tail_paths = 0, tail_updates = 0, tail_selected = 0;
     unsigned tail_best_depth = 0;
     double tail_selection_ms = 0;
+    std::uint64_t planner_searches = 0, plan_adoptions = 0, executor_checks = 0;
+    std::uint64_t emergency_searches = 0, pending_dropped = 0, executor_invalidations = 0;
+    double planner_ms = 0; // Full search only; emergency work remains executor cost.
 };
 struct Decision {
     std::uint16_t action = 1;
+    // Lag zero: search depth. Delayed mode: current checked execution depth,
+    // capped at executor_check, including when the emergency search is longer.
     int depth = 0;
     SearchStatistics search;
 };

@@ -355,13 +355,34 @@ before lethal probes, so even discarded proposals keep their original key owner.
 An underestimated domain expands to the full cyclic key space while migrating
 all marks; `proposal_grid_expansions` records that work. Only buffer capacity is
 reused between layers. No new coordinate or world-state equivalence is introduced.
-Then test owned plan reuse with deterministic lag 0/1/2: forced inputs must align
-with the recording latch, adopted plans must match the executed prefix, and stale
-results must be discarded after emergency replacement or lifecycle changes.
-Lag 0 keeps the synchronous action tape. Lag 1/2 reports executor/planner latency,
-overruns, checks, adoptions, emergencies and dropped results, without calling
-synchronous delay accounting a live deadline guarantee. Exact kernel batching,
-local deduplication, parallel probes and lazy forecast/index work require their
+`--planner-lag N` implements an optional deterministic delay model. Zero keeps the
+synchronous policy and its complete action tapes. A search at observation u forces
+the N submitted movement/focus inputs before its first new choice, then withholds
+that result until u+N. The already latched input owns movement one; only the first
+N-1 newly submitted inputs have moved the player at adoption. Plans own their
+inputs and expected arrival, without a simulator pointer or native future.
+Actual latched gameplay inputs (including shooting/bomb state), position bits,
+movement snapshot, stage/spell phase and owning epoch must agree. Mismatches or
+emergency replacement discard pending work without resetting observer history.
+
+Each followed or newly adopted plan is checked against the latest forecast for
+`--executor-check` updates (default 32). Checks hold the final input beyond a finite
+proposal. Failure runs `--emergency-horizon 32 --emergency-beam 48`; a shallower
+rescue cannot replace a deeper checked continuation. Delayed mode rejects warm,
+held and terminal-tail options instead of silently ignoring their contracts.
+Its reported depth is capped at executor_check; full planner/emergency search work
+remains charged in the aggregate search counts. An unavoidable latched hit does
+not launch or certify a delayed prefix. Native execution still determines outcomes.
+
+The harness computes searches synchronously. Controller latency is the actual
+whole decision; modeled executor latency subtracts only the full planner search,
+retaining capture, forecast/index, checks, cancellation and emergency cost.
+Planner overruns compare that search with N times the requested frame deadline;
+they are diagnostics and do not postpone fixed-N adoption. Lag-zero executor
+latency equals controller latency and has no separate delayed planner counters.
+Per-update logs and reports include both timing scopes and executor events.
+These are not asynchronous CPU-contention, snapshot-copy or live bridge tests.
+Exact kernel batching, parallel probes and lazy forecast/index work require their
 own ordered differential checks and measured adoption decisions. Behavior-changing
 options use frozen paired seed banks; no significant difference is not evidence
 of equivalence, and spell-practice outcomes do not establish story probabilities.

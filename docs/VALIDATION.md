@@ -1,6 +1,6 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 29
+Core CTest cases: 30
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
 add two CTests (31 total). Native builds add process, semantic, hazard-probe and
@@ -73,6 +73,19 @@ Only one-update commits and the kinematic forecast are supported. Outcomes have
 distinct exits: complete 0, setup/output error 2, budget 3, death 4, runtime error 5.
 Output directories must be empty; failed tapes remain evidence, not successes.
 
+Optional `--planner-lag 1|2` uses the deterministic delay model described in
+[Planner](PLANNER.md). `--executor-check`, `--emergency-horizon` and
+`--emergency-beam` declare its check/rescue budgets; warm/held/tail combinations
+are rejected. Lag zero remains the default. Policy regressions cover the one-input
+latch at adoption, early/punctual adoption, newly visible hazards, pending-result
+cancellation, actual input/position/movement/phase changes, skipped decisions,
+an unavoidable first update and both shorter/longer rescue depths. Full Stage 2
+keeps `c4acd20a…`; complete lag-zero 6B tapes also retain their parent identities.
+Lag-one/two window repetitions must match actions and deterministic event counts,
+while excluding diagnostic times/overruns from equality. New complete runs still
+require the same fresh action and natural replay gates. Separate executor/planner
+statistics in a synchronous driver do not certify unpaused deadlines.
+
 Optional `--risk-dir` requires all four files: `risk_table_merged.tsv`,
 `risk_backoff_seg.tsv`, `risk_backoff_global.tsv`, `nowarn_merged.tsv`.
 `--risk-phantoms 1` additionally uses collision-disabled bullets as soft risk.
@@ -104,6 +117,20 @@ boundaries, signed zero, subnormals, focus separation, undersized/invalid hints,
 migration of populated bins, independent instances and repeated layer resets.
 Native complete-stage and prefix pairs also require zero unexpected domain
 expansions; their original action, selection-count and terminal gates stay active.
+
+`th08_spell_bank TRIALS SEEDS CASES PROTOCOL BASELINE CANDIDATE` evaluates a paired
+spell-practice bank against declared case/seed files, not only available outputs.
+SEEDS contains one native seed per line. CASES has the TSV header
+`stage difficulty shot spell` (tab-separated; stage uses the report's zero-based
+entry index). TRIALS has `profile stage difficulty shot spell seed outcome frames
+actions_sha256`, also tab-separated. Every declared pair must exist exactly once;
+unexpected cases/seeds/profiles, duplicate or truncated rows and runtime/setup
+outcomes reject the summary. Budget outcomes remain non-completions and are counted
+separately. The report binds all four input files by SHA, gives Wilson 95% intervals
+and the exact two-sided McNemar discordance test, and makes no equivalence claim.
+The standalone contract includes a completely missing case, missing pair, duplicates,
+invalid identities/outcomes and known interval/binomial-tail values. Spell practice
+remains a proxy; it does not establish complete-story probability.
 
 The independent Release campaign freezes shot 0, Lunatic, seed 0, non-practice
 6B story entry, H64/beam192/cell16/guard16, reach filter and soft phantom option.
