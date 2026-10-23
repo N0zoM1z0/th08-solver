@@ -374,6 +374,16 @@ Its reported depth is capped at executor_check; full planner/emergency search wo
 remains charged in the aggregate search counts. An unavoidable latched hit does
 not launch or certify a delayed prefix. Native execution still determines outcomes.
 
+Optional `--lazy-index 1` delays only the unused suffix of per-frame collision
+indices while a delayed result is pending. Forecast generation and reach pruning
+still cover the same full horizon. The executor initially prepares the larger of
+its check and emergency horizons; a canceled pending plan extends the index before
+starting a replacement full search. Indices belong to the current observation and
+are never reused across observations. `indexed_forecast_frames` reports actual
+construction work. Lag zero and the default flag retain eager indexing. Index
+extensions remain executor work, including in component timing; they are excluded
+from the reported full-search duration.
+
 The harness computes searches synchronously. Controller latency is the actual
 whole decision; modeled executor latency subtracts only the full planner search,
 retaining capture, forecast/index, checks, cancellation and emergency cost.
@@ -382,7 +392,7 @@ they are diagnostics and do not postpone fixed-N adoption. Lag-zero executor
 latency equals controller latency and has no separate delayed planner counters.
 Per-update logs and reports include both timing scopes and executor events.
 These are not asynchronous CPU-contention, snapshot-copy or live bridge tests.
-Exact kernel batching, parallel probes and lazy forecast/index work require their
+Exact kernel batching, parallel probes and lazy forecast work require their
 own ordered differential checks and measured adoption decisions. Behavior-changing
 options use frozen paired seed banks; no significant difference is not evidence
 of equivalence, and spell-practice outcomes do not establish story probabilities.

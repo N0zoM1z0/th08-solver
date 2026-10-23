@@ -143,6 +143,8 @@ Options parse(int argc, char **argv) {
             o.policy.emergency_horizon = integer(value);
         else if (key == "--emergency-beam")
             o.policy.emergency_beam = integer(value);
+        else if (key == "--lazy-index")
+            o.policy.lazy_index = boolean();
         else if (key == "--log-every")
             o.log_every = int(integer(value));
         else if (key == "--profile-components")
@@ -423,6 +425,7 @@ int run(const Options &o) {
             search_stats.turn_envelope_frames += decision.search.turn_envelope_frames;
             search_stats.relative_turn_frames += decision.search.relative_turn_frames;
             search_stats.planner_searches += decision.search.planner_searches;
+            search_stats.indexed_forecast_frames += decision.search.indexed_forecast_frames;
             search_stats.plan_adoptions += decision.search.plan_adoptions;
             search_stats.executor_checks += decision.search.executor_checks;
             search_stats.emergency_searches += decision.search.emergency_searches;
@@ -581,6 +584,8 @@ int run(const Options &o) {
            << ",\"held_forecast_updates\":" << search_stats.held_updates
            << ",\"held_selected\":" << search_stats.held_selected
            << ",\"warm_fallback\":" << o.policy.warm_fallback
+           << ",\"lazy_index\":" << o.policy.lazy_index
+           << ",\"indexed_forecast_frames\":" << search_stats.indexed_forecast_frames
            << ",\"planner_lag\":" << o.policy.planner_lag << ",\"decision_depth_scope\":\""
            << (o.policy.planner_lag > 0 ? "checked-executor-updates" : "beam-search-updates") << '"'
            << ",\"executor_check\":" << o.policy.executor_check

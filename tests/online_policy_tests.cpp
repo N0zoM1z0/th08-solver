@@ -10,6 +10,7 @@
 
 #include <cerrno>
 #include <cfenv>
+#include <chrono>
 #include <cmath>
 #include <cstring>
 #include <filesystem>
@@ -255,6 +256,68 @@ void planner_lag_contract() {
               "unused executor settings changed the synchronous policy");
         advance(current, a.action);
     }
+}
+void lazy_index_contract() {
+    on::Configuration config;
+    config.horizon = 24;
+    config.beam = 64;
+    config.grow = 0;
+    config.planner_lag = 2;
+    config.executor_check = config.emergency_horizon = 12;
+    config.emergency_beam = 16;
+    auto lazy_config = config;
+    lazy_config.lazy_index = true;
+    on::Policy eager(config), lazy(lazy_config);
+    auto o = scene();
+    bool skipped = false, extended_after_invalidation = false;
+    for (int step = 0; step < 16; ++step) {
+        if (step == 3) {
+            auto incoming = bullet(5, o.x + 30, o.y, -6, 0);
+            incoming.full_width = incoming.full_height = 6;
+            o.bullets.push_back(incoming);
+        }
+        if (step == 7)
+            o.stage = 3;
+        const auto a = eager.decide(o);
+        on::DecisionTiming timing;
+        const auto begin = std::chrono::steady_clock::now();
+        const auto b = lazy.decide(o, &timing);
+        const auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                 std::chrono::steady_clock::now() - begin)
+                                 .count();
+        check(a.action == b.action && a.depth == b.depth &&
+                  a.search.selections == b.search.selections &&
+                  a.search.candidates == b.search.candidates && a.search.bins == b.search.bins &&
+                  a.search.retained_bins == b.search.retained_bins &&
+                  a.search.planner_searches == b.search.planner_searches &&
+                  a.search.plan_adoptions == b.search.plan_adoptions &&
+                  a.search.executor_checks == b.search.executor_checks &&
+                  a.search.emergency_searches == b.search.emergency_searches &&
+                  a.search.pending_dropped == b.search.pending_dropped &&
+                  a.search.executor_invalidations == b.search.executor_invalidations,
+              "lazy frame indices changed a proposal, latch, event or tie order");
+        check(a.search.indexed_forecast_frames == unsigned(config.horizon) &&
+                  b.search.indexed_forecast_frames <= a.search.indexed_forecast_frames,
+              "lazy indexing rebuilt or omitted requested frame ownership");
+        skipped = skipped || b.search.indexed_forecast_frames < a.search.indexed_forecast_frames;
+        extended_after_invalidation =
+            extended_after_invalidation ||
+            (step == 3 && b.search.emergency_searches &&
+             b.search.indexed_forecast_frames == unsigned(config.horizon));
+        const auto total = timing.history_ns + timing.forecast_ns + timing.index_ns +
+                           timing.search_ns + timing.fallback_ns;
+        check(timing.index_ns <= std::uint64_t(elapsed) &&
+                  timing.search_ns <= std::uint64_t(elapsed) && total <= std::uint64_t(elapsed),
+              "extended indexing was subtracted twice or left inside search time");
+        on::detail::apply_movement(o.movement, o.x, o.y,
+                                   on::detail::movement_delta(o.movement, o.latched_input));
+        o.latched_input = a.action;
+        ++o.update;
+        for (auto &bullet : o.bullets)
+            bullet.x += bullet.vx, bullet.y += bullet.vy;
+    }
+    check(skipped && extended_after_invalidation,
+          "lazy index fixture missed either a skipped frame or an emergency extension");
 }
 void transform_motion_history() {
     on::Configuration config;
@@ -1190,6 +1253,7 @@ int main(int argc, char **argv) {
         spawn_neighborhood_contract();
         committed_prefix_contract();
         planner_lag_contract();
+        lazy_index_contract();
         observation_history();
         transform_motion_history();
         pruning_and_isolation();

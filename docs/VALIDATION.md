@@ -86,6 +86,16 @@ while excluding diagnostic times/overruns from equality. New complete runs still
 require the same fresh action and natural replay gates. Separate executor/planner
 statistics in a synchronous driver do not certify unpaused deadlines.
 
+The optional lazy-index regression compares eager and delayed construction through
+normal reuse, a new incoming hazard and a phase invalidation. Actions, depths,
+selection/search counts and executor events must agree while at least one update
+builds fewer indices. The hazard must also force a previously omitted suffix to
+be constructed before replacement search. Component clocks must remain disjoint.
+Three alternating spell-166 pairs per model and two complete 6B candidates retain
+the eager lag-two tapes and all event counts; the complete tapes pass fresh action
+execution and natural replay. This changes index scheduling, not the forecast or
+the native collision predicate.
+
 Optional `--risk-dir` requires all four files: `risk_table_merged.tsv`,
 `risk_backoff_seg.tsv`, `risk_backoff_global.tsv`, `nowarn_merged.tsv`.
 `--risk-phantoms 1` additionally uses collision-disabled bullets as soft risk.

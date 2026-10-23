@@ -236,6 +236,9 @@ struct Policy::Impl {
     const RiskTables risk;
     Movement current_movement;
     std::vector<HFrame> frames;
+    int indexed_horizon = 0;
+    bool time_index_extensions = false;
+    std::uint64_t index_extension_ns = 0;
     std::uint64_t last_observed = UINT64_MAX;
     std::uint64_t last_decided = UINT64_MAX;
     explicit Impl(Configuration configuration, RiskTables tables)
@@ -864,11 +867,28 @@ struct Policy::Impl {
             }
         return longest;
     }
+    void ensure_index(int horizon) {
+        if (horizon <= indexed_horizon)
+            return;
+        const bool timed = time_index_extensions && indexed_horizon > 0;
+        const auto begin =
+            timed ? std::chrono::steady_clock::now() : std::chrono::steady_clock::time_point{};
+        search_stats.indexed_forecast_frames += horizon - indexed_horizon;
+        for (int j = indexed_horizon + 1; j <= horizon; ++j)
+            build_index(frames[j], current_movement.half);
+        indexed_horizon = horizon;
+        if (timed)
+            index_extension_ns += std::chrono::duration_cast<std::chrono::nanoseconds>(
+                                      std::chrono::steady_clock::now() - begin)
+                                      .count();
+    }
     SearchResult search(const std::vector<HFrame> &frames, int horizon, const Speeds &sp,
                         std::uint16_t latched, float x0, float y0, float pref_x, float pref_y,
                         const std::vector<std::uint16_t> *forced = nullptr, int beam = 0) {
         if (beam == 0)
             beam = opt.beam;
+        if (horizon + (horizon == opt.horizon ? opt.tail_check : 0) > indexed_horizon)
+            throw std::runtime_error("unprepared_online_index");
         SpawnGrid summed_spawns;
         const SpawnGrid *nw = nullptr;
         if (risk.loaded && opt.nowarn_weight > 0) {
@@ -1080,6 +1100,7 @@ struct Policy::Impl {
     // freshly built forecast. Beyond a finite proposal, hold its final input.
     int checked_depth(const std::vector<std::uint16_t> &moves, std::size_t offset,
                       const Observation &o) {
+        ensure_index(opt.executor_check);
         ++search_stats.executor_checks;
         float x = o.x, y = o.y;
         int depth = 0;
@@ -1166,6 +1187,9 @@ struct Policy::Impl {
             forced.reserve(opt.planner_lag);
             for (int i = 0; i < opt.planner_lag; ++i)
                 forced.push_back(a.active.input(std::size_t(i)));
+            // Shared indexing is executor work; only the following full search
+            // is subtracted by the deterministic latency model.
+            ensure_index(opt.horizon);
             const auto begin = std::chrono::steady_clock::now();
             auto full = search(frames, opt.horizon, o.movement, o.latched_input, o.x, o.y, pref_x,
                                400.f, &forced);
@@ -1281,6 +1305,9 @@ struct Policy::Impl {
         observe(observation);
         last_decided = observation.update;
         search_stats = {};
+        indexed_horizon = 0;
+        index_extension_ns = 0;
+        time_index_extensions = timing != nullptr;
         current_movement = observation.movement;
         current_segment = observation.spell_active ? observation.spell : 300 + observation.stage;
         mark(&DecisionTiming::history_ns);
@@ -1290,8 +1317,11 @@ struct Policy::Impl {
         const auto &sp = observation.movement;
         if (opt.reach_filter)
             prune_unreachable(frames, forecast_horizon, sp, observation.x, observation.y);
-        for (int j = 1; j <= forecast_horizon; ++j)
-            build_index(frames[j], sp.half);
+        const bool pending_only = opt.planner_lag > 0 && opt.lazy_index &&
+                                  executor.pending.present &&
+                                  observation.update < executor.pending.due;
+        ensure_index(pending_only ? std::max(opt.executor_check, opt.emergency_horizon)
+                                  : forecast_horizon);
         mark(&DecisionTiming::index_ns);
         float pref_x = 192.f, area = 0;
         for (const auto &r : observation.lethal_regions) {
@@ -1303,6 +1333,10 @@ struct Policy::Impl {
         if (opt.planner_lag > 0) {
             const auto executed = lag_decide(observation, pref_x);
             mark(&DecisionTiming::search_ns);
+            if (timing) {
+                timing->index_ns += index_extension_ns;
+                timing->search_ns -= index_extension_ns;
+            }
             mark(&DecisionTiming::fallback_ns);
             return {std::uint16_t(executed.action | 1), executed.depth, search_stats};
         }

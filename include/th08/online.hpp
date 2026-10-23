@@ -137,6 +137,7 @@ struct Configuration {
     int planner_lag = 0;
     int executor_check = 32;
     int emergency_horizon = 32, emergency_beam = 48;
+    bool lazy_index = false; // Delay unused frame indices; forecasts remain unchanged.
 };
 using SpawnGrid = std::array<float, 24 * 28>;
 // Clipped 3x3 no-warning birth sums over 16-pixel cells. Preserve each center's
@@ -170,6 +171,7 @@ struct SearchStatistics {
     std::uint64_t planner_searches = 0, plan_adoptions = 0, executor_checks = 0;
     std::uint64_t emergency_searches = 0, pending_dropped = 0, executor_invalidations = 0;
     double planner_ms = 0; // Full search only; emergency work remains executor cost.
+    std::uint64_t indexed_forecast_frames = 0;
 };
 struct Decision {
     std::uint16_t action = 1;

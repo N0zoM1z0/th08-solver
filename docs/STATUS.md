@@ -32,8 +32,9 @@ updates 42681 (no model, 62020-update completion) and 45032 (unchanged model,
 and all six fresh execution/natural-replay gates now pass; measured results are
 below. The subsequent local proposal bitset also passes the complete gates.
 Ordered probe/threading ablations remain local. The owned deterministic plan-lag
-model passes all six complete 6B controls and replay gates; an index-scheduling
-prototype and a frozen 24-seed paired bank are next. [Planner](PLANNER.md) owns the
+model passes all six complete 6B controls and replay gates. Optional lazy indexing
+also preserves both complete lag-two tapes; a frozen 24-seed paired bank is next.
+[Planner](PLANNER.md) owns the
 algorithm-phase acceptance gates and current-memory boundary.
 
 The latest scope prioritizes random-seed generalization. The reference catalog
@@ -816,6 +817,38 @@ non-documentation tests pass in the 41-test suite; the stale core-count declarat
 was fixed and documentation passed on recheck. The strict C++ paired-bank contract
 is the new core test. No fresh-seed reliability or complete-story result is added
 by these known-seed controls, and no actual asynchronous/retail bridge is claimed.
+
+Lazy indexing leaves the entire forecast and reach filter unchanged and skips only
+an unused index suffix while a delayed plan is pending. Three alternating-order
+spell-166 pairs per model preserve actions and all search/executor event counts;
+each 2400-decision window builds about 115200 frame indices instead of 153600.
+Two complete lag-two candidates retain their exact parent tapes (`cabbd899…` and
+`a0abef28…`), score and RNG. Fresh action execution and natural playback agree on
+129035 rows with no death/bomb rows. Complete-run executor measurements are:
+
+| Model | Mean eager / lazy (ms) | p99.9 eager / lazy (ms) | Max eager / lazy (ms) |
+| --- | --- | --- | --- |
+| None | 0.793 / 0.676 | 3.106 / 3.134 | 3.263 / 4.144 |
+| Existing risk | 0.935 / 0.789 | 4.436 / 4.274 | 4.656 / 4.676 |
+
+Index construction falls about 25%; executor means fall about 15–16%. Maxima do
+not consistently improve. Both candidates have zero executor misses and planner
+overruns in this sample; actual synchronous controller maxima are 14.811/15.325 ms.
+These concurrent measurements do not add a deadline guarantee. The 14 controller
+episodes cost 684113 native updates, including 526278 prefix updates, and 618.45
+summed wall seconds; four fresh execution/playback commands are additional.
+Source/binary prefixes are `55fc12f9…`/`ea1c2a47…`. All 41 native/DAT CTests pass
+in 636.69 seconds, and documentation passes again after the prose update.
+Raw receipts remain local.
+
+The subsequent diagnosis freezes 24 new seeds, two spell-practice proxies (111
+and Extra 202), and paired no-model lag-zero/lag-two profiles before execution.
+All 96 planned cases, including deaths and exhausted budgets, belong in the
+denominator. The strict C++ analyzer requires every manifest pair and reports
+Wilson intervals and exact McNemar results. Six separately drawn holdout seeds
+remain unreleased. The campaign has charged 200 tasks before this bank, including
+the six aborted build-audit attempts; this bank reserves tasks through 296 of 320.
+These practice proxies cannot establish a full-story probability or equivalence.
 
 The owner prioritizes further measured algorithmic speedups before model/training
 replacement. Native/replay correctness remains required even if a later stochastic
