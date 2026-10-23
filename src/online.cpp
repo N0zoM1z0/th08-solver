@@ -3,6 +3,7 @@
 // observation history, immutable risk model and heuristic proposal search.
 #include "th08/online.hpp"
 #include "th08/online_collision.hpp"
+#include "th08/online_dedup.hpp"
 #include "th08/online_movement.hpp"
 #include "th08/online_rotation.hpp"
 #include "th08/plan_beam.hpp"
@@ -816,7 +817,7 @@ struct Policy::Impl {
     // marks before use; retained capacity carries no previous proposal state.
     struct SearchScratch {
         std::vector<std::vector<Node>> layers;
-        std::vector<std::uint32_t> seen_key, seen_gen;
+        detail::ProposalSet seen;
         plan::SpatialBeamScratch<Node> selection;
     } search_scratch;
     const std::uint16_t kDirs[9] = {0, 16, 32, 64, 128, 16 | 64, 16 | 128, 32 | 64, 32 | 128};
@@ -883,21 +884,27 @@ struct Policy::Impl {
             for (int d = 0; d < 9; ++d)
                 deltas[f * 9 + d] =
                     detail::movement_delta(sp, std::uint16_t(kDirs[d] | (f ? 4 : 0)));
-        // At most 18 successors per retained node. Keep an empty hash slot even
-        // at the maximum supported beam, so linear probing always terminates.
-        std::size_t table_size = 1 << 16;
-        while (table_size <= std::size_t(opt.beam) * 18)
-            table_size *= 2;
-        auto &seen_key = search_scratch.seen_key;
-        auto &seen_gen = search_scratch.seen_gen;
-        seen_key.resize(table_size);
-        seen_gen.assign(table_size, 0);
-        std::uint32_t gen = 0;
+        detail::MovementDelta low{}, high{};
+        for (const auto &delta : deltas) {
+            low.x = std::min(low.x, delta.x);
+            low.y = std::min(low.y, delta.y);
+            high.x = std::max(high.x, delta.x);
+            high.y = std::max(high.y, delta.y);
+        }
         int deepest = 1;
         for (int j = 1; j < horizon && !layers[j].empty(); ++j) {
             auto &cur = layers[j];
             auto &next = layers[j + 1];
-            ++gen;
+            Box bounds{cur.front().x, cur.front().y, cur.front().x, cur.front().y};
+            for (const auto &node : cur) {
+                bounds.x0 = std::min(bounds.x0, node.x);
+                bounds.x1 = std::max(bounds.x1, node.x);
+                bounds.y0 = std::min(bounds.y0, node.y);
+                bounds.y1 = std::max(bounds.y1, node.y);
+            }
+            detail::apply_movement(sp, bounds.x0, bounds.y0, low);
+            detail::apply_movement(sp, bounds.x1, bounds.y1, high);
+            search_scratch.seen.reset(bounds);
             const bool branch = j < 12 || (j % 2) == 0;
             for (int pi = 0; pi < int(cur.size()); ++pi) {
                 const Node &p = cur[pi];
@@ -908,22 +915,8 @@ struct Policy::Impl {
                             continue;
                         float x = p.x, y = p.y;
                         detail::apply_movement(sp, x, y, deltas[f * 9 + d]);
-                        const std::uint32_t key = (plan::detail::half_pixel_bin(x) << 12 |
-                                                   plan::detail::half_pixel_bin(y))
-                                                      << 1 |
-                                                  std::uint32_t(f);
-                        std::uint32_t h = (key * 2654435761u) >> 16;
-                        bool dup = false;
-                        while (seen_gen[h] == gen) {
-                            if (seen_key[h] == key) {
-                                dup = true;
-                                break;
-                            }
-                            h = (h + 1) & (table_size - 1);
-                        }
-                        if (dup)
+                        if (!search_scratch.seen.first(x, y, f != 0))
                             continue;
-                        seen_gen[h] = gen, seen_key[h] = key;
                         const int hit = probe(frames[j + 1], sp.half, x, y, true);
                         if (hit == 2)
                             continue;
@@ -947,6 +940,7 @@ struct Policy::Impl {
                         next.push_back(n);
                     }
             }
+            search_stats.proposal_grid_expansions += search_scratch.seen.expansions();
             if (int(next.size()) > opt.beam) {
                 if (opt.diversity_cell > 0) {
                     const auto begin = std::chrono::steady_clock::now();

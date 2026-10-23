@@ -3,6 +3,7 @@
 #include "th08/geometry.hpp"
 #include "th08/online.hpp"
 #include "th08/online_collision.hpp"
+#include "th08/online_dedup.hpp"
 #include "th08/online_movement.hpp"
 #include "th08/online_rotation.hpp"
 
@@ -14,6 +15,7 @@
 #include <fstream>
 #include <limits>
 #include <stdexcept>
+#include <unordered_set>
 
 namespace fs = std::filesystem;
 namespace on = th08::online;
@@ -254,6 +256,78 @@ void search_scratch_contract() {
               a.search.candidates == b.search.candidates && a.search.bins == b.search.bins &&
               a.search.retained_bins == b.search.retained_bins,
           "an early-return search leaked scratch nodes, marks or parent chains");
+}
+void proposal_set_contract() {
+    std::fenv_t environment;
+    std::fegetenv(&environment);
+    const int saved_errno = errno;
+    on::detail::ProposalSet actual, independent;
+    std::uint32_t random = 0x735acde1u;
+    const auto draw = [&] { return random = random * 1664525u + 1013904223u; };
+    const auto old_key = [](float x, float y, bool focus) {
+        return ((std::uint32_t(std::lround(x * 2)) & 2047u) << 12 |
+                (std::uint32_t(std::lround(y * 2)) & 2047u))
+                   << 1 |
+               std::uint32_t(focus);
+    };
+    const float nan = std::numeric_limits<float>::quiet_NaN();
+    const std::array<on::Box, 7> domains{{{8, 16, 376, 432},
+                                          {1022, -2, 1026, 2},
+                                          {-0.f, -0.f, 0.f, 0.f},
+                                          {-1048576, -1048576, 1048576, 1048576},
+                                          {0, 0, 1, 1},
+                                          {1, 1, 0, 0},
+                                          {nan, 0, 1, 1}}};
+    for (const int rounding : {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO}) {
+        check(std::fesetround(rounding) == 0, "cannot set proposal rounding mode");
+        for (const auto bounds : domains) {
+            actual.reset(bounds);
+            independent.reset({0, 0, 0, 0});
+            std::unordered_set<std::uint32_t> expected;
+            const auto compare = [&](float x, float y, bool focus) {
+                const bool first = expected.insert(old_key(x, y, focus)).second;
+                independent.first(x, y, focus);
+                check(actual.first(x, y, focus) == first,
+                      "local proposal grid changed the first key owner or retained stale marks");
+            };
+            const bool valid = bounds.x0 <= bounds.x1 && bounds.y0 <= bounds.y1;
+            const auto range = valid ? bounds : domains.front();
+            for (int i = 0; i < 1024; ++i) {
+                const float fx = float(draw() % 4097) / 4096.f;
+                const float fy = float(draw() % 4097) / 4096.f;
+                const float x =
+                    std::clamp(range.x0 + (range.x1 - range.x0) * fx, range.x0, range.x1);
+                const float y =
+                    std::clamp(range.y0 + (range.y1 - range.y0) * fy, range.y0, range.y1);
+                const bool focus = (draw() & 1) != 0;
+                compare(x, y, focus);
+                compare(x, y, focus); // includes keys owned by a discarded/lethal proposal
+            }
+            // Force expansion after populated cyclic bins, then revisit their
+            // owners and aliases. Bounds only accelerate key membership.
+            for (int repeat = 0; repeat < 2; ++repeat)
+                for (const auto point : std::array<on::Vector, 6>{
+                         {{1023, -1, 0},
+                          {1025, 1, 0},
+                          {999, 100, 0},
+                          {-1, -1, 0},
+                          {-0.f, 0.f, 0},
+                          {std::numeric_limits<float>::denorm_min(), -0.f, 0}}})
+                    for (const bool focus : {false, true})
+                        compare(point.x, point.y, focus);
+        }
+    }
+    actual.reset({1022, -2, 1026, 2});
+    check(actual.first(1023, -1, false) && actual.first(1025, 1, true) &&
+              actual.expansions() == 0 && actual.first(999, 100, false) &&
+              actual.expansions() == 1 && !actual.first(1023, -1, false) &&
+              !actual.first(-1, -1, false) && !actual.first(1025, 1, true),
+          "proposal fallback lost cyclic/focus owners or its expansion count");
+    actual.reset({1022, -2, 1026, 2});
+    check(actual.expansions() == 0 && actual.first(1023, -1, false),
+          "a new layer retained the fallback state or marked bits");
+    std::fesetenv(&environment);
+    errno = saved_errno;
 }
 void actor_risk() {
     auto o = scene();
@@ -974,6 +1048,7 @@ int main(int argc, char **argv) {
         transform_motion_history();
         pruning_and_isolation();
         search_scratch_contract();
+        proposal_set_contract();
         actor_risk();
         spatial_retention();
         queued_birth();

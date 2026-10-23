@@ -30,8 +30,9 @@ learned-risk profile. Fresh complete 6B controls identify spell-166 starts at
 updates 42681 (no model, 62020-update completion) and 45032 (unchanged model,
 64744-update completion). Exact-kernel paired timing, complete action comparison
 and all six fresh execution/natural-replay gates now pass; measured results are
-below. Ordered search/deduplication and pure-probe experiments are next, followed
-by the deterministic plan-lag model. [Planner](PLANNER.md) owns the
+below. The subsequent local proposal bitset also passes the complete gates.
+Ordered probe/threading ablations remain local; the deterministic plan-lag model
+is now being implemented and tested. [Planner](PLANNER.md) owns the
 algorithm-phase acceptance gates and current-memory boundary.
 
 The latest scope prioritizes random-seed generalization. The reference catalog
@@ -748,6 +749,44 @@ additional. Portable/native binaries are `323e8ad6…`/`70c9756a…`; the source
 compiler flags, DAT/model hashes and full receipts remain in ignored local storage.
 These concurrent host measurements preserve behavior without enforcing deadlines;
 two zero-miss complete samples do not establish general 60 FPS or story reliability.
+
+The successor-key bitset replaces the 65536-slot hash without changing its
+cyclic half-pixel/focus equivalence or serial first-owner order. Bounds are
+acceleration hints: a new regression checks migration to the full key domain,
+wrapped aliases, focus bits, scratch resets and four rounding modes. Three
+alternating native prefix pairs per model preserve all actions and reduce mean
+by about 4–5%. Four complete portable/native candidates retain the same two
+full tapes and freshly verify with 253528 natural-replay rows and no death/bomb
+rows. No candidate needs a domain expansion. Native complete-run measurements:
+
+| Model | Mean before/after (ms) | p99 before/after (ms) | Max before/after (ms) |
+| --- | --- | --- | --- |
+| None | 6.787 / 6.358 | 11.653 / 11.374 | 16.523 / 16.061 |
+| Existing risk | 7.404 / 6.891 | 12.136 / 11.761 | 16.558 / 16.204 |
+
+Both native candidates have zero measured deadline misses. Portable means improve
+7.866 → 7.297 and 8.472 → 7.872 ms, but maxima are 18.596/21.402 ms and misses
+26/18, versus the preceding 23/17: mean gains are not universal tail gains.
+All 40 native/DAT CTests pass in 660.45 seconds. The accepted 16-episode campaign
+costs 808606 native updates (526278 prefix updates) and 2116.38 summed solver
+wall seconds; fresh execution and playback are additional. Portable/native binary
+prefixes are `f300339b…`/`5eeb7b97…`. A prior build audit stops six attempts after
+finding a portable model-reader object in the native build. Four completed windows
+and two interrupted windows are retained, with 185026 exact completed updates and
+91200 observed interrupted updates; additional interrupted work is unknown and
+bounded by their frozen frame caps. Their timings are excluded, not relabeled.
+
+The 72 ordered kernel/probe ablations preserve their window tapes and cost
+3330468 native updates, including 3157668 prefix updates, and 1901.67 summed wall
+seconds. At beam192, the 8192-slot hash is slower than the original table. Per-parent
+position arrays show a small mean gain but mixed maxima; the empty-grid variant
+saves less than 1% in this window. Serial batch probing and condition-variable
+workers are slower. Two spinning workers improve some timings, but the risk-model
+mean ranges 8.715–9.501 ms against roughly 9.51 ms; four workers have maxima up to
+22.064 ms. Those thread/batch layouts are not selected over the consistently faster
+single-thread bitset. This does not reject all parallel planning designs. All raw
+sources, identities, costs and endpoints remain local; no new seed/story/retail
+or enforced-deadline claim is added by these optimization controls.
 
 The owner prioritizes further measured algorithmic speedups before model/training
 replacement. Native/replay correctness remains required even if a later stochastic

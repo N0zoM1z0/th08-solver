@@ -387,6 +387,7 @@ int run(const Options &o) {
                 components.add(phase_sample);
             }
             search_stats.selections += decision.search.selections;
+            search_stats.proposal_grid_expansions += decision.search.proposal_grid_expansions;
             search_stats.candidates += decision.search.candidates;
             search_stats.bins += decision.search.bins;
             search_stats.retained_bins += decision.search.retained_bins;
@@ -559,6 +560,7 @@ int run(const Options &o) {
            << ",\"deadline_misses\":" << deadline_misses
            << ",\"full_depth_decisions\":" << full_depth
            << ",\"diversity_selections\":" << search_stats.selections
+           << ",\"proposal_grid_expansions\":" << search_stats.proposal_grid_expansions
            << ",\"diversity_candidates\":" << search_stats.candidates
            << ",\"diversity_bins\":" << search_stats.bins
            << ",\"diversity_retained_bins\":" << search_stats.retained_bins

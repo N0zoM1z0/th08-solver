@@ -150,6 +150,7 @@ inline std::uint64_t risk_key(long segment, long sprite, long size10, long speed
 // must never consume columns from the following record or silently end a model.
 RiskTables load_risk_tables(const std::string &directory);
 struct SearchStatistics {
+    std::uint64_t proposal_grid_expansions = 0;
     std::uint64_t selections = 0, candidates = 0, bins = 0, retained_bins = 0;
     double selection_ms = 0;
     std::uint64_t held_paths = 0, held_updates = 0, held_selected = 0;

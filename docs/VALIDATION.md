@@ -98,6 +98,12 @@ preserving all retained float bits, source ties, parent/action indices and count
 The complete Stage 2 CTest retains action SHA `c4acd20a…`; normal 40-test native/DAT
 coverage passes. Optional `TH08_ONLINE_ARCH=native` and `x86-64-v3` also pass local
 policy contracts; this is numerical evidence for those builds, not a flag guarantee.
+The proposal-set regression separately compares first-key ownership with the
+frozen original `lround`/mask formula in all four rounding modes. It covers cyclic
+boundaries, signed zero, subnormals, focus separation, undersized/invalid hints,
+migration of populated bins, independent instances and repeated layer resets.
+Native complete-stage and prefix pairs also require zero unexpected domain
+expansions; their original action, selection-count and terminal gates stay active.
 
 The independent Release campaign freezes shot 0, Lunatic, seed 0, non-practice
 6B story entry, H64/beam192/cell16/guard16, reach filter and soft phantom option.

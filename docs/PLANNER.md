@@ -348,6 +348,13 @@ library's architecture. Both targets retain `-ffp-contract=off`, without fast-ma
 flags alone do not prove action equivalence or portability to another CPU.
 These kernels pass unchanged complete actions and the full suite under the
 measured profiles in [Status](STATUS.md).
+Successor deduplication retains the original cyclic 11-bit half-pixel x/y keys
+and focus bit. A layer-local bitset replaces hashing; bounds come from retained
+parent coordinates and exact movement extrema. Marking remains serial and occurs
+before lethal probes, so even discarded proposals keep their original key owner.
+An underestimated domain expands to the full cyclic key space while migrating
+all marks; `proposal_grid_expansions` records that work. Only buffer capacity is
+reused between layers. No new coordinate or world-state equivalence is introduced.
 Then test owned plan reuse with deterministic lag 0/1/2: forced inputs must align
 with the recording latch, adopted plans must match the executed prefix, and stale
 results must be discarded after emergency replacement or lifecycle changes.
