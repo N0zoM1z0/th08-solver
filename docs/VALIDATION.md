@@ -24,6 +24,13 @@ large/small-term sum whose rounding changes under reassociation. A second contra
 warms search storage, takes an immediate latched-collision return, then compares
 the next full decision with an observer-only control, including selection counts
 and exact action/depth. These guard per-decision grid and scratch-storage reuse.
+The movement decomposition contract compares the frozen original move with
+prepared displacement plus position addition/clamping in 204800 cases: all 256
+low input-bit combinations (with unrelated high bits set), twenty speed/multiplier
+profiles, ten positions and four rounding modes. It requires identical position
+float bits and floating exception flags, covering signed zero, subnormals,
+negative multipliers and bounds. Complete action/behavior comparisons additionally
+guard integration of per-search displacement reuse into candidate enumeration.
 The half-pixel key contract compares the optimized path with the original
 `lround`/mask expression at every fast-range rounding boundary and its adjacent
 floats, plus one million finite bit samples (26165824 comparisons). Four rounding

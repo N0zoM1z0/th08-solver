@@ -293,6 +293,13 @@ Beam layers and dedup tables reuse policy-owned capacity. Every call clears all
 logical nodes and generation marks, including after an early latched collision;
 neither another policy nor a later decision can inherit proposal state. Capacity
 is bounded by the configured horizon/beam and its eighteen successors per node.
+After the latched root survives, search prepares the eighteen movement deltas
+once from that call's immutable movement snapshot. Input direction/focus priority
+and float multiply order are unchanged. Every successor still adds its own player
+position and applies the original bounds checks; candidate order, keys, scoring
+and tie-RNG consumption are unchanged. Deltas are local to the search call, so a
+new snapshot cannot inherit another call's speed or multiplier. Deltas use native
+position units for one modeled update.
 
 The initial execution mode is `forward-measured`: observation copying, policy and
 route-input decoration are timed before `Session::step`, with mean, p99, p99.9,

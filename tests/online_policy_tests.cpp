@@ -2,8 +2,11 @@
 #include "th08/ecl_turn_hint.hpp"
 #include "th08/geometry.hpp"
 #include "th08/online.hpp"
+#include "th08/online_movement.hpp"
 
+#include <cfenv>
 #include <cmath>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -666,6 +669,93 @@ void terminal_tail_contract() {
     rejects([&] { on::Policy invalid(c); }, "an oversized forecast horizon was accepted");
 }
 
+void reference_move(const on::Movement &s, float &x, float &y, std::uint16_t in) {
+    int dx = 0, dy = 0;
+    if ((in & 0x50) == 0x50)
+        dx = -1, dy = -1;
+    else if ((in & 0x60) == 0x60)
+        dx = -1, dy = 1;
+    else if ((in & 0x90) == 0x90)
+        dx = 1, dy = -1;
+    else if ((in & 0xA0) == 0xA0)
+        dx = 1, dy = 1;
+    else if (in & 0x20)
+        dy = 1;
+    else if (in & 0x10)
+        dy = -1;
+    else if (in & 0x40)
+        dx = -1;
+    else if (in & 0x80)
+        dx = 1;
+    const int f = (in & 4) ? 1 : 0;
+    float h = 0, v = 0;
+    if (dx && dy)
+        h = dx * s.diag[f], v = dy * s.diag[f];
+    else
+        h = dx * s.axis[f], v = dy * s.axis[f];
+    h *= s.hmul;
+    v *= s.vmul;
+    x += h * s.frm;
+    y += v * s.frm;
+    if (x < s.minx)
+        x = s.minx;
+    else if (x > s.maxx)
+        x = s.maxx;
+    if (y < s.miny)
+        y = s.miny;
+    else if (y > s.maxy)
+        y = s.maxy;
+}
+void cached_move(const on::Movement &s, float &x, float &y, std::uint16_t input) {
+    on::detail::apply_movement(s, x, y, on::detail::movement_delta(s, input));
+}
+void movement_kernel_contract() {
+    using Move = void (*)(const on::Movement &, float &, float &, std::uint16_t);
+    Move volatile reference = reference_move, cached = cached_move;
+    std::fenv_t saved;
+    check(std::fegetenv(&saved) == 0, "cannot capture movement floating environment");
+    const auto bits = [](float f) {
+        std::uint32_t result;
+        std::memcpy(&result, &f, sizeof(result));
+        return result;
+    };
+    for (int mode : {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO}) {
+        check(std::fesetround(mode) == 0, "cannot set movement rounding mode");
+        for (int profile = 0; profile < 20; ++profile) {
+            on::Movement s;
+            const float small = std::numeric_limits<float>::denorm_min();
+            s.axis[0] = profile == 0 ? small : profile == 1 ? -0.f : 4.125f;
+            s.axis[1] = profile == 2 ? small : profile == 3 ? 0.f : 2.25f;
+            s.diag[0] = 2.828427f;
+            s.diag[1] = 1.4142135f;
+            s.hmul = profile % 4 == 0   ? -0.f
+                     : profile % 4 == 1 ? .3f
+                     : profile % 4 == 2 ? -.75f
+                                        : 1.25f;
+            s.vmul = profile % 3 == 0 ? small : profile % 3 == 1 ? .7f : 1.f;
+            s.frm = profile % 5 == 0 ? .625f : profile % 5 == 1 ? -1.f : 1.f;
+            s.minx = -384;
+            s.maxx = 384;
+            s.miny = -448;
+            s.maxy = 448;
+            const std::array<float, 10> positions{0.f,       -0.f,  small,  -small, 192.125f,
+                                                  -192.125f, 384.f, -384.f, 1000.f, -1000.f};
+            for (unsigned input = 0; input < 256; ++input)
+                for (float position : positions) {
+                    float ax = position, ay = position, bx = position, by = position;
+                    std::feclearexcept(FE_ALL_EXCEPT);
+                    reference(s, ax, ay, std::uint16_t(input | 0x1100));
+                    const auto flags = std::fetestexcept(FE_ALL_EXCEPT);
+                    std::feclearexcept(FE_ALL_EXCEPT);
+                    cached(s, bx, by, std::uint16_t(input | 0x1100));
+                    check(bits(ax) == bits(bx) && bits(ay) == bits(by) &&
+                              flags == std::fetestexcept(FE_ALL_EXCEPT),
+                          "movement decomposition changed float bits or exception flags");
+                }
+        }
+    }
+    check(std::fesetenv(&saved) == 0, "cannot restore movement floating environment");
+}
 void phase_timing_contract() {
     on::Configuration config;
     config.horizon = 12;
@@ -774,6 +864,7 @@ int main(int argc, char **argv) {
         current_program_turn_cues();
         terminal_tail_contract();
         phase_timing_contract();
+        movement_kernel_contract();
         narrow_arc_contract();
         return 0;
     } catch (const std::exception &error) {

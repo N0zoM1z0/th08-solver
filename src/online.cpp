@@ -2,6 +2,7 @@
 // current-memory fields are copied by the adapter; this policy owns only its
 // observation history, immutable risk model and heuristic proposal search.
 #include "th08/online.hpp"
+#include "th08/online_movement.hpp"
 #include "th08/plan_beam.hpp"
 #include <algorithm>
 #include <chrono>
@@ -26,41 +27,7 @@ void rotate(Float3 *out, const Float3 *point, float angle) {
 }
 // Player::UpdateMovementAndOptions direction priority and float operation order.
 inline void move(const Speeds &s, float &x, float &y, std::uint16_t in) {
-    int dx = 0, dy = 0;
-    if ((in & 0x50) == 0x50)
-        dx = -1, dy = -1;
-    else if ((in & 0x60) == 0x60)
-        dx = -1, dy = 1;
-    else if ((in & 0x90) == 0x90)
-        dx = 1, dy = -1;
-    else if ((in & 0xA0) == 0xA0)
-        dx = 1, dy = 1;
-    else if (in & 0x20)
-        dy = 1;
-    else if (in & 0x10)
-        dy = -1;
-    else if (in & 0x40)
-        dx = -1;
-    else if (in & 0x80)
-        dx = 1;
-    const int f = (in & 4) ? 1 : 0;
-    float h = 0, v = 0;
-    if (dx && dy)
-        h = dx * s.diag[f], v = dy * s.diag[f];
-    else
-        h = dx * s.axis[f], v = dy * s.axis[f];
-    h *= s.hmul;
-    v *= s.vmul;
-    x += h * s.frm;
-    y += v * s.frm;
-    if (x < s.minx)
-        x = s.minx;
-    else if (x > s.maxx)
-        x = s.maxx;
-    if (y < s.miny)
-        y = s.miny;
-    else if (y > s.maxy)
-        y = s.maxy;
+    detail::apply_movement(s, x, y, detail::movement_delta(s, in));
 }
 
 struct HFrame {
@@ -904,6 +871,13 @@ struct Policy::Impl {
         layers[1].push_back({x1, y1, -1, std::uint16_t(latched & 0xF4), 0.f});
         if (probe(frames[1], sp.half, x1, y1, false) == 2)
             return {{std::uint16_t(latched & 0xF4)}, 0};
+        // Every successor shares this immutable movement snapshot. Keep the
+        // original float operations in the 18 deltas; clamp each node afterward.
+        std::array<detail::MovementDelta, 18> deltas;
+        for (int f = 0; f < 2; ++f)
+            for (int d = 0; d < 9; ++d)
+                deltas[f * 9 + d] =
+                    detail::movement_delta(sp, std::uint16_t(kDirs[d] | (f ? 4 : 0)));
         // At most 18 successors per retained node. Keep an empty hash slot even
         // at the maximum supported beam, so linear probing always terminates.
         std::size_t table_size = 1 << 16;
@@ -928,7 +902,7 @@ struct Policy::Impl {
                         if (!branch && a != p.act)
                             continue;
                         float x = p.x, y = p.y;
-                        move(sp, x, y, a);
+                        detail::apply_movement(sp, x, y, deltas[f * 9 + d]);
                         const std::uint32_t key = (plan::detail::half_pixel_bin(x) << 12 |
                                                    plan::detail::half_pixel_bin(y))
                                                       << 1 |
