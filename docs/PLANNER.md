@@ -404,6 +404,27 @@ native transforms. `motion_envelope_frames` charges the extra bullet/update
 hypotheses. The default is off, and unused alternatives are not read by the native
 adapter. Native outcomes and independent-seed comparisons still decide usefulness.
 
+Optional `--child-births 1` reads a narrow current copied WAIT/child-pattern program
+without resolving gameplay RNG. It projects a linear parent to the pre-movement
+birth position, then encloses every angle through the birth and following update,
+including both pool-order possibilities. Only a literal child WAIT that keeps
+initial velocity unchanged is supported. This is partial birth coverage, not a
+forecast of the child's entire lifetime or arbitrary later callbacks. Detected
+unsupported candidates stop this enabled profile; finite inputs producing
+nonfinite derived geometry also fail. `child_birth_frames` charges added boxes.
+Native flags, RNG and collision remain unchanged; the option defaults off.
+
+Optional `--retain-headings 1` distinguishes all nine incoming directions and focus
+where the following layer must repeat that input, and at terminal endpoints whose
+conditional target depends on it. Terminal retention is independent of tracing,
+so exporting labels cannot change actions or tie draws. Half-pixel position
+merging and bounded beam retention remain approximate. Enabled candidate
+acceptance/tie draws can differ, while beam/horizon budgets stay literal.
+`heading_layers` and `heading_keys` account for the additional membership work.
+The full cyclic-domain logical bitset is nine MiB per buffer, up to eighteen MiB
+for its two logical buffers, plus vector capacity/allocator overhead. Ordinary
+bounded layer rectangles are smaller. This defaults off.
+
 The experimental `--value-model` loads an immutable logistic endpoint ranker.
 Its fixed contract is H24 proposals followed by holding their final input until
 native update 64 or the explicit spell terminal. It predicts that conditional
@@ -431,6 +452,19 @@ hashes remain local. The first frozen producer predates the explicit sidecar and
 retains its exact binary/source plus parent tape and proposal rank for recovery.
 Its startup-terminal bug was rejected by transparency checks before training data
 generation; the original failed attempts stay charged.
+Optional `--continuation replan-h24` creates a different, explicitly versioned
+conditional target. The fork inherits the already-decided parent Policy, submits
+the 23 proposed controls and repeats the last on native call 24. It warms the 23
+intermediate observations without search/tie draws, then resumes the inherited
+no-model H24 baseline after update 24 through update 64 or terminal. This is a
+baseline-policy continuation, not an optimal expert. V1 held-last data/model bytes
+stay supported; mixed train/tune targets fail. Actual branch submissions and
+Native attempts/time plus child observation/decision work are recorded separately.
+`--sample-from`/`--sample-until` define an inclusive window and anchor its stride;
+defaults preserve the original absolute grid and update-128 floor. Sampling has
+its own identity; parent identity, split/weighting and duplicate rejection remain
+whole-trajectory properties. Additional failure-tail strata cannot silently become
+independent parents, overlap labels or replace a failed original episode.
 `th08_value_train` rejects overlapping train/tune seeds and parent identities,
 fits normalization and weights from training rows only, and reports conditional
 classification metrics. Seed/parent splits, all parent outcomes and Native label
@@ -438,7 +472,7 @@ costs belong to the frozen campaign manifest; selected small weights and provena
 are saved in [models](../models/README.md). Independent paired native completion
 and complete-stage tests remain separate from classification loss.
 
-The harness computes searches synchronously. Controller latency is the actual
+`th08_online` computes searches synchronously. Controller latency is the actual
 whole decision; modeled executor latency subtracts only the full planner search,
 retaining capture, forecast/index, checks, cancellation and emergency cost.
 Planner overruns compare that search with N times the requested frame deadline;
@@ -450,13 +484,35 @@ Exact kernel batching, parallel probes and lazy forecast work require their
 own ordered differential checks and measured adoption decisions. Behavior-changing
 options use frozen paired seed banks; no significant difference is not evidence
 of equivalence, and spell-practice outcomes do not establish story probabilities.
-Learning, native-lookahead alternatives and the retail bridge remain subsequent
-work under their documented information and execution boundaries.
+Broader learning, native-lookahead alternatives and the retail bridge remain
+separate work under their documented information and execution boundaries.
 Full configuration and executable/DAT/action/prefix/model hashes accompany the
 result. Source archives, model provenance, process receipts and failed tapes remain
 in ignored local experiments. Success requires fresh complete action execution,
 terminal/RNG/calculation agreement and natural replay with zero death/bomb rows;
 this does not independently certify native physics or retail compatibility.
+
+The separate opt-in `th08_online_live` instead advances one recording API update
+on each absolute steady-clock tick `epoch + floor(update * 1e9 / 60) ns`. The
+Native owner captures current observations and applies route/dialogue controls;
+one worker exclusively owns a lag-zero Policy. All snapshots are owned copies.
+Only a reply with the current update/phase and publication time no later than the
+tick cutoff can be used. Missing/late replies cause an explicit last-movement/
+focus hold with shooting; this fallback is not certified safe. Every expired
+queued observation still warms history without retroactive search/tie draws.
+The bounded FIFO fails visibly on overflow; stale replies and abandoned/failed
+work remain counted. Stop invalidates queued work and joins the bounded running
+search rather than force-killing it. Worker floating-point state copies the owner's
+environment. Lag, warm/held and tail modes are initially rejected.
+Native execution never waits for the current search. The owner aborts if processing
+crosses the next period plus the declared `--scheduler-tolerance-us`; wake-up jitter
+is measured separately. It never resets the epoch or bursts multiple updates to
+hide elapsed time. Native file I/O is part of this real owner deadline, with timing
+also reported separately. Recording/control handoffs remain API ticks; replay
+fast-forward calculation rows use their established different units. Setup and
+worker shutdown cost are separate from the live loop. Actual completion still
+requires full fresh execution and natural replay; a paced fragment is not a whole
+stage/story result or proof of retail control.
 
 Teacher corrections are separate offline episodes from immutable student prefixes.
 The first diagnosis protocol queries all six remaining failed 4B/Extra trajectories

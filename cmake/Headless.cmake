@@ -136,6 +136,11 @@ target_link_libraries(th08_online PRIVATE th08_online_native OpenSSL::Crypto)
 target_compile_options(th08_online PRIVATE -ffp-contract=off
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 add_executable(th08_value_collect tools/value_collect.cpp)
+add_executable(th08_online_live_cli tools/online_live.cpp)
+set_target_properties(th08_online_live_cli PROPERTIES OUTPUT_NAME th08_online_live)
+target_link_libraries(th08_online_live_cli PRIVATE th08_online_live th08_online_native OpenSSL::Crypto)
+target_compile_options(th08_online_live_cli PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 target_link_libraries(th08_value_collect PRIVATE th08_online_native OpenSSL::Crypto)
 target_compile_options(th08_value_collect PRIVATE -ffp-contract=off
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")

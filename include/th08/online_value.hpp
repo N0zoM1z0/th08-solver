@@ -7,6 +7,10 @@
 namespace th08::online {
 constexpr unsigned kValueFeatures = 24, kValueHorizon = 24, kValueLabelUpdates = 64;
 using ValueFeatures = std::array<float, kValueFeatures>;
+// ReplanH24 warms the inherited baseline Policy during the forced prefix, then
+// resumes decisions after 24 native calls, with the original movement latch.
+enum class BranchContinuation { HeldLast, ReplanH24 };
+const char *branch_continuation_name(BranchContinuation);
 inline constexpr std::array<const char *, kValueFeatures> kValueFeatureNames{"x",
                                                                              "y",
                                                                              "travel_x",
@@ -32,13 +36,14 @@ inline constexpr std::array<const char *, kValueFeatures> kValueFeatureNames{"x"
                                                                              "global_ghosts",
                                                                              "global_lasers"};
 
-// Probability for one proposed H24 input prefix followed by its held final
-// input, executed natively through update 64 or the declared episode terminal.
+// Probability for one proposed H24 input prefix followed by the named
+// continuation, executed through update 64 or the declared native terminal.
 // This is a conditional branch heuristic, not optimal state value or a safety certificate.
 struct BranchValueModel {
     std::array<double, kValueFeatures> mean{}, scale{}, weight{};
     double bias = 0;
     bool loaded = false;
+    BranchContinuation continuation = BranchContinuation::HeldLast;
     double probability(const ValueFeatures &) const;
 };
 BranchValueModel load_branch_value(const std::string &path);
@@ -56,7 +61,9 @@ struct BranchExample {
     unsigned proposal = 0, native_updates = 0;
     bool survived = false;
     ValueFeatures features;
+    BranchContinuation continuation = BranchContinuation::HeldLast;
 };
+std::string branch_dataset_version(BranchContinuation = BranchContinuation::HeldLast);
 std::string branch_dataset_header();
 std::vector<BranchExample> read_branch_examples(const std::string &path);
 } // namespace th08::online

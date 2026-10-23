@@ -65,3 +65,6 @@ available at the corresponding observation.
 auxiliary model and normalization. It learns a conditional native branch outcome,
 not an expert action policy. Its independent native comparison remains separate
 from artifact identity and offline classification metrics.
+[Branch value v2](branch-value-v2/README.md) preserves a separately versioned
+baseline-replanning continuation target, with explicit failure-tail sampling and
+whole-parent provenance. V1 and v2 remain distinct conditional experiments.

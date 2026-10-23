@@ -13,6 +13,64 @@ The tracked runtime imports upstream `02ff72f`; results below from
 
 ## Active work
 
+The owner continues generic forecasting, search and label-quality work under #5,
+keeping learned guidance opt-in and postponing full RL. A new bounded campaign
+retains the preceding 310-task learning ledger unchanged, with the same four-job
+and 320-task limits. Current work separates current-program child-birth warnings,
+incoming-direction proposal membership, explicitly versioned replanning labels,
+and a real wall-paced worker/executor experiment. Their evidence is not combined
+into a story or deadline claim.
+Two retained 202 model regressions freshly reproduce their original score/RNG
+and death at 3708/3649. In both, a current WAIT/child-pattern program emits a new
+bullet at its parent's pre-movement position; the player hits it one update after
+first observing it. An optional all-angle birth guard completes the first case
+at 4712 updates and advances the second to 3710, where it still dies after several
+partial searches near the bottom boundary. These are diagnosis cases, not new
+evaluation seeds. The option remains off. A separate synthetic three-position
+witness shows position/focus merging can discard the only direction that survives
+the next forced repeat, even without beam truncation. Optional direction retention
+restores full depth and preserves the longest safe partial depth in its failure
+control; Native paired evaluation remains pending.
+
+The new collector can label a proposed H24 prefix followed by the inherited
+baseline Policy replanning after 24 native updates. A separate v2 target records
+that continuation; old held-last targets/weights remain unchanged and mixed targets
+are rejected. Sampling windows have independent identities while preserving
+whole-parent membership, weighting and duplicate rejection. Seven focused native
+checks preserve the exact parent tapes, projections, score, RNG and calculations,
+including shifted checkpoints 257/289/321; explicit plain controls have zero label
+work. Early replanning windows have more positives than held-last windows because
+the conditional targets differ, not because earlier labels were incorrect.
+The frozen 27-job collection reuses the original 16 train/eight tune parents and
+adds three separately identified known-failure-tail strata. All former evaluation
+seeds are excluded from later independent draws. No new model-quality claim follows
+from collecting these labels.
+Collection has now completed: 2500 rows, 2322 positive, zero faults, 93870 nominal
+updates, 149207 separate branch updates and 90569 child-policy decisions. The 27
+episodes include three repeated tail parents; there are 24 distinct parents, with
+the original 21 complete/three failed trajectories retained. Summed collection
+wall time is 678.68 seconds, including 311.92 seconds of child-policy work.
+One fixed 0.04-second C++ fit produces the saved 1697-byte
+[v2 model](../models/branch-value-v2/README.md). Train/tune have 1648/852 rows and
+episode-weighted BCE 0.20254/0.21196; the changed conditional target and positive
+rates prevent raw-loss comparisons with v1. Global tuning/new-seed Native
+comparisons remain pending. All 48 integrated Native/DAT CTests pass in 677.74
+seconds; the complete default Stage 2 action hash remains `c4acd20a…`.
+
+`th08_online_live` now owns Native execution on one thread and Policy on one worker,
+advancing one API update per absolute 60 Hz tick. It accepts only a reply for the
+current origin/phase that was published before its cutoff; otherwise an explicit,
+uncertified last-input hold is recorded. Queue overflow, worker failures and owner
+period overruns stop the case. The clock is never reset to hide delays. One
+360-update physical smoke lasts 6.000221 seconds with zero fallback/overrun and
+68733 model endpoint evaluations. Its initial report has a JSON-only TAB-escaping
+defect; original bytes/binary/tape/ticks are retained, and a derived repair changes
+only those three TAB escapes. A fresh one-update run and a Native regression guard
+the corrected serializer. This is execution-mechanism evidence, not whole-stage,
+full-story, retail-control or universal real-time validation. A complete story
+attempt on the manifest-derived H64/legacy-risk shot-1 profile is now running;
+the current source differs from its historical successful artifact.
+
 The owner authorizes tracking selected compact learned models while keeping raw
 training/run artifacts ignored. The three inherited risk packs are now copied
 unchanged into [saved models](../models/README.md), with complete table identities,
@@ -1393,7 +1451,7 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 33 core CTests without private data, plus two optional pinned-source tests
+There are 34 core CTests without private data, plus two optional pinned-source tests
 (31 total). The current headless/DAT configuration has 40 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
 continuation test, online policy contracts and a complete online-stage/replay test.

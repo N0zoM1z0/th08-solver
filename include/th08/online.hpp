@@ -81,6 +81,14 @@ struct QueuedShot {
     unsigned update = 0, linear_updates = 0;
     float x = 0, y = 0, vx = 0, vy = 0, width = 0, height = 0;
 };
+// Current-program child-pattern birth under a linear parent hypothesis. The
+// speed bound covers every angle without sampling gameplay RNG. Coverage ends
+// after the birth/first-following update, when the live observer can own children.
+struct ChildBirth {
+    unsigned update = 0;
+    float x = 0, y = 0, max_speed = 0, width = 0, height = 0;
+    int parent_slot = -1;
+};
 struct QueuedLaser {
     // Inclusive one-based lethal interval from the current observation boundary.
     // Geometry is an adapter hypothesis, not a complete future-world guarantee.
@@ -109,6 +117,8 @@ struct Observation {
     // Positive prefixes from the existing narrow current-cursor adapter. This
     // is partial coverage: zero records never proves that no shot will spawn.
     std::vector<QueuedShot> queued_shots;
+    std::vector<ChildBirth> child_births;
+    std::uint32_t unsupported_child_births = 0;
     std::uint32_t unsupported_queued_shots = 0;
     std::vector<QueuedLaser> queued_lasers;
     std::uint32_t unsupported_queued_lasers = 0;
@@ -131,6 +141,10 @@ struct Configuration {
     // Conservative proposal prior for fired collision-disabled bullets; no activation schedule.
     bool hard_phantoms = false;
     bool motion_envelope = false;
+    bool child_births = false;
+    // Keep incoming direction where the next expansion repeats it and at
+    // terminal endpoints whose conditional value can depend on the last input.
+    bool retain_headings = false;
     float value_weight = 1;
     bool queued_shots = false, queued_lasers = false;
     bool held_fallback = false;
@@ -166,6 +180,7 @@ inline std::uint64_t risk_key(long segment, long sprite, long size10, long speed
 RiskTables load_risk_tables(const std::string &directory);
 struct SearchStatistics {
     std::uint64_t proposal_grid_expansions = 0;
+    std::uint64_t heading_layers = 0, heading_keys = 0;
     std::uint64_t selections = 0, candidates = 0, bins = 0, retained_bins = 0;
     double selection_ms = 0;
     std::uint64_t held_paths = 0, held_updates = 0, held_selected = 0;
@@ -182,6 +197,7 @@ struct SearchStatistics {
     std::uint64_t indexed_forecast_frames = 0;
     std::uint64_t hard_phantom_frames = 0;
     std::uint64_t motion_envelope_frames = 0;
+    std::uint64_t child_birth_frames = 0;
     std::uint64_t value_evaluations = 0;
     double value_ms = 0;
 };

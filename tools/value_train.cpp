@@ -79,6 +79,11 @@ int main(int argc, char **argv) {
             throw std::runtime_error("usage: th08_value_train TRAIN.tsv TUNE.tsv WEIGHTS.tsv");
         const auto train = on::read_branch_examples(argv[1]);
         const auto tune = on::read_branch_examples(argv[2]);
+        const auto continuation = train.front().continuation;
+        for (const auto *rows : {&train, &tune})
+            for (const auto &row : *rows)
+                if (row.continuation != continuation)
+                    throw std::runtime_error("training_tuning_continuation_mismatch");
         const auto training_seeds = seeds(train);
         for (const auto seed : seeds(tune))
             if (training_seeds.count(seed))
@@ -96,6 +101,7 @@ int main(int argc, char **argv) {
         const auto mass = masses(train);
         on::BranchValueModel model;
         model.loaded = true;
+        model.continuation = continuation;
         for (unsigned feature = 0; feature < on::kValueFeatures; ++feature) {
             for (std::size_t i = 0; i < train.size(); ++i)
                 model.mean[feature] += mass[i] * train[i].features[feature];
@@ -132,8 +138,12 @@ int main(int argc, char **argv) {
         }
         on::save_branch_value(model, argv[3]);
         const auto saved = on::load_branch_value(argv[3]);
-        std::cout << std::setprecision(17)
-                  << "{\"schema_version\":1,\"label\":\"conditional-held-last-branch-64\","
+        const bool replan = continuation == on::BranchContinuation::ReplanH24;
+        std::cout << std::setprecision(17) << "{\"schema_version\":" << (replan ? 2 : 1)
+                  << ",\"label\":\""
+                  << (replan ? "conditional-replan-h24-after24-branch-64"
+                             : "conditional-held-last-branch-64")
+                  << "\","
                   << "\"input_horizon\":24,\"label_updates\":64,\"features\":24,\"epochs\":"
                   << epochs << ",\"learning_rate\":" << rate << ",\"l2\":" << l2
                   << ",\"weighting\":\"equal-parent-episode\",\"normalization\":\"training-only-z-"

@@ -57,8 +57,16 @@ int main(int argc, char **argv) {
         model.scale[0] = .25;
         on::save_branch_value(model, (root / "weights.tsv").string());
         const auto loaded = on::load_branch_value((root / "weights.tsv").string());
-        check(loaded.probability(features) == model.probability(features),
+        check(loaded.continuation == on::BranchContinuation::HeldLast &&
+                  loaded.probability(features) == model.probability(features),
               "saved model changed prediction");
+        auto replan = model;
+        replan.continuation = on::BranchContinuation::ReplanH24;
+        on::save_branch_value(replan, (root / "replan.tsv").string());
+        const auto reloaded = on::load_branch_value((root / "replan.tsv").string());
+        check(reloaded.continuation == on::BranchContinuation::ReplanH24 &&
+                  reloaded.probability(features) == model.probability(features),
+              "replanning target lost its version or changed inference math");
         rejects([&] { on::save_branch_value(model, (root / "weights.tsv").string()); },
                 "saved model snapshot was overwritten");
         features[0] = std::numeric_limits<float>::quiet_NaN();
@@ -76,6 +84,19 @@ int main(int argc, char **argv) {
         const auto data = on::read_branch_examples((root / "data.tsv").string());
         check(data.size() == 3 && data[0].survived && !data[1].survived && data[2].survived,
               "native label/terminal meaning changed");
+        const auto replan_header = on::branch_dataset_version(on::BranchContinuation::ReplanH24) +
+                                   '\n' + on::branch_dataset_header() + '\n';
+        write(root / "replan-data.tsv", replan_header + row("survived", 64));
+        const auto replanned = on::read_branch_examples((root / "replan-data.tsv").string());
+        check(replanned.size() == 1 &&
+                  replanned.front().continuation == on::BranchContinuation::ReplanH24 &&
+                  data.front().continuation == on::BranchContinuation::HeldLast,
+              "branch continuation target was silently mixed or discarded");
+        write(root / "unknown-target.tsv", "th08_branch_dataset_v2\t24\t64\t24\tunknown\n" +
+                                               on::branch_dataset_header() + '\n' +
+                                               row("survived", 64));
+        rejects([&] { on::read_branch_examples((root / "unknown-target.tsv").string()); },
+                "unknown continuation target became training data");
         for (const auto *status : {"fault", "budget", "unsupported"}) {
             write(root / "bad.tsv", header + row(status, 12));
             rejects([&] { on::read_branch_examples((root / "bad.tsv").string()); },

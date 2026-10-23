@@ -123,6 +123,10 @@ Options parse(int argc, char **argv) {
             o.policy.hard_phantoms = boolean();
         else if (key == "--motion-envelope")
             o.policy.motion_envelope = boolean();
+        else if (key == "--child-births")
+            o.policy.child_births = boolean();
+        else if (key == "--retain-headings")
+            o.policy.retain_headings = boolean();
         else if (key == "--value-model")
             o.value_model = fs::absolute(value);
         else if (key == "--value-weight")
@@ -250,10 +254,13 @@ int run(const Options &o) {
                                  "risk_backoff_global.tsv", "nowarn_merged.tsv"})
             model_hashes.emplace_back(name, hash(o.risk / name));
     const auto value_hash = o.value_model.empty() ? std::string{} : hash(o.value_model);
+    auto value = o.value_model.empty() ? on::BranchValueModel{}
+                                       : on::load_branch_value(o.value_model.string());
+    const std::string value_target =
+        value.loaded ? on::branch_continuation_name(value.continuation) : "none";
     on::Policy policy(o.policy,
                       o.risk.empty() ? on::RiskTables{} : on::load_risk_tables(o.risk.string()),
-                      o.value_model.empty() ? on::BranchValueModel{}
-                                            : on::load_branch_value(o.value_model.string()));
+                      std::move(value));
     th08::plan::PrefixParser parser(o.frames);
     const auto prefix_hash = o.prefix.empty() ? std::string{} : hash(o.prefix, &parser);
     const auto prefix = parser.finish();
@@ -376,7 +383,8 @@ int run(const Options &o) {
                 session, actions.size(), observation, o.policy.spawn_guard > 0,
                 o.policy.queued_shots ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
                 o.policy.queued_lasers ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
-                o.policy.direct_turn_envelope, o.policy.motion_envelope || !o.value_model.empty());
+                o.policy.direct_turn_envelope, o.policy.motion_envelope || !o.value_model.empty(),
+                o.policy.child_births ? unsigned(o.policy.horizon + o.policy.tail_check) : 0);
             if (o.profile_components)
                 components.capture_ns +=
                     std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin)
@@ -439,6 +447,9 @@ int run(const Options &o) {
             search_stats.indexed_forecast_frames += decision.search.indexed_forecast_frames;
             search_stats.hard_phantom_frames += decision.search.hard_phantom_frames;
             search_stats.motion_envelope_frames += decision.search.motion_envelope_frames;
+            search_stats.heading_layers += decision.search.heading_layers;
+            search_stats.heading_keys += decision.search.heading_keys;
+            search_stats.child_birth_frames += decision.search.child_birth_frames;
             search_stats.value_evaluations += decision.search.value_evaluations;
             search_stats.value_ms += decision.search.value_ms;
             search_stats.plan_adoptions += decision.search.plan_adoptions;
@@ -570,9 +581,15 @@ int run(const Options &o) {
            << ",\"hard_phantoms\":" << o.policy.hard_phantoms
            << ",\"motion_envelope\":" << o.policy.motion_envelope
            << ",\"motion_envelope_frames\":" << search_stats.motion_envelope_frames
-           << ",\"value_model\":" << !o.value_model.empty()
-           << ",\"value_weight\":" << o.policy.value_weight << ",\"value_model_sha256\":\""
-           << value_hash << '"' << ",\"value_evaluations\":" << search_stats.value_evaluations
+           << ",\"child_births\":" << o.policy.child_births
+           << ",\"child_birth_frames\":" << search_stats.child_birth_frames
+           << ",\"retain_headings\":" << o.policy.retain_headings
+           << ",\"heading_layers\":" << search_stats.heading_layers
+           << ",\"heading_keys\":" << search_stats.heading_keys
+           << ",\"value_model\":" << !o.value_model.empty() << ",\"value_continuation\":\""
+           << value_target << '"' << ",\"value_weight\":" << o.policy.value_weight
+           << ",\"value_model_sha256\":\"" << value_hash << '"'
+           << ",\"value_evaluations\":" << search_stats.value_evaluations
            << ",\"value_ms\":" << search_stats.value_ms
            << ",\"hard_phantom_frames\":" << search_stats.hard_phantom_frames
            << ",\"risk_hard\":" << o.policy.risk_hard

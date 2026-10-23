@@ -33,7 +33,9 @@ struct Options {
     fs::path dat, out;
     int stage = 5, difficulty = 3, spell = 107, seed = 0, shot = 0;
     unsigned frames = 20000, stride = 128, checkpoints = 32, seconds = 900;
+    unsigned sample_from = 0, sample_until = 20000;
     bool collect = true;
+    on::BranchContinuation continuation = on::BranchContinuation::HeldLast;
 };
 unsigned integer(const std::string &text, unsigned maximum) {
     unsigned value = 0;
@@ -69,14 +71,26 @@ Options options(int argc, char **argv) {
             o.stride = integer(value, 20000);
         else if (key == "--checkpoints")
             o.checkpoints = integer(value, 32);
+        else if (key == "--sample-from")
+            o.sample_from = integer(value, 20000);
+        else if (key == "--sample-until")
+            o.sample_until = integer(value, 20000);
         else if (key == "--seconds")
             o.seconds = integer(value, 1800);
         else if (key == "--collect")
             o.collect = integer(value, 1);
-        else
+        else if (key == "--continuation") {
+            if (value == "held-last")
+                o.continuation = on::BranchContinuation::HeldLast;
+            else if (value == "replan-h24")
+                o.continuation = on::BranchContinuation::ReplanH24;
+            else
+                throw std::runtime_error("unsupported_collect_continuation");
+        } else
             throw std::runtime_error("unknown_collect_option");
     }
-    if (o.dat.empty() || o.out.empty() || fs::exists(o.out) || !o.frames || !o.stride || !o.seconds)
+    if (o.dat.empty() || o.out.empty() || fs::exists(o.out) || !o.frames || !o.stride ||
+        !o.seconds || o.sample_from > o.sample_until)
         throw std::runtime_error("invalid_collect_configuration");
     return o;
 }
@@ -104,6 +118,9 @@ struct Label {
     unsigned magic = 0x42564c31, updates = 0;
     LabelStatus status = LabelStatus::Fault;
     std::uint64_t native_ns = 0, io_ns = 0;
+    std::uint64_t policy_ns = 0;
+    unsigned attempts = 0, submissions = 0, policy_decisions = 0, warm_observations = 0;
+    std::array<std::uint16_t, on::kValueLabelUpdates> inputs{};
 };
 bool transfer(int descriptor, void *bytes, std::size_t length, bool writing) {
     auto *cursor = static_cast<char *>(bytes);
@@ -119,7 +136,8 @@ bool transfer(int descriptor, void *bytes, std::size_t length, bool writing) {
     }
     return true;
 }
-Label label_branch(hl::Session &session, const on::ValueProposal &proposal,
+Label label_branch(hl::Session &session, on::Policy &policy, const on::ValueProposal &proposal,
+                   std::uint64_t checkpoint_update, on::BranchContinuation continuation,
                    const fs::path &scratch) {
     if (proposal.inputs.size() != on::kValueHorizon - 1)
         throw std::runtime_error("invalid_proposal_prefix");
@@ -147,11 +165,32 @@ Label label_branch(hl::Session &session, const on::ValueProposal &proposal,
             if (!initial.spell_active || initial.player_state == 2 || initial.deaths != 0)
                 throw std::runtime_error("invalid_label_checkpoint");
             result.status = LabelStatus::Survived;
+            on::Observation observation;
             for (unsigned update = 0; update < on::kValueLabelUpdates; ++update) {
-                const auto action =
+                auto action =
                     proposal.inputs[std::min<std::size_t>(update, proposal.inputs.size() - 1)];
+                // The old latch owns movement one. The 23 proposed submissions
+                // own movements 2..24; submission 24 holds the last one. The
+                // first new decision observes the state after 24 native calls,
+                // while that held latch still owns movement 25.
+                if (continuation == on::BranchContinuation::ReplanH24 &&
+                    update >= on::kValueHorizon) {
+                    const auto before = Clock::now();
+                    on::capture_memory(session, checkpoint_update + update, observation, true, 0, 0,
+                                       false, true);
+                    action = policy.decide(observation).action;
+                    result.policy_ns +=
+                        std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - before)
+                            .count();
+                    ++result.policy_decisions;
+                }
+                if (!(action & 1) || (action & ~0xf5u))
+                    throw std::runtime_error("invalid_continuation_action_space");
+                result.inputs[update] = action;
+                ++result.submissions;
                 const auto io_before = session.file_io_time_ns();
                 const auto before = Clock::now();
+                ++result.attempts;
                 const auto state = session.step(action);
                 result.native_ns +=
                     std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - before)
@@ -168,6 +207,20 @@ Label label_branch(hl::Session &session, const on::ValueProposal &proposal,
                 }
                 if (state.retry_menu)
                     throw std::runtime_error("unsupported_label_terminal");
+                // Warm the inherited branch-local history on every skipped
+                // decision boundary, without consuming search tie RNG. Future
+                // observations and outcomes never return to the parent Policy.
+                if (continuation == on::BranchContinuation::ReplanH24 &&
+                    update + 1 < on::kValueHorizon) {
+                    const auto before = Clock::now();
+                    on::capture_memory(session, checkpoint_update + update + 1, observation, true,
+                                       0, 0, false, true);
+                    policy.observe(observation);
+                    result.policy_ns +=
+                        std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - before)
+                            .count();
+                    ++result.warm_observations;
+                }
             }
         } catch (...) {
             result.status = LabelStatus::Fault;
@@ -186,7 +239,10 @@ Label label_branch(hl::Session &session, const on::ValueProposal &proposal,
             throw std::runtime_error("label_wait_failed");
     if (!received || !WIFEXITED(status) || WEXITSTATUS(status) != 0 || result.magic != 0x42564c31 ||
         result.updates > on::kValueLabelUpdates || result.updates == 0 ||
+        result.submissions > on::kValueLabelUpdates ||
         unsigned(result.status) > unsigned(LabelStatus::Fault) ||
+        (result.status != LabelStatus::Fault &&
+         (result.attempts != result.updates || result.submissions != result.updates)) ||
         (result.status == LabelStatus::Survived && result.updates != on::kValueLabelUpdates))
         result.status = LabelStatus::Fault;
     return result;
@@ -211,8 +267,19 @@ int run(const Options &o, const std::string &binary) {
     identity << "branch-data-v1;" << dat_hash << ';' << binary_hash << ';' << o.stage << ';'
              << o.difficulty << ';' << o.shot << ';' << o.spell << ';' << o.seed
              << ";h24-b192-c16-g16-hard-motion";
+    if (o.continuation != on::BranchContinuation::HeldLast)
+        identity << ';' << on::branch_continuation_name(o.continuation);
     const auto identity_bytes = identity.str();
     const auto episode = digest(identity_bytes.data(), identity_bytes.size());
+    // Sampling does not alter the nominal parent or create a second training
+    // parent. A separate identity records the sampling/budget contract; row
+    // identity remains (parent, update, proposal), so overlapping rows fail.
+    std::ostringstream sampling;
+    sampling << "window-anchored-v1;" << episode << ';' << o.sample_from << ';' << o.sample_until
+             << ';' << o.stride << ';' << o.checkpoints << ';' << o.frames << ';' << o.seconds
+             << ';' << o.collect;
+    const auto sampling_bytes = sampling.str();
+    const auto sampling_id = digest(sampling_bytes.data(), sampling_bytes.size());
     hl::Config config;
     const auto dat = o.dat.string();
     config.dat_path = dat.c_str();
@@ -229,21 +296,27 @@ int run(const Options &o, const std::string &binary) {
     policy_config.spawn_guard = 16;
     policy_config.reach_filter = policy_config.risk_phantoms = policy_config.hard_phantoms = true;
     policy_config.motion_envelope = true;
+    policy_config.child_births = policy_config.retain_headings = false;
     on::Policy policy(policy_config);
     on::Observation observation;
     std::ofstream dataset(o.out / "dataset.tsv"), tape(o.out / "nominal.actions"),
-        branch_inputs(o.out / "branch-inputs.tsv");
+        branch_inputs(o.out / "branch-inputs.tsv"), rollouts(o.out / "branch-rollouts.tsv");
     dataset.exceptions(std::ios::failbit | std::ios::badbit);
     tape.exceptions(std::ios::failbit | std::ios::badbit);
     branch_inputs.exceptions(std::ios::failbit | std::ios::badbit);
+    rollouts.exceptions(std::ios::failbit | std::ios::badbit);
     branch_inputs << "episode\tupdate\tproposal\tprefix_sha256\tinputs\n";
-    dataset << "th08_branch_dataset_v1\t24\t64\t24\n"
+    rollouts
+        << "episode\tupdate\tproposal\tprefix_sha256\tstatus\tnative_updates\tnative_attempts\t"
+           "policy_decisions\twarm_observations\tpolicy_ns\tinputs\n";
+    dataset << on::branch_dataset_version(o.continuation) << '\n'
             << on::branch_dataset_header() << '\n'
             << std::setprecision(9);
     std::string prefix, outcome = "budget";
     std::vector<double> timings;
     std::uint64_t label_updates = 0, label_ns = 0, label_io_ns = 0, nominal_ns = 0,
-                  nominal_io_ns = 0;
+                  nominal_io_ns = 0, label_policy_ns = 0, label_attempts = 0,
+                  label_policy_decisions = 0, label_warm_observations = 0;
     unsigned checkpoints = 0, branches = 0, bad = 0, positives = 0, rows = 0;
     std::uint64_t trace = 1469598103934665603ULL;
     const auto mix = [&](std::uint64_t word) { trace = (trace ^ word) * 1099511628211ULL; };
@@ -258,8 +331,11 @@ int run(const Options &o, const std::string &binary) {
     for (unsigned update = 0; update < o.frames; ++update) {
         if (std::chrono::duration<double>(Clock::now() - start).count() >= o.seconds)
             break;
+        // The minimum remains 128. The default zero anchor preserves the old
+        // absolute grid for every stride; an explicit window owns its own phase.
         const bool sample = o.collect && state.spell_active && update >= 128 &&
-                            update % o.stride == 0 && checkpoints < o.checkpoints;
+                            update >= o.sample_from && update <= o.sample_until &&
+                            (update - o.sample_from) % o.stride == 0 && checkpoints < o.checkpoints;
         const auto before = Clock::now();
         on::capture_memory(session, update, observation, true, 0, 0, false, true);
         std::vector<on::ValueProposal> proposals;
@@ -293,12 +369,17 @@ int run(const Options &o, const std::string &binary) {
                     first = false;
                 }
                 branch_inputs << '\n';
-                const auto label = label_branch(session, proposals[candidate],
-                                                o.out / "branches" / std::to_string(branches));
+                const auto label =
+                    label_branch(session, policy, proposals[candidate], update, o.continuation,
+                                 o.out / "branches" / std::to_string(branches));
                 ++branches;
                 label_updates += label.updates;
                 label_ns += label.native_ns;
                 label_io_ns += label.io_ns;
+                label_attempts += label.attempts;
+                label_policy_ns += label.policy_ns;
+                label_policy_decisions += label.policy_decisions;
+                label_warm_observations += label.warm_observations;
                 bad += label.status == LabelStatus::Fault;
                 positives +=
                     label.status == LabelStatus::Survived || label.status == LabelStatus::Complete;
@@ -309,6 +390,16 @@ int run(const Options &o, const std::string &binary) {
                 for (const auto value : proposals[candidate].features)
                     dataset << '\t' << value;
                 dataset << '\n';
+                rollouts << episode << '\t' << update << '\t' << candidate << '\t' << prefix_hash
+                         << '\t' << label_name(label.status) << '\t' << label.updates << '\t'
+                         << label.attempts << '\t' << label.policy_decisions << '\t'
+                         << label.warm_observations << '\t' << label.policy_ns << '\t';
+                for (unsigned index = 0; index < label.submissions; ++index) {
+                    if (index)
+                        rollouts << ',';
+                    rollouts << label.inputs[index];
+                }
+                rollouts << '\n';
                 ++rows;
             }
         }
@@ -341,6 +432,7 @@ int run(const Options &o, const std::string &binary) {
     tape.close();
     dataset.close();
     branch_inputs.close();
+    rollouts.close();
     const auto wall = std::chrono::duration<double>(Clock::now() - start).count();
     double sum = 0;
     for (const auto ms : timings)
@@ -351,8 +443,10 @@ int run(const Options &o, const std::string &binary) {
     };
     std::ofstream report(o.out / "collection.json");
     report.exceptions(std::ios::failbit | std::ios::badbit);
-    report << std::setprecision(17)
-           << "{\"schema_version\":2,\"scope\":\"offline-native-branch-labels\","
+    const bool sampling_metadata = o.continuation != on::BranchContinuation::HeldLast ||
+                                   o.sample_from != 0 || o.sample_until != 20000;
+    report << std::setprecision(17) << "{\"schema_version\":" << (sampling_metadata ? 3 : 2)
+           << ",\"scope\":\"offline-native-branch-labels\","
            << "\"episode\":\"" << episode << "\",\"dat_sha256\":\"" << dat_hash
            << "\",\"binary_sha256\":\"" << binary_hash << "\",\"dataset_sha256\":\""
            << file_hash(o.out / "dataset.tsv") << "\",\"actions_sha256\":\""
@@ -373,7 +467,22 @@ int run(const Options &o, const std::string &binary) {
            << ",\"mean_nominal_controller_ms\":" << (timings.empty() ? 0 : sum / timings.size())
            << ",\"p99_nominal_controller_ms\":" << quantile(.99)
            << ",\"max_nominal_controller_ms\":" << quantile(1) << ",\"wall_seconds\":" << wall
-           << ",\"input_horizon\":24,\"label_updates\":64,\"deadline_enforced\":false}\n";
+           << ",\"input_horizon\":24,\"label_updates\":64,\"deadline_enforced\":false";
+    if (o.continuation != on::BranchContinuation::HeldLast)
+        report << ",\"continuation\":\"" << on::branch_continuation_name(o.continuation)
+               << "\",\"replan_start_update\":24,\"prefix_submitted_controls\":23,"
+                  "\"rollouts_sha256\":\""
+               << file_hash(o.out / "branch-rollouts.tsv")
+               << "\",\"label_native_attempts\":" << label_attempts
+               << ",\"label_policy_decisions\":" << label_policy_decisions
+               << ",\"label_warm_observations\":" << label_warm_observations
+               << ",\"label_policy_seconds\":" << double(label_policy_ns) / 1e9;
+    if (sampling_metadata)
+        report << ",\"sampling_id\":\"" << sampling_id
+               << "\",\"sampling_version\":\"window-anchored-v1\",\"sample_from\":" << o.sample_from
+               << ",\"sample_until\":" << o.sample_until << ",\"sampling_stride\":" << o.stride
+               << ",\"sampling_max_checkpoints\":" << o.checkpoints;
+    report << "}\n";
     return bad || outcome == "runtime_error" ? 5 : 0;
 }
 } // namespace

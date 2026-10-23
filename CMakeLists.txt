@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(th08_solver VERSION 0.1.0 LANGUAGES CXX)
 find_package(OpenSSL REQUIRED COMPONENTS Crypto)
+find_package(Threads REQUIRED)
 include(CTest)
 include(cmake/ReplaySuite.cmake)
 include(cmake/PlannerTests.cmake)
@@ -37,6 +38,14 @@ target_include_directories(th08_plan_matrix PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 add_executable(th08_spell_bank tools/spell_bank.cpp)
 target_compile_features(th08_spell_bank PRIVATE cxx_std_17)
 target_link_libraries(th08_spell_bank PRIVATE OpenSSL::Crypto)
+add_library(th08_online_live src/online_live.cpp)
+target_link_libraries(th08_online_live PUBLIC th08_online_policy Threads::Threads)
+target_compile_features(th08_online_live PUBLIC cxx_std_17)
+if(MSVC)
+  target_compile_options(th08_online_live PRIVATE /fp:strict)
+else()
+  target_compile_options(th08_online_live PRIVATE -ffp-contract=off)
+endif()
 add_executable(th08_value_train tools/value_train.cpp)
 target_link_libraries(th08_value_train PRIVATE th08_online_policy OpenSSL::Crypto)
 if(MSVC)
@@ -45,6 +54,9 @@ else()
   target_compile_options(th08_value_train PRIVATE -ffp-contract=off)
 endif()
 if(BUILD_TESTING)
+  add_executable(online_live_tests tests/online_live_tests.cpp)
+  target_link_libraries(online_live_tests PRIVATE th08_online_live)
+  add_test(NAME online_live_contract COMMAND online_live_tests)
   add_executable(value_model_tests tests/value_model_tests.cpp)
   target_link_libraries(value_model_tests PRIVATE th08_online_policy)
   add_test(NAME value_model_contract COMMAND value_model_tests
@@ -309,6 +321,13 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/value-collection-regression
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/value_collection_real_data.cmake)
     set_tests_properties(headless_value_collection_real_data PROPERTIES TIMEOUT 120)
+    add_test(NAME headless_online_live_real_data COMMAND ${CMAKE_COMMAND}
+      -DEXECUTABLE=$<TARGET_FILE:th08_online_live_cli>
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DMODEL=${CMAKE_CURRENT_SOURCE_DIR}/models/branch-value-v1/weights.tsv
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-live-regression
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_live_real_data.cmake)
+    set_tests_properties(headless_online_live_real_data PROPERTIES TIMEOUT 60)
     add_test(NAME headless_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_headless>
       -DPROBE_EXECUTABLE=$<TARGET_FILE:th08_headless_probe>

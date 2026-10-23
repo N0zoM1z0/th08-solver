@@ -8,9 +8,93 @@
 #include "th08/animation.hpp"
 #include "th08/direct_laser_policy.hpp"
 #include "th08/ecl_turn_hint.hpp"
+#include "th08/online_child_birth.hpp"
+#include <cmath>
+#include <limits>
 
 namespace th08::online {
 namespace {
+void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
+                         Observation &observation) {
+    if (parent.state != BULLET_STATE_FIRED || parent.transformIndex < 0 ||
+        parent.transformIndex >= 18)
+        return;
+    std::array<detail::ChildCursorRecord, 18> records;
+    for (std::size_t i = 0; i < records.size(); ++i)
+        records[i] = {parent.transforms[i].kind, parent.transforms[i].allowWhileActive != 0};
+    const auto &wait = parent.exStates[BULLET_TRANSFORM_STATE_WAIT].timer;
+    const auto cursor = detail::child_birth_cursor(
+        records, parent.transformIndex, parent.transformFlags, parent.activeTransformFlags,
+        wait.current, wait.subFrame, horizon);
+    if (cursor.unsupported)
+        ++observation.unsupported_child_births;
+    if (cursor.index < 0)
+        return;
+    const int index = cursor.index;
+    const unsigned update = cursor.update;
+    const auto &record = parent.transforms[index];
+    const auto unsupported = [&] { ++observation.unsupported_child_births; };
+    if (g_Supervisor.framerateMultiplier != 1.f || g_GameManager.scriptedUpdateFreeze ||
+        g_GameManager.flags.deathbombFreezeActive || g_Supervisor.flags.forceExtraTimerStep) {
+        unsupported();
+        return;
+    }
+    const auto packed = std::uint32_t(record.payload.childPrimary.packedPattern);
+    const int type = int((packed >> 16) & 255), mode = int((packed >> 24) & 127);
+    const int start = int(packed & 255);
+    const auto &secondary = parent.transforms[index + 1].payload.childSecondary;
+    // Match the source's signed-short count conversion without evaluating RNG.
+    const auto count1 = std::int16_t(record.payload.childPrimary.count1);
+    const auto count2 = std::int16_t(secondary.count2);
+    if (count1 <= 0 || count2 <= 0)
+        return;
+    if (type >= int(std::size(g_BulletManager.bulletTypeSprites)) || mode > BULLET_AIM_RANDOM ||
+        start >= 18 ||
+        (secondary.transformFlags & (BULLET_TRANSFORM_SPAWN_FAST | BULLET_TRANSFORM_SPAWN_NORMAL |
+                                     BULLET_TRANSFORM_SPAWN_SLOW))) {
+        unsupported();
+        return;
+    }
+    const auto &first = parent.transforms[start];
+    // A currently copied WAIT keeps child velocity unchanged throughout these
+    // first two pool-order possibilities. Later transforms are outside coverage.
+    if (first.kind != BULLET_TRANSFORM_WAIT || first.payload.timed.frames < 1 ||
+        !(secondary.transformFlags & BULLET_TRANSFORM_WAIT)) {
+        unsupported();
+        return;
+    }
+    for (int next = start + 1; next < 18; ++next) {
+        const auto &pending = parent.transforms[next];
+        if (!pending.kind || !pending.allowWhileActive)
+            break;
+        if (pending.kind & secondary.transformFlags) {
+            unsupported();
+            return;
+        }
+    }
+    const auto &size = g_BulletManager.bulletTypeSprites[type].collisionSize;
+    const float speed1 = record.payload.childPrimary.speed1;
+    const float speed2 = record.payload.childPrimary.speed2;
+    if (!std::isfinite(speed1) || !std::isfinite(speed2) || !std::isfinite(secondary.angle) ||
+        !std::isfinite(secondary.angleStep) || !std::isfinite(size.x) || !std::isfinite(size.y) ||
+        size.x < 0 || size.y < 0) {
+        unsupported();
+        return;
+    }
+    // Native interpolation rounds the subtraction/product/add separately. The
+    // triangle bound encloses all interpolation fractions, including RNG modes.
+    const float difference = speed1 - speed2;
+    const float bound = std::nextafter(std::abs(difference) + std::abs(speed2),
+                                       std::numeric_limits<float>::infinity());
+    if (!std::isfinite(bound)) {
+        unsupported();
+        return;
+    }
+    float x = parent.position.x, y = parent.position.y;
+    for (unsigned step = 1; step < update; ++step)
+        x += parent.velocity.x, y += parent.velocity.y;
+    observation.child_births.push_back({update, x, y, bound, size.x, size.y, slot});
+}
 unsigned native_spawn_clock(const th08::Bullet &bullet) {
     if (g_Supervisor.framerateMultiplier != 1 || g_GameManager.scriptedUpdateFreeze ||
         g_GameManager.flags.deathbombFreezeActive)
@@ -67,7 +151,8 @@ TurnHint native_turn_hint(const headless::EclContextView &view) {
 } // namespace
 void capture_memory(headless::Session &session, std::uint64_t update, Observation &o,
                     bool include_actors, unsigned queued_horizon, unsigned queued_laser_horizon,
-                    bool include_turn_hints, bool include_motion_alternatives) {
+                    bool include_turn_hints, bool include_motion_alternatives,
+                    unsigned child_horizon) {
     const auto state = session.state();
     o.update = update;
     o.stage = state.stage;
@@ -91,11 +176,15 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
     m.maxy = m.miny + g_GameManager.playerMovementAreaSize.y;
     m.half = {g_Player.hurtboxHalfSize.x, g_Player.hurtboxHalfSize.y, 0};
     o.bullets.clear();
+    o.child_births.clear();
+    o.unsupported_child_births = 0;
     for (const auto &b : session.bullets()) {
         // The final pool entry is a source sentinel, never a gameplay bullet.
         if (b.slot == 0x600 && b.state == BULLET_STATE_SENTINEL)
             continue;
         const auto &native = g_BulletManager.bullets[b.slot];
+        if (child_horizon)
+            capture_child_birth(native, b.slot, child_horizon, o);
         o.bullets.push_back({b.x, b.y, b.vx, b.vy, b.state, b.slot,
                              int(native.sprites.bulletVm.activeSpriteIndex), b.full_width,
                              b.full_height, b.active_transforms, b.vector_acceleration_x,

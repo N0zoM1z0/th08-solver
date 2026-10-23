@@ -61,3 +61,26 @@ execute_process(COMMAND "${TRAINER}" "${WORK}/fault.tsv" "${WORK}/tune.tsv" "${W
 if(result STREQUAL "0" OR EXISTS "${WORK}/fault-model.tsv")
   message(FATAL_ERROR "Native branch fault entered model training")
 endif()
+
+# Identical synthetic labels under a different declared continuation must keep
+# the new target in its model, rather than silently becoming a v1 held-tail fit.
+foreach(split IN ITEMS train tune)
+  file(READ "${WORK}/${split}.tsv" replanned)
+  string(REPLACE "th08_branch_dataset_v1\t24\t64\t24\n"
+    "th08_branch_dataset_v2\t24\t64\t24\treplan-h24-after24-v1\n" replanned "${replanned}")
+  file(WRITE "${WORK}/replan-${split}.tsv" "${replanned}")
+endforeach()
+execute_process(COMMAND "${TRAINER}" "${WORK}/replan-train.tsv" "${WORK}/replan-tune.tsv"
+  "${WORK}/replan-weights.tsv" RESULT_VARIABLE result OUTPUT_VARIABLE report ERROR_VARIABLE error)
+if(NOT result STREQUAL "0" OR NOT report MATCHES "conditional-replan-h24-after24-branch-64")
+  message(FATAL_ERROR "Versioned replan fit failed: ${report} ${error}")
+endif()
+file(STRINGS "${WORK}/replan-weights.tsv" model_header LIMIT_COUNT 1)
+if(NOT model_header STREQUAL "th08_branch_value_v2\t24\t64\t24\treplan-h24-after24-v1")
+  message(FATAL_ERROR "Replan model lost its declared continuation target")
+endif()
+execute_process(COMMAND "${TRAINER}" "${WORK}/train.tsv" "${WORK}/replan-tune.tsv"
+  "${WORK}/mixed-target.tsv" RESULT_VARIABLE result OUTPUT_QUIET ERROR_VARIABLE error)
+if(result STREQUAL "0" OR EXISTS "${WORK}/mixed-target.tsv")
+  message(FATAL_ERROR "Different continuation targets were silently pooled")
+endif()

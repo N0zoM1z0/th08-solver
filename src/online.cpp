@@ -2,6 +2,7 @@
 // current-memory fields are copied by the adapter; this policy owns only its
 // observation history, immutable risk model and heuristic proposal search.
 #include "th08/online.hpp"
+#include "th08/online_child_birth.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
 #include "th08/online_motion_envelope.hpp"
@@ -388,6 +389,17 @@ struct Policy::Impl {
             for (float v : {shot.x, shot.y, shot.vx, shot.vy, shot.width, shot.height})
                 finite(v);
         }
+        if (opt.child_births && o.unsupported_child_births)
+            throw std::runtime_error("unsupported_online_child_birth");
+        for (const auto &birth : o.child_births) {
+            finite(birth.x);
+            finite(birth.y);
+            if (birth.update == 0 || birth.update > 200 || !std::isfinite(birth.max_speed) ||
+                birth.max_speed < 0 || birth.max_speed > 1048576 || !std::isfinite(birth.width) ||
+                !std::isfinite(birth.height) || birth.width < 0 || birth.height < 0 ||
+                birth.width > 1048576 || birth.height > 1048576)
+                throw std::runtime_error("invalid_online_child_birth");
+        }
         for (const auto &laser : o.queued_lasers) {
             const auto &l = laser.hitbox;
             if (laser.first_update == 0 || laser.last_update < laser.first_update ||
@@ -701,6 +713,15 @@ struct Policy::Impl {
                 }
             }
         }
+        if (opt.child_births)
+            for (const auto &birth : observation.child_births) {
+                const auto boxes = detail::child_birth_boxes(birth, opt.grow);
+                for (unsigned age = 0; age < boxes.size(); ++age)
+                    if (birth.update + age <= unsigned(horizon)) {
+                        frames[birth.update + age].b.push_back(boxes[age]);
+                        ++search_stats.child_birth_frames;
+                    }
+            }
         // Pooled lasers: deterministic geometry/timer state machine from the visible laser.
         for (const auto &src : observation.lasers) {
             laser_forecast(src, src.motion_observed ? src.origin_delta_x : 0.f,
@@ -1058,7 +1079,10 @@ struct Policy::Impl {
             }
             detail::apply_movement(sp, bounds.x0, bounds.y0, low);
             detail::apply_movement(sp, bounds.x1, bounds.y1, high);
-            search_scratch.seen.reset(bounds);
+            const bool next_repeats = j + 2 <= horizon && j + 1 >= 12 && ((j + 1) % 2) != 0;
+            const bool retain_heading = opt.retain_headings && (next_repeats || j + 1 == horizon);
+            search_scratch.seen.reset(bounds, retain_heading);
+            search_stats.heading_layers += retain_heading;
             const bool branch = j < 12 || (j % 2) == 0;
             for (int pi = 0; pi < int(cur.size()); ++pi) {
                 const Node &p = cur[pi];
@@ -1069,8 +1093,9 @@ struct Policy::Impl {
                             continue;
                         float x = p.x, y = p.y;
                         detail::apply_movement(sp, x, y, deltas[f * 9 + d]);
-                        if (!search_scratch.seen.first(x, y, f != 0))
+                        if (!search_scratch.seen.first(x, y, f != 0, unsigned(d)))
                             continue;
+                        search_stats.heading_keys += retain_heading;
                         const int hit = probe(frames[j + 1], sp.half, x, y, true);
                         if (hit == 2)
                             continue;

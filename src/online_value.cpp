@@ -19,6 +19,9 @@ void require(bool value, const char *message = "invalid_branch_value") {
 }
 constexpr const char *version = "th08_branch_value_v1\t24\t64\t24";
 constexpr const char *dataset_version = "th08_branch_dataset_v1\t24\t64\t24";
+constexpr const char *replan_version = "th08_branch_value_v2\t24\t64\t24\treplan-h24-after24-v1";
+constexpr const char *replan_dataset_version =
+    "th08_branch_dataset_v2\t24\t64\t24\treplan-h24-after24-v1";
 double finite(const std::string &text) {
     std::size_t used = 0;
     const auto value = std::stod(text, &used);
@@ -50,6 +53,19 @@ bool digest(const std::string &value) {
            });
 }
 } // namespace
+const char *branch_continuation_name(BranchContinuation continuation) {
+    switch (continuation) {
+    case BranchContinuation::HeldLast:
+        return "held-last";
+    case BranchContinuation::ReplanH24:
+        return "replan-h24-after24-v1";
+    }
+    throw std::runtime_error("unsupported_branch_continuation");
+}
+std::string branch_dataset_version(BranchContinuation continuation) {
+    branch_continuation_name(continuation);
+    return continuation == BranchContinuation::HeldLast ? dataset_version : replan_dataset_version;
+}
 double normalized_value_feature(float value, double mean, double scale) {
     require(std::isfinite(value) && std::isfinite(mean) && std::isfinite(scale) && scale > 0);
     return std::clamp((double(value) - mean) / scale, -8.0, 8.0);
@@ -70,9 +86,13 @@ double BranchValueModel::probability(const ValueFeatures &features) const {
 BranchValueModel load_branch_value(const std::string &path) {
     std::ifstream input(path);
     std::string line;
-    require(bool(input) && bool(std::getline(input, line)) && line == version);
+    require(bool(input) && bool(std::getline(input, line)) &&
+            (line == version || line == replan_version));
+    const auto continuation =
+        line == version ? BranchContinuation::HeldLast : BranchContinuation::ReplanH24;
     require(bool(std::getline(input, line)) && line == "feature\tmean\tscale\tweight");
     BranchValueModel model;
+    model.continuation = continuation;
     for (unsigned i = 0; i <= kValueFeatures; ++i) {
         require(bool(std::getline(input, line)));
         const auto values = columns(line);
@@ -93,6 +113,7 @@ BranchValueModel load_branch_value(const std::string &path) {
     return model;
 }
 void save_branch_value(const BranchValueModel &model, const std::string &path) {
+    branch_continuation_name(model.continuation);
     model.probability({}); // Validate before opening the output.
     require(std::fabs(model.bias) <= 1e6);
     for (unsigned i = 0; i < kValueFeatures; ++i)
@@ -101,8 +122,9 @@ void save_branch_value(const BranchValueModel &model, const std::string &path) {
     require(!std::filesystem::exists(path), "branch_value_output_exists");
     std::ofstream output(path);
     output.exceptions(std::ios::failbit | std::ios::badbit);
-    output << std::setprecision(17) << version << "\nfeature\tmean\tscale\tweight\nbias\t0\t1\t"
-           << model.bias << '\n';
+    output << std::setprecision(17)
+           << (model.continuation == BranchContinuation::HeldLast ? version : replan_version)
+           << "\nfeature\tmean\tscale\tweight\nbias\t0\t1\t" << model.bias << '\n';
     for (unsigned i = 0; i < kValueFeatures; ++i)
         output << kValueFeatureNames[i] << '\t' << model.mean[i] << '\t' << model.scale[i] << '\t'
                << model.weight[i] << '\n';
@@ -117,8 +139,11 @@ std::string branch_dataset_header() {
 std::vector<BranchExample> read_branch_examples(const std::string &path) {
     std::ifstream input(path);
     std::string line;
-    require(bool(input) && bool(std::getline(input, line)) && line == dataset_version,
+    require(bool(input) && bool(std::getline(input, line)) &&
+                (line == dataset_version || line == replan_dataset_version),
             "invalid_branch_dataset");
+    const auto continuation =
+        line == dataset_version ? BranchContinuation::HeldLast : BranchContinuation::ReplanH24;
     require(bool(std::getline(input, line)) && line == branch_dataset_header());
     std::vector<BranchExample> rows;
     std::set<std::tuple<std::string, std::uint64_t, unsigned>> seen;
@@ -128,6 +153,7 @@ std::vector<BranchExample> read_branch_examples(const std::string &path) {
         const auto fields = columns(line);
         require(fields.size() == 11 + kValueFeatures);
         BranchExample row;
+        row.continuation = continuation;
         require(digest(fields[0]) && digest(fields[10]));
         row.episode = fields[0];
         row.prefix = fields[10];

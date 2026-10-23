@@ -1,11 +1,11 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 33
+Core CTest cases: 34
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (35 total). Native builds add process, semantic, hazard-probe and
+add two CTests (36 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay and planner-prefix CTests (46 total).
+complete-scene, online-stage/replay and planner-prefix CTests (48 total).
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
@@ -92,6 +92,22 @@ agent. It makes no future Session updates and does not rewind the live game.
 ./build-headless/th08_replay_check game_data_donottrack/th08.dat reports/local/online-stage2-verify/th8_verify.rpy reports/local/online-stage2.rows
 ctest --test-dir build-headless -R headless_online --output-on-failure
 ```
+
+For the opt-in physical clock/worker harness, a short run explicitly remains a
+budget outcome. It takes approximately six seconds for 360 API ticks:
+
+```sh
+./build-headless/th08_online_live --dat game_data_donottrack/th08.dat --out reports/local/live-smoke --stage 1 --story 1 --final-route a --difficulty 3 --seed 0 --shot 1 --horizon 24 --beam 192 --diversity-cell 16 --spawn-guard 16 --reach-filter 1 --hard-phantoms 1 --motion-envelope 1 --value-model models/branch-value-v1/weights.tsv --value-weight 0.25 --history-queue 4 --scheduler-tolerance-us 0 --frames 360 --seconds 10
+ctest --test-dir build-headless -R 'online_live|headless_value_collection' --output-on-failure
+```
+
+Live core checks cover absolute tick arithmetic, cutoff/origin/phase rejection,
+bounded consecutive observations, worker faults, discarded-work accounting and
+expired-history agreement with a serial Policy. The one-frame Native CLI check
+uses a declared generous owner tolerance solely to verify serialization/input
+accounting, not performance. It requires JSON-escaped literal TSV model metadata
+and rejects zero queue capacity before Native initialization. Physical timing and
+complete routes require separately frozen experiments with their actual tolerance.
 
 Natural replay `rows` counts recorded gameplay calculations; `stages[].frames`
 is the last observed `ReplayManager::frameCounter`, a replay input clock. They

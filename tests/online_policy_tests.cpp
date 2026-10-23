@@ -2,6 +2,7 @@
 #include "th08/ecl_turn_hint.hpp"
 #include "th08/geometry.hpp"
 #include "th08/online.hpp"
+#include "th08/online_child_birth.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
 #include "th08/online_motion_envelope.hpp"
@@ -520,6 +521,196 @@ void motion_envelope_contract() {
     config.hard_phantoms = false;
     rejects([&] { on::Policy invalid(config); },
             "a motion envelope silently ignored disabled fired bullets");
+}
+on::Observation gate_scene() {
+    on::Observation o;
+    o.x = 104;
+    o.y = 400;
+    o.movement.axis[0] = o.movement.axis[1] = 4;
+    o.movement.diag[0] = o.movement.diag[1] = 4;
+    o.movement.minx = 100;
+    o.movement.maxx = 108;
+    o.movement.miny = o.movement.maxy = 400;
+    o.movement.half = {.1f, .1f, 0};
+    o.queued_shots = {{13, 1, -396.2f, 400, 0, 0, 1000, 10},
+                      {13, 1, 604.2f, 400, 0, 0, 1000, 10},
+                      {14, 1, 104, 400, 0, 0, .5f, 10}};
+    return o;
+}
+void retain_heading_contract() {
+    on::detail::ProposalSet keys;
+    keys.reset({100, 400, 100, 400}, true);
+    check(keys.first(100, 400, false, 0) && keys.first(100, 400, false, 4) &&
+              !keys.first(100, 400, false, 4) && keys.first(100, 400, true, 4),
+          "heading membership lost direction/focus separation");
+    check(keys.first(500, 400, false, 7) && keys.expansions() == 1 &&
+              !keys.first(100, 400, false, 0) && !keys.first(100, 400, false, 4) &&
+              !keys.first(100, 400, true, 4),
+          "heading expansion forgot previously occupied channels");
+    keys.reset({100, 400, 100, 400});
+    check(keys.first(100, 400, false, 0) && !keys.first(100, 400, false, 4),
+          "legacy membership unexpectedly retains headings");
+    const auto o = gate_scene();
+    // Independently verify one path against literal one-update rectangles and
+    // the same public inclusive collision kernel. The nonbranch layer repeats
+    // right at movement 14 rather than inventing an unavailable late turn.
+    float x = o.x, y = o.y;
+    std::uint16_t previous = 0;
+    for (int step = 1; step <= 14; ++step) {
+        const std::uint16_t a = step == 12 ? 64 : step >= 13 ? 128 : 0;
+        check(!(step > 1 && step - 1 >= 12 && ((step - 1) % 2) != 0 && a != previous),
+              "oracle changed a forced repeat");
+        on::detail::apply_movement(o.movement, x, y, on::detail::movement_delta(o.movement, a));
+        for (const auto &shot : o.queued_shots) {
+            if (step < int(shot.update) || step >= int(shot.update + shot.linear_updates))
+                continue;
+            const float sx = shot.x + (step - shot.update) * shot.vx;
+            const float sy = shot.y + (step - shot.update) * shot.vy;
+            const on::Box box{sx - shot.width / 2, sy - shot.height / 2, sx + shot.width / 2,
+                              sy + shot.height / 2};
+            check(!on::detail::box_hit(box, {x - .1f, y - .1f, 0}, {x + .1f, y + .1f, 0}),
+                  "literal path collided");
+        }
+        previous = a;
+    }
+    check(x == 108 && y == 400, "oracle endpoint changed");
+    for (int beam : {64, 192, 8192}) {
+        on::Configuration cfg;
+        cfg.horizon = 14;
+        cfg.beam = beam;
+        cfg.grow = 0;
+        cfg.risk_weight = 0;
+        cfg.queued_shots = true;
+        cfg.diversity_cell = 1;
+        const auto before = on::Policy(cfg).decide(o);
+        cfg.retain_headings = true;
+        const auto after = on::Policy(cfg).decide(o);
+        check(before.depth == 13 && after.depth == 14, "forced heading witness disappeared");
+        check(before.search.selections == 0 && after.search.selections == 0,
+              "witness depends on beam truncation");
+        check(before.search.heading_layers == 0 && before.search.heading_keys == 0,
+              "default adds hidden repeat work");
+        check(after.search.heading_layers == 2 && after.search.heading_keys > 0,
+              "extra repeat work is uncharged");
+        auto impossible = o;
+        impossible.queued_shots.push_back({14, 1, 104, 400, 0, 0, 1000, 1000});
+        const auto partial = on::Policy(cfg).decide(impossible);
+        cfg.retain_headings = false;
+        const auto old_partial = on::Policy(cfg).decide(impossible);
+        check(partial.depth == 13 && old_partial.depth == 13,
+              "all dead compulsory repeats hid the longest safe partial layer");
+        cfg.retain_headings = true;
+        auto blocked = o;
+        blocked.queued_shots.push_back({1, 1, blocked.x, blocked.y, 0, 0, 10, 10});
+        const auto doomed = on::Policy(cfg).decide(blocked);
+        check(doomed.depth == 0 && doomed.search.heading_layers == 0,
+              "repeat check bypassed an already latched hit");
+    }
+    on::Configuration traced_cfg;
+    traced_cfg.horizon = 24;
+    traced_cfg.beam = 64;
+    traced_cfg.retain_headings = true;
+    auto empty = o;
+    empty.queued_shots.clear();
+    on::Policy plain(traced_cfg), traced(traced_cfg);
+    std::vector<on::ValueProposal> proposals;
+    for (unsigned step = 0; step < 8; ++step) {
+        const auto a = plain.decide(empty), b = traced.decide(empty, nullptr, &proposals);
+        check(a.depth == 24 && b.depth == 24 && a.action == b.action &&
+                  a.search.heading_layers == 7 &&
+                  a.search.heading_layers == b.search.heading_layers &&
+                  a.search.heading_keys == b.search.heading_keys && proposals.size() == 4,
+              "terminal heading retention depends on tracing or lost H24 target context");
+        on::detail::apply_movement(empty.movement, empty.x, empty.y,
+                                   on::detail::movement_delta(empty.movement, empty.latched_input));
+        empty.latched_input = a.action;
+        ++empty.update;
+    }
+}
+void child_cursor_contract() {
+    std::array<on::detail::ChildCursorRecord, 18> records{};
+    records[0] = {on::detail::kChildSpawnKind, false};
+    auto r = on::detail::child_birth_cursor(records, 0, on::detail::kChildSpawnKind, 0, 0, 0, 24);
+    check(r.index == 0 && r.update == 1 && !r.unsupported, "active-zero birth lost");
+    records[0] = {};
+    records[1] = {on::detail::kChildSpawnKind, true};
+    r = on::detail::child_birth_cursor(records, 0, on::detail::kChildSpawnKind, 0x10, -1, 1, 24);
+    check(r.index < 0 && !r.unsupported, "NONE did not end narrow preview");
+    records[0] = {on::detail::kChildWaitKind, false};
+    records[1] = {0x10, false};
+    records[2] = {on::detail::kChildSpawnKind, true};
+    r = on::detail::child_birth_cursor(records, 1,
+                                       on::detail::kChildSpawnKind | on::detail::kChildWaitKind,
+                                       on::detail::kChildWaitKind, 3, 0, 24);
+    check(r.index == 2 && r.update == 5 && !r.unsupported, "mask skip bypassed WAIT gate");
+    r = on::detail::child_birth_cursor(records, 1,
+                                       on::detail::kChildSpawnKind | on::detail::kChildWaitKind,
+                                       on::detail::kChildWaitKind, 0, 0, 24);
+    check(r.index == 2 && r.update == 2 && !r.unsupported, "zero WAIT omitted clear callback");
+    r = on::detail::child_birth_cursor(records, 1,
+                                       on::detail::kChildSpawnKind | on::detail::kChildWaitKind,
+                                       on::detail::kChildWaitKind, 3, 0, 4);
+    check(r.index < 0 && !r.unsupported, "birth beyond horizon entered forecast");
+    r = on::detail::child_birth_cursor(records, 1,
+                                       on::detail::kChildSpawnKind | on::detail::kChildWaitKind,
+                                       on::detail::kChildWaitKind, 3, 0, 5);
+    check(r.index == 2 && r.update == 5, "birth at horizon was omitted");
+    r = on::detail::child_birth_cursor(
+        records, 1, on::detail::kChildSpawnKind | on::detail::kChildWaitKind,
+        on::detail::kChildWaitKind, std::numeric_limits<int>::max(), 0, 200);
+    check(r.index < 0 && !r.unsupported, "WAIT clock overflowed");
+    r = on::detail::child_birth_cursor(
+        records, 1, on::detail::kChildSpawnKind | on::detail::kChildWaitKind,
+        on::detail::kChildWaitKind, 3, std::numeric_limits<float>::quiet_NaN(), 24);
+    check(r.unsupported, "nonfinite WAIT subframe accepted");
+    r = on::detail::child_birth_cursor(
+        records, 1, on::detail::kChildSpawnKind | on::detail::kChildWaitKind, 0x10, 3, 0, 24);
+    check(r.unsupported, "unmodeled blocking active transform accepted");
+    records[2] = {};
+    r = on::detail::child_birth_cursor(
+        records, 1, on::detail::kChildSpawnKind | on::detail::kChildWaitKind, 0x10, 3, 0, 24);
+    check(r.index < 0 && !r.unsupported, "unrelated cursor with no child caused false unsupported");
+    records = {};
+    records[17] = {on::detail::kChildSpawnKind, true};
+    r = on::detail::child_birth_cursor(records, 17, on::detail::kChildSpawnKind, 0, 0, 0, 24);
+    check(r.unsupported, "child record17 silently lost missing secondary");
+    r = on::detail::child_birth_cursor(records, 17, 0, 0, 0, 0, 24);
+    check(r.index < 0 && !r.unsupported, "disabled record17 incorrectly requires secondary");
+    r = on::detail::child_birth_cursor(records, 18, on::detail::kChildSpawnKind, 0, 0, 0, 24);
+    check(r.index < 0 && !r.unsupported, "terminal cursor unsupported");
+    r = on::detail::child_birth_cursor(records, -1, on::detail::kChildSpawnKind, 0, 0, 0, 24);
+    check(r.unsupported, "negative cursor accepted");
+    r = on::detail::child_birth_cursor(records, 17, on::detail::kChildSpawnKind, 0, 0, 0, 0);
+    check(r.index < 0 && !r.unsupported, "zero horizon decoded a future");
+    std::cout << "child cursor contract passed\n";
+}
+void child_birth_contract() {
+    on::Configuration config;
+    config.horizon = 24;
+    auto observation = scene();
+    observation.child_births.push_back({1, observation.x, observation.y, 0, 4, 4, 0});
+    on::Policy ordinary(config);
+    config.child_births = true;
+    on::Policy guarded(config);
+    check(ordinary.decide(observation).depth == 24 && guarded.decide(observation).depth == 0,
+          "birth coverage changed the disabled path or missed the forced first movement");
+    observation.unsupported_child_births = 1;
+    on::Policy unknown(config);
+    rejects([&] { unknown.decide(observation); }, "unsupported child birth became empty space");
+    const on::ChildBirth birth{3, 193.5076599f, 397.5036316f, 3.3f, 4, 4, 358};
+    const auto boxes = on::detail::child_birth_boxes(birth, 0);
+    rejects([&] { on::detail::child_birth_boxes(birth, std::numeric_limits<float>::max()); },
+            "non-finite derived child boxes reached indexing");
+    for (float vx : {-3.3f, 0.f, 3.3f})
+        for (float vy : {-3.3f, 0.f, 3.3f})
+            for (unsigned movements = 0; movements <= 2; ++movements) {
+                float x = birth.x, y = birth.y;
+                for (unsigned step = 0; step < movements; ++step)
+                    x += vx, y += vy;
+                const auto &box = boxes[movements < 2 ? 0 : 1];
+                check(box.x0 <= x - 2 && box.y0 <= y - 2 && box.x1 >= x + 2 && box.y1 >= y + 2,
+                      "child birth bounds omitted a pool-order/movement extreme");
+            }
 }
 void branch_value_contract() {
     on::Configuration config;
@@ -1454,6 +1645,9 @@ int main(int argc, char **argv) {
         hard_phantom_contract();
         motion_envelope_contract();
         branch_value_contract();
+        child_birth_contract();
+        child_cursor_contract();
+        retain_heading_contract();
         observation_history();
         transform_motion_history();
         pruning_and_isolation();
