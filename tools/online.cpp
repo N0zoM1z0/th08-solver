@@ -125,6 +125,8 @@ Options parse(int argc, char **argv) {
             o.policy.motion_envelope = boolean();
         else if (key == "--child-births")
             o.policy.child_births = boolean();
+        else if (key == "--scheduled-expiry")
+            o.policy.scheduled_expiry = boolean();
         else if (key == "--retain-headings")
             o.policy.retain_headings = boolean();
         else if (key == "--value-model")
@@ -384,7 +386,8 @@ int run(const Options &o) {
                 o.policy.queued_shots ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
                 o.policy.queued_lasers ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
                 o.policy.direct_turn_envelope, o.policy.motion_envelope || !o.value_model.empty(),
-                o.policy.child_births ? unsigned(o.policy.horizon + o.policy.tail_check) : 0);
+                o.policy.child_births ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
+                o.policy.scheduled_expiry ? unsigned(o.policy.horizon + o.policy.tail_check) : 0);
             if (o.profile_components)
                 components.capture_ns +=
                     std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin)
@@ -450,6 +453,10 @@ int run(const Options &o) {
             search_stats.heading_layers += decision.search.heading_layers;
             search_stats.heading_keys += decision.search.heading_keys;
             search_stats.child_birth_frames += decision.search.child_birth_frames;
+            search_stats.lifetime_records += decision.search.lifetime_records;
+            search_stats.lifetime_projected_frames += decision.search.lifetime_projected_frames;
+            search_stats.lifetime_skipped_frames += decision.search.lifetime_skipped_frames;
+            search_stats.unsupported_lifetimes += decision.search.unsupported_lifetimes;
             search_stats.value_evaluations += decision.search.value_evaluations;
             search_stats.value_ms += decision.search.value_ms;
             search_stats.plan_adoptions += decision.search.plan_adoptions;
@@ -583,6 +590,13 @@ int run(const Options &o) {
            << ",\"motion_envelope_frames\":" << search_stats.motion_envelope_frames
            << ",\"child_births\":" << o.policy.child_births
            << ",\"child_birth_frames\":" << search_stats.child_birth_frames
+           << ",\"scheduled_expiry\":" << o.policy.scheduled_expiry
+           << ",\"lifetime_coverage\":\"current-program-despawn-or-validated-child-fade\""
+           << ",\"lifetime_hypothesis\":\"unchanged-program-callbacks-and-unit-clock\""
+           << ",\"lifetime_records\":" << search_stats.lifetime_records
+           << ",\"lifetime_projected_frames\":" << search_stats.lifetime_projected_frames
+           << ",\"lifetime_skipped_frames\":" << search_stats.lifetime_skipped_frames
+           << ",\"unsupported_lifetimes\":" << search_stats.unsupported_lifetimes
            << ",\"retain_headings\":" << o.policy.retain_headings
            << ",\"heading_layers\":" << search_stats.heading_layers
            << ",\"heading_keys\":" << search_stats.heading_keys

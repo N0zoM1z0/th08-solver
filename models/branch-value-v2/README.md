@@ -46,7 +46,14 @@ tune SHA-256 is
 `df5d754d9d764dfafd1fed680e6598a06fbc1cbc6f8af7d9facbc44d57e5f7b9`.
 Episode-weighted train BCE/Brier are 0.20254/0.05163; tune 0.21196/0.05458.
 The target and class balance differ from v1, so comparing their raw losses does
-not establish model improvement. Native paired evaluation is still required.
+not establish model improvement. A TRAIN-fitted equal-parent constant prior
+(`p=0.9413043`) gives train BCE/Brier 0.22336/0.05525 and tune 0.23480/0.05889.
+The model improves modestly on that baseline on this deliberately tail-biased
+conditional sample; this is not population calibration. The complete row/sidecar
+audit checks nominal-prefix identities, actual submissions and train-only scaling,
+but does not independently re-execute every Native branch outcome.
+All three global multipliers 0.25/1/4 complete 7/8 tuning proxies. The frozen
+smallest-weight tie rule selects 0.25; fresh Native paired evaluation is required.
 
 Collection uses H24/beam192/cell16/guard16/reach-filter, hard phantoms and motion
 envelope; child-birth/heading options, lag, fallbacks, legacy risk and learned
@@ -60,4 +67,4 @@ GCC13.3 Release on EPYC9654 uses policy `-march=native` and `-ffp-contract=off`;
 Native library/DAT identities are unchanged from v1. Full source/binaries, labels,
 actual branch inputs, parent tapes and failed receipts stay local and ignored.
 The saved snapshot is not retrained on evaluation outcomes. Global weight tuning
-and new-seed evaluation remain separate gates owned by [Status](../../docs/STATUS.md).
+and new-seed evaluation are separate gates owned by [Status](../../docs/STATUS.md).

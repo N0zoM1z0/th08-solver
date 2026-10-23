@@ -9,16 +9,21 @@
 #include "th08/direct_laser_policy.hpp"
 #include "th08/ecl_turn_hint.hpp"
 #include "th08/online_child_birth.hpp"
+#include "th08/online_lifetime.hpp"
 #include <cmath>
 #include <limits>
 
 namespace th08::online {
 namespace {
-void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
-                         Observation &observation) {
+static_assert(detail::kLifetimeWaitKind == BULLET_TRANSFORM_WAIT &&
+              detail::kLifetimeDespawnKind == BULLET_TRANSFORM_DESPAWN);
+// A returned parent cutoff reuses the successful child-constructor validation.
+// Fade changes the parent state, but its current Fired callback still collides.
+unsigned capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
+                             Observation &observation) {
     if (parent.state != BULLET_STATE_FIRED || parent.transformIndex < 0 ||
         parent.transformIndex >= 18)
-        return;
+        return 0;
     std::array<detail::ChildCursorRecord, 18> records;
     for (std::size_t i = 0; i < records.size(); ++i)
         records[i] = {parent.transforms[i].kind, parent.transforms[i].allowWhileActive != 0};
@@ -29,7 +34,7 @@ void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
     if (cursor.unsupported)
         ++observation.unsupported_child_births;
     if (cursor.index < 0)
-        return;
+        return 0;
     const int index = cursor.index;
     const unsigned update = cursor.update;
     const auto &record = parent.transforms[index];
@@ -37,7 +42,7 @@ void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
     if (g_Supervisor.framerateMultiplier != 1.f || g_GameManager.scriptedUpdateFreeze ||
         g_GameManager.flags.deathbombFreezeActive || g_Supervisor.flags.forceExtraTimerStep) {
         unsupported();
-        return;
+        return 0;
     }
     const auto packed = std::uint32_t(record.payload.childPrimary.packedPattern);
     const int type = int((packed >> 16) & 255), mode = int((packed >> 24) & 127);
@@ -47,13 +52,13 @@ void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
     const auto count1 = std::int16_t(record.payload.childPrimary.count1);
     const auto count2 = std::int16_t(secondary.count2);
     if (count1 <= 0 || count2 <= 0)
-        return;
+        return 0;
     if (type >= int(std::size(g_BulletManager.bulletTypeSprites)) || mode > BULLET_AIM_RANDOM ||
         start >= 18 ||
         (secondary.transformFlags & (BULLET_TRANSFORM_SPAWN_FAST | BULLET_TRANSFORM_SPAWN_NORMAL |
                                      BULLET_TRANSFORM_SPAWN_SLOW))) {
         unsupported();
-        return;
+        return 0;
     }
     const auto &first = parent.transforms[start];
     // A currently copied WAIT keeps child velocity unchanged throughout these
@@ -61,7 +66,7 @@ void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
     if (first.kind != BULLET_TRANSFORM_WAIT || first.payload.timed.frames < 1 ||
         !(secondary.transformFlags & BULLET_TRANSFORM_WAIT)) {
         unsupported();
-        return;
+        return 0;
     }
     for (int next = start + 1; next < 18; ++next) {
         const auto &pending = parent.transforms[next];
@@ -69,7 +74,7 @@ void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
             break;
         if (pending.kind & secondary.transformFlags) {
             unsupported();
-            return;
+            return 0;
         }
     }
     const auto &size = g_BulletManager.bulletTypeSprites[type].collisionSize;
@@ -79,7 +84,7 @@ void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
         !std::isfinite(secondary.angleStep) || !std::isfinite(size.x) || !std::isfinite(size.y) ||
         size.x < 0 || size.y < 0) {
         unsupported();
-        return;
+        return 0;
     }
     // Native interpolation rounds the subtraction/product/add separately. The
     // triangle bound encloses all interpolation fractions, including RNG modes.
@@ -88,12 +93,30 @@ void capture_child_birth(const th08::Bullet &parent, int slot, unsigned horizon,
                                        std::numeric_limits<float>::infinity());
     if (!std::isfinite(bound)) {
         unsupported();
-        return;
+        return 0;
     }
     float x = parent.position.x, y = parent.position.y;
     for (unsigned step = 1; step < update; ++step)
         x += parent.velocity.x, y += parent.velocity.y;
     observation.child_births.push_back({update, x, y, bound, size.x, size.y, slot});
+    return (packed & 0x80000000u) && (!parent.activeTransformFlags ||
+                                      parent.activeTransformFlags == BULLET_TRANSFORM_WAIT)
+               ? update
+               : 0;
+}
+detail::CollisionLifetime capture_collision_lifetime(const th08::Bullet &bullet, unsigned horizon) {
+    if (bullet.state != BULLET_STATE_FIRED)
+        return {};
+    std::array<detail::LifetimeRecord, 18> records;
+    for (std::size_t i = 0; i < records.size(); ++i)
+        records[i] = {bullet.transforms[i].kind, bullet.transforms[i].allowWhileActive != 0};
+    const auto &wait = bullet.exStates[BULLET_TRANSFORM_STATE_WAIT].timer;
+    const bool clock =
+        g_Supervisor.framerateMultiplier == 1.f && !g_GameManager.scriptedUpdateFreeze &&
+        !g_GameManager.flags.deathbombFreezeActive && !g_Supervisor.flags.forceExtraTimerStep;
+    return detail::scheduled_collision_lifetime(records, bullet.transformIndex,
+                                                bullet.transformFlags, bullet.activeTransformFlags,
+                                                wait.current, wait.subFrame, horizon, clock);
 }
 unsigned native_spawn_clock(const th08::Bullet &bullet) {
     if (g_Supervisor.framerateMultiplier != 1 || g_GameManager.scriptedUpdateFreeze ||
@@ -152,7 +175,7 @@ TurnHint native_turn_hint(const headless::EclContextView &view) {
 void capture_memory(headless::Session &session, std::uint64_t update, Observation &o,
                     bool include_actors, unsigned queued_horizon, unsigned queued_laser_horizon,
                     bool include_turn_hints, bool include_motion_alternatives,
-                    unsigned child_horizon) {
+                    unsigned child_horizon, unsigned lifetime_horizon) {
     const auto state = session.state();
     o.update = update;
     o.stage = state.stage;
@@ -178,19 +201,28 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
     o.bullets.clear();
     o.child_births.clear();
     o.unsupported_child_births = 0;
+    o.unsupported_lifetimes = 0;
     for (const auto &b : session.bullets()) {
         // The final pool entry is a source sentinel, never a gameplay bullet.
         if (b.slot == 0x600 && b.state == BULLET_STATE_SENTINEL)
             continue;
         const auto &native = g_BulletManager.bullets[b.slot];
-        if (child_horizon)
-            capture_child_birth(native, b.slot, child_horizon, o);
+        const unsigned parent_fade =
+            child_horizon ? capture_child_birth(native, b.slot, child_horizon, o) : 0;
         o.bullets.push_back({b.x, b.y, b.vx, b.vy, b.state, b.slot,
                              int(native.sprites.bulletVm.activeSpriteIndex), b.full_width,
                              b.full_height, b.active_transforms, b.vector_acceleration_x,
                              b.vector_acceleration_y, b.vector_acceleration_timer,
                              b.vector_acceleration_duration, native.collisionDisabled != 0});
         o.bullets.back().activation_update = native_spawn_clock(native);
+        if (lifetime_horizon) {
+            const auto lifetime = capture_collision_lifetime(native, lifetime_horizon);
+            auto &copied = o.bullets.back();
+            copied.collision_until = lifetime.collision_until;
+            o.unsupported_lifetimes += lifetime.unsupported;
+            if (parent_fade && parent_fade <= lifetime_horizon)
+                copied.collision_until = parent_fade;
+        }
         if (include_motion_alternatives && native.collisionDisabled &&
             native.state == BULLET_STATE_FIRED) {
             // Source mode-restoration callbacks can replace the displayed ghost

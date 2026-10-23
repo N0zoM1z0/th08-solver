@@ -45,6 +45,10 @@ signal with regressions and uncertainty; the complete Stage 5 sample passes all
 three arms. [Status](docs/STATUS.md) owns the counts, costs and evidence limits.
 Selected compact [learned artifacts](models/README.md)
 are preserved with exact identities and provenance; raw training/run data stay local.
+Further opt-in current-program forecasts, direction retention and versioned
+replanning labels are under paired evaluation. A separate wall-paced executor
+now exposes Native stage-initialization costs as well as decision deadlines;
+[Status](docs/STATUS.md) records the retained failure and measured optimization target.
 
 Two of three Lunatic Final A stories through natural 4A now strictly verify with
 the same uniform current-memory controller. Story diagnosis retains a Stage 5

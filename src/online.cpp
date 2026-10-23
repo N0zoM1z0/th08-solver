@@ -5,6 +5,7 @@
 #include "th08/online_child_birth.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
+#include "th08/online_lifetime.hpp"
 #include "th08/online_motion_envelope.hpp"
 #include "th08/online_movement.hpp"
 #include "th08/online_plan.hpp"
@@ -334,6 +335,10 @@ struct Policy::Impl {
             if (opt.spawn_clock && b.activation_update &&
                 (b.state < 2 || b.state > 4 || o.movement.frm != 1 || b.activation_update > 32768))
                 throw std::runtime_error("unsupported_online_spawn_clock");
+            if (opt.scheduled_expiry && b.collision_until &&
+                (b.state != 1 || b.collision_until > 200 || o.movement.frm != 1 ||
+                 (b.active_transforms && b.active_transforms != detail::kLifetimeWaitKind)))
+                throw std::runtime_error("invalid_online_collision_lifetime");
             const auto &r = b.relative_turn;
             if (opt.relative_turns && r.updates) {
                 const auto &turn = r.state;
@@ -562,6 +567,15 @@ struct Policy::Impl {
         }
     }
 
+    int collision_horizon(const Bullet &bullet, int horizon) {
+        if (!opt.scheduled_expiry || !bullet.collision_until)
+            return horizon;
+        const int projected = std::min(horizon, int(bullet.collision_until));
+        ++search_stats.lifetime_records;
+        search_stats.lifetime_projected_frames += projected;
+        search_stats.lifetime_skipped_frames += horizon - projected;
+        return projected;
+    }
     void kinematic_forecast(const Observation &observation, int horizon,
                             std::vector<HFrame> &frames) {
         for (int j = 1; j <= horizon; ++j)
@@ -578,12 +592,13 @@ struct Policy::Impl {
                 // patterns): no hard hazard, only a learned soft-risk region.
                 if (!(opt.risk_phantoms && risk.loaded && b.state == 1))
                     continue;
+                const int projected = collision_horizon(b, horizon);
                 const float s1 = std::hypot(b.vx, b.vy);
                 const auto *rq =
                     lookup_risk(current_segment, int(nb.sprite), int(std::lround(w * 10)),
                                 speed_bucket(s1) + 4, age_bucket(m.born >= 0 ? now - m.born : 0));
                 float x = b.x, y = b.y;
-                for (int j = 1; j <= horizon; ++j) {
+                for (int j = 1; j <= projected; ++j) {
                     x += b.vx, y += b.vy;
                     const float rm = std::max(2.f, rq ? std::min(12.f, risk_margin(*rq, j)) : 4.f);
                     frames[j].risk.push_back({x - w / 2.0f - rm, y - h / 2.0f - rm,
@@ -592,14 +607,15 @@ struct Policy::Impl {
                 continue;
             }
             if (b.state == 1) {
+                const int projected = collision_horizon(b, horizon);
                 // This optional prior changes only proposal obstacles. The native
                 // collision flag and the observer's mode-change history stay intact.
                 if (b.collision_disabled)
-                    search_stats.hard_phantom_frames += horizon;
+                    search_stats.hard_phantom_frames += projected;
                 detail::MotionEnvelope envelope(b.x, b.y);
                 const bool alternate = opt.motion_envelope && b.alternate_motion;
                 if (alternate)
-                    search_stats.motion_envelope_frames += horizon;
+                    search_stats.motion_envelope_frames += projected;
                 const Prev &p = prev_vel[b.slot];
                 float x = b.x, y = b.y;
                 float s1 = std::hypot(b.vx, b.vy), a1 = std::atan2(b.vy, b.vx), ds = 0, da = 0;
@@ -640,7 +656,7 @@ struct Policy::Impl {
                                      age_bucket((opt.risk_stop_age && s1 < 0.05f && m.stopped >= 0)
                                                     ? now - m.stopped
                                                     : (m.born >= 0 ? now - m.born : 0)));
-                for (int j = 1; j <= horizon; ++j) {
+                for (int j = 1; j <= projected; ++j) {
                     if (opt.relative_turns && relative.updates) {
                         if (unsigned(j) <= relative.updates) {
                             if (bullet::advance_direction(flight, turn, current_movement.frm) !=
@@ -1482,6 +1498,8 @@ struct Policy::Impl {
         observe(observation);
         last_decided = observation.update;
         search_stats = {};
+        if (opt.scheduled_expiry)
+            search_stats.unsupported_lifetimes = observation.unsupported_lifetimes;
         indexed_horizon = 0;
         index_extension_ns = 0;
         time_index_extensions = timing != nullptr;

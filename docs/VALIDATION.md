@@ -39,6 +39,15 @@ branch. The first frozen collection predates that sidecar and retains its exact
 producer binary/source and parent tapes instead; the model card preserves this
 provenance distinction.
 
+The online-policy lifetime regression preserves source dispatch order: an active
+gate precedes masked-record skipping, WAIT clears after program dispatch, and a
+DESPAWN still collides in its activation callback. An independently stepped
+three-position corridor checks the inclusive cutoff, longest safe partial depth,
+unavoidable latched first hit, unknown-clock fallback and disabled metadata/tie
+transparency. Native known-seed pilots and fresh action execution are separate
+checks of the enabled proposal profile; neither this narrow program hypothesis
+nor agreement between two Native executions is an independent physics oracle.
+
 The shared spatial selector's `plan_contract` regression compares partial rank
 selection against the frozen former full-sort algorithm in 420 deterministic
 cases. It checks every retained float field, action, violation count, parent,

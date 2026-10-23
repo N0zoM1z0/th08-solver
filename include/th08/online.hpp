@@ -61,6 +61,9 @@ struct Bullet {
     // An owned source-state alternative, without an activation-time promise.
     bool alternate_motion = false;
     float alternate_vx = 0, alternate_vy = 0;
+    // Current-program hypothesis for this incarnation, not a slot-lifetime
+    // guarantee. One-based last potentially colliding update; zero is unknown.
+    unsigned collision_until = 0;
 };
 struct LaserState {
     float endOffset = 0, startOffset = 0, startLength = 0, width = 0;
@@ -119,6 +122,7 @@ struct Observation {
     std::vector<QueuedShot> queued_shots;
     std::vector<ChildBirth> child_births;
     std::uint32_t unsupported_child_births = 0;
+    std::uint32_t unsupported_lifetimes = 0;
     std::uint32_t unsupported_queued_shots = 0;
     std::vector<QueuedLaser> queued_lasers;
     std::uint32_t unsupported_queued_lasers = 0;
@@ -142,6 +146,7 @@ struct Configuration {
     bool hard_phantoms = false;
     bool motion_envelope = false;
     bool child_births = false;
+    bool scheduled_expiry = false;
     // Keep incoming direction where the next expansion repeats it and at
     // terminal endpoints whose conditional value can depend on the last input.
     bool retain_headings = false;
@@ -198,6 +203,11 @@ struct SearchStatistics {
     std::uint64_t hard_phantom_frames = 0;
     std::uint64_t motion_envelope_frames = 0;
     std::uint64_t child_birth_frames = 0;
+    // Positive lifetime hypotheses actually used in hard/soft projections,
+    // and their pre-pruning bullet/update work. Unknown preview clocks keep
+    // the full original projection; these counts do not imply full coverage.
+    std::uint64_t lifetime_records = 0, lifetime_projected_frames = 0;
+    std::uint64_t lifetime_skipped_frames = 0, unsupported_lifetimes = 0;
     std::uint64_t value_evaluations = 0;
     double value_ms = 0;
 };

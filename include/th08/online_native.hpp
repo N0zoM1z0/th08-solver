@@ -10,5 +10,6 @@ namespace th08::online {
 void capture_memory(headless::Session &session, std::uint64_t update, Observation &observation,
                     bool include_actors = false, unsigned queued_horizon = 0,
                     unsigned queued_laser_horizon = 0, bool include_turn_hints = false,
-                    bool include_motion_alternatives = false, unsigned child_horizon = 0);
+                    bool include_motion_alternatives = false, unsigned child_horizon = 0,
+                    unsigned lifetime_horizon = 0);
 } // namespace th08::online

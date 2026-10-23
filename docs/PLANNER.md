@@ -414,6 +414,22 @@ unsupported candidates stop this enabled profile; finite inputs producing
 nonfinite derived geometry also fail. `child_birth_frames` charges added boxes.
 Native flags, RNG and collision remain unchanged; the option defaults off.
 
+Optional `--scheduled-expiry 1` copies a one-based inclusive final collision update
+for the currently observed bullet incarnation. Its narrow preview reads only the
+first enabled DESPAWN reached through masked records under active NONE/WAIT and
+unit clocks. It tests the active gate before skipping masked records. A blocked
+WAIT at timer K permits execution at K+2; the Fired callback that changes state
+still performs collision. Only later projected updates are omitted. With child
+births enabled, an already validated fading child constructor can supply the same
+parent cutoff. No future gameplay RNG or Native update is executed.
+Unsupported previews keep the old full projection and charge
+`unsupported_lifetimes`; other enabled operations stop this narrow preview without
+claiming coverage. Positive cutoffs assume unchanged programs/callbacks/timing,
+not a universal lifetime guarantee. They cannot certify a safe prefix or predict
+slot reuse. `lifetime_records`, `lifetime_projected_frames` and
+`lifetime_skipped_frames` charge hard/soft bullet projections before reach pruning.
+The option defaults off and disabled metadata leaves actions/tie draws unchanged.
+
 Optional `--retain-headings 1` distinguishes all nine incoming directions and focus
 where the following layer must repeat that input, and at terminal endpoints whose
 conditional target depends on it. Terminal retention is independent of tracing,

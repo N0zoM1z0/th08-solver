@@ -5,6 +5,7 @@
 #include "th08/online_child_birth.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
+#include "th08/online_lifetime.hpp"
 #include "th08/online_motion_envelope.hpp"
 #include "th08/online_movement.hpp"
 #include "th08/online_plan.hpp"
@@ -711,6 +712,134 @@ void child_birth_contract() {
                 check(box.x0 <= x - 2 && box.y0 <= y - 2 && box.x1 >= x + 2 && box.y1 >= y + 2,
                       "child birth bounds omitted a pool-order/movement extreme");
             }
+}
+void scheduled_expiry_contract() {
+    namespace detail = on::detail;
+    std::array<detail::LifetimeRecord, 18> records{};
+    records[0] = {detail::kLifetimeDespawnKind, false};
+    auto decode = [&](std::uint32_t active, int timer, float fraction, unsigned horizon,
+                      bool clock = true) {
+        return detail::scheduled_collision_lifetime(
+            records, 0, detail::kLifetimeWaitKind | detail::kLifetimeDespawnKind, active, timer,
+            fraction, horizon, clock);
+    };
+    check(decode(0, 0, 0, 24).collision_until == 1 &&
+              decode(detail::kLifetimeWaitKind, 0, 0, 24).collision_until == 2 &&
+              decode(detail::kLifetimeWaitKind, 1, 0, 24).collision_until == 3,
+          "DESPAWN lost the active-gate/WAIT-clear callback order");
+    // Independent source-order replica: the switch enters Fired before Advance
+    // changes its state; collision still runs in that callback, not the next.
+    for (int initial_wait : {-1, 0, 1, 3}) {
+        bool fired = true, waiting = initial_wait >= 0;
+        int timer = std::max(0, initial_wait);
+        const unsigned last =
+            decode(waiting ? detail::kLifetimeWaitKind : 0, timer, 0, 24).collision_until;
+        for (unsigned update = 1; update <= last + 1; ++update) {
+            const bool entered_fired = fired;
+            if (fired && !waiting)
+                fired = false;
+            if (waiting) {
+                if (timer <= 0)
+                    waiting = false;
+                else
+                    --timer;
+            }
+            check(entered_fired == (update <= last),
+                  "lifetime excluded the activation collision or kept the next callback");
+        }
+    }
+    records[0] = {0x10u, false}; // Masked, but its active gate is still tested.
+    records[1] = {detail::kLifetimeDespawnKind, true};
+    check(decode(detail::kLifetimeWaitKind, 3, 0, 24).collision_until == 5,
+          "masked blocking record bypassed a WAIT before allowed DESPAWN");
+    check(decode(detail::kLifetimeWaitKind, 3, 0, 4).collision_until == 0 &&
+              decode(detail::kLifetimeWaitKind, 3, 0, 5).collision_until == 5 &&
+              decode(detail::kLifetimeWaitKind, std::numeric_limits<int>::max(), 0, 200)
+                      .collision_until == 0,
+          "lifetime crossed its horizon or overflowed a WAIT clock");
+    check(decode(0x10u, 0, 0, 24).unsupported &&
+              decode(detail::kLifetimeWaitKind, -1, 0, 24).unsupported &&
+              decode(detail::kLifetimeWaitKind, 0, std::numeric_limits<float>::quiet_NaN(), 24)
+                  .unsupported &&
+              decode(0, 0, 0, 24, false).unsupported,
+          "unsupported lifetime clock became an expiry promise");
+    records[0] = {};
+    check(!decode(0x10u, -1, 1, 24).unsupported && decode(0x10u, -1, 1, 24).collision_until == 0,
+          "NONE did not end the narrow lifetime preview");
+    records = {};
+    records[17] = {detail::kLifetimeDespawnKind, false};
+    check(detail::scheduled_collision_lifetime(records, 17, detail::kLifetimeDespawnKind, 0, 0, 0,
+                                               24, true)
+                  .collision_until == 1,
+          "one-record DESPAWN incorrectly required a secondary payload");
+
+    on::Configuration config;
+    config.horizon = 3;
+    config.beam = 64;
+    config.grow = config.risk_weight = 0;
+    config.queued_shots = true;
+    auto observation = scene();
+    observation.x = 188;
+    observation.latched_input = 128;
+    observation.movement.minx = 188;
+    observation.movement.maxx = 200;
+    observation.movement.miny = observation.movement.maxy = 400;
+    observation.movement.axis[0] = observation.movement.axis[1] = 4;
+    observation.movement.diag[0] = observation.movement.diag[1] = 4;
+    observation.movement.half = {.1f, .1f, 0};
+    observation.bullets = {bullet(0, 196, 400, 0, 0)};
+    observation.bullets[0].collision_until = 1;
+    // Movement two must enter x196, after the old incarnation stops colliding.
+    observation.queued_shots = {{2, 1, -305.2f, 400, 0, 0, 1000, 10},
+                                {2, 1, 697.2f, 400, 0, 0, 1000, 10}};
+    const auto legacy = on::Policy(config).decide(observation);
+    config.scheduled_expiry = true;
+    const auto expired = on::Policy(config).decide(observation);
+    check(legacy.depth == 1 && expired.depth == 3 && legacy.search.lifetime_records == 0 &&
+              expired.search.lifetime_records == 1 &&
+              expired.search.lifetime_projected_frames == 1 &&
+              expired.search.lifetime_skipped_frames == 2,
+          "scheduled expiry missed the corridor or hid projection work");
+    observation.bullets[0].collision_until = 2;
+    check(on::Policy(config).decide(observation).depth == 1,
+          "inclusive expiry removed a lethal update and overstated partial depth");
+    observation.bullets[0].collision_until = 0;
+    observation.unsupported_lifetimes = 1;
+    const auto unknown = on::Policy(config).decide(observation);
+    check(unknown.depth == legacy.depth && unknown.action == legacy.action &&
+              unknown.search.unsupported_lifetimes == 1 && unknown.search.lifetime_records == 0,
+          "unsupported lifetime removed an unbounded hazard or lost coverage accounting");
+    observation.unsupported_lifetimes = 0;
+    observation.bullets[0].collision_until = 1;
+    observation.x = 192;
+    const auto latched = on::Policy(config).decide(observation);
+    check(latched.depth == 0 && latched.search.lifetime_projected_frames == 1,
+          "expiry hid an already-latched first-update collision");
+    observation.bullets[0].collision_until = 201;
+    rejects([&] { on::Policy(config).decide(observation); },
+            "out-of-profile positive lifetime metadata was accepted");
+
+    // Disabled metadata is inert across consecutive observations, including tie RNG.
+    on::Configuration ordinary;
+    ordinary.horizon = 12;
+    ordinary.beam = 64;
+    on::Policy plain(ordinary), ignored(ordinary);
+    auto current = scene();
+    current.bullets = {bullet(0, 110, 100, 1, 0)};
+    for (unsigned update = 0; update < 8; ++update) {
+        current.bullets[0].collision_until = 0;
+        const auto a = plain.decide(current);
+        current.bullets[0].collision_until = 1;
+        const auto b = ignored.decide(current);
+        check(a.action == b.action && a.depth == b.depth && b.search.lifetime_records == 0,
+              "disabled lifetime metadata changed ordinary actions or tie progression");
+        on::detail::apply_movement(
+            current.movement, current.x, current.y,
+            on::detail::movement_delta(current.movement, current.latched_input));
+        current.latched_input = a.action;
+        ++current.update;
+        current.bullets[0].x += current.bullets[0].vx;
+    }
 }
 void branch_value_contract() {
     on::Configuration config;
@@ -1646,6 +1775,7 @@ int main(int argc, char **argv) {
         motion_envelope_contract();
         branch_value_contract();
         child_birth_contract();
+        scheduled_expiry_contract();
         child_cursor_contract();
         retain_heading_contract();
         observation_history();
