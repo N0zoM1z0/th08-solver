@@ -331,6 +331,23 @@ bridge overhead. Bounded work or asynchronous planning with an explicit fallback
 must account for stale observations and missed decisions, then pass complete-run
 and independent-seed survival checks under that actual timing behavior. Memory
 access removes the need for image recognition; it does not establish those gates.
+The owner-supplied [realtime analysis](../preparations/10.23-with-claude/TH08_online_realtime_analysis.md)
+guides the next algorithm phase. Its no-model VM measurements are external
+evidence to reproduce on this build, including the actual spell-166 laser window.
+First test exact inverse rotations, bounded spatial retention and an optional
+policy architecture target against unchanged complete actions and the full suite.
+Then test owned plan reuse with deterministic lag 0/1/2: forced inputs must align
+with the recording latch, adopted plans must match the executed prefix, and stale
+results must be discarded after emergency replacement or lifecycle changes.
+Lag 0 keeps the synchronous action tape. Lag 1/2 reports executor/planner latency,
+overruns, checks, adoptions, emergencies and dropped results, without calling
+synchronous delay accounting a live deadline guarantee. Exact kernel batching,
+local deduplication, parallel probes and lazy forecast/index work require their
+own ordered differential checks and measured adoption decisions. Behavior-changing
+options use frozen paired seed banks; no significant difference is not evidence
+of equivalence, and spell-practice outcomes do not establish story probabilities.
+Learning, native-lookahead alternatives and the retail bridge remain subsequent
+work under their documented information and execution boundaries.
 Full configuration and executable/DAT/action/prefix/model hashes accompany the
 result. Source archives, model provenance, process receipts and failed tapes remain
 in ignored local experiments. Success requires fresh complete action execution,

@@ -16,6 +16,18 @@ fork rollouts and verified commits; it adds no spell-92 strategy branch. The
 and failed searches, fresh verification, budgets, executable identities and total
 native costs. Unfinished processes contribute only a pending identifier.
 
+The current owner priority follows the preserved October 23
+[realtime analysis](../preparations/10.23-with-claude/TH08_online_realtime_analysis.md):
+reproduce its actual spell-166 workload, validate exact kernel optimizations,
+then test plan reuse and deterministic planning latency before learning work.
+Only the analysis was supplied; its referenced patches and experiment artifacts
+are absent, so the mechanisms will be implemented and independently measured here.
+The source document stays unchanged. Its two-core no-model VM results do not
+transfer to the current learned-risk profile. Fresh complete 6B controls with
+and without the unchanged model are running to identify the correct windows;
+pending controls add no new verified coverage. [Planner](PLANNER.md) owns the
+algorithm-phase acceptance gates and current-memory boundary.
+
 The latest scope prioritizes random-seed generalization. The reference catalog
 covers 108 full runs: twelve team/solo shots, each with Final A/B at
 Easy/Normal/Hard/Lunatic and a full Extra entry. The
