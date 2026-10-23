@@ -618,10 +618,37 @@ native/DAT CTests pass after each change in 697.28/636.97/688.80/662.47 seconds 
 two workers; the default Stage 2 action SHA remains unchanged. At most four
 controllers use a twelve-core CPU quota and eight-GiB memory cap on the shared
 host; the earlier isolated micro units each use six-core/four-GiB caps.
-The latest full-stage p99 is 12.16/13.91 ms, but maxima are 22.23/15.84 ms and
+The latest two-stage gate's p99 is 12.16/13.91 ms, but maxima are 22.23/15.84 ms and
 2/0 decisions exceed the 1000/60-ms deadline. These clocks exclude native execution
 and file I/O, and the harness still waits for decisions. No enforced-deadline,
 live retail, new seed coverage or independent physics claim follows from this speedup.
+
+A later-entry comparison extends the same H64/beam192/cell16/guard16 profile from
+pre-optimization `83d09a6` to `0ee1056`, with unchanged native library, DAT and model
+files. These six completed pairs have identical full action bytes and all
+non-timing behavioral fields:
+
+| Entry / shot / seed | Updates and outcome | Controller mean, old → optimized (ms) | p99, old → optimized (ms) |
+| --- | --- | --- | --- |
+| 3 / 1 / 0 | 35534, complete | 14.11 → 8.19 | 22.33 → 16.93 |
+| 4A / 1 / 29768 | 43912, complete | 14.40 → 8.60 | 20.38 → 15.84 |
+| 4B / 0 / 0 | 31333, death in 88 | 13.27 → 8.10 | 18.67 → 13.88 |
+| 5 / 0 / 0 | 44346, complete | 14.98 → 9.34 | 20.92 → 16.62 |
+| 6A / 0 / 0 | 72545, complete | 15.13 → 9.47 | 21.31 → 17.30 |
+| 6B / 0 / 0 | 64744, complete | 15.55 → 9.98 | 30.18 → 27.08 |
+
+All entries are Lunatic. The two Finals use the documented non-practice power-zero
+standalone checkpoint (`story:1`, natural route, no explicit route unlock); the
+others use practice starts. All five completions freshly execute with matching
+score/RNG/counts and naturally replay with zero death/bomb rows, adding 261081
+native updates and the same number of replay rows. The twelve timed runs cost
+584828 native updates and 7025.58 summed solver wall seconds. Four earlier Final
+setup attempts were rejected before gameplay because explicit route unlock is
+invalid at a direct Final checkpoint; their exit-2 receipts and original protocol
+remain retained. The corrected profile adds two four-update preflights. Extra is
+still running under the same frozen comparison. The retained 4B death is behavior
+agreement, not a solved workload. These known diagnosis seeds do not add unseen
+coverage; later-stage p99 still prevents a general 60 FPS claim.
 
 The owner prioritizes further measured algorithmic speedups before model/training
 replacement. Native/replay correctness remains required even if a later stochastic
