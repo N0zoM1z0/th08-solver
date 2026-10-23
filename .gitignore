@@ -11,6 +11,12 @@
 /reports/native/**/*.json
 /reports/native/**/*.rpy
 /reports/native/**/*.actions
+# Explicitly requested, audited complete online 4A story captures.
+!/reports/native/online_story_4a_validation.json
+!/reports/native/replays/online-story-4a-v1--s0.rpy
+!/reports/native/replays/online-story-4a-v1--s0.actions
+!/reports/native/replays/online-story-4a-v1--s29768.rpy
+!/reports/native/replays/online-story-4a-v1--s29768.actions
 **/private_resources/
 __pycache__/
 *.py[cod]

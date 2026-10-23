@@ -267,11 +267,19 @@ training seeds unseen. Teacher-conditioned futures, rounded funnel paths and
 retrospectively selected predictors remain diagnostic evidence.
 
 The initial execution mode is `forward-measured`: observation copying, policy and
-route-input decoration are timed through input submission, with mean, p99, p99.9,
+route-input decoration are timed before `Session::step`, with mean, p99, p99.9,
 maximum and deadline misses. Native execution excluding measured file I/O, setup,
 prefix cost and whole-loop wall time are separate. It waits for late decisions;
 `deadline_enforced:false` is explicit. A future bounded-work/fallback policy must
 be evaluated under its actual execution behavior before any real-time claim.
+The current driver calls the owned native Session directly and advances it only
+after a decision; it has no unpaused retail-memory/input bridge. A live 60 FPS
+gate must let the game advance on schedule, align snapshots and input sampling
+with the recording latch, and measure observation-to-input latency including
+bridge overhead. Bounded work or asynchronous planning with an explicit fallback
+must account for stale observations and missed decisions, then pass complete-run
+and independent-seed survival checks under that actual timing behavior. Memory
+access removes the need for image recognition; it does not establish those gates.
 Full configuration and executable/DAT/action/prefix/model hashes accompany the
 result. Source archives, model provenance, process receipts and failed tapes remain
 in ignored local experiments. Success requires fresh complete action execution,

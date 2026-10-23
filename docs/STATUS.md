@@ -508,6 +508,15 @@ The complete 2/3 batch costs 630494 native updates and 9843.38 summed solver wal
 seconds; fresh checks add 463976 updates and natural playback adds 463966 rows.
 Unit memory peaks at 268288000 bytes. These are native-profile completions,
 without enforced deadlines, retail equivalence or all-seed certification.
+The owner-requested two successful replay/action pairs are now archived in
+[native replays](../reports/native/replays/), with the exact frozen profile,
+artifact hashes, decision timings and fresh publication checks in the
+[publication audit](../reports/native/online_story_4a_validation.json). Both
+published tapes freshly execute with matching score/RNG/counts and all five
+transition tuples; playback of the unchanged published replay bytes again
+matches the ordered stage path, calculation count and score with zero death/bomb
+rows. Neither new replay has been played in retail. Publication does not rerun
+the controller or transfer the frozen result to current main.
 Seed 60950 dies at 166518 in Stage 5 spell 107. Five diagnostic executions
 (832590 additional native updates) reproduce score/RNG and show a long-observed
 phantom becoming real with a velocity change on the fatal update. The main
@@ -556,8 +565,9 @@ controller units have 96 tasks, six CPU cores, 6-GiB high/8-GiB hard memory
 limits and no extra swap. Teacher corrections use at most two planners, 192 tasks,
 four CPU cores and 8-GiB high/16-GiB hard memory limits; the successor is serial.
 Measured teacher memory peaks stay below 1.3 GB. No enforced-deadline or retail live
-controller is established. New tapes, replays, models, JSON reports and process receipts stay
-under ignored local storage.
+controller is established. Except for the explicitly requested two complete 4A
+story captures and their publication audit, new tapes, replays, models, JSON
+reports and process receipts stay under ignored local storage.
 
 The route interfaces pass all 38 native/DAT CTests; all 108 replay-corpus outcome,
 row-count and fingerprint tuples match the preceding runtime (106/108 against the

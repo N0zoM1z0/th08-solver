@@ -39,6 +39,11 @@ not establish a 60 FPS controller.
 Two of three Lunatic Final A stories through natural 4A now strictly verify with
 the same uniform current-memory controller. Story diagnosis retains a Stage 5
 failure; [Status](docs/STATUS.md) owns the exact profile and validation.
+The owner-requested [seed-0 replay](reports/native/replays/online-story-4a-v1--s0.rpy)
+and [seed-29768 replay](reports/native/replays/online-story-4a-v1--s29768.rpy), full
+action tapes and [publication audit](reports/native/online_story_4a_validation.json)
+are tracked. These two captures have fresh native verification; neither has been
+validated in retail or with enforced 60 FPS deadlines.
 
 The preceding random-seed evaluation is complete: all 12 diagnosis and 12 held-out
 cases pass fresh native/replay checks under the frozen offline solver. This finite
@@ -48,7 +53,8 @@ were interrupted. The [108-case catalog](reports/native/planner_route_matrix.jso
 remains the coverage reference. Its [original protocol](reports/native/planner_route_protocol.json)
 retains the baseline profiles, unlock history and bounded continuation costs.
 The [published route ledger](reports/native/planner_route_summary.json) retains a
-24-combination snapshot. New replays, action tapes and experiment JSON stay in
+24-combination snapshot. Apart from the explicitly requested online 4A captures above,
+new replays, action tapes and experiment JSON stay in
 ignored `reports/local/`; [Status](docs/STATUS.md) owns current verified coverage.
 The report checks complete stage paths against the manifest and counts distinct
 combinations across retries. The first sparse random batch freezes 24 independent

@@ -142,8 +142,12 @@ Fresh verification must match exact terminal, score, RNG, action hash and
 calculation/control events. Natural replay must finish with the same score and
 observed calculation rows, zero death rows and zero bomb-input rows. These checks
 establish native execution agreement, not an independent physics/retail oracle.
-Source, model, process receipts, timings and all failures stay local; publish only
-sanitized conclusions and maintained code/prose.
+Source, model, process receipts, timings and all failures normally stay local;
+publish sanitized conclusions and maintained code/prose. The owner's explicit
+request for the two successful complete 4A story captures is a narrow exception:
+their [publication audit](../reports/native/online_story_4a_validation.json) retains
+sanitized provenance, timings and native verification receipts. It does not add
+retail playback or enforced-deadline evidence.
 
 Final-stage practice recording and natural playback currently differ at the
 clear-bonus branch. Native practice sets `isPracticeMode`; playback clears it and
@@ -231,8 +235,10 @@ agree directly on counts and events. `th08_replay_check` also hashes its actual 
 DAT and executable before capture. `--replay-dir` archives only verified whole-scene
 originals and full action tapes, checks the replay hash, and emits both artifact hashes
 in the ledger. Previously published originals remain under
-[native replays](../reports/native/replays/). New replays, action tapes and generated
-JSON stay under ignored `reports/local/`, together with fresh-verification copies
+[native replays](../reports/native/replays/). The owner additionally requested the
+two complete online 4A story replay/action pairs and their publication audit.
+All other new replays, action tapes and generated JSON stay under ignored
+`reports/local/`, together with fresh-verification copies
 and retained raw rows. Code and maintained prose continue through progress commits.
 Git newline conversion is disabled for `.actions` and `.rpy` so
 platform checkout settings preserve the exact bytes bound by these hashes.
