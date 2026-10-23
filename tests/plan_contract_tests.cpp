@@ -6,7 +6,10 @@
 #include "th08/plan_prefix.hpp"
 #include "th08/plan_route.hpp"
 
+#include <cerrno>
+#include <cfenv>
 #include <csignal>
+#include <cstring>
 #include <limits>
 #include <new>
 #include <string>
@@ -278,6 +281,63 @@ void spatial_beam_contract() {
           "focus diversity or stable equal-score ordering was lost");
 }
 
+void half_pixel_quantization_contract() {
+    const auto reference = [](float x) { return std::uint32_t(std::lround(x * 2)) & 2047u; };
+    const auto agrees = [&](float x) {
+        check(th08::plan::detail::half_pixel_bin(x) == reference(x),
+              "half-pixel key differs from the original lround/mask expression");
+    };
+    // Every rounding boundary in the binary32 fast range, plus the adjacent
+    // representable values on both sides. Include sign changes and key wrapping.
+    for (int i = -4194304; i < 4194304; ++i) {
+        const float x = (float(i) + .5f) * .5f;
+        agrees(std::nextafter(x, -std::numeric_limits<float>::infinity()));
+        agrees(x);
+        agrees(std::nextafter(x, std::numeric_limits<float>::infinity()));
+    }
+    std::uint32_t random = 0x76543210;
+    const auto draw = [&] { return random = random * 1664525u + 1013904223u; };
+    if constexpr (sizeof(float) == sizeof(std::uint32_t) && std::numeric_limits<float>::is_iec559) {
+        for (int i = 0; i < 1000000; ++i) {
+            const auto bits = (draw() & 0x807fffffu) | (((draw() >> 16) % 148u) << 23);
+            float x;
+            std::memcpy(&x, &bits, sizeof(x));
+            agrees(x);
+        }
+    }
+    std::fenv_t environment;
+    check(std::fegetenv(&environment) == 0, "cannot capture the floating environment");
+    const int saved_errno = errno;
+    for (const int mode : {FE_TONEAREST, FE_UPWARD, FE_DOWNWARD, FE_TOWARDZERO}) {
+        check(std::fesetround(mode) == 0, "cannot select the rounding-mode fixture");
+        for (const float value :
+             {0.f, -0.f, .24999998f, .25f, .25000003f, -.24999998f, -.25f, -.25000003f, 1048576.f,
+              -1048576.f, 2097152.f, -2097152.f, std::numeric_limits<float>::denorm_min(),
+              std::numeric_limits<float>::max(), std::numeric_limits<float>::infinity(),
+              std::numeric_limits<float>::quiet_NaN()}) {
+            volatile float input = value;
+            std::feclearexcept(FE_ALL_EXCEPT);
+            errno = E2BIG;
+            const volatile auto expected = reference(input);
+            const auto expected_flags = std::fetestexcept(FE_ALL_EXCEPT);
+            const auto expected_errno = errno;
+            std::feclearexcept(FE_ALL_EXCEPT);
+            errno = E2BIG;
+            const volatile auto actual = th08::plan::detail::half_pixel_bin(input);
+            const bool same = actual == expected &&
+                              std::fetestexcept(FE_ALL_EXCEPT) == expected_flags &&
+                              errno == expected_errno && std::fegetround() == mode;
+            if (!same) {
+                std::fesetenv(&environment);
+                errno = saved_errno;
+                check(false, "half-pixel key changed rounding mode, exception flags or errno");
+            }
+        }
+    }
+    std::fesetenv(&environment);
+    errno = saved_errno;
+}
+
 // Frozen full-sort selector: the independent oracle for partial rank selection.
 th08::plan::BeamSelection reference_spatial_beam(std::vector<th08::plan::BeamNode> &nodes,
                                                  std::size_t width, int cell_size) {
@@ -407,6 +467,7 @@ int main() {
     route_contract();
     matrix_contract();
     spatial_beam_contract();
+    half_pixel_quantization_contract();
     spatial_beam_rank_agreement();
     prefix_contract();
 }

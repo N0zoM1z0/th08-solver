@@ -631,8 +631,8 @@ SearchResult search(const std::vector<int> &slots, int horizon, int beam_width, 
                     float x = p.x, y = p.y;
                     move(sp, x, y, a);
                     // Cell-merged exact representatives: 0.5 px cells, focus kept apart.
-                    const std::uint32_t key = ((std::uint32_t(std::lround(x * 2)) & 2047u) << 12 |
-                                               (std::uint32_t(std::lround(y * 2)) & 2047u))
+                    const std::uint32_t key = (th08::plan::detail::half_pixel_bin(x) << 12 |
+                                               th08::plan::detail::half_pixel_bin(y))
                                                   << 1 |
                                               std::uint32_t(f);
                     std::uint32_t h = (key * 2654435761u) >> (32 - kSeenBits);

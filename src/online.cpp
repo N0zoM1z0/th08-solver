@@ -928,11 +928,10 @@ struct Policy::Impl {
                             continue;
                         float x = p.x, y = p.y;
                         move(sp, x, y, a);
-                        const std::uint32_t key =
-                            ((std::uint32_t(std::lround(x * 2)) & 2047u) << 12 |
-                             (std::uint32_t(std::lround(y * 2)) & 2047u))
-                                << 1 |
-                            std::uint32_t(f);
+                        const std::uint32_t key = (plan::detail::half_pixel_bin(x) << 12 |
+                                                   plan::detail::half_pixel_bin(y))
+                                                      << 1 |
+                                                  std::uint32_t(f);
                         std::uint32_t h = (key * 2654435761u) >> 16;
                         bool dup = false;
                         while (seen_gen[h] == gen) {

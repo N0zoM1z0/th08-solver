@@ -602,6 +602,22 @@ limits, and the later full-stage unit has twelve-core/eight-GiB limits. There ar
 no future native updates, rewinds or enforced deadlines. All 40 native/DAT CTests
 pass in 636.97 seconds with two workers; the default Stage 2 action SHA is unchanged.
 
+The shared half-pixel proposal key additionally uses an exact integer-significand
+path on the tested glibc/x86-64 binary32 profile, with the original library fallback
+for other layouts and large/special values. Its standard-library oracle checks
+26165824 boundary/adjacent/finite-bit values and four rounding modes, including
+exception flags and errno. Three paired prefix samples reduce story-start mean
+12.15--12.18 to 11.97--12.03 ms and Stage 4A mean 11.219--11.224 to
+10.971--11.005 ms. Full Stage 1/Stage 2 means change 11.10/10.50 to 10.84/10.31 ms;
+the exact 23149/32843-update tapes, scores, RNG and all behavioral fields still
+agree. Fresh execution and natural NMNB playback each add 55992 updates/rows.
+The sixteen measured runs cost 140784 native updates and 1534.09 summed solver
+wall seconds; all eight behavioral pairs agree. This is a roughly two-percent
+controller gain on these workloads, not the larger isolated primitive speedup.
+All 40 native/DAT CTests pass in 688.80 seconds with two workers, including the
+unchanged default Stage 2 action SHA. Budgets, precision, model and collision
+semantics remain unchanged; no enforced-deadline or retail claim is added.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

@@ -22,6 +22,11 @@ large/small-term sum whose rounding changes under reassociation. A second contra
 warms search storage, takes an immediate latched-collision return, then compares
 the next full decision with an observer-only control, including selection counts
 and exact action/depth. These guard per-decision grid and scratch-storage reuse.
+The half-pixel key contract compares the optimized path with the original
+`lround`/mask expression at every fast-range rounding boundary and its adjacent
+floats, plus one million finite bit samples (26165824 comparisons). Four rounding
+modes additionally check exact values, exception flags, errno and unchanged mode,
+including signed zero, subnormals and large/special-value library fallback.
 
 ## Current-memory CPU controller
 

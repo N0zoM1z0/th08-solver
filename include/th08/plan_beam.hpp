@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 #include <limits>
 #include <stdexcept>
 #include <unordered_map>
@@ -24,6 +25,35 @@ struct BeamSelection {
 };
 
 namespace detail {
+// Keep the original uint32_t(lround(coordinate * 2)) & 2047 proposal key.
+// On the tested glibc/x86-64 binary32 profile, round the unsigned significand
+// directly. Preserve the original multiplication and delegate large/special
+// values and other layouts to lround, including its domain/error behavior.
+inline std::uint32_t half_pixel_bin(float coordinate) {
+    const float scaled = coordinate * 2;
+#if defined(__GLIBC__) && defined(__x86_64__)
+    if constexpr (sizeof(float) == sizeof(std::uint32_t) && std::numeric_limits<float>::is_iec559) {
+        const float one = 1.f;
+        std::uint32_t layout, bits;
+        std::memcpy(&layout, &one, sizeof(layout));
+        std::memcpy(&bits, &scaled, sizeof(bits));
+        if (layout == 0x3f800000u) {
+            const auto exponent = (bits >> 23) & 255u;
+            if (exponent < 126)
+                return 0;
+            if (exponent <= 148) {
+                const auto shift = 150 - exponent;
+                const auto rounded =
+                    (((bits & 0x7fffffu) | 0x800000u) + (std::uint32_t(1) << (shift - 1))) >> shift;
+                const auto sign = bits >> 31;
+                return ((rounded ^ (0u - sign)) + sign) & 2047u;
+            }
+        }
+    }
+#endif
+    return std::uint32_t(std::lround(scaled)) & 2047u;
+}
+
 struct SpatialBin {
     int x, y;
     bool focus;

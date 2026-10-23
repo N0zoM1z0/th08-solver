@@ -133,6 +133,12 @@ merging. Observations must cover consecutive API updates, including control-only
 stage transitions. Explicit prefix reconstruction warms bullet velocity, spawn,
 direct-laser and body history without consuming search tie RNG; a continuation is
 a new policy episode, not a bit-identical resumption of an earlier search.
+The shared online/offline half-pixel key remains exactly
+`uint32_t(lround(coordinate * 2)) & 2047`. On the tested glibc/x86-64 binary32
+profile, an integer-significand path avoids the per-node library call. It retains
+the original multiplication and signed modulo result; large/special values and
+other layouts use the original library expression. This changes no deduplication
+precision, collision geometry or tie order.
 Velocity-rate estimation requires the same fired phase, collision-enabled mode
 and active-transform mask on both observations. Installing or clearing a transform,
 or a source ghost-to-real switch, may change velocity discretely; the difference
