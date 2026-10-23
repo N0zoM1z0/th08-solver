@@ -384,6 +384,16 @@ construction work. Lag zero and the default flag retain eager indexing. Index
 extensions remain executor work, including in component timing; they are excluded
 from the reported full-search duration.
 
+Optional `--hard-phantoms 1` applies a conservative category prior: currently
+collision-disabled fired bullets (state 1) enter the ordinary hard kinematic
+forecast. It requires no model, activation schedule or spell/seed branch. This
+replaces their phantom-only soft-risk path; ordinary learned margins still apply
+when a model is loaded. Disabled spawning states keep their existing handling.
+The observation's native collision flag and collision-mode motion-history boundary
+remain intact. `hard_phantom_frames` counts forecasted bullet/update pairs before
+reach pruning. The default is off: additional obstacles can restrict escape, and
+this hypothesis neither predicts activation nor certifies future native motion.
+
 The harness computes searches synchronously. Controller latency is the actual
 whole decision; modeled executor latency subtracts only the full planner search,
 retaining capture, forecast/index, checks, cancellation and emergency cost.

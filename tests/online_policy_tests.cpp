@@ -375,6 +375,77 @@ void transform_motion_history() {
     check(accelerating.decide(current).depth == 0,
           "an unchanged active acceleration lost its unavoidable latched hit");
 }
+void hard_phantom_contract() {
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 64;
+    config.grow = 0;
+    config.risk_phantoms = true;
+    for (bool pruned : {false, true}) {
+        config.reach_filter = pruned;
+        auto hard = config;
+        hard.hard_phantoms = true;
+        auto ghost = scene();
+        ghost.bullets = {bullet(0, 184, 400, 4, 0)};
+        ghost.bullets[0].full_height = 200;
+        ghost.bullets[0].collision_disabled = true;
+        auto real = ghost;
+        real.bullets[0].collision_disabled = false;
+        auto empty = ghost;
+        empty.bullets.clear();
+        const auto ignored = on::Policy(config).decide(ghost);
+        const auto absent = on::Policy(config).decide(empty);
+        const auto ordinary = on::Policy(config).decide(real);
+        const auto conservative = on::Policy(hard).decide(ghost);
+        check(ignored.action == absent.action && ignored.depth == absent.depth &&
+                  ignored.search.candidates == absent.search.candidates &&
+                  ignored.search.hard_phantom_frames == 0,
+              "default no-model policy changed its collision-disabled contract");
+        check(conservative.action == ordinary.action && conservative.depth == ordinary.depth &&
+                  conservative.depth == hard.horizon && (conservative.action & 0xf0) &&
+                  conservative.action != ignored.action &&
+                  conservative.search.candidates == ordinary.search.candidates &&
+                  conservative.search.hard_phantom_frames == unsigned(hard.horizon),
+              "hard phantom did not use the ordinary fired-bullet forecast");
+        for (std::uint16_t state : {2, 3, 4}) {
+            ghost.bullets[0].state = state;
+            const auto spawning = on::Policy(hard).decide(ghost);
+            check(spawning.action == absent.action && spawning.depth == absent.depth &&
+                      spawning.search.hard_phantom_frames == 0,
+                  "fired-phantom prior promoted a disabled spawning bullet");
+        }
+        ghost.bullets[0] = bullet(0, ghost.x, ghost.y, 0, 0);
+        ghost.bullets[0].collision_disabled = true;
+        check(on::Policy(hard).decide(ghost).depth == 0 &&
+                  on::Policy(config).decide(ghost).depth == config.horizon,
+              "conservative root overlap incorrectly certified a safe prefix");
+
+        // Hard promotion replaces phantom-only soft risk. Ordinary model margins
+        // still apply exactly as they do to a real fired bullet.
+        on::RiskTables model;
+        model.loaded = true;
+        const auto with_model = on::Policy(hard, model).decide(real);
+        auto restored = real;
+        restored.bullets[0].collision_disabled = true;
+        const auto hard_model = on::Policy(hard, model).decide(restored);
+        check(hard_model.action == with_model.action && hard_model.depth == with_model.depth &&
+                  hard_model.search.candidates == with_model.search.candidates,
+              "hard phantom retained an extra phantom-only soft obstacle");
+
+        auto previous = real;
+        previous.bullets[0].x = 180;
+        previous.bullets[0].vx = 0;
+        previous.bullets[0].collision_disabled = true;
+        auto current = real;
+        current.update = 1;
+        on::Policy transition(hard), reference(config);
+        transition.observe(previous);
+        reference.observe(previous);
+        const auto a = transition.decide(current), b = reference.decide(current);
+        check(a.action == b.action && a.depth == b.depth && a.depth == hard.horizon,
+              "hard prior erased the collision-mode motion-history boundary");
+    }
+}
 void observation_history() {
     on::Configuration config;
     config.horizon = 8;
@@ -1254,6 +1325,7 @@ int main(int argc, char **argv) {
         committed_prefix_contract();
         planner_lag_contract();
         lazy_index_contract();
+        hard_phantom_contract();
         observation_history();
         transform_motion_history();
         pruning_and_isolation();

@@ -548,7 +548,7 @@ struct Policy::Impl {
             const auto &nb = b;
             const float w = b.full_width, h = b.full_height;
             const auto &m = mem.slots[b.slot];
-            if (nb.collision_disabled) {
+            if (nb.collision_disabled && !(opt.hard_phantoms && b.state == 1)) {
                 // A visible phantom is harmless now but may become real (e.g. illusion
                 // patterns): no hard hazard, only a learned soft-risk region.
                 if (!(opt.risk_phantoms && risk.loaded && b.state == 1))
@@ -567,6 +567,10 @@ struct Policy::Impl {
                 continue;
             }
             if (b.state == 1) {
+                // This optional prior changes only proposal obstacles. The native
+                // collision flag and the observer's mode-change history stay intact.
+                if (b.collision_disabled)
+                    search_stats.hard_phantom_frames += horizon;
                 const Prev &p = prev_vel[b.slot];
                 float x = b.x, y = b.y;
                 float s1 = std::hypot(b.vx, b.vy), a1 = std::atan2(b.vy, b.vx), ds = 0, da = 0;

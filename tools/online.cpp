@@ -119,6 +119,8 @@ Options parse(int argc, char **argv) {
             o.policy.risk_stop_age = boolean();
         else if (key == "--risk-phantoms")
             o.policy.risk_phantoms = boolean();
+        else if (key == "--hard-phantoms")
+            o.policy.hard_phantoms = boolean();
         else if (key == "--queued-shots")
             o.policy.queued_shots = boolean();
         else if (key == "--queued-lasers")
@@ -426,6 +428,7 @@ int run(const Options &o) {
             search_stats.relative_turn_frames += decision.search.relative_turn_frames;
             search_stats.planner_searches += decision.search.planner_searches;
             search_stats.indexed_forecast_frames += decision.search.indexed_forecast_frames;
+            search_stats.hard_phantom_frames += decision.search.hard_phantom_frames;
             search_stats.plan_adoptions += decision.search.plan_adoptions;
             search_stats.executor_checks += decision.search.executor_checks;
             search_stats.emergency_searches += decision.search.emergency_searches;
@@ -552,6 +555,8 @@ int run(const Options &o) {
            << ",\"boss_follow\":" << o.policy.boss_follow
            << ",\"reach_filter\":" << o.policy.reach_filter << ",\"risk\":" << !o.risk.empty()
            << ",\"risk_phantoms\":" << o.policy.risk_phantoms
+           << ",\"hard_phantoms\":" << o.policy.hard_phantoms
+           << ",\"hard_phantom_frames\":" << search_stats.hard_phantom_frames
            << ",\"risk_hard\":" << o.policy.risk_hard
            << ",\"risk_stop_age\":" << o.policy.risk_stop_age
            << ",\"risk_weight\":" << o.policy.risk_weight

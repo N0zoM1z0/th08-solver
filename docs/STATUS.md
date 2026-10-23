@@ -33,7 +33,10 @@ and all six fresh execution/natural-replay gates now pass; measured results are
 below. The subsequent local proposal bitset also passes the complete gates.
 Ordered probe/threading ablations remain local. The owned deterministic plan-lag
 model passes all six complete 6B controls and replay gates. Optional lazy indexing
-also preserves both complete lag-two tapes; a frozen 24-seed paired bank is next.
+also preserves both complete lag-two tapes. A frozen 24-seed paired bank is
+complete; its lag-two success point estimates are lower and do not establish
+equivalence. A separate generic phantom-prior pilot improves the sampled spell
+111 cases but retains a spell-107 death; it remains opt-in and native-proxy only.
 [Planner](PLANNER.md) owns the
 algorithm-phase acceptance gates and current-memory boundary.
 
@@ -843,12 +846,60 @@ Raw receipts remain local.
 
 The subsequent diagnosis freezes 24 new seeds, two spell-practice proxies (111
 and Extra 202), and paired no-model lag-zero/lag-two profiles before execution.
-All 96 planned cases, including deaths and exhausted budgets, belong in the
-denominator. The strict C++ analyzer requires every manifest pair and reports
-Wilson intervals and exact McNemar results. Six separately drawn holdout seeds
-remain unreleased. The campaign has charged 200 tasks before this bank, including
-the six aborted build-audit attempts; this bank reserves tasks through 296 of 320.
-These practice proxies cannot establish a full-story probability or equivalence.
+All 96 planned cases finish: 34 native completions, 62 deaths, no budget or runtime
+failures. The strict C++ analyzer checks every manifest pair and reproduces
+byte-for-byte locally from the collected trials and frozen protocol:
+
+| Spell | Sync complete / 24 (Wilson 95%) | Lag-two complete / 24 (Wilson 95%) | Sync-only / lag-only | Exact McNemar p |
+| --- | --- | --- | --- | --- |
+| 111 | 5 (9.2–40.5%) | 2 (2.3–25.8%) | 4 / 1 | 0.375 |
+| Extra 202 | 16 (46.7–82.0%) | 11 (27.9–64.9%) | 7 / 2 | 0.180 |
+
+Lag two has lower success point estimates in both cases. These small samples
+establish neither equivalence nor absence of regression; synchronous remains the
+default. Modeled lag-two executor maximum is 4.637 ms with no misses, while actual
+synchronous-controller maximum is 18.171 ms. Zero planner overruns against a
+two-frame budget do not turn those waits into a live asynchronous controller.
+The bank costs 293967 native updates and 1633.46 summed controller wall seconds,
+without prefix updates. Individual bank tapes have not all received fresh/retail
+verification and are not certified expert routes. Six separately drawn holdouts
+remain unreleased; a post-draw audit finds no overlap with checked prior local
+protocol seeds. This phase reaches task 296 of 320, retaining the six earlier
+aborted build-audit attempts. Practice proxies cannot establish story probability.
+
+The opt-in fired-phantom prior uses only the current bullet category, without a
+spell/seed/timer strategy. A prespecified diagnostic pilot uses the first eight
+bank seeds for 111 and the first three for 103/107. Eight frozen synchronous bank
+controls are reused; twenty new pilot episodes and one new default-mode control
+are run. The new native default control retains its parent action tape and all
+behavioral fields. Complete paired results, including the remaining death, are:
+
+| Spell | Ignore complete (Wilson 95%) | Hard prior complete (Wilson 95%) | Ignore-only / hard-only | Exact McNemar p |
+| --- | --- | --- | --- | --- |
+| 111 | 1/8 (2.2–47.1%) | 8/8 (67.6–100%) | 0 / 7 | 0.015625 |
+| 107 | 0/3 (0–56.1%) | 2/3 (20.8–93.9%) | 0 / 2 | 0.500 |
+| 103 | 3/3 (43.9–100%) | 3/3 (43.9–100%) | 0 / 0 | 1.000 |
+
+This small diagnosis supports further evaluation of the generic category prior,
+not an all-seed, learned-model or story claim. Extra obstacles increase search
+work; one dense-103 update takes 42.392 ms. Defaults remain unchanged. Both strict
+paired summaries reproduce byte-for-byte locally. The 21 new controller episodes
+cost 57319 native updates and 472.57 summed wall seconds; reused controls stay
+charged to the preceding bank. Prespecified 111/107 tapes pass fresh action
+execution on 7184 updates, with terminal/score/RNG/calculation agreement.
+The attempted natural-playback gate fails before simulation: this verifier
+exports `.rpy` only for non-spell runs and explicitly leaves the practice replay
+path empty. The incorrect harness assumption and failed command remain recorded;
+no replay is fabricated or substitute seed selected. These proxy results are
+not certified expert routes. All 41 native/DAT CTests pass in 646.05 seconds.
+Source/binary prefixes are `1809b5cf…`/`e92ad99e…`; raw inputs, tapes, failed and
+successful receipts remain ignored. The 21 controllers plus three verification
+commands reach the 320-task campaign cap, including the failed playback command.
+No holdout is released and no further campaign solver job is launched.
+The remaining 107 trace has depth 64 through update 3331, depth zero at 3332 and
+native death on update 3333. It supplies a concrete late-warning boundary for
+further motion/activation diagnosis, without identifying the missing mechanism
+or justifying a spell-specific schedule.
 
 The owner prioritizes further measured algorithmic speedups before model/training
 replacement. Native/replay correctness remains required even if a later stochastic
@@ -905,6 +956,12 @@ later successful raw rows are removed after recording their hashes and receipts.
 Six finalized online failure captures are additionally losslessly compressed after
 matching the collected local SHA values, reclaiming 30535680 allocated bytes.
 Every protected replay/action hash in that scope remains unchanged.
+The October 23 optimization cleanup reclaims another 73035776 allocated bytes
+across two checked passes: 72 completed-build objects are removed and 173 decision
+tables are losslessly compressed with restored SHA checks. All 1060 protected
+files retain their hashes, including actions/replays, executables, source archives,
+protocols and failure receipts. Active batches, shared native/data dependencies
+and the interrupted build-audit evidence are excluded from cleanup.
 
 The stopped local baseline ledger verifies 36 directly completed combinations:
 all nine seed-0 entries for each of the four double teams. Each team clears all four

@@ -124,6 +124,8 @@ struct Configuration {
     float spawn_guard = 0; // soft risk radius in pixels around current actor shot origins
     bool risk_hard = false, reach_filter = false, risk_stop_age = false;
     bool risk_phantoms = false;
+    // Conservative proposal prior for fired collision-disabled bullets; no activation schedule.
+    bool hard_phantoms = false;
     bool queued_shots = false, queued_lasers = false;
     bool held_fallback = false;
     // Recheck one previous proposal only when the new beam cannot fill its horizon.
@@ -172,6 +174,7 @@ struct SearchStatistics {
     std::uint64_t emergency_searches = 0, pending_dropped = 0, executor_invalidations = 0;
     double planner_ms = 0; // Full search only; emergency work remains executor cost.
     std::uint64_t indexed_forecast_frames = 0;
+    std::uint64_t hard_phantom_frames = 0;
 };
 struct Decision {
     std::uint16_t action = 1;

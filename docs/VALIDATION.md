@@ -96,9 +96,25 @@ the eager lag-two tapes and all event counts; the complete tapes pass fresh acti
 execution and natural replay. This changes index scheduling, not the forecast or
 the native collision predicate.
 
+The opt-in hard-phantom contract compares a disabled fired bullet with the same
+ordinary real bullet, with and without reach pruning. The no-model default must
+still match an absent ghost. The prior must preserve ordinary search behavior,
+leave disabled spawning bullets unchanged, retain conservative root failure and
+respect a ghost-to-real velocity discontinuity. A model-loaded control checks
+that hard promotion replaces the phantom-only soft obstacle. Native paired-bank
+outcomes, default-mode action agreement and fresh replay checks are separate gates;
+these synthetic comparisons alone establish neither survival nor model quality.
+The pilot's prespecified practice tapes pass fresh native action execution, but
+the current verifier exports a replay only when `spell < 0`. Practice receipts
+leave `rpy` empty. The attempted natural replay check is retained as a failed
+harness assumption, so this pilot has native-proxy evidence without a natural or
+retail replay claim. Such tapes require an appropriate export/validation path
+before promotion to certified expert routes.
+
 Optional `--risk-dir` requires all four files: `risk_table_merged.tsv`,
 `risk_backoff_seg.tsv`, `risk_backoff_global.tsv`, `nowarn_merged.tsv`.
-`--risk-phantoms 1` additionally uses collision-disabled bullets as soft risk.
+`--risk-phantoms 1` additionally uses collision-disabled bullets as soft risk
+unless the fired-bullet hard prior replaces that path.
 The maintained line parser fixes the preparation's cross-row backoff parsing, so
 those results need new reproduction rather than assigning old outcome/timing
 claims to the corrected model. New model hashes and training lineage belong in

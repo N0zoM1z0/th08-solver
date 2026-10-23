@@ -1299,7 +1299,8 @@ int execute(int argc, char **argv) {
     config.shot = opt.shot;
     config.unlock_final_routes = opt.final_route != th08::plan::FinalRoute::Natural;
     if (!opt.verify.empty()) {
-        // Fresh-process strict replay of a committed tape; also writes a real .rpy.
+        // Fresh-process strict replay of a committed tape. Only non-spell runs
+        // export a .rpy; spell-practice receipts intentionally leave rpy empty.
         // Hash and decode the same bytes; a receipt must identify the exact
         // immutable action input, independently of its private filesystem path.
         th08::plan::PrefixParser parser(std::numeric_limits<std::size_t>::max());
