@@ -53,7 +53,15 @@ conditional sample; this is not population calibration. The complete row/sidecar
 audit checks nominal-prefix identities, actual submissions and train-only scaling,
 but does not independently re-execute every Native branch outcome.
 All three global multipliers 0.25/1/4 complete 7/8 tuning proxies. The frozen
-smallest-weight tie rule selects 0.25; fresh Native paired evaluation is required.
+smallest-weight tie rule selects 0.25.
+
+The subsequent frozen 172-trial comparison is complete. On 24 new Extra 202 seeds,
+baseline completes 14/24, v1 and v2 each 9/24, and the generic no-model profile
+23/24. All four arms complete 8/8 each on 107/111 and 3/3 dense 103 controls.
+V2 therefore shows no controller benefit on this bank despite its conditional
+classification improvement. It remains opt-in; neither weights nor the selected
+multiplier were retrained or tuned on these outcomes. These shared spell-practice
+proxies do not establish whole-stage/story reliability or a live deadline.
 
 Collection uses H24/beam192/cell16/guard16/reach-filter, hard phantoms and motion
 envelope; child-birth/heading options, lag, fallbacks, legacy risk and learned

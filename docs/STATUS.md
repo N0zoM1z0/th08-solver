@@ -11,126 +11,128 @@ work integrated the fork planner and retained its replay fidelity limitations.
 The tracked runtime imports upstream `02ff72f`; results below from
 `861bec9` remain historical native-profile evidence. They do not certify the new build.
 
-## Active work
+## Current batch
 
-The owner continues generic forecasting, search and label-quality work under #5,
-keeping learned guidance opt-in and postponing full RL. A new bounded campaign
-retains the preceding 310-task learning ledger unchanged, with the same four-job
-and 320-task limits. Current work separates current-program child-birth warnings,
-incoming-direction proposal membership, explicitly versioned replanning labels,
-and a real wall-paced worker/executor experiment. Their evidence is not combined
-into a story or deadline claim.
-Two retained 202 model regressions freshly reproduce their original score/RNG
-and death at 3708/3649. In both, a current WAIT/child-pattern program emits a new
-bullet at its parent's pre-movement position; the player hits it one update after
-first observing it. An optional all-angle birth guard completes the first case
-at 4712 updates and advances the second to 3710, where it still dies after several
-partial searches near the bottom boundary. These are diagnosis cases, not new
-evaluation seeds. The option remains off. A separate synthetic three-position
-witness shows position/focus merging can discard the only direction that survives
-the next forced repeat, even without beam truncation. Optional direction retention
-restores full depth and preserves the longest safe partial depth in its failure
-control. A further default-off current-program lifetime preview covers the first
-reachable DESPAWN or a validated fading child constructor, with an inclusive final
-collision update. Unsupported clocks/programs keep the original full projection;
-this is an unchanged-program proposal hypothesis, not a Native safety certificate.
-Six further known-seed pilots retain one heading-only failure at 3696 and one
-completion. The combined birth/heading/expiry profile completes both cases at
-4712 with the model off, and both with v1 guidance. The no-model pair also matches
-fresh Native execution on terminal, score, RNG and input/calculation counts over
-9424 updates; practice RPY export remains unsupported. All six pilot outcomes cost
-27256 Native updates and 89.41 summed command wall seconds. The two successful
-no-model runs omit 6.60 million obsolete bullet/update projections, with mean
-controller time 3.10/3.14 ms and p99 3.97/4.60 ms. Changed trajectories prevent an
-isolated speedup claim. These reused seeds cannot establish generalization; the
-fresh paired comparison remains pending.
+The owner requested this batch's completion and handoff under
+[issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5), with learned guidance
+opt-in and no expansion into RL. Generic prediction/search, label-quality work,
+the frozen new-seed comparison and exact resource optimizations are complete.
+The preceding 310-task learning and 320-task optimization ledgers stay unchanged.
+This batch kept the four-solver concurrency and 320-task limits; new data, actions,
+replays and experiment reports remain local and ignored.
 
-The new collector can label a proposed H24 prefix followed by the inherited
-baseline Policy replanning after 24 native updates. A separate v2 target records
-that continuation; old held-last targets/weights remain unchanged and mixed targets
-are rejected. Sampling windows have independent identities while preserving
-whole-parent membership, weighting and duplicate rejection. Seven focused native
-checks preserve the exact parent tapes, projections, score, RNG and calculations,
-including shifted checkpoints 257/289/321; explicit plain controls have zero label
-work. Early replanning windows have more positives than held-last windows because
-the conditional targets differ, not because earlier labels were incorrect.
-The frozen 27-job collection reuses the original 16 train/eight tune parents and
-adds three separately identified known-failure-tail strata. All former evaluation
-seeds are excluded from later independent draws. No new model-quality claim follows
-from collecting these labels.
-Collection has now completed: 2500 rows, 2322 positive, zero faults, 93870 nominal
-updates, 149207 separate branch updates and 90569 child-policy decisions. The 27
-episodes include three repeated tail parents; there are 24 distinct parents, with
-the original 21 complete/three failed trajectories retained. Summed collection
-wall time is 678.68 seconds, including 311.92 seconds of child-policy work.
-One fixed 0.04-second C++ fit produces the saved 1697-byte
-[v2 model](../models/branch-value-v2/README.md). Train/tune have 1648/852 rows and
-episode-weighted BCE 0.20254/0.21196; the changed conditional target and positive
-rates prevent raw-loss comparisons with v1. An independent dataset/sidecar audit
-checks all 2500 row identities, 625 exact nominal-prefix hashes and 149207 actual
-branch submissions, including latch/held-last boundaries, disjoint parents and
-train-only normalization. It reproduces the model metrics. A TRAIN-fitted,
-episode-weighted constant positive prior scores tune BCE/Brier 0.23480/0.05889,
-versus the model's 0.21196/0.05458: modest improvement on this deliberately
-tail-biased conditional dataset, not population calibration or controller benefit.
-All three global multipliers 0.25/1/4 complete 7/8 tuning proxies; the frozen tie
-rule selects 0.25. The 24 trials cost 81810 Native updates and 290.91 summed command
-wall seconds. The joint-frozen 172-trial new-seed comparison is now running:
-baseline, v1, v2 and the no-model generic profile. Each has 24 Extra 202 seeds,
-eight each on 107/111 and three dense 103 controls. Source/binary/model/loader
-identities and all six paired contrasts are frozen before outcomes; the later
-decoder/resource optimizations are excluded from all four evaluated builds.
-Three controllers leave the fourth Native slot for separate regression work.
-The lifetime-enabled
-checkpoint passes all 48 integrated Native/DAT CTests in 810.87 seconds; the
-complete default Stage 2 action hash remains `c4acd20a…`.
+The optional generic profile combines current-program child-birth bounds,
+incoming-direction retention and inclusive collision-expiry hypotheses. These
+read owned current memory without sampling future gameplay RNG. Unsupported
+lifetime previews retain the original horizon; unsupported birth cues stop the
+enabled case. These are proposal hypotheses, not safety certificates. Native
+execution decides outcomes. The options remain off by default; no seed, spell or
+route-specific strategy was added. [Planner](PLANNER.md) owns their contracts.
 
-`th08_online_live` now owns Native execution on one thread and Policy on one worker,
-advancing one API update per absolute 60 Hz tick. It accepts only a reply for the
-current origin/phase that was published before its cutoff; otherwise an explicit,
-uncertified last-input hold is recorded. Queue overflow, worker failures and owner
-period overruns stop the case. The clock is never reset to hide delays. One
-360-update physical smoke lasts 6.000221 seconds with zero fallback/overrun and
-68733 model endpoint evaluations. Its initial report has a JSON-only TAB-escaping
-defect; original bytes/binary/tape/ticks are retained, and a derived repair changes
-only those three TAB escapes. A fresh one-update run and a Native regression guard
-the corrected serializer. This is execution-mechanism evidence, not whole-stage,
-full-story, retail-control or universal real-time validation. The first complete
-story attempt on the manifest-derived H64/legacy-risk shot-1 profile stops at the
-Stage 1-to-2 initialization: 22463 API updates, zero deaths, zero policy misses or
-fallbacks, then a 46.99-ms owner update violates the unchanged 16.67-ms period.
-The raw tool outcome is `deadline` (exit 6); the original wrapper rejects that
-declared exit code and therefore exits 1. Both receipts are retained as failure.
-An exact-prefix passive replay matches score, RNG, calculations and the handoff;
-its initialization costs 29.31 ms Native CPU, 0.316 ms recorded file I/O and
-0.0039 ms capture. Native initialization work alone exceeds the period. Internal
-resource probe also matches that exact prefix and attributes 20.78 ms to LZSS
-decoding and 5.66 ms to surface conversion within a 29.65-ms Native update. These
-are nested CPU costs, not extra wall time to sum with the whole update. Exact
-decoder optimization is the next measured target. This incomplete attempt certifies neither
-full-story completion nor retail control, and no deadline tolerance was relaxed.
+The versioned [v2 value model](../models/branch-value-v2/README.md) predicts an H24
+prefix followed by inherited baseline replanning through update 64. The old v1
+held-last target and weights stay unchanged. The 27-job corpus has 2500 rows,
+2322 positive, 24 distinct parents, 93870 nominal and 149207 additional label updates,
+with 90569 child decisions and zero faults. Collection costs 678.68 summed wall
+seconds, including 311.92 seconds of child-policy work. A complete sidecar/split/
+prefix/scaler audit and eight fresh Native branch replays agree. Tail samples
+remain the same whole parents. The saved 1697-byte C++ fit uses train-only scaling;
+tune BCE/Brier 0.21196/0.05458 modestly improve on the TRAIN-fitted constant prior's
+0.23480/0.05889. This conditional, deliberately tail-biased sample does not establish
+population calibration or controller benefit. All three tuning multipliers complete
+7/8; the frozen tie rule selects 0.25.
 
-An exact headless LZSS field reader now passes an independent scalar oracle and
-the actual native codec entry-point audit over 318 archive decodes and 112526407
-bytes. Output and all 8192 persistent dictionary bytes match after every call;
-Encode remains unchanged. The Release audit measures 287.66 ms versus 868.43 ms
-for legacy decode, including output allocation. One exact Stage 2 prefix probe
-reduces Native initialization from 29.65 to 15.63 ms, with LZSS 20.78 to 6.96 ms.
-This passive sample alone gives little margin for the live owner.
-A passive full historical seed-0 tape also matches all 231306 API updates,
-231301 calculations, five handoffs, terminal, score and RNG with zero deaths.
-It replays recorded inputs; it does not establish a new controller completion.
-All five calls above 8 ms are first calculations after a handoff. Per-stage
-initialization peaks reach 16.11, 15.60, 21.58, 22.04 and 36.33 ms, so the current
-decoder improvement still cannot establish a strict full-story period. The
-complete replay-fingerprint regression matches every one of the 108 baseline
-case tuples, row counts, fingerprints and outcomes, including both original
-failure captures. The fidelity gate stays 106/108; equivalence does not repair
-those failures or add retail evidence. It costs 9313155 API calls, 12241597
-calculation rows and 574.18 seconds of sequential suite wall time. All 49 CTest
-contracts pass after correcting and rerunning the documented core-count check;
-the initial documentation failure is retained. Further measured resource work
-and actual paced execution remain separate gates.
+All 172 frozen new-seed first attempts are now identified and audited: 131 Native
+completions, 41 deaths, no budget/runtime outcomes, missing cases or validation
+errors. Each arm uses H24/beam192/cell16/guard16/reach filtering with hard phantoms
+and the motion envelope. Only the generic arm enables the three new options;
+only v1/v2 load their respective 0.25-weight models. Source, binary, model, loader,
+seeds, budgets and six paired contrasts were fixed before outcomes. Later codec
+and surface changes are excluded from all four evaluated builds.
+
+| Native spell proxy | Seed units | Baseline | Value v1 | Value v2 | Generic, no model |
+| --- | --- | --- | --- | --- | --- |
+| Extra 202 | 24 | 14/24 | 9/24 | 9/24 | 23/24 |
+| 107 | 8 | 8/8 | 8/8 | 8/8 | 8/8 |
+| 111 | 8 | 8/8 | 8/8 | 8/8 | 8/8 |
+| Dense 103 control | 3 | 3/3 | 3/3 | 3/3 | 3/3 |
+
+Extra 202 generic versus baseline has 10 gains and one regression; exact two-sided
+McNemar p=0.01172 is descriptive and unadjusted for six contrasts. Its exact 95%
+completion interval is [0.7888, 0.9989], versus [0.3664, 0.7789] for baseline. This is
+promising finite-sample evidence, not every-seed reliability. The same eight seeds
+share 202/107/111: all-three counts are 3/8, 4/8, 2/8, 7/8 respectively. Dense 103 stays
+separate; 43 episodes per arm are not 43 independent seeds. Neither learned model
+improves 202 completion on this bank, despite the v2 classification result; both
+remain experimental and opt-in. Practice outcomes do not establish full Extra,
+whole stages, other shots, story success or retail control.
+
+The first three attempts remain at their original paths. An overly strict
+validator rejected valid deaths before the life counter incremented. A documented
+validation-only amendment retained 72/base complete and 73/v1, 74/v2 deaths, then ran
+only untouched 75..243 with identical algorithms, models, seeds and budgets. Fresh
+Native checks confirm both fatal prefixes. Original worker exits 5 and the failed
+runner's 32.93 seconds remain charged; no attempt was retried or removed. Local
+hash/decision reanalysis reproduces the complete remote summary.
+
+All 662066 decisions enter the following pooled Release timings, including failed
+runs. Shared EPYC 9654 / GCC 13.3 uses policy `-march=native`, `-ffp-contract=off`.
+
+| Arm | Mean / p99 / p99.9 / max controller ms |
+| --- | --- |
+| Baseline | 3.300 / 5.134 / 6.500 / 10.902 |
+| Value v1 | 3.335 / 5.169 / 6.664 / 9.115 |
+| Value v2 | 3.332 / 5.368 / 6.795 / 11.584 |
+| Generic | 3.283 / 5.195 / 6.853 / 10.357 |
+
+All have zero observed 16.67-ms decision misses. This harness waits for decisions;
+it does not enforce a live deadline. The full bank costs 662066 Native updates,
+42.27 Native seconds excluding file I/O, 2268.01 summed command-wall seconds and
+2611.69 summed worker-wall seconds. Worker/command/component scopes overlap and
+must not be added as independent costs.
+
+The separate absolute 60 Hz owner/worker harness retains its first story failure:
+22463 API updates, no deaths/policy fallbacks, then a 46.99-ms Stage 1-to-2 owner
+update. The raw deadline exit 6 and wrapper exit 1 remain failures; no clock reset
+or tolerance relaxation was used. The 360-update physical smoke lasts 6.000221 s;
+its original JSON-only TAB defect and the narrowly repaired analysis copy remain
+recorded. Neither fragment certifies a complete paced story.
+
+The headless LZSS field reader preserves actual legacy output and every 8192-byte
+persistent dictionary on 317 entries plus the file table (112526407 bytes), with
+Encode unchanged. Release audit decode falls from 868.43 to 287.66 ms. The packed CPU
+surface shortcut preserves bytes for three exact formats and keeps all other
+conversion/snapshot paths. Full historical seed-0 input execution matches all
+231306 input/state rows, 231301 calculations, five handoffs, score and RNG with
+zero deaths. It executes recorded inputs; it is not a new Policy completion.
+
+| Stage initialization peak, passive full-tape runs | LZSS only ms | LZSS + exact surface copy ms |
+| --- | --- | --- |
+| 2 | 16.11 | 10.98 |
+| 3 | 15.60 | 10.96 |
+| 4A | 21.58 | 14.49 |
+| 5 | 22.04 | 14.33 |
+| 6A | 36.33 | 25.47 |
+
+These shared-host measurements include Native I/O and do not prove universal
+period bounds. Final 6A still exceeds 16.67 ms, primarily in decoding. Both resource
+checkpoints preserve all 108 reference replay tuples, counts, fingerprints and
+outcomes; the fidelity gate remains 106/108 with the same two failures. Final
+regression costs 9313155 API calls, 12241597 calculation rows and 570.33 seconds of
+sequential suite wall. All 50 CTests pass in 800.85 seconds; the complete default
+Stage 2 action SHA remains `c4acd20a…`. The new idle-prefix regression explicitly
+checks fatal `player_state==2` with `deaths==0`; the CLI now reports that state.
+
+Rejected tiny match-copy/fill variants stay out of production: all 24 differential
+DAT audits pass, but exact production-profile medians are 287.54 ms for C3 versus
+290.54/308.70/302.68 ms for the candidates. A read-only preparation audit proves all
+318 current DAT streams self-contained; a possible future cache would need about
+152 MiB plus overhead and preserve untouched dictionary cells on 93 short streams.
+No cache, additional training/RL round or new paced story was implemented/launched
+for this handoff. Further generic coverage and genuine full-story 60 FPS execution
+remain future work.
+
+## Earlier component evidence
 
 The owner authorizes tracking selected compact learned models while keeping raw
 training/run artifacts ignored. The three inherited risk packs are now copied
@@ -1513,7 +1515,7 @@ are optional component evidence, not prerequisites or the next integration roadm
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
 There are 35 core CTests without private data, plus two optional pinned-source tests
-(37 total). The current headless/DAT configuration has 49 CTests, including native
+(37 total). The current headless/DAT configuration has 50 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
 continuation test, online policy contracts and a complete online-stage/replay test.
 The complete-scene test covers complete

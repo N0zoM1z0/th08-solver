@@ -95,6 +95,11 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
 endif()
 
 if(BUILD_TESTING)
+  add_executable(th08_headless_surface_copy tests/headless_surface_copy.cpp)
+  target_link_libraries(th08_headless_surface_copy PRIVATE th08_native_headless)
+  target_compile_options(th08_headless_surface_copy PRIVATE -ffp-contract=off
+    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+  add_test(NAME headless_surface_copy COMMAND th08_headless_surface_copy)
   add_executable(th08_headless_cancel_regions tests/headless_cancel_regions.cpp)
   target_link_libraries(th08_headless_cancel_regions PRIVATE th08_native_headless)
   target_compile_options(th08_headless_cancel_regions PRIVATE -ffp-contract=off

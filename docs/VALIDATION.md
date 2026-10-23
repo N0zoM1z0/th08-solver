@@ -5,7 +5,7 @@ Core CTest cases: 35
 Normal core tests require no game assets or reconstruction. Optional source comparisons
 add two CTests (37 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay and planner-prefix CTests (49 total).
+complete-scene, online-stage/replay and planner-prefix CTests (50 total).
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
@@ -18,6 +18,15 @@ native caller contract. A separate real-DAT audit checks the actual exported
 Encode/Decode entry points against unchanged renamed legacy code: all 317 entries
 and the file table have identical bytes, declared lengths and complete final
 dictionaries after each decode. This is codec equivalence, not a gameplay oracle.
+
+`headless_surface_copy` calls the production D3DX entry point through owned CPU
+surfaces with padded pitches and change-notification counters. It checks every
+16-bit pixel of the two eligible formats against direct identity and the forced
+original conversion path, plus 32-bit alpha, untouched padding/source, self-copy
+overlap, rectangles/clamping, color keys, scaling, X formats, invalid filters and
+zero dimensions. The fast path is headless-only and requires separate owned
+surfaces, equal positive full dimensions, no rectangles/key and exact filter 3;
+all other cases keep their original behavior.
 
 `model_artifacts` checks the complete saved-table file set, SHA-256, byte lengths
 and data-row counts against [the model manifest](../models/artifacts.tsv).
@@ -56,6 +65,13 @@ unavoidable latched first hit, unknown-clock fallback and disabled metadata/tie
 transparency. Native known-seed pilots and fresh action execution are separate
 checks of the enabled proposal profile; neither this narrow program hypothesis
 nor agreement between two Native executions is an independent physics oracle.
+
+The complete online-stage CLI regression also executes a generated idle prefix
+without Policy decisions. Native `player_state==2` is an immediate NMNB failure
+during the deathbomb window, before the `deaths` counter increments. Exit 4 and
+`outcome:death` therefore remain valid with `deaths:0`; the additive
+`final_player_state` field makes that boundary explicit. Consumers must retain
+this failure rather than require a positive life/death counter.
 
 The shared spatial selector's `plan_contract` regression compares partial rank
 selection against the frozen former full-sort algorithm in 420 deterministic

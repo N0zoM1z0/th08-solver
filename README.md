@@ -45,14 +45,18 @@ signal with regressions and uncertainty; the complete Stage 5 sample passes all
 three arms. [Status](docs/STATUS.md) owns the counts, costs and evidence limits.
 Selected compact [learned artifacts](models/README.md)
 are preserved with exact identities and provenance; raw training/run data stay local.
-Further opt-in current-program forecasts, direction retention and versioned
-replanning labels are under paired evaluation. A separate wall-paced executor
-now exposes Native stage-initialization costs as well as decision deadlines;
-[Status](docs/STATUS.md) records the retained failure and measured optimization target.
+The next frozen comparison completes all 172 trials. On 24 new Extra 202 seeds,
+the opt-in generic forecast/search profile completes 23/24, baseline 14/24 and
+each compact value model 9/24. These are spell proxies; the options and models
+remain opt-in. Exact decoder/surface acceleration preserves the replay gate.
+A separate wall-paced executor exposes Native stage-initialization costs as well
+as decision deadlines; [Status](docs/STATUS.md) records the paired results, retained
+failure and remaining full-story timing limit.
 
-Two of three Lunatic Final A stories through natural 4A now strictly verify with
-the same uniform current-memory controller. Story diagnosis retains a Stage 5
-failure; [Status](docs/STATUS.md) owns the exact profile and validation.
+Two of three historical Lunatic Final A stories through natural 4A strictly verify
+under the documented uniform current-memory controller profile. Story diagnosis
+retains a Stage 5 failure; [Status](docs/STATUS.md) owns the exact version and
+validation. These captures do not establish a current-main controller completion.
 The owner-requested [seed-0 replay](reports/native/replays/online-story-4a-v1--s0.rpy)
 and [seed-29768 replay](reports/native/replays/online-story-4a-v1--s29768.rpy), full
 action tapes and [publication audit](reports/native/online_story_4a_validation.json)

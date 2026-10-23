@@ -22,6 +22,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Independent source extraction | `tools/*_source_probe.cpp`, shared `source_probe_support.*`, `tests/source_*_cases.hpp` |
 | Imported production game and headless session | `third_party/th08/src/`; `modern/headless/session.*`, CPU resource/time/input adapters |
 | Exact headless archive field decoding | `modern/headless/lzss_decode.hpp`; borrows the native persistent dictionary and disjoint caller buffers; changes neither encoder nor non-headless decoder |
+| Exact packed headless surface copies | `modern/linux/d3dx8_compat.cpp`; copies complete equal-format owned CPU surfaces, retaining conversion/snapshot paths for other cases |
 | Native proposal kernels | `include/th08/reactive.hpp`, `native_policy.hpp`, `direct_laser_policy.hpp`, `imminent_laser_policy.hpp`, `upcoming_bullet_policy.hpp`; actual game establishes collisions/outcomes |
 | Native spell policy selection | `include/th08/spell_policy.hpp`; case IDs do not enter generic kernels |
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |

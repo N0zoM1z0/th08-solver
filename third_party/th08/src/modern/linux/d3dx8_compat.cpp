@@ -396,10 +396,35 @@ HRESULT CopyRgbaToSurface(IDirect3DSurface8 *destinationRaw, const RECT *destina
 }
 
 HRESULT CopySurface(IDirect3DSurface8 *destinationRaw, const RECT *destinationRectRaw,
-                    IDirect3DSurface8 *sourceRaw, const RECT *sourceRectRaw, D3DCOLOR colorKey, DWORD filter)
-{
+                    IDirect3DSurface8 *sourceRaw, const RECT *sourceRectRaw, D3DCOLOR colorKey,
+                    DWORD filter) {
     LinuxSurfaceAccess source;
-    if (!th08_linux_surface_access(sourceRaw, &source, true) || source.pixels == NULL) return E_INVALIDARG;
+    if (!th08_linux_surface_access(sourceRaw, &source, true) || source.pixels == NULL)
+        return E_INVALIDARG;
+#ifdef TH08_HEADLESS
+    // Headless surfaces own separate pixel vectors. These three packed formats
+    // survive DecodePixel/EncodePixel exactly; X formats normalize unused bits
+    // and must retain the original conversion. Keep self/rectangular copies on
+    // the snapshot path so overlapping regions read the original source bytes.
+    if (filter == 3 && colorKey == 0 && sourceRectRaw == NULL && destinationRectRaw == NULL &&
+        sourceRaw != destinationRaw && source.width > 0 && source.height > 0 &&
+        (source.format == D3DFMT_A8R8G8B8 || source.format == D3DFMT_A4R4G4B4 ||
+         source.format == D3DFMT_R5G6B5)) {
+        LinuxSurfaceAccess destination;
+        if (!th08_linux_surface_access(destinationRaw, &destination, false) ||
+            destination.pixels == NULL)
+            return E_INVALIDARG;
+        if (destination.format == source.format && destination.width == source.width &&
+            destination.height == source.height) {
+            const UINT rowBytes = source.width * BytesPerPixel(source.format);
+            for (UINT y = 0; y < source.height; ++y)
+                memcpy(destination.pixels + y * destination.pitch, source.pixels + y * source.pitch,
+                       rowBytes);
+            th08_linux_surface_changed(destinationRaw);
+            return S_OK;
+        }
+    }
+#endif
     std::vector<BYTE> rgba(source.width * source.height * 4);
     UINT sourceBytes = BytesPerPixel(source.format);
     for (UINT y = 0; y < source.height; ++y)

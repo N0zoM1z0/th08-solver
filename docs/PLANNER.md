@@ -687,8 +687,9 @@ configuration, terminal checks, costs and distinctly labeled failed prefixes.
 Future imitation and student-state teacher corrections need predecision observations
 aligned with the native input latch. The teacher may use future rollouts but must
 keep the student's queried prefix immutable. The current online policy is described
-above. Teacher corrections, learned reactive models and RL remain later work,
-with successful and failed episodes kept distinct.
+above. Recorded teacher corrections and compact conditional value models now
+provide initial evidence; broad imitation, learned reactive policy replacement
+and RL remain future work. Successful and failed episodes stay distinct.
 
 Measured execution acceleration is tracked in
 [issue #4](https://github.com/N0zoM1z0/th08-solver/issues/4). Its

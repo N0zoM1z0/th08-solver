@@ -121,4 +121,27 @@ run(overflow 2 --seed 4294967296)
 if(EXISTS "${WORK}/overflow")
   message(FATAL_ERROR "Invalid checkpoint was accepted after integer narrowing")
 endif()
+# A fixed idle prefix tests Native failure reporting without depending on solver
+# success. The deathbomb window is already an NMNB failure, before lives update.
+string(REPEAT "0\n" 5000 idle_prefix)
+file(WRITE "${WORK}/idle-prefix.actions" "${idle_prefix}")
+execute_process(COMMAND "${EXECUTABLE}" --dat "${DAT}" --out "${WORK}/death-window"
+  --stage 1 --difficulty 3 --seed 0 --shot 0 --horizon 24 --frames 5000 --seconds 300
+  --prefix "${WORK}/idle-prefix.actions"
+  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 330)
+if(NOT result STREQUAL "4")
+  message(FATAL_ERROR "Death-window prefix did not fail natively: ${stdout} ${stderr}")
+endif()
+file(READ "${WORK}/death-window/online.json" death_window)
+expect("${death_window}" outcome "\"death\"")
+expect("${death_window}" failure "\"death\"")
+expect("${death_window}" final_player_state 2)
+expect("${death_window}" deaths 0)
+expect("${death_window}" decisions 0)
+field("${death_window}" frames fatal_frames)
+if(NOT fatal_frames GREATER 0 OR fatal_frames GREATER 5000)
+  message(FATAL_ERROR "Death-window fixture did not execute the bounded prefix")
+endif()
+expect("${death_window}" native_update_attempts "${fatal_frames}")
+expect("${death_window}" native_updates "${fatal_frames}")
 message(STATUS "Complete online stage and replay contract passed at ${frames} updates")

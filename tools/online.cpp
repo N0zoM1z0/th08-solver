@@ -688,7 +688,8 @@ int run(const Options &o) {
            << ",\"calculation_updates\":" << hl::replay_calculation_updates() - initial_calculations
            << ",\"control_updates\":" << controls << ",\"failed_input\":" << failed_input
            << ",\"final_stage\":" << state.stage << ",\"final_spell\":" << state.spell
-           << ",\"final_spell_active\":" << state.spell_active << ",\"deaths\":" << state.deaths
+           << ",\"final_spell_active\":" << state.spell_active
+           << ",\"final_player_state\":" << state.player_state << ",\"deaths\":" << state.deaths
            << ",\"score\":" << state.score << ",\"rng_seed\":" << state.rng_seed
            << ",\"rng_draws\":" << state.rng_draws << ",\"decisions\":" << timings.size()
            << ",\"mean_controller_ms\":" << (timings.empty() ? 0 : sum / timings.size())
