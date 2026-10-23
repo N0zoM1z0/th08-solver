@@ -1,6 +1,9 @@
 # Current handoff status
 
-Reviewed: 2026-10-23. Current work is
+Reviewed: 2026-10-23. Current implementation is
+[issue #6](https://github.com/N0zoM1z0/th08-solver/issues/6): preserve compact learned
+artifacts, improve generic forecasting, prepare reproducible training data and
+compare small learned guidance. This continues
 [issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5): integrate and validate a
 forward-only CPU controller using authorized current process memory, then diagnose
 generic failures and build the offline-teacher/student loop. The earlier issue #1
@@ -9,6 +12,20 @@ The tracked runtime imports upstream `02ff72f`; results below from
 `861bec9` remain historical native-profile evidence. They do not certify the new build.
 
 ## Active work
+
+The owner authorizes tracking selected compact learned models while keeping raw
+training/run artifacts ignored. The three inherited risk packs are now copied
+unchanged into [saved models](../models/README.md), with complete table identities,
+production-parser smoke checks and explicit unknown seed/episode lineage.
+The teacher-plus-student pack matches the four files used remotely. This preserves
+research inputs; it does not add independent model-quality evidence.
+The preservation checkpoint passes all 42 native/DAT CTests in 627.88 seconds,
+including the new artifact-identity check, all three production-parser loads and
+the unchanged complete Stage 2 action/replay regression.
+The new issue's campaign is separate from the finalized 320-task optimization
+campaign below, retaining its entire ledger. New experiments keep the same limits
+of four concurrent solver jobs and 320 top-level tasks, with internal label/rollout
+work charged separately. A frozen protocol precedes outcome-dependent choices.
 
 The current approach is in [Planner](PLANNER.md). The generic planner uses native
 fork rollouts and verified commits; it adds no spell-92 strategy branch. The
@@ -1250,7 +1267,7 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 30 core CTests without private data, plus two optional pinned-source tests
+There are 31 core CTests without private data, plus two optional pinned-source tests
 (31 total). The current headless/DAT configuration has 40 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
 continuation test, online policy contracts and a complete online-stage/replay test.

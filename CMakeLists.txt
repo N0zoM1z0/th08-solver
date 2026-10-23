@@ -178,6 +178,9 @@ if(TH08_REFERENCE_SOURCE)
   endforeach()
 endif()
 if(BUILD_TESTING)
+  add_test(NAME model_artifacts COMMAND ${CMAKE_COMMAND}
+    -DROOT=${CMAKE_CURRENT_SOURCE_DIR}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/model_artifacts.cmake)
   add_executable(geometry_tests tests/geometry_tests.cpp)
   target_link_libraries(geometry_tests PRIVATE th08_geometry)
   add_test(NAME geometry COMMAND geometry_tests)

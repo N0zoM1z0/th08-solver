@@ -1,14 +1,21 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 30
+Core CTest cases: 31
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (31 total). Native builds add process, semantic, hazard-probe and
+add two CTests (33 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay and planner-prefix CTests (40 total).
+complete-scene, online-stage/replay and planner-prefix CTests (42 total).
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
+
+`model_artifacts` checks the complete saved-table file set, SHA-256, byte lengths
+and data-row counts against [the model manifest](../models/artifacts.tsv).
+The native online-policy contract additionally loads all three historical packs
+through the production parser. Artifact identity and successful parsing do not
+establish a disjoint evaluation split or learned-policy quality; [model provenance](../models/README.md)
+records the inherited unknowns.
 
 The shared spatial selector's `plan_contract` regression compares partial rank
 selection against the frozen former full-sort algorithm in 420 deterministic

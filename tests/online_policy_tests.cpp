@@ -88,6 +88,14 @@ void spawn_neighborhood_contract() {
     check(empty[0] == 0 && !std::signbit(empty[0]),
           "spawn neighborhood changed the original positive-zero accumulator");
 }
+void saved_risk_tables(const fs::path &root) {
+    for (const auto *name : {"teacher-near-v1", "teacher-all-v1", "teacher-plus-student-v1"}) {
+        const auto model = on::load_risk_tables((root / name).string());
+        check(model.loaded && !model.fine.empty() && !model.segment.empty() &&
+                  !model.global.empty() && !model.spawn.empty(),
+              "a saved risk snapshot no longer loads through the production parser");
+    }
+}
 on::Observation scene() {
     on::Observation o;
     o.x = 192;
@@ -1319,8 +1327,10 @@ void narrow_arc_contract() {
 } // namespace
 int main(int argc, char **argv) {
     try {
-        check(argc == 2, "test needs an isolated scratch directory");
+        check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
+        if (argc == 3)
+            saved_risk_tables(argv[2]);
         spawn_neighborhood_contract();
         committed_prefix_contract();
         planner_lag_contract();

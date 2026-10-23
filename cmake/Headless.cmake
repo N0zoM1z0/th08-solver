@@ -150,7 +150,8 @@ if(BUILD_TESTING)
   add_executable(online_policy_tests tests/online_policy_tests.cpp)
   target_link_libraries(online_policy_tests PRIVATE th08_online_policy)
   add_test(NAME headless_online_policy_contract COMMAND online_policy_tests
-    ${CMAKE_CURRENT_BINARY_DIR}/online-policy-test)
+    ${CMAKE_CURRENT_BINARY_DIR}/online-policy-test
+    ${CMAKE_CURRENT_SOURCE_DIR}/models/legacy-risk)
   add_executable(hazard_probe_tests tests/hazard_probe_tests.cpp)
   target_include_directories(hazard_probe_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
   target_compile_features(hazard_probe_tests PRIVATE cxx_std_17)

@@ -38,6 +38,10 @@ not establish a 60 FPS controller.
 An optional deterministic planner-delay model reuses checked owned plans and
 reports executor/search timing separately. Its searches still run synchronously;
 [Planner](docs/PLANNER.md) defines the latch, cancellation and timing contracts.
+The next bounded phase, [issue #6](https://github.com/N0zoM1z0/th08-solver/issues/6),
+combines generic forecasting diagnosis, reproducible training data and a small
+learned-guidance comparison. Selected compact [learned artifacts](models/README.md)
+are preserved with exact identities and provenance; raw training/run data stay local.
 
 Two of three Lunatic Final A stories through natural 4A now strictly verify with
 the same uniform current-memory controller. Story diagnosis retains a Stage 5
