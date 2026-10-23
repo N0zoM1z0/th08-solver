@@ -394,6 +394,16 @@ remain intact. `hard_phantom_frames` counts forecasted bullet/update pairs befor
 reach pruning. The default is off: additional obstacles can restrict escape, and
 this hypothesis neither predicts activation nor certifies future native motion.
 
+`--motion-envelope 1` additionally requires hard-phantom mode and copies the
+current native canonical angle/speed into an owned alternative velocity for fired
+ghosts. The forecast contains its observed-motion path and every modeled single
+switch time to that alternative. Axis extrema form a conservative rectangle,
+updated by repeated additions; no activation schedule, spell or seed is decoded.
+The rectangle can overrestrict movement and does not cover arbitrary subsequent
+native transforms. `motion_envelope_frames` charges the extra bullet/update
+hypotheses. The default is off, and unused alternatives are not read by the native
+adapter. Native outcomes and independent-seed comparisons still decide usefulness.
+
 The harness computes searches synchronously. Controller latency is the actual
 whole decision; modeled executor latency subtracts only the full planner search,
 retaining capture, forecast/index, checks, cancellation and emergency cost.

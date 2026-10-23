@@ -4,6 +4,7 @@
 #include "th08/online.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
+#include "th08/online_motion_envelope.hpp"
 #include "th08/online_movement.hpp"
 #include "th08/online_plan.hpp"
 #include "th08/online_rotation.hpp"
@@ -453,6 +454,72 @@ void hard_phantom_contract() {
         check(a.action == b.action && a.depth == b.depth && a.depth == hard.horizon,
               "hard prior erased the collision-mode motion-history boundary");
     }
+}
+void motion_envelope_contract() {
+    std::fenv_t environment;
+    std::fegetenv(&environment);
+    for (const int rounding : {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO}) {
+        check(std::fesetround(rounding) == 0, "cannot set envelope test rounding");
+        std::uint32_t random = 0x902ac57du;
+        const auto draw = [&] {
+            random = random * 1664525u + 1013904223u;
+            return (float(int(random & 65535u) - 32768)) / 1024.f;
+        };
+        for (int sample = 0; sample < 64; ++sample) {
+            float x = draw(), y = draw();
+            const float vx = draw() / 8, vy = draw() / 8;
+            on::detail::MotionEnvelope envelope(x, y);
+            std::vector<std::array<float, 2>> switched{{x, y}};
+            for (int step = 0; step < 48; ++step) {
+                x += draw() / 16;
+                y += draw() / 16;
+                for (auto &point : switched)
+                    point[0] += vx, point[1] += vy;
+                switched.push_back({x, y});
+                envelope.advance(x, y, vx, vy);
+                for (const auto &point : switched)
+                    check(point[0] >= envelope.min_x && point[0] <= envelope.max_x &&
+                              point[1] >= envelope.min_y && point[1] <= envelope.max_y,
+                          "motion envelope omitted a modeled float switch time");
+            }
+        }
+    }
+    std::fesetenv(&environment);
+
+    on::Configuration config;
+    config.horizon = 24;
+    config.beam = 64;
+    config.hard_phantoms = true;
+    auto current = scene();
+    current.bullets = {bullet(0, 192.f, 380.f, -.6f, 0)};
+    auto &ghost = current.bullets[0];
+    ghost.full_width = ghost.full_height = 4;
+    ghost.collision_disabled = true;
+    ghost.alternate_motion = true;
+    ghost.alternate_vy = 10.f;
+    const auto original = on::Policy(config).decide(current);
+    config.motion_envelope = true;
+    const auto guarded = on::Policy(config).decide(current);
+    check(original.depth == 24 && guarded.depth == 24 && guarded.action != original.action &&
+              (guarded.action & 0xf0) && original.search.motion_envelope_frames == 0 &&
+              guarded.search.motion_envelope_frames == 24,
+          "an owned alternative flight did not expose the mode-restoration risk");
+    config.reach_filter = true;
+    const auto pruned = on::Policy(config).decide(current);
+    check(pruned.action == guarded.action && pruned.depth == guarded.depth,
+          "reach pruning removed an alternative-flight escape");
+    ghost.alternate_motion = false;
+    const auto absent = on::Policy(config).decide(current);
+    check(absent.action == original.action && absent.depth == original.depth &&
+              absent.search.motion_envelope_frames == 0,
+          "missing alternative motion changed the old forecast");
+    ghost.alternate_motion = true;
+    ghost.alternate_vx = std::numeric_limits<float>::quiet_NaN();
+    rejects([&] { on::Policy(config).decide(current); },
+            "non-finite source alternative entered the forecast");
+    config.hard_phantoms = false;
+    rejects([&] { on::Policy invalid(config); },
+            "a motion envelope silently ignored disabled fired bullets");
 }
 void observation_history() {
     on::Configuration config;
@@ -1336,6 +1403,7 @@ int main(int argc, char **argv) {
         planner_lag_contract();
         lazy_index_contract();
         hard_phantom_contract();
+        motion_envelope_contract();
         observation_history();
         transform_motion_history();
         pruning_and_isolation();

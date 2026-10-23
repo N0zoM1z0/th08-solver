@@ -9,5 +9,6 @@ namespace th08::online {
 // to the caller; no pointer into a reused Session view survives this call.
 void capture_memory(headless::Session &session, std::uint64_t update, Observation &observation,
                     bool include_actors = false, unsigned queued_horizon = 0,
-                    unsigned queued_laser_horizon = 0, bool include_turn_hints = false);
+                    unsigned queued_laser_horizon = 0, bool include_turn_hints = false,
+                    bool include_motion_alternatives = false);
 } // namespace th08::online

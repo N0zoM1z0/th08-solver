@@ -57,6 +57,9 @@ struct Bullet {
     // One-based future animation-completion update; zero leaves timing unknown.
     // This owns no ANM pointer and does not certify activation transforms/motion.
     unsigned activation_update = 0;
+    // An owned source-state alternative, without an activation-time promise.
+    bool alternate_motion = false;
+    float alternate_vx = 0, alternate_vy = 0;
 };
 struct LaserState {
     float endOffset = 0, startOffset = 0, startLength = 0, width = 0;
@@ -126,6 +129,7 @@ struct Configuration {
     bool risk_phantoms = false;
     // Conservative proposal prior for fired collision-disabled bullets; no activation schedule.
     bool hard_phantoms = false;
+    bool motion_envelope = false;
     bool queued_shots = false, queued_lasers = false;
     bool held_fallback = false;
     // Recheck one previous proposal only when the new beam cannot fill its horizon.
@@ -175,6 +179,7 @@ struct SearchStatistics {
     double planner_ms = 0; // Full search only; emergency work remains executor cost.
     std::uint64_t indexed_forecast_frames = 0;
     std::uint64_t hard_phantom_frames = 0;
+    std::uint64_t motion_envelope_frames = 0;
 };
 struct Decision {
     std::uint16_t action = 1;

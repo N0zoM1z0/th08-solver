@@ -121,6 +121,8 @@ Options parse(int argc, char **argv) {
             o.policy.risk_phantoms = boolean();
         else if (key == "--hard-phantoms")
             o.policy.hard_phantoms = boolean();
+        else if (key == "--motion-envelope")
+            o.policy.motion_envelope = boolean();
         else if (key == "--queued-shots")
             o.policy.queued_shots = boolean();
         else if (key == "--queued-lasers")
@@ -367,7 +369,7 @@ int run(const Options &o) {
                 session, actions.size(), observation, o.policy.spawn_guard > 0,
                 o.policy.queued_shots ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
                 o.policy.queued_lasers ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
-                o.policy.direct_turn_envelope);
+                o.policy.direct_turn_envelope, o.policy.motion_envelope);
             if (o.profile_components)
                 components.capture_ns +=
                     std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin)
@@ -429,6 +431,7 @@ int run(const Options &o) {
             search_stats.planner_searches += decision.search.planner_searches;
             search_stats.indexed_forecast_frames += decision.search.indexed_forecast_frames;
             search_stats.hard_phantom_frames += decision.search.hard_phantom_frames;
+            search_stats.motion_envelope_frames += decision.search.motion_envelope_frames;
             search_stats.plan_adoptions += decision.search.plan_adoptions;
             search_stats.executor_checks += decision.search.executor_checks;
             search_stats.emergency_searches += decision.search.emergency_searches;
@@ -556,6 +559,8 @@ int run(const Options &o) {
            << ",\"reach_filter\":" << o.policy.reach_filter << ",\"risk\":" << !o.risk.empty()
            << ",\"risk_phantoms\":" << o.policy.risk_phantoms
            << ",\"hard_phantoms\":" << o.policy.hard_phantoms
+           << ",\"motion_envelope\":" << o.policy.motion_envelope
+           << ",\"motion_envelope_frames\":" << search_stats.motion_envelope_frames
            << ",\"hard_phantom_frames\":" << search_stats.hard_phantom_frames
            << ",\"risk_hard\":" << o.policy.risk_hard
            << ",\"risk_stop_age\":" << o.policy.risk_stop_age

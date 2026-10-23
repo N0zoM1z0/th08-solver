@@ -27,6 +27,30 @@ campaign below, retaining its entire ledger. New experiments keep the same limit
 of four concurrent solver jobs and 320 top-level tasks, with internal label/rollout
 work charged separately. A frozen protocol precedes outcome-dependent choices.
 
+The first generic forecasting diagnosis replays the retained 107/seed-46445 tape
+and exactly matches its update-3333 death, score and RNG. Its colliding bullet is
+already visible and collision-disabled, moving horizontally near (-0.6, 0).
+At update 3332 the source mode-restoration callback restores its retained canonical
+flight, near (0, 1.3); native collision follows one update later. The current state
+already contains that alternative angle/speed. No activation timetable is needed
+to expose the missing motion hypothesis.
+The optional motion envelope contains every modeled single-switch time between
+observed and canonical flight; it changes proposal geometry, never native state.
+The retained failure now completes at 3941 updates, and the frozen first-three-seed
+controls complete 3/3 on each of 103/107/111. Relative to the preceding hard-only
+pilot, 107 changes 2/3 to 3/3 and the other two remain 3/3; these are diagnosis
+seeds, with one newly improved pair, not a population reliability result.
+All nine controller episodes cost 28578 native updates and 231.93 summed wall
+seconds; the initial audit adds 3333 updates. Two prespecified fresh native checks
+agree on terminal/score/RNG/counts over 6378 updates. Practice replay export remains
+unsupported. The public implementation reproduces the prototype's full 3941-input
+tape locally. All 43 native/DAT CTests pass in 671.71 seconds, including the new
+complete motion regression and unchanged default Stage 2 tape/natural replay.
+The envelope defaults off: its uncertain rectangles can overrestrict movement
+and do not model arbitrary later transforms. These twelve campaign tasks complete
+the initial diagnosis allocation. Small-model/data work continues separately;
+no heldout seed has been released.
+
 The current approach is in [Planner](PLANNER.md). The generic planner uses native
 fork rollouts and verified commits; it adds no spell-92 strategy branch. The
 [campaign ledger](../reports/native/planner_current_summary.json) retains successful

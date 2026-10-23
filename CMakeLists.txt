@@ -281,6 +281,13 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-regression
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_real_data.cmake)
     set_tests_properties(headless_online_real_data PROPERTIES TIMEOUT 1100)
+    add_test(NAME headless_online_motion_real_data COMMAND ${CMAKE_COMMAND}
+      -DEXECUTABLE=$<TARGET_FILE:th08_online>
+      -DVERIFIER=$<TARGET_FILE:th08_plan>
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-motion-regression
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_motion_real_data.cmake)
+    set_tests_properties(headless_online_motion_real_data PROPERTIES TIMEOUT 400)
     add_test(NAME headless_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_headless>
       -DPROBE_EXECUTABLE=$<TARGET_FILE:th08_headless_probe>

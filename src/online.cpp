@@ -4,6 +4,7 @@
 #include "th08/online.hpp"
 #include "th08/online_collision.hpp"
 #include "th08/online_dedup.hpp"
+#include "th08/online_motion_envelope.hpp"
 #include "th08/online_movement.hpp"
 #include "th08/online_plan.hpp"
 #include "th08/online_rotation.hpp"
@@ -243,6 +244,8 @@ struct Policy::Impl {
     std::uint64_t last_decided = UINT64_MAX;
     explicit Impl(Configuration configuration, RiskTables tables)
         : opt(configuration), risk(std::move(tables)) {
+        if (opt.motion_envelope && !opt.hard_phantoms)
+            throw std::runtime_error("motion_envelope_requires_hard_phantoms");
         if (opt.horizon < 2 || opt.horizon > 200 || opt.beam < 1 || opt.beam > 8192 ||
             opt.tail_check < 0 || opt.tail_check > 200 - opt.horizon || !std::isfinite(opt.grow) ||
             opt.grow < 0 || !std::isfinite(opt.boss_follow) || !std::isfinite(opt.risk_weight) ||
@@ -315,6 +318,10 @@ struct Policy::Impl {
             for (float v : {b.x, b.y, b.vx, b.vy, b.full_width, b.full_height,
                             b.vector_acceleration_x, b.vector_acceleration_y})
                 finite(v);
+            if (b.alternate_motion) {
+                finite(b.alternate_vx);
+                finite(b.alternate_vy);
+            }
             if (b.full_width < 0 || b.full_height < 0)
                 throw std::runtime_error("unsupported_online_observation");
             if (opt.spawn_clock && b.activation_update &&
@@ -571,6 +578,10 @@ struct Policy::Impl {
                 // collision flag and the observer's mode-change history stay intact.
                 if (b.collision_disabled)
                     search_stats.hard_phantom_frames += horizon;
+                detail::MotionEnvelope envelope(b.x, b.y);
+                const bool alternate = opt.motion_envelope && b.alternate_motion;
+                if (alternate)
+                    search_stats.motion_envelope_frames += horizon;
                 const Prev &p = prev_vel[b.slot];
                 float x = b.x, y = b.y;
                 float s1 = std::hypot(b.vx, b.vy), a1 = std::atan2(b.vy, b.vx), ds = 0, da = 0;
@@ -635,17 +646,24 @@ struct Policy::Impl {
                         x += vx, y += vy;
                     }
                     const float g = opt.grow * j;
+                    if (alternate)
+                        envelope.advance(x, y, b.alternate_vx, b.alternate_vy);
+                    else
+                        envelope = detail::MotionEnvelope(x, y);
                     float rm = rq ? std::min(12.f, risk_margin(*rq, j)) : 0.f;
                     if (opt.risk_hard && rm > 1.5f) {
-                        frames[j].b.push_back({x - w / 2.0f - rm, y - h / 2.0f - rm,
-                                               w / 2.0f + x + rm, h / 2.0f + y + rm});
+                        frames[j].b.push_back(
+                            {envelope.min_x - w / 2.0f - rm, envelope.min_y - h / 2.0f - rm,
+                             w / 2.0f + envelope.max_x + rm, h / 2.0f + envelope.max_y + rm});
                         continue;
                     }
                     frames[j].b.push_back(
-                        {x - w / 2.0f - g, y - h / 2.0f - g, w / 2.0f + x + g, h / 2.0f + y + g});
+                        {envelope.min_x - w / 2.0f - g, envelope.min_y - h / 2.0f - g,
+                         w / 2.0f + envelope.max_x + g, h / 2.0f + envelope.max_y + g});
                     if (rm > 1.5f)
-                        frames[j].risk.push_back({x - w / 2.0f - rm, y - h / 2.0f - rm,
-                                                  w / 2.0f + x + rm, h / 2.0f + y + rm});
+                        frames[j].risk.push_back(
+                            {envelope.min_x - w / 2.0f - rm, envelope.min_y - h / 2.0f - rm,
+                             w / 2.0f + envelope.max_x + rm, h / 2.0f + envelope.max_y + rm});
                 }
             } else if (b.state >= 2 && b.state <= 4) {
                 const float div = b.state == 2 ? 2.0f : b.state == 3 ? 2.5f : 3.0f;

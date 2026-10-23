@@ -67,7 +67,7 @@ TurnHint native_turn_hint(const headless::EclContextView &view) {
 } // namespace
 void capture_memory(headless::Session &session, std::uint64_t update, Observation &o,
                     bool include_actors, unsigned queued_horizon, unsigned queued_laser_horizon,
-                    bool include_turn_hints) {
+                    bool include_turn_hints, bool include_motion_alternatives) {
     const auto state = session.state();
     o.update = update;
     o.stage = state.stage;
@@ -102,6 +102,19 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
                              b.vector_acceleration_y, b.vector_acceleration_timer,
                              b.vector_acceleration_duration, native.collisionDisabled != 0});
         o.bullets.back().activation_update = native_spawn_clock(native);
+        if (include_motion_alternatives && native.collisionDisabled &&
+            native.state == BULLET_STATE_FIRED) {
+            // Source mode-restoration callbacks can replace the displayed ghost
+            // velocity with this retained canonical flight. Read it without
+            // decoding a spell schedule or mutating the native bullet.
+            Float3 alternative;
+            alternative.FromAngleMagnitude(native.angle,
+                                           g_Supervisor.framerateMultiplier * native.speed);
+            auto &copied = o.bullets.back();
+            copied.alternate_motion = true;
+            copied.alternate_vx = alternative.x;
+            copied.alternate_vy = alternative.y;
+        }
         if (b.relative_direction.updates) {
             const auto &v = b.relative_direction;
             const auto &turn = native.exStates[BULLET_TRANSFORM_STATE_DIRECTION_CHANGE];

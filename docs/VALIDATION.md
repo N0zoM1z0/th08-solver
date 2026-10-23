@@ -5,7 +5,7 @@ Core CTest cases: 31
 Normal core tests require no game assets or reconstruction. Optional source comparisons
 add two CTests (33 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay and planner-prefix CTests (42 total).
+complete-scene, online-stage/replay and planner-prefix CTests (43 total).
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
@@ -117,6 +117,16 @@ leave `rpy` empty. The attempted natural replay check is retained as a failed
 harness assumption, so this pilot has native-proxy evidence without a natural or
 retail replay claim. Such tapes require an appropriate export/validation path
 before promotion to certified expert routes.
+
+The optional current-state motion envelope is checked against all modeled switch
+times with repeated float additions in all four rounding modes. It keeps the
+ordinary forecast when no alternative is supplied, rejects non-finite inputs and
+requires explicit hard-phantom mode. A focused policy fixture exposes a restored
+flight direction with reach-filter agreement. `headless_online_motion_real_data`
+executes the complete 107 checkpoint that previously died after that mode change,
+then freshly verifies its complete action tape, terminal, score, RNG and update
+counts. This is a native-practice regression, without a natural/retail claim or
+proof that the conditional motion hypothesis covers every native transform.
 
 Optional `--risk-dir` requires all four files: `risk_table_merged.tsv`,
 `risk_backoff_seg.tsv`, `risk_backoff_global.tsv`, `nowarn_merged.tsv`.
