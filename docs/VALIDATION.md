@@ -17,6 +17,11 @@ output position and bin statistic across ties, signed zero, infinite scores,
 negative coordinates, focus bins and different widths/cell sizes. Invalid cells
 and non-finite coordinates still fail. Performance checks additionally require
 identical full action bytes and behavioral reports before comparing timings.
+The spawn-grid contract checks clipped edges, row separation, signed zero and a
+large/small-term sum whose rounding changes under reassociation. A second contract
+warms search storage, takes an immediate latched-collision return, then compares
+the next full decision with an observer-only control, including selection counts
+and exact action/depth. These guard per-decision grid and scratch-storage reuse.
 
 ## Current-memory CPU controller
 

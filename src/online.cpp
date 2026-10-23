@@ -840,6 +840,12 @@ struct Policy::Impl {
         std::uint16_t act;
         float score;
     };
+    // Storage belongs to this policy. Each search clears nodes and generation
+    // marks before use; retained capacity carries no previous proposal state.
+    struct SearchScratch {
+        std::vector<std::vector<Node>> layers;
+        std::vector<std::uint32_t> seen_key, seen_gen;
+    } search_scratch;
     const std::uint16_t kDirs[9] = {0, 16, 32, 64, 128, 16 | 64, 16 | 128, 32 | 64, 32 | 128};
     std::uint64_t tie = 88172645463325252ULL;
     SearchStatistics search_stats;
@@ -877,13 +883,21 @@ struct Policy::Impl {
     }
     SearchResult search(const std::vector<HFrame> &frames, int horizon, const Speeds &sp,
                         std::uint16_t latched, float x0, float y0, float pref_x, float pref_y) {
-        const std::array<float, 24 * 28> *nw = nullptr;
+        SpawnGrid summed_spawns;
+        const SpawnGrid *nw = nullptr;
         if (risk.loaded && opt.nowarn_weight > 0) {
             auto it = risk.spawn.find(current_segment);
-            if (it != risk.spawn.end())
-                nw = &it->second;
+            if (it != risk.spawn.end()) {
+                // This immutable grid is shared by every node in this search.
+                // Rebuild at each decision so no phase/model cache can go stale.
+                summed_spawns = spawn_neighborhood_sums(it->second);
+                nw = &summed_spawns;
+            }
         }
-        std::vector<std::vector<Node>> layers(horizon + 1);
+        auto &layers = search_scratch.layers;
+        layers.resize(horizon + 1);
+        for (auto &layer : layers)
+            layer.clear();
         float x1 = x0, y1 = y0;
         move(sp, x1, y1, latched);
         layers[1].push_back({x1, y1, -1, std::uint16_t(latched & 0xF4), 0.f});
@@ -894,7 +908,10 @@ struct Policy::Impl {
         std::size_t table_size = 1 << 16;
         while (table_size <= std::size_t(opt.beam) * 18)
             table_size *= 2;
-        std::vector<std::uint32_t> seen_key(table_size), seen_gen(table_size, 0);
+        auto &seen_key = search_scratch.seen_key;
+        auto &seen_gen = search_scratch.seen_gen;
+        seen_key.resize(table_size);
+        seen_gen.assign(table_size, 0);
         std::uint32_t gen = 0;
         int deepest = 1;
         for (int j = 1; j < horizon && !layers[j].empty(); ++j) {
@@ -940,10 +957,7 @@ struct Policy::Impl {
                             // expected no-warning spawns in the 3x3 cells around the node
                             const int cx = std::clamp(int(x / 16.f), 0, 23),
                                       cy = std::clamp(int(y / 16.f), 0, 27);
-                            float r = 0;
-                            for (int yy = std::max(0, cy - 1); yy <= std::min(27, cy + 1); ++yy)
-                                for (int xx = std::max(0, cx - 1); xx <= std::min(23, cx + 1); ++xx)
-                                    r += (*nw)[yy * 24 + xx];
+                            const float r = (*nw)[cy * 24 + cx];
                             n.score += opt.nowarn_weight * r * (j < 16 ? 1.f : 0.25f);
                         }
                         if (!(a & 4))

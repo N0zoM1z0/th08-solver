@@ -580,6 +580,28 @@ failure meaning. All 40 native/DAT CTests pass in 697.28 seconds with two worker
 including the unchanged default Stage 2 action SHA. No enforced-deadline or retail
 claim follows from these measurements; this changes speed without adding seed coverage.
 
+Two subsequent exact changes precompute each decision's spawn-grid neighborhoods
+and reuse policy-owned beam/dedup storage. The grid keeps the original row-major
+float additions and node-score weights; scratch nodes and generation marks reset
+on every search, including early failure. Focused contracts guard clipped cells,
+rounding order, signed zero and a failed-root/observer-only control comparison.
+Isolated three-pair Release measurements over the same two 2400-update workloads
+retain identical full actions/behavior: grid preparation reduces the story-start
+mean from 13.76--13.82 to 12.43--12.57 ms, then storage reuse reduces it from
+12.42--12.47 to 12.16--12.20 ms. Stage 4A's latter comparison is 11.49--11.52 to
+11.19--11.25 ms. A separate combined full-stage gate against the published partial-rank
+baseline retains the exact earlier Stage 1/Stage 2 tapes, scores and RNG at
+23149/32843 updates. Controller means change 12.47/11.74 to 11.07/10.50 ms;
+p99 changes 15.93/16.59 to 14.32/15.77 ms. Fresh actions and natural playback again
+verify all 55992 calculations with zero death/bomb rows. The 28 micro/full runs
+cost 169584 native updates and 1984.41 summed solver wall seconds; fresh execution
+adds 55992 updates and natural replay adds 55992 rows. All 14 behavioral pairs
+agree, without changing budgets, models or tie RNG. The same GCC 13.3/EPYC 9654
+environment keeps at most four controllers: each micro unit has six-core/four-GiB
+limits, and the later full-stage unit has twelve-core/eight-GiB limits. There are
+no future native updates, rewinds or enforced deadlines. All 40 native/DAT CTests
+pass in 636.97 seconds with two workers; the default Stage 2 action SHA is unchanged.
+
 Eighteen additional distinct holdout seeds, two per
 entry, remain unexecuted until a frozen candidate passes diagnosis. Overlapping
 queues reserve slots to keep at most four controllers and 320 tasks overall;

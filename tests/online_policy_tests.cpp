@@ -54,6 +54,30 @@ void risk_rows(const fs::path &root) {
     rejects([&] { on::load_risk_tables(root.string()); }, "duplicate model key/horizon accepted");
     fs::remove_all(root);
 }
+void spawn_neighborhood_contract() {
+    on::SpawnGrid source{};
+    source[0] = 1;
+    source[1] = 2;
+    source[24] = 4;
+    source[25] = 8;
+    source.back() = 16;
+    for (int i = 0; i < 9; ++i)
+        source[(9 + i / 3) * 24 + 9 + i % 3] = 1;
+    source[9 * 24 + 9] = 100000000.f;
+    const auto sums = on::spawn_neighborhood_sums(source);
+    check(sums[0] == 15 && sums[2] == 10 && sums[48] == 12 && sums.back() == 16 && sums[23] == 0 &&
+              sums[27 * 24] == 0,
+          "spawn neighborhoods duplicate clipped edges or wrap between rows");
+    // Eight unit terms round away when added individually after the large term.
+    // A reassociated/running sum can incorrectly retain them as one extra ULP.
+    check(sums[10 * 24 + 10] == 100000000.f,
+          "spawn neighborhood changed the original row-major float sum");
+    on::SpawnGrid zero{};
+    zero[0] = -0.f;
+    const auto empty = on::spawn_neighborhood_sums(zero);
+    check(empty[0] == 0 && !std::signbit(empty[0]),
+          "spawn neighborhood changed the original positive-zero accumulator");
+}
 on::Observation scene() {
     on::Observation o;
     o.x = 192;
@@ -198,6 +222,32 @@ void pruning_and_isolation() {
               "reach filtering changed an achievable action/depth");
         o.latched_input = a.action;
     }
+}
+void search_scratch_contract() {
+    on::Configuration config;
+    config.horizon = 12;
+    config.beam = 48;
+    config.diversity_cell = 16;
+    on::Policy failed(config), skipped(config);
+    auto o = scene();
+    const auto first = failed.decide(o), reference = skipped.decide(o);
+    check(first.action == reference.action && first.depth == config.horizon,
+          "scratch fixture did not warm a complete search");
+    ++o.update;
+    o.latched_input = 0;
+    o.bullets = {bullet(0, o.x, o.y, 0, 0)};
+    check(failed.decide(o).depth == 0, "scratch fixture did not take the latched failure return");
+    // The failed root consumes no search tie RNG. Warming without a decision
+    // supplies identical observer history while leaving a different scratch use.
+    skipped.observe(o);
+    ++o.update;
+    o.bullets.clear();
+    const auto a = failed.decide(o), b = skipped.decide(o);
+    check(a.depth == config.horizon && a.action == b.action && a.depth == b.depth &&
+              a.search.selections == b.search.selections &&
+              a.search.candidates == b.search.candidates && a.search.bins == b.search.bins &&
+              a.search.retained_bins == b.search.retained_bins,
+          "an early-return search leaked scratch nodes, marks or parent chains");
 }
 void actor_risk() {
     auto o = scene();
@@ -673,9 +723,11 @@ int main(int argc, char **argv) {
     try {
         check(argc == 2, "test needs an isolated scratch directory");
         risk_rows(argv[1]);
+        spawn_neighborhood_contract();
         observation_history();
         transform_motion_history();
         pruning_and_isolation();
+        search_scratch_contract();
         actor_risk();
         spatial_retention();
         queued_birth();

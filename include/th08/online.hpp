@@ -130,9 +130,13 @@ struct Configuration {
     bool direct_turn_envelope = false;
     bool relative_turns = false;
 };
+using SpawnGrid = std::array<float, 24 * 28>;
+// Clipped 3x3 no-warning birth sums over 16-pixel cells. Preserve each center's
+// row-major float addition order; the result owns its storage independently.
+SpawnGrid spawn_neighborhood_sums(const SpawnGrid &source);
 struct RiskTables {
     std::map<std::uint64_t, std::array<float, 4>> fine, segment, global;
-    std::map<int, std::array<float, 24 * 28>> spawn;
+    std::map<int, SpawnGrid> spawn;
     bool loaded = false;
 };
 inline std::uint64_t risk_key(long segment, long sprite, long size10, long speed, long age) {

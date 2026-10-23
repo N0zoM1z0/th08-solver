@@ -50,6 +50,20 @@ int horizon_index(double value) {
 }
 } // namespace
 
+SpawnGrid spawn_neighborhood_sums(const SpawnGrid &source) {
+    SpawnGrid result;
+    for (int cy = 0; cy < 28; ++cy)
+        for (int cx = 0; cx < 24; ++cx) {
+            float sum = 0;
+            // Prefix/running sums would reassociate the original float additions.
+            for (int yy = std::max(0, cy - 1); yy <= std::min(27, cy + 1); ++yy)
+                for (int xx = std::max(0, cx - 1); xx <= std::min(23, cx + 1); ++xx)
+                    sum += source[yy * 24 + xx];
+            result[cy * 24 + cx] = sum;
+        }
+    return result;
+}
+
 RiskTables load_risk_tables(const std::string &directory) {
     const std::filesystem::path root(directory);
     RiskTables tables;

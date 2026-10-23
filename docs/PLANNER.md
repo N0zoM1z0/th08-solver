@@ -272,6 +272,16 @@ training data; new experiments bind each file's SHA and must not call reused
 training seeds unseen. Teacher-conditioned futures, rounded funnel paths and
 retrospectively selected predictors remain diagnostic evidence.
 
+Each decision builds the current segment's clipped 3x3 spawn-grid sums once,
+then shares them across search nodes. Each center retains the original row-major
+float addition order; running/prefix sums would change rounding. Weights and
+depth factors are still applied in the original node-score expression. The grid
+is owned by that search and rebuilt on every decision, with no phase cache.
+Beam layers and dedup tables reuse policy-owned capacity. Every call clears all
+logical nodes and generation marks, including after an early latched collision;
+neither another policy nor a later decision can inherit proposal state. Capacity
+is bounded by the configured horizon/beam and its eighteen successors per node.
+
 The initial execution mode is `forward-measured`: observation copying, policy and
 route-input decoration are timed before `Session::step`, with mean, p99, p99.9,
 maximum and deadline misses. Native execution excluding measured file I/O, setup,
