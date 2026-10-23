@@ -593,8 +593,9 @@ guard16 and the same teacher-plus-student files. Complete standalone Stage 1,
 shot 1/seed 0, and Stage 2, shot 0/seed 29768, have 100000-update/7200-second
 budgets. Every version finishes with identical full action bytes and behavioral
 fields: 23149/32843 calculations, scores 3796648/11813854 and unchanged terminal RNG.
-Each row below compares its own baseline/candidate measurements; costs include
-all paired prefix and full-stage runs.
+Each row compares its own baseline/candidate measurements. Table costs include
+the paired prefixes and two complete early stages; later-entry work is charged
+separately below.
 
 | Exact change | Stage 1 controller mean (ms) | Stage 2 controller mean (ms) | Runs / native updates | Summed solver wall (s) |
 | --- | --- | --- | --- | --- |
@@ -603,6 +604,7 @@ all paired prefix and full-stage runs.
 | Half-pixel conversion | 11.10 → 10.84 | 10.50 → 10.31 | 16 / 140784 | 1534.09 |
 | Flat spatial index + selection storage | 10.85 → 8.72 | 10.28 → 8.38 | 16 / 140784 | 1376.43 |
 | Per-search movement deltas | 8.73 → 8.10 | 8.38 → 7.74 | 16 / 140784 | 1190.10 |
+| Scalar AABB rejection evaluation | 8.12 → 7.95 | 7.76 → 7.64 | 22 / 455184 | 1317.17 |
 
 Three alternating paired 2400-update prefixes per workload use the shot-1
 story start, seed 0, and standalone Stage 4A start, seed 29768. They are timing
@@ -611,17 +613,19 @@ story-start mean 13.76--13.82 to 12.43--12.57 ms; search-storage reuse then redu
 12.42--12.47 to 12.16--12.20 ms. The latest flat-index comparison changes
 11.97--12.02 to 9.95--9.97 ms at the story start and 10.97--11.01 to
 8.93--8.99 ms at Stage 4A. Movement reuse changes 9.96--9.98 to 9.19--9.21 ms at
-the story start and 8.92--8.97 to 8.33--8.35 ms at Stage 4A. All 8/14/8/8/8
-behavioral pair checks agree. The initial
+the story start and 8.92--8.97 to 8.33--8.35 ms at Stage 4A. The AABB experiment
+also includes three alternating pairs after 50000 explicit 6B prefix updates;
+their 300000 reconstruction updates are included in its row. All behavioral
+pair checks agree. The initial
 separate instrumented profile adds 2400 native updates; its timing is excluded.
 
 Each full-stage gate freshly verifies the two unique tapes for another 55992
 native updates and 55992 natural replay rows, with zero death/bomb rows. All 40
-native/DAT CTests pass after each change in 697.28/636.97/688.80/662.47/943.95 seconds with
+native/DAT CTests pass after each change in 697.28/636.97/688.80/662.47/943.95/724.92 seconds with
 two workers; the default Stage 2 action SHA remains unchanged. At most four
 controllers use a twelve-core CPU quota and eight-GiB memory cap on the shared
 host; the earlier isolated micro units each use six-core/four-GiB caps.
-The movement gate's p99 is 11.31/12.76 ms, maxima are 12.76/13.74 ms and neither
+The AABB gate's p99 is 10.79/12.14 ms, maxima are 13.21/13.70 ms and neither
 sample has a decision above the 1000/60-ms deadline. These clocks exclude native execution
 and file I/O, and the harness still waits for decisions. No enforced-deadline,
 live retail, new seed coverage or independent physics claim follows from this speedup.
@@ -629,18 +633,19 @@ live retail, new seed coverage or independent physics claim follows from this sp
 A later-entry comparison extends the same H64/beam192/cell16/guard16 profile from
 pre-optimization `83d09a6` to `0ee1056`, with unchanged native library, DAT and model
 files. All seven pairs have identical full action bytes and all non-timing
-behavioral fields. The last column is a separate movement-candidate recheck;
-its timings are descriptive, not an additional paired speed comparison:
+behavioral fields. The last column records the latest AABB recheck (`75b952e`);
+these timings are descriptive rather than a paired comparison against the old
+columns. The separate full 6B pair is recorded below:
 
-| Entry / shot / seed | Updates and outcome | Controller mean, old → optimized (ms) | p99, old → optimized (ms) | Movement recheck mean / p99 (ms) |
+| Entry / shot / seed | Updates and outcome | Controller mean, old → optimized (ms) | p99, old → optimized (ms) | Latest mean / p99 (ms) |
 | --- | --- | --- | --- | --- |
-| 3 / 1 / 0 | 35534, complete | 14.11 → 8.19 | 22.33 → 16.93 | 7.64 / 16.02 |
-| 4A / 1 / 29768 | 43912, complete | 14.40 → 8.60 | 20.38 → 15.84 | 8.03 / 14.84 |
-| 4B / 0 / 0 | 31333, death in 88 | 13.27 → 8.10 | 18.67 → 13.88 | 7.53 / 12.76 |
-| 5 / 0 / 0 | 44346, complete | 14.98 → 9.34 | 20.92 → 16.62 | 8.64 / 15.62 |
-| 6A / 0 / 0 | 72545, complete | 15.13 → 9.47 | 21.31 → 17.30 | 8.81 / 16.64 |
-| 6B / 0 / 0 | 64744, complete | 15.55 → 9.98 | 30.18 → 27.08 | 9.33 / 26.40 |
-| Extra / 0 / 0 | 61156, death in 201 | 14.45 → 8.54 | 20.67 → 14.94 | 7.92 / 13.99 |
+| 3 / 1 / 0 | 35534, complete | 14.11 → 8.19 | 22.33 → 16.93 | 7.57 / 15.58 |
+| 4A / 1 / 29768 | 43912, complete | 14.40 → 8.60 | 20.38 → 15.84 | 7.91 / 14.27 |
+| 4B / 0 / 0 | 31333, death in 88 | 13.27 → 8.10 | 18.67 → 13.88 | 7.41 / 12.26 |
+| 5 / 0 / 0 | 44346, complete | 14.98 → 9.34 | 20.92 → 16.62 | 8.50 / 14.97 |
+| 6A / 0 / 0 | 72545, complete | 15.13 → 9.47 | 21.31 → 17.30 | 8.62 / 16.38 |
+| 6B / 0 / 0 | 64744, complete | 15.55 → 9.98 | 30.18 → 27.08 | 9.13 / 26.12 |
+| Extra / 0 / 0 | 61156, death in 201 | 14.45 → 8.54 | 20.67 → 14.94 | 7.79 / 13.44 |
 
 Main-stage entries are Lunatic; Extra uses difficulty 4. The two Finals use the
 documented non-practice power-zero standalone checkpoint (`story:1`, natural
@@ -656,32 +661,36 @@ retained 4B/Extra deaths are behavior agreement, not solved workloads. These kno
 diagnosis seeds do not add unseen coverage; later-stage p99 still prevents a
 general 60 FPS claim.
 
-The movement recheck matches every protected parent action byte and behavioral
-field across all seven later entries. Its five completions again pass fresh
+The predecessor movement recheck (`4125adb`) matches every protected parent action
+byte and behavioral field across all seven later entries. Its five completions again pass fresh
 execution and natural replay; both failures retain their exact update and spell.
 These seven additional candidate runs cost 353570 native updates and 2992.92
 summed solver wall seconds. Including the paired early-stage checks above, this
 movement campaign costs 23 runs, 494354 native updates and 4183.02 solver wall
 seconds; seven fresh checks add 317073 native updates and natural playback adds
 317073 rows with zero death/bomb rows. The unit's measured memory peak, including
-four-job compilation, is 571793408 bytes under its eight-GiB hard limit. Latest
-6B p99/max are still 26.40/54.86 ms, with 3118 deadline misses. No budget, strategy,
+four-job compilation, is 571793408 bytes under its eight-GiB hard limit. Its
+6B p99/max are 26.40/54.86 ms, with 3118 deadline misses. No budget, strategy,
 model, native physics or gameplay-RNG change contributes to the measured speedup.
 
-The scalar online AABB predicate now evaluates the four original rejection
+The scalar online AABB predicate (`75b952e`) evaluates the four original rejection
 comparisons together, retaining inclusive contact and the original bounds.
 All 403116 finite-geometry comparison cases and all 40 native/DAT CTests pass
 (724.92 seconds); the default Stage 2 action SHA is unchanged. Nine alternating
-Release prefix pairs cover the story start, Stage 4A start and a 6B window after
-50000 explicit prefix updates, with identical complete actions and behavioral
-fields. Complete Stage 1/2 means are 8.12 → 7.95 and 7.76 → 7.64 ms; p99 changes
-11.33 → 10.79 and 12.78 → 12.14 ms. Fresh native execution and natural replay
-agree on score/RNG/counts and all 55992 rows, with zero death/bomb rows. These
-22 completed timing runs cost 455184 native updates, including 300000 prefix
-updates, and 1317.17 solver wall seconds; fresh checks/replay are additional.
-The full 6B pair and the other six entry rechecks are still running under the
-frozen protocol. No pending case transfers the earlier nine-entry result to this
-new build, and no strict 60 FPS or new seed coverage claim follows.
+Release prefix pairs and full Stage 1/2/6B pairs have identical complete actions
+and behavioral fields. The full 6B pair improves mean 9.33 → 9.13 ms and p99
+26.37 → 26.12 ms, while maxima are 54.88/54.92 ms and deadline misses 3142/2962.
+The maximum does not improve, and the harness still waits for late decisions.
+All nine candidate entries match their protected parent tapes: seven completions
+again pass fresh execution and natural replay, and both deaths retain the exact
+update/spell. The eight full runs beyond the early-stage table row add 418314
+native updates and 3548.28 solver wall seconds. This complete AABB campaign costs
+30 runs, 873498 native updates (300000 prefix updates) and 4865.44 solver wall
+seconds; seven fresh checks add 317073 native updates and natural playback adds
+317073 rows with zero death/bomb rows. Measured unit peak, including four-job
+compilation, is 573657088 bytes under its eight-GiB hard limit. New raw artifacts
+stay local. These known diagnosis entries add no unseen-seed, current-main story,
+retail or enforced 60 FPS claim.
 
 Private diagnosis of that 6B window counts 215996427 hard probes, 208114877 soft
 risk calls (170034826 nonempty), 850065867 AABB tests and zero indexed lasers.
