@@ -75,7 +75,13 @@ versus the model's 0.21196/0.05458: modest improvement on this deliberately
 tail-biased conditional dataset, not population calibration or controller benefit.
 All three global multipliers 0.25/1/4 complete 7/8 tuning proxies; the frozen tie
 rule selects 0.25. The 24 trials cost 81810 Native updates and 290.91 summed command
-wall seconds. New-seed Native comparisons remain pending. The lifetime-enabled
+wall seconds. The joint-frozen 172-trial new-seed comparison is now running:
+baseline, v1, v2 and the no-model generic profile. Each has 24 Extra 202 seeds,
+eight each on 107/111 and three dense 103 controls. Source/binary/model/loader
+identities and all six paired contrasts are frozen before outcomes; the later
+decoder/resource optimizations are excluded from all four evaluated builds.
+Three controllers leave the fourth Native slot for separate regression work.
+The lifetime-enabled
 checkpoint passes all 48 integrated Native/DAT CTests in 810.87 seconds; the
 complete default Stage 2 action hash remains `c4acd20a…`.
 
@@ -103,6 +109,28 @@ decoding and 5.66 ms to surface conversion within a 29.65-ms Native update. Thes
 are nested CPU costs, not extra wall time to sum with the whole update. Exact
 decoder optimization is the next measured target. This incomplete attempt certifies neither
 full-story completion nor retail control, and no deadline tolerance was relaxed.
+
+An exact headless LZSS field reader now passes an independent scalar oracle and
+the actual native codec entry-point audit over 318 archive decodes and 112526407
+bytes. Output and all 8192 persistent dictionary bytes match after every call;
+Encode remains unchanged. The Release audit measures 287.66 ms versus 868.43 ms
+for legacy decode, including output allocation. One exact Stage 2 prefix probe
+reduces Native initialization from 29.65 to 15.63 ms, with LZSS 20.78 to 6.96 ms.
+This passive sample alone gives little margin for the live owner.
+A passive full historical seed-0 tape also matches all 231306 API updates,
+231301 calculations, five handoffs, terminal, score and RNG with zero deaths.
+It replays recorded inputs; it does not establish a new controller completion.
+All five calls above 8 ms are first calculations after a handoff. Per-stage
+initialization peaks reach 16.11, 15.60, 21.58, 22.04 and 36.33 ms, so the current
+decoder improvement still cannot establish a strict full-story period. The
+complete replay-fingerprint regression matches every one of the 108 baseline
+case tuples, row counts, fingerprints and outcomes, including both original
+failure captures. The fidelity gate stays 106/108; equivalence does not repair
+those failures or add retail evidence. It costs 9313155 API calls, 12241597
+calculation rows and 574.18 seconds of sequential suite wall time. All 49 CTest
+contracts pass after correcting and rerunning the documented core-count check;
+the initial documentation failure is retained. Further measured resource work
+and actual paced execution remain separate gates.
 
 The owner authorizes tracking selected compact learned models while keeping raw
 training/run artifacts ignored. The three inherited risk packs are now copied
@@ -1484,8 +1512,8 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 34 core CTests without private data, plus two optional pinned-source tests
-(31 total). The current headless/DAT configuration has 40 CTests, including native
+There are 35 core CTests without private data, plus two optional pinned-source tests
+(37 total). The current headless/DAT configuration has 49 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
 continuation test, online policy contracts and a complete online-stage/replay test.
 The complete-scene test covers complete

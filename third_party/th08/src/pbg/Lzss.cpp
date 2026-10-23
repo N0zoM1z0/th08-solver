@@ -2,6 +2,9 @@
 
 #include "pbg/Lzss.hpp"
 #include "pbg/PbgMemory.hpp"
+#ifdef TH08_HEADLESS
+#include "modern/headless/lzss_decode.hpp"
+#endif
 
 #define LZSS_BREAKEVEN 3
 #define LZSS_LOOKAHEAD_MAX ((1 << LZSS_LENGTH_BITS) + LZSS_BREAKEVEN - 1)
@@ -310,6 +313,14 @@ u8 *Lzss::Decode(u8 *in, i32 inSize, u8 *out, i32 outSize)
             return NULL;
         }
     }
+
+#ifdef TH08_HEADLESS
+    // Only bit extraction changes. Keep the native allocation, persistent
+    // dictionary, zero-padded EOF, overlapping copies and output-size contract.
+    static_assert(LZSS_DICTSIZE == headless::lzss_dictionary_size, "LZSS dictionary mismatch");
+    headless::decode_lzss_fields(in, inSize, out, m_Dict);
+    return out;
+#endif
 
     inCursor = in;
     outCursor = out;

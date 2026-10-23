@@ -1,14 +1,23 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 34
+Core CTest cases: 35
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (36 total). Native builds add process, semantic, hazard-probe and
+add two CTests (37 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay and planner-prefix CTests (48 total).
+complete-scene, online-stage/replay and planner-prefix CTests (49 total).
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
+
+`lzss_decode` compares the headless field reader against an independent one-bit
+scalar oracle. It checks persistent nonzero dictionaries, generated streams and
+byte truncations, sequential overlapping/ring-wrap copies, end markers and exact
+output guards. The output-capacity obligation and zero-padded EOF remain the
+native caller contract. A separate real-DAT audit checks the actual exported
+Encode/Decode entry points against unchanged renamed legacy code: all 317 entries
+and the file table have identical bytes, declared lengths and complete final
+dictionaries after each decode. This is codec equivalence, not a gameplay oracle.
 
 `model_artifacts` checks the complete saved-table file set, SHA-256, byte lengths
 and data-row counts against [the model manifest](../models/artifacts.tsv).
