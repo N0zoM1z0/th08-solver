@@ -20,12 +20,16 @@ The current owner priority follows the preserved October 23
 [realtime analysis](../preparations/10.23-with-claude/TH08_online_realtime_analysis.md):
 reproduce its actual spell-166 workload, validate exact kernel optimizations,
 then test plan reuse and deterministic planning latency before learning work.
-Only the analysis was supplied; its referenced patches and experiment artifacts
-are absent, so the mechanisms will be implemented and independently measured here.
-The source document stays unchanged. Its two-core no-model VM results do not
-transfer to the current learned-risk profile. Fresh complete 6B controls with
-and without the unchanged model are running to identify the correct windows;
-pending controls add no new verified coverage. [Planner](PLANNER.md) owns the
+The subsequently supplied [reference bundle](../preparations/10.23-with-claude/th08-online-realtime-2026-10-23-public.zip)
+includes an updated analysis, both prototype patches and raw external evidence.
+Unmodified originals remain local; the tracked publication copy removes private
+conversation metadata. Exact kernels were implemented independently before those
+attachments arrived and are now being compared with them. The source analyses
+stay unchanged. Their two-core no-model VM results do not transfer to the current
+learned-risk profile. Fresh complete 6B controls identify spell-166 starts at
+updates 42681 (no model, 62020-update completion) and 45032 (unchanged model,
+64744-update completion); paired exact-kernel timing and replay gates are running.
+Pending experiments add no new verified coverage. [Planner](PLANNER.md) owns the
 algorithm-phase acceptance gates and current-memory boundary.
 
 The latest scope prioritizes random-seed generalization. The reference catalog
