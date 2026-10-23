@@ -404,6 +404,40 @@ native transforms. `motion_envelope_frames` charges the extra bullet/update
 hypotheses. The default is off, and unused alternatives are not read by the native
 adapter. Native outcomes and independent-seed comparisons still decide usefulness.
 
+The experimental `--value-model` loads an immutable logistic endpoint ranker.
+Its fixed contract is H24 proposals followed by holding their final input until
+native update 64 or the explicit spell terminal. It predicts that conditional
+branch outcome, not optimal escape value. Current/proposed features exclude seed,
+spell identity, episode time and teacher future. Training-only normalization and
+clipping are stored with the weights. The first model requires hard phantoms and
+the motion envelope, without legacy-risk tables, lag, warm/held or terminal-tail
+fallbacks. Unsupported combinations fail setup.
+Only complete retained endpoints receive `-value_weight * log(max(p, 1e-4))` in
+their terminal ranking. Earlier beam generation, pruning, budgets and tie draws
+stay unchanged; equal terminal scores retain source order. A zero weight avoids
+model evaluation. `value_evaluations` and nested `value_ms` account for preparation
+and ranking; whole controller timing includes feature construction and inference.
+No probability is a safety certificate or a reason to certify a failed rollout.
+
+`th08_value_collect` is a separate offline tool. At bounded checkpoints it obtains
+up to four owned complete prefixes from the ordinary beam and independently forks
+the current native world for each one. Shooting/focus/movement, the original latch,
+RNG, carried bullets and actors remain literal. Each child executes that prefix
+and then holds its final input; it never feeds future state to the parent policy.
+Native death is a negative label, a full surviving window or declared native
+terminal is positive, and faults/incomplete windows cannot enter training.
+Parent tapes, checkpoint/prefix identities, explicit branch inputs and dataset
+hashes remain local. The first frozen producer predates the explicit sidecar and
+retains its exact binary/source plus parent tape and proposal rank for recovery.
+Its startup-terminal bug was rejected by transparency checks before training data
+generation; the original failed attempts stay charged.
+`th08_value_train` rejects overlapping train/tune seeds and parent identities,
+fits normalization and weights from training rows only, and reports conditional
+classification metrics. Seed/parent splits, all parent outcomes and Native label
+costs belong to the frozen campaign manifest; selected small weights and provenance
+are saved in [models](../models/README.md). Independent paired native completion
+and complete-stage tests remain separate from classification loss.
+
 The harness computes searches synchronously. Controller latency is the actual
 whole decision; modeled executor latency subtracts only the full planner search,
 retaining capture, forecast/index, checks, cancellation and emergency cost.

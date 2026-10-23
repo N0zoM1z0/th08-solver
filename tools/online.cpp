@@ -29,7 +29,7 @@ void require(bool condition, const char *reason) {
         throw std::runtime_error(reason);
 }
 struct Options {
-    fs::path dat, out, prefix, risk;
+    fs::path dat, out, prefix, risk, value_model;
     on::Configuration policy;
     int stage = 0, difficulty = 3, shot = 0, seed = 0, spell = -1, log_every = 0;
     bool story = false, profile_components = false;
@@ -123,6 +123,10 @@ Options parse(int argc, char **argv) {
             o.policy.hard_phantoms = boolean();
         else if (key == "--motion-envelope")
             o.policy.motion_envelope = boolean();
+        else if (key == "--value-model")
+            o.value_model = fs::absolute(value);
+        else if (key == "--value-weight")
+            o.policy.value_weight = float(number(value));
         else if (key == "--queued-shots")
             o.policy.queued_shots = boolean();
         else if (key == "--queued-lasers")
@@ -245,8 +249,11 @@ int run(const Options &o) {
         for (const char *name : {"risk_table_merged.tsv", "risk_backoff_seg.tsv",
                                  "risk_backoff_global.tsv", "nowarn_merged.tsv"})
             model_hashes.emplace_back(name, hash(o.risk / name));
+    const auto value_hash = o.value_model.empty() ? std::string{} : hash(o.value_model);
     on::Policy policy(o.policy,
-                      o.risk.empty() ? on::RiskTables{} : on::load_risk_tables(o.risk.string()));
+                      o.risk.empty() ? on::RiskTables{} : on::load_risk_tables(o.risk.string()),
+                      o.value_model.empty() ? on::BranchValueModel{}
+                                            : on::load_branch_value(o.value_model.string()));
     th08::plan::PrefixParser parser(o.frames);
     const auto prefix_hash = o.prefix.empty() ? std::string{} : hash(o.prefix, &parser);
     const auto prefix = parser.finish();
@@ -369,7 +376,7 @@ int run(const Options &o) {
                 session, actions.size(), observation, o.policy.spawn_guard > 0,
                 o.policy.queued_shots ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
                 o.policy.queued_lasers ? unsigned(o.policy.horizon + o.policy.tail_check) : 0,
-                o.policy.direct_turn_envelope, o.policy.motion_envelope);
+                o.policy.direct_turn_envelope, o.policy.motion_envelope || !o.value_model.empty());
             if (o.profile_components)
                 components.capture_ns +=
                     std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin)
@@ -432,6 +439,8 @@ int run(const Options &o) {
             search_stats.indexed_forecast_frames += decision.search.indexed_forecast_frames;
             search_stats.hard_phantom_frames += decision.search.hard_phantom_frames;
             search_stats.motion_envelope_frames += decision.search.motion_envelope_frames;
+            search_stats.value_evaluations += decision.search.value_evaluations;
+            search_stats.value_ms += decision.search.value_ms;
             search_stats.plan_adoptions += decision.search.plan_adoptions;
             search_stats.executor_checks += decision.search.executor_checks;
             search_stats.emergency_searches += decision.search.emergency_searches;
@@ -561,6 +570,10 @@ int run(const Options &o) {
            << ",\"hard_phantoms\":" << o.policy.hard_phantoms
            << ",\"motion_envelope\":" << o.policy.motion_envelope
            << ",\"motion_envelope_frames\":" << search_stats.motion_envelope_frames
+           << ",\"value_model\":" << !o.value_model.empty()
+           << ",\"value_weight\":" << o.policy.value_weight << ",\"value_model_sha256\":\""
+           << value_hash << '"' << ",\"value_evaluations\":" << search_stats.value_evaluations
+           << ",\"value_ms\":" << search_stats.value_ms
            << ",\"hard_phantom_frames\":" << search_stats.hard_phantom_frames
            << ",\"risk_hard\":" << o.policy.risk_hard
            << ",\"risk_stop_age\":" << o.policy.risk_stop_age

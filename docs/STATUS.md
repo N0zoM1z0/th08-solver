@@ -48,8 +48,36 @@ tape locally. All 43 native/DAT CTests pass in 671.71 seconds, including the new
 complete motion regression and unchanged default Stage 2 tape/natural replay.
 The envelope defaults off: its uncertain rectangles can overrestrict movement
 and do not model arbitrary later transforms. These twelve campaign tasks complete
-the initial diagnosis allocation. Small-model/data work continues separately;
-no heldout seed has been released.
+the initial diagnosis allocation.
+
+The first conditional branch-value model is genuinely trained, with its compact
+weights and normalization saved in [branch value v1](../models/branch-value-v1/README.md).
+Sixteen independent seed/parent episodes supply 1584 training rows; eight disjoint
+episodes supply 820 tuning rows. Across collection, all 24 parent outcomes remain
+charged (21 complete, three deaths), with 82333 nominal updates, 119661 additional
+native label updates and 299.88 summed wall seconds. Every dataset/tape identity,
+checkpoint-prefix hash, row count and manifest configuration has been audited;
+no native fault became a label. Parent observations/features never receive child
+future state. The collector's startup-terminal defect was caught in two failed
+acceptance tasks before this corpus was generated, and those attempts remain in
+the campaign ledger.
+The 1670-byte logistic model predicts a proposed H24 prefix followed by held-last
+input through update 64; it is a search aid, not an expert policy or safety proof.
+Training-only normalization and weights use 400 deterministic C++ steps. Weighted
+BCE/Brier are 0.65494/0.23135 on training and 0.65674/0.23217 on tuning. These losses
+do not establish controller benefit. Global penalties 0.25/1/4 each complete 7/8
+tuning cases; the predeclared tie rule fixes 0.25. All 24 tuning episodes cost
+83312 native updates and 258.60 summed wall seconds. The independent 24-seed
+H24/H24-value/H64 comparison has now been released with frozen binaries, model,
+weight and manifests. Its full bank and two-seed standalone Stage 5 gate remain
+pending; no successful-route or real-time claim follows from training.
+The maintained collector now preserves explicit branch inputs as well as parent
+tapes. The first frozen producer predates this sidecar and retains exact source,
+binaries, parent tapes and checkpoint/rank identities for recovery. The current
+trainer reproduces the first saved model byte-for-byte from the audited corpus.
+All 46 final-build native/DAT CTests pass in 677.87 seconds, including branch
+transparency on 107/Extra 202 and the unchanged complete Stage 2 execution/replay
+gate. Model-off and zero-weight policy contracts preserve ordinary behavior.
 
 The current approach is in [Planner](PLANNER.md). The generic planner uses native
 fork rollouts and verified commits; it adds no spell-92 strategy branch. The
@@ -1291,7 +1319,7 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 31 core CTests without private data, plus two optional pinned-source tests
+There are 33 core CTests without private data, plus two optional pinned-source tests
 (31 total). The current headless/DAT configuration has 40 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
 continuation test, online policy contracts and a complete online-stage/replay test.

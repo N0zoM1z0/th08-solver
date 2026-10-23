@@ -521,6 +521,55 @@ void motion_envelope_contract() {
     rejects([&] { on::Policy invalid(config); },
             "a motion envelope silently ignored disabled fired bullets");
 }
+void branch_value_contract() {
+    on::Configuration config;
+    config.horizon = on::kValueHorizon;
+    config.beam = 64;
+    config.hard_phantoms = config.motion_envelope = true;
+    on::BranchValueModel model;
+    model.loaded = true;
+    model.scale.fill(1);
+    on::Policy plain(config), traced(config), constant(config, {}, model);
+    config.value_weight = 0;
+    model.weight[0] = 100;
+    on::Policy disabled(config, {}, model);
+    auto current = scene();
+    for (int step = 0; step < 12; ++step) {
+        if (step == 7)
+            current.bullets = {bullet(0, current.x, current.y, 0, 0)};
+        if (step == 8)
+            current.bullets.clear();
+        std::vector<on::ValueProposal> proposals;
+        const auto a = plain.decide(current), b = traced.decide(current, nullptr, &proposals),
+                   c = constant.decide(current), d = disabled.decide(current);
+        check(a.action == b.action && a.action == c.action && a.action == d.action &&
+                  a.depth == b.depth && a.depth == c.depth && a.depth == d.depth &&
+                  a.search.candidates == b.search.candidates,
+              "proposal extraction, constant value or zero weight changed ordinary search");
+        if (a.depth == config.horizon) {
+            check(proposals.size() == 4, "complete beam lost its four sampled endpoints");
+            for (const auto &proposal : proposals) {
+                check(proposal.inputs.size() == on::kValueHorizon - 1,
+                      "branch prefix disagrees with the movement latch");
+                for (const auto input : proposal.inputs)
+                    check((input & 1) && !(input & ~0xf5u),
+                          "branch proposal changed student action space");
+                for (const auto value : proposal.features)
+                    check(std::isfinite(value), "non-finite student feature exported");
+            }
+            check(c.search.value_evaluations > 0 && d.search.value_evaluations == 0,
+                  "learned ranking work is missing or zero weight still evaluates models");
+        } else {
+            check(proposals.empty(),
+                  "partial or failed search emitted a complete branch label request");
+        }
+        on::detail::apply_movement(
+            current.movement, current.x, current.y,
+            on::detail::movement_delta(current.movement, current.latched_input));
+        current.latched_input = a.action;
+        ++current.update;
+    }
+}
 void observation_history() {
     on::Configuration config;
     config.horizon = 8;
@@ -1404,6 +1453,7 @@ int main(int argc, char **argv) {
         lazy_index_contract();
         hard_phantom_contract();
         motion_envelope_contract();
+        branch_value_contract();
         observation_history();
         transform_motion_history();
         pruning_and_isolation();

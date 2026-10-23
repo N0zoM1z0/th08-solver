@@ -58,3 +58,10 @@ splits, action-space assumptions, training implementation/configuration and
 validation limitations alongside their small weights and identity entry. Teacher
 future may label offline examples; student features must contain only information
 available at the corresponding observation.
+
+## Experimental native branch value
+
+[Branch value v1](branch-value-v1/README.md) preserves the first compact C++-trained
+auxiliary model and normalization. It learns a conditional native branch outcome,
+not an expert action policy. Its independent native comparison remains separate
+from artifact identity and offline classification metrics.

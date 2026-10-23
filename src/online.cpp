@@ -235,6 +235,7 @@ inline int probe(const HFrame &f, const Float3 &half, float x, float y, bool wan
 struct Policy::Impl {
     Configuration opt;
     const RiskTables risk;
+    const BranchValueModel value_model;
     Movement current_movement;
     std::vector<HFrame> frames;
     int indexed_horizon = 0;
@@ -242,8 +243,13 @@ struct Policy::Impl {
     std::uint64_t index_extension_ns = 0;
     std::uint64_t last_observed = UINT64_MAX;
     std::uint64_t last_decided = UINT64_MAX;
-    explicit Impl(Configuration configuration, RiskTables tables)
-        : opt(configuration), risk(std::move(tables)) {
+    explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
+        : opt(configuration), risk(std::move(tables)), value_model(std::move(value)) {
+        if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
+            (value_model.loaded && (opt.horizon != int(kValueHorizon) || opt.planner_lag ||
+                                    opt.tail_check || opt.warm_fallback || opt.held_fallback ||
+                                    risk.loaded || !opt.hard_phantoms || !opt.motion_envelope)))
+            throw std::runtime_error("unsupported_branch_value_configuration");
         if (opt.motion_envelope && !opt.hard_phantoms)
             throw std::runtime_error("motion_envelope_requires_hard_phantoms");
         if (opt.horizon < 2 || opt.horizon > 200 || opt.beam < 1 || opt.beam > 8192 ||
@@ -847,6 +853,86 @@ struct Policy::Impl {
         std::uint16_t act;
         float score;
     };
+    struct ValueContext {
+        using Grid = std::array<float, 24 * 28>;
+        Grid real{}, ghost{}, spawning{}, actors{}, canonical_gap{};
+        float x = 0, y = 0, youkai = 0, bullets = 0, ghosts = 0, lasers = 0;
+        static int bin(float x, float y) {
+            return std::clamp(int(y / 16), 0, 27) * 24 + std::clamp(int(x / 16), 0, 23);
+        }
+        static bool inside(float x, float y) {
+            return x >= 0 && x <= 384 && y >= 0 && y <= 448;
+        }
+        static float local(const Grid &grid, float x, float y) {
+            const int cx = std::clamp(int(x / 16), 0, 23), cy = std::clamp(int(y / 16), 0, 27);
+            float sum = 0;
+            for (int yy = std::max(0, cy - 1); yy <= std::min(27, cy + 1); ++yy)
+                for (int xx = std::max(0, cx - 1); xx <= std::min(23, cx + 1); ++xx)
+                    sum += grid[yy * 24 + xx];
+            return sum;
+        }
+        void prepare(const Observation &observation) {
+            *this = {};
+            x = observation.x;
+            y = observation.y;
+            youkai = observation.youkai;
+            bullets = float(observation.bullets.size());
+            lasers = float(observation.laser_hitboxes.size());
+            for (const auto &b : observation.bullets) {
+                ghosts += b.state == 1 && b.collision_disabled;
+                if (!inside(b.x, b.y))
+                    continue;
+                const int cell = bin(b.x, b.y);
+                if (b.state >= 2 && b.state <= 4)
+                    ++spawning[cell];
+                else if (b.state == 1) {
+                    if (b.collision_disabled)
+                        ++ghost[cell];
+                    else
+                        ++real[cell];
+                    if (b.alternate_motion)
+                        canonical_gap[cell] +=
+                            std::hypot(b.vx - b.alternate_vx, b.vy - b.alternate_vy) / 8;
+                }
+            }
+            for (const auto &actor : observation.actors)
+                if (inside(actor.origin_x, actor.origin_y))
+                    ++actors[bin(actor.origin_x, actor.origin_y)];
+        }
+    } value_context;
+    ValueFeatures value_features(const Node &node, const Speeds &sp) const {
+        const auto &context = value_context;
+        const auto &frame = frames[opt.horizon];
+        const int cell = cell_of(node.y, kGy0, kGH) * kGW + cell_of(node.x, kGx0, kGW);
+        const auto delta = detail::movement_delta(sp, node.act);
+        ValueFeatures features{node.x / 384,
+                               node.y / 448,
+                               (node.x - context.x) / 96,
+                               (node.y - context.y) / 96,
+                               (node.x - sp.minx) / 96,
+                               (sp.maxx - node.x) / 96,
+                               (node.y - sp.miny) / 96,
+                               (sp.maxy - node.y) / 96,
+                               delta.x / 8,
+                               delta.y / 8,
+                               float((node.act & 4) != 0),
+                               node.score / opt.horizon,
+                               ValueContext::local(context.real, node.x, node.y) / 64,
+                               ValueContext::local(context.ghost, node.x, node.y) / 64,
+                               ValueContext::local(context.spawning, node.x, node.y) / 64,
+                               ValueContext::local(context.actors, node.x, node.y) / 16,
+                               ValueContext::local(context.canonical_gap, node.x, node.y) / 32,
+                               float(frame.start[cell + 1] - frame.start[cell]) / 64,
+                               float(frame.lstart[cell + 1] - frame.lstart[cell]) / 8,
+                               float(frame.rstart[cell + 1] - frame.rstart[cell]) / 64,
+                               context.youkai,
+                               context.bullets / 1536,
+                               context.ghosts / 1536,
+                               context.lasers / 64};
+        for (auto &feature : features)
+            feature = std::clamp(feature, -32.f, 32.f);
+        return features;
+    }
     // Storage belongs to this policy. Each search clears nodes and generation
     // marks before use; retained capacity carries no previous proposal state.
     struct SearchScratch {
@@ -906,7 +992,8 @@ struct Policy::Impl {
     }
     SearchResult search(const std::vector<HFrame> &frames, int horizon, const Speeds &sp,
                         std::uint16_t latched, float x0, float y0, float pref_x, float pref_y,
-                        const std::vector<std::uint16_t> *forced = nullptr, int beam = 0) {
+                        const std::vector<std::uint16_t> *forced = nullptr, int beam = 0,
+                        std::vector<ValueProposal> *proposals = nullptr) {
         if (beam == 0)
             beam = opt.beam;
         if (horizon + (horizon == opt.horizon ? opt.tail_check : 0) > indexed_horizon)
@@ -1036,6 +1123,42 @@ struct Policy::Impl {
         for (int i = 1; i < int(last.size()); ++i)
             if (last[i].score < last[best].score)
                 best = i;
+        if (value_model.loaded && opt.value_weight > 0 && deepest == horizon) {
+            const auto begin = std::chrono::steady_clock::now();
+            double minimum = std::numeric_limits<double>::infinity();
+            for (int i = 0; i < int(last.size()); ++i) {
+                const auto probability = value_model.probability(value_features(last[i], sp));
+                const double score =
+                    last[i].score - opt.value_weight * std::log(std::max(probability, 1e-4));
+                ++search_stats.value_evaluations;
+                if (score < minimum)
+                    minimum = score, best = i;
+            }
+            search_stats.value_ms +=
+                std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - begin)
+                    .count();
+        }
+        if (proposals && deepest == horizon) {
+            std::vector<int> order(last.size());
+            for (int i = 0; i < int(last.size()); ++i)
+                order[i] = i;
+            std::stable_sort(order.begin(), order.end(),
+                             [&](int a, int b) { return last[a].score < last[b].score; });
+            const auto count = std::min<std::size_t>(4, last.size());
+            for (std::size_t sample = 0; sample < count; ++sample) {
+                const auto index =
+                    order[count == 1 ? 0 : sample * (order.size() - 1) / (count - 1)];
+                ValueProposal proposal;
+                proposal.features = value_features(last[index], sp);
+                int cursor = index;
+                for (int j = deepest; j > 1; --j) {
+                    proposal.inputs.push_back(std::uint16_t(layers[j][cursor].act | 1));
+                    cursor = layers[j][cursor].parent;
+                }
+                std::reverse(proposal.inputs.begin(), proposal.inputs.end());
+                proposals->push_back(std::move(proposal));
+            }
+        }
         if (opt.tail_check && deepest == horizon && horizon == opt.horizon) {
             const auto begin = std::chrono::steady_clock::now();
             std::vector<int> order;
@@ -1309,7 +1432,14 @@ struct Policy::Impl {
         search_stats.held_selected = selected;
     }
 
-    Decision choose(const Observation &observation, DecisionTiming *timing) {
+    Decision choose(const Observation &observation, DecisionTiming *timing,
+                    std::vector<ValueProposal> *proposals) {
+        if (proposals) {
+            proposals->clear();
+            if (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
+                opt.warm_fallback || opt.held_fallback)
+                throw std::runtime_error("unsupported_branch_proposal_configuration");
+        }
         using Timer = std::chrono::steady_clock;
         if (timing)
             *timing = {};
@@ -1332,6 +1462,13 @@ struct Policy::Impl {
         time_index_extensions = timing != nullptr;
         current_movement = observation.movement;
         current_segment = observation.spell_active ? observation.spell : 300 + observation.stage;
+        if ((value_model.loaded && opt.value_weight > 0) || proposals) {
+            const auto begin = std::chrono::steady_clock::now();
+            value_context.prepare(observation);
+            search_stats.value_ms +=
+                std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - begin)
+                    .count();
+        }
         mark(&DecisionTiming::history_ns);
         const int forecast_horizon = opt.horizon + opt.tail_check;
         kinematic_forecast(observation, forecast_horizon, frames);
@@ -1363,7 +1500,7 @@ struct Policy::Impl {
             return {std::uint16_t(executed.action | 1), executed.depth, search_stats};
         }
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
-                             observation.y, pref_x, 400.f);
+                             observation.y, pref_x, 400.f, nullptr, 0, proposals);
         mark(&DecisionTiming::search_ns);
         check_warm_path(result, observation);
         check_held_directions(result, observation);
@@ -1375,13 +1512,14 @@ struct Policy::Impl {
         return {std::uint16_t(result.moves.front() | 1), result.depth, search_stats};
     }
 };
-Policy::Policy(Configuration configuration, RiskTables risk)
-    : impl_(new Impl(configuration, std::move(risk))) {}
+Policy::Policy(Configuration configuration, RiskTables risk, BranchValueModel value)
+    : impl_(new Impl(configuration, std::move(risk), std::move(value))) {}
 Policy::~Policy() = default;
 void Policy::observe(const Observation &observation) {
     impl_->observe(observation);
 }
-Decision Policy::decide(const Observation &observation, DecisionTiming *timing) {
-    return impl_->choose(observation, timing);
+Decision Policy::decide(const Observation &observation, DecisionTiming *timing,
+                        std::vector<ValueProposal> *proposals) {
+    return impl_->choose(observation, timing, proposals);
 }
 } // namespace th08::online

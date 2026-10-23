@@ -1,11 +1,11 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 31
+Core CTest cases: 33
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (33 total). Native builds add process, semantic, hazard-probe and
+add two CTests (35 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay and planner-prefix CTests (43 total).
+complete-scene, online-stage/replay and planner-prefix CTests (46 total).
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
@@ -16,6 +16,28 @@ The native online-policy contract additionally loads all three historical packs
 through the production parser. Artifact identity and successful parsing do not
 establish a disjoint evaluation split or learned-policy quality; [model provenance](../models/README.md)
 records the inherited unknowns.
+
+The branch-value core contract checks normalized logistic probabilities, extreme
+logits, exact model round trips, immutable output snapshots and strict rejection
+of truncated models, invalid scales/features, duplicate labels and failed or
+incomplete native windows. The independent separable CLI fixture must fit and
+reproduce byte-identical weights; overlapping train/tune seeds and native faults
+must fail before creating a model. These synthetic checks validate the trainer
+and format, not gameplay quality.
+The online-policy contract verifies that candidate export, a constant model and
+zero model weight preserve ordinary actions/depths and proposal counts. Complete
+H24 samples own 23 newly submitted inputs (the old latch owns movement one), keep
+shooting and contain only finite features. Partial/failed searches export none.
+`headless_value_collection_real_data` compares exact nominal tapes, observation/
+actor projections, terminal, score, RNG and calculation counts with/without
+independent Native branch sampling on both 107 and Extra 202. An initial false
+startup terminal is guarded by the required 640 nominal updates and positive
+branch count. Teacher futures stay outside policy features.
+The maintained collector writes `branch-inputs.tsv` with each exact submitted
+sequence and prefix hash; its real-DAT contract also requires one sidecar row per
+branch. The first frozen collection predates that sidecar and retains its exact
+producer binary/source and parent tapes instead; the model card preserves this
+provenance distinction.
 
 The shared spatial selector's `plan_contract` regression compares partial rank
 selection against the frozen former full-sort algorithm in 420 deterministic
@@ -70,6 +92,26 @@ agent. It makes no future Session updates and does not rewind the live game.
 ./build-headless/th08_replay_check game_data_donottrack/th08.dat reports/local/online-stage2-verify/th8_verify.rpy reports/local/online-stage2.rows
 ctest --test-dir build-headless -R headless_online --output-on-failure
 ```
+
+The optional branch-value experiment uses separate offline collection and C++
+training tools. Use new output paths; neither collector episodes nor saved model
+snapshots are overwritten. The collector's `--stage` is the native index 0..8
+(1/2/3/4A/4B/5/6A/6B/Extra), unlike the online CLI's named stage convention:
+
+```sh
+./build-headless/th08_value_collect --dat game_data_donottrack/th08.dat --out reports/local/branch-labels --stage 5 --difficulty 3 --spell 107 --seed 42 --shot 0 --frames 20000 --stride 128 --checkpoints 32 --seconds 1800
+./build-headless/th08_value_train reports/local/train.tsv reports/local/tune.tsv reports/local/new-value-weights.tsv > reports/local/value-training.json
+./build-headless/th08_online --dat game_data_donottrack/th08.dat --out reports/local/value-stage5 --stage 5 --difficulty 3 --seed 42 --shot 0 --horizon 24 --beam 192 --reach-filter 1 --hard-phantoms 1 --motion-envelope 1 --value-model models/branch-value-v1/weights.tsv --value-weight 0.25 --frames 100000 --seconds 1800
+```
+
+The first command supplies one parent episode, not disjoint train/tune datasets.
+Construct whole-parent/seed splits before collection, preserve both header lines
+when merging TSV rows, and freeze model/weight before independent evaluation.
+Every sampled prefix adds separately reported native updates and wall cost.
+The saved first model reproduces byte-for-byte when the maintained trainer fits
+the audited original train/tune files locally. This checks reproduction, not
+generalization. Its [model card](../models/branch-value-v1/README.md) owns label,
+split and input-profile assumptions.
 
 Stage names use the repository convention `1/2/3/4a/4b/5/6a/6b/extra`, rather than
 the preparation prototype's zero-based numeric CLI. `--story 1 --final-route a|b`

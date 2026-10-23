@@ -4,7 +4,7 @@ find_package(OpenSSL REQUIRED COMPONENTS Crypto)
 include(CTest)
 include(cmake/ReplaySuite.cmake)
 include(cmake/PlannerTests.cmake)
-add_library(th08_online_policy src/online.cpp src/online_model.cpp)
+add_library(th08_online_policy src/online.cpp src/online_model.cpp src/online_value.cpp)
 target_compile_features(th08_online_policy PUBLIC cxx_std_17)
 target_include_directories(th08_online_policy PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(TH08_ONLINE_ARCH "" CACHE STRING "Optional online-policy CPU target: native or x86-64-v3")
@@ -37,7 +37,22 @@ target_include_directories(th08_plan_matrix PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/
 add_executable(th08_spell_bank tools/spell_bank.cpp)
 target_compile_features(th08_spell_bank PRIVATE cxx_std_17)
 target_link_libraries(th08_spell_bank PRIVATE OpenSSL::Crypto)
+add_executable(th08_value_train tools/value_train.cpp)
+target_link_libraries(th08_value_train PRIVATE th08_online_policy OpenSSL::Crypto)
+if(MSVC)
+  target_compile_options(th08_value_train PRIVATE /fp:strict)
+else()
+  target_compile_options(th08_value_train PRIVATE -ffp-contract=off)
+endif()
 if(BUILD_TESTING)
+  add_executable(value_model_tests tests/value_model_tests.cpp)
+  target_link_libraries(value_model_tests PRIVATE th08_online_policy)
+  add_test(NAME value_model_contract COMMAND value_model_tests
+    ${CMAKE_CURRENT_BINARY_DIR}/value-model-contract)
+  add_test(NAME value_training_contract COMMAND ${CMAKE_COMMAND}
+    -DTRAINER=$<TARGET_FILE:th08_value_train>
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/value-training-contract
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/value_training_tests.cmake)
   add_test(NAME spell_bank_contract COMMAND ${CMAKE_COMMAND}
     -DANALYZER=$<TARGET_FILE:th08_spell_bank>
     -DWORK=${CMAKE_CURRENT_BINARY_DIR}/spell-bank-contract
@@ -288,6 +303,12 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-motion-regression
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_motion_real_data.cmake)
     set_tests_properties(headless_online_motion_real_data PROPERTIES TIMEOUT 400)
+    add_test(NAME headless_value_collection_real_data COMMAND ${CMAKE_COMMAND}
+      -DCOLLECTOR=$<TARGET_FILE:th08_value_collect>
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/value-collection-regression
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/value_collection_real_data.cmake)
+    set_tests_properties(headless_value_collection_real_data PROPERTIES TIMEOUT 120)
     add_test(NAME headless_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_headless>
       -DPROBE_EXECUTABLE=$<TARGET_FILE:th08_headless_probe>

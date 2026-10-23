@@ -1,5 +1,6 @@
 #pragma once
 #include "th08/bullet_motion.hpp"
+#include "th08/online_value.hpp"
 
 #include <array>
 #include <cstdint>
@@ -130,6 +131,7 @@ struct Configuration {
     // Conservative proposal prior for fired collision-disabled bullets; no activation schedule.
     bool hard_phantoms = false;
     bool motion_envelope = false;
+    float value_weight = 1;
     bool queued_shots = false, queued_lasers = false;
     bool held_fallback = false;
     // Recheck one previous proposal only when the new beam cannot fill its horizon.
@@ -180,6 +182,8 @@ struct SearchStatistics {
     std::uint64_t indexed_forecast_frames = 0;
     std::uint64_t hard_phantom_frames = 0;
     std::uint64_t motion_envelope_frames = 0;
+    std::uint64_t value_evaluations = 0;
+    double value_ms = 0;
 };
 struct Decision {
     std::uint16_t action = 1;
@@ -197,7 +201,7 @@ struct DecisionTiming {
 };
 class Policy {
   public:
-    explicit Policy(Configuration configuration, RiskTables risk = {});
+    explicit Policy(Configuration configuration, RiskTables risk = {}, BranchValueModel value = {});
     ~Policy();
     Policy(const Policy &) = delete;
     Policy &operator=(const Policy &) = delete;
@@ -205,7 +209,11 @@ class Policy {
     // actions or advancing the policy's search tie RNG. Re-observing the same
     // unchanged snapshot is allowed; deciding twice at one update is rejected.
     void observe(const Observation &observation);
-    Decision decide(const Observation &observation, DecisionTiming *timing = nullptr);
+    // Optional offline collection exports up to four owned retained H24 prefixes
+    // and current/proposed features. No future native state is queried. Tracing
+    // preserves the selected action and tie RNG; partial searches export none.
+    Decision decide(const Observation &observation, DecisionTiming *timing = nullptr,
+                    std::vector<ValueProposal> *proposals = nullptr);
 
   private:
     struct Impl;
