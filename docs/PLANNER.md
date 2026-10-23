@@ -145,6 +145,11 @@ profile, an integer-significand path avoids the per-node library call. It retain
 the original multiplication and signed modulo result; large/special values and
 other layouts use the original library expression. This changes no deduplication
 precision, collision geometry or tie order.
+For validated finite forecast coordinates, the scalar AABB predicate evaluates
+the four original rejection comparisons together. It retains inclusive contact
+and the same margin-expanded bounds for hard and soft queries, while reducing
+internal short-circuit branches. Hazard traversal and the first-hit return stay
+in the existing order.
 Velocity-rate estimation requires the same fired phase, collision-enabled mode
 and active-transform mask on both observations. Installing or clearing a transform,
 or a source ghost-to-real switch, may change velocity discretely; the difference

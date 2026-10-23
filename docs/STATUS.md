@@ -668,6 +668,30 @@ four-job compilation, is 571793408 bytes under its eight-GiB hard limit. Latest
 6B p99/max are still 26.40/54.86 ms, with 3118 deadline misses. No budget, strategy,
 model, native physics or gameplay-RNG change contributes to the measured speedup.
 
+The scalar online AABB predicate now evaluates the four original rejection
+comparisons together, retaining inclusive contact and the original bounds.
+All 403116 finite-geometry comparison cases and all 40 native/DAT CTests pass
+(724.92 seconds); the default Stage 2 action SHA is unchanged. Nine alternating
+Release prefix pairs cover the story start, Stage 4A start and a 6B window after
+50000 explicit prefix updates, with identical complete actions and behavioral
+fields. Complete Stage 1/2 means are 8.12 → 7.95 and 7.76 → 7.64 ms; p99 changes
+11.33 → 10.79 and 12.78 → 12.14 ms. Fresh native execution and natural replay
+agree on score/RNG/counts and all 55992 rows, with zero death/bomb rows. These
+22 completed timing runs cost 455184 native updates, including 300000 prefix
+updates, and 1317.17 solver wall seconds; fresh checks/replay are additional.
+The full 6B pair and the other six entry rechecks are still running under the
+frozen protocol. No pending case transfers the earlier nine-entry result to this
+new build, and no strict 60 FPS or new seed coverage claim follows.
+
+Private diagnosis of that 6B window counts 215996427 hard probes, 208114877 soft
+risk calls (170034826 nonempty), 850065867 AABB tests and zero indexed lasers.
+This rejects laser caching as that window's target. Shared query preparation and
+two exact spatial-quantizer layouts have no repeatable end-to-end win in local
+pilots and remain unpublished. Including the successful AABB pilot, the four
+local pilot batches and two diagnostic passes cost 981600 native updates
+(900000 prefix updates) and 929.60 summed solver wall seconds. Their raw source,
+all outcomes and action comparisons remain local, outside the Release totals.
+
 The owner prioritizes further measured algorithmic speedups before model/training
 replacement. Native/replay correctness remains required even if a later stochastic
 policy accepts a finite complete-story success rate. The eventual initial policy

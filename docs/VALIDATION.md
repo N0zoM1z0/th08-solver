@@ -31,6 +31,12 @@ profiles, ten positions and four rounding modes. It requires identical position
 float bits and floating exception flags, covering signed zero, subnormals,
 negative multipliers and bounds. Complete action/behavior comparisons additionally
 guard integration of per-search displacement reuse into candidate enumeration.
+The online AABB predicate is compared with the frozen former short-circuit
+expression in 403116 finite-geometry cases across four rounding modes. Fixtures
+cover all sixteen rejection combinations, signed-zero permutations, subnormals,
+touching/degenerate bounds and deterministic finite bit samples. Boolean results,
+standard floating exception flags, preexisting flags, errno and rounding mode must
+agree. This checks the proposal predicate; native collision physics stays separate.
 The half-pixel key contract compares the optimized path with the original
 `lround`/mask expression at every fast-range rounding boundary and its adjacent
 floats, plus one million finite bit samples (26165824 comparisons). Four rounding

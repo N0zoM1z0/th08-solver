@@ -2,6 +2,7 @@
 // current-memory fields are copied by the adapter; this policy owns only its
 // observation history, immutable risk model and heuristic proposal search.
 #include "th08/online.hpp"
+#include "th08/online_collision.hpp"
 #include "th08/online_movement.hpp"
 #include "th08/plan_beam.hpp"
 #include <algorithm>
@@ -14,6 +15,7 @@ namespace th08::online {
 namespace {
 using Float3 = Vector;
 using Speeds = Movement;
+using detail::box_hit;
 struct Laser {
     float cx, cy, w, h, ox, oy, angle;
     // Proposal uncertainty only: all turn signs up to the last observed speed.
@@ -118,9 +120,6 @@ void build_index(HFrame &f, const Float3 &half) {
     std::vector<int> pos(cnt.begin(), cnt.end() - 1);
     for (int i = 0; i < int(f.b.size()); ++i)
         each(f.b[i], [&](int c) { f.items[pos[c]++] = i; });
-}
-inline bool box_hit(const Box &b, const Float3 &mn, const Float3 &mx) {
-    return !(mn.x > b.x1 || mn.y > b.y1 || mx.x < b.x0 || mx.y < b.y0);
 }
 inline bool laser_hit(const Laser &l, const Float3 &p, const Float3 &half, float margin) {
     Float3 origin, position, size, in_min, in_max, pmin, pmax;

@@ -2,8 +2,10 @@
 #include "th08/ecl_turn_hint.hpp"
 #include "th08/geometry.hpp"
 #include "th08/online.hpp"
+#include "th08/online_collision.hpp"
 #include "th08/online_movement.hpp"
 
+#include <cerrno>
 #include <cfenv>
 #include <cmath>
 #include <cstring>
@@ -756,6 +758,67 @@ void movement_kernel_contract() {
     }
     check(std::fesetenv(&saved) == 0, "cannot restore movement floating environment");
 }
+bool reference_box_hit(const on::Box &box, const on::Vector &minimum, const on::Vector &maximum) {
+    return !(minimum.x > box.x1 || minimum.y > box.y1 || maximum.x < box.x0 || maximum.y < box.y0);
+}
+void box_predicate_contract() {
+    using Predicate = bool (*)(const on::Box &, const on::Vector &, const on::Vector &);
+    Predicate volatile reference = reference_box_hit, current = on::detail::box_hit;
+    std::fenv_t saved;
+    check(std::fegetenv(&saved) == 0, "cannot capture box floating environment");
+    const int saved_errno = errno;
+    const auto agrees = [&](const on::Box &box, const on::Vector &minimum,
+                            const on::Vector &maximum) {
+        std::feclearexcept(FE_ALL_EXCEPT);
+        std::feraiseexcept(FE_DIVBYZERO);
+        errno = E2BIG;
+        const bool expected = reference(box, minimum, maximum);
+        const int flags = std::fetestexcept(FE_ALL_EXCEPT), error = errno;
+        std::feclearexcept(FE_ALL_EXCEPT);
+        std::feraiseexcept(FE_DIVBYZERO);
+        errno = E2BIG;
+        const bool actual = current(box, minimum, maximum);
+        check(actual == expected && std::fetestexcept(FE_ALL_EXCEPT) == flags && errno == error,
+              "box predicate changed contact or the floating environment");
+    };
+    for (int mode : {FE_TONEAREST, FE_DOWNWARD, FE_UPWARD, FE_TOWARDZERO}) {
+        check(std::fesetround(mode) == 0, "cannot set box rounding mode");
+        const float small = std::numeric_limits<float>::denorm_min();
+        const std::array<float, 13> edges{
+            -2, -1,      -small,  -0.f, 0.f, small, 1, 15.999999f, 16, std::nextafter(16.f, 17.f),
+            17, 1048576, -1048576};
+        for (float x : edges)
+            for (float y : edges)
+                for (float half : {0.f, .5f, 2.f})
+                    agrees({0, 0, 16, 16}, {x - half, y - half, 0}, {x + half, y + half, 0});
+        for (unsigned mask = 0; mask < 16; ++mask)
+            agrees({0, 0, 1, 1}, {mask & 1 ? 2.f : -1.f, mask & 2 ? 2.f : -1.f, 0},
+                   {mask & 4 ? -1.f : 2.f, mask & 8 ? -1.f : 2.f, 0});
+        for (unsigned mask = 0; mask < 256; ++mask) {
+            const auto zero = [&](unsigned bit) { return mask & (1u << bit) ? -0.f : 0.f; };
+            agrees({zero(0), zero(1), zero(2), zero(3)}, {zero(4), zero(5), 0},
+                   {zero(6), zero(7), 0});
+        }
+        std::uint32_t bits = 0x9e3779b9;
+        const auto draw = [&] {
+            bits ^= bits << 13;
+            bits ^= bits >> 17;
+            bits ^= bits << 5;
+            const std::uint32_t finite = (bits & 0x807fffffu) | (((bits >> 23) % 148) << 23);
+            float result;
+            std::memcpy(&result, &finite, sizeof(result));
+            return result;
+        };
+        for (unsigned i = 0; i < 100000; ++i) {
+            const on::Box box{draw(), draw(), draw(), draw()};
+            const on::Vector minimum{draw(), draw(), 0}, maximum{draw(), draw(), 0};
+            agrees(box, minimum, maximum);
+        }
+        check(std::fegetround() == mode, "box predicate changed rounding mode");
+    }
+    check(std::fesetenv(&saved) == 0, "cannot restore box floating environment");
+    errno = saved_errno;
+}
 void phase_timing_contract() {
     on::Configuration config;
     config.horizon = 12;
@@ -865,6 +928,7 @@ int main(int argc, char **argv) {
         terminal_tail_contract();
         phase_timing_contract();
         movement_kernel_contract();
+        box_predicate_contract();
         narrow_arc_contract();
         return 0;
     } catch (const std::exception &error) {
