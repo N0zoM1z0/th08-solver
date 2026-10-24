@@ -32,7 +32,9 @@ Wine action bridge are implemented. A controlled complete Lunatic spell and a
 run with zero miss/bomb. The first complete Lunatic Stage 1, 2 and 3 practices
 also clear NMNB; the isolated Stage 1/3 runs average about 59.5/59.7 FPS.
 The owner now prioritizes complete stage practice
-one stage at a time before full-story integration. Live play monitors numeric drift
+one stage at a time before full-story integration, deferring 4B and following 4A
+with Marisa/Alice (shot 1). The Stage 1/2/3 development clears above use shot 0;
+uniform-route confirmation remains open. Live play monitors numeric drift
 and checks
 gameplay/RNG/lifecycle agreement; continuous NMNB and 60 FPS
 acceptance remain open in [Status](docs/STATUS.md). This separate native-lookahead profile

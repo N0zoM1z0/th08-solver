@@ -11,6 +11,12 @@ October 24 inputs remain unchanged locally; the
 [publication manifest](../preparations/10.24-with-claude-gpt/PUBLICATION.json)
 records audited public copies, hashes and excluded raw result files.
 
+The latest owner instruction defers Stage 4B and follows the Stage 4A route,
+continuing complete stage practice before full story. Current practice uses
+Marisa/Alice (shot1), matching the earlier validated 4A story's legal natural
+branch. Earlier Stage 1/2/3 clears below use shot0 and remain component evidence;
+confirm a uniform shot1 profile before full-story integration.
+
 The first implementation adds a versioned little-endian 32/64-bit wire projection
 and an independently initialized Native follower process. The complete ID179 Easy
 seed-0 tape agrees over all 1292 updates; a follower initialized with seed 1 stops
@@ -138,8 +144,26 @@ remains a separate contract check.
 Without CTest overlap, Stage 3 takes 699.181 seconds versus 695.217 seconds at 60 Hz,
 about 59.660 average FPS. Owner period p99/max is 20.87/46.47 ms; planning
 mean/p99/max is 17.91/31.33/95.29 ms. The first three complete stage practices now
-have one development clear each. Continue with shot0's legal Stage 4B branch,
-then Stage 5 and Final A; fresh-seed confirmation and full-story timing remain open.
+have one development clear each under shot0. The owner now defers its Stage 4B
+branch and continues Stage 4A, Stage 5 and Final A practice with shot1. Fresh-seed,
+uniform-route confirmation and full-story timing remain open.
+
+The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
+projected words matching and no numeric drift; fresh Native following reproduces
+the death. Failed-nominal suppression recovers four continuations, but the final
+search still exhausts its verified queue: five runtime fallback calls follow nine
+startup calls. The report retains 76 branch deaths, eight timeouts, nine planning
+budget overruns, 276740 charged branch updates and 109 proposal-lead updates.
+No stale result, invalid prefix or owner rejection occurs. Owner elapsed is
+574.976 seconds; planning p99/max is 37.78/115.06 ms. This is a planning failure,
+not a synchronization or numeric-parity blocker.
+
+Two bounded Native probes preserve the deferred diagnosis: at origin34288, two
+guided candidates survive H64; at origins34256/34272, five full-horizon fixed
+holds survive where their Policy-guided tails fail. Each candidate has a 200-ms
+probe cap, unlike the live 110-ms total search budget. These results are retained
+for later 4B work; the deployed client is unchanged. Current work proceeds to the
+owner's 4A route with a real registration seed.
 
 The earlier two Lunatic proposal profiles' deaths at
 1400/1614 updates remain separate failed development attempts. Different seeds

@@ -580,6 +580,10 @@ costs recorded separately. Diagnose failures before advancing; confirm with fres
 seeds under a uniform final profile before story integration. The first natural
 handoff remains a separate smoke check. Practice initialization legitimately
 resets state, so isolated clears do not certify carried world/RNG at story joins.
+The owner subsequently deferred 4B and selected the 4A route. Continue with
+Marisa/Alice (shot1), whose natural branch is 4A and which matches the historical
+validated 4A story. Earlier shot0 Stage 1/2/3 clears remain component evidence;
+complete the selected route and confirm a uniform shot1 profile before story.
 
 The first `th08_shadow_follow` gate implements common-start Native input following
 over a versioned wire projection. It compares independently initialized processes,
