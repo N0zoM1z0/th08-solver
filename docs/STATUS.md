@@ -196,6 +196,16 @@ use default locked routes, selecting Final A without assuming that the V1 start
 record serializes arbitrary persistent score history. This profile is prepared,
 not a completed story result.
 
+Uniform shot1 confirmation starts with complete Lunatic Stage 1 practice,
+seed23035: 22976 calculations NMNB, no meaningful gameplay/RNG discrepancy and
+zero player error. Its 7908 numeric-drift updates remain telemetry; fresh Native
+following agrees. It certifies 2871 futures, charges 183520 branch updates plus
+16 proposal-lead updates, and has no branch death/timeout, budget overrun or
+runtime queue gap. Ten initial unqueued receipts correspond to nine startup
+fallback calls. Owner elapsed is 383.375 seconds, about 59.931 average FPS;
+period p99/max is 17.90/31.57 ms and planning mean/p99/max is 17.66/30.86/52.60 ms.
+Continue complete Stages 2/3 with the same frozen client/team before story.
+
 The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
 projected words matching and no numeric drift; fresh Native following reproduces
 the death. Failed-nominal suppression recovers four continuations, but the final
