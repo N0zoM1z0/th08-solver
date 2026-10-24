@@ -34,6 +34,11 @@ updates. No runtime queue gap, stale result or owner rejection occurs. The 29
 rejected future deaths, seven timeouts and seven budget overruns remain charged;
 they are not actual misses. This is functional development coverage, not a
 statistical reliability claim. Period distributions below preserve actual jitter.
+Across these completed practice traces, the hooked calculation function's p99
+is 0.98..1.54 ms and observer projection/cache preparation's p99 is 0.10..0.18 ms.
+The latter excludes encoding, journal writes and publication; remaining owner
+wall time is not a measured rendering-only cost. This narrows subsequent timing
+work without attributing shared-host jitter to the solver or the renderer alone.
 
 The first implementation adds a versioned little-endian 32/64-bit wire projection
 and an independently initialized Native follower process. The complete ID179 Easy

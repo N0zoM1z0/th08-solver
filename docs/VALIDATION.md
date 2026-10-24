@@ -78,6 +78,13 @@ waiting. Exit 0 is the actual case terminal; 3 is projection mismatch, 4 is deat
 inputs export beside the output as `.actions`. Reports bind start/trace/actions,
 DAT and Native binary hashes, configuration, budgets, proposal/native attempts,
 charged interrupted work, stale results, input fallbacks and actual owner clocks.
+The trace's calculation time brackets the original hooked calculation function,
+including input-hook calls within it. Observer time covers projection/cache
+preparation after that call, stopping before trace encoding, `WriteFile`, atomic
+publication and outcome handling. Inter-receipt periods include work between those
+boundaries, such as rendering, limiting, scheduling and journal writes; they do
+not attribute a slow frame to one component. Total elapsed time starts at the
+first hooked calculation's entry and ends at the last projection timestamp.
 Optional trailing arguments `[behavioral|exact] [h32|h64]` select comparison and
 planning profiles (defaults `behavioral h32`).
 Live comparison records numeric bullet/laser digest drift, player differences up
