@@ -148,6 +148,22 @@ have one development clear each under shot0. The owner now defers its Stage 4B
 branch and continues Stage 4A, Stage 5 and Final A practice with shot1. Fresh-seed,
 uniform-route confirmation and full-story timing remain open.
 
+The selected route's first complete Lunatic Stage 4A practice,
+Marisa/Alice/shot1/seed26528, clears NMNB at 43216 calculations under `e1a35be`.
+All 41 projected words match, including fresh Native following of every actual
+input. It certifies 5397 futures, retaining 18 branch deaths, four timeouts and
+four planning-budget overruns. Six unsuccessful nominal extensions are followed
+by fresh searches without a runtime queue gap; all ten unqueued receipts are
+startup (nine owner fallback input calls). No stale result, invalid prefix or
+owner rejection occurs. It charges 346288 branch updates and 95 proposal-lead
+updates, including interrupted work.
+
+Stage 4A takes 751.512 seconds versus 720.267 seconds at 60 Hz, about 57.507 average
+FPS. Owner period p99/max is 26.74/57.28 ms; planning mean/p99/max is
+21.03/47.67/116.79 ms. This is a complete functional clear with actual unsuccessful
+extension recovery, not a universal deadline result. Continue Stage 5 and Final A
+practice with the same shot1 team before uniform-route confirmation.
+
 The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
 projected words matching and no numeric drift; fresh Native following reproduces
 the death. Failed-nominal suppression recovers four continuations, but the final
@@ -162,8 +178,8 @@ Two bounded Native probes preserve the deferred diagnosis: at origin34288, two
 guided candidates survive H64; at origins34256/34272, five full-horizon fixed
 holds survive where their Policy-guided tails fail. Each candidate has a 200-ms
 probe cap, unlike the live 110-ms total search budget. These results are retained
-for later 4B work; the deployed client is unchanged. Current work proceeds to the
-owner's 4A route with a real registration seed.
+for later 4B work; the deployed client is unchanged. The owner's selected 4A route
+continues independently of this deferred failure.
 
 The earlier two Lunatic proposal profiles' deaths at
 1400/1614 updates remain separate failed development attempts. Different seeds

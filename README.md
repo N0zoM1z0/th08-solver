@@ -29,12 +29,11 @@ The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](http
 Common-start synchronization, true-RNG branch verification and a forward-only
 Wine action bridge are implemented. A controlled complete Lunatic spell and a
 32000-update Lunatic story prefix through the first natural stage handoff have
-run with zero miss/bomb. The first complete Lunatic Stage 1, 2 and 3 practices
-also clear NMNB; the isolated Stage 1/3 runs average about 59.5/59.7 FPS.
+run with zero miss/bomb. Initial complete practices clear Lunatic Stages 1, 2 and 3
+with shot 0, and Stage 4A with Marisa/Alice (shot 1).
 The owner now prioritizes complete stage practice
 one stage at a time before full-story integration, deferring 4B and following 4A
-with Marisa/Alice (shot 1). The Stage 1/2/3 development clears above use shot 0;
-uniform-route confirmation remains open. Live play monitors numeric drift
+with Marisa/Alice (shot 1). Uniform-route confirmation remains open. Live play monitors numeric drift
 and checks
 gameplay/RNG/lifecycle agreement; continuous NMNB and 60 FPS
 acceptance remain open in [Status](docs/STATUS.md). This separate native-lookahead profile
