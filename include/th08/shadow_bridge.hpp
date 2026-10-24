@@ -26,6 +26,26 @@ enum Header : unsigned {
 enum class OutcomeCode : std::uint32_t { Running, Complete, Death, Budget, Failure, Stopped };
 constexpr unsigned slot_words = 8 + capacity, map_words = 32 + 2 * slot_words;
 constexpr unsigned map_bytes = 4 * map_words;
+enum class UpdateEvent { None, Control, Calculation, Unsupported };
+struct CalculationCursor {
+    std::uint32_t stage = 0, frame = 0;
+    UpdateEvent observe(std::uint32_t next_stage, std::uint32_t next_frame, bool ready) {
+        // Stage control happens before asynchronous retail initialization. It
+        // owns a receipt even while gameplay is not ready; the new counter then
+        // starts at zero. Waiting/loading callbacks consume no gameplay receipt.
+        if (next_stage != stage) {
+            stage = next_stage;
+            frame = 0;
+            return UpdateEvent::Control;
+        }
+        if (!ready || next_frame == frame)
+            return UpdateEvent::None;
+        if (next_frame != frame + 1)
+            return UpdateEvent::Unsupported;
+        frame = next_frame;
+        return UpdateEvent::Calculation;
+    }
+};
 static_assert(__atomic_always_lock_free(4, nullptr), "shared words must be lock-free");
 inline std::uint32_t load(const std::uint32_t *word) {
     return __atomic_load_n(word, __ATOMIC_ACQUIRE);

@@ -6,7 +6,7 @@
 namespace th08 {
 struct Float3;
 struct Player;
-}
+} // namespace th08
 
 // One original game instance per process. These are explicit input/clock ports,
 // not candidate state: a planner must never memcpy pointer-rich game managers.
@@ -14,6 +14,8 @@ extern uint16_t th08_headless_input;
 extern uint64_t th08_headless_frame;
 
 namespace th08::headless {
+void configure_input_profile(InputProfile);
+void apply_sampled_gameplay_input();
 // On the single calc thread, one bullet-manager callback owns this read scope.
 // Its empty-region proof removes repeated per-bullet scans; either creation API
 // invalidates it.
@@ -50,7 +52,9 @@ void record_laser_hitbox(const Float3 &center, const Float3 &size, const Float3 
                          float angle, bool graze_enabled);
 void record_lethal_region(const Float3 &minimum, const Float3 &maximum);
 // Bullet boxes exactly as passed to the graze/lethal tests of this update.
-struct BulletBoxRecord { float x, y, w, h; };
+struct BulletBoxRecord {
+    float x, y, w, h;
+};
 void record_bullet_box(const Float3 &position, const Float3 &size);
 const std::vector<BulletBoxRecord> &current_bullet_boxes();
 // Planner rollouts toggle recording; normal sessions keep it off.

@@ -1,4 +1,5 @@
 #include "th08/shadow_native.hpp"
+#include "BulletManager.hpp"
 #include "GameManager.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/plan_route.hpp"
@@ -93,5 +94,22 @@ Projection capture(headless::Session &session) {
     p[Field::Clock] = g.clockTime;
     p[Field::PointValue] = g.pointItemValue;
     return p;
+}
+NativeDiagnostics diagnostics(headless::Session &session) {
+    NativeDiagnostics result;
+    result.bullets.reserve(std::size_t(session.state().bullets));
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
+    __asm__ volatile("fnstcw %0" : "=m"(result.x87_control));
+#endif
+    int slot = 0;
+    for (const auto &bullet : g_BulletManager.bullets) {
+        if (bullet.state) {
+            const auto &a = bullet.exStates[BULLET_TRANSFORM_STATE_VECTOR_ACCELERATION];
+            result.bullets.push_back(
+                {slot, bullet.angle, bullet.speed, a.accelerationAngle, a.accelerationMagnitude});
+        }
+        ++slot;
+    }
+    return result;
 }
 } // namespace th08::shadow

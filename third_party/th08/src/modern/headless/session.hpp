@@ -3,6 +3,7 @@
 #include <vector>
 
 namespace th08::headless {
+enum class InputProfile { Controller, SampledGameplay };
 struct Config {
     const char *dat_path = nullptr;
     int stage = 0, spell = -1, difficulty = 0;
@@ -16,6 +17,9 @@ struct Config {
     // Explicit preexisting clear history enables both original final-stage
     // choices. It changes no gameplay state/RNG and is serialized as clearState 2.
     bool unlock_final_routes = false;
+    // A live journal supplies the final sampled input of a gameplay event.
+    // Controller mode preserves the original synchronous native/tape contract.
+    InputProfile input_profile = InputProfile::Controller;
 };
 struct RelativeDirectionView {
     float angle = 0, speed = 0, turn_angle = 0, turn_speed = 0;

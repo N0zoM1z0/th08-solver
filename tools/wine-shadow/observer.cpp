@@ -16,7 +16,8 @@ int configured_spell = -1;
 std::uint64_t calculations = 0;
 s::Packet packet;
 b::Plan active;
-unsigned max_frames = 1600, last_stage = 0, last_frame = 0, examined = 0;
+unsigned max_frames = 1600, examined = 0;
+b::CalculationCursor cursor;
 LARGE_INTEGER frequency{}, first_tick{};
 using Calc = int(__thiscall *)(void *);
 using Init = int(__fastcall *)();
@@ -139,8 +140,8 @@ int __fastcall init_hook() {
         std::snprintf(final_path, sizeof(final_path), "%s/start.txt", directory);
         if (!MoveFileExA(path, final_path, MOVEFILE_WRITE_THROUGH))
             finish(b::OutcomeCode::Failure, 26);
-        last_stage = game().currentStage;
-        last_frame = 0;
+        cursor.stage = game().currentStage;
+        cursor.frame = 0;
         started = true;
     }
     return original_init();
@@ -178,18 +179,17 @@ int __fastcall calc_hook(void *self, void *) {
     QueryPerformanceCounter(&begin);
     const int result = original_calc(self);
     QueryPerformanceCounter(&observed);
-    if (started && game().globals && supervisor().curState == SupervisorState_GameManager &&
-        game().gameplaySetupState == GAMEPLAY_SETUP_COMPLETE) {
+    if (started && game().globals) {
         const auto stage = unsigned(game().currentStage), frame = game().gameplayFrameCounter;
-        if (frame != last_frame || stage != last_stage) {
-            if (stage == last_stage && frame == last_frame + 1)
-                ++calculations;
-            else if (stage == last_stage)
-                finish(b::OutcomeCode::Failure, 22);
-            packet.epoch += stage != last_stage;
+        const bool ready = supervisor().curState == SupervisorState_GameManager &&
+                           game().gameplaySetupState == GAMEPLAY_SETUP_COMPLETE;
+        const auto event = cursor.observe(stage, frame, ready);
+        if (event == b::UpdateEvent::Unsupported)
+            finish(b::OutcomeCode::Failure, 22);
+        if (event != b::UpdateEvent::None) {
+            calculations += event == b::UpdateEvent::Calculation;
+            packet.epoch += event == b::UpdateEvent::Control;
             ++packet.sequence;
-            last_stage = stage;
-            last_frame = frame;
             packet.input = at<unsigned short>(0x164d528);
             try {
                 packet.state = capture(packet, calculations);

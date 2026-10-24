@@ -1,0 +1,183 @@
+#include "th08/shadow_proposal.hpp"
+#include "modern/headless/session.hpp"
+#include "th08/online_native.hpp"
+#include "th08/shadow_native.hpp"
+#include <cerrno>
+#include <chrono>
+#include <csignal>
+#include <filesystem>
+#include <new>
+#include <poll.h>
+#include <sys/mman.h>
+#include <sys/prctl.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+namespace th08::shadow {
+namespace {
+using Clock = std::chrono::steady_clock;
+struct Result {
+    BranchStatus status = BranchStatus::Incomplete;
+    unsigned count = 0;
+    std::uint64_t attempts = 0, completed = 0, native_ns = 0, file_io_ns = 0;
+    std::array<std::array<std::uint16_t, 23>, 4> inputs{};
+};
+void run(headless::Session &session, online::Policy &policy, const Packet &origin,
+         const std::vector<std::uint16_t> &lead, Boundary boundary, Result &out) {
+    bool spell_seen = session.state().spell_active;
+    online::Observation observation;
+    for (unsigned i = 0; i < lead.size(); ++i) {
+        const auto begin = Clock::now();
+        const auto io_before = session.file_io_time_ns();
+        ++out.attempts;
+        headless::State state;
+        const auto record_time = [&] {
+            const auto total =
+                std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin).count();
+            const auto io = session.file_io_time_ns() - io_before;
+            out.native_ns += std::uint64_t(total) > io ? std::uint64_t(total) - io : 0;
+            out.file_io_ns += io;
+        };
+        try {
+            state = session.step(lead[i]);
+        } catch (...) {
+            record_time();
+            out.status = BranchStatus::Fault;
+            return;
+        }
+        record_time();
+        ++out.completed;
+        if (state.player_state == 2 || state.deaths != 0) {
+            out.status = BranchStatus::Death;
+            return;
+        }
+        spell_seen = spell_seen || state.spell_active;
+        if (stage_terminal(boundary.story, state) ||
+            (boundary.spell >= 0 && spell_seen && !state.spell_active)) {
+            out.status = BranchStatus::Terminal;
+            return;
+        }
+        online::capture_memory(session, origin.sequence + i + 1, observation, true);
+        policy.observe(observation);
+    }
+    std::vector<online::ValueProposal> proposals;
+    policy.decide(observation, nullptr, &proposals);
+    if (proposals.size() > 4)
+        throw std::runtime_error("shadow_proposal_capacity");
+    for (const auto &proposal : proposals) {
+        if (proposal.inputs.size() != 23)
+            throw std::runtime_error("shadow_proposal_horizon");
+        for (unsigned i = 0; i < 23; ++i) {
+            input_value(proposal.inputs[i]);
+            out.inputs[out.count][i] = proposal.inputs[i];
+        }
+        ++out.count;
+    }
+    out.status = BranchStatus::Horizon;
+}
+} // namespace
+FutureProposals propose_after_lead(headless::Session &session, online::Policy &policy,
+                                   const Packet &origin, const std::vector<std::uint16_t> &lead,
+                                   Boundary boundary, unsigned timeout_ms) {
+    const auto begin = Clock::now();
+    if (lead.empty() || lead.size() > 32 || !timeout_ms || timeout_ms > 1000)
+        throw std::runtime_error("invalid_shadow_proposal_budget");
+    for (auto input : lead)
+        input_value(input);
+    Packet actual = origin;
+    actual.state = capture(session);
+    if (difference(actual, origin))
+        throw std::runtime_error("shadow_proposal_origin_mismatch");
+    if (origin.state[Field::PlayerState] == 2 || origin.state[Field::Deaths] ||
+        origin.state[Field::BombsUsed])
+        throw std::runtime_error("shadow_proposal_after_nmnb_failure");
+    unsigned threads = 0;
+    for (const auto &entry : std::filesystem::directory_iterator("/proc/self/task")) {
+        (void)entry;
+        ++threads;
+    }
+    if (threads != 1)
+        throw std::runtime_error("shadow_proposal_requires_single_thread");
+    char path[] = "/tmp/th08-shadow-proposal-XXXXXX";
+    if (!mkdtemp(path))
+        throw std::runtime_error("shadow_proposal_scratch_failed");
+    struct Cleanup {
+        std::filesystem::path path;
+        ~Cleanup() {
+            std::error_code error;
+            std::filesystem::remove_all(path, error);
+        }
+    } cleanup{path};
+    for (const char *name : {"score.dat", "th08.cfg"})
+        if (std::filesystem::is_regular_file(name))
+            std::filesystem::copy_file(name, cleanup.path / name);
+    void *memory =
+        mmap(nullptr, sizeof(Result), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    if (memory == MAP_FAILED)
+        throw std::runtime_error("shadow_proposal_allocation_failed");
+    struct Arena {
+        Result *data;
+        ~Arena() {
+            munmap(data, sizeof(Result));
+        }
+    } arena{new (memory) Result{}};
+    const auto parent = getpid();
+    const auto child = fork();
+    if (child < 0)
+        throw std::runtime_error("shadow_proposal_fork_failed");
+    if (!child) {
+        if (prctl(PR_SET_PDEATHSIG, SIGKILL) || getppid() != parent)
+            _exit(2);
+        try {
+            std::filesystem::current_path(cleanup.path);
+            run(session, policy, origin, lead, boundary, *arena.data);
+        } catch (...) {
+            arena.data->status = BranchStatus::Fault;
+        }
+        _exit(0);
+    }
+    bool timeout = false, failed = false;
+    int status = 0;
+    while (true) {
+        const auto result = waitpid(child, &status, WNOHANG);
+        if (result == child)
+            break;
+        if (result < 0 && errno == EINTR)
+            continue;
+        if (result < 0) {
+            failed = true;
+            break;
+        }
+        if (Clock::now() >= begin + std::chrono::milliseconds(timeout_ms)) {
+            timeout = true;
+            kill(child, SIGKILL);
+            while (waitpid(child, &status, 0) < 0 && errno == EINTR) {
+            }
+            break;
+        }
+        poll(nullptr, 0, 1);
+    }
+    FutureProposals result;
+    const auto &raw = *arena.data;
+    result.status = timeout ? BranchStatus::Timeout : raw.status;
+    if (!timeout && (failed || !WIFEXITED(status) || WEXITSTATUS(status)))
+        result.status = BranchStatus::Fault;
+    result.attempts = raw.attempts;
+    result.completed = raw.completed;
+    result.charged_updates =
+        result.status == BranchStatus::Timeout || result.status == BranchStatus::Fault
+            ? lead.size()
+            : raw.completed;
+    result.native_ns = raw.native_ns;
+    result.file_io_ns = raw.file_io_ns;
+    if (result.status == BranchStatus::Horizon) {
+        if (raw.count > 4)
+            throw std::runtime_error("shadow_proposal_corrupt_result");
+        for (unsigned i = 0; i < raw.count; ++i) {
+            result.inputs.emplace_back(raw.inputs[i].begin(), raw.inputs[i].end());
+        }
+    }
+    result.wall_ms = std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
+    return result;
+}
+} // namespace th08::shadow

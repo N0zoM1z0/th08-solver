@@ -26,10 +26,57 @@ A complete ID179 future certifies 1292 updates; the fatal stationary candidate i
 rejected at update 353. Successful and failed branches leave the parent's projected
 world/RNG and score/config files unchanged. Actual execution of the accepted queue
 matches every predicted receipt. Faults/timeouts cannot certify partial work;
-late adoption requires the complete already-executed prefix to agree. These are
-native primitives, not candidate search or a live MPC result. The Wine bridge and
-actual closed-loop deadline validation remain next work.
-Core CTest passes 36/36; the complete Native/DAT suite passes 52/52 in 1121.61
+late adoption requires the complete already-executed prefix to agree. These native
+primitives now back an opt-in Wine observer/input bridge and a
+true-RNG MPC client. The owned launcher checks the pinned 1.00d EXE, installs
+three declared hooks, captures the real pre-initialization seed/configuration and
+leaves the original game clock running. Plans have an eight-update immutable
+lead, a 32-update native verification window and a four-update replan interval.
+The owner rejects late plans and incompatible queued leads; exhausted queues use
+the recorded movement/focus/shoot fallback. Actual inputs and all branch costs are
+retained, including failures, timeouts and extra proposal-lead updates.
+
+The initial rendered Wine diagnostic completes ID179 Easy/seed7169 in 1292 updates.
+The aligned, frequent-replan prototype completes Lunatic ID107/seed34750 in 3490
+updates with zero miss/bomb and all 41 projection words matching. It verifies 849
+futures, discards two late results and uses four startup fallback inputs. This is
+one controlled complete spell, not unseen-seed reliability or a continuous clear.
+Its 66.66-second owner span exceeds 58.17 seconds of 60 Hz gameplay; software-rendered
+Wine has p99/max periods 27.63/35.61 ms. Planning p99/max is 83.66/86.91 ms behind
+the action lead; neither clock passes a strict 60 FPS acceptance gate.
+
+The first actual story attempts stop exactly at bullet-projection divergence:
+seed54589/update4243 and seed20367/update4152, with zero deaths/bombs and matching
+RNG, player and score. The latter's same-update post-calc dumps contain 196 bullets;
+two vector-acceleration bullets differ in velocity/acceleration by 3..11 float ULPs.
+No tolerance, RNG overwrite or continued exact-mode claim hides this failure.
+Additional source arguments and x87 control words are captured for diagnosis.
+A third story attempt (seed20233/update4218) records differing source acceleration
+arguments and latent bullet angles, with x87 controls `0x037f` Native versus
+`0x007f` retail. This supports investigating numeric execution paths; it does not
+prove that changing the control word alone fixes retail fidelity. No gameplay
+math, comparison tolerance or shared RNG semantics were changed for this bridge.
+These exact-mode diagnostics are historical evidence, not a runtime prerequisite.
+The owner's clarification prioritizes actual NMNB and online progress over bitwise
+numeric parity. Live mode now records bullet/laser digest drift and player errors
+up to 1/64 pixel without stopping, while inputs, RNG, lifecycle, actors and gameplay
+feedback remain checked. Inactive spell/route labels are compared only while active.
+Neither Native collision predicates nor RNG/world state are adjusted to hide drift.
+A subsequent actual story passes 25735 updates with zero miss/bomb, identical player
+position and no RNG discrepancy; 9007 digest-drift updates did not stop play.
+Its next published snapshot exposed a dropped control-only handoff, not floating
+point drift. The observer now retains that event during asynchronous loading, and
+the separate sampled-input profile corrects the first new-stage sample. Both
+input profiles pass the complete-stage entry regression. A later seed5657 attempt
+dies at update23981 with matching gameplay state and 100 fallback input calls;
+this is a planning/continuation failure retained for offline prefix diagnosis.
+A real Wine handoff, continuous completion and full deadline validation remain open
+in issue #8. The earlier two Lunatic proposal profiles' deaths at
+1400/1614 updates remain separate failed development attempts. Different seeds
+and profiles prevent a paired improvement claim.
+
+The native verification checkpoint passes core CTest 36/36; the complete
+Native/DAT suite passes 52/52 in 989.27
 seconds, including complete branch validation, mismatch and natural-handoff checks.
 
 Reviewed: 2026-10-23. The bounded

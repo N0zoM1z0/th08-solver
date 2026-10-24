@@ -463,12 +463,16 @@ Session::Session(const Config &config) {
     static bool used = false;
     require(!used, "one native session per process; start a fresh process for replay");
     used = true;
-    require(config.dat_path && config.stage >= 0 && config.stage < 9 && config.spell >= -1 &&
-                config.spell < 222 && config.difficulty >= 0 && config.difficulty < 5 &&
-                config.shot >= 0 && config.shot < 12 &&
-                (!config.unlock_final_routes ||
-                 (config.story && config.stage < 6 && !config.replay)),
-            "invalid native checkpoint");
+    require(
+        config.dat_path && config.stage >= 0 && config.stage < 9 && config.spell >= -1 &&
+            config.spell < 222 && config.difficulty >= 0 && config.difficulty < 5 &&
+            config.shot >= 0 && config.shot < 12 &&
+            (config.input_profile == InputProfile::Controller ||
+             config.input_profile == InputProfile::SampledGameplay) &&
+            (!config.replay || config.input_profile == InputProfile::Controller) &&
+            (!config.unlock_final_routes || (config.story && config.stage < 6 && !config.replay)),
+        "invalid native checkpoint");
+    configure_input_profile(config.input_profile);
     g_Supervisor.InitializeCriticalSections();
     require(g_Supervisor.LoadConfig(const_cast<char *>("th08.cfg")) == ZUN_SUCCESS,
             "configuration initialization failed");

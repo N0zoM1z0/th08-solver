@@ -568,7 +568,7 @@ evaluation covering all nine entries before releasing the untouched holdouts.
 ## True-RNG shadow runtime
 
 Issue #8 authorizes a separate native-lookahead profile. A synchronized shadow
-will follow actual owner inputs and use complete branch-owned Native state/RNG
+follows actual owner inputs and uses complete branch-owned Native state/RNG
 for candidate prediction. The real owner cannot rewind; future planning must not
 change its executed or latched prefix. This does not relax the zero-native-future
 contract of the existing current-memory policy.
@@ -586,8 +586,36 @@ and projected state, replacing only the remaining suffix. The complete ID179
 regression verifies 1292 updates, rejects a fatal candidate and executes the
 verified queue without divergence. This is a branch-verification primitive, not
 yet a candidate-search policy or online deadline result. The actual Wine
-observation/input bridge must pass its own gates before a live Shadow-MPC
-completion can be reported.
+observation/input bridge has now passed controlled complete-spell gates; continuous
+gameplay agreement and actual 60 FPS acceptance remain open in [Status](STATUS.md).
+
+`th08_shadow_online` follows a local Wine observation journal and publishes plans
+through a versioned mapped file. The profile fixes lead 8, verified horizon 32,
+minimum search interval 4 and replan-remaining threshold 28. A proposal child
+advances the immutable lead first, warming inherited Policy history at each update.
+The H24/beam192/cell16 policy exports at most four 23-input prefixes; its first
+modeled movement belongs to the existing latch. The client pads the remaining
+update and also considers the 18 held movement/focus candidates. Every complete
+lead-plus-candidate executes with its own full Native world and true RNG. No sampled
+RNG replacement or shared action-independent future is used.
+
+Proposal generation has a 60-ms wall cap inside an 80-ms total search budget.
+Fork/setup/termination can exceed those caps; reports retain actual wall overruns,
+partial counters and full requested update charges for interrupted native work.
+The lead is a latency allowance, not a claim that planning always meets one
+16.67-ms period. Receipt catch-up, exact prefix comparison and owner-side stale/lead
+checks protect the irreversible frontier. A depleted queue holds actual movement
+and focus while shooting, with alternating dialogue skip outside spell practice.
+Fallback is an explicit executed input, never a certified future or a rescue proof.
+
+This bounded search can enter a state with no surviving tested continuation.
+Native validation establishes its declared finite window only. Failed earlier
+profiles and the optional exact-mode story diagnostics remain evidence; a
+complete spell does not establish a whole-stage NMNB or deadline result.
+The owner explicitly prioritizes meaningful gameplay outcomes over tiny numeric
+parity. The live behavioral comparison logs digest/subpixel drift and stale
+inactive labels rather than rejecting them; it retains gameplay/RNG/lifecycle
+checks. Exact comparison remains selectable for diagnosis, not a clear prerequisite.
 
 ## Resource ownership and parallelism
 

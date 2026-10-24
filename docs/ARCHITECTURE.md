@@ -30,6 +30,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Owned current-memory observations and online proposal history | `online.hpp`, `online.cpp`, `online_model.cpp`; the optional previous-plan cache belongs to each `Policy` and is rechecked against new observations |
 | Common-start shadow synchronization | `shadow_protocol.hpp`, `shadow_native.*`, `shadow_process.*`, `tools/shadow_follow.cpp`; fixed-width wire values and a single-threaded independently initialized follower process |
 | True-RNG branch verification and committed action frontier | `shadow_rollout.*`, `shadow_plan.hpp`; isolated native child futures and checked consecutive execution receipts |
+| Local Wine observation/input bridge and future proposals | `shadow_bridge.hpp`, `shadow_proposal.*`, `tools/shadow_online.cpp`, `tools/wine-shadow/`; pinned retail ABI adapter, owned launcher and branch-owned proposal history |
 | Native observation adapter and online execution/reporting | `online_native.*`, `tools/online.cpp`; no native future updates or live rewinds |
 | Replay projection and strict corpus gate | `modern/headless/replay_check.*`, `tools/replay_check.cpp`, `tools/replay_suite.cpp` |
 | Sanitized campaign evidence and verified replay export | `tools/planner_report.cpp`; retains original proofs, separate accounting/archive receipts and their costs |
@@ -159,6 +160,55 @@ requested update cap. Native timing excludes measured file I/O; wall timing incl
 setup, copying, fork, capture and waiting. `ActionBuffer` can adopt a late result
 only after every actual receipt since its origin matches the predicted prefix.
 Execution remains monotonic; an observed fallback clears incompatible queued work.
+
+The optional Wine launcher owns a newly created suspended 32-bit process. Both
+launcher and observer verify the original EXE's pinned SHA-256; all three complete
+entry signatures are checked before any hook is installed. Initialization runs
+outside the DLL loader lock, before the primary thread resumes. A partial install
+rolls back or terminates that owned process. The on-disk EXE stays unchanged; its
+in-memory calc, gameplay-registration and controller entries are explicitly hooked.
+Trampolines remain owned for the process lifetime. No existing game is attached.
+
+The observer records actual configuration/RNG before original gameplay registration.
+A named optional checkpoint changes only the selected stage/difficulty/shot/practice
+configuration at that boundary. It never sets the gameplay RNG. A fresh Native
+Session reconstructs that start and follows actual sampled inputs, preserving the
+one-update latch. This is common-start reconstruction, not RNG-only world import.
+Its append-only 228-byte journal contains the 204-byte projection and three explicit
+nanosecond clocks. Observer timing includes capture but excludes journal WriteFile;
+actual inter-update periods include the remaining game/presentation/scheduler work.
+The first projection mismatch stops optional exact mode and preserves post-calc bullet words,
+source polar arguments and x87 control state for diagnosis. Matching hashes cover
+their declared fields, not every latent manager value or complete retail physics.
+Live behavioral mode treats bullet/laser digest drift and player differences up to
+1/64 pixel as telemetry. Inactive spell/route labels carry no gameplay comparison
+requirement until active. Input/RNG/clock/lifecycle/actor/feedback divergence remains
+an explicit stop. This comparison changes no world value or collision predicate;
+actual NMNB and owner-clock results determine practical acceptance.
+
+The Wine cursor publishes a stage-control receipt even while asynchronous loading
+is in progress. It resets only the new stage's observed calculation counter, then
+ignores loading callbacks until gameplay resumes. Dropping that control receipt
+would compare a new-stage world with Native's earlier control boundary. The live
+client selects `InputProfile::SampledGameplay`: at GameManager's input boundary it
+applies the supplied final sample after synchronous headless initialization has
+cleared transient input. The default Controller profile retains its original
+first-new-stage zero sample and all existing tape/replay semantics. Retail replay
+playback cannot select the sampled profile. Both preserve the original late
+movement latch and the complete native transition's carried/reset world state.
+
+The action file maps aligned little-endian 32-bit words on local x86 Linux/Wine.
+GCC lock-free atomics guard two publication slots; the owner copies an accepted
+plan privately. It rejects torn/late generations and any leading input inconsistent
+with its existing queue/fallback before the declared first change. It never waits
+for Native planning. This is local shared-memory transport, not an SSH/network API.
+The Native root remains single-threaded. One isolated proposal child advances the
+fixed lead and inherited Policy history; it returns only heuristic input vectors.
+Separate serial native children verify complete lead-plus-candidate futures. The
+root catches up with actual receipts before publishing a remaining suffix. Extra
+lead work, failed branches, full-cap timeout charges and wall overruns stay visible.
+Child policy tie RNG is private; the actual root only observes. This defines a new
+profile and does not reproduce the old per-update policy's search RNG sequence.
 
 `tools/headless_repair.cpp` uses this fresh-process boundary for bounded prefix repair.
 The child CLI keeps strict replay distinct from explicit prefix continuation; per-update

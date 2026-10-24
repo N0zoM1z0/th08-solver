@@ -1,5 +1,6 @@
 #include "runtime.hpp"
 #include "BulletManager.hpp"
+#include "Global.hpp"
 #include "Gui.hpp"
 #include "Player.hpp"
 #include "modern/windows_runtime.hpp"
@@ -11,6 +12,19 @@ uint64_t th08_headless_frame = 0;
 uint64_t th08::headless::file_io_ns = 0;
 
 namespace th08::headless {
+namespace {
+InputProfile input_profile = InputProfile::Controller;
+}
+void configure_input_profile(InputProfile profile) {
+    input_profile = profile;
+}
+void apply_sampled_gameplay_input() {
+    // Retail loading spans callbacks. Synchronous native initialization clears
+    // input inside its first new-stage call; a live receipt already describes
+    // the subsequent final sample. Inject only at this explicit input boundary.
+    if (input_profile == InputProfile::SampledGameplay)
+        g_CurFrameInput = th08_headless_input;
+}
 CancelRegionScope *CancelRegionScope::current_ = nullptr;
 CancelRegionScope::CancelRegionScope(Player &player) : player_(&player), previous_(current_) {
     for (const auto &region : player.cancelRegions)

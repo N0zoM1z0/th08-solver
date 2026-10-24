@@ -8,6 +8,7 @@ namespace th08::shadow {
 struct Comparison {
     const char *failure = nullptr;
     unsigned numeric_words = 0;
+    unsigned inactive_words = 0;
     float player_error = 0;
 };
 // Live play is judged by behavior, not bitwise equality of every numeric digest.
@@ -28,6 +29,13 @@ inline Comparison compare_live(const Packet &owner, const Packet &native, bool e
         if (owner.state.values[i] == native.state.values[i])
             continue;
         const auto field = Field(i);
+        if ((field == Field::Spell && !owner.state[Field::SpellActive] &&
+             !native.state[Field::SpellActive]) ||
+            (field == Field::FinalRoute && !owner.state[Field::RouteSelection] &&
+             !native.state[Field::RouteSelection])) {
+            ++result.inactive_words;
+            continue;
+        }
         if (field == Field::BulletLow || field == Field::BulletHigh || field == Field::LaserLow ||
             field == Field::LaserHigh) {
             ++result.numeric_words;

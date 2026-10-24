@@ -26,17 +26,18 @@ configuration, hashes, verification and retained search costs.
 ## Current direction
 
 The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).
-The first acceptance gate is common-start synchronization with actual input receipts;
-branch prediction and a forward-only action buffer follow that gate. This is a
-separate native-lookahead profile, not a change to the current-memory controller's
-zero-future-update contract. No synchronized Wine controller or new 60 FPS clear
-is established yet. The [October 24 preparation](preparations/10.24-with-claude-gpt/PUBLICATION.json)
+Common-start synchronization, true-RNG branch verification and a forward-only
+Wine action bridge are implemented. A controlled complete Lunatic spell has run
+with matching projected state and zero miss/bomb. Live play monitors small numeric
+drift and checks gameplay/RNG/lifecycle agreement; continuous NMNB and 60 FPS
+acceptance remain open in [Status](docs/STATUS.md). This separate native-lookahead profile
+preserves the existing current-memory controller's zero-future-update contract.
+The [October 24 preparation](preparations/10.24-with-claude-gpt/PUBLICATION.json)
 preserves audited public research copies and identities of unchanged local originals.
 
-The current implementation phase is the
-[memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5):
-complete every standalone stage over different seeds, diagnose action-dependent
-failures and close the offline-teacher/student loop. A continuous story through
+The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
+tracks standalone-stage coverage, action-dependent failures and the
+offline-teacher/student loop. A continuous story through
 the natural 4A branch is also authorized while 4B/Extra work continues; real-time
 evaluation remains separate. Reading current
 process memory is permitted; image recognition is not required. `th08_online` consumes

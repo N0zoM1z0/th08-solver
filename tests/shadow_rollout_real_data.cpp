@@ -1,7 +1,9 @@
 #include "modern/headless/session.hpp"
+#include "th08/online_native.hpp"
 #include "th08/plan_prefix.hpp"
 #include "th08/shadow_native.hpp"
 #include "th08/shadow_plan.hpp"
+#include "th08/shadow_proposal.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -15,7 +17,63 @@ std::string contents(const char *path) {
     std::ifstream stream(path, std::ios::binary);
     return {std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()};
 }
+int story_entry(const char *dat_path, const char *tape_path, bool sampled) {
+    const auto dat = std::filesystem::absolute(dat_path).string();
+    std::ifstream file(tape_path);
+    th08::plan::PrefixParser parser(1000000);
+    char bytes[8192];
+    while (file) {
+        file.read(bytes, sizeof(bytes));
+        parser.append(bytes, std::size_t(file.gcount()));
+    }
+    check(file.eof(), "cannot read story entry tape");
+    const auto actions = parser.finish();
+    const auto previous = std::filesystem::current_path();
+    char scratch[] = "/tmp/th08-shadow-entry-test-XXXXXX";
+    check(mkdtemp(scratch) != nullptr, "entry scratch failed");
+    std::filesystem::current_path(scratch);
+    th08::headless::Config config;
+    config.dat_path = dat.c_str();
+    config.story = true;
+    config.shot = 1;
+    config.difficulty = 3;
+    config.input_profile = sampled ? th08::headless::InputProfile::SampledGameplay
+                                   : th08::headless::InputProfile::Controller;
+    th08::headless::Session session(config);
+    bool reached = false;
+    unsigned calls = 0;
+    for (auto input : actions) {
+        if (calls >= 32000)
+            break;
+        const auto before = session.state();
+        const auto after = session.step(input);
+        ++calls;
+        if (after.stage != before.stage) {
+            check(after.stage == 1 && after.calculation_updates == before.calculation_updates,
+                  "story control update was collapsed into a gameplay calculation");
+            const auto first = session.step(0x45);
+            ++calls;
+            check(first.calculation_updates == after.calculation_updates + 1 &&
+                      first.sampled_input == (sampled ? 0x45 : 0) &&
+                      first.latched_input == (sampled ? 0x45 : 0),
+                  "new-stage sampled input profile changed or lost the original latch");
+            reached = true;
+            break;
+        }
+    }
+    check(reached && session.state().deaths == 0, "complete first-stage entry gate failed");
+    std::filesystem::current_path(previous);
+    std::filesystem::remove_all(scratch);
+    std::cout << "story entry profile=" << (sampled ? "sampled" : "controller")
+              << " updates=" << calls << '\n';
+    return 0;
+}
 int main(int argc, char **argv) try {
+    if (argc == 4) {
+        check(std::string(argv[3]) == "sampled" || std::string(argv[3]) == "controller",
+              "unknown input profile");
+        return story_entry(argv[1], argv[2], std::string(argv[3]) == "sampled");
+    }
     check(argc == 3, "expected DAT and complete control tape");
     const auto dat = std::filesystem::absolute(argv[1]).string();
     std::ifstream file(argv[2]);
@@ -59,11 +117,38 @@ int main(int argc, char **argv) try {
           "native branch changed the owner's score/config files");
     s::ActionBuffer queue(origin);
     check(queue.replace(good), "verified future did not enter action buffer");
+    th08::online::Configuration profile;
+    profile.horizon = 24;
+    th08::online::Policy policy(profile);
+    th08::online::Observation observation;
+    th08::online::capture_memory(session, 0, observation, true);
+    policy.observe(observation);
+    std::vector<std::uint16_t> lead(actions.begin(), actions.begin() + 8);
+    const auto future = s::propose_after_lead(session, policy, origin, lead, {false, 179}, 1000);
+    check(future.status == s::BranchStatus::Horizon && !future.inputs.empty() &&
+              future.attempts == 8 && future.completed == 8 && future.charged_updates == 8,
+          "proposal work did not own and charge its forced lead");
+    actual.state = s::capture(session);
+    check(!s::difference(actual, origin) && contents("score.dat") == score_before &&
+              contents("th08.cfg") == config_before,
+          "future proposal mutated the actual owner");
     for (const auto &frame : good.frames) {
         check(queue.next() && queue.next()->input == frame.input, "buffer changed native inputs");
         session.step(std::uint16_t(frame.input));
         s::advance_receipt(actual, frame.input, s::capture(session));
         check(queue.confirm(actual), "committed execution diverged from verified branch");
+        if (frame.sequence <= 8) {
+            th08::online::capture_memory(session, frame.sequence, observation, true);
+            policy.observe(observation);
+            if (frame.sequence == 8) {
+                std::vector<th08::online::ValueProposal> serial;
+                policy.decide(observation, nullptr, &serial);
+                check(serial.size() == future.inputs.size(), "proposal history leaked from child");
+                for (unsigned i = 0; i < serial.size(); ++i)
+                    check(serial[i].inputs == future.inputs[i],
+                          "proposal did not use the true end-of-lead observation and latch");
+            }
+        }
     }
     check(!queue.next() && session.state().deaths == 0, "complete buffered execution failed");
     std::filesystem::current_path(previous);

@@ -22,6 +22,7 @@
 #endif
 #ifdef TH08_HEADLESS
 #include "modern/headless/replay_check.hpp"
+#include "modern/headless/runtime.hpp"
 #endif
 
 namespace th08
@@ -289,6 +290,9 @@ ChainCallbackResult GameManager::OnUpdate(GameManager *gameManager)
     u32 value;
     u32 antiTamperIdx;
 
+#ifdef TH08_HEADLESS
+    headless::apply_sampled_gameplay_input();
+#endif
 #ifdef TH08_ENABLE_REPLAY_TRACE
     modern::ReplayTraceBeginCalculation();
 #endif

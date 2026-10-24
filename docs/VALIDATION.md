@@ -30,6 +30,68 @@ and executes every accepted action through the original Session. The core wire
 contract tests late-prefix agreement, stale receipt rejection and preservation of
 an existing plan after a failed proposal. Neither self-comparison is an
 independent physics oracle.
+
+The optional local Wine bridge requires a 32-bit MinGW compiler and the pinned
+retail 1.00d EXE (`330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`,
+840704 bytes). Keep a private copy of the game/config/score and a dedicated Wine
+prefix. It attaches only to the new process created by its launcher. Its three
+in-memory hooks are declared; no gameplay RNG value is written. Core/native builds
+do not require Wine or MinGW unless the observer option is enabled.
+
+```sh
+cmake -S . -B build-headless -DTH08_HEADLESS=ON -DTH08_WINE_SHADOW=ON -DCMAKE_BUILD_TYPE=Release
+cmake --build build-headless --parallel 2
+export WINEPREFIX="$PWD/game_exe/owned-shadow-prefix" WINEARCH=win32 WINEDEBUG=-all
+export TH08_SHADOW_CHECKPOINT='5,3,0,107,0' TH08_SHADOW_UPDATES=6000
+run="$PWD/reports/local/wine-shadow-example"
+game="$PWD/game_exe/owned-shadow-game"
+mkdir "$run"
+launcher=$(winepath -w "$PWD/build-headless/wine-shadow/launch.exe")
+observer=$(winepath -w "$PWD/build-headless/wine-shadow/observer.dll")
+executable=$(winepath -w "$game/th08.exe")
+destination=$(winepath -w "$run")
+(cd "$game" && wine "$launcher" "$executable" "$observer" "$destination") &
+./build-headless/th08_shadow_online game_data_donottrack/th08.dat "$run" "$run/result.json" mpc 300
+```
+
+Start a normal game in the owned window. The optional checkpoint is applied only
+before original gameplay registration: zero-based stage, difficulty, shot, spell
+or -1, story 0/1. Unset it to preserve the actual menu-selected configuration.
+The observer records the real seed before registration, then publishes only
+actual gameplay/control updates. Use a new output directory each time; existing
+journals/command files are deliberately rejected. The mapped command file requires
+local coherent x86 Linux/Wine memory; remote SSH transport is not implemented.
+
+The client accepts mode `follow` for receipt-only Native comparison, including an
+already finished observation journal; mode `mpc` adds branch-owned futures.
+The wall-seconds argument caps total command wall seconds, including menu/start
+waiting. Exit 0 is the actual case terminal; 3 is projection mismatch, 4 is death,
+5 is a budget/stop boundary and 1 is runtime/transport failure. Actual sampled
+inputs export beside the output as `.actions`. Reports bind start/trace/actions,
+DAT and Native binary hashes, configuration, budgets, proposal/native attempts,
+charged interrupted work, stale results, input fallbacks and actual owner clocks.
+An optional final `behavioral|exact` selects comparison policy (default behavioral).
+Live comparison records numeric bullet/laser digest drift, player differences up
+to 1/64 pixel and inactive spell/route metadata; meaningful gameplay fields remain
+checked. It does not modify either simulation or collision handling. Exact mode
+retains bitwise projection diagnosis. Keep launcher/DLL/config identities with the
+local run receipt as well. New logs,
+tapes and diagnoses stay under ignored `reports/local/`.
+
+Core checks reject late generations, torn publications, altered immutable leads,
+unsupported bomb bits and edits to the owner's private accepted copy. The complete
+Native scene also compares future-lead proposal inputs with the same Policy only
+after actual execution reaches that lead, guarding history, latch and private tie
+RNG isolation. Rendered Wine spell completions and retained story mismatches are
+separate manual real-data evidence in [Status](STATUS.md). Same-update stopped
+diagnostics use raw float bits: the client writes `.bullets.tsv` beside its report;
+the observer retains `retail-bullets.tsv` from the post-calc phase, before drawing.
+Neither a partial story nor a complete spell establishes a continuous 60 FPS run.
+The same real-data regression executes a complete first story stage in both
+Controller and SampledGameplay profiles, checks the control-only handoff, then
+requires the new stage's first sample/latch to be respectively zero or the
+explicit supplied input. A core cursor regression covers the intervening retail
+loading callbacks so that the control receipt cannot disappear again.
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.

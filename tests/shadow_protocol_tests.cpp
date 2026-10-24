@@ -104,8 +104,23 @@ int main() try {
     std::memcpy(&live.state[s::Field::X], &large_error, sizeof(float));
     check(std::strcmp(s::compare_live(live, native, false).failure, "x") == 0,
           "material player displacement was hidden by numeric tolerance");
+    s::Packet retired, previous_spell;
+    previous_spell.state[s::Field::Spell] = 9;
+    check(!s::compare_live(retired, previous_spell, false).failure &&
+              s::compare_live(retired, previous_spell, false).inactive_words == 1,
+          "inactive spell metadata stopped continuous play");
+    retired.state[s::Field::SpellActive] = previous_spell.state[s::Field::SpellActive] = 1;
+    check(std::strcmp(s::compare_live(retired, previous_spell, false).failure, "spell") == 0,
+          "active gameplay spell mismatch was hidden as stale metadata");
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
     namespace b = s::bridge;
+    b::CalculationCursor cursor{0, 123};
+    check(cursor.observe(1, 123, false) == b::UpdateEvent::Control && cursor.frame == 0 &&
+              cursor.observe(1, 0, false) == b::UpdateEvent::None &&
+              cursor.observe(1, 1, true) == b::UpdateEvent::Calculation,
+          "asynchronous loading swallowed a control-only stage handoff");
+    check(cursor.observe(1, 3, true) == b::UpdateEvent::Unsupported,
+          "unexplained skipped gameplay calculations were silently accepted");
     std::array<std::uint32_t, b::map_words> mapping{};
     b::Plan plan;
     plan.generation = 2;
