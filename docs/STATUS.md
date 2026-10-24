@@ -206,6 +206,15 @@ fallback calls. Owner elapsed is 383.375 seconds, about 59.931 average FPS;
 period p99/max is 17.90/31.57 ms and planning mean/p99/max is 17.66/30.86/52.60 ms.
 Continue complete Stages 2/3 with the same frozen client/team before story.
 
+Uniform shot1 Stage 2/seed46377 completes NMNB at 27316 calculations, with all
+41 projected words and fresh Native input following matching. It certifies 3414
+futures and charges 218232 branch updates plus 11 proposal-lead updates. There
+are no branch deaths/timeouts, budget overruns or runtime queue gaps; all eleven
+unqueued receipts are startup (ten fallback calls). Owner elapsed is 459.206
+seconds, about 59.485 average FPS, with period p99/max 21.82/93.93 ms. Planning
+mean/p99/max is 17.92/33.11/47.56 ms. Uniform shot1 Stage 3 is the remaining
+complete-practice check before story; the client and budgets remain frozen.
+
 The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
 projected words matching and no numeric drift; fresh Native following reproduces
 the death. Failed-nominal suppression recovers four continuations, but the final
