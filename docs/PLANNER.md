@@ -573,6 +573,14 @@ for candidate prediction. The real owner cannot rewind; future planning must not
 change its executed or latched prefix. This does not relax the zero-native-future
 contract of the existing current-memory policy.
 
+The latest owner sequence validates complete stage practice one stage at a time
+before returning to a full story. Each case includes the entire stage, midboss,
+boss and internal transitions, with actual NMNB, fresh input following and clock
+costs recorded separately. Diagnose failures before advancing; confirm with fresh
+seeds under a uniform final profile before story integration. The first natural
+handoff remains a separate smoke check. Practice initialization legitimately
+resets state, so isolated clears do not certify carried world/RNG at story joins.
+
 The first `th08_shadow_follow` gate implements common-start Native input following
 over a versioned wire projection. It compares independently initialized processes,
 detects the first differing field and preserves original stage handoffs. It does

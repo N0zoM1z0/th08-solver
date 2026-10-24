@@ -29,7 +29,10 @@ The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](http
 Common-start synchronization, true-RNG branch verification and a forward-only
 Wine action bridge are implemented. A controlled complete Lunatic spell and a
 32000-update Lunatic story prefix through the first natural stage handoff have
-run with zero miss/bomb. Live play monitors numeric drift and checks
+run with zero miss/bomb. The first complete Lunatic Stage 1 practice also clears
+NMNB at about 59.5 average FPS. The owner now prioritizes complete stage practice
+one stage at a time before full-story integration. Live play monitors numeric drift
+and checks
 gameplay/RNG/lifecycle agreement; continuous NMNB and 60 FPS
 acceptance remain open in [Status](docs/STATUS.md). This separate native-lookahead profile
 preserves the existing current-memory controller's zero-future-update contract.

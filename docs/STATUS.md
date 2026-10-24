@@ -83,6 +83,34 @@ p99/max is 67.11/550.04 ms; planning mean/p99/max is 34.90/99.70/152.08 ms, incl
 21 budget overruns. These software-rendered shared-host measurements overlap the
 normal regression suite. A real Wine handoff is now demonstrated; continuous
 completion and full deadline validation remain open in issue #8.
+
+The latest owner sequence is complete stage practice, one stage at a time, before
+returning to a full story. The first actual Lunatic Stage 1 practice, shot0/seed29609,
+completes all 25489 calculations NMNB. Player position and meaningful gameplay/RNG
+fields match; 8932 digest-drift updates remain telemetry. There are 3186 certified
+futures, zero branch timeouts/deaths or planning budget overruns, no stale result,
+no owner rejection and no runtime queue gap. Ten unqueued updates are all at startup
+(nine owner fallback input calls). Terminal-before-change is counted separately
+for seven short terminal predictions.
+
+With no CTest overlap and Native/Wine nice levels 15/10, this software-rendered run
+takes 428.497 seconds versus 424.817 seconds at 60 Hz: about 59.485 average FPS.
+Owner period p99/max is 22.38/43.78 ms; planning mean/p99/max is
+22.67/65.07/94.28 ms behind the action lead. This complete development case is a
+functional milestone with measured jitter, not an every-frame deadline guarantee
+or fresh-seed reliability claim. Continue with complete Stage 2 practice; fresh-seed
+confirmation and a uniform final profile precede full-story promotion.
+
+A separate H64 Lunatic ID107/seed13011 attempt dies at update1332 with every
+projection word matching. It retains 15 owner fallback input calls, eight branch
+timeouts and 15 branch deaths. A 154-candidate Native diagnosis over seven earlier
+origins finds safe complete 64-update alternatives even at origin1312. Its
+200-ms per-candidate cap is explicitly larger than the live total budget; it
+demonstrates tested alternatives, not an online clear or impossibility result.
+Repeated unsuccessful nominal extensions can consume fresh-candidate budget;
+the next scheduling change prioritizes a fresh search until a new certificate
+replaces that nominal plan. This failure remains alongside the Stage 1 success.
+
 The earlier two Lunatic proposal profiles' deaths at
 1400/1614 updates remain separate failed development attempts. Different seeds
 and profiles prevent a paired improvement claim.
