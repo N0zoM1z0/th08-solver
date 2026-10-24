@@ -17,6 +17,8 @@
 !/reports/native/replays/online-story-4a-v1--s0.actions
 !/reports/native/replays/online-story-4a-v1--s29768.rpy
 !/reports/native/replays/online-story-4a-v1--s29768.actions
+# Owner-requested replay corresponding to the actual split-capture recording.
+!/reports/native/replays/shadow-recording-v2--stage4a-d3-s1-seed34235.rpy
 **/private_resources/
 __pycache__/
 *.py[cod]

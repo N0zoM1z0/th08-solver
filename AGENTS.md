@@ -66,6 +66,10 @@ this repository, not an ignored checkout, submodule or separate feature branch.
 - Keep new generated replays, action tapes and experiment JSON under ignored
   `reports/local/`. Preserve the existing tracked artifacts as historical snapshots;
   progress commits contain code and maintained prose, not new or refreshed run artifacts
+- The owner explicitly authorizes the selected `.rpy` files corresponding to the
+  recorded Stage 4A, standalone Final B and complete 4A-to-Final-B story. Keep their
+  exact identities/provenance in maintained documentation. This does not authorize
+  committing videos, action tapes or new experiment reports
 - The owner also authorizes selected compact learned policy/risk snapshots under
   `models/`. Preserve exact weights/tables with schema, hashes, provenance and
   training/evaluation limitations. This exception does not include raw datasets,

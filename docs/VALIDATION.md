@@ -1,5 +1,23 @@
 # Validation, provenance and reproduction
 
+The owner-requested [recorded Stage 4A replay](../reports/native/replays/shadow-recording-v2--stage4a-d3-s1-seed34235.rpy)
+corresponds to the actual split-capture Lunatic Marisa/Alice practice, real seed34235.
+The original Native replay writer consumes a fresh execution of all 43597 actual
+sampled input/control receipts; each receipt agrees with the Wine journal before
+export. Natural replay then completes all 43597 calculation rows, zero deaths/bomb
+inputs, raw end score27231727 and the pinned 1.00d executable target. Its replay
+input clock is 43528, a different unit from calculation receipts. This is an
+export of verified actual inputs, not a different searched route; its producer
+metadata is Native and its playback clock is not the video's wall clock.
+
+Replay SHA-256: `0e670b832b595bb153429407d17c03d280450dcfe19dbcca002145de2029a92d`.
+Original matched video SHA-256: `7f5f4d2938840971b7eeb23c05d56d4ba86c25096ab16a1f95a2e0b9ed4b31a0`.
+The original video is 770.566 seconds, H.264 640x480 with actual AAC stereo game
+audio; videos remain local. A later compressed delivery retains this case identity.
+Copy the replay into an unused `replay/th8_XX.rpy` slot in an owned game copy.
+Standalone Final B and full 4A-to-Final-B replays are authorized next; the stopped
+first-clear seed24474 attempt is not published as a completed route.
+
 Core CTest cases: 36
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
