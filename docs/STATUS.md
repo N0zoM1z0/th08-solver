@@ -14,8 +14,26 @@ records audited public copies, hashes and excluded raw result files.
 The latest owner instruction defers Stage 4B and follows the Stage 4A route,
 continuing complete stage practice before full story. Current practice uses
 Marisa/Alice (shot1), matching the earlier validated 4A story's legal natural
-branch. Earlier Stage 1/2/3 clears below use shot0 and remain component evidence;
-confirm a uniform shot1 profile before full-story integration.
+branch. All six complete practices now pass under one frozen shot1 client, with
+fresh Native following of every actual input. Earlier shot0 clears remain
+separate component evidence. The current full-story attempt is active; it is not
+yet a story completion or a universal deadline result.
+
+| Complete Lunatic practice, shot1 | Real seed | Calculations | Average FPS | Outcome |
+| --- | --- | --- | --- | --- |
+| Stage 1 | 23035 | 22976 | 59.931 | NMNB |
+| Stage 2 | 46377 | 27316 | 59.485 | NMNB |
+| Stage 3 | 57711 | 35605 | 58.774 | NMNB |
+| Stage 4A | 26528 | 43216 | 57.505 | NMNB |
+| Stage 5 | 60127 | 45781 | 59.105 | NMNB |
+| Final A | 39870 | 54211 | 59.001 | NMNB |
+
+These six initial cases use the identical native binary and H64/8/110-ms profile:
+229105 actual calculations, 1832577 charged branch updates and 206 proposal-lead
+updates. No runtime queue gap, stale result or owner rejection occurs. The 29
+rejected future deaths, seven timeouts and seven budget overruns remain charged;
+they are not actual misses. This is functional development coverage, not a
+statistical reliability claim. Period distributions below preserve actual jitter.
 
 The first implementation adds a versioned little-endian 32/64-bit wire projection
 and an independently initialized Native follower process. The complete ID179 Easy
@@ -158,7 +176,7 @@ startup (nine owner fallback input calls). No stale result, invalid prefix or
 owner rejection occurs. It charges 346288 branch updates and 95 proposal-lead
 updates, including interrupted work.
 
-Stage 4A takes 751.512 seconds versus 720.267 seconds at 60 Hz, about 57.507 average
+Stage 4A takes 751.512 seconds versus 720.267 seconds at 60 Hz, about 57.505 average
 FPS. Owner period p99/max is 26.74/57.28 ms; planning mean/p99/max is
 21.03/47.67/116.79 ms. This is a complete functional clear with actual unsuccessful
 extension recovery, not a universal deadline result. Continue Stage 5 and Final A
@@ -187,14 +205,17 @@ Owner elapsed is 918.812 seconds versus 903.517 seconds at 60 Hz: about 59.001
 average FPS. Owner period p99/max is 24.51/59.05 ms; planning mean/p99/max is
 22.38/55.83/92.95 ms.
 
-Stage 4A, Stage 5 and Final A now have complete initial shot1 cases. Confirm
-Stages 1/2/3 with that same team and frozen client before full story; earlier
+Stage 4A, Stage 5 and Final A have complete initial shot1 cases. Subsequent
+Stages 1/2/3 confirmation uses that same team and frozen client; earlier
 shot0 component clears remain separate. A future story starts from a named fresh
 score-history profile in a new owned game directory, preserving the practice
 directory. Both the native scratch and original game's first-clear history then
 use default locked routes, selecting Final A without assuming that the V1 start
 record serializes arbitrary persistent score history. This profile is prepared,
-not a completed story result.
+not a completed story result. The first actual story attempt now runs with real
+seed33280, a 350000-update / 7200-second cap, the same frozen client/team and
+continuous original stage transitions. No new controller or physics change is
+introduced for the story attempt.
 
 Uniform shot1 confirmation starts with complete Lunatic Stage 1 practice,
 seed23035: 22976 calculations NMNB, no meaningful gameplay/RNG discrepancy and
@@ -212,8 +233,16 @@ futures and charges 218232 branch updates plus 11 proposal-lead updates. There
 are no branch deaths/timeouts, budget overruns or runtime queue gaps; all eleven
 unqueued receipts are startup (ten fallback calls). Owner elapsed is 459.206
 seconds, about 59.485 average FPS, with period p99/max 21.82/93.93 ms. Planning
-mean/p99/max is 17.92/33.11/47.56 ms. Uniform shot1 Stage 3 is the remaining
-complete-practice check before story; the client and budgets remain frozen.
+mean/p99/max is 17.92/33.11/47.56 ms.
+
+Uniform shot1 Stage 3/seed57711 completes NMNB at 35605 calculations, with all
+41 projected words and fresh Native input following matching. It certifies 4450
+futures and charges 284544 branch updates plus 12 proposal-lead updates. There
+are no branch deaths/timeouts, budget overruns or runtime queue gaps; ten initial
+unqueued receipts correspond to nine startup fallback calls. Owner elapsed is
+605.790 seconds, about 58.774 average FPS, with period p99/max 24.63/41.80 ms.
+Planning mean/p99/max is 18.19/44.94/77.43 ms. This completes the selected uniform
+practice route and permits the subsequent full-story integration attempt.
 
 The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
 projected words matching and no numeric drift; fresh Native following reproduces
