@@ -38,8 +38,8 @@ reliability remain open in [Status](docs/STATUS.md). Numeric digest drift stays
 visible, and meaningful gameplay/RNG/lifecycle fields remain checked. Stage 4B
 is deferred by the owner. This separate native-lookahead profile
 preserves the existing current-memory controller's zero-future-update contract.
-The [October 24 preparation](preparations/10.24-with-claude-gpt/PUBLICATION.json)
-preserves audited public research copies and identities of unchanged local originals.
+Preparation material remains unchanged locally and is excluded from published
+Git history at the owner's request; its download archive is supplied separately.
 
 [Issue #9](https://github.com/N0zoM1z0/th08-solver/issues/9) records the execution flow,
 resource evidence and deployment options. The owner keeps the current Wine setup
@@ -187,12 +187,8 @@ Acceleration removes waiting without enlarging gameplay time steps.
 | [Third-party notices](docs/THIRD_PARTY_NOTICES.md) | Required attribution/license |
 
 Old entry-first roadmaps were consolidated or removed; Git history retains them.
-`preparations/` preserves historical research, not current instructions or verified
-coverage. Public handoff copies redact private links/paths; the
-[offline preparation manifest](preparations/10.21-with-claude-important/PUBLICATION.json)
-and [online preparation manifest](preparations/10.22-with-claude-online/PUBLICATION.json)
-record original/public hashes, with exact inputs preserved locally. The online
-handoff ZIP retains its source patch, research notes and analysis scripts; generated
-models, results, replays and action tapes remain in the complete local extraction.
-Historical analysis scripts are not a maintained runtime dependency. Game assets,
-generated binaries/source and new experiments stay ignored.
+`preparations/` is an ignored local research archive. Its files are removed from
+published Git history; a verified ZIP is provided separately to the owner.
+Historical research is not current runtime instructions, verified coverage or a
+maintained dependency. Game assets, generated binaries/source and new experiments
+stay ignored.

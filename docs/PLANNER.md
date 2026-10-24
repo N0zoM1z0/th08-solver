@@ -331,7 +331,7 @@ bridge overhead. Bounded work or asynchronous planning with an explicit fallback
 must account for stale observations and missed decisions, then pass complete-run
 and independent-seed survival checks under that actual timing behavior. Memory
 access removes the need for image recognition; it does not establish those gates.
-The owner-supplied [realtime analysis](../preparations/10.23-with-claude/TH08_online_realtime_analysis.md)
+The owner-supplied local realtime analysis
 guides the next algorithm phase. Its no-model VM measurements are external
 evidence to reproduce on this build, including the actual spell-166 laser window.
 Exact inverse rotations are prepared once per retained forecast laser after all

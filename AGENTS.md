@@ -57,6 +57,9 @@ this repository, not an ignored checkout, submodule or separate feature branch.
 
 ## Documentation and publication
 
+- All `preparations/` material is local-only. The owner requested a verified ZIP
+  download and removal of that directory from all published Git history; never
+  reintroduce its files through later commits or old branches
 - Keep only the compact current document set linked by README. Update the document
   that owns the fact instead of adding another roadmap, diary or duplicate checklist
 - Keep current status, future work and historical/component evidence distinct.

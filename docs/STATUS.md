@@ -7,9 +7,9 @@ separates existing capability, attachment-only experiments and proposed acceptan
 The new profile may simulate native futures; it does not silently change the
 existing current-memory policy contract. Actual functional NMNB and per-frame
 deadline acceptance are measured separately. Original
-October 24 inputs remain unchanged locally; the
-[publication manifest](../preparations/10.24-with-claude-gpt/PUBLICATION.json)
-records audited public copies, hashes and excluded raw result files.
+October 24 inputs remain unchanged locally. At the owner's later request, all
+preparation files are excluded from published history and supplied in a verified
+local ZIP rather than tracked research copies.
 
 The latest owner instruction defers Stage 4B and follows the Stage 4A route,
 continuing complete stage practice before full story. Current practice uses
@@ -677,14 +677,14 @@ fork rollouts and verified commits; it adds no spell-92 strategy branch. The
 and failed searches, fresh verification, budgets, executable identities and total
 native costs. Unfinished processes contribute only a pending identifier.
 
-The current owner priority follows the preserved October 23
-[realtime analysis](../preparations/10.23-with-claude/TH08_online_realtime_analysis.md):
+The historical October 23 owner priority follows the locally preserved
+realtime analysis:
 reproduce its actual spell-166 workload, validate exact kernel optimizations,
 then test plan reuse and deterministic planning latency before learning work.
-The subsequently supplied [reference bundle](../preparations/10.23-with-claude/th08-online-realtime-2026-10-23-public.zip)
+The subsequently supplied local reference bundle
 includes an updated analysis, both prototype patches and raw external evidence.
-Unmodified originals remain local; the tracked publication copy removes private
-conversation metadata. Exact kernels were implemented independently before those
+Unmodified originals remain local and are excluded from published history.
+Exact kernels were implemented independently before those
 attachments arrived and are now being compared with them. The source analyses
 stay unchanged. Their two-core no-model VM results do not transfer to the current
 learned-risk profile. Fresh complete 6B controls identify spell-166 starts at

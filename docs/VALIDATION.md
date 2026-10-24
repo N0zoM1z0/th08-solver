@@ -894,7 +894,8 @@ Platinum 8573C, GCC 14.2, Release; timing is not portable or a guarantee.
 - Original preparation archive `TH08_AllCase_20260911.zip`: SHA256
   `8913fffc96824c27b681ff1b1133a4385f7c7ca3e8e377fede17e552e535b199`
 - Older preparation reports mentioning a dirty worktree near `af72ca9` are historical
-  evidence, not the pinned source or current runtime. `preparations/` remains unchanged
+  evidence, not the pinned source or current runtime. `preparations/` remains
+  unchanged locally and is excluded from published Git history
 
 Legacy DAT analysis tools check the expected input hash. Native experiment tools
 record the supplied DAT hash; compare evidence only for the stated input/profile.

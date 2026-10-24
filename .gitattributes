@@ -3,4 +3,3 @@
 *.dat -text
 *.rpy -text
 *.actions -text
-preparations/** -text
