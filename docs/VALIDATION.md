@@ -19,8 +19,25 @@ seconds, with SHA-256 `003be7ce892e8e1f366eb89cc9454d78175198eae585d25b43c0eeeeb
 Its complete decode passes; capture frame timing is retained apart from four
 duplicate-timestamp drops required for the encoded delivery.
 Copy the replay into an unused `replay/th8_XX.rpy` slot in an owned game copy.
-Standalone Final B and full 4A-to-Final-B replays are authorized next; the stopped
-first-clear seed24474 attempt is not published as a completed route.
+The [standalone Final B replay](../reports/native/replays/shadow-recording-v3--finalb-d3-s1-seed29085.rpy)
+corresponds to real seed29085, Lunatic shot1, the `fbb7758` client and V2 dialogue
+advancement. Fresh following and export agree on all 30333 actual receipts,
+zero miss/bomb, zero drift/player error and raw live score93642342. The 8845-byte
+replay naturally completes NMNB with the pinned 1.00d target. Natural playback
+reports 30330 rows, replay input clock29829 and end score127392342: the original
+final-practice/playback clear-bonus offset is 33750000, as documented below.
+This is not a row-for-row terminal or score equality claim; the file preserves
+the verified actual inputs through the original writer. Actual retail playback
+of this selected file remains unchecked.
+
+Final B replay SHA-256: `e565f51c06e210e3242d1e136133184023863ca170b7b83d2810dbad5993011c`.
+Matched capture-quality MP4 SHA-256: `9f94a8e74b56836211bab62a3a06d763577e33512a43004557b936b41d71fff8`.
+The MP4 is 523.983 seconds/672570952 bytes, with its capture video stream copied
+and audio aligned by trimming 10816 samples at 48 kHz. Its complete decode passes.
+The 20-second spell158 Kaguya preview starts at movie second198, remains 640x480,
+and is 6748573 bytes, SHA-256 `b8eb00563589ff2fceec2d6377e4acaa8b95d14ba94d62bcb5bd90081eacc4ac`.
+Full 4A-to-Final-B recording/replay remains in progress; the stopped first-clear
+seed24474 attempt is not published as a completed route.
 
 `th08_shadow_export DAT RECORDING_DIRECTORY OUTPUT.rpy` reads the versioned start
 record and requires the owner's Complete marker plus an exact-length journal.

@@ -53,6 +53,12 @@ Final B recording at capture quality, a compact full-story video, a compact Kagu
 spell preview, and their matching selected `.rpy` files. Dialogue advancement uses
 periodic Z release/press inputs inside the verified Native futures. Windows
 migration and Stage 4B stay deferred.
+The new-profile complete Final B practice now clears NMNB at real seed29085:
+30333 actual calculations, matching fresh following and a complete natural
+[replay](reports/native/replays/shadow-recording-v3--finalb-d3-s1-seed29085.rpy).
+The capture-quality standalone movie and compact Kaguya preview are complete;
+the new actual full-story recording is running under the declared second-clear
+history. This is a recorded practice case, not yet a completed B story.
 
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the

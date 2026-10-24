@@ -133,8 +133,29 @@ setup must finish before applying that history. Dialogue inputs release/press Z
 in four-update groups while the owned Native GUI reports dialogue, preserving
 movement/focus and alternating Ctrl. These actual inputs pass through normal
 lead ownership and complete native rollout verification. V1/default input
-behavior and H64 search budgets remain unchanged. Full online validation of the
-new profile is pending. Windows migration and Stage 4B stay deferred.
+behavior and H64 search budgets remain unchanged.
+
+The new `fbb7758` client completes actual Lunatic Final B practice with shot1,
+real seed29085 and dialogue advancement: 30333 calculations/receipts, NMNB,
+zero numeric drift and zero player-position error. Fresh following agrees on
+all receipts. The original complete stage includes active spell IDs150,154,158,
+162,166,170,174,178,182,186,190 and its original terminal. Owner time is
+512.640385024 seconds, averaging 59.170 calculations/s; period p99/max is
+22.05/49.09 ms. All 3791 searches certify, with 3789 nominal extensions,
+242376 charged branch updates and 13 proposal-lead updates. Planning mean/p99/max
+is 21.96/38.14/54.45 ms, with no rollout death/timeout or budget overrun.
+Ten unqueued receipts and nine fallback calls are confined to startup.
+
+Complete video/audio decode passes. The standalone MP4 stream-copies the capture
+video: 523.983 seconds, 640x480, actual stereo game audio and 672570952 bytes.
+The selected 20-second spell158 Kaguya preview is 6748573 bytes at native
+resolution with balanced compression. The matching selected replay is tracked;
+[Validation](VALIDATION.md) records its identity and the known practice/playback
+clear-bonus difference. The next actual full story is running at real seed40755,
+shot1/Lunatic with prior-Final-A-clear and dialogue flags recorded in V2,
+350000 receipts/7200-second outer caps and unchanged H64 search budgets.
+It must reach the natural 4A-to-Final-B route before a completion claim.
+Windows migration and Stage 4B stay deferred.
 
 Under the initial combined-recorder profile, GNU time accounts for the Native
 client and its reaped branches at 130.81 CPU
