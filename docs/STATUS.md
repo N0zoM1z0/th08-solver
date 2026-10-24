@@ -54,8 +54,9 @@ queue recovery and broader frozen-seed coverage; 4B remains deferred.
 The owner's next request is viewing the actual online game on the existing Wine
 deployment. [Issue #9](https://github.com/N0zoM1z0/th08-solver/issues/9) records its
 execution flow, resource measurements and future Windows deployment alternatives.
-The latest scope is one complete Stage 4A practice with real BGM and sound effects
-before reviewing full-story recording. The seed33280 story has no video capture;
+The owner first requests a complete Stage 4A practice with real BGM and sound
+effects, then accepts the repaired smooth preview and explicitly authorizes the
+complete Stage 4A followed by an actual full-story recording. The seed33280 story has no video capture;
 rendering its action tape later would be replay footage. A startup recording probe
 is retained: its transient X11 window disappeared during menu recreation, so the
 recorder stopped at 7.025 seconds. The actual seed16508 game was explicitly stopped
@@ -98,16 +99,33 @@ blank owned Xvfb display and private null sink, serial 12-second controls yield:
 
 The recorder now captures video and lossless PCM audio in separate processes,
 then aligns their original device clock origins for delivery. This removes live
-A/V input backpressure from the video reader. The actual replacement Stage 4A
-run at real seed34235 is in progress under the identical frozen Native client and
-budgets. Its inspected 10-second raw window has 600 packets, no repeated PTS and a
-17-ms maximum gap; a new 30-second real gameplay preview contains 1800 frames with
-actual game audio. This is a fresh live capture, not interpolation of the old
-movie. It does not rule out residual Wine/rendering or game-calculation jitter.
-No new full-story attempt or Windows migration is active. Movies and raw receipts
-remain ignored.
+A/V input backpressure from the video reader. The actual replacement Stage 4A run
+at real seed34235 completes NMNB under the identical frozen Native client and
+budgets: 43597 calculations, no numeric drift, zero player-position error and
+matching fresh Native following of every actual input. A complete media decode
+passes. The source video has 46233 frames over 770.566 seconds, about 60 samples/s,
+with 46 nonincreasing timestamp intervals and an 83-ms maximum gap. The accepted
+30-second preview has 1800 frames; its inspected raw 10-second window has no
+duplicate PTS and a 17-ms maximum gap. These are newly captured images, without
+interpolation or game-speed changes.
 
-GNU time accounts for the Native client and its reaped branches at 130.81 CPU
+Stage 4A owner time is 759.189209088 seconds, 57.426 calculations/s, with period
+p99/max 27.79/104.86 ms; hooked calculation p99 is 1.56 ms and observer preparation
+p99 0.17 ms. Ten unqueued receipts and nine fallback calls are all startup, with
+no subsequent runtime gap. Thus accepted viewing quality and nominal capture
+rate remain separate from strict all-frame gameplay deadlines or causal timing
+attribution. The original combined-recorder attempt and all costs stay retained.
+
+After that complete-stage, fresh-follow and media gate, the actual first-clear
+story recording starts at real seed24474: Lunatic Marisa/Alice, natural 4A to Final
+A, frozen `e1a35be`, H64/8/110-ms and unchanged 350000-update/7200-second outer caps.
+A new owned game directory has no initial score.dat, matching Native's empty
+scratch/default clear history. Separate X11 video/private-sink PCM audio capture
+is active; early input following agrees and the actual game is still running.
+Windows migration and Stage 4B stay deferred. Movies and raw receipts remain ignored.
+
+Under the initial combined-recorder profile, GNU time accounts for the Native
+client and its reaped branches at 130.81 CPU
 seconds over 755.28 wall seconds (about 17.3% of one CPU), recorder at 167.72/752.46
 (22.3%), and private PulseAudio at 50.14/767.27 (6.5%). Per-job maximum RSS is
 63984/109808/10752 KiB respectively, not a simultaneous aggregate memory peak.

@@ -660,8 +660,9 @@ checks. Exact comparison remains selectable for diagnosis, not a clear prerequis
 
 ### Viewing actual Wine gameplay
 
-The owner keeps the existing Wine deployment and requests a complete Stage 4A
-practice with real audio before reviewing a full-story recording. Issue #9 owns
+The owner keeps the existing Wine deployment, accepts the separate-capture Stage
+4A preview, and authorizes a complete Stage 4A practice followed by actual full-story
+recording with real audio. Issue #9 owns
 the execution/resource brief and future Windows alternatives. Capture the rendered
 owned game while `th08_shadow_online` is making decisions; rendering an exported
 action tape later produces replay footage. Keep the solver profile, actual RNG
