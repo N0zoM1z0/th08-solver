@@ -173,8 +173,11 @@ fallback sampling calls are confined to startup, with no later runtime queue gap
 stale result, invalid prefix, owner rejection or plan invalidation.
 
 The complete original recording passes video/audio decode: 2129.716 seconds,
-640x480 with actual stereo game audio, 2608210712 bytes. Balanced compression is
-in progress; no movies enter Git. The selected full-story replay is tracked after
+640x480 with actual stereo game audio, 2608210712 bytes. The delivered compact
+version retains native resolution/cadence with fast CRF26 and AAC128k:
+2129.717 seconds, 683523714 bytes, eight duplicate-timestamp drops and no
+interpolation. Its complete video/audio decode also passes; no movies enter Git.
+The selected full-story replay is tracked after
 fresh actual-input export and natural NMNB playback through Final B, with matching
 raw end score218996507. Natural replay has its own row/input clocks rather than
 the video's wall clock; [Validation](VALIDATION.md) owns identities and boundaries.

@@ -51,8 +51,12 @@ Actual retail playback of this selected file remains unchecked.
 Story replay SHA-256: `202622b4e52e3cedc959f5f41d3e745b8f9d51faad33cf09571834f884758c2a`.
 Matched original MP4 SHA-256: `ac7fe1f8abdeb0ecee88d5b7e7b2e26cfa76ae0ee20b56076263dbd9b77fbe03`.
 It is 2129.716 seconds/2608210712 bytes, with capture video copied and audio
-aligned by trimming 21242 samples at48kHz. Complete media decode passes; the
-balanced compressed delivery is being finalized. The stopped first-clear
+aligned by trimming 21242 samples at48kHz. Complete media decode passes. The
+compact full-story delivery retains 640x480 and capture cadence, fast CRF26 and
+AAC128k from aligned original PCM: 2129.717 seconds/683523714 bytes, SHA-256
+`615c78f3c0cdfe2c9c7f8536c573355941a9c3e018c9c94f37bac8de4fbfee9c`.
+Its full video/audio decode passes, with eight duplicate-timestamp drops and no
+interpolation. The stopped first-clear
 seed24474 attempt is not published as a completed route.
 
 `th08_shadow_export DAT RECORDING_DIRECTORY OUTPUT.rpy` reads the versioned start
