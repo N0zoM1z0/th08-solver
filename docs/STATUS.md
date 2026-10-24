@@ -65,11 +65,55 @@ The replacement captures the owned Xvfb screen rectangle and a dedicated private
 PulseAudio sink monitor. Only an owned game configuration copy enables WAV BGM,
 sound effects and volume 100; the earlier game directories remain unchanged.
 Local audio packages are extracted under ignored reports rather than enabling a
-host audio service. The actual Stage 4A recording starts at real seed52382 under
-the same frozen H64 client and budgets. An early 640x480 H.264/AAC stereo preview
-has visible gameplay and non-silent audio; the complete attempt is still running.
+host audio service. The actual Stage 4A recording at real seed52382 now completes
+NMNB under the same frozen H64 client and budgets: 43588 calculations, no numeric
+drift or meaningful state mismatch, zero player-position error, and matching fresh
+Native following of every actual input. Its 349478 charged branch updates and 75
+proposal-lead updates retain 25 rejected future deaths, five rollout timeouts and
+five planning budget overruns. Ten unqueued receipts and nine fallback sampling
+calls are all at startup; there is no subsequent runtime queue gap, stale plan or
+owner rejection.
+
+Owner elapsed is 739.454353408 seconds, averaging 58.946 calculations/s. Planning
+mean/p99/max is 19.11/46.87/113.40 ms; owner period p99/max is 24.61/106.05 ms.
+The delivered video includes startup and the complete stage, about 12m32s,
+640x480 H.264 with actual AAC stereo 48-kHz game audio. It contains 33074 captured
+video frames over 751.416 seconds (about 44.02 frames/s); nominal 60-Hz capture is
+not actual 60-FPS video or a strict gameplay deadline result. The two input clock
+origins differ by 0.666722 seconds. Delivery retains the video stream and aligns
+audio using 32003 samples of delay at 48 kHz, followed by AAC encoding. Original
+capture and earlier unaligned previews remain local. A complete media decode
+passes, but its cadence fails owner review: 18297 remux timestamp adjustments
+remain logged, and a compact preview retains only about 21.48 frames/s after VFR
+deduplication. The decoded average frame count does not establish smooth motion.
+
+Recorder isolation reproduces the fault without Wine, a game or a solver. On a
+blank owned Xvfb display and private null sink, serial 12-second controls yield:
+
+| Synthetic capture arm | Video frames | Repeated PTS intervals | Maximum gap |
+| --- | ---: | ---: | ---: |
+| Video only | 720 | 0 | 17 ms |
+| Combined live X11/Pulse inputs | 281 | 222 | 1450 ms |
+| Separate audio/video processes, together | 720 | 0 | 17 ms |
+
+The recorder now captures video and lossless PCM audio in separate processes,
+then aligns their original device clock origins for delivery. This removes live
+A/V input backpressure from the video reader. The actual replacement Stage 4A
+run at real seed34235 is in progress under the identical frozen Native client and
+budgets. Its inspected 10-second raw window has 600 packets, no repeated PTS and a
+17-ms maximum gap; a new 30-second real gameplay preview contains 1800 frames with
+actual game audio. This is a fresh live capture, not interpolation of the old
+movie. It does not rule out residual Wine/rendering or game-calculation jitter.
 No new full-story attempt or Windows migration is active. Movies and raw receipts
-remain ignored, and capture frame rate is separate from gameplay deadline evidence.
+remain ignored.
+
+GNU time accounts for the Native client and its reaped branches at 130.81 CPU
+seconds over 755.28 wall seconds (about 17.3% of one CPU), recorder at 167.72/752.46
+(22.3%), and private PulseAudio at 50.14/767.27 (6.5%). Per-job maximum RSS is
+63984/109808/10752 KiB respectively, not a simultaneous aggregate memory peak.
+The Wine launcher accounting does not cover every reparented Wine game/helper
+process and must not be labeled total game CPU. An in-run game-process snapshot
+shows 19m36s CPU over 7m55s elapsed and 335776 KiB RSS; it is not a whole-run peak.
 
 A separate search-disabled resource probe freshly follows all 231742 receipts of
 the completed seed33280 story in 15.60 wall seconds, using 14.77 user/0.67 system CPU

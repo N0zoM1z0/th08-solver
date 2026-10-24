@@ -43,8 +43,10 @@ preserves audited public research copies and identities of unchanged local origi
 
 [Issue #9](https://github.com/N0zoM1z0/th08-solver/issues/9) records the execution flow,
 resource evidence and deployment options. The owner keeps the current Wine setup
-and requests a complete Stage 4A practice recording with real game audio first;
-full-story recording and Windows migration wait for that viewing review.
+and now has a complete actual Stage 4A practice NMNB recording with real game
+audio. Recorder stutter is reproduced independently of Wine/planning; separate
+audio/video capture passes the cadence control and is being checked in a fresh
+live Stage 4A run. Full-story recording and Windows migration wait for that review.
 
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the

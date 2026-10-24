@@ -676,26 +676,41 @@ its monitor source. Route the owned Wine prefix and recorder to that private Uni
 socket; do not record unrelated host audio. Enable WAV music, sound effects and
 their volumes only in the owned recording configuration copy, and record its hash.
 
-Use a single libx264 encoder thread and a fast preset. For example, with the owned
-display rectangle and private PulseAudio endpoint already initialized:
+Capture video and audio in separate processes. The original combined X11/Pulse
+command stalls even on a blank owned display without Wine or a solver: a 12-second
+control yields 281 frames, 222 repeated timestamps and a 1450-ms gap. Video-only
+and simultaneous separate audio/video capture each yield 720 frames, no repeated
+timestamps and a 17-ms maximum gap. These synthetic controls isolate a recorder
+fault; they do not establish smooth retail rendering or gameplay deadlines.
+
+Use a single libx264 encoder thread and a fast preset, with lossless PCM audio
+captured independently. For example, after initializing the owned rectangle and
+private PulseAudio endpoint:
 
 ```sh
+ffmpeg -f pulse -server "$PULSE_SERVER" -sample_rate 48000 -channels 2 \
+  -i th08_game.monitor -c:a pcm_s16le reports/local/audio.wav &
+audio_capture_pid=$!
 ffmpeg -f x11grab -framerate 60 -video_size 640x480 \
-  -i "$DISPLAY+$capture_x,$capture_y" \
-  -f pulse -server "$PULSE_SERVER" -sample_rate 48000 -channels 2 \
-  -i th08_game.monitor -map 0:v:0 -map 1:a:0 \
+  -i "$DISPLAY+$capture_x,$capture_y" -an \
   -c:v libx264 -preset ultrafast -crf 21 -threads:v 1 -pix_fmt yuv420p \
-  -c:a aac -b:a 160k -f matroska reports/local/capture.mkv
-ffmpeg -i reports/local/capture.mkv -map 0 -c copy -movflags +faststart \
-  reports/local/capture.mp4
+  -f matroska reports/local/video.mkv &
+video_capture_pid=$!
 ```
 
-Start before gameplay, retain actual timestamps, and stop the owned recorder
+Start before gameplay, retain actual timestamps, and stop both owned recorders
 cleanly when the observer reaches its declared terminal. The current observer
 exits at gameplay completion, so this does not capture ending credits. Matroska
-preserves an interrupted attempt; stream-copy remuxing yields a seekable MP4
-without changing its gameplay sequence. Verify decoding, both media streams and
+preserves an interrupted attempt. Retain each device's logged original clock
+origin. If audio starts earlier, trim that many 48-kHz PCM samples; if it starts
+later, insert the measured leading silence. Encode the aligned PCM as AAC and
+stream-copy the video into a seekable MP4, preserving actual gameplay time and
+sequence. Do not recover missing temporal samples by changing game speed or
+declaring a nominal output frame rate. Verify decoding, both media streams and
 non-silent audio separately from actual journal/NMNB and fresh Native-follow checks.
+Separately normalized timestamps can both start at zero while hiding the different
+capture start times. Inspect packet intervals and duplicate timestamps, not just
+average FPS or successful decode; bursty capture can pass both superficial checks.
 Capture sampling FPS is not proof of 60-Hz gameplay. Record encoder overhead,
 identities, actual seed, fallback/queue counters and outcome; per-job maximum RSS
 is not a simultaneous combined memory peak. Keep all generated movies, previews,
