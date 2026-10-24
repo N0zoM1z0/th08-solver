@@ -27,25 +27,24 @@ configuration, hashes, verification and retained search costs.
 
 The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).
 Common-start synchronization, true-RNG branch verification and a forward-only
-Wine action bridge are implemented. A controlled complete Lunatic spell and a
-32000-update Lunatic story prefix through the first natural stage handoff have
-run with zero miss/bomb. Complete Lunatic practices now clear the full selected
-1/2/3/4A/5/Final A route with Marisa/Alice (shot 1) under one frozen client.
-The owner now prioritizes complete stage practice
-one stage at a time before full-story integration, deferring 4B and following 4A
-with Marisa/Alice (shot 1). Continuous story validation is active. Live play monitors numeric drift
-and checks
-gameplay/RNG/lifecycle agreement; continuous NMNB and 60 FPS
-acceptance remain open in [Status](docs/STATUS.md). This separate native-lookahead profile
+Wine action bridge are implemented. After six complete stage-practice clears,
+the frozen client completes an actual Lunatic story NMNB with Marisa/Alice
+(shot 1), through natural 4A to Final A: real seed33280, 231737 calculations and
+five original stage handoffs. The game continues while native branches plan;
+the live owner never rewinds or waits for a search. Fresh Native following of
+all 231742 actual receipts agrees. Average gameplay rate is 58.565 FPS under the
+recorded software-rendering profile; strict per-frame deadlines and broader seed
+reliability remain open in [Status](docs/STATUS.md). Numeric digest drift stays
+visible, and meaningful gameplay/RNG/lifecycle fields remain checked. Stage 4B
+is deferred by the owner. This separate native-lookahead profile
 preserves the existing current-memory controller's zero-future-update contract.
 The [October 24 preparation](preparations/10.24-with-claude-gpt/PUBLICATION.json)
 preserves audited public research copies and identities of unchanged local originals.
 
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the
-offline-teacher/student loop. A continuous story through
-the natural 4A branch is also authorized while 4B/Extra work continues; real-time
-evaluation remains separate. Reading current
+offline-teacher/student loop. Its historical 4B/Extra work and natural-4A captures
+remain separate from the current shadow profile. Reading current
 process memory is permitted; image recognition is not required. `th08_online` consumes
 owned current observations without future native steps or rewinds. Its first harness
 measures latency and deadline misses but waits for each decision, so completion does

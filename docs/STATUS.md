@@ -5,8 +5,8 @@ implement a true-RNG shadow runtime, common-start synchronization, verified futu
 branches and a forward-only Wine input loop. The [review](https://github.com/N0zoM1z0/th08-solver/issues/7)
 separates existing capability, attachment-only experiments and proposed acceptance.
 The new profile may simulate native futures; it does not silently change the
-existing current-memory policy contract. Synchronization and actual deadline
-behavior must be validated before claiming a new real-time clear. Original
+existing current-memory policy contract. Actual functional NMNB and per-frame
+deadline acceptance are measured separately. Original
 October 24 inputs remain unchanged locally; the
 [publication manifest](../preparations/10.24-with-claude-gpt/PUBLICATION.json)
 records audited public copies, hashes and excluded raw result files.
@@ -16,8 +16,40 @@ continuing complete stage practice before full story. Current practice uses
 Marisa/Alice (shot1), matching the earlier validated 4A story's legal natural
 branch. All six complete practices now pass under one frozen shot1 client, with
 fresh Native following of every actual input. Earlier shot0 clears remain
-separate component evidence. The current full-story attempt is active; it is not
-yet a story completion or a universal deadline result.
+separate component evidence. The subsequent actual forward-only Wine story now
+completes NMNB under the identical frozen `e1a35be` client.
+
+The complete story uses actual registration seed33280, Lunatic, Marisa/Alice and
+the named first-clear score-history profile: 231742 input/control receipts,
+231737 calculations and five natural handoffs through 1/2/3/4A/5/Final A.
+The original owner never rewinds or waits for a search. All receipts also pass
+fresh Native following with no meaningful gameplay/RNG/lifecycle discrepancy
+and zero player-position error. Numeric digest drift on 7096 updates remains
+telemetry. A full journal audit finds zero fatal-player/death/bomb rows, zero
+calculation-clock violations, the expected stage path and matching trace hash.
+Fresh following is an execution/index check, not an independent physics oracle.
+
+Owner elapsed is 3956.920 seconds, about 65.949 minutes and 58.565 calculations/s,
+versus 3862.283 seconds at 60 Hz. Owner period p99/max is 25.95/616.56 ms, including
+loading gaps. Planning mean/p99/max is 22.05/58.10/119.39 ms behind the action lead.
+The client performs 28967 searches, certifies 28943 futures and charges 1854698
+branch updates plus 269 proposal-lead updates. Twenty future branch deaths,
+24 rollout timeouts and three proposal timeouts certify nothing; 24 planning-budget
+overruns remain recorded. There are no stale results, invalid prefixes, owner
+rejections or plan invalidations. The live native follower executes all 231742
+receipts; fresh following executes them again as separately charged validation.
+
+The full run records 31 receipts without an active verified queue, including
+startup and transition recovery: first receipt1, last176844, maximum streak11.
+There are 97 owner fallback sampling calls; repeated samples during loading
+count separately from gameplay/control receipts. The last two increases align
+with 4A-to-5 and 5-to-Final-A loading/recovery. The journal does not serialize
+per-receipt plan provenance, so those counters do not support an exact attribution
+of every fallback call. This is an actual complete NMNB, not a claim that every
+executed action was covered by a certificate or that every 16.67-ms deadline was met.
+One real story and the six practice cases establish initial functionality, not
+all-seed/shot/route reliability. Further work owns deadline attribution, transition
+queue recovery and broader frozen-seed coverage; 4B remains deferred.
 
 | Complete Lunatic practice, shot1 | Real seed | Calculations | Average FPS | Outcome |
 | --- | --- | --- | --- | --- |
@@ -39,6 +71,8 @@ is 0.98..1.54 ms and observer projection/cache preparation's p99 is 0.10..0.18 m
 The latter excludes encoding, journal writes and publication; remaining owner
 wall time is not a measured rendering-only cost. This narrows subsequent timing
 work without attributing shared-host jitter to the solver or the renderer alone.
+
+## Earlier shadow component evidence
 
 The first implementation adds a versioned little-endian 32/64-bit wire projection
 and an independently initialized Native follower process. The complete ID179 Easy
@@ -216,11 +250,11 @@ shot0 component clears remain separate. A future story starts from a named fresh
 score-history profile in a new owned game directory, preserving the practice
 directory. Both the native scratch and original game's first-clear history then
 use default locked routes, selecting Final A without assuming that the V1 start
-record serializes arbitrary persistent score history. This profile is prepared,
-not a completed story result. The first actual story attempt now runs with real
-seed33280, a 350000-update / 7200-second cap, the same frozen client/team and
-continuous original stage transitions. No new controller or physics change is
-introduced for the story attempt.
+record serializes arbitrary persistent score history. This was the named
+starting profile of the completed story above. Its predeclared cap was
+350000 updates / 7200 seconds, with the same frozen client/team and continuous
+original stage transitions. No new controller or physics change was introduced
+for the story attempt.
 
 Uniform shot1 confirmation starts with complete Lunatic Stage 1 practice,
 seed23035: 22976 calculations NMNB, no meaningful gameplay/RNG discrepancy and
@@ -246,8 +280,8 @@ futures and charges 284544 branch updates plus 12 proposal-lead updates. There
 are no branch deaths/timeouts, budget overruns or runtime queue gaps; ten initial
 unqueued receipts correspond to nine startup fallback calls. Owner elapsed is
 605.790 seconds, about 58.774 average FPS, with period p99/max 24.63/41.80 ms.
-Planning mean/p99/max is 18.19/44.94/77.43 ms. This completes the selected uniform
-practice route and permits the subsequent full-story integration attempt.
+Planning mean/p99/max is 18.19/44.94/77.43 ms. This completed the selected uniform
+practice route before the successful full-story integration attempt.
 
 The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
 projected words matching and no numeric drift; fresh Native following reproduces
