@@ -177,6 +177,25 @@ FPS. Owner period p99/max is 23.52/55.61 ms; planning mean/p99/max is
 19.54/50.59/112.96 ms. Final A practice with shot1 is next. This whole-stage clear
 does not relabel the earlier different-shot/seed spell-107 failure as repaired.
 
+Complete Lunatic Final A practice, Marisa/Alice/shot1/seed39870, clears NMNB at
+54211 calculations under the same client. All 41 projected words and fresh Native
+following of every actual input agree. It certifies 6776 futures, completes and
+charges 433400 branch updates plus 11 proposal-lead updates, and has no branch
+death/timeout, budget overrun, stale result, invalid prefix, owner rejection or
+runtime queue gap. Ten unqueued receipts are startup only (nine fallback calls).
+Owner elapsed is 918.812 seconds versus 903.517 seconds at 60 Hz: about 59.001
+average FPS. Owner period p99/max is 24.51/59.05 ms; planning mean/p99/max is
+22.38/55.83/92.95 ms.
+
+Stage 4A, Stage 5 and Final A now have complete initial shot1 cases. Confirm
+Stages 1/2/3 with that same team and frozen client before full story; earlier
+shot0 component clears remain separate. A future story starts from a named fresh
+score-history profile in a new owned game directory, preserving the practice
+directory. Both the native scratch and original game's first-clear history then
+use default locked routes, selecting Final A without assuming that the V1 start
+record serializes arbitrary persistent score history. This profile is prepared,
+not a completed story result.
+
 The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
 projected words matching and no numeric drift; fresh Native following reproduces
 the death. Failed-nominal suppression recovers four continuations, but the final

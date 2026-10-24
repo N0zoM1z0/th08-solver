@@ -30,7 +30,7 @@ Common-start synchronization, true-RNG branch verification and a forward-only
 Wine action bridge are implemented. A controlled complete Lunatic spell and a
 32000-update Lunatic story prefix through the first natural stage handoff have
 run with zero miss/bomb. Initial complete practices clear Lunatic Stages 1, 2 and 3
-with shot 0, and Stages 4A and 5 with Marisa/Alice (shot 1).
+with shot 0, and Stages 4A, 5 and Final A with Marisa/Alice (shot 1).
 The owner now prioritizes complete stage practice
 one stage at a time before full-story integration, deferring 4B and following 4A
 with Marisa/Alice (shot 1). Uniform-route confirmation remains open. Live play monitors numeric drift
