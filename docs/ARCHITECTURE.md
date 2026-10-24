@@ -28,6 +28,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
 | Native fork planner, proposals and process checkpoints | `tools/plan.cpp`; `plan_contracts.hpp`, `plan_observation.hpp`, `plan_beam.hpp` |
 | Owned current-memory observations and online proposal history | `online.hpp`, `online.cpp`, `online_model.cpp`; the optional previous-plan cache belongs to each `Policy` and is rechecked against new observations |
+| Common-start shadow synchronization | `shadow_protocol.hpp`, `shadow_native.*`, `shadow_process.*`, `tools/shadow_follow.cpp`; fixed-width wire values and a single-threaded independently initialized follower process |
 | Native observation adapter and online execution/reporting | `online_native.*`, `tools/online.cpp`; no native future updates or live rewinds |
 | Replay projection and strict corpus gate | `modern/headless/replay_check.*`, `tools/replay_check.cpp`, `tools/replay_suite.cpp` |
 | Sanitized campaign evidence and verified replay export | `tools/planner_report.cpp`; retains original proofs, separate accounting/archive receipts and their costs |
@@ -134,6 +135,19 @@ optionally owns a 32-update before/after ring, serialized after loop timing.
 Original managers contain process globals and internal pointers. `headless::Session`
 is noncopyable and permits one instance per process. Fresh replay starts another
 process. Do not memcpy this state or share one future across alternative actions.
+
+The shadow follower is a separate common-start execution check. Its little-endian
+packet contains sequence, epoch, actual input and a declared scalar/digest projection;
+it contains no pointers, is identical on 32/64-bit hosts, and is not a save state.
+The parent forks before constructing its Session and requires a single-threaded
+caller. Each process initializes from the same explicit configuration in its own
+owned scratch directory. Only acknowledged consecutive inputs advance the follower.
+The first field mismatch is a failure, never an instruction to overwrite RNG.
+Epoch advances on an observed stage change, including a control-only handoff.
+Stage-clear flags in a story are not terminal until the existing Final/Extra rule.
+Transport has a bounded read/write deadline and owns only its child and directory.
+Actor/bullet/laser hashes cover their stated exported views, not all latent state;
+even matching packets do not establish complete world or retail equivalence.
 `tools/headless_repair.cpp` uses this fresh-process boundary for bounded prefix repair.
 The child CLI keeps strict replay distinct from explicit prefix continuation; per-update
 policy logs supply source-prefix projections and rollback triggers. The outer process owns

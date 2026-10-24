@@ -136,6 +136,14 @@ add_library(th08_online_native src/online_native.cpp)
 target_link_libraries(th08_online_native PUBLIC th08_online_policy th08_native_headless)
 target_compile_options(th08_online_native PRIVATE -ffp-contract=off
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+add_library(th08_shadow_native src/shadow_native.cpp src/shadow_process.cpp)
+target_include_directories(th08_shadow_native PUBLIC include)
+target_link_libraries(th08_shadow_native PUBLIC th08_native_headless)
+target_compile_options(th08_shadow_native PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+add_executable(th08_shadow_follow tools/shadow_follow.cpp)
+target_link_libraries(th08_shadow_follow PRIVATE th08_shadow_native OpenSSL::Crypto)
+target_compile_options(th08_shadow_follow PRIVATE -ffp-contract=off)
 add_executable(th08_online tools/online.cpp)
 target_link_libraries(th08_online PRIVATE th08_online_native OpenSSL::Crypto)
 target_compile_options(th08_online PRIVATE -ffp-contract=off

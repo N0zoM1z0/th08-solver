@@ -11,6 +11,20 @@ October 24 inputs remain unchanged locally; the
 [publication manifest](../preparations/10.24-with-claude-gpt/PUBLICATION.json)
 records audited public copies, hashes and excluded raw result files.
 
+The first implementation adds a versioned little-endian 32/64-bit wire projection
+and an independently initialized Native follower process. The complete ID179 Easy
+seed-0 tape agrees over all 1292 updates; a follower initialized with seed 1 stops
+at update zero on `rng_seed`. The historical shot-1 seed-0 story tape additionally
+agrees over 32000 API updates, including 31999 calculations and the natural
+Stage 1-to-2 control-only handoff. An initial premature stage-clear termination
+is retained locally and replaced by the existing complete-story terminal contract.
+These are same-build Native input-following checks, not a new policy route,
+full-world equality, native lookahead, real-time execution or Wine validation.
+The projection covers 41 scalar/digest words; it does not serialize manager state.
+Owned verified plans, branch prediction and the actual Wine bridge remain next work.
+Core CTest passes 36/36; the complete Native/DAT suite passes 52/52 in 964.85
+seconds, including the complete spell, mismatch and natural-handoff regression.
+
 Reviewed: 2026-10-23. The bounded
 [issue #6](https://github.com/N0zoM1z0/th08-solver/issues/6) experiment preserves compact
 learned artifacts, improves generic forecasting, prepares reproducible training
@@ -1525,8 +1539,8 @@ Earlier practice-entry, effect51/62 and camera components remain checked code. T
 are optional component evidence, not prerequisites or the next integration roadmap.
 The old Wriggle sub40/41 fixtures are fixed-emitter slices, not whole spells.
 
-There are 35 core CTests without private data, plus two optional pinned-source tests
-(37 total). The current headless/DAT configuration has 50 CTests, including native
+There are 36 core CTests without private data, plus two optional pinned-source tests
+(38 total). The current headless/DAT configuration has 52 CTests, including native
 process/semantic/opcode/hazard contracts, the complete-scene test and the prefix
 continuation test, online policy contracts and a complete online-stage/replay test.
 The complete-scene test covers complete

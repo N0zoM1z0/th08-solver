@@ -54,6 +54,11 @@ else()
   target_compile_options(th08_value_train PRIVATE -ffp-contract=off)
 endif()
 if(BUILD_TESTING)
+  add_executable(shadow_protocol_tests tests/shadow_protocol_tests.cpp)
+  target_link_libraries(shadow_protocol_tests PRIVATE th08_geometry)
+  target_include_directories(shadow_protocol_tests PRIVATE include)
+  target_compile_features(shadow_protocol_tests PRIVATE cxx_std_17)
+  add_test(NAME shadow_protocol_contract COMMAND shadow_protocol_tests)
   add_executable(online_live_tests tests/online_live_tests.cpp)
   target_link_libraries(online_live_tests PRIVATE th08_online_live)
   add_test(NAME online_live_contract COMMAND online_live_tests)
@@ -304,6 +309,14 @@ if(BUILD_TESTING)
     if(NOT EXISTS "${TH08_HEADLESS_DAT}")
       message(FATAL_ERROR "TH08_HEADLESS_DAT does not exist")
     endif()
+    add_test(NAME headless_shadow_follow_real_data COMMAND ${CMAKE_COMMAND}
+      -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+      -DPRODUCER=$<TARGET_FILE:th08_headless>
+      -DSTORY_ACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online-story-4a-v1--s0.actions
+      -DDAT=${TH08_HEADLESS_DAT}
+      -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-follow-regression
+      -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_follow_real_data.cmake)
+    set_tests_properties(headless_shadow_follow_real_data PROPERTIES TIMEOUT 100)
     add_test(NAME headless_online_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_online>
       -DVERIFIER=$<TARGET_FILE:th08_plan>

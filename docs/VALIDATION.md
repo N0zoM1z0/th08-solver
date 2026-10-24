@@ -1,11 +1,29 @@
 # Validation, provenance and reproduction
 
-Core CTest cases: 35
+Core CTest cases: 36
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
-add two CTests (37 total). Native builds add process, semantic, hazard-probe and
+add two CTests (38 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay and planner-prefix CTests (50 total).
+complete-scene, online-stage/replay, shadow-follow and planner-prefix CTests (52 total).
+
+The common-start shadow follower compares independently initialized Native
+processes under one configuration and the actual input tape. It performs no native
+future steps or rewinds, waits for each receipt, and does not enforce a live clock.
+The 41-word projection includes current scalar state, RNG/feedback, and hashes of
+the declared actor/bullet/laser views; it is not complete world serialization.
+
+```sh
+./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage 6b --difficulty 0 --spell-id 179 --seed 0 --strategy spell-portfolio --frames 2000 --actions reports/local/id179-shadow.actions --output reports/local/id179-shadow-control.json
+./build-headless/th08_shadow_follow --dat game_data_donottrack/th08.dat --stage 6b --difficulty 0 --spell 179 --seed 0 --actions reports/local/id179-shadow.actions --output reports/local/id179-shadow-follow.json
+ctest --test-dir build-headless -R 'shadow|documentation' --output-on-failure
+```
+
+The real-data regression compares all 1292 updates, rejects an explicitly different
+follower seed at update zero, and compares 32000 historical story inputs through
+the natural first handoff (31999 calculations). The partial story reports `budget`,
+not complete. Reports bind DAT/binary/actions hashes. This validates Native process
+synchronization only; replayed input is not a new solver or live Wine result.
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.

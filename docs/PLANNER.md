@@ -565,6 +565,22 @@ action branch or become an embedded online route. Diagnosis seeds remain tuning
 data, and every algorithm/configuration change must pass one frozen stage/seed
 evaluation covering all nine entries before releasing the untouched holdouts.
 
+## True-RNG shadow runtime
+
+Issue #8 authorizes a separate native-lookahead profile. A synchronized shadow
+will follow actual owner inputs and use complete branch-owned Native state/RNG
+for candidate prediction. The real owner cannot rewind; future planning must not
+change its executed or latched prefix. This does not relax the zero-native-future
+contract of the existing current-memory policy.
+
+The first `th08_shadow_follow` gate implements common-start Native input following
+over a versioned wire projection. It compares independently initialized processes,
+detects the first differing field and preserves original stage handoffs. It does
+not import arbitrary retail state, predict futures, generate actions or enforce
+deadlines. Its finite scalar/digest agreement is not full-world or retail proof.
+Branch validation, owned action buffers and an actual Wine observation/input bridge
+must pass their own gates before a live Shadow-MPC completion can be reported.
+
 ## Resource ownership and parallelism
 
 Independent executables can run in parallel with separate scratch directories and
