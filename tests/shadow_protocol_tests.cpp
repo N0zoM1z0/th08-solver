@@ -87,6 +87,34 @@ int main() try {
     check(!queue.confirm(fallback) && !queue.next() && queue.frontier().sequence == 2,
           "fallback did not invalidate the obsolete plan");
     rejects([&] { queue.confirm(prediction.frames[0]); });
+    auto nominal = prediction;
+    while (nominal.frames.size() < 32) {
+        auto next = nominal.frames.back();
+        s::advance_receipt(next, 0x41, next.state);
+        nominal.frames.push_back(next);
+    }
+    nominal.requested = nominal.attempts = nominal.completed = nominal.frames.size();
+    s::ActionBuffer buffered(origin);
+    s::NominalExtension extension;
+    check(buffered.replace(nominal) && extension.eligible(nominal, buffered, 8),
+          "complete nominal continuation was unavailable for reuse");
+    auto dead_tail = nominal;
+    dead_tail.status = s::BranchStatus::Death;
+    extension.observe_attempt(nominal, dead_tail);
+    check(buffered.confirm(nominal.frames[0]) && buffered.confirm(nominal.frames[1]) &&
+              buffered.size() == 30 && !extension.eligible(nominal, buffered, 8),
+          "advancing the owner retried a failed nominal tail or discarded its verified queue");
+    auto fresh = nominal;
+    fresh.origin = buffered.frontier();
+    for (auto &frame : fresh.frames)
+        frame.sequence += fresh.origin.sequence;
+    check(buffered.replace(fresh) && extension.eligible(fresh, buffered, 8),
+          "newly verified alternative could not enable nominal reuse");
+    auto timeout_tail = fresh;
+    timeout_tail.status = s::BranchStatus::Timeout;
+    extension.observe_attempt(fresh, timeout_tail);
+    check(buffered.confirm(fresh.frames[0]) && !extension.eligible(fresh, buffered, 8),
+          "interrupted nominal extension consumed the next fresh search budget");
     s::Packet live, native;
     live.state[s::Field::BulletLow] = 17;
     check(!s::compare_live(live, native, false).failure &&

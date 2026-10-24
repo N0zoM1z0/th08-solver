@@ -85,7 +85,7 @@ normal regression suite. A real Wine handoff is now demonstrated; continuous
 completion and full deadline validation remain open in issue #8.
 
 The latest owner sequence is complete stage practice, one stage at a time, before
-returning to a full story. The first actual Lunatic Stage 1 practice, shot0/seed29609,
+returning to a full story. At `f0b64d5`, the first actual Lunatic Stage 1 practice, shot0/seed29609,
 completes all 25489 calculations NMNB. Player position and meaningful gameplay/RNG
 fields match; 8932 digest-drift updates remain telemetry. There are 3186 certified
 futures, zero branch timeouts/deaths or planning budget overruns, no stale result,
@@ -98,7 +98,7 @@ takes 428.497 seconds versus 424.817 seconds at 60 Hz: about 59.485 average FPS.
 Owner period p99/max is 22.38/43.78 ms; planning mean/p99/max is
 22.67/65.07/94.28 ms behind the action lead. This complete development case is a
 functional milestone with measured jitter, not an every-frame deadline guarantee
-or fresh-seed reliability claim. Continue with complete Stage 2 practice; fresh-seed
+or fresh-seed reliability claim. Continue with complete stage practice; fresh-seed
 confirmation and a uniform final profile precede full-story promotion.
 
 A separate H64 Lunatic ID107/seed13011 attempt dies at update1332 with every
@@ -107,16 +107,32 @@ timeouts and 15 branch deaths. A 154-candidate Native diagnosis over seven earli
 origins finds safe complete 64-update alternatives even at origin1312. Its
 200-ms per-candidate cap is explicitly larger than the live total budget; it
 demonstrates tested alternatives, not an online clear or impossibility result.
-Repeated unsuccessful nominal extensions can consume fresh-candidate budget;
-the next scheduling change prioritizes a fresh search until a new certificate
-replaces that nominal plan. This failure remains alongside the Stage 1 success.
+Repeated unsuccessful nominal extensions can consume fresh-candidate budget.
+The scheduler now remembers the failed nominal origin, prioritizing a fresh search
+until a certificate with a new origin replaces that plan. A focused regression
+keeps the old verified queue while actual execution advances, and checks that
+only a new certificate restores eligibility. The unchanged live budget remains
+110 ms. The failed spell remains alongside the Stage 1 success; this scheduling
+change is not evidence that the entire spell now clears.
+
+The next complete Lunatic Stage 2 practice, shot0/seed9028, clears NMNB at 33364
+calculations with the scheduling revision. All 41 projected words match throughout.
+It certifies 4170 futures, with no branch death/timeout, budget overrun, stale
+result, owner rejection or runtime queue gap. The ten unqueued receipts are all
+startup (nine fallback input calls). Branch work completes and charges 266608
+updates, with ten additional proposal-lead updates. Actual owner elapsed is
+589.141 seconds, overlapping the normal suite; period p99/max is 30.34/60.72 ms.
+Planning mean/p99/max is 22.92/56.44/77.71 ms. This case has no failed nominal
+extension, so it validates the deployed revised client without exercising the
+new failure recovery path. Complete Stage 3 practice is next, with shot0's legal
+Stage 4B branch after it.
 
 The earlier two Lunatic proposal profiles' deaths at
 1400/1614 updates remain separate failed development attempts. Different seeds
 and profiles prevent a paired improvement claim.
 
-The guided-continuation checkpoint passes core CTest 36/36 in 12.15 seconds; the complete
-Native/DAT suite passes 52/52 in 926.48
+The failed-nominal scheduling checkpoint passes core CTest 36/36 in 8.61 seconds; the complete
+Native/DAT suite passes 52/52 in 762.44
 seconds, including complete branch validation, mismatch and natural-handoff checks.
 
 Reviewed: 2026-10-23. The bounded

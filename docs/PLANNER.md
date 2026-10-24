@@ -638,6 +638,13 @@ ablation or an automatic change to the default. Reports retain continuation cost
 timeouts, deaths, queue gaps and invalidations. A real terminal reached before
 any changed input is needed is counted separately from a deadline-stale plan.
 
+An unsuccessful nominal extension disables reuse of that plan's origin, even
+while actual execution advances through its still-verified queue. Subsequent
+searches give fresh candidates the complete existing search budget. Adoption of
+a certificate with a new origin enables nominal extension again. This avoids
+repeatedly spending the budget on an unsuccessful fixed prefix; it changes
+scheduling, not the budget, collision handling or certification contract.
+
 This bounded search can enter a state with no surviving tested continuation.
 Native validation establishes its declared finite window only. Failed earlier
 profiles and the optional exact-mode story diagnostics remain evidence; a

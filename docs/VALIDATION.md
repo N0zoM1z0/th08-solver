@@ -34,6 +34,10 @@ scene from an eight-input fixed prefix: every remaining input comes from a
 branch-owned callback observing the advanced world. Its packets must match the
 fixed-action reference, and callback counters/state must remain unchanged in the
 parent. This guards callback update order and fork isolation, not Policy quality.
+The core scheduling regression retains the already-verified queue while the
+owner advances after an unsuccessful nominal extension. That same plan stays
+ineligible for reuse after death or timeout; a new certificate origin enables
+reuse again. Advancing the current receipt alone must not restore eligibility.
 
 The optional local Wine bridge requires a 32-bit MinGW compiler and the pinned
 retail 1.00d EXE (`330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`,

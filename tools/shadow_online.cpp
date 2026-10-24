@@ -76,6 +76,7 @@ struct Statistics {
     std::uint64_t searches = 0, candidates = 0, verified = 0, stale = 0, invalid_prefix = 0;
     std::uint64_t terminal_before_change = 0;
     std::uint64_t warm_attempts = 0, warm_selected = 0;
+    std::uint64_t fresh_searches = 0;
     std::uint64_t branch_attempts = 0, branch_completed = 0, branch_charged = 0;
     std::uint64_t branch_native_ns = 0, branch_io_ns = 0, owner_native_ns = 0;
     std::uint64_t guidance_ns = 0, guidance_requests = 0;
@@ -235,7 +236,7 @@ struct PlanCandidate {
     unsigned unchanged_inputs = lead_updates;
 };
 PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Boundary boundary,
-                     Statistics &statistics, unsigned horizon) {
+                     Statistics &statistics, unsigned horizon, s::NominalExtension &nominal) {
     const auto begin = Clock::now();
     constexpr unsigned lead = lead_updates;
     const unsigned search_budget_ms = horizon == 64 ? 110 : 80;
@@ -264,25 +265,22 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
     // A deterministic shadow already knows the verified nominal continuation.
     // Re-execute it in a fresh owned branch and extend its tail, saving repeated
     // proposal searches while still requiring a complete new native horizon.
-    if (horizon == 64 && previous.certifies() && previous.origin.sequence <= origin.sequence) {
+    if (horizon == 64 && nominal.eligible(previous, follower.queue, lead_updates)) {
         const auto consumed = origin.sequence - previous.origin.sequence;
-        if (consumed < previous.frames.size() &&
-            follower.queue.size() == previous.frames.size() - consumed &&
-            follower.queue.size() > lead_updates) {
-            std::vector<std::uint16_t> warm;
-            for (auto i = std::size_t(consumed); i < previous.frames.size(); ++i)
-                warm.push_back(std::uint16_t(previous.frames[i].input));
-            ++statistics.warm_attempts;
-            auto prediction = s::predict_with_policy(follower.session, follower.policy, origin,
-                                                     warm, horizon, boundary, search_budget_ms);
-            record(prediction);
-            if (prediction.certifies()) {
-                ++statistics.verified;
-                ++statistics.warm_selected;
-                selected.unchanged_inputs = warm.size();
-                selected.prediction = std::move(prediction);
-                return finish();
-            }
+        std::vector<std::uint16_t> warm;
+        for (auto i = std::size_t(consumed); i < previous.frames.size(); ++i)
+            warm.push_back(std::uint16_t(previous.frames[i].input));
+        ++statistics.warm_attempts;
+        auto prediction = s::predict_with_policy(follower.session, follower.policy, origin, warm,
+                                                 horizon, boundary, search_budget_ms);
+        record(prediction);
+        nominal.observe_attempt(previous, prediction);
+        if (prediction.certifies()) {
+            ++statistics.verified;
+            ++statistics.warm_selected;
+            selected.unchanged_inputs = warm.size();
+            selected.prediction = std::move(prediction);
+            return finish();
         }
     }
     std::vector<std::uint16_t> prefix;
@@ -299,6 +297,7 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
         std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
     if (elapsed_before_proposal >= search_budget_ms)
         return finish();
+    ++statistics.fresh_searches;
     const auto proposals = s::propose_after_lead(
         follower.session, follower.policy, origin, prefix, boundary,
         std::min(proposal_budget_ms,
@@ -406,6 +405,7 @@ int run(int argc, char **argv) {
     Follower follower(session, policy, statistics, directory / "frames.bin");
     follower.exact = argc >= 7 && std::string(argv[6]) == "exact";
     s::Prediction previous;
+    s::NominalExtension nominal;
     std::uint32_t generation = 0;
     std::uint64_t last_search = 0;
     bool timed_out = false, native_fault = false;
@@ -435,7 +435,7 @@ int run(int argc, char **argv) {
                 follower.actual.sequence >= last_search + minimum_search_interval) {
                 last_search = follower.actual.sequence;
                 const auto candidate = search(follower, previous, {config.story, config.spell},
-                                              statistics, verified_horizon);
+                                              statistics, verified_horizon, nominal);
                 const auto &prediction = candidate.prediction;
                 follower.drain();
                 if (follower.mismatch)
@@ -565,7 +565,8 @@ int run(int argc, char **argv) {
            << ",\"search_budget_ms\":" << search_budget_ms
            << ",\"proposal_budget_ms\":" << proposal_budget_ms << ",\"continuation\":\""
            << (verified_horizon == 64 ? "policy-prefix8" : "fixed") << '"'
-           << ",\"policy_horizon\":24,\"policy_beam\":192,\"policy_diversity_cell\":16"
+           << ",\"nominal_retry\":\"" << (verified_horizon == 64 ? "after-new-origin" : "disabled")
+           << '"' << ",\"policy_horizon\":24,\"policy_beam\":192,\"policy_diversity_cell\":16"
            << ",\"proposal_boundary\":\"after-forced-lead\",\"search_rng\":\"branch-private\""
            << ",\"start_sha256\":\"" << wine_shadow::file_hash((directory / "start.txt").string())
            << "\",\"trace_sha256\":\""
@@ -578,6 +579,7 @@ int run(int argc, char **argv) {
            << ",\"terminal_before_change\":" << statistics.terminal_before_change
            << ",\"warm_attempts\":" << statistics.warm_attempts
            << ",\"warm_selected\":" << statistics.warm_selected
+           << ",\"fresh_searches\":" << statistics.fresh_searches
            << ",\"invalid_prefix\":" << statistics.invalid_prefix
            << ",\"planned_input_calls\":" << b::load(map.data + b::Planned)
            << ",\"fallback_input_calls\":" << b::load(map.data + b::Fallback)

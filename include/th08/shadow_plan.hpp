@@ -1,6 +1,7 @@
 #pragma once
 #include "th08/shadow_rollout.hpp"
 #include <deque>
+#include <optional>
 #include <utility>
 
 namespace th08::shadow {
@@ -63,6 +64,27 @@ class ActionBuffer {
             pending_.clear();
         frontier_ = actual;
         return matched;
+    }
+};
+// A failed tail extension belongs to the nominal plan, even as the actual
+// frontier advances. Retrying that same prefix can spend the budget needed for
+// fresh alternatives. Only a certificate with a new origin enables reuse again.
+class NominalExtension {
+    std::optional<std::uint64_t> failed_origin_;
+
+  public:
+    bool eligible(const Prediction &plan, const ActionBuffer &queue, unsigned lead) const {
+        const auto now = queue.frontier().sequence;
+        if (!plan.certifies() || plan.origin.sequence > now ||
+            failed_origin_ == plan.origin.sequence)
+            return false;
+        const auto consumed = now - plan.origin.sequence;
+        return consumed < plan.frames.size() && queue.size() == plan.frames.size() - consumed &&
+               queue.size() > lead;
+    }
+    void observe_attempt(const Prediction &plan, const Prediction &extension) {
+        if (!extension.certifies())
+            failed_origin_ = plan.origin.sequence;
     }
 };
 } // namespace th08::shadow
