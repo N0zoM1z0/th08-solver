@@ -29,6 +29,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Native fork planner, proposals and process checkpoints | `tools/plan.cpp`; `plan_contracts.hpp`, `plan_observation.hpp`, `plan_beam.hpp` |
 | Owned current-memory observations and online proposal history | `online.hpp`, `online.cpp`, `online_model.cpp`; the optional previous-plan cache belongs to each `Policy` and is rechecked against new observations |
 | Common-start shadow synchronization | `shadow_protocol.hpp`, `shadow_native.*`, `shadow_process.*`, `tools/shadow_follow.cpp`; fixed-width wire values and a single-threaded independently initialized follower process |
+| True-RNG branch verification and committed action frontier | `shadow_rollout.*`, `shadow_plan.hpp`; isolated native child futures and checked consecutive execution receipts |
 | Native observation adapter and online execution/reporting | `online_native.*`, `tools/online.cpp`; no native future updates or live rewinds |
 | Replay projection and strict corpus gate | `modern/headless/replay_check.*`, `tools/replay_check.cpp`, `tools/replay_suite.cpp` |
 | Sanitized campaign evidence and verified replay export | `tools/planner_report.cpp`; retains original proofs, separate accounting/archive receipts and their costs |
@@ -148,6 +149,17 @@ Stage-clear flags in a story are not terminal until the existing Final/Extra rul
 Transport has a bounded read/write deadline and owns only its child and directory.
 Actor/bullet/laser hashes cover their stated exported views, not all latent state;
 even matching packets do not establish complete world or retail equivalence.
+
+`shadow::predict` forks only a single-threaded owner, preserving the complete current
+world, input latch and true RNG. The child also owns a temporary score/config
+directory: copy-on-write memory alone cannot isolate filesystem effects. Its
+bounded shared result arena is consumed only after the child exits. Death, native
+fault and timeout never certify a prefix; interrupted work is charged its full
+requested update cap. Native timing excludes measured file I/O; wall timing includes
+setup, copying, fork, capture and waiting. `ActionBuffer` can adopt a late result
+only after every actual receipt since its origin matches the predicted prefix.
+Execution remains monotonic; an observed fallback clears incompatible queued work.
+
 `tools/headless_repair.cpp` uses this fresh-process boundary for bounded prefix repair.
 The child CLI keeps strict replay distinct from explicit prefix continuation; per-update
 policy logs supply source-prefix projections and rollback triggers. The outer process owns

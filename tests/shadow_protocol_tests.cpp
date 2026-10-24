@@ -1,3 +1,4 @@
+#include "th08/shadow_plan.hpp"
 #include "th08/shadow_protocol.hpp"
 #include <cstring>
 #include <iostream>
@@ -51,6 +52,37 @@ int main() try {
     s::advance_receipt(receipt, 0x41, after);
     check(receipt.sequence == 2 && receipt.epoch == 1 && receipt.input == 0x41,
           "ordinary receipt changed epoch or actual input");
+    s::Packet origin;
+    s::Prediction prediction;
+    prediction.origin = origin;
+    prediction.requested = prediction.attempts = prediction.completed = 3;
+    prediction.status = s::BranchStatus::Horizon;
+    for (unsigned i = 0; i < 3; ++i) {
+        auto next = prediction.frames.empty() ? origin : prediction.frames.back();
+        s::advance_receipt(next, 0x41, next.state);
+        prediction.frames.push_back(next);
+    }
+    s::ActionBuffer queue(origin);
+    check(queue.replace(prediction) && queue.size() == 3, "verified native plan rejected");
+    check(queue.confirm(prediction.frames[0]) && queue.size() == 2,
+          "execution frontier did not advance");
+    check(!queue.replace(prediction), "late plan accepted without actual prefix receipts");
+    check(queue.replace(prediction, {prediction.frames[0]}), "matching late plan rejected");
+    auto changed = prediction.frames[0];
+    changed.input = 1;
+    check(!queue.replace(prediction, {changed}),
+          "changed executed input was retroactively replaced");
+    auto failed = prediction;
+    failed.status = s::BranchStatus::Death;
+    check(!failed.certifies() && !queue.replace(failed, {prediction.frames[0]}),
+          "failed rollout certified a prefix");
+    failed.status = s::BranchStatus::Timeout;
+    check(!failed.certifies(), "interrupted rollout certified a prefix");
+    auto fallback = prediction.frames[1];
+    fallback.input = 1;
+    check(!queue.confirm(fallback) && !queue.next() && queue.frontier().sequence == 2,
+          "fallback did not invalidate the obsolete plan");
+    rejects([&] { queue.confirm(prediction.frames[0]); });
     std::cout << "shadow protocol contracts passed\n";
     return 0;
 } catch (const std::exception &e) {

@@ -21,9 +21,16 @@ is retained locally and replaced by the existing complete-story terminal contrac
 These are same-build Native input-following checks, not a new policy route,
 full-world equality, native lookahead, real-time execution or Wine validation.
 The projection covers 41 scalar/digest words; it does not serialize manager state.
-Owned verified plans, branch prediction and the actual Wine bridge remain next work.
-Core CTest passes 36/36; the complete Native/DAT suite passes 52/52 in 964.85
-seconds, including the complete spell, mismatch and natural-handoff regression.
+True-RNG branch verification and a monotonic action buffer are now implemented.
+A complete ID179 future certifies 1292 updates; the fatal stationary candidate is
+rejected at update 353. Successful and failed branches leave the parent's projected
+world/RNG and score/config files unchanged. Actual execution of the accepted queue
+matches every predicted receipt. Faults/timeouts cannot certify partial work;
+late adoption requires the complete already-executed prefix to agree. These are
+native primitives, not candidate search or a live MPC result. The Wine bridge and
+actual closed-loop deadline validation remain next work.
+Core CTest passes 36/36; the complete Native/DAT suite passes 52/52 in 1121.61
+seconds, including complete branch validation, mismatch and natural-handoff checks.
 
 Reviewed: 2026-10-23. The bounded
 [issue #6](https://github.com/N0zoM1z0/th08-solver/issues/6) experiment preserves compact

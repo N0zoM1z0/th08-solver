@@ -578,8 +578,16 @@ over a versioned wire projection. It compares independently initialized processe
 detects the first differing field and preserves original stage handoffs. It does
 not import arbitrary retail state, predict futures, generate actions or enforce
 deadlines. Its finite scalar/digest agreement is not full-world or retail proof.
-Branch validation, owned action buffers and an actual Wine observation/input bridge
-must pass their own gates before a live Shadow-MPC completion can be reported.
+`shadow::predict` now verifies an explicit action sequence from the actual current
+world/RNG in a branch-owned process and filesystem. A complete horizon or actual
+terminal can certify a plan; death, fault and timeout cannot certify even an early
+surviving prefix. `ActionBuffer` checks late results against every executed input
+and projected state, replacing only the remaining suffix. The complete ID179
+regression verifies 1292 updates, rejects a fatal candidate and executes the
+verified queue without divergence. This is a branch-verification primitive, not
+yet a candidate-search policy or online deadline result. The actual Wine
+observation/input bridge must pass its own gates before a live Shadow-MPC
+completion can be reported.
 
 ## Resource ownership and parallelism
 

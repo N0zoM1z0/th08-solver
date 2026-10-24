@@ -311,6 +311,7 @@ if(BUILD_TESTING)
     endif()
     add_test(NAME headless_shadow_follow_real_data COMMAND ${CMAKE_COMMAND}
       -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+      -DROLLOUT=$<TARGET_FILE:th08_shadow_rollout_test>
       -DPRODUCER=$<TARGET_FILE:th08_headless>
       -DSTORY_ACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online-story-4a-v1--s0.actions
       -DDAT=${TH08_HEADLESS_DAT}

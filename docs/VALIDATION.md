@@ -24,6 +24,12 @@ follower seed at update zero, and compares 32000 historical story inputs through
 the natural first handoff (31999 calculations). The partial story reports `budget`,
 not complete. Reports bind DAT/binary/actions hashes. This validates Native process
 synchronization only; replayed input is not a new solver or live Wine result.
+The same real-data test also verifies the complete true-RNG native branch,
+rejects a fatal stationary candidate, checks parent world/RNG/filesystem isolation
+and executes every accepted action through the original Session. The core wire
+contract tests late-prefix agreement, stale receipt rejection and preservation of
+an existing plan after a failed proposal. Neither self-comparison is an
+independent physics oracle.
 Existing public CI runs sanitizer OFF/ON without DAT/source;
 it does not establish real-DAT scenario success. Keep new verification proportional to
 the changed behavior; no elaborate sanitizer infrastructure is required.
