@@ -18,4 +18,9 @@ struct FutureProposals {
 FutureProposals propose_after_lead(headless::Session &, online::Policy &, const Packet &origin,
                                    const std::vector<std::uint16_t> &lead, Boundary,
                                    unsigned timeout_ms);
+// The fixed candidate is followed by branch-owned Policy replanning in batches
+// of at most eight submitted inputs. The complete horizon/terminal is required.
+Prediction predict_with_policy(headless::Session &, online::Policy &, const Packet &origin,
+                               const std::vector<std::uint16_t> &prefix, std::size_t horizon,
+                               Boundary, unsigned timeout_ms);
 } // namespace th08::shadow

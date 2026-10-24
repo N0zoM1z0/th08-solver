@@ -113,6 +113,29 @@ int main(int argc, char **argv) try {
     check(!s::difference(origin, actual), "failed child mutated parent world or RNG");
     check(good.charged_updates == 1292 && bad.charged_updates == bad.completed,
           "native branch cost omitted successful or failed updates");
+    class TapeGuidance final : public s::RolloutGuidance {
+        const std::vector<std::uint16_t> &actions_;
+
+      public:
+        std::size_t position = 8, observations = 0;
+        explicit TapeGuidance(const std::vector<std::uint16_t> &actions) : actions_(actions) {}
+        void observe(const s::Packet &packet) override {
+            check(packet.sequence == observations++, "guided rollout observed a stale world");
+        }
+        std::uint16_t next_input() override {
+            return actions_.at(position++);
+        }
+    } guidance(actions);
+    const auto guided = s::predict_guided(
+        session, origin, std::vector<std::uint16_t>(actions.begin(), actions.begin() + 8),
+        actions.size(), guidance, {false, 179}, 10000);
+    check(guided.certifies() && guided.guidance_requests == actions.size() - 8 &&
+              guided.frames.size() == good.frames.size() && guidance.position == 8 &&
+              guidance.observations == 0,
+          "guided continuation leaked state or failed the complete native horizon");
+    for (unsigned i = 0; i < good.frames.size(); ++i)
+        check(!s::difference(guided.frames[i], good.frames[i]),
+              "guided continuation changed input/latch/world execution");
     check(contents("score.dat") == score_before && contents("th08.cfg") == config_before,
           "native branch changed the owner's score/config files");
     s::ActionBuffer queue(origin);

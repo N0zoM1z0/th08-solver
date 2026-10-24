@@ -2,6 +2,7 @@
 #include "modern/headless/session.hpp"
 #include "th08/online_native.hpp"
 #include "th08/shadow_native.hpp"
+#include <algorithm>
 #include <cerrno>
 #include <chrono>
 #include <csignal>
@@ -76,6 +77,47 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
     out.status = BranchStatus::Horizon;
 }
 } // namespace
+Prediction predict_with_policy(headless::Session &session, online::Policy &policy,
+                               const Packet &origin, const std::vector<std::uint16_t> &prefix,
+                               std::size_t horizon, Boundary boundary, unsigned timeout_ms) {
+    class Guidance final : public RolloutGuidance {
+        headless::Session &session_;
+        online::Policy &policy_;
+        online::Observation observation_;
+        std::array<std::uint16_t, 8> pending_{};
+        unsigned position_ = 0, count_ = 0;
+        bool dialogue_;
+        std::uint64_t sequence_ = 0;
+
+      public:
+        Guidance(headless::Session &session, online::Policy &policy, bool dialogue)
+            : session_(session), policy_(policy), dialogue_(dialogue) {}
+        void observe(const Packet &packet) override {
+            sequence_ = packet.sequence;
+            online::capture_memory(session_, sequence_, observation_, true);
+            policy_.observe(observation_);
+        }
+        std::uint16_t next_input() override {
+            if (position_ == count_) {
+                std::vector<online::ValueProposal> proposals;
+                const auto decision = policy_.decide(observation_, nullptr, &proposals);
+                count_ = pending_.size();
+                position_ = 0;
+                if (!proposals.empty()) {
+                    count_ = std::min<std::size_t>(count_, proposals.front().inputs.size());
+                    if (!count_)
+                        throw std::runtime_error("empty_shadow_policy_continuation");
+                    std::copy_n(proposals.front().inputs.begin(), count_, pending_.begin());
+                } else
+                    pending_.fill(decision.action);
+            }
+            const auto input = pending_[position_++];
+            return std::uint16_t((input & ~0x1000) |
+                                 ((dialogue_ && ((sequence_ + 1) & 1)) ? 0x1000 : 0));
+        }
+    } guidance(session, policy, boundary.spell < 0);
+    return predict_guided(session, origin, prefix, horizon, guidance, boundary, timeout_ms);
+}
 FutureProposals propose_after_lead(headless::Session &session, online::Policy &policy,
                                    const Packet &origin, const std::vector<std::uint16_t> &lead,
                                    Boundary boundary, unsigned timeout_ms) {

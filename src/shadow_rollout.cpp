@@ -20,6 +20,7 @@ struct Shared {
     BranchStatus status = BranchStatus::Incomplete;
     std::uint32_t frames = 0;
     std::uint64_t attempts = 0, completed = 0, native_ns = 0, file_io_ns = 0;
+    std::uint64_t guidance_ns = 0, guidance_requests = 0;
     std::array<Packet, maximum_horizon> records;
 };
 class Arena {
@@ -39,16 +40,36 @@ class Arena {
     Arena &operator=(const Arena &) = delete;
 };
 void run(headless::Session &session, const Packet &origin, const std::vector<std::uint16_t> &inputs,
-         Boundary boundary, Shared &out) {
+         std::size_t horizon, RolloutGuidance *guidance, Boundary boundary, Shared &out) {
     auto current = origin;
     const float initial_deaths = session.state().deaths;
     bool spell_seen = session.state().spell_active;
-    for (auto input : inputs) {
+    const auto observe = [&] {
+        if (!guidance)
+            return;
+        const auto start = Clock::now();
+        guidance->observe(current);
+        out.guidance_ns +=
+            std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - start).count();
+    };
+    observe();
+    for (std::size_t index = 0; index < horizon; ++index) {
         const auto before = session.state();
         if (stage_terminal(boundary.story, before) ||
             (boundary.spell >= 0 && spell_seen && !before.spell_active)) {
             out.status = BranchStatus::Terminal;
             return;
+        }
+        std::uint16_t input;
+        if (index < inputs.size())
+            input = inputs[index];
+        else {
+            const auto start = Clock::now();
+            ++out.guidance_requests;
+            input = guidance->next_input();
+            out.guidance_ns +=
+                std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - start).count();
+            input_value(input);
         }
         const auto start = Clock::now();
         const auto io_before = session.file_io_time_ns();
@@ -83,15 +104,18 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
             out.status = BranchStatus::Terminal;
             return;
         }
+        if (index + 1 < horizon)
+            observe();
     }
     out.status = BranchStatus::Horizon;
 }
 } // namespace
-Prediction predict(headless::Session &session, const Packet &origin,
-                   const std::vector<std::uint16_t> &inputs, Boundary boundary,
-                   unsigned timeout_ms) {
+static Prediction predict_owned(headless::Session &session, const Packet &origin,
+                                const std::vector<std::uint16_t> &inputs, std::size_t horizon,
+                                RolloutGuidance *guidance, Boundary boundary, unsigned timeout_ms) {
     const auto begin = Clock::now();
-    if (inputs.empty() || inputs.size() > maximum_horizon || !timeout_ms || timeout_ms > 60000)
+    if (inputs.empty() || inputs.size() > horizon || horizon > maximum_horizon ||
+        (!guidance && horizon != inputs.size()) || !timeout_ms || timeout_ms > 60000)
         throw std::runtime_error("invalid_shadow_rollout_budget");
     for (auto input : inputs)
         input_value(input);
@@ -134,7 +158,7 @@ Prediction predict(headless::Session &session, const Packet &origin,
             _exit(2);
         try {
             std::filesystem::current_path(cleanup.directory);
-            run(session, origin, inputs, boundary, *arena.data);
+            run(session, origin, inputs, horizon, guidance, boundary, *arena.data);
         } catch (...) {
             arena.data->status = BranchStatus::Fault;
         }
@@ -166,7 +190,7 @@ Prediction predict(headless::Session &session, const Packet &origin,
     }
     Prediction result;
     result.origin = origin;
-    result.requested = inputs.size();
+    result.requested = horizon;
     result.status = timed_out ? BranchStatus::Timeout : arena.data->status;
     if (wait_failed || !WIFEXITED(status) || WEXITSTATUS(status) != 0)
         result.status = timed_out ? BranchStatus::Timeout : BranchStatus::Fault;
@@ -174,15 +198,27 @@ Prediction predict(headless::Session &session, const Packet &origin,
     result.completed = arena.data->completed;
     result.native_ns = arena.data->native_ns;
     result.file_io_ns = arena.data->file_io_ns;
+    result.guidance_ns = arena.data->guidance_ns;
+    result.guidance_requests = arena.data->guidance_requests;
     // Interrupted work can stop between counter writes. Charge the full cap and
     // never expose its partial records as verified execution.
     const bool interrupted =
         result.status == BranchStatus::Timeout || result.status == BranchStatus::Fault;
-    result.charged_updates = interrupted ? inputs.size() : result.completed;
+    result.charged_updates = interrupted ? horizon : result.completed;
     if (!interrupted && arena.data->frames <= maximum_horizon)
         result.frames.assign(arena.data->records.begin(),
                              arena.data->records.begin() + arena.data->frames);
     result.wall_ms = std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
     return result;
+}
+Prediction predict(headless::Session &session, const Packet &origin,
+                   const std::vector<std::uint16_t> &inputs, Boundary boundary,
+                   unsigned timeout_ms) {
+    return predict_owned(session, origin, inputs, inputs.size(), nullptr, boundary, timeout_ms);
+}
+Prediction predict_guided(headless::Session &session, const Packet &origin,
+                          const std::vector<std::uint16_t> &prefix, std::size_t horizon,
+                          RolloutGuidance &guidance, Boundary boundary, unsigned timeout_ms) {
+    return predict_owned(session, origin, prefix, horizon, &guidance, boundary, timeout_ms);
 }
 } // namespace th08::shadow

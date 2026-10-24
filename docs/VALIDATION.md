@@ -29,7 +29,11 @@ rejects a fatal stationary candidate, checks parent world/RNG/filesystem isolati
 and executes every accepted action through the original Session. The core wire
 contract tests late-prefix agreement, stale receipt rejection and preservation of
 an existing plan after a failed proposal. Neither self-comparison is an
-independent physics oracle.
+independent physics oracle. A guided child also executes the complete 1292-update
+scene from an eight-input fixed prefix: every remaining input comes from a
+branch-owned callback observing the advanced world. Its packets must match the
+fixed-action reference, and callback counters/state must remain unchanged in the
+parent. This guards callback update order and fork isolation, not Policy quality.
 
 The optional local Wine bridge requires a 32-bit MinGW compiler and the pinned
 retail 1.00d EXE (`330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`,
@@ -70,13 +74,19 @@ waiting. Exit 0 is the actual case terminal; 3 is projection mismatch, 4 is deat
 inputs export beside the output as `.actions`. Reports bind start/trace/actions,
 DAT and Native binary hashes, configuration, budgets, proposal/native attempts,
 charged interrupted work, stale results, input fallbacks and actual owner clocks.
-An optional final `behavioral|exact` selects comparison policy (default behavioral).
+Optional trailing arguments `[behavioral|exact] [h32|h64]` select comparison and
+planning profiles (defaults `behavioral h32`).
 Live comparison records numeric bullet/laser digest drift, player differences up
 to 1/64 pixel and inactive spell/route metadata; meaningful gameplay fields remain
 checked. It does not modify either simulation or collision handling. Exact mode
 retains bitwise projection diagnosis. Keep launcher/DLL/config identities with the
 local run receipt as well. New logs,
 tapes and diagnoses stay under ignored `reports/local/`.
+The opt-in `h64` bundle and nominal-prefix extension are specified in
+[Planner](PLANNER.md#true-rng-shadow-runtime). Do not combine its results with
+default-profile runs or attribute differences solely to horizon. Its reports
+separate branch simulation, guidance, proposal work, conservative timeout charges
+and actual unqueued-update streaks; these are costs, not a 60 FPS guarantee.
 
 Core checks reject late generations, torn publications, altered immutable leads,
 unsupported bomb bits and edits to the owner's private accepted copy. The complete

@@ -18,6 +18,7 @@ struct Prediction {
     std::size_t requested = 0;
     std::uint64_t attempts = 0, completed = 0, charged_updates = 0;
     std::uint64_t native_ns = 0, file_io_ns = 0;
+    std::uint64_t guidance_ns = 0, guidance_requests = 0;
     double wall_ms = 0;
     bool certifies() const {
         return !frames.empty() && completed == frames.size() && attempts == completed &&
@@ -31,4 +32,16 @@ struct Prediction {
 Prediction predict(headless::Session &session, const Packet &origin,
                    const std::vector<std::uint16_t> &inputs, Boundary boundary,
                    unsigned timeout_ms = 1000);
+// Guidance lives in the forked branch. It observes the current owned rollout
+// and proposes additional inputs after the fixed prefix; it must not step or
+// mutate the native world. Native execution still decides every outcome.
+class RolloutGuidance {
+  public:
+    virtual ~RolloutGuidance() = default;
+    virtual void observe(const Packet &) = 0;
+    virtual std::uint16_t next_input() = 0;
+};
+Prediction predict_guided(headless::Session &, const Packet &origin,
+                          const std::vector<std::uint16_t> &prefix, std::size_t horizon,
+                          RolloutGuidance &, Boundary, unsigned timeout_ms = 1000);
 } // namespace th08::shadow

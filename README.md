@@ -27,9 +27,10 @@ configuration, hashes, verification and retained search costs.
 
 The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).
 Common-start synchronization, true-RNG branch verification and a forward-only
-Wine action bridge are implemented. A controlled complete Lunatic spell has run
-with matching projected state and zero miss/bomb. Live play monitors small numeric
-drift and checks gameplay/RNG/lifecycle agreement; continuous NMNB and 60 FPS
+Wine action bridge are implemented. A controlled complete Lunatic spell and a
+32000-update Lunatic story prefix through the first natural stage handoff have
+run with zero miss/bomb. Live play monitors numeric drift and checks
+gameplay/RNG/lifecycle agreement; continuous NMNB and 60 FPS
 acceptance remain open in [Status](docs/STATUS.md). This separate native-lookahead profile
 preserves the existing current-memory controller's zero-future-update contract.
 The [October 24 preparation](preparations/10.24-with-claude-gpt/PUBLICATION.json)

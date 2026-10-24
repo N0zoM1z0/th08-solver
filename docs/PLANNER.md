@@ -590,7 +590,7 @@ observation/input bridge has now passed controlled complete-spell gates; continu
 gameplay agreement and actual 60 FPS acceptance remain open in [Status](STATUS.md).
 
 `th08_shadow_online` follows a local Wine observation journal and publishes plans
-through a versioned mapped file. The profile fixes lead 8, verified horizon 32,
+through a versioned mapped file. The default `h32` profile fixes lead 8, verified horizon 32,
 minimum search interval 4 and replan-remaining threshold 28. A proposal child
 advances the immutable lead first, warming inherited Policy history at each update.
 The H24/beam192/cell16 policy exports at most four 23-input prefixes; its first
@@ -607,6 +607,28 @@ The lead is a latency allowance, not a claim that planning always meets one
 checks protect the irreversible frontier. A depleted queue holds actual movement
 and focus while shooting, with alternating dialogue skip outside spell practice.
 Fallback is an explicit executed input, never a certified future or a rescue proof.
+
+The opt-in `h64` experiment changes a bundle: verified horizon 64, minimum search
+interval 8, replan-remaining threshold 56 and total search budget 110 ms. Lead 8,
+the 60-ms proposal cap and the H24 proposal policy remain fixed. Each candidate's
+fixed prefix is followed by Policy decisions over the branch's actual future
+observations, submitting at most eight inputs before deciding again. Guidance
+lives entirely in the forked child; inherited Policy history/tie RNG and the
+parent's actual world remain private. Complete native execution still decides
+the 64-update horizon or actual terminal. Continuation wall time and requested
+inputs are reported separately from native simulation and file I/O.
+
+Before requesting fresh candidates, `h64` can reuse the unconsumed inputs of the
+previous verified plan. A fresh child re-executes that whole prefix and extends
+its tail to a new complete horizon. This saves repeated proposal searches; it
+does not reuse old collision verdicts for a changed world. The declared first
+change follows that entire unchanged prefix, so owner-side checks can accept the
+extension while keeping queued inputs immutable. A failed or incomplete extension
+cannot certify any prefix. Fresh alternatives still fit inside the same total
+search budget. This is a distinct experimental profile, not an isolated horizon
+ablation or an automatic change to the default. Reports retain continuation costs,
+timeouts, deaths, queue gaps and invalidations. A real terminal reached before
+any changed input is needed is counted separately from a deadline-stale plan.
 
 This bounded search can enter a state with no surviving tested continuation.
 Native validation establishes its declared finite window only. Failed earlier

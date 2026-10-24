@@ -31,7 +31,7 @@ primitives now back an opt-in Wine observer/input bridge and a
 true-RNG MPC client. The owned launcher checks the pinned 1.00d EXE, installs
 three declared hooks, captures the real pre-initialization seed/configuration and
 leaves the original game clock running. Plans have an eight-update immutable
-lead, a 32-update native verification window and a four-update replan interval.
+lead, a default 32-update native verification window and a four-update replan interval.
 The owner rejects late plans and incompatible queued leads; exhausted queues use
 the recorded movement/focus/shoot fallback. Actual inputs and all branch costs are
 retained, including failures, timeouts and extra proposal-lead updates.
@@ -39,24 +39,18 @@ retained, including failures, timeouts and extra proposal-lead updates.
 The initial rendered Wine diagnostic completes ID179 Easy/seed7169 in 1292 updates.
 The aligned, frequent-replan prototype completes Lunatic ID107/seed34750 in 3490
 updates with zero miss/bomb and all 41 projection words matching. It verifies 849
-futures, discards two late results and uses four startup fallback inputs. This is
+futures, records two results under the original stale counter and uses four startup fallback inputs. This is
 one controlled complete spell, not unseen-seed reliability or a continuous clear.
 Its 66.66-second owner span exceeds 58.17 seconds of 60 Hz gameplay; software-rendered
 Wine has p99/max periods 27.63/35.61 ms. Planning p99/max is 83.66/86.91 ms behind
 the action lead; neither clock passes a strict 60 FPS acceptance gate.
 
-The first actual story attempts stop exactly at bullet-projection divergence:
-seed54589/update4243 and seed20367/update4152, with zero deaths/bombs and matching
-RNG, player and score. The latter's same-update post-calc dumps contain 196 bullets;
-two vector-acceleration bullets differ in velocity/acceleration by 3..11 float ULPs.
-No tolerance, RNG overwrite or continued exact-mode claim hides this failure.
-Additional source arguments and x87 control words are captured for diagnosis.
-A third story attempt (seed20233/update4218) records differing source acceleration
-arguments and latent bullet angles, with x87 controls `0x037f` Native versus
-`0x007f` retail. This supports investigating numeric execution paths; it does not
-prove that changing the control word alone fixes retail fidelity. No gameplay
-math, comparison tolerance or shared RNG semantics were changed for this bridge.
-These exact-mode diagnostics are historical evidence, not a runtime prerequisite.
+Historical exact-mode story diagnostics stop at seed54589/update4243,
+seed20367/update4152 and seed20233/update4218, with zero deaths/bombs and matching
+RNG/player/score. The second dump has 196 bullets, two with 3..11-ULP vector
+differences; the third captures differing acceleration arguments and x87 controls
+(`0x037f` Native, `0x007f` retail). These remain diagnostic evidence, not a runtime
+prerequisite or proof of a gameplay defect. No native physics or RNG patch was made.
 The owner's clarification prioritizes actual NMNB and online progress over bitwise
 numeric parity. Live mode now records bullet/laser digest drift and player errors
 up to 1/64 pixel without stopping, while inputs, RNG, lifecycle, actors and gameplay
@@ -67,16 +61,34 @@ position and no RNG discrepancy; 9007 digest-drift updates did not stop play.
 Its next published snapshot exposed a dropped control-only handoff, not floating
 point drift. The observer now retains that event during asynchronous loading, and
 the separate sampled-input profile corrects the first new-stage sample. Both
-input profiles pass the complete-stage entry regression. A later seed5657 attempt
-dies at update23981 with matching gameplay state and 100 fallback input calls;
-this is a planning/continuation failure retained for offline prefix diagnosis.
-A real Wine handoff, continuous completion and full deadline validation remain open
-in issue #8. The earlier two Lunatic proposal profiles' deaths at
+input profiles pass the complete-stage entry regression. A later default-profile
+seed5657 attempt dies at update23981 with matching gameplay state and 100 fallback
+input calls; this planning/continuation failure remains retained.
+
+The opt-in H64 bundle adds branch-owned Policy continuation and freshly verified
+nominal-prefix extension, with interval 8 and a 110-ms total search budget.
+An actual Lunatic story attempt, shot0/seed48572, survives the full 32000-update cap:
+complete Stage 1 and 4187 calculations in Stage 2, zero miss/bomb, identical player
+position and no gameplay/RNG discrepancy. The control-only handoff at update27813
+and first new-stage calculation at 27814 both match. Its 10883 numeric-drift updates
+remain telemetry. Of 3980 certified futures, 3979 reuse the nominal prefix; no
+stale result, invalid prefix or owner rejection occurs. The only 12 unqueued
+updates are at startup (11 owner fallback input calls); 19 timed-out branches
+certify nothing. All 255936 charged branch updates and eight proposal-lead updates
+remain recorded. This is a distinct development profile and seed, not a paired
+improvement or full-story clear.
+
+The 689.48-second owner span still exceeds 533.32 seconds at 60 Hz. Owner period
+p99/max is 67.11/550.04 ms; planning mean/p99/max is 34.90/99.70/152.08 ms, including
+21 budget overruns. These software-rendered shared-host measurements overlap the
+normal regression suite. A real Wine handoff is now demonstrated; continuous
+completion and full deadline validation remain open in issue #8.
+The earlier two Lunatic proposal profiles' deaths at
 1400/1614 updates remain separate failed development attempts. Different seeds
 and profiles prevent a paired improvement claim.
 
-The native verification checkpoint passes core CTest 36/36; the complete
-Native/DAT suite passes 52/52 in 989.27
+The guided-continuation checkpoint passes core CTest 36/36 in 12.15 seconds; the complete
+Native/DAT suite passes 52/52 in 926.48
 seconds, including complete branch validation, mismatch and natural-handoff checks.
 
 Reviewed: 2026-10-23. The bounded
