@@ -28,7 +28,7 @@ add_custom_command(OUTPUT ${_wine_output}/observer.dll
   DEPENDS tools/wine-shadow/observer.cpp tools/wine-shadow/identity.hpp
     tools/wine-shadow/retail_view.hpp tools/wine-shadow/compat/d3dx8.h
     tools/wine-shadow/compat/d3dx8math.h include/th08/shadow_bridge.hpp
-    include/th08/shadow_protocol.hpp ${_wine_abi_headers}
+    include/th08/shadow_protocol.hpp include/th08/shadow_start.hpp ${_wine_abi_headers}
   VERBATIM)
 add_custom_target(th08_wine_shadow ALL
   DEPENDS ${_wine_output}/launch.exe ${_wine_output}/observer.dll)

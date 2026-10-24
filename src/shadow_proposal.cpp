@@ -1,6 +1,7 @@
 #include "th08/shadow_proposal.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/online_native.hpp"
+#include "th08/shadow_dialogue.hpp"
 #include "th08/shadow_native.hpp"
 #include <algorithm>
 #include <cerrno>
@@ -24,7 +25,8 @@ struct Result {
     std::array<std::array<std::uint16_t, 23>, 4> inputs{};
 };
 void run(headless::Session &session, online::Policy &policy, const Packet &origin,
-         const std::vector<std::uint16_t> &lead, Boundary boundary, Result &out) {
+         const std::vector<std::uint16_t> &lead, Boundary boundary, Result &out,
+         bool advance_dialogue) {
     bool spell_seen = session.state().spell_active;
     online::Observation observation;
     for (unsigned i = 0; i < lead.size(); ++i) {
@@ -61,6 +63,16 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
         online::capture_memory(session, origin.sequence + i + 1, observation, true);
         policy.observe(observation);
     }
+    if (advance_dialogue && session.state().dialogue_present) {
+        auto previous = lead.back();
+        for (unsigned i = 0; i < 23; ++i) {
+            previous = dialogue_input(previous, origin.sequence + lead.size() + i + 1);
+            out.inputs[0][i] = previous;
+        }
+        out.count = 1;
+        out.status = BranchStatus::Horizon;
+        return;
+    }
     std::vector<online::ValueProposal> proposals;
     policy.decide(observation, nullptr, &proposals);
     if (proposals.size() > 4)
@@ -79,7 +91,8 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
 } // namespace
 Prediction predict_with_policy(headless::Session &session, online::Policy &policy,
                                const Packet &origin, const std::vector<std::uint16_t> &prefix,
-                               std::size_t horizon, Boundary boundary, unsigned timeout_ms) {
+                               std::size_t horizon, Boundary boundary, unsigned timeout_ms,
+                               bool advance_dialogue) {
     class Guidance final : public RolloutGuidance {
         headless::Session &session_;
         online::Policy &policy_;
@@ -87,17 +100,26 @@ Prediction predict_with_policy(headless::Session &session, online::Policy &polic
         std::array<std::uint16_t, 8> pending_{};
         unsigned position_ = 0, count_ = 0;
         bool dialogue_;
+        bool advance_dialogue_;
+        std::uint16_t actual_input_ = 0;
         std::uint64_t sequence_ = 0;
 
       public:
-        Guidance(headless::Session &session, online::Policy &policy, bool dialogue)
-            : session_(session), policy_(policy), dialogue_(dialogue) {}
+        Guidance(headless::Session &session, online::Policy &policy, bool dialogue,
+                 bool advance_dialogue)
+            : session_(session), policy_(policy), dialogue_(dialogue),
+              advance_dialogue_(advance_dialogue) {}
         void observe(const Packet &packet) override {
             sequence_ = packet.sequence;
+            actual_input_ = std::uint16_t(packet.input);
             online::capture_memory(session_, sequence_, observation_, true);
             policy_.observe(observation_);
         }
         std::uint16_t next_input() override {
+            if (advance_dialogue_ && session_.state().dialogue_present) {
+                position_ = count_ = 0;
+                return dialogue_input(actual_input_, sequence_ + 1);
+            }
             if (position_ == count_) {
                 std::vector<online::ValueProposal> proposals;
                 const auto decision = policy_.decide(observation_, nullptr, &proposals);
@@ -115,12 +137,12 @@ Prediction predict_with_policy(headless::Session &session, online::Policy &polic
             return std::uint16_t((input & ~0x1000) |
                                  ((dialogue_ && ((sequence_ + 1) & 1)) ? 0x1000 : 0));
         }
-    } guidance(session, policy, boundary.spell < 0);
+    } guidance(session, policy, boundary.spell < 0, advance_dialogue);
     return predict_guided(session, origin, prefix, horizon, guidance, boundary, timeout_ms);
 }
 FutureProposals propose_after_lead(headless::Session &session, online::Policy &policy,
                                    const Packet &origin, const std::vector<std::uint16_t> &lead,
-                                   Boundary boundary, unsigned timeout_ms) {
+                                   Boundary boundary, unsigned timeout_ms, bool advance_dialogue) {
     const auto begin = Clock::now();
     if (lead.empty() || lead.size() > 32 || !timeout_ms || timeout_ms > 1000)
         throw std::runtime_error("invalid_shadow_proposal_budget");
@@ -172,7 +194,7 @@ FutureProposals propose_after_lead(headless::Session &session, online::Policy &p
             _exit(2);
         try {
             std::filesystem::current_path(cleanup.path);
-            run(session, policy, origin, lead, boundary, *arena.data);
+            run(session, policy, origin, lead, boundary, *arena.data, advance_dialogue);
         } catch (...) {
             arena.data->status = BranchStatus::Fault;
         }

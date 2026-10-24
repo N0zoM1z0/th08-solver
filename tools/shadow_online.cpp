@@ -5,6 +5,7 @@
 #include "th08/shadow_native.hpp"
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_proposal.hpp"
+#include "th08/shadow_start.hpp"
 #include "wine-shadow/file_hash.hpp"
 #include <algorithm>
 #include <cerrno>
@@ -131,6 +132,7 @@ struct Follower {
     const char *mismatch = nullptr;
     s::Packet retail;
     bool exact = false;
+    bool advance_dialogue = false;
     Follower(h::Session &session_, o::Policy &policy_, Statistics &statistics_,
              const fs::path &path)
         : session(session_), queue(s::Packet{}), policy(policy_), statistics(statistics_) {
@@ -271,8 +273,9 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
         for (auto i = std::size_t(consumed); i < previous.frames.size(); ++i)
             warm.push_back(std::uint16_t(previous.frames[i].input));
         ++statistics.warm_attempts;
-        auto prediction = s::predict_with_policy(follower.session, follower.policy, origin, warm,
-                                                 horizon, boundary, search_budget_ms);
+        auto prediction =
+            s::predict_with_policy(follower.session, follower.policy, origin, warm, horizon,
+                                   boundary, search_budget_ms, follower.advance_dialogue);
         record(prediction);
         nominal.observe_attempt(previous, prediction);
         if (prediction.certifies()) {
@@ -301,7 +304,8 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
     const auto proposals = s::propose_after_lead(
         follower.session, follower.policy, origin, prefix, boundary,
         std::min(proposal_budget_ms,
-                 std::max(1u, unsigned(search_budget_ms - elapsed_before_proposal))));
+                 std::max(1u, unsigned(search_budget_ms - elapsed_before_proposal))),
+        follower.advance_dialogue);
     statistics.proposal_attempts += proposals.attempts;
     statistics.proposal_completed += proposals.completed;
     statistics.proposal_charged += proposals.charged_updates;
@@ -338,9 +342,10 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
             break;
         const auto timeout = std::max(1u, unsigned(search_budget_ms - elapsed));
         const auto prediction =
-            horizon == 32 ? s::predict(follower.session, origin, inputs, boundary, timeout)
-                          : s::predict_with_policy(follower.session, follower.policy, origin,
-                                                   inputs, horizon, boundary, timeout);
+            horizon == 32
+                ? s::predict(follower.session, origin, inputs, boundary, timeout)
+                : s::predict_with_policy(follower.session, follower.policy, origin, inputs, horizon,
+                                         boundary, timeout, follower.advance_dialogue);
         record(prediction);
         if (prediction.certifies()) {
             ++statistics.verified;
@@ -377,16 +382,17 @@ int run(int argc, char **argv) {
     }
     h::Config config;
     std::ifstream start(directory / "start.txt");
-    std::string version, retail_hash;
-    unsigned seed, story, max_updates, row_size;
-    if (!(start >> version >> seed >> config.stage >> config.difficulty >> config.shot >> story >>
-          config.spell >> max_updates >> row_size >> retail_hash) ||
-        version != "TH08_SHADOW_START_V1" || seed > 65535 || story > 1 ||
-        row_size != b::trace_bytes ||
-        retail_hash != "330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924")
-        throw std::runtime_error("invalid_shadow_start_record");
-    config.seed = std::uint16_t(seed);
-    config.story = story;
+    const auto recording = s::read_start(start);
+    const auto seed = recording.seed;
+    config.stage = recording.stage;
+    config.difficulty = recording.difficulty;
+    config.shot = recording.shot;
+    config.spell = recording.spell;
+    config.seed = std::uint16_t(recording.seed);
+    config.story = recording.story;
+    config.prior_final_a_clear = recording.prior_final_a_clear;
+    if (recording.advance_dialogue && verified_horizon != 64)
+        throw std::runtime_error("dialogue_advance_requires_h64");
     config.input_profile = h::InputProfile::SampledGameplay;
     config.dat_path = dat.c_str();
     Mapping map(directory / "commands.bin");
@@ -403,6 +409,7 @@ int run(int argc, char **argv) {
     o::Policy policy(profile);
     Statistics statistics;
     Follower follower(session, policy, statistics, directory / "frames.bin");
+    follower.advance_dialogue = recording.advance_dialogue;
     follower.exact = argc >= 7 && std::string(argv[6]) == "exact";
     s::Prediction previous;
     s::NominalExtension nominal;
@@ -544,6 +551,8 @@ int run(int argc, char **argv) {
            << ",\"shot\":" << config.shot << ",\"spell\":" << config.spell << ",\"sync_mode\":\""
            << (follower.exact ? "exact" : "behavioral") << '"'
            << ",\"input_profile\":\"sampled-gameplay\""
+           << ",\"prior_final_a_clear\":" << (recording.prior_final_a_clear ? "true" : "false")
+           << ",\"dialogue_advance\":" << (recording.advance_dialogue ? "true" : "false")
            << ",\"actual_complete\":" << (actual_complete ? "true" : "false")
            << ",\"actual_nmnb_failed\":" << (actual_failed ? "true" : "false")
            << ",\"actual_player_state\":" << follower.retail.state[s::Field::PlayerState]
@@ -573,7 +582,8 @@ int run(int argc, char **argv) {
            << wine_shadow::file_hash((directory / "frames.bin").string())
            << "\",\"actions_sha256\":\"" << wine_shadow::file_hash(output.string() + ".actions")
            << '"' << ",\"dat_sha256\":\"" << dat_hash << "\",\"native_sha256\":\"" << binary_hash
-           << "\",\"retail_sha256\":\"" << retail_hash << "\",\"searches\":" << statistics.searches
+           << "\",\"retail_sha256\":\"" << recording.retail_hash
+           << "\",\"searches\":" << statistics.searches
            << ",\"candidates\":" << statistics.candidates << ",\"verified\":" << statistics.verified
            << ",\"stale\":" << statistics.stale
            << ",\"terminal_before_change\":" << statistics.terminal_before_change

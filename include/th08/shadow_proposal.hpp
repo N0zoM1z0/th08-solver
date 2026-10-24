@@ -17,10 +17,10 @@ struct FutureProposals {
 // from the unchanged actual owner with predict().
 FutureProposals propose_after_lead(headless::Session &, online::Policy &, const Packet &origin,
                                    const std::vector<std::uint16_t> &lead, Boundary,
-                                   unsigned timeout_ms);
+                                   unsigned timeout_ms, bool advance_dialogue = false);
 // The fixed candidate is followed by branch-owned Policy replanning in batches
 // of at most eight submitted inputs. The complete horizon/terminal is required.
 Prediction predict_with_policy(headless::Session &, online::Policy &, const Packet &origin,
                                const std::vector<std::uint16_t> &prefix, std::size_t horizon,
-                               Boundary, unsigned timeout_ms);
+                               Boundary, unsigned timeout_ms, bool advance_dialogue = false);
 } // namespace th08::shadow

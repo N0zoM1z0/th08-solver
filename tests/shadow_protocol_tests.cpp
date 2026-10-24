@@ -1,6 +1,8 @@
 #include "th08/shadow_compare.hpp"
+#include "th08/shadow_dialogue.hpp"
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_protocol.hpp"
+#include "th08/shadow_start.hpp"
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 #include "th08/shadow_bridge.hpp"
 #endif
@@ -23,6 +25,61 @@ template <class F> void rejects(F run) {
     check(rejected, "invalid wire accepted");
 }
 int main() try {
+    s::StartRecord start;
+    start.seed = 65535;
+    start.maximum_updates = 350000;
+    start.story = true;
+    start.shot = 1;
+    start.difficulty = 3;
+    const auto legacy = s::encode_start(start);
+    check(legacy.find("TH08_SHADOW_START_V1 ") == 0, "legacy start format changed");
+    std::istringstream legacy_input(legacy);
+    const auto legacy_copy = s::read_start(legacy_input);
+    check(s::encode_start(legacy_copy) == legacy && !legacy_copy.advance_dialogue &&
+              !legacy_copy.prior_final_a_clear,
+          "legacy recording acquired new inputs/history");
+    start.prior_final_a_clear = start.advance_dialogue = true;
+    const auto extended = s::encode_start(start);
+    std::istringstream extended_input(extended);
+    const auto copy = s::read_start(extended_input);
+    check(extended.find("TH08_SHADOW_START_V2 ") == 0 && copy.prior_final_a_clear &&
+              copy.advance_dialogue && s::encode_start(copy) == extended,
+          "named history/dialogue profile lost in the start record");
+    rejects([&] {
+        auto bad = start;
+        bad.story = false;
+        s::encode_start(bad);
+    });
+    rejects([&] {
+        auto bad = start;
+        bad.shot = 4;
+        s::encode_start(bad);
+    });
+    rejects([&] {
+        auto bad = start;
+        bad.row_bytes--;
+        s::encode_start(bad);
+    });
+    rejects([&] {
+        std::istringstream bad(extended + "extra");
+        s::read_start(bad);
+    });
+    rejects([&] {
+        auto text = extended;
+        text.replace(text.find("228 1 1"), 7, "228 2 1");
+        std::istringstream bad(text);
+        s::read_start(bad);
+    });
+    unsigned rising_edges = 0;
+    std::uint16_t previous = 0x10f5;
+    for (unsigned sequence = 1; sequence <= 16; ++sequence) {
+        const auto input = s::dialogue_input(previous, sequence);
+        rising_edges += !(previous & 1) && (input & 1);
+        check((input & 0xf4) == 0xf4 && !(input & 2) && bool(input & 0x1000) == bool(sequence & 1),
+              "dialogue advance changed movement/focus, sampled a bomb or lost Ctrl cadence");
+        previous = input;
+    }
+    check(rising_edges == 2, "held shoot did not create periodic Z rising edges");
     s::Packet p;
     p.sequence = 0x123456789abcdef0ULL;
     p.epoch = 0x1020304050607080ULL;

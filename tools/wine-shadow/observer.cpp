@@ -1,6 +1,7 @@
 #include "identity.hpp"
 #include "retail_view.hpp"
 #include "th08/shadow_bridge.hpp"
+#include "th08/shadow_start.hpp"
 #include <cstdlib>
 #include <limits>
 
@@ -12,6 +13,7 @@ HANDLE rows = INVALID_HANDLE_VALUE, mapping = nullptr;
 std::uint32_t *shared = nullptr;
 char directory[MAX_PATH];
 bool started = false, spell_seen = false, story = true;
+bool prior_final_a_clear = false, advance_dialogue = false, history_pending = false;
 int configured_spell = -1;
 std::uint64_t calculations = 0;
 s::Packet packet;
@@ -25,6 +27,19 @@ using Input = unsigned short(__fastcall *)();
 Calc original_calc;
 Init original_init;
 Input original_input;
+
+bool environment_flag(const char *name, bool &value) {
+    char text[8];
+    const auto size = GetEnvironmentVariableA(name, text, sizeof(text));
+    if (!size) {
+        value = false;
+        return true;
+    }
+    if (size != 1 || (text[0] != '0' && text[0] != '1'))
+        return false;
+    value = text[0] == '1';
+    return true;
+}
 
 [[noreturn]] void finish(b::OutcomeCode outcome, unsigned exit_code) {
     if (shared)
@@ -130,10 +145,25 @@ int __fastcall init_hook() {
             finish(b::OutcomeCode::Failure, 21);
         // Capture the seed at the SAME pre-RegisterChain boundary as Session.
         // A stage seed sampled after initialization is not interchangeable.
-        std::fprintf(file, "TH08_SHADOW_START_V1 %u %u %u %u %u %d %u %u\n%s\n",
-                     unsigned(at<unsigned short>(0x164d520)), unsigned(game().currentStage),
-                     unsigned(game().difficulty), unsigned(game().shotType), unsigned(story),
-                     configured_spell, max_frames, b::trace_bytes, retail_sha256);
+        try {
+            s::StartRecord record;
+            record.seed = at<unsigned short>(0x164d520);
+            record.stage = game().currentStage;
+            record.difficulty = game().difficulty;
+            record.shot = game().shotType;
+            record.story = story;
+            record.spell = configured_spell;
+            record.maximum_updates = max_frames;
+            record.row_bytes = b::trace_bytes;
+            record.prior_final_a_clear = prior_final_a_clear;
+            record.advance_dialogue = advance_dialogue;
+            record.retail_hash = retail_sha256;
+            const auto text = s::encode_start(record);
+            if (std::fwrite(text.data(), 1, text.size(), file) != text.size())
+                finish(b::OutcomeCode::Failure, 21);
+        } catch (...) {
+            finish(b::OutcomeCode::Failure, 20);
+        }
         if (std::fclose(file))
             finish(b::OutcomeCode::Failure, 21);
         char final_path[MAX_PATH];
@@ -143,6 +173,7 @@ int __fastcall init_hook() {
         cursor.stage = game().currentStage;
         cursor.frame = 0;
         started = true;
+        history_pending = prior_final_a_clear;
     }
     return original_init();
 }
@@ -177,6 +208,21 @@ unsigned short __fastcall input_hook() {
 int __fastcall calc_hook(void *self, void *) {
     LARGE_INTEGER begin{}, observed{}, end{};
     QueryPerformanceCounter(&begin);
+    if (history_pending && game().gameplaySetupState == GAMEPLAY_SETUP_COMPLETE) {
+        // Retail setup runs on a worker. Apply the declared score-history
+        // checkpoint only after it has loaded, before the first game update.
+        auto *recorder = at<ReplayManager *>(0x18b8a28);
+        if (!recorder || !recorder->replayData || packet.sequence)
+            finish(b::OutcomeCode::Failure, 27);
+        auto &history = game().clrdData[game().shotType];
+        for (int difficulty = EASY; difficulty <= LUNATIC; ++difficulty)
+            if (history.difficultiesClearedWithoutRetries[difficulty] & ZUN_BIT(STAGE6B))
+                finish(b::OutcomeCode::Failure, 27);
+        history.difficultiesClearedWithoutRetries[NORMAL] |= ZUN_BIT(STAGE6A);
+        history.difficultiesClearedWithRetries[NORMAL] |= ZUN_BIT(STAGE6A);
+        recorder->replayData->clearState = 1;
+        history_pending = false;
+    }
     const int result = original_calc(self);
     QueryPerformanceCounter(&observed);
     if (started && game().globals) {
@@ -262,7 +308,9 @@ bool setup() {
     const auto executable_size = GetModuleFileNameA(nullptr, executable, sizeof(executable));
     const auto directory_size =
         GetEnvironmentVariableA("TH08_SHADOW_DIR", directory, sizeof(directory));
-    if (!executable_size || executable_size >= sizeof(executable) || !directory_size ||
+    if (!environment_flag("TH08_SHADOW_PRIOR_FINAL_A_CLEAR", prior_final_a_clear) ||
+        !environment_flag("TH08_SHADOW_ADVANCE_DIALOGUE", advance_dialogue) || !executable_size ||
+        executable_size >= sizeof(executable) || !directory_size ||
         directory_size >= sizeof(directory) - 48 || !pinned_executable(executable) ||
         !QueryPerformanceFrequency(&frequency) || frequency.QuadPart <= 0)
         return false;

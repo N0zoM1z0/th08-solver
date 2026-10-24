@@ -5,6 +5,7 @@
 #include "Global.hpp"
 #include "Gui.hpp"
 #include "Player.hpp"
+#include "ReplayManager.hpp"
 #include "Spellcard.hpp"
 #include "Supervisor.hpp"
 #include "th08/shadow_protocol.hpp"

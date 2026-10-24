@@ -14,9 +14,22 @@ Replay SHA-256: `0e670b832b595bb153429407d17c03d280450dcfe19dbcca002145de2029a92
 Original matched video SHA-256: `7f5f4d2938840971b7eeb23c05d56d4ba86c25096ab16a1f95a2e0b9ed4b31a0`.
 The original video is 770.566 seconds, H.264 640x480 with actual AAC stereo game
 audio; videos remain local. A later compressed delivery retains this case identity.
+The compact 640x480 fast-CRF26/AAC128k delivery is 191516144 bytes over 770.584
+seconds, with SHA-256 `003be7ce892e8e1f366eb89cc9454d78175198eae585d25b43c0eeeeb4d971c8`.
+Its complete decode passes; capture frame timing is retained apart from four
+duplicate-timestamp drops required for the encoded delivery.
 Copy the replay into an unused `replay/th8_XX.rpy` slot in an owned game copy.
 Standalone Final B and full 4A-to-Final-B replays are authorized next; the stopped
 first-clear seed24474 attempt is not published as a completed route.
+
+`th08_shadow_export DAT RECORDING_DIRECTORY OUTPUT.rpy` reads the versioned start
+record and requires the owner's Complete marker plus an exact-length journal.
+It freshly executes every actual input with SampledGameplay, compares each
+receipt under the declared behavioral contract and requires a complete NMNB
+terminal (Final B for the second-clear story). Only then does a child invoke the
+original Native replay writer. It rejects incomplete/stopped/dead recordings and
+existing output paths. Export and fresh natural replay are execution/index checks;
+they do not establish independent physics equivalence or actual retail playback.
 
 Core CTest cases: 36
 

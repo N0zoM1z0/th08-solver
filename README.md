@@ -47,7 +47,12 @@ and now has a complete actual Stage 4A practice NMNB recording with real game
 audio. Recorder stutter is reproduced independently of Wine/planning; separate
 audio/video capture passes the cadence control and a complete fresh live Stage 4A
 NMNB. The owner accepted the smooth preview and now requests the complete actual
-story recording with the same method. Windows migration and Stage 4B stay deferred.
+story recording through **4A to Final B (Kaguya)** with the same method. Complete
+Final B practice precedes that new story. The requested deliveries are a full
+Final B recording at capture quality, a compact full-story video, a compact Kaguya
+spell preview, and their matching selected `.rpy` files. Dialogue advancement uses
+periodic Z release/press inputs inside the verified Native futures. Windows
+migration and Stage 4B stay deferred.
 
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the

@@ -5,6 +5,7 @@
 #include "modern/headless/session.hpp"
 #include "th08/plan_contracts.hpp"
 #include "th08/plan_route.hpp"
+#include "th08/shadow_dialogue.hpp"
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
@@ -71,6 +72,45 @@ void extra(const char *dat) {
     require(state.calculation_updates == 1 && state.stage == EXTRASTAGE,
             "full Extra did not execute its original calculation chain");
 }
+
+void second_clear(const char *dat) {
+    using namespace th08;
+    headless::Config config;
+    config.dat_path = dat;
+    config.stage = STAGE5;
+    config.shot = 1;
+    config.difficulty = LUNATIC;
+    config.story = config.prior_final_a_clear = true;
+    headless::Session session(config);
+    require(g_ReplayManager->replayData->clearState == 1 &&
+                g_GameManager.IsStageClearedWithRetries(STAGE6A, 1, NORMAL) &&
+                g_GameManager.IsStageClearedWithoutRetries(STAGE6A, 1, NORMAL),
+            "second-clear checkpoint lost its original/replay history selector");
+    g_Gui.MsgRead(10);
+    require(session.state().dialogue_present && g_Gui.impl->message.currentMsgIdx == 2 &&
+                !session.state().final_route_selection,
+            "second clear did not use the original forced-Final-B dialogue");
+    std::uint16_t previous = 1;
+    for (unsigned frame = 1; frame <= 1200; ++frame) {
+        const auto input = shadow::dialogue_input(previous, frame);
+        g_GuiMessageInputPrevious = previous;
+        g_GuiMessageInputCurrent = input;
+        previous = input;
+        g_Gui.impl->RunMsg();
+        // The original stage-results animation owns the subsequent end. This
+        // isolated message-interpreter contract ends at that handoff.
+        if (g_Gui.impl->message.currentInstr->opcode == GUI_MSG_END_STAGE &&
+            g_GameManager.flags.stageClearSequenceActive) {
+            require(g_GameManager.flags.finalStageRoute == 1,
+                    "periodic dialogue Z changed the second-clear route");
+            g_GameManager.AdvanceToNextStage();
+            require(g_GameManager.currentStage == STAGE6B,
+                    "second-clear history did not naturally transition to Final B");
+            return;
+        }
+    }
+    throw std::runtime_error("periodic Z did not complete the original route dialogue");
+}
 } // namespace
 
 int main(int argc, char **argv) {
@@ -81,14 +121,16 @@ int main(int argc, char **argv) {
     if (!mkdtemp(scratch))
         return 2;
     bool ok = true;
-    for (int index = 0; index < 5; ++index) {
+    for (int index = 0; index < 6; ++index) {
         const auto directory = std::filesystem::path(scratch) / std::to_string(index);
         std::filesystem::create_directory(directory);
         const pid_t pid = fork();
         if (pid == 0) {
             try {
                 std::filesystem::current_path(directory);
-                if (index == 4)
+                if (index == 5)
+                    second_clear(dat.c_str());
+                else if (index == 4)
                     extra(dat.c_str());
                 else
                     choice(dat.c_str(), index < 2 ? 0 : 11,

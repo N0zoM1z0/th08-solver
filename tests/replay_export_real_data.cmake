@@ -97,3 +97,16 @@ execute_process(COMMAND "${TARGETER}" "${WORK}/malformed.rpy" "${WORK}/invalid-o
 if(NOT refused STREQUAL "2" OR EXISTS "${WORK}/invalid-output.rpy")
   message(FATAL_ERROR "Malformed input must fail before writing any output")
 endif()
+
+# A live/truncated command map cannot certify that a recording completed. Reject
+# it before constructing the native world or leaving an apparently valid replay.
+file(MAKE_DIRECTORY "${WORK}/unfinished-recording")
+file(WRITE "${WORK}/unfinished-recording/start.txt"
+  "TH08_SHADOW_START_V2 0 0 3 1 1 -1 350000 228 1 1\n330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924\n")
+file(WRITE "${WORK}/unfinished-recording/commands.bin" "unfinished")
+execute_process(COMMAND "${SHADOW_EXPORTER}" "${DAT}" "${WORK}/unfinished-recording"
+  "${WORK}/unfinished.rpy" RESULT_VARIABLE refused ERROR_VARIABLE error TIMEOUT 10)
+if(NOT refused STREQUAL "2" OR EXISTS "${WORK}/unfinished.rpy" OR
+    NOT error MATCHES "shadow_export_requires_completed_owner")
+  message(FATAL_ERROR "Incomplete live recording was exported: ${refused} ${error}")
+endif()

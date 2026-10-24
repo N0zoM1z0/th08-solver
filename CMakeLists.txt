@@ -372,6 +372,7 @@ if(BUILD_TESTING)
     set_tests_properties(headless_planner_prefix PROPERTIES TIMEOUT 300)
     add_test(NAME headless_replay_export_contract COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_plan>
+      -DSHADOW_EXPORTER=$<TARGET_FILE:th08_shadow_export>
       -DCHECKER=$<TARGET_FILE:th08_replay_check>
       -DTARGETER=$<TARGET_FILE:th08_replay_target>
       -DDAT=${TH08_HEADLESS_DAT}

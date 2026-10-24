@@ -658,11 +658,29 @@ parity. The live behavioral comparison logs digest/subpixel drift and stale
 inactive labels rather than rejecting them; it retains gameplay/RNG/lifecycle
 checks. Exact comparison remains selectable for diagnosis, not a clear prerequisite.
 
+The opt-in `TH08_SHADOW_ADVANCE_DIALOGUE=1` profile advances dialogue with four
+updates of released Z followed by four of pressed Z, using the global receipt
+sequence (including handoffs). It preserves movement/focus and alternating Ctrl.
+Only the owned Native GUI's dialogue-present state selects that behavior in
+proposal generation and guided tails; immutable prefixes retain their actual
+inputs. Complete Native rollouts still decide whether a plan can be adopted.
+The retail input hook executes those same queued inputs without separate key
+injection. Spell practice rejects the flag, and this profile requires H64.
+
+`TH08_SHADOW_PRIOR_FINAL_A_CLEAR=1` names a second-clear story checkpoint for
+double teams at standard difficulties. Both worlds load a fresh score history,
+then declare one prior Normal Final A clear in the original with/without-retry
+tables and recorder clearState=1. Retail waits for its asynchronous gameplay
+setup before applying the declaration, before the first calculation receipt.
+The original Stage 5 message selects Final B naturally; no stage jump, gameplay
+RNG substitution or route-selection input policy is added. The V2 `start.txt`
+records both flags; V1 files keep their original first-clear/input behavior.
+
 ### Viewing actual Wine gameplay
 
 The owner keeps the existing Wine deployment, accepts the separate-capture Stage
-4A preview, and authorizes a complete Stage 4A practice followed by actual full-story
-recording with real audio. Issue #9 owns
+4A preview, and authorizes complete Final B practice followed by actual full-story
+recording through 4A to Final B with real audio. Issue #9 owns
 the execution/resource brief and future Windows alternatives. Capture the rendered
 owned game while `th08_shadow_online` is making decisions; rendering an exported
 action tape later produces replay footage. Keep the solver profile, actual RNG
@@ -676,6 +694,13 @@ dedicated PulseAudio server with only a null sink supplies the game's output and
 its monitor source. Route the owned Wine prefix and recorder to that private Unix
 socket; do not record unrelated host audio. Enable WAV music, sound effects and
 their volumes only in the owned recording configuration copy, and record its hash.
+
+Deliver the standalone full Final B video by stream-copying the capture video
+when muxing aligned audio. Deliver the full story and a selected Kaguya-spell
+preview with balanced compression; the accepted 4A derivative uses native 640x480,
+libx264 fast CRF26 and AAC128k, preserving capture cadence without interpolation.
+Keep originals and all videos outside Git. Only the owner's selected matching
+4A/Final-B/story replays are an exception to the generated-artifact ignore rule.
 
 Capture video and audio in separate processes. The original combined X11/Pulse
 command stalls even on a blank owned display without Wine or a solver: a 12-second

@@ -470,7 +470,10 @@ Session::Session(const Config &config) {
             (config.input_profile == InputProfile::Controller ||
              config.input_profile == InputProfile::SampledGameplay) &&
             (!config.replay || config.input_profile == InputProfile::Controller) &&
-            (!config.unlock_final_routes || (config.story && config.stage < 6 && !config.replay)),
+            (!config.unlock_final_routes || (config.story && config.stage < 6 && !config.replay)) &&
+            (!config.prior_final_a_clear ||
+             (config.story && config.stage < 6 && config.shot <= 3 && config.difficulty <= 3 &&
+              !config.replay && !config.unlock_final_routes)),
         "invalid native checkpoint");
     configure_input_profile(config.input_profile);
     g_Supervisor.InitializeCriticalSections();
@@ -545,6 +548,14 @@ Session::Session(const Config &config) {
                 g_GameManager.gameplaySetupState == GAMEPLAY_SETUP_COMPLETE,
             "native gameplay setup failed");
     require(g_AnmManager->ServicePreloadedAnims() == ZUN_SUCCESS, "stage ANM load failed");
+    if (config.prior_final_a_clear) {
+        auto &history = g_GameManager.clrdData[config.shot];
+        history.difficultiesClearedWithoutRetries[NORMAL] |= ZUN_BIT(STAGE6A);
+        history.difficultiesClearedWithRetries[NORMAL] |= ZUN_BIT(STAGE6A);
+        require(g_ReplayManager && g_ReplayManager->replayData,
+                "Final B checkpoint has no replay recorder");
+        g_ReplayManager->replayData->clearState = 1;
+    }
     if (config.unlock_final_routes) {
         // Score initialization has now loaded the checkpoint's history. Mirror
         // one prior Final B clear, and keep the already-created recorder header
@@ -613,7 +624,8 @@ State Session::state() const {
             g_GameManager.currentStage == STAGE5 && g_Gui.impl &&
                 g_Gui.impl->message.currentInstr &&
                 g_Gui.impl->message.currentInstr->opcode == GUI_MSG_SHOW_SELECTION,
-            g_Gui.impl ? g_Gui.impl->message.selectedOption : 0};
+            g_Gui.impl ? g_Gui.impl->message.selectedOption : 0,
+            bool(g_Gui.impl && g_Gui.IsDialoguePresent())};
 }
 const std::vector<BulletView> &Session::bullets() {
     views_.clear();

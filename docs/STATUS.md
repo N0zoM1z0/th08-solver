@@ -116,13 +116,25 @@ no subsequent runtime gap. Thus accepted viewing quality and nominal capture
 rate remain separate from strict all-frame gameplay deadlines or causal timing
 attribution. The original combined-recorder attempt and all costs stay retained.
 
-After that complete-stage, fresh-follow and media gate, the actual first-clear
-story recording starts at real seed24474: Lunatic Marisa/Alice, natural 4A to Final
-A, frozen `e1a35be`, H64/8/110-ms and unchanged 350000-update/7200-second outer caps.
-A new owned game directory has no initial score.dat, matching Native's empty
-scratch/default clear history. Separate X11 video/private-sink PCM audio capture
-is active; early input following agrees and the actual game is still running.
-Windows migration and Stage 4B stay deferred. Movies and raw receipts remain ignored.
+The first-clear story recording at real seed24474 was explicitly stopped when
+the owner clarified **4A to Final B (Kaguya)**. It retains 75569 receipts, 75567
+calculations and two natural handoffs, zero miss/bomb and no meaningful mismatch;
+it is not a completed requested route. Its partial capture and all costs stay local.
+The new order is complete Final B practice, fresh following/media validation, then
+the actual full B story. Final B's standalone movie retains capture quality; the
+full story and a Kaguya spell preview receive balanced compression. Both selected
+matching replays are authorized for publication; movies and raw receipts remain ignored.
+
+The opt-in V2 start record declares prior-Final-A-clear history and periodic
+dialogue advancement. A named second-clear checkpoint sets the original score
+history and recorder clearState=1 after initialization, without replacing RNG;
+the original Stage 5 dialogue naturally chooses Final B. Retail's asynchronous
+setup must finish before applying that history. Dialogue inputs release/press Z
+in four-update groups while the owned Native GUI reports dialogue, preserving
+movement/focus and alternating Ctrl. These actual inputs pass through normal
+lead ownership and complete native rollout verification. V1/default input
+behavior and H64 search budgets remain unchanged. Full online validation of the
+new profile is pending. Windows migration and Stage 4B stay deferred.
 
 Under the initial combined-recorder profile, GNU time accounts for the Native
 client and its reaped branches at 130.81 CPU

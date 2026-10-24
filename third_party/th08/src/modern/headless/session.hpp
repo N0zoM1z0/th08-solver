@@ -17,6 +17,9 @@ struct Config {
     // Explicit preexisting clear history enables both original final-stage
     // choices. It changes no gameplay state/RNG and is serialized as clearState 2.
     bool unlock_final_routes = false;
+    // Named second-clear checkpoint: one prior Final A clear, no Final B clear.
+    // Original dialogue then selects Final B; replay clearState is 1.
+    bool prior_final_a_clear = false;
     // A live journal supplies the final sampled input of a gameplay event.
     // Controller mode preserves the original synchronous native/tape contract.
     InputProfile input_profile = InputProfile::Controller;
@@ -188,6 +191,7 @@ struct State {
     std::uint64_t calculation_updates = 0;
     bool final_route_selection = false;
     int selected_final_route = 0;
+    bool dialogue_present = false;
 };
 // Upstream managers are pointer-rich process globals. Exactly one noncopyable
 // session may be created per process; fresh processes provide fresh replay.
