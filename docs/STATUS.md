@@ -124,8 +124,22 @@ updates, with ten additional proposal-lead updates. Actual owner elapsed is
 589.141 seconds, overlapping the normal suite; period p99/max is 30.34/60.72 ms.
 Planning mean/p99/max is 22.92/56.44/77.71 ms. This case has no failed nominal
 extension, so it validates the deployed revised client without exercising the
-new failure recovery path. Complete Stage 3 practice is next, with shot0's legal
-Stage 4B branch after it.
+new failure recovery path.
+
+Complete Lunatic Stage 3 practice, shot0/seed4330, then clears NMNB at 41713
+calculations under the same `e1a35be` client. All 41 projected words match, including
+fresh Native following of the actual inputs. It certifies 5214 futures, completes
+and charges 333416 branch updates plus nine proposal-lead updates, and has no
+branch death/timeout, planning-budget overrun, stale result, invalid prefix, owner
+rejection or runtime queue gap. Nine unqueued receipts are startup only (eight
+fallback input calls). Its nominal extensions all succeed; failure recovery
+remains a separate contract check.
+
+Without CTest overlap, Stage 3 takes 699.181 seconds versus 695.217 seconds at 60 Hz,
+about 59.660 average FPS. Owner period p99/max is 20.87/46.47 ms; planning
+mean/p99/max is 17.91/31.33/95.29 ms. The first three complete stage practices now
+have one development clear each. Continue with shot0's legal Stage 4B branch,
+then Stage 5 and Final A; fresh-seed confirmation and full-story timing remain open.
 
 The earlier two Lunatic proposal profiles' deaths at
 1400/1614 updates remain separate failed development attempts. Different seeds
