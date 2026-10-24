@@ -41,6 +41,11 @@ preserves the existing current-memory controller's zero-future-update contract.
 The [October 24 preparation](preparations/10.24-with-claude-gpt/PUBLICATION.json)
 preserves audited public research copies and identities of unchanged local originals.
 
+[Issue #9](https://github.com/N0zoM1z0/th08-solver/issues/9) records the execution flow,
+resource evidence and deployment options. The owner keeps the current Wine setup
+and requests a complete Stage 4A practice recording with real game audio first;
+full-story recording and Windows migration wait for that viewing review.
+
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the
 offline-teacher/student loop. Its historical 4B/Extra work and natural-4A captures

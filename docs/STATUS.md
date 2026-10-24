@@ -51,6 +51,33 @@ One real story and the six practice cases establish initial functionality, not
 all-seed/shot/route reliability. Further work owns deadline attribution, transition
 queue recovery and broader frozen-seed coverage; 4B remains deferred.
 
+The owner's next request is viewing the actual online game on the existing Wine
+deployment. [Issue #9](https://github.com/N0zoM1z0/th08-solver/issues/9) records its
+execution flow, resource measurements and future Windows deployment alternatives.
+The latest scope is one complete Stage 4A practice with real BGM and sound effects
+before reviewing full-story recording. The seed33280 story has no video capture;
+rendering its action tape later would be replay footage. A startup recording probe
+is retained: its transient X11 window disappeared during menu recreation, so the
+recorder stopped at 7.025 seconds. The actual seed16508 game was explicitly stopped
+alive after 3770 calculations, with zero miss/bomb and no meaningful mismatch.
+
+The replacement captures the owned Xvfb screen rectangle and a dedicated private
+PulseAudio sink monitor. Only an owned game configuration copy enables WAV BGM,
+sound effects and volume 100; the earlier game directories remain unchanged.
+Local audio packages are extracted under ignored reports rather than enabling a
+host audio service. The actual Stage 4A recording starts at real seed52382 under
+the same frozen H64 client and budgets. An early 640x480 H.264/AAC stereo preview
+has visible gameplay and non-silent audio; the complete attempt is still running.
+No new full-story attempt or Windows migration is active. Movies and raw receipts
+remain ignored, and capture frame rate is separate from gameplay deadline evidence.
+
+A separate search-disabled resource probe freshly follows all 231742 receipts of
+the completed seed33280 story in 15.60 wall seconds, using 14.77 user/0.67 system CPU
+seconds and 82372 KiB peak single-process RSS. It agrees through all five handoffs.
+This measures baseline simulation/following, excluding online branch planning and
+game rendering; it is neither a full online memory peak nor a strategy-solve time.
+The original online aggregate CPU and simultaneous memory peaks were not recorded.
+
 | Complete Lunatic practice, shot1 | Real seed | Calculations | Average FPS | Outcome |
 | --- | --- | --- | --- | --- |
 | Stage 1 | 23035 | 22976 | 59.931 | NMNB |

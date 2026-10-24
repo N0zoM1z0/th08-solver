@@ -658,6 +658,49 @@ parity. The live behavioral comparison logs digest/subpixel drift and stale
 inactive labels rather than rejecting them; it retains gameplay/RNG/lifecycle
 checks. Exact comparison remains selectable for diagnosis, not a clear prerequisite.
 
+### Viewing actual Wine gameplay
+
+The owner keeps the existing Wine deployment and requests a complete Stage 4A
+practice with real audio before reviewing a full-story recording. Issue #9 owns
+the execution/resource brief and future Windows alternatives. Capture the rendered
+owned game while `th08_shadow_online` is making decisions; rendering an exported
+action tape later produces replay footage. Keep the solver profile, actual RNG
+capture and original game clock unchanged, and retain failed or stopped attempts.
+
+Record the game rectangle on its owned Xvfb root display. Wine can destroy and
+recreate the game window during startup, invalidating a recorder's window ID even
+when its screen position stays fixed. Read the rectangle from the owned window,
+inspect an early gameplay sample and ensure it stays inside that rectangle. A
+dedicated PulseAudio server with only a null sink supplies the game's output and
+its monitor source. Route the owned Wine prefix and recorder to that private Unix
+socket; do not record unrelated host audio. Enable WAV music, sound effects and
+their volumes only in the owned recording configuration copy, and record its hash.
+
+Use a single libx264 encoder thread and a fast preset. For example, with the owned
+display rectangle and private PulseAudio endpoint already initialized:
+
+```sh
+ffmpeg -f x11grab -framerate 60 -video_size 640x480 \
+  -i "$DISPLAY+$capture_x,$capture_y" \
+  -f pulse -server "$PULSE_SERVER" -sample_rate 48000 -channels 2 \
+  -i th08_game.monitor -map 0:v:0 -map 1:a:0 \
+  -c:v libx264 -preset ultrafast -crf 21 -threads:v 1 -pix_fmt yuv420p \
+  -c:a aac -b:a 160k -f matroska reports/local/capture.mkv
+ffmpeg -i reports/local/capture.mkv -map 0 -c copy -movflags +faststart \
+  reports/local/capture.mp4
+```
+
+Start before gameplay, retain actual timestamps, and stop the owned recorder
+cleanly when the observer reaches its declared terminal. The current observer
+exits at gameplay completion, so this does not capture ending credits. Matroska
+preserves an interrupted attempt; stream-copy remuxing yields a seekable MP4
+without changing its gameplay sequence. Verify decoding, both media streams and
+non-silent audio separately from actual journal/NMNB and fresh Native-follow checks.
+Capture sampling FPS is not proof of 60-Hz gameplay. Record encoder overhead,
+identities, actual seed, fallback/queue counters and outcome; per-job maximum RSS
+is not a simultaneous combined memory peak. Keep all generated movies, previews,
+audio packages, action tapes and experiment reports under ignored `reports/local/`.
+
 ## Resource ownership and parallelism
 
 Independent executables can run in parallel with separate scratch directories and
