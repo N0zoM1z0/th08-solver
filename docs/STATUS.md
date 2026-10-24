@@ -164,6 +164,19 @@ FPS. Owner period p99/max is 26.74/57.28 ms; planning mean/p99/max is
 extension recovery, not a universal deadline result. Continue Stage 5 and Final A
 practice with the same shot1 team before uniform-route confirmation.
 
+Complete Lunatic Stage 5 practice, Marisa/Alice/shot1/seed60127, then clears NMNB
+at 45781 calculations with the same `e1a35be` client. All 41 projected words and
+fresh Native following of every actual input agree. It certifies 5719 futures,
+retaining 11 branch deaths, three timeouts and three budget overruns, with no
+runtime queue gap, stale result, invalid prefix or owner rejection. All ten
+unqueued receipts are startup (nine fallback input calls). Costs retain 366593
+charged branch updates and 61 additional proposal-lead updates.
+
+Stage 5 takes 774.565 seconds versus 763.017 seconds at 60 Hz, about 59.105 average
+FPS. Owner period p99/max is 23.52/55.61 ms; planning mean/p99/max is
+19.54/50.59/112.96 ms. Final A practice with shot1 is next. This whole-stage clear
+does not relabel the earlier different-shot/seed spell-107 failure as repaired.
+
 The retained Stage 4B/shot0/seed42386 attempt dies at update34318 with all 41
 projected words matching and no numeric drift; fresh Native following reproduces
 the death. Failed-nominal suppression recovers four continuations, but the final
