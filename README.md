@@ -57,8 +57,13 @@ The new-profile complete Final B practice now clears NMNB at real seed29085:
 30333 actual calculations, matching fresh following and a complete natural
 [replay](reports/native/replays/shadow-recording-v3--finalb-d3-s1-seed29085.rpy).
 The capture-quality standalone movie and compact Kaguya preview are complete;
-the new actual full-story recording is running under the declared second-clear
-history. This is a recorded practice case, not yet a completed B story.
+the new actual full-story recording also completes NMNB at real seed40755 under
+the declared second-clear history: 121528 calculations through 1/2/3/4A/5/Final B.
+All 121533 actual input/control receipts agree with fresh Native following.
+The matching [full-story replay](reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy)
+naturally completes NMNB with the same final score. The full capture passes media
+decode; its balanced compressed delivery is being finalized. These are initial
+functional cases; strict every-frame 60 Hz and general seed reliability remain open.
 
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the

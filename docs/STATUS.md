@@ -151,10 +151,35 @@ video: 523.983 seconds, 640x480, actual stereo game audio and 672570952 bytes.
 The selected 20-second spell158 Kaguya preview is 6748573 bytes at native
 resolution with balanced compression. The matching selected replay is tracked;
 [Validation](VALIDATION.md) records its identity and the known practice/playback
-clear-bonus difference. The next actual full story is running at real seed40755,
-shot1/Lunatic with prior-Final-A-clear and dialogue flags recorded in V2,
-350000 receipts/7200-second outer caps and unchanged H64 search budgets.
-It must reach the natural 4A-to-Final-B route before a completion claim.
+clear-bonus difference.
+
+The subsequent actual full story at real seed40755 also completes NMNB under
+the identical `fbb7758` executable: Lunatic shot1, prior-Final-A-clear and dialogue
+flags recorded in V2, unchanged 350000 receipts/7200-second outer caps and H64
+search budgets. Its original route is 1/2/3/4A/5/Final B: 121533 receipts,
+121528 calculations and five control-only handoffs. All five preserve the RNG
+across the control receipt. Fresh following agrees through every actual input,
+zero player-position error and no meaningful gameplay/RNG/lifecycle mismatch.
+Numeric digest drift on 7708 updates and inactive spell labels on 26805 updates
+remain telemetry. The journal has zero NMNB/index/calculation/clock violations.
+
+Owner time is 2118.536134656 seconds, averaging 57.364 calculations/s; period
+p99/max is 27.79/683.41 ms, including loading. The client performs 15191 searches,
+certifies 15186 futures and selects 15175 nominal extensions. Charged branch
+updates are 972837 plus 116 proposal-lead updates. Sixteen future deaths and five
+rollout timeouts certify nothing; five planning-budget overruns remain recorded.
+Planning mean/p99/max is 24.56/65.52/117.36 ms. Nine unqueued receipts and eight
+fallback sampling calls are confined to startup, with no later runtime queue gap,
+stale result, invalid prefix, owner rejection or plan invalidation.
+
+The complete original recording passes video/audio decode: 2129.716 seconds,
+640x480 with actual stereo game audio, 2608210712 bytes. Balanced compression is
+in progress; no movies enter Git. The selected full-story replay is tracked after
+fresh actual-input export and natural NMNB playback through Final B, with matching
+raw end score218996507. Natural replay has its own row/input clocks rather than
+the video's wall clock; [Validation](VALIDATION.md) owns identities and boundaries.
+These two new-profile actual cases establish initial functionality, not strict
+every-frame 60 Hz, retail playback of the new files or general seed reliability.
 Windows migration and Stage 4B stay deferred.
 
 Under the initial combined-recorder profile, GNU time accounts for the Native

@@ -36,7 +36,23 @@ The MP4 is 523.983 seconds/672570952 bytes, with its capture video stream copied
 and audio aligned by trimming 10816 samples at 48 kHz. Its complete decode passes.
 The 20-second spell158 Kaguya preview starts at movie second198, remains 640x480,
 and is 6748573 bytes, SHA-256 `b8eb00563589ff2fceec2d6377e4acaa8b95d14ba94d62bcb5bd90081eacc4ac`.
-Full 4A-to-Final-B recording/replay remains in progress; the stopped first-clear
+The [full 4A-to-Final-B replay](../reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy)
+corresponds to the actual complete Lunatic shot1 story, real seed40755, identical
+`fbb7758` client, prior-Final-A-clear and dialogue advancement recorded in V2.
+Fresh following and export agree on all 121533 actual receipts, 121528 calculations
+and five handoffs, zero miss/bomb/player-position error. Numeric drift remains
+telemetry. The 34489-byte replay naturally completes NMNB through raw stages
+0/1/2/3/5/7, 121654 playback rows and raw end score218996507, matching the live
+terminal. Its per-stage input clocks are 14049/15458/14962/24775/21583/29811;
+these are separate from receipt/calculation counts and video wall time. This is
+the original writer's export of verified actual inputs, without another search.
+Actual retail playback of this selected file remains unchecked.
+
+Story replay SHA-256: `202622b4e52e3cedc959f5f41d3e745b8f9d51faad33cf09571834f884758c2a`.
+Matched original MP4 SHA-256: `ac7fe1f8abdeb0ecee88d5b7e7b2e26cfa76ae0ee20b56076263dbd9b77fbe03`.
+It is 2129.716 seconds/2608210712 bytes, with capture video copied and audio
+aligned by trimming 21242 samples at48kHz. Complete media decode passes; the
+balanced compressed delivery is being finalized. The stopped first-clear
 seed24474 attempt is not published as a completed route.
 
 `th08_shadow_export DAT RECORDING_DIRECTORY OUTPUT.rpy` reads the versioned start
