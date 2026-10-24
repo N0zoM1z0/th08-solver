@@ -1,5 +1,16 @@
 # Current handoff status
 
+The October 24 owner request starts [issue #8](https://github.com/N0zoM1z0/th08-solver/issues/8):
+implement a true-RNG shadow runtime, common-start synchronization, verified future
+branches and a forward-only Wine input loop. The [review](https://github.com/N0zoM1z0/th08-solver/issues/7)
+separates existing capability, attachment-only experiments and proposed acceptance.
+The new profile may simulate native futures; it does not silently change the
+existing current-memory policy contract. Synchronization and actual deadline
+behavior must be validated before claiming a new real-time clear. Original
+October 24 inputs remain unchanged locally; the
+[publication manifest](../preparations/10.24-with-claude-gpt/PUBLICATION.json)
+records audited public copies, hashes and excluded raw result files.
+
 Reviewed: 2026-10-23. The bounded
 [issue #6](https://github.com/N0zoM1z0/th08-solver/issues/6) experiment preserves compact
 learned artifacts, improves generic forecasting, prepares reproducible training

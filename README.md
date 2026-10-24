@@ -25,6 +25,14 @@ configuration, hashes, verification and retained search costs.
 
 ## Current direction
 
+The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).
+The first acceptance gate is common-start synchronization with actual input receipts;
+branch prediction and a forward-only action buffer follow that gate. This is a
+separate native-lookahead profile, not a change to the current-memory controller's
+zero-future-update contract. No synchronized Wine controller or new 60 FPS clear
+is established yet. The [October 24 preparation](preparations/10.24-with-claude-gpt/PUBLICATION.json)
+preserves audited public research copies and identities of unchanged local originals.
+
 The current implementation phase is the
 [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5):
 complete every standalone stage over different seeds, diagnose action-dependent
