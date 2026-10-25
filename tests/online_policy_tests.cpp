@@ -394,6 +394,58 @@ void score_attack_pacing_contract() {
         unprofitable.observe(empty);
     check(unprofitable.wants_fire(), "zero realized income prolonged an ordinary attack");
 }
+void point_price_goal_contract() {
+    auto base = on::with_style("score-harvest");
+    base.horizon = 24;
+    auto o = scene();
+    o.y = 148;
+    o.scoring.available = o.scoring.auto_collect_eligible = o.scoring.can_switch_forms = true;
+    o.scoring.collection_line = 160;
+    o.scoring.pickup_reach_y = 32;
+    for (int i = 0; i < 4; ++i)
+        o.scoring.pickups.push_back({192, 200, on::PickupKind::Point});
+    auto priced = base;
+    priced.scoring_priced_collection = true;
+    check(!(on::Policy(base).decide(o).action & (16 | 32)) &&
+              (on::Policy(priced).decide(o).action & 16),
+          "price-aware collection stopped with its pickup box below the value line");
+    o.y = 126;
+    o.latched_input = 5;
+    priced.collection_focus_bias = 5;
+    std::vector<on::ValueProposal> paths;
+    const auto collecting = on::Policy(priced).decide(o, nullptr, &paths);
+    float end_x = o.x, end_y = o.y;
+    check(!paths.empty(), "point-price goal omitted its complete proposal");
+    for (auto input : paths.front().inputs)
+        on::detail::apply_movement(o.movement, end_x, end_y,
+                                   on::detail::movement_delta(o.movement, input));
+    check(!(collecting.action & 4) && end_y + o.scoring.pickup_reach_y < o.scoring.collection_line,
+          "full-price collection target or human-form preference ignored source pickup reach");
+
+    o.scoring.pickups.clear();
+    o.y = 360;
+    auto upper = priced;
+    upper.scoring_upper_stage = true;
+    check(on::Policy(upper).decide(o).action & 16,
+          "empty no-boss stage returned to the bottom instead of its economic staging goal");
+    o.scoring.has_boss = true;
+    check(on::Policy(upper).decide(o).action == on::Policy(priced).decide(o).action,
+          "stage staging goal remained active after boss registration");
+
+    auto human = on::with_style("baseline");
+    human.horizon = 24;
+    human.economic_human_bias = 5;
+    check(on::Policy(human).needs_scoring_memory() && !(on::Policy(human).decide(o).action & 4),
+          "economic form preference omitted source eligibility or retained focus");
+    auto survival = on::with_style("score-flow");
+    survival.horizon = 24;
+    survival.economic_human_bias = 1000;
+    o.scoring.survival_spell = o.spell_active = true;
+    check(on::Policy(survival).decide(o).action & 4,
+          "human point preference overrode an active source-survival graze goal");
+    o.scoring.pickup_reach_y = -1;
+    rejects([&] { on::Policy(priced).decide(o); }, "negative source pickup reach was accepted");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -2039,6 +2091,7 @@ int main(int argc, char **argv) {
         score_precollect_contract();
         score_flow_contract();
         score_attack_pacing_contract();
+        point_price_goal_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

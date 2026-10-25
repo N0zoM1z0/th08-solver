@@ -164,6 +164,16 @@ decisions and retained proposals. `--attack-focus-bias`, `--baseline-recovery`
 and `--search-budget-ms` are independent reported Native experiment controls.
 The complete local prototype and every weaker/failed trial remain in Status;
 fresh terminal/replay agreement is not an independent physics oracle.
+The price/staging contract checks the source pickup reach and whole proposed
+pickup position, collection human preference, empty-field stage positioning,
+boss-registration exit, and survival-graze priority over general human preference.
+An initial stationary-first-action assertion was rejected: beam proposals can
+move before returning to the target. The retained contract checks economic
+endpoint/phase behavior without prescribing that incidental first movement.
+The optional `--capture-factor`/`--capture-padding`, price height, stage anchor
+and two human preferences are independently reported. Complete-duration local
+cases retain both higher scores and weaker outcomes; read-only price probes
+require byte-identical original25-field replay rows before interpreting values.
 The tool records all rejected work,
 timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
 terminal41-word projection. Periodic Z advances dialogue. Story mode declares

@@ -5,7 +5,56 @@ The owner's current target is **Extra >= 2,500,000,000 displayed points, NMNB an
 experiments focus on proper non-practice Extra, Marisa/Alice. New story/4A work
 is paused alongside4B; ordinary regression coverage remains unchanged.
 
-The best complete local Native result is **2,308,450,110**, seed19732, NMNB
+The best complete local Native result is **2,564,311,730**, seed19732, NMNB and
+14/14, from complete proper Extra entry. The frozen `extra-flow-v15` prototype
+adds a source-pickup-reach collection target, an upper-stage goal while no boss
+is registered, and a human-form preference outside active graze goals. It keeps
+the1.5*HP/DPS+240 capture reserve and explicit256/128/lead8/250ms/60ms budgets.
+Its68429 updates collect1010 point items /83160 orbs. Fresh41-word execution and
+natural replay agree, including every capture. The replay SHA-256 is
+`2bf469a6cbe59732f53b2a7b2ef208d3b450fc272e4c9c172eff244502b0c2d4`.
+Planning costs408.479s,2216535 branch+312 proposal updates,461 rejected future
+deaths,29 timeouts,32 overruns and70 safety attempts/32 adoptions. Fresh following
+costs38.097s. This Native milestone is84.86% of ASL's score-attack reference;
+the online ladder remains separate.
+
+The read-only source price audit preserves all original replay rows byte-for-byte.
+Against v10 below, actual point-item income rises625,587,010 to847,202,820,
+with full-height pickups731/944 to961/1010 and human-doubled pickups702/944 to
+977/1010. Point income increases221,615,810 while total score increases255,861,620
+and collected orbs fall1787. These are measured score components in different
+action-dependent futures, not a component ablation. The static full-human-price
+ceiling for v15's own items/PIV snapshots leaves29,733,620 of pickup-price loss.
+
+The frozen integrated pacing profile also completes a new cryptographically
+drawn seed10025 at2,336,991,400, NMNB/14/14, exact fresh/natural replay:
+903 points /87005 orbs,69077 updates,416.275s,2270493 branch+656 proposal updates,
+70 timeouts and73 overruns. The separate v14 generic reserve1.2*HP/DPS+120 trial
+completes at2,354,433,630,14/14,419.329s,2224479 branch+360 proposal updates,
+35 timeouts and37 overruns. The current-source price/staging integration on
+seed10025 completes NMNB/14/14 at2,453,582,120, exact fresh/natural replay:
+926 points /84976 orbs,73493 updates,442.000s,2403152 branch+544 proposal updates,
+842 rejected future deaths,55 timeouts,62 overruns and117 safety attempts/46
+adoptions, with explicit1.2/120 reserve. Its116,590,720 increase over the same
+seed's preceding pacing result describes a changed complete scene, not a
+component ablation. The current-source seed19732 rerun of v15's1.5/240 settings
+fails in the last card at65137,13/14,1,683,795,810 partial points. Fresh execution
+agrees. Its391.341s,2126610 branch+449 proposal updates,685 rejected future
+deaths,46 timeouts and50 overruns remain charged. The frozen prototype result
+above is not a guarantee that current wall-budget searches reproduce its tape.
+
+A bounded offline recovery preserves61789 inputs from that successful13-card
+prefix, carrying the complete Native world. The generic expert H128/64/lead8/
+110ms/60ms continuation completes at2,464,473,300,14/14, exact fresh/natural
+replay. Continuation costs20.518s,96196 branch+24 proposal updates, zero timeouts
+and zero overruns; solver wall including reconstruction is26.273s. Baseline H64
+and zen H64 continuations fail at13/14,15.334s/13.857s including reconstruction,
+27968+76 /24729+77 branch/proposal updates,8 timeouts/overruns each. Their first
+changed input is61792, so these offline continuations do not prove a timely live
+handoff. All original and recovery costs remain retained; the complete2.564-billion
+milestone stays attributed to the frozen v15 prototype.
+
+The preceding complete local Native result is **2,308,450,110**, seed19732, NMNB
 and14/14, from a complete Extra entry without prefix repair. The frozen
 `extra-flow-v10` source-pacing prototype waits for extreme-youkai gauge before
 measuring realized orb income. Generic baseline movement recovery preserves
@@ -34,7 +83,13 @@ this is a static pricing ceiling, not an achieved policy gain. The source pickup
 reach is32 pixels, while our collection goal sits only12 pixels above the line;
 91 low-priced items are touched even with the player above the line. A local
 prototype tests a pickup-reach-derived target and a separate collection form
-prior. Its complete-run outcome must determine whether the insight pays off.
+prior. That v12 complete trial scores2,271,435,430,873 points /81892 orbs,
+446.104s,2338723 branch+912 proposal updates,95 timeouts and104 overruns,14/14
+with exact fresh/natural replay. It raises actual point income to632,944,380
+despite collecting71 fewer points; its full-height count is776 and human count703.
+Adding precollection fire release (v13) completes at2,173,050,400,814 points /
+76488 orbs,421.536s,2198066 branch+520 proposal updates,50 timeouts and56 overruns,
+14/14 with exact fresh/natural replay. Both weaker total outcomes remain retained.
 
 The preceding complete local Native result is **2,205,160,930**, seed19732, NMNB
 and14/14, with exact fresh41-word execution and matching natural replay. It
@@ -149,8 +204,9 @@ retains the rejected owner-goal-refresh idea (Stage1 gain,4A failure),
 `extra-precollect-v1` and `extra-farm-*`/`extra-economy-v4` retain new positive and
 negative evidence; `extra-flow-v*` and `extra-flow-v9-repair-*` retain the new
 macro/income trials and prefix repair. No new ablation matrix is run. Current
-Release Native/DAT CTest passes56/56 (903.93s), core36/36 (8.23s), including the
-audit, corrected flow and integrated attack-pacing scope. One intermediate full run retains a planner-prefix
+Release Native/DAT CTest passes56/56 (889.37s), core36/36 (8.47s), including the
+audit, corrected flow, attack pacing, pickup pricing and stage/form goals.
+One intermediate full run retains a planner-prefix
 binary-identity failure caused by relinking during the check; the focused rerun
 and two later full runs with frozen binaries pass. The audit is published at
 `489a171`; all new experiment tapes/reports remain ignored under `reports/local/`.

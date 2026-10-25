@@ -171,17 +171,28 @@ unsigned number(const char *text, unsigned maximum) {
         throw std::runtime_error("invalid_native_style_argument");
     return unsigned(n);
 }
+float preference(const char *text) {
+    const std::string value(text);
+    std::size_t used = 0;
+    const float n = std::stof(value, &used);
+    if (used != value.size() || !std::isfinite(n) || n < 0 || n > 10000)
+        throw std::runtime_error("invalid_native_score_preference");
+    return n;
+}
 int run(int argc, char **argv) {
     if (argc < 11 || (argc - 11) % 2 != 0)
-        throw std::runtime_error("usage: th08_shadow_style DAT OUTPUT_DIR STAGE DIFFICULTY SHOT "
-                                 "SEED STYLE MAX_UPDATES STORY WALL_SECONDS "
-                                 "[--collect-items 0|1] [--aim-boss 0|1] "
-                                 "[--survival-focus 0|1] [--verify-horizon 64|128|256] "
-                                 "[--publish-horizon 64|128] [--held-recovery 0|1] "
-                                 "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
-                                 "[--survival-flow 0|1] [--attack-pacing 0|1] "
-                                 "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
-                                 "[--search-budget-ms VALUE]");
+        throw std::runtime_error(
+            "usage: th08_shadow_style DAT OUTPUT_DIR STAGE DIFFICULTY SHOT "
+            "SEED STYLE MAX_UPDATES STORY WALL_SECONDS "
+            "[--collect-items 0|1] [--aim-boss 0|1] "
+            "[--survival-focus 0|1] [--verify-horizon 64|128|256] "
+            "[--publish-horizon 64|128] [--held-recovery 0|1] "
+            "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
+            "[--survival-flow 0|1] [--attack-pacing 0|1] "
+            "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
+            "[--search-budget-ms VALUE] [--priced-collection 0|1] "
+            "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
+            "[--capture-factor VALUE] [--capture-padding UPDATES]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -208,6 +219,9 @@ int run(int argc, char **argv) {
     bool survival_flow_override = false;
     bool pacing_override = false, attack_bias_override = false, recovery_override = false;
     bool budget_override = false, baseline_recovery = false;
+    bool price_override = false, upper_override = false, collection_bias_override = false;
+    bool human_bias_override = false;
+    bool reserve_factor_override = false, reserve_updates_override = false;
     unsigned budget_ms = 110;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
@@ -269,6 +283,24 @@ int run(int argc, char **argv) {
             if (!budget_ms)
                 throw std::runtime_error("invalid_native_search_budget");
             budget_override = true;
+        } else if (key == "--capture-factor" && !reserve_factor_override) {
+            profile.attack_reserve_factor = preference(argv[i + 1]);
+            reserve_factor_override = true;
+        } else if (key == "--capture-padding" && !reserve_updates_override) {
+            profile.attack_reserve_updates = number(argv[i + 1], 10000);
+            reserve_updates_override = true;
+        } else if (key == "--priced-collection" && !price_override) {
+            profile.scoring_priced_collection = number(argv[i + 1], 1);
+            price_override = true;
+        } else if (key == "--upper-stage" && !upper_override) {
+            profile.scoring_upper_stage = number(argv[i + 1], 1);
+            upper_override = true;
+        } else if (key == "--collection-bias" && !collection_bias_override) {
+            profile.collection_focus_bias = preference(argv[i + 1]);
+            collection_bias_override = true;
+        } else if (key == "--human-bias" && !human_bias_override) {
+            profile.economic_human_bias = preference(argv[i + 1]);
+            human_bias_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
@@ -425,10 +457,16 @@ int run(int argc, char **argv) {
            << ",\"survival_flow\":" << (profile.scoring_survival_flow ? "true" : "false")
            << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
            << ",\"attack_pacing\":" << (profile.scoring_attack_pacing ? "true" : "false")
-           << ",\"attack_pacing_revision\":" << (profile.scoring_attack_pacing ? 1 : 0)
+           << ",\"attack_pacing_revision\":" << (profile.scoring_attack_pacing ? 2 : 0)
            << ",\"attack_focus_bias\":" << profile.attack_focus_bias
+           << ",\"attack_reserve_factor\":" << profile.attack_reserve_factor
+           << ",\"attack_reserve_updates\":" << profile.attack_reserve_updates
            << ",\"boss_collect\":" << (profile.scoring_boss_collection ? "true" : "false")
            << ",\"precollect\":" << (profile.scoring_precollect ? "true" : "false")
+           << ",\"priced_collection\":" << (profile.scoring_priced_collection ? "true" : "false")
+           << ",\"upper_stage\":" << (profile.scoring_upper_stage ? "true" : "false")
+           << ",\"collection_focus_bias\":" << profile.collection_focus_bias
+           << ",\"economic_human_bias\":" << profile.economic_human_bias
            << ",\"difficulty\":" << config.difficulty << ",\"shot\":" << config.shot
            << ",\"seed\":" << config.seed << ",\"story\":" << (config.story ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (config.prior_final_a_clear ? "true" : "false")

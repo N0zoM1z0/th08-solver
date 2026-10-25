@@ -170,6 +170,8 @@ continue. The reserve or low remaining HP restores fire. This is a proposal
 proxy: bonus caps, future decay, PIV and clear-bonus effects are not an exact
 terminal value model. Carried shots and the source20-update shot cycle remain
 owned by Native; releasing the key does not instantly remove damage.
+`--capture-factor` and `--capture-padding` independently expose that reserve;
+defaults remain1.5 and240, and the1.2/120 complete trial retains its extra costs.
 
 `--attack-focus-bias` independently controls the pacing form prior (default5).
 The Native harness can try `--baseline-recovery 1` after a failed nominal future.
@@ -180,6 +182,21 @@ publication. Additional safety attempts/adoptions and all rollout work are
 reported. `--search-budget-ms` explicitly changes only this synchronous Native
 experiment's total budget (default110); the250ms scoring prototype supplies no
 claim about live deadlines or60FPS capability.
+
+Point goals use current source pickup geometry. `--priced-collection 1` sets
+player target Y to collection_line-pickup_reach_y-2, clamped to movement bounds.
+The intended item pickup is above the price line. Auto-attraction
+alone does not imply full value. `--upper-stage 1` keeps that economic staging
+target when no boss is registered, instead of returning to the bottom after each
+trip. Boss registration restores the ordinary goal; current lethal regions and
+Native verification still own safety. `--collection-bias` prefers unfocused
+movement while collecting; `--human-bias` separately sustains that form outside
+an active graze goal. This supports extreme-human point doubling and shooting
+gauge ramp continuity. Both defaults are zero; all four controls are opt-in and
+recorded, with no card, seed or human-input lookup. Height is a proposal goal,
+not a promise about prices during transit. Pacer/source-survival graze goals
+retain priority over the general human preference. Precollection, when enabled,
+uses the same price-aware target before restoring new fire.
 
 Per-spell score audits snapshot collected orbs, point count/value and score after
 the preceding capture payout is settled, then again at the source end hook.

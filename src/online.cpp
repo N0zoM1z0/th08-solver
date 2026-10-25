@@ -30,6 +30,8 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_attack_pacing = false;
     configuration.scoring_boss_collection = false;
     configuration.scoring_precollect = false;
+    configuration.scoring_priced_collection = configuration.scoring_upper_stage = false;
+    configuration.collection_focus_bias = configuration.economic_human_bias = 0;
     configuration.boss_follow = 0.25f;
     if (name == "baseline")
         return configuration;
@@ -332,7 +334,8 @@ struct Policy::Impl {
         const auto &w = opt.style;
         for (float cost : {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost,
                            w.move_cost, w.focused_move_cost, w.reversal_cost, w.edge_cost,
-                           w.graze_reward, opt.survival_focus_bias, opt.attack_focus_bias})
+                           w.graze_reward, opt.survival_focus_bias, opt.attack_focus_bias,
+                           opt.collection_focus_bias, opt.economic_human_bias})
             if (!std::isfinite(cost) || cost < 0 || cost > 10000)
                 throw std::runtime_error("invalid_online_style_cost");
         for (float coordinate : {w.anchor_x, w.anchor_y, w.anchor_x_min, w.anchor_x_max})
@@ -342,15 +345,21 @@ struct Policy::Impl {
             !std::isfinite(w.edge_margin) || w.edge_margin < 0 || w.edge_margin > 1024 ||
             (w.edge_cost > 0 && w.edge_margin == 0))
             throw std::runtime_error("invalid_online_style_bounds");
-        if ((opt.scoring_boss_collection || opt.scoring_precollect) && !opt.scoring_collection)
+        if ((opt.scoring_boss_collection || opt.scoring_precollect ||
+             opt.scoring_priced_collection || opt.scoring_upper_stage ||
+             opt.collection_focus_bias > 0) &&
+            !opt.scoring_collection)
             throw std::runtime_error("boss_collection_requires_item_goals");
+        if (!std::isfinite(opt.attack_reserve_factor) || opt.attack_reserve_factor < 1 ||
+            opt.attack_reserve_factor > 10 || opt.attack_reserve_updates > 10000)
+            throw std::runtime_error("invalid_online_capture_reserve");
         if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
             (value_model.loaded &&
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
               opt.warm_fallback || opt.held_fallback || risk.loaded || !opt.hard_phantoms ||
               !opt.motion_envelope || opt.scoring_collection || opt.scoring_aim ||
               opt.scoring_survival_focus || opt.scoring_survival_flow ||
-              opt.scoring_attack_pacing)))
+              opt.scoring_attack_pacing || opt.economic_human_bias > 0)))
             throw std::runtime_error("unsupported_branch_value_configuration");
         if (opt.motion_envelope && !opt.hard_phantoms)
             throw std::runtime_error("motion_envelope_requires_hard_phantoms");
@@ -371,7 +380,7 @@ struct Policy::Impl {
             throw std::runtime_error("unsupported_online_lag_fallback");
         if (opt.planner_lag > 0 &&
             (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus ||
-             opt.scoring_survival_flow || opt.scoring_attack_pacing))
+             opt.scoring_survival_flow || opt.scoring_attack_pacing || opt.economic_human_bias > 0))
             throw std::runtime_error("unsupported_scoring_lag_configuration");
         frames.resize(opt.horizon + opt.tail_check + 1);
     }
@@ -415,12 +424,15 @@ struct Policy::Impl {
         finite(o.x);
         finite(o.y);
         if (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus ||
-            opt.scoring_survival_flow || opt.scoring_attack_pacing) {
+            opt.scoring_survival_flow || opt.scoring_attack_pacing || opt.economic_human_bias > 0) {
             if (!o.scoring.available)
                 throw std::runtime_error("missing_online_score_memory");
             for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power,
-                            o.scoring.impending_x, o.scoring.orb_value, o.scoring.bonus_decay})
+                            o.scoring.impending_x, o.scoring.orb_value, o.scoring.bonus_decay,
+                            o.scoring.pickup_reach_y})
                 finite(v);
+            if (o.scoring.pickup_reach_y < 0)
+                throw std::runtime_error("invalid_online_pickup_box");
             if (opt.scoring_attack_pacing &&
                 (o.scoring.capture_hp < 0 || o.scoring.collected_orbs < 0 ||
                  o.scoring.orb_value < 0 || o.scoring.bonus_decay < 0))
@@ -646,7 +658,8 @@ struct Policy::Impl {
                 // actual HP, shot carry-over, safety and timeout outcomes.
                 const float dps = float(a.damage) /
                                   float(std::min<std::uint64_t>(a.samples, a.recent_damage.size()));
-                const float reserve = 1.5f * float(s.capture_hp) / dps + 240;
+                const float reserve = opt.attack_reserve_factor * float(s.capture_hp) / dps +
+                                      opt.attack_reserve_updates;
                 if ((a.phase != Phase::Probe && float(s.spell_remaining) <= reserve) ||
                     s.capture_hp < a.initial_hp / 5)
                     a.phase = Phase::Capture;
@@ -687,6 +700,11 @@ struct Policy::Impl {
             flow_active = true;
             proposal_focus_bias += opt.attack_focus_bias;
         }
+    }
+
+    float collection_goal_y(const Observation &o) const {
+        const float clearance = opt.scoring_priced_collection ? o.scoring.pickup_reach_y + 2 : 12;
+        return std::clamp(o.scoring.collection_line - clearance, o.movement.miny, o.movement.maxy);
     }
 
     void observe(const Observation &observation) {
@@ -732,9 +750,11 @@ struct Policy::Impl {
             // kill. Actual native drops, RNG scatter and pickup prices remain
             // action-dependent. Finish the climb before launching new shots.
             preparing_collection =
-                impending && collecting && observation.y > score.collection_line - 12;
+                impending && collecting && observation.y > collection_goal_y(observation);
         }
         proposal_focus_bias = opt.focus_bias;
+        if (collecting && observation.scoring.can_switch_forms)
+            proposal_focus_bias -= opt.collection_focus_bias;
         if (opt.scoring_survival_focus && observation.scoring.can_switch_forms &&
             observation.scoring.survival_spell && observation.scoring.has_boss &&
             observation.spell_active && !collecting) {
@@ -748,6 +768,8 @@ struct Policy::Impl {
                       observation.scoring.survival_spell && observation.scoring.has_boss &&
                       observation.spell_active;
         update_attack_pacing(observation);
+        if (!flow_active && observation.scoring.can_switch_forms)
+            proposal_focus_bias -= opt.economic_human_bias;
         if (flow_active) {
             update_flow_goal(observation);
             proposal_style.anchor_weight = 0.03f;
@@ -1933,11 +1955,13 @@ struct Policy::Impl {
         }
         pref_x = std::clamp(pref_x, opt.style.anchor_x_min, opt.style.anchor_x_max);
         float pref_y = opt.style.anchor_y;
+        if (opt.scoring_upper_stage && !observation.scoring.has_boss)
+            pref_y = collection_goal_y(observation);
         if (opt.scoring_aim && observation.scoring.has_boss)
             pref_x = std::clamp(observation.scoring.boss_x, sp.minx, sp.maxx);
         if (collecting) {
             pref_x = std::clamp(collection_x, sp.minx, sp.maxx);
-            pref_y = std::clamp(observation.scoring.collection_line - 12, sp.miny, sp.maxy);
+            pref_y = collection_goal_y(observation);
         }
         if (flow_active) {
             pref_x = std::clamp(flow_x, sp.minx, sp.maxx);
@@ -1980,7 +2004,7 @@ bool Policy::wants_fire() const {
 bool Policy::needs_scoring_memory() const {
     return impl_->opt.scoring_collection || impl_->opt.scoring_aim ||
            impl_->opt.scoring_survival_focus || impl_->opt.scoring_survival_flow ||
-           impl_->opt.scoring_attack_pacing;
+           impl_->opt.scoring_attack_pacing || impl_->opt.economic_human_bias > 0;
 }
 Decision Policy::decide(const Observation &observation, DecisionTiming *timing,
                         std::vector<ValueProposal> *proposals) {

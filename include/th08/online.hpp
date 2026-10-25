@@ -117,6 +117,9 @@ struct ScoreMemory {
     int collected_orbs = 0;
     float orb_value = 100, bonus_decay = 0;
     float boss_x = 192, collection_line = 128, power = 0;
+    // Player pickup half-height plus the source item box half-height. Point
+    // pricing uses the item's Y, even when the player has crossed the line.
+    float pickup_reach_y = 0;
     // Unconditional counts on currently damageable enemies, at current power;
     // periodic/random drops are omitted. X is a count-weighted current origin,
     // not a promise about RNG scatter, a future kill or a realized pickup.
@@ -179,9 +182,13 @@ struct Configuration {
     bool scoring_survival_flow = false;
     bool scoring_attack_pacing = false;
     float attack_focus_bias = 5;
+    float attack_reserve_factor = 1.5f;
+    unsigned attack_reserve_updates = 240;
     float survival_focus_bias = 0.01f;
     bool scoring_boss_collection = false;
     bool scoring_precollect = false;
+    bool scoring_priced_collection = false, scoring_upper_stage = false;
+    float collection_focus_bias = 0, economic_human_bias = 0;
     int horizon = 32, beam = 192;
     // Held-input updates beyond retained full-horizon endpoints; H + T <= 200.
     int tail_check = 0;

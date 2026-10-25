@@ -59,6 +59,8 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
         score.reduction_remaining = boss.damageReductionTimer.current;
     }
     score.collection_line = g_Player.primaryShtFile->pointItemValueLine;
+    score.pickup_reach_y =
+        g_Player.itemCollectionHalfSize.y + g_Player.primaryShtFile->itemCollectionBoxSize / 2;
     score.impending_points = 0;
     score.impending_x = 192;
     double weighted_drop_x = 0;

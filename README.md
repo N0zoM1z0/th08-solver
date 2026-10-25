@@ -81,11 +81,11 @@ optimize collection, gauge, attack timing and actual terminal score. Movement
 style follows the scoring strategy. New story/4A experiments and Stage 4B stay
 paused; the existing story milestone remains preserved.
 
-The current complete Native Extra best is **2,308,450,110, NMNB and 14/14 captures**,
-with fresh execution and natural replay agreement. This complete run starts at
-Extra entry and uses source-directed attack pacing with generic movement
-recovery. [Status](docs/STATUS.md) records the source insights, all search costs
-and separate live verification.
+The current complete Native Extra best is **2,564,311,730, NMNB and 14/14 captures**,
+meeting the2.5-billion Native milestone with fresh execution and natural replay
+agreement. Source-directed attack pacing, pickup pricing and stage positioning
+produce this complete Extra-entry run. [Status](docs/STATUS.md) records the
+mechanisms, all search costs and separate live verification.
 
 The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).
 Common-start synchronization, true-RNG branch verification and a forward-only
