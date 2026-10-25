@@ -27,6 +27,7 @@ Native/Wine agreement, their real seeds, attempted work, tapes and recordings:
 | H512 pulse experiment / wine-46 | 33944 | 9702 /80 inactive |
 | Buffered H512 guided control / wine-48 | 31675 | 20130 /92 |
 | Buffered H512 with periodic refresh / wine-50 | 21673 | 20568 /92 |
+| Frozen original H64 control / wine-52 | 7794 | 20292 /92 |
 
 The retained failures prove two generic omissions: a held tail can survive where
 a Policy tail dies, and a short move followed by a stationary tail can survive
@@ -40,7 +41,7 @@ remain charged to the original successful rollout. Failed futures supply none.
 Longer verification alone did not clear4B. Some complete H512 guided alternatives
 survive but take390–510ms, exceeding the original110ms total. The buffered control
 therefore explicitly uses512 verified updates,128 published inputs, lead32 and
-480ms total (proposal cap60ms). It still fails. The next generic experiment adds
+480ms total (proposal cap60ms). It still fails. A further generic experiment adds
 a fresh solve once per128 actual receipts, preventing indefinite nominal-route
 reuse while preserving certified windows. The actual seed21673 case still
 dies in spell92 at20568, with148 forced refreshes,144 fresh adoptions and50
@@ -51,6 +52,18 @@ This is not a4B clear or a computation-speed claim. No stage/spell/seed-specific
 added. Rejected proposal-uncertainty settings produced the same outcomes; the
 H48 diagnostic hit the H24 proposal-interface restriction and is unsupported for
 that adapter, not an H48 survival result.
+
+The unchanged frozen H64 controller is also tested with LP4/vblank0, without
+seed selection or new tuning: actual seed 7794 dies at 20292 in spell 92, with exact
+41-word agreement and 59.914 calculations/s. This separates the persistent
+planning failure from the measured rendering slowdown. On the retained seed 21673
+trace, full 1024-update Native diagnostics test 264 existing held/pulse candidates,
+648 two-leg direction/focus pairs and 72 move-then-guided candidates; none certifies.
+Queued-hazard guidance also fails all 16 candidates for each H24/H48/H96 profile.
+These are retrospective failure probes, with every branch charged, rather than
+new live profiles or evidence of deadline acceptance. Wider-path export is a local
+diagnostic only; the production H24 interface remains unchanged. Input-latch and
+dialogue-state checks find no phase error or dialogue override in the failed region.
 
 Rendering has a measured general improvement. The same normal-mode retail Stage2
 replay produces15216 identical callback packets, inputs and all41 state words,
@@ -66,13 +79,18 @@ with no planner/capture and zero death/bomb rows:
 The4-thread case's slowest complete5-second window is59.811 presentations/s;
 period p99 is18.729ms. Original game pacing and image resolution remain unchanged.
 This consumes more renderer threads, without increasing concurrent solver jobs.
-It is a matched selected-stage result, not every-frame or full-story60Hz proof.
+An additional normal-mode Final B replay completes NMNB with stage-complete set
+and matching story score 218996507: 29501 callbacks/29500 Present samples, 59.956
+presentations/s, slowest complete 5-second window 58.006/s and period p99 19.819ms.
+This held-out stage uses the same LP4/vblank0 profile, original pacing and 640x480,
+private game audio and no planner/capture. These are selected-stage measurements;
+strict every-frame and complete-story60Hz acceptance remain separate.
 A separate CPU fast-path trial gives mixed cross-scene results and remains a
 local experiment:4A improves6.19%,4B regresses1.97%,FinalB improves1.12%,Extra is
 unchanged over three interleaved pairs, with identical proposal hashes. It is not
-published as a general speedup. Normal Native/DAT54/54 and core36/36 pass at the
-current buffered/refresh implementation. The updated core and full Native/DAT
-suites pass36/36 and54/54 respectively. Generated experimental artifacts remain ignored under reports/local/.
+published as a general speedup. The current buffered/refresh implementation passes
+Native/DAT54/54 and core36/36. Generated experimental artifacts remain ignored under
+reports/local/.
 
 ## October 24 runtime and recording evidence
 

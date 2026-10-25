@@ -3,6 +3,7 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine and recorded with game audio.
+> Extra also clears NMNB online.
 > [Matching replay](reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy) · [Milestone tag](https://github.com/N0zoM1z0/th08-solver/tree/lunatic-nmnb-4a-finalb-20261024)
 > [Videos and replays on Google Drive](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 

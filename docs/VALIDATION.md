@@ -46,9 +46,11 @@ telemetry. The 34489-byte replay naturally completes NMNB through raw stages
 terminal. Its per-stage input clocks are 14049/15458/14962/24775/21583/29811;
 these are separate from receipt/calculation counts and video wall time. This is
 the original writer's export of verified actual inputs, without another search.
-Selected Stage2 now also completes actual normal-mode retail replay timing in
-two runs, with all15216 callback packets identical and no death/bomb rows; this
-is a selected-stage playback check. Full retail playback remains unchecked.
+Selected Stage2 also completes actual normal-mode retail replay timing with
+all 15216 callback packets identical across the four renderer configurations and
+no death/bomb rows. A held-out normal-mode Final B playback completes with 29501
+callbacks, stage-complete set, no death/bomb rows and matching score 218996507.
+These are selected-stage playback checks. Full retail playback remains unchecked.
 
 Story replay SHA-256: `202622b4e52e3cedc959f5f41d3e745b8f9d51faad33cf09571834f884758c2a`.
 Matched original MP4 SHA-256: `ac7fe1f8abdeb0ecee88d5b7e7b2e26cfa76ae0ee20b56076263dbd9b77fbe03`.
@@ -205,6 +207,13 @@ whereas LP4 reaches59.997/s with mean Present0.043ms. Both match all15216 LP2
 packets exactly. LP4 has a59.811/s slowest complete5-second window and18.729ms
 period p99. It uses additional rendering workers while solver concurrency stays
 fixed. [Mesa documents LP_NUM_THREADS as the renderer thread count](https://docs.mesa3d.org/envvars.html#lp-num-threads).
+A held-out normal-mode Final B check uses the unchanged LP4/vblank0 profile,
+original pacing and 640x480, private game audio and no planner/capture. Its 29500
+Present samples average 59.95552/s; the slowest complete 5-second window is 58.00598/s
+and period p99 is 19.81930ms. There are no repeated receipts, absent draws or failed
+Present calls. The 29501 callback packets end at stage-complete, score 218996507 and
+zero death/bomb violations. This is held-out rendering and replay evidence, rather
+than an additional solver clear or every-frame60Hz guarantee.
 The buffered solver profile separately declares512 verification,128 publication,
 lead32,480ms total and128-receipt fresh-planning intervals. Keep this latency and
 compute budget distinct from the original110ms/lead8 controls.
