@@ -26,6 +26,8 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     w = {};
     configuration.scoring_collection = configuration.scoring_aim = false;
     configuration.scoring_survival_focus = false;
+    configuration.scoring_boss_collection = false;
+    configuration.scoring_precollect = false;
     configuration.boss_follow = 0.25f;
     if (name == "baseline")
         return configuration;
@@ -48,10 +50,18 @@ Configuration with_style(const std::string &name, Configuration configuration) {
         w.anchor_weight = 0.05f;
         w.anchor_y = 360;
         configuration.boss_follow = 1;
-    } else if (name == "score" || name == "score-survival") {
+    } else if (name == "score" || name == "score-survival" || name == "score-harvest" ||
+               name == "score-precollect") {
         configuration.scoring_collection = configuration.scoring_aim = true;
-        configuration.scoring_survival_focus = name == "score-survival";
+        configuration.scoring_survival_focus = name != "score";
+        configuration.scoring_boss_collection =
+            name == "score-harvest" || name == "score-precollect";
+        configuration.scoring_precollect = name == "score-precollect";
         w.anchor_weight = 0.05f;
+        if (configuration.scoring_boss_collection) {
+            w.edge_cost = 2;
+            w.edge_margin = 40;
+        }
         configuration.boss_follow = 1;
     } else if (name == "graze") {
         w.anchor_weight = 0.005f;
@@ -298,13 +308,14 @@ struct Policy::Impl {
     bool collecting = false;
     float proposal_focus_bias = 0;
     float collection_x = 192;
+    bool preparing_collection = false;
     static constexpr unsigned collection_batch = 4, collection_start_bullet_limit = 64;
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
         : opt(configuration), risk(std::move(tables)), value_model(std::move(value)) {
         const auto &w = opt.style;
-        for (float cost :
-             {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost, w.move_cost,
-              w.focused_move_cost, w.reversal_cost, w.edge_cost, w.graze_reward})
+        for (float cost : {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost,
+                           w.move_cost, w.focused_move_cost, w.reversal_cost, w.edge_cost,
+                           w.graze_reward, opt.survival_focus_bias})
             if (!std::isfinite(cost) || cost < 0 || cost > 10000)
                 throw std::runtime_error("invalid_online_style_cost");
         for (float coordinate : {w.anchor_x, w.anchor_y, w.anchor_x_min, w.anchor_x_max})
@@ -314,6 +325,8 @@ struct Policy::Impl {
             !std::isfinite(w.edge_margin) || w.edge_margin < 0 || w.edge_margin > 1024 ||
             (w.edge_cost > 0 && w.edge_margin == 0))
             throw std::runtime_error("invalid_online_style_bounds");
+        if ((opt.scoring_boss_collection || opt.scoring_precollect) && !opt.scoring_collection)
+            throw std::runtime_error("boss_collection_requires_item_goals");
         if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
             (value_model.loaded &&
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
@@ -385,7 +398,8 @@ struct Policy::Impl {
         if (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus) {
             if (!o.scoring.available)
                 throw std::runtime_error("missing_online_score_memory");
-            for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power})
+            for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power,
+                            o.scoring.impending_x})
                 finite(v);
             for (const auto &item : o.scoring.pickups) {
                 finite(item.x);
@@ -524,19 +538,31 @@ struct Policy::Impl {
         now = long(observation.update);
         if (opt.scoring_collection) {
             const auto &score = observation.scoring;
-            if (score.has_boss || !score.auto_collect_eligible || score.pickups.empty())
+            const bool impending = opt.scoring_precollect && !score.has_boss &&
+                                   score.impending_points >= collection_batch;
+            const bool boss_blocks =
+                score.has_boss && (!opt.scoring_boss_collection || observation.spell_active ||
+                                   observation.bullets.size() >= 128);
+            if (boss_blocks || !score.auto_collect_eligible ||
+                (score.pickups.empty() && !impending))
                 collecting = false;
-            else if (!collecting && score.pickups.size() >= collection_batch &&
+            else if (!collecting && (score.pickups.size() >= collection_batch || impending) &&
                      observation.bullets.size() < collection_start_bullet_limit) {
-                // Commit to a trip until the items are collected or a boss
-                // appears. Recomputing a four-item threshold each frame would
-                // turn away while the final items are still flying toward us.
+                // Keep the trip until its drops/items disappear or the boss
+                // gate closes. Recomputing a four-item threshold each frame
+                // would turn away while the final items still approach.
                 collecting = true;
                 float sum = 0;
                 for (const auto &item : score.pickups)
                     sum += item.x;
-                collection_x = sum / float(score.pickups.size());
+                collection_x =
+                    score.pickups.empty() ? score.impending_x : sum / float(score.pickups.size());
             }
+            // Current unconditional drop counts justify positioning before the
+            // kill. Actual native drops, RNG scatter and pickup prices remain
+            // action-dependent. Finish the climb before launching new shots.
+            preparing_collection =
+                impending && collecting && observation.y > score.collection_line - 12;
         }
         proposal_focus_bias = opt.focus_bias;
         if (opt.scoring_survival_focus && observation.scoring.can_switch_forms &&
@@ -544,8 +570,7 @@ struct Policy::Impl {
             observation.spell_active && !collecting) {
             // Source-marked survival attacks have different opportunity costs
             // from HP races. Keep this prior on the existing change-cost scale.
-            constexpr float form_bias = 0.01f;
-            proposal_focus_bias += form_bias;
+            proposal_focus_bias += opt.survival_focus_bias;
         }
         const auto &bs = observation.bullets;
         std::array<bool, kSlots> seen{};
@@ -1384,7 +1409,8 @@ struct Policy::Impl {
                 proposal.features = value_features(last[index], sp);
                 int cursor = index;
                 for (int j = deepest; j > 1; --j) {
-                    proposal.inputs.push_back(std::uint16_t(layers[j][cursor].act | 1));
+                    proposal.inputs.push_back(
+                        std::uint16_t(layers[j][cursor].act | (preparing_collection ? 0 : 1)));
                     cursor = layers[j][cursor].parent;
                 }
                 std::reverse(proposal.inputs.begin(), proposal.inputs.end());
@@ -1751,7 +1777,8 @@ struct Policy::Impl {
             previous_plan_update = observation.update;
         }
         mark(&DecisionTiming::fallback_ns);
-        return {std::uint16_t(result.moves.front() | 1), result.depth, search_stats};
+        return {std::uint16_t(result.moves.front() | (preparing_collection ? 0 : 1)), result.depth,
+                search_stats};
     }
 };
 Policy::Policy(Configuration configuration, RiskTables risk, BranchValueModel value)

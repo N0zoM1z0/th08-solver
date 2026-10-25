@@ -130,7 +130,14 @@ two controls. The result records both resolved booleans and the score-goal
 revision, so later ablation runs need no source edits. No new ablation matrix is
 required for the current score-improvement campaign.
 `score-survival` enables the separate `--survival-focus 0|1` control, recording
-form-goal revision2. `--verify-horizon 64|128`, `--publish-horizon 64|128` and
+form-goal revision2. `--survival-bias VALUE` records the nonnegative prior strength
+(default0.01). `score-harvest` adds quiet nonspell boss collection and an existing
+edge prior; `score-precollect` additionally prepares current unconditional enemy
+drops before firing. `--boss-collect 0|1` and `--precollect 0|1` independently
+override these collection controls; both require item collection enabled. Policy
+contracts cover closing the boss gate, pre-kill fire release in both decisions
+and branch proposals, restoring fire at the collection line, and clearing a
+finished collection target. `--verify-horizon 64|128|256`, `--publish-horizon 64|128` and
 `--held-recovery 0|1` make the search/publication/recovery choices explicit; all
 resolved values, failed branches and retained-window counts are reported. The
 read-only score audit counts physical graze awards separately from displayed

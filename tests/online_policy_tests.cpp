@@ -225,6 +225,15 @@ void score_goal_contract() {
     config.planner_lag = 1;
     rejects([&] { on::Policy bad(config); },
             "score goal silently used a fixed-height delayed plan");
+    config = on::with_style("score-harvest");
+    o.update = 0;
+    o.scoring.pickups.assign(4, {192, 250, on::PickupKind::Point});
+    on::Policy harvest(config);
+    check(harvest.decide(o).action & 16, "quiet boss interval blocked item collection");
+    ++o.update;
+    o.spell_active = true;
+    check(harvest.decide(o).action & 128,
+          "active spell did not end collection and restore the boss aim");
 }
 void score_form_contract() {
     auto config = on::with_style("score-survival");
@@ -241,6 +250,35 @@ void score_form_contract() {
           "survival preference changed an ordinary attack");
     config.planner_lag = 1;
     rejects([&] { on::Policy bad(config); }, "form economy accepted the delayed executor");
+}
+void score_precollect_contract() {
+    auto config = on::with_style("score-precollect");
+    config.horizon = 24;
+    on::Policy policy(config);
+    auto o = scene();
+    o.scoring.available = o.scoring.auto_collect_eligible = true;
+    o.scoring.collection_line = 160;
+    o.scoring.impending_points = 4;
+    std::vector<on::ValueProposal> proposals;
+    const auto climb = policy.decide(o, nullptr, &proposals);
+    check((climb.action & 16) && !(climb.action & 1),
+          "known current drops did not prepare collection before firing");
+    check(!proposals.empty(), "precollection omitted branch proposals");
+    for (const auto &proposal : proposals)
+        for (auto input : proposal.inputs)
+            check(!(input & 1), "branch proposal restored fire before the collection line");
+    ++o.update;
+    o.y = 140;
+    check(policy.decide(o).action & 1, "arrival at the collection line did not restore fire");
+    ++o.update;
+    o.scoring.impending_points = 0;
+    o.scoring.pickups.assign(4, {192, 120, on::PickupKind::Point});
+    check(policy.decide(o).action & 1, "real drops were treated as an unfinished enemy kill");
+    ++o.update;
+    o.scoring.pickups.clear();
+    const auto leave = policy.decide(o);
+    check((leave.action & 32) && (leave.action & 1),
+          "empty drop/item state retained a stale collection goal");
 }
 void committed_prefix_contract() {
     auto o = scene();
@@ -1884,6 +1922,7 @@ int main(int argc, char **argv) {
         legacy_style_signature();
         score_goal_contract();
         score_form_contract();
+        score_precollect_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

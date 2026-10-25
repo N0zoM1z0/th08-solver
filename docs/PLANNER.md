@@ -118,7 +118,31 @@ not a proof that HP can never finish the attack early. The blanket all-spell
 form prototype is retired after two complete-duration failures. These preferences
 use no spell-ID decisions or input scripts and remain opt-in.
 
-The Native experiment tool exposes verification64/128 and publication64/128
+`score-harvest` allows a collection trip during a quiet nonspell boss interval:
+the existing four-item/<64-bullet entry gate remains; an active spell or128
+observed bullets ends a boss trip. Its existing edge-cost term is2 with40-pixel
+margin. This combination raises one complete Extra sample to1,871,533,920 NMNB,
+14/14; it does not establish which component caused the gain or general seed
+reliability. The baseline and original `score` behavior remain unchanged.
+
+`score-precollect` also reads unconditional point-drop counts on currently active,
+damageable enemies when no boss is present. Current power decides whether a
+power-or-point drop counts; periodic/random drops are omitted. The count-weighted
+current X is a proposal target, not a predicted RNG scatter. A qualifying batch
+can start the collection climb before its kill. New shot commands are withheld
+until reaching12 pixels above the SHT collection line; existing shots remain
+live and Native branches decide their actual effects. Real drops continue the
+trip until collection; empty actor/item state clears it. Its first complete-
+duration trial fails at13/14 and remains experimental.
+
+Boss collection, precollection and source-survival focus strength are independent
+recorded controls. The survival prior defaults to0.01; changing its nonnegative
+strength does not affect ordinary attacks. No failed/incomplete branch certifies
+an input prefix. Ordinary-spell milking prototypes are retired after their
+negative full-scene trials; source economics still motivates future work, not
+a claim that keeping an attack alive automatically raises terminal score.
+
+The Native experiment tool exposes verification64/128/256 and publication64/128
 independently, with publication bounded by the complete certificate. Optional
 held recovery mirrors the live client's family/order: after a failed nominal,
 held directions precede policy prefixes; if none certifies, guided tails use the

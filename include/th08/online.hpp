@@ -111,6 +111,11 @@ struct ScoreMemory {
     bool available = false, has_boss = false, auto_collect_eligible = false;
     bool can_switch_forms = false, survival_spell = false;
     float boss_x = 192, collection_line = 128, power = 0;
+    // Unconditional counts on currently damageable enemies, at current power;
+    // periodic/random drops are omitted. X is a count-weighted current origin,
+    // not a promise about RNG scatter, a future kill or a realized pickup.
+    std::uint64_t impending_points = 0;
+    float impending_x = 192;
     std::vector<ScorePickup> pickups;
 };
 
@@ -165,6 +170,9 @@ struct Configuration {
     StyleWeights style;
     bool scoring_collection = false, scoring_aim = false;
     bool scoring_survival_focus = false;
+    float survival_focus_bias = 0.01f;
+    bool scoring_boss_collection = false;
+    bool scoring_precollect = false;
     int horizon = 32, beam = 192;
     // Held-input updates beyond retained full-horizon endpoints; H + T <= 200.
     int tail_check = 0;
@@ -198,7 +206,8 @@ struct Configuration {
     int emergency_horizon = 32, emergency_beam = 48;
     bool lazy_index = false; // Delay unused frame indices; forecasts remain unchanged.
 };
-// General proposal controls: baseline, zen, expert, sniper, graze, score and score-survival.
+// General proposal controls: baseline, zen, expert, sniper, graze, score,
+// score-survival, score-harvest and score-precollect.
 // Score adds current-item collection and literal boss aiming. No preference
 // changes the horizon, beam, verification budgets or physics.
 Configuration with_style(const std::string &name, Configuration configuration = {});

@@ -13,6 +13,7 @@
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_proposal.hpp"
 #include <chrono>
+#include <cmath>
 #include <deque>
 #include <filesystem>
 #include <fstream>
@@ -156,8 +157,9 @@ int run(int argc, char **argv) {
         throw std::runtime_error("usage: th08_shadow_style DAT OUTPUT_DIR STAGE DIFFICULTY SHOT "
                                  "SEED STYLE MAX_UPDATES STORY WALL_SECONDS "
                                  "[--collect-items 0|1] [--aim-boss 0|1] "
-                                 "[--survival-focus 0|1] [--verify-horizon 64|128] "
-                                 "[--publish-horizon 64|128] [--held-recovery 0|1]");
+                                 "[--survival-focus 0|1] [--verify-horizon 64|128|256] "
+                                 "[--publish-horizon 64|128] [--held-recovery 0|1] "
+                                 "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -179,6 +181,8 @@ int run(int argc, char **argv) {
     bool collection_override = false, aim_override = false, horizon_override = false;
     bool form_override = false;
     bool publication_override = false, held_override = false;
+    bool boss_collection_override = false, precollect_override = false;
+    bool survival_bias_override = false;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
         if (key == "--collect-items" && !collection_override) {
@@ -191,8 +195,8 @@ int run(int argc, char **argv) {
             profile.scoring_survival_focus = number(argv[i + 1], 1);
             form_override = true;
         } else if (key == "--verify-horizon" && !horizon_override) {
-            horizon = number(argv[i + 1], 128);
-            if (horizon != 64 && horizon != 128)
+            horizon = number(argv[i + 1], 256);
+            if (horizon != 64 && horizon != 128 && horizon != 256)
                 throw std::runtime_error("unsupported_native_style_verification_horizon");
             horizon_override = true;
         } else if (key == "--publish-horizon" && !publication_override) {
@@ -203,6 +207,20 @@ int run(int argc, char **argv) {
         } else if (key == "--held-recovery" && !held_override) {
             held_recovery = number(argv[i + 1], 1);
             held_override = true;
+        } else if (key == "--boss-collect" && !boss_collection_override) {
+            profile.scoring_boss_collection = number(argv[i + 1], 1);
+            boss_collection_override = true;
+        } else if (key == "--precollect" && !precollect_override) {
+            profile.scoring_precollect = number(argv[i + 1], 1);
+            precollect_override = true;
+        } else if (key == "--survival-bias" && !survival_bias_override) {
+            std::size_t used = 0;
+            profile.survival_focus_bias = std::stof(argv[i + 1], &used);
+            if (used != std::string(argv[i + 1]).size() ||
+                !std::isfinite(profile.survival_focus_bias) || profile.survival_focus_bias < 0 ||
+                profile.survival_focus_bias > 10000)
+                throw std::runtime_error("invalid_native_survival_bias");
+            survival_bias_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
@@ -348,6 +366,9 @@ int run(int argc, char **argv) {
            << ",\"aim_boss\":" << (profile.scoring_aim ? "true" : "false")
            << ",\"survival_focus\":" << (profile.scoring_survival_focus ? "true" : "false")
            << ",\"form_goal_revision\":" << (profile.scoring_survival_focus ? 2 : 0)
+           << ",\"survival_focus_bias\":" << profile.survival_focus_bias
+           << ",\"boss_collect\":" << (profile.scoring_boss_collection ? "true" : "false")
+           << ",\"precollect\":" << (profile.scoring_precollect ? "true" : "false")
            << ",\"difficulty\":" << config.difficulty << ",\"shot\":" << config.shot
            << ",\"seed\":" << config.seed << ",\"story\":" << (config.story ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (config.prior_final_a_clear ? "true" : "false")

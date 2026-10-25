@@ -37,6 +37,24 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
     score.survival_spell = g_Spellcard.IsActive() && g_Spellcard.activeEnemy &&
                            (g_Spellcard.activeEnemy->flags1 & ENEMY_FLAG_TIMEOUT_SPELL);
     score.collection_line = g_Player.primaryShtFile->pointItemValueLine;
+    score.impending_points = 0;
+    score.impending_x = 192;
+    double weighted_drop_x = 0;
+    const bool full_power = g_GameManager.GetPower() >= 128;
+    if (!score.has_boss)
+        for (const auto &enemy : g_EnemyManager.enemies) {
+            constexpr unsigned required =
+                ENEMY_FLAG_ACTIVE | ENEMY_FLAG_ACCEPTS_DAMAGE | ENEMY_FLAG_DAMAGEABLE;
+            if ((enemy.flags1 & required) != required || enemy.life <= 0)
+                continue;
+            const auto count =
+                std::uint64_t(std::max(0, enemy.pointItemDropCount)) +
+                (full_power ? std::uint64_t(std::max(0, enemy.powerOrPointItemDropCount)) : 0);
+            score.impending_points += count;
+            weighted_drop_x += double(enemy.worldPosition.x) * double(count);
+        }
+    if (score.impending_points)
+        score.impending_x = float(weighted_drop_x / double(score.impending_points));
     // Exact eligibility from ItemManager::OnUpdate; it is not a collection
     // promise, since the native world still owns movement and item lifecycle.
     score.auto_collect_eligible = score.power >= 128 ||

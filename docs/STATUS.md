@@ -5,15 +5,41 @@ The owner's current target is **Extra >= 2,500,000,000 displayed points, NMNB an
 experiments focus on proper non-practice Extra, Marisa/Alice. New story/4A work
 is paused alongside4B; ordinary regression coverage remains unchanged.
 
-Extra's best complete Native sample is now **1,595,477,390**, seed19732, with
-14/14 captures, exact fresh41-word execution and matching natural replay. This
-opt-in `score-survival` trial uses128-update verification/publication, lead8 and
-the unchanged110ms/60ms budgets, with held-action recovery. It collects745 point
-items /39564 time orbs and records5391 graze award events,1251 at extreme youkai
-gauge. Its44941 owner updates cost191.983s,726044 branch+245 proposal updates,
-184 rejected future deaths,18 timeouts and19 overruns. The paired seed14956 fails
-before survival attacks, at6/14 captures. This finite result does not promote a
-uniform replacement or update the online ladder.
+Extra's best complete Native sample is now **1,871,533,920**, seed19732, NMNB and
+14/14 captures, with exact fresh41-word execution and matching natural replay.
+The opt-in `score-harvest` combines quiet nonspell boss collection with the existing
+edge cost, keeping128-update verification/publication, lead8,110ms/60ms budgets
+and held recovery. It collects877 point items /42456 time orbs, versus745/39564
+in the preceding1,595,477,390 `score-survival` completion: a276,056,530 increase.
+These are different action-dependent futures, not an ablation assigning the gain
+to either control. Its44221 owner updates cost158.054s,715975 branch+333 proposal
+updates,236 rejected future deaths,24 timeouts and25 overruns. Physical graze
+awards are5242,1261 at extreme youkai gauge. Its fresh original-RNG Wine trial,
+seed12421, reaches the last spell but is hit at41863:1,222,798,110 partial points,
+903 point items /40017 orbs, no bomb input and zero ordinary death counter.
+Meaningful Native/Wine agreement and a fresh41-word follow are retained, with
+1209 numeric-drift updates and zero position error. It averages59.733 actual
+calculations/s;283 rejected future deaths,28 timeouts,34 planning overruns and
+31 unqueued receipts remain charged. The final-spell hit prevents a complete
+capture claim; the online ladder remains unchanged.
+
+The first boss-collection candidate without the edge prior fails at30596,10/14,
+with993,755,070 partial points. Its855 point items already exceed the preceding
+complete trial's745, but failure prevents treating it as a new score. The first
+precollection candidate uses current unconditional enemy drop counts to climb
+before shooting; it fails in the final card at40641,13/14,1,141,360,030 partial
+points,931 points /33909 orbs. Exact fresh execution agrees. A separate prior5
+trial fails at10/14 before source-survival attacks become active. Its differing
+wall-budget search outcomes cannot be attributed to the inactive form prior.
+
+The ordinary-spell pacing prototypes are retired from current code. Off-axis
+shooting, explicit fire release, a mature-DPS reserve and a graze-income gate all
+have retained complete-duration failures; none raises the complete score. The
+first three128-horizon candidates fail at8683/10689/13417 with2/14 captures;
+256 verification fails before the first capture. Combining the income gate with
+harvest fails at10/14,997,572,820 partial points. Physical graze income must
+outweigh bonus decay and extra hazard exposure; prolonged attacks alone do not
+prove profit. Their frozen binaries, patches and costs remain local.
 
 The earlier128-verification/64-publication score goal completes Native Extra
 seed14956 at1,586,593,180,14/14. Fresh execution and natural replay agree. Its
@@ -28,7 +54,7 @@ The complete online Extra PB stays1,166,969,620.
 The human Extra WR replay (ASL) reproduces **3,021,639,920** exactly in Native:
 14/14 captures, no misses and one bomb,1081 points /105531 orbs. It has25998
 physical graze award events,22906 at extreme youkai gauge, versus our latest
-5391/1251. Its displayed graze counter is30808. Counting raw graze alone hides
+5242/1261. Its displayed graze counter is30808. Counting raw graze alone hides
 the source's3/2/1 increments per event. Several ordinary attacks are captured
 near their limits with large orb income and bonus; source-based attack pacing
 and orb production are the next scoring priority. The reference remains a
@@ -37,8 +63,11 @@ score-attack comparison, not a matching NMNB bound.
 Local frozen evidence is in `reports/local/score-styles-20261025/`: `score-goals-r2/`
 retains the rejected owner-goal-refresh idea (Stage1 gain,4A failure),
 `score-h128-v1/`, `extra-form-v1/` retains two failed blanket-form trials, and
-`extra-survival-v2/` retains the current two-case trial. There is no new ablation
-matrix. Current Release Native/DAT CTest passes56/56 (942.95s), core36/36.
+`extra-survival-v2/` retains the preceding two-case trial. `extra-harvest-v1/v2`,
+`extra-precollect-v1` and `extra-farm-*`/`extra-economy-v4` retain new positive and
+negative evidence. No new ablation matrix is run. Current Release Native/DAT
+CTest passes56/56 (952.95s), core36/36 (8.83s), including documentation and the
+unchanged legacy action signature.
 
 The active October25 scope is [issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11):
 complete Extra delivery at original capture quality, general alternative policies,
