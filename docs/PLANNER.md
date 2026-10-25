@@ -706,6 +706,14 @@ separately from all verification attempts. Reports also expose recording/search
 counts, capture/search time and timeouts; Native timing excludes file I/O. The
 ordinary profiles keep their existing algorithms and budgets.
 
+`h64-recorded` keeps the original H64 nominal Policy path and its64-input
+publication window. Revision3 requires a complete128-update Native verification
+for a recorded repair. Subsequent literal extensions preserve that longer route
+and verify128 again; publishing64 does not discard the unpublished evidence.
+Lead8, interval8 and the shared110ms total remain explicit. Unused budget may
+still reach ordinary fresh Policy proposals. The earlier fixed64-verification
+portfolio remains a retained failed control, not a128-update safety claim.
+
 Before requesting fresh candidates, `h64` and its named variants can reuse the unconsumed inputs of the
 previous verified plan. A fresh child re-executes that whole prefix and extends
 its tail to a new complete horizon. This saves repeated proposal searches; it

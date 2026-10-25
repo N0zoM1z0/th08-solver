@@ -5,6 +5,9 @@
 namespace th08::shadow {
 struct RecordedOptions {
     unsigned horizon = 128, beam = 192, refinements = 4;
+    // Zero verifies the full recording horizon. A shorter value requests a
+    // separate complete Native rollout of that length; recording proves none.
+    unsigned verification_horizon = 0;
     int diversity_cell = 16;
     bool region_goals = true, advance_dialogue = false;
 };

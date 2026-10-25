@@ -102,9 +102,12 @@ struct RecordedPlanner::Impl {
     explicit Impl(RecordedOptions cfg) : options(cfg) {
         if (cfg.horizon < 2 || cfg.horizon > kMaxFrames || cfg.beam < 1 || cfg.beam > 8192 ||
             cfg.refinements < 1 || cfg.refinements > kMaxTapes || cfg.diversity_cell < 0 ||
-            cfg.diversity_cell > 512)
+            cfg.diversity_cell > 512 || cfg.verification_horizon > cfg.horizon ||
+            cfg.verification_horizon == 1)
             throw std::runtime_error("invalid_recorded_planner_options");
         opt.diversity_cell = cfg.diversity_cell;
+        if (!options.verification_horizon)
+            options.verification_horizon = options.horizon;
         void *mem = mmap(nullptr, sizeof(Storage), PROT_READ | PROT_WRITE,
                          MAP_SHARED | MAP_ANONYMOUS, -1, 0);
         if (mem == MAP_FAILED)
@@ -597,7 +600,7 @@ struct RecordedPlanner::Impl {
                          const std::vector<std::uint16_t> &lead, std::vector<std::uint16_t> nominal,
                          Boundary boundary, unsigned budget_ms) {
         if (!budget_ms || budget_ms > 10000 || lead.empty() || lead.size() >= options.horizon ||
-            nominal.size() != options.horizon ||
+            lead.size() >= options.verification_horizon || nominal.size() != options.horizon ||
             !std::equal(lead.begin(), lead.end(), nominal.begin()))
             throw std::runtime_error("invalid_recorded_planner_request");
         for (auto input : nominal)
@@ -640,9 +643,11 @@ struct RecordedPlanner::Impl {
                     const auto budget = remaining();
                     if (!budget)
                         break;
+                    const std::vector<std::uint16_t> verified_inputs(
+                        path.begin(), path.begin() + options.verification_horizon);
                     auto prediction =
-                        predict_recorded_tape(world, origin, path, lead.size(), boundary, budget,
-                                              options.advance_dialogue);
+                        predict_recorded_tape(world, origin, verified_inputs, lead.size(), boundary,
+                                              budget, options.advance_dialogue);
                     if (prediction.status == BranchStatus::Fault)
                         output.native_fault = true;
                     if (prediction.completed > longest) {

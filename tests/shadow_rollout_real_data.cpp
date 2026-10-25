@@ -21,15 +21,20 @@ std::string contents(const char *path) {
 }
 void recorded_contract(th08::headless::Session &session, const s::Packet &origin,
                        const std::vector<std::uint16_t> &lead,
-                       const std::vector<std::uint16_t> &nominal, s::Boundary boundary) {
+                       const std::vector<std::uint16_t> &nominal, s::Boundary boundary,
+                       unsigned verification_horizon = 0) {
     const auto score = contents("score.dat"), config = contents("th08.cfg");
     s::RecordedOptions options;
     options.horizon = unsigned(nominal.size());
+    options.verification_horizon = verification_horizon;
     s::RecordedPlanner planner(options);
     const auto result = planner.solve(session, origin, lead, nominal, boundary, 10000);
     check(!result.native_fault && result.selected.certifies() && result.work.forecasts > 0 &&
               result.work.searches > 0 && !result.checks.empty(),
           "recorded geometry did not produce an independently verified complete future");
+    check(result.selected.requested ==
+              (verification_horizon ? verification_horizon : nominal.size()),
+          "recorded proposal overstated its independently verified horizon");
     check(result.work.charged == result.work.attempts &&
               result.work.completed == result.work.attempts,
           "recorded forecast work was hidden or a partial update was certified");
@@ -206,6 +211,7 @@ int retained_4b(const char *dat_path, const char *trace_path, bool pulse_case = 
     recorded_nominal.resize(128, std::uint16_t(recorded_nominal.back() & 0xf5));
     const std::vector<std::uint16_t> recorded_lead(prefix.begin(), prefix.begin() + 8);
     recorded_contract(session, current, recorded_lead, recorded_nominal, {false, -1});
+    recorded_contract(session, current, recorded_lead, recorded_nominal, {false, -1}, 64);
     std::filesystem::current_path(previous);
     std::filesystem::remove_all(scratch);
     return 0;

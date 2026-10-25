@@ -29,6 +29,8 @@ Native/Wine agreement, their real seeds, attempted work, tapes and recordings:
 | Buffered H512 with periodic refresh / wine-50 | 21673 | 20568 /92 |
 | Frozen original H64 control / wine-52 | 7794 | 20292 /92 |
 | Recorded Native geometry H128 / wine-53 | 30774 | 10386 /84 |
+| Recorded H128 with failed-nominal retry guard / wine-54 | 36784 | 12333 /84 inactive |
+| H64 Policy plus recorded repair, fixed64 verification / wine-55 | 26642 | 21118 /92 |
 
 The new recorded-geometry path completes forward-only Native continuations from
 two actual prefixes: seed21673 at19200 completes at32678; seed42386 at34200
@@ -46,6 +48,18 @@ total budget and lead8. It dies in spell84 with exact41-word agreement, zero dri
 and59.963 calculations/s. Its160 verification timeouts and10 proposal-search
 timeouts motivate removing repeated failed nominal work before another live run.
 The original recordings, all failed candidates and costs remain local.
+The retry guard still does not clear the next real seed36784: death at12333,
+exact41-word agreement,59.735 calculations/s,92 verification timeouts and7
+search timeouts. A separate `h64-recorded` portfolio now retains the original
+H64 nominal Policy and calls the Native-geometry engine for repairs, explicitly
+separating128-frame proposal information from a fresh complete64-frame safety
+certificate. Its total budget remains110ms; a new actual practice is required.
+That fixed64-verification portfolio also fails: real seed26642 reaches21118 in
+spell92, exact41-word agreement,59.142 calculations/s,8 verification timeouts,
+171012+657 charged verification/recording updates. Revision3 instead requires a
+full128-update repair and preserves its unconsumed route while publishing64,
+keeping the original H64 Policy before a repair is needed. The110ms budget and
+lead8 are unchanged; the new live comparison is recorded separately.
 
 The owner's October25 Claude review has been read and extracted locally. Its
 future-hazard/tail-diversity recommendations agree with this experiment; persistent

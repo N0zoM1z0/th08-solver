@@ -288,7 +288,10 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
                      bool held_recovery, unsigned publication_horizon, bool pulse_recovery,
                      s::RecordedPlanner *recorded_planner) {
     const auto begin = Clock::now();
-    const unsigned lead = window.lead, horizon = window.horizon,
+    const unsigned lead = window.lead,
+                   horizon = recorded_planner
+                                 ? std::max(window.horizon, unsigned(previous.frames.size()))
+                                 : window.horizon,
                    search_budget_ms = window.budget_ms;
     const auto origin = follower.actual;
     PlanCandidate selected;
@@ -313,7 +316,33 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
         if (prediction.status == s::BranchStatus::Fault)
             throw std::runtime_error("shadow_native_branch_fault");
     };
-    if (recorded_planner) {
+    const auto collect_recorded = [&](s::RecordedResult result) {
+        statistics.proposal_attempts += result.work.attempts;
+        statistics.proposal_completed += result.work.completed;
+        statistics.proposal_charged += result.work.charged;
+        statistics.proposal_native_ns += result.work.native_ns;
+        statistics.proposal_io_ns += result.work.file_io_ns;
+        auto &work = statistics.recorded;
+        work.forecasts += result.work.forecasts;
+        work.searches += result.work.searches;
+        work.paths += result.work.paths;
+        work.capture_ns += result.work.capture_ns;
+        work.search_ns += result.work.search_ns;
+        work.forecast_timeouts += result.work.forecast_timeouts;
+        work.search_timeouts += result.work.search_timeouts;
+        work.forecast_deaths += result.work.forecast_deaths;
+        statistics.proposal_deaths += result.work.forecast_deaths;
+        for (const auto &checked : result.checks)
+            record(checked);
+        if (result.native_fault)
+            throw std::runtime_error("shadow_recorded_native_fault");
+        if (result.selected.certifies()) {
+            ++statistics.verified;
+            ++statistics.fresh_searches;
+            selected.prediction = std::move(result.selected);
+        }
+    };
+    if (recorded_planner && horizon >= 128) {
         std::vector<std::uint16_t> inputs;
         auto last = std::uint16_t(origin.input);
         const auto consumed = origin.sequence - previous.origin.sequence;
@@ -351,30 +380,7 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
             return finish();
         auto result = recorded_planner->solve(follower.session, origin, prefix, inputs, boundary,
                                               remaining_budget());
-        statistics.proposal_attempts += result.work.attempts;
-        statistics.proposal_completed += result.work.completed;
-        statistics.proposal_charged += result.work.charged;
-        statistics.proposal_native_ns += result.work.native_ns;
-        statistics.proposal_io_ns += result.work.file_io_ns;
-        auto &work = statistics.recorded;
-        work.forecasts += result.work.forecasts;
-        work.searches += result.work.searches;
-        work.paths += result.work.paths;
-        work.capture_ns += result.work.capture_ns;
-        work.search_ns += result.work.search_ns;
-        work.forecast_timeouts += result.work.forecast_timeouts;
-        work.search_timeouts += result.work.search_timeouts;
-        work.forecast_deaths += result.work.forecast_deaths;
-        statistics.proposal_deaths += result.work.forecast_deaths;
-        for (const auto &checked : result.checks)
-            record(checked);
-        if (result.native_fault)
-            throw std::runtime_error("shadow_recorded_native_fault");
-        if (result.selected.certifies()) {
-            ++statistics.verified;
-            ++statistics.fresh_searches;
-            selected.prediction = std::move(result.selected);
-        }
+        collect_recorded(std::move(result));
         return finish();
     }
     // A deterministic shadow already knows the verified nominal continuation.
@@ -418,6 +424,29 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
             sequence <= previous.origin.sequence + previous.frames.size())
             last = std::uint16_t(previous.frames[sequence - previous.origin.sequence - 1].input);
         prefix.push_back(last);
+    }
+    if (recorded_planner && horizon == 64 && previous.certifies()) {
+        // Preserve the H64 policy until it needs a different route. Longer
+        // conditional geometry proposes that route; safety still uses a fresh
+        // complete H64 rollout, with the distinction explicit in this profile.
+        auto inputs = prefix;
+        const auto consumed = origin.sequence - previous.origin.sequence;
+        while (inputs.size() < 128) {
+            const auto i = inputs.size();
+            auto input = b::fallback(inputs.back(), origin.sequence + i + 1, boundary.spell >= 0);
+            if (consumed + i < previous.frames.size())
+                input = std::uint16_t(previous.frames[consumed + i].input);
+            inputs.push_back(input);
+        }
+        const auto elapsed =
+            std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - begin).count();
+        if (elapsed < search_budget_ms) {
+            collect_recorded(recorded_planner->solve(follower.session, origin, prefix, inputs,
+                                                     boundary,
+                                                     search_budget_ms - unsigned(elapsed)));
+            if (selected.prediction.certifies())
+                return finish();
+        }
     }
     const auto elapsed_before_proposal =
         std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
@@ -534,26 +563,29 @@ int run(int argc, char **argv) {
         (argc == 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64" &&
          std::string(argv[7]) != "h64-held" && std::string(argv[7]) != "h128-held" &&
          std::string(argv[7]) != "h256-held" && std::string(argv[7]) != "h256-pulse" &&
-         std::string(argv[7]) != "h512-buffered" && std::string(argv[7]) != "h128-recorded"))
-        throw std::runtime_error(
-            "usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
-            "WALL_SECONDS [behavioral|exact] "
-            "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|h128-recorded]");
+         std::string(argv[7]) != "h512-buffered" && std::string(argv[7]) != "h128-recorded" &&
+         std::string(argv[7]) != "h64-recorded"))
+        throw std::runtime_error("usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
+                                 "WALL_SECONDS [behavioral|exact] "
+                                 "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
+                                 "h128-recorded|h64-recorded]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
-    const bool recorded_mode = argc == 8 && std::string(argv[7]) == "h128-recorded";
+    const bool recorded_mode = argc == 8 && (std::string(argv[7]) == "h128-recorded" ||
+                                             std::string(argv[7]) == "h64-recorded");
+    const bool recorded_direct = argc == 8 && std::string(argv[7]) == "h128-recorded";
     const bool buffered = argc == 8 && std::string(argv[7]) == "h512-buffered";
     const bool pulse_recovery = argc == 8 && std::string(argv[7]) == "h256-pulse";
     const bool held_recovery =
         argc == 8 && (std::string(argv[7]) == "h64-held" || std::string(argv[7]) == "h128-held" ||
                       std::string(argv[7]) == "h256-held" || pulse_recovery);
     const unsigned verified_horizon =
-        buffered                                                               ? 512
-        : (argc == 8 && std::string(argv[7]) == "h256-held") || pulse_recovery ? 256
-        : recorded_mode || (argc == 8 && std::string(argv[7]) == "h128-held")  ? 128
-        : argc == 8 && std::string(argv[7]) != "h32"                           ? 64
-                                                                               : 32;
+        buffered                                                                ? 512
+        : (argc == 8 && std::string(argv[7]) == "h256-held") || pulse_recovery  ? 256
+        : recorded_direct || (argc == 8 && std::string(argv[7]) == "h128-held") ? 128
+        : argc == 8 && std::string(argv[7]) != "h32"                            ? 64
+                                                                                : 32;
     const unsigned minimum_search_interval = verified_horizon >= 64 ? 8 : 4;
     const unsigned search_budget_ms = buffered ? 480 : verified_horizon >= 64 ? 110 : 80;
     const unsigned active_lead = buffered ? 32 : lead_updates;
@@ -602,6 +634,9 @@ int run(int argc, char **argv) {
     if (mpc && recorded_mode) {
         s::RecordedOptions options;
         options.advance_dialogue = recording.advance_dialogue;
+        // A successful longer repair keeps its complete unconsumed route.
+        // Subsequent literal extensions must certify the same full horizon.
+        options.verification_horizon = 128;
         recorded_planner = std::make_unique<s::RecordedPlanner>(options);
     }
     follower.history_limit = std::max(256u, verified_horizon);
@@ -788,8 +823,9 @@ int run(int argc, char **argv) {
            << ",\"search_budget_ms\":" << search_budget_ms
            << ",\"proposal_budget_ms\":" << (recorded_mode ? search_budget_ms : proposal_budget_ms)
            << ",\"continuation\":\""
-           << (recorded_mode            ? "recorded-native-geometry-and-literal-extension"
-               : held_recovery          ? "policy-prefix8-with-held-recovery"
+           << (recorded_mode   ? (recorded_direct ? "recorded-native-geometry-and-literal-extension"
+                                                  : "policy-h64-with-recorded-region-recovery")
+               : held_recovery ? "policy-prefix8-with-held-recovery"
                : verified_horizon >= 64 ? "policy-prefix8"
                                         : "fixed")
            << '"' << ",\"held_recovery\":" << (held_recovery ? "true" : "false")
@@ -804,8 +840,11 @@ int run(int argc, char **argv) {
            << ",\"proposal_boundary\":\"after-forced-lead\",\"search_rng\":\""
            << (recorded_mode ? "owned-primary-and-independent-region-streams" : "branch-private")
            << '"' << ",\"recorded_geometry\":" << (recorded_mode ? "true" : "false")
-           << ",\"start_sha256\":\"" << wine_shadow::file_hash((directory / "start.txt").string())
-           << "\",\"trace_sha256\":\""
+           << ",\"recorded_forecast_horizon\":" << (recorded_mode ? 128 : 0)
+           << ",\"recorded_verification_horizon\":" << (recorded_mode ? 128 : 0)
+           << ",\"maximum_verified_horizon\":" << (recorded_mode ? 128 : verified_horizon)
+           << ",\"recorded_profile_revision\":" << (recorded_mode ? 3 : 0) << ",\"start_sha256\":\""
+           << wine_shadow::file_hash((directory / "start.txt").string()) << "\",\"trace_sha256\":\""
            << wine_shadow::file_hash((directory / "frames.bin").string())
            << "\",\"actions_sha256\":\"" << wine_shadow::file_hash(output.string() + ".actions")
            << '"' << ",\"dat_sha256\":\"" << dat_hash << "\",\"native_sha256\":\"" << binary_hash
