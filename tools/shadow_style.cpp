@@ -133,9 +133,10 @@ unsigned number(const char *text, unsigned maximum) {
     return unsigned(n);
 }
 int run(int argc, char **argv) {
-    if (argc != 11)
+    if (argc < 11 || (argc - 11) % 2 != 0)
         throw std::runtime_error("usage: th08_shadow_style DAT OUTPUT_DIR STAGE DIFFICULTY SHOT "
-                                 "SEED STYLE MAX_UPDATES STORY WALL_SECONDS");
+                                 "SEED STYLE MAX_UPDATES STORY WALL_SECONDS "
+                                 "[--collect-items 0|1] [--aim-boss 0|1]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -152,6 +153,19 @@ int run(int argc, char **argv) {
     config.prior_final_a_clear = config.story && config.stage != 8;
     config.input_profile = h::InputProfile::SampledGameplay;
     auto profile = o::with_style(style);
+    bool collection_override = false, aim_override = false;
+    for (int i = 11; i < argc; i += 2) {
+        const std::string key = argv[i];
+        if (key == "--collect-items" && !collection_override) {
+            profile.scoring_collection = number(argv[i + 1], 1);
+            collection_override = true;
+        } else if (key == "--aim-boss" && !aim_override) {
+            profile.scoring_aim = number(argv[i + 1], 1);
+            aim_override = true;
+        } else {
+            throw std::runtime_error("unknown_or_duplicate_native_score_control");
+        }
+    }
     profile.horizon = 24;
     profile.beam = 192;
     profile.diversity_cell = 16;
@@ -171,7 +185,7 @@ int run(int argc, char **argv) {
     s::Prediction previous;
     s::NominalExtension nominal;
     o::Observation observation;
-    o::capture_memory(session, 0, observation, true);
+    o::capture_policy_memory(session, 0, observation, policy);
     policy.observe(observation);
     const auto begin = Clock::now();
     Work work;
@@ -236,7 +250,7 @@ int run(int argc, char **argv) {
             outcome = "complete";
             break;
         }
-        o::capture_memory(session, actual.sequence, observation, true);
+        o::capture_policy_memory(session, actual.sequence, observation, policy);
         policy.observe(observation);
     }
     const auto elapsed = std::chrono::duration<double>(Clock::now() - begin).count();
@@ -265,6 +279,9 @@ int run(int argc, char **argv) {
     report << "{\"schema_version\":1,\"evidence\":\"synchronous-native-style-experiment\","
               "\"online_fps_evidence\":false,\"style_revision\":1,\"style\":\""
            << style << "\",\"outcome\":\"" << outcome << "\",\"stage\":" << config.stage
+           << ",\"score_goal_revision\":" << (policy.needs_scoring_memory() ? 1 : 0)
+           << ",\"collect_items\":" << (profile.scoring_collection ? "true" : "false")
+           << ",\"aim_boss\":" << (profile.scoring_aim ? "true" : "false")
            << ",\"difficulty\":" << config.difficulty << ",\"shot\":" << config.shot
            << ",\"seed\":" << config.seed << ",\"story\":" << (config.story ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (config.prior_final_a_clear ? "true" : "false")

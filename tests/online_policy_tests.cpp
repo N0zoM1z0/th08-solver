@@ -203,6 +203,29 @@ void legacy_style_signature() {
     check(signature == 0xeca066c1adb5a367ull,
           "default style changed legacy proposals or tie sequence");
 }
+void score_goal_contract() {
+    auto config = on::with_style("score");
+    config.horizon = 24;
+    auto o = scene();
+    on::Policy missing(config);
+    rejects([&] { missing.decide(o); }, "score control accepted absent current-memory inputs");
+    o.scoring.available = o.scoring.auto_collect_eligible = true;
+    o.scoring.collection_line = 128;
+    o.scoring.pickups.assign(4, {192, 250, on::PickupKind::Point});
+    on::Policy policy(config);
+    check(policy.needs_scoring_memory() && (policy.decide(o).action & 16),
+          "visible item batch did not generate a collection trip");
+    ++o.update;
+    o.scoring.pickups.pop_back();
+    check(policy.decide(o).action & 16, "collection trip ended before its final items arrived");
+    ++o.update;
+    o.scoring.has_boss = true;
+    o.scoring.boss_x = 300;
+    check(policy.decide(o).action & 128, "boss arrival did not end collection and restore aiming");
+    config.planner_lag = 1;
+    rejects([&] { on::Policy bad(config); },
+            "score goal silently used a fixed-height delayed plan");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -1843,6 +1866,7 @@ int main(int argc, char **argv) {
     try {
         policy_style_contract();
         legacy_style_signature();
+        score_goal_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 3.16)
 file(REMOVE_RECURSE "${WORK}")
-execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 sniper 70000 0 180
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 70000 0 180
+  --collect-items 1 --aim-boss 1
   RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 200)
 if(NOT result STREQUAL "0")
   message(FATAL_ERROR "Complete style scene failed: ${result} ${stdout} ${stderr}")
 endif()
 file(READ "${WORK}/result.json" original)
+if(NOT original MATCHES "\"collect_items\":true" OR
+   NOT original MATCHES "\"aim_boss\":true" OR
+   NOT original MATCHES "\"score_goal_revision\":1")
+  message(FATAL_ERROR "Score experiment did not record its independent controls: ${original}")
+endif()
 file(READ "${WORK}/score-audit.json" audit)
 foreach(pair IN ITEMS "complete:true" "nmnb:true" "expected_unique:4" "captured_unique:4"
                       "unsuccessful_attempts:0" "unmatched_events:0"

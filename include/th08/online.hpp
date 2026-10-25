@@ -101,6 +101,17 @@ struct QueuedLaser {
     LaserHitbox hitbox;
     float turn_hint = 0; // radians per batch, from literal current-program writes
 };
+enum class PickupKind { Point, Power };
+struct ScorePickup {
+    float x = 0, y = 0;
+    PickupKind kind = PickupKind::Point;
+};
+// Current native scoring inputs only; no predicted drops, route script or RNG.
+struct ScoreMemory {
+    bool available = false, has_boss = false, auto_collect_eligible = false;
+    float boss_x = 192, collection_line = 128, power = 0;
+    std::vector<ScorePickup> pickups;
+};
 
 // Owned current-memory snapshot. The native adapter may reuse its vector capacity
 // after decide() returns. No simulator, manager pointer or future rollout enters
@@ -115,6 +126,7 @@ struct Observation {
     std::uint16_t latched_input = 0;
     Movement movement;
     Vector graze_half;
+    ScoreMemory scoring;
     std::vector<Bullet> bullets;
     std::vector<LaserState> lasers;
     std::vector<LaserHitbox> laser_hitboxes;
@@ -150,6 +162,7 @@ struct StyleWeights {
 };
 struct Configuration {
     StyleWeights style;
+    bool scoring_collection = false, scoring_aim = false;
     int horizon = 32, beam = 192;
     // Held-input updates beyond retained full-horizon endpoints; H + T <= 200.
     int tail_check = 0;
@@ -183,8 +196,9 @@ struct Configuration {
     int emergency_horizon = 32, emergency_beam = 48;
     bool lazy_index = false; // Delay unused frame indices; forecasts remain unchanged.
 };
-// Revision 1 general profiles: baseline, zen, expert, sniper and graze. Changes
-// only style/boss-follow preferences, never horizon, beam, budgets or physics.
+// General proposal controls: baseline, zen, expert, sniper, graze and score.
+// Score adds current-item collection and literal boss aiming. No preference
+// changes the horizon, beam, verification budgets or physics.
 Configuration with_style(const std::string &name, Configuration configuration = {});
 using SpawnGrid = std::array<float, 24 * 28>;
 // Clipped 3x3 no-warning birth sums over 16-pixel cells. Preserve each center's
@@ -248,6 +262,7 @@ struct DecisionTiming {
 class Policy {
   public:
     explicit Policy(Configuration configuration, RiskTables risk = {}, BranchValueModel value = {});
+    bool needs_scoring_memory() const;
     ~Policy();
     Policy(const Policy &) = delete;
     Policy &operator=(const Policy &) = delete;

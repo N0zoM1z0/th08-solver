@@ -60,7 +60,7 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
             out.status = BranchStatus::Terminal;
             return;
         }
-        online::capture_memory(session, origin.sequence + i + 1, observation, true);
+        online::capture_policy_memory(session, origin.sequence + i + 1, observation, policy);
         policy.observe(observation);
     }
     if (advance_dialogue && session.state().dialogue_present) {
@@ -164,7 +164,7 @@ Prediction predict_with_policy(headless::Session &session, online::Policy &polic
         void observe(const Packet &packet) override {
             sequence_ = packet.sequence;
             actual_input_ = std::uint16_t(packet.input);
-            online::capture_memory(session_, sequence_, observation_, true);
+            online::capture_policy_memory(session_, sequence_, observation_, policy_);
             policy_.observe(observation_);
         }
         std::uint16_t next_input() override {

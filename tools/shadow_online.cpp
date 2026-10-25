@@ -230,7 +230,7 @@ struct Follower {
             last_elapsed = elapsed;
             statistics.elapsed_ms = double(elapsed) / 1e6;
             o::Observation observation;
-            o::capture_memory(session, actual.sequence, observation, true);
+            o::capture_policy_memory(session, actual.sequence, observation, policy);
             policy.observe(observation);
         }
     }
@@ -565,10 +565,11 @@ int run(int argc, char **argv) {
          std::string(argv[7]) != "h256-held" && std::string(argv[7]) != "h256-pulse" &&
          std::string(argv[7]) != "h512-buffered" && std::string(argv[7]) != "h128-recorded" &&
          std::string(argv[7]) != "h64-recorded"))
-        throw std::runtime_error("usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
-                                 "WALL_SECONDS [behavioral|exact] "
-                                 "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
-                                 "h128-recorded|h64-recorded] [baseline|zen|expert|sniper|graze]");
+        throw std::runtime_error(
+            "usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
+            "WALL_SECONDS [behavioral|exact] "
+            "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
+            "h128-recorded|h64-recorded] [baseline|zen|expert|sniper|graze|score]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
@@ -800,6 +801,9 @@ int run(int argc, char **argv) {
            << (follower.exact ? "exact" : "behavioral") << '"'
            << ",\"input_profile\":\"sampled-gameplay\""
            << ",\"policy_style\":\"" << style << "\",\"policy_style_revision\":1"
+           << ",\"score_goal_revision\":" << (policy.needs_scoring_memory() ? 1 : 0)
+           << ",\"collect_items\":" << (profile.scoring_collection ? "true" : "false")
+           << ",\"aim_boss\":" << (profile.scoring_aim ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (recording.prior_final_a_clear ? "true" : "false")
            << ",\"dialogue_advance\":" << (recording.advance_dialogue ? "true" : "false")
            << ",\"actual_complete\":" << (actual_complete ? "true" : "false")

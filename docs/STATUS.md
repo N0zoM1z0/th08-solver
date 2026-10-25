@@ -11,6 +11,47 @@ full decode passing and byte-identical original video bitstream. These establish
 the baseline for the new investigation. The owner's latest direction prioritizes
 terminal score under NMNB and full capture; movement style is a resulting metric.
 
+The source-directed score-goal revision1 improves collection and literal boss
+aiming without changing verification/search budgets or using spell/seed rules.
+Seven complete Native scenes all retain NMNB and capture every eligible spell:
+Stage1 seeds23035/40755 score100,719,190/101,416,330 (4/4 each), Stage2 seed46377
+177,121,170 (5/5), Stage3 seed57711 218,127,200 (6/6), 4A seeds26528/34235
+286,749,530/304,500,460 (6/6 each), and proper non-practice Extra seed19732
+1,494,043,570 (14/14). All seven pass exact fresh terminal execution and natural
+replay with matching score/captures. These are synchronous Native outcomes.
+
+A complete Native second-clear4A-to-Final-B story at the old seed40755 now scores
+**2,596,027,940**, up18.54%, with **37/37 captures**,854 point items and110669
+owner updates. Fresh41-word execution and natural replay agree, including all
+capture outcomes. Against the old story, points rise623→854 and orbs77399→82475
+while graze falls40784→33524. These describe different action-dependent futures,
+not a causal ablation. It charges886140 branch+245 proposal updates,28 future deaths,
+24 timeouts,26 budget overruns and16 executed fallback updates;400.02s wall time
+is not a live frame-rate result. The real-data matrix and story manifests are
+local under `reports/local/score-styles-20261025/score-goals-r1/` and
+`score-story-r1/`, with frozen binaries/source patches and retained costs.
+
+The first live score-goal Stage1, actual seed37981, completes NMNB in11001
+calculations with104,080,460 displayed points and4/4 captures. Its actual journal
+averages59.938 calculations/s; original-writer export and natural capture replay
+pass. The first full live story with this goal, new real seed40978, fails NMNB
+in4A card70 at56822 receipts /56819 calculations, with no meaningful mismatch
+or player-position error. It retains4138 numeric-drift updates,15 rollout
+timeouts,30 future deaths and16 planning overruns; average gameplay rate is59.505
+calculations/s. Its complete failure evidence remains local in `wine-58/`; the
+README's online best stays unchanged. The new seed is not a paired baseline
+comparison, so this failure alone does not identify the scoring goal as its cause.
+The last accepted64-update certificate ends at receipt56816; death occurs six
+fallback updates later. This is exhaustion of certified continuation, not a
+collision inside a still-matching certified window. A generic recovery change
+must preserve that distinction and retain the failure rather than special-case
+the card or silently enlarge the budget.
+Collection and boss aiming are independent recorded
+controls for future ablations; the owner's current request is score improvement,
+without another ablation matrix. Human replay references inform the economic gap,
+while new target/form/fire decisions must follow source mechanisms and complete
+Native outcomes.
+
 The first frozen ten-case Native comparison keeps H64, lead8, total110ms and
 proposal60ms, with dialogue advancement. All ten action tapes agree in fresh
 execution on all41 terminal words. Eight complete NMNB cases also pass natural

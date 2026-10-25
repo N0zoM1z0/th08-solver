@@ -2,6 +2,7 @@
 #include "BulletManager.hpp"
 #include "EnemyManager.hpp"
 #include "GameManager.hpp"
+#include "ItemManager.hpp"
 #include "Player.hpp"
 #include "Supervisor.hpp"
 #include "modern/headless/session.hpp"
@@ -14,6 +15,40 @@
 #include <limits>
 
 namespace th08::online {
+void capture_policy_memory(headless::Session &session, std::uint64_t update, Observation &o,
+                           const Policy &policy) {
+    capture_memory(session, update, o, true);
+    auto &score = o.scoring;
+    score.available = policy.needs_scoring_memory();
+    score.pickups.clear();
+    if (!score.available)
+        return;
+    score.has_boss = false;
+    score.boss_x = 192;
+    for (const auto *boss : g_EnemyManager.bosses)
+        if (boss && (boss->flags1 & ENEMY_FLAG_ACTIVE)) {
+            score.has_boss = true;
+            score.boss_x = boss->worldPosition.x;
+            break;
+        }
+    score.power = g_GameManager.globals->playerPower;
+    score.collection_line = g_Player.primaryShtFile->pointItemValueLine;
+    // Exact eligibility from ItemManager::OnUpdate; it is not a collection
+    // promise, since the native world still owns movement and item lifecycle.
+    score.auto_collect_eligible = score.power >= 128 ||
+                                  g_Player.focusMode != PLAYER_FOCUS_MODE_UNFOCUSED ||
+                                  g_GameManager.shotType == 1 || g_GameManager.shotType == 6;
+    for (const auto *item = g_ItemManager.itemListHead.next; item; item = item->next) {
+        if (!item->isInUse)
+            continue;
+        const bool point = item->itemType == ITEM_POINT;
+        const bool power = item->itemType == ITEM_POWER_SMALL || item->itemType == ITEM_POWER_BIG ||
+                           item->itemType == ITEM_POWER_FULL;
+        if (point || (power && score.power < 128))
+            score.pickups.push_back({item->currentPosition.x, item->currentPosition.y,
+                                     point ? PickupKind::Point : PickupKind::Power});
+    }
+}
 namespace {
 static_assert(detail::kLifetimeWaitKind == BULLET_TRANSFORM_WAIT &&
               detail::kLifetimeDespawnKind == BULLET_TRANSFORM_DESPAWN);

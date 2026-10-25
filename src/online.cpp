@@ -24,6 +24,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     // Contact rewards below additionally track unique bullets along each path.
     auto &w = configuration.style;
     w = {};
+    configuration.scoring_collection = configuration.scoring_aim = false;
     configuration.boss_follow = 0.25f;
     if (name == "baseline")
         return configuration;
@@ -45,6 +46,10 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     } else if (name == "sniper") {
         w.anchor_weight = 0.05f;
         w.anchor_y = 360;
+        configuration.boss_follow = 1;
+    } else if (name == "score") {
+        configuration.scoring_collection = configuration.scoring_aim = true;
+        w.anchor_weight = 0.05f;
         configuration.boss_follow = 1;
     } else if (name == "graze") {
         w.anchor_weight = 0.005f;
@@ -288,6 +293,9 @@ struct Policy::Impl {
     std::uint64_t index_extension_ns = 0;
     std::uint64_t last_observed = UINT64_MAX;
     std::uint64_t last_decided = UINT64_MAX;
+    bool collecting = false;
+    float collection_x = 192;
+    static constexpr unsigned collection_batch = 4, collection_start_bullet_limit = 64;
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
         : opt(configuration), risk(std::move(tables)), value_model(std::move(value)) {
         const auto &w = opt.style;
@@ -304,9 +312,10 @@ struct Policy::Impl {
             (w.edge_cost > 0 && w.edge_margin == 0))
             throw std::runtime_error("invalid_online_style_bounds");
         if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
-            (value_model.loaded && (opt.horizon != int(kValueHorizon) || opt.planner_lag ||
-                                    opt.tail_check || opt.warm_fallback || opt.held_fallback ||
-                                    risk.loaded || !opt.hard_phantoms || !opt.motion_envelope)))
+            (value_model.loaded &&
+             (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
+              opt.warm_fallback || opt.held_fallback || risk.loaded || !opt.hard_phantoms ||
+              !opt.motion_envelope || opt.scoring_collection || opt.scoring_aim)))
             throw std::runtime_error("unsupported_branch_value_configuration");
         if (opt.motion_envelope && !opt.hard_phantoms)
             throw std::runtime_error("motion_envelope_requires_hard_phantoms");
@@ -325,6 +334,8 @@ struct Policy::Impl {
             throw std::runtime_error("invalid_online_configuration");
         if (opt.planner_lag > 0 && (opt.held_fallback || opt.warm_fallback || opt.tail_check))
             throw std::runtime_error("unsupported_online_lag_fallback");
+        if (opt.planner_lag > 0 && (opt.scoring_collection || opt.scoring_aim))
+            throw std::runtime_error("unsupported_scoring_lag_configuration");
         frames.resize(opt.horizon + opt.tail_check + 1);
     }
     static constexpr int kSlots = 0x601;
@@ -366,6 +377,16 @@ struct Policy::Impl {
         };
         finite(o.x);
         finite(o.y);
+        if (opt.scoring_collection || opt.scoring_aim) {
+            if (!o.scoring.available)
+                throw std::runtime_error("missing_online_score_memory");
+            for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power})
+                finite(v);
+            for (const auto &item : o.scoring.pickups) {
+                finite(item.x);
+                finite(item.y);
+            }
+        }
         if (opt.style.graze_reward > 0) {
             finite(o.graze_half.x);
             finite(o.graze_half.y);
@@ -496,6 +517,22 @@ struct Policy::Impl {
         regions_current = observation.lethal_regions;
         last_observed = observation.update;
         now = long(observation.update);
+        if (opt.scoring_collection) {
+            const auto &score = observation.scoring;
+            if (score.has_boss || !score.auto_collect_eligible || score.pickups.empty())
+                collecting = false;
+            else if (!collecting && score.pickups.size() >= collection_batch &&
+                     observation.bullets.size() < collection_start_bullet_limit) {
+                // Commit to a trip until the items are collected or a boss
+                // appears. Recomputing a four-item threshold each frame would
+                // turn away while the final items are still flying toward us.
+                collecting = true;
+                float sum = 0;
+                for (const auto &item : score.pickups)
+                    sum += item.x;
+                collection_x = sum / float(score.pickups.size());
+            }
+        }
         const auto &bs = observation.bullets;
         std::array<bool, kSlots> seen{};
         for (const auto &b : bs) {
@@ -1673,6 +1710,13 @@ struct Policy::Impl {
                                    opt.boss_follow * ((r.x0 + r.x1) / 2 - opt.style.anchor_x);
         }
         pref_x = std::clamp(pref_x, opt.style.anchor_x_min, opt.style.anchor_x_max);
+        float pref_y = opt.style.anchor_y;
+        if (opt.scoring_aim && observation.scoring.has_boss)
+            pref_x = std::clamp(observation.scoring.boss_x, sp.minx, sp.maxx);
+        if (collecting) {
+            pref_x = std::clamp(collection_x, sp.minx, sp.maxx);
+            pref_y = std::clamp(observation.scoring.collection_line - 12, sp.miny, sp.maxy);
+        }
         if (opt.planner_lag > 0) {
             const auto executed = lag_decide(observation, pref_x);
             mark(&DecisionTiming::search_ns);
@@ -1684,7 +1728,7 @@ struct Policy::Impl {
             return {std::uint16_t(executed.action | 1), executed.depth, search_stats};
         }
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
-                             observation.y, pref_x, opt.style.anchor_y, nullptr, 0, proposals);
+                             observation.y, pref_x, pref_y, nullptr, 0, proposals);
         mark(&DecisionTiming::search_ns);
         check_warm_path(result, observation);
         check_held_directions(result, observation);
@@ -1701,6 +1745,9 @@ Policy::Policy(Configuration configuration, RiskTables risk, BranchValueModel va
 Policy::~Policy() = default;
 void Policy::observe(const Observation &observation) {
     impl_->observe(observation);
+}
+bool Policy::needs_scoring_memory() const {
+    return impl_->opt.scoring_collection || impl_->opt.scoring_aim;
 }
 Decision Policy::decide(const Observation &observation, DecisionTiming *timing,
                         std::vector<ValueProposal> *proposals) {

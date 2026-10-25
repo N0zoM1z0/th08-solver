@@ -60,7 +60,14 @@ Several coupled mechanisms matter more than a distance-to-bullet reward:
 - [ItemManager.cpp](../third_party/th08/src/ItemManager.cpp) uses collection height
   or max-value state to price point items. Extremely human gauge doubles their
   pickup value. Moving above the collection line can attract items; eligibility
-  also depends on power/form/shot. This creates a positioning objective.
+  also depends on power/form/shot. Attraction alone does not set `isMaxValue`:
+  price still uses the item's height when collected. This creates a positioning
+  objective that can require staying high until pickup, not merely crossing up.
+- Ordinary time-orb pickup pays `max(100, 10 * floor(totalPointItems / 2))`,
+  except the source's special orb mode and2000-stage-point branch. Conversely,
+  every two time orbs add10 to future point-item value. Early point collection
+  therefore raises later orb income, while earlier orbs raise later point income;
+  a controller should value both carried economy state and immediate pickup score.
 - Native graze awards2000 or4000 displayed points and1/2/3 graze count depending
   on gauge. At extreme youkai gauge against a boss, it can generate additional
   time orbs, including extra spell rewards. Ordinary bullets graze once; lasers
@@ -78,6 +85,43 @@ can conflict; local graze or damage alone cannot identify the highest-score run.
 The [PND score list](https://thscore.pndsng.com/index.php?th=8), checked October25,
 lists a6,168,365,790 Marisa/Alice score and higher scores for other shots. It is a
 score-attack reference, not an established matching-NMNB bound for this solver.
+
+The opt-in `score` preference adds two independent current-memory controls:
+`Configuration::scoring_collection` and `scoring_aim`. The Native adapter owns a
+copy of visible point/useful power items, literal boss position, current power
+and the loaded SHT collection line. It reads no future drops or RNG. Collection
+starts with at least four useful items and fewer than64 observed bullets, aims
+12 pixels above that source line and retains its intent until items disappear,
+eligibility ends or a boss arrives. This hysteresis prevents turning back while
+the last items are still approaching. Boss aiming uses its actual position and
+the ordinary400-pixel vertical anchor. These are proposal goals; complete Native
+rollouts still decide safety under the unchanged H64/lead8/110ms/60ms contract.
+Baseline actions and tie ordering remain unchanged. The scoring goals reject the
+fixed-height delayed executor and existing branch-value models rather than
+silently mixing unsupported control or training assumptions.
+
+Source-first follow-up should separate orb production from HP loss.
+`Player::CalcDamageToEnemy` checks the hit accumulator before adding at most50
+damage to it; Marisa/Alice uses threshold40, and a fresh enemy starts at that
+threshold. Eligible extreme-human shots can therefore produce orbs before
+`EnemyManager::OnUpdate` applies spell division, reduction timers and damageable
+flags. Familiar damage reaches the parent through another division and a life
+callback floor. This suggests targeting fresh/linked enemies and using reduced-HP
+windows as economic opportunities. It does not establish a profitable strategy:
+target availability, source collision callbacks, gauge, item collection, timer
+bonus decay, capture deadlines and the extra hazard exposure all matter. Retained
+real-data traces distinguish an accumulator interaction from an actual spawned or
+collected orb. Shooting release also has latency: a running20-update shot cycle
+and existing projectiles can keep dealing damage after Z is released. Evaluate
+any harvesting controller through full outcomes, with independently recorded
+target/form/fire controls; do not encode spell IDs, seeds or human input tapes.
+In the complete seed40755 score-goal tape, a read-only follow finds19847 stable
+extreme-human accumulator interactions with no enemy HP loss, including16286
+while both sampled boundaries retain a reduction timer. It reproduces the full
+2,596,027,940 score and NMNB state. These are interaction observations, not19847
+proven orb spawns or additional profit; the current controller already benefits
+from some such windows. The next experiment must measure incremental collected
+orbs and terminal score, including any lost speed bonus or capture.
 
 ## Execution and ownership
 

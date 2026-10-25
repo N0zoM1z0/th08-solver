@@ -111,18 +111,24 @@ visited stages, retains skipped Last Spells and reports each lifecycle outcome
 and bonus. `observations` counts replay calculation rows in this mode, not batched
 Session calls. Start/end timestamps count GameManager calculations. The two
 focused real-data regressions cover the old story's negative capture case and a
-complete Stage1 sniper4/4 case, fresh execution and natural replay.
+complete Stage1 scoring4/4 case, fresh execution and natural replay.
 
 The bounded Native comparison tool is:
 
 ```sh
 build-issue1/th08_shadow_style game_data_donottrack/th08.dat \
-  reports/local/score-trial 0 3 1 23035 sniper 70000 0 180
+  reports/local/score-trial 0 3 1 23035 score 70000 0 180 \
+  --collect-items 1 --aim-boss 1
 ```
 
 Arguments after the output directory are raw stage, difficulty, shot, seed,
 proposal preference, maximum owner updates, story flag and wall seconds. The
-directory must be fresh. Five revision1 preferences are baseline/zen/expert/sniper/graze.
+directory must be fresh. Preferences are baseline/zen/expert/sniper/graze and
+`score`; the latter enables current-item collection and literal boss aiming.
+Optional `--collect-items 0|1` and `--aim-boss 0|1` independently override those
+two controls. The result records both resolved booleans and the score-goal
+revision, so later ablation runs need no source edits. No new ablation matrix is
+required for the current score-improvement campaign.
 Its H64/lead8/110ms/60ms budgets are explicit; it records all rejected work,
 timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
 terminal41-word projection. Periodic Z advances dialogue. Story mode declares
