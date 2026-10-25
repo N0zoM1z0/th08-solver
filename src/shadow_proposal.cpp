@@ -89,6 +89,34 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
     out.status = BranchStatus::Horizon;
 }
 } // namespace
+Prediction predict_with_hold(headless::Session &session, const Packet &origin,
+                             const std::vector<std::uint16_t> &prefix, std::size_t horizon,
+                             Boundary boundary, unsigned timeout_ms, bool advance_dialogue) {
+    if (prefix.empty())
+        throw std::runtime_error("empty_shadow_hold_prefix");
+    class Hold final : public RolloutGuidance {
+        headless::Session &session_;
+        std::uint16_t held_, actual_ = 0;
+        std::uint64_t sequence_ = 0;
+        bool spell_, advance_dialogue_;
+
+      public:
+        Hold(headless::Session &session, std::uint16_t held, Boundary boundary, bool dialogue)
+            : session_(session), held_(held), spell_(boundary.spell >= 0),
+              advance_dialogue_(dialogue) {}
+        void observe(const Packet &packet) override {
+            actual_ = std::uint16_t(packet.input);
+            sequence_ = packet.sequence;
+        }
+        std::uint16_t next_input() override {
+            if (advance_dialogue_ && session_.state().dialogue_present)
+                return dialogue_input(actual_, sequence_ + 1);
+            return std::uint16_t((held_ & 0xf5) |
+                                 ((!spell_ && ((sequence_ + 1) & 1)) ? 0x1000 : 0));
+        }
+    } guidance(session, prefix.back(), boundary, advance_dialogue);
+    return predict_guided(session, origin, prefix, horizon, guidance, boundary, timeout_ms);
+}
 Prediction predict_with_policy(headless::Session &session, online::Policy &policy,
                                const Packet &origin, const std::vector<std::uint16_t> &prefix,
                                std::size_t horizon, Boundary boundary, unsigned timeout_ms,

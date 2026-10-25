@@ -78,6 +78,7 @@ struct Statistics {
     std::uint64_t terminal_before_change = 0;
     std::uint64_t warm_attempts = 0, warm_selected = 0;
     std::uint64_t fresh_searches = 0;
+    std::uint64_t held_attempts = 0, held_selected = 0;
     std::uint64_t branch_attempts = 0, branch_completed = 0, branch_charged = 0;
     std::uint64_t branch_native_ns = 0, branch_io_ns = 0, owner_native_ns = 0;
     std::uint64_t guidance_ns = 0, guidance_requests = 0;
@@ -238,10 +239,11 @@ struct PlanCandidate {
     unsigned unchanged_inputs = lead_updates;
 };
 PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Boundary boundary,
-                     Statistics &statistics, unsigned horizon, s::NominalExtension &nominal) {
+                     Statistics &statistics, unsigned horizon, s::NominalExtension &nominal,
+                     bool held_recovery, unsigned publication_horizon) {
     const auto begin = Clock::now();
     constexpr unsigned lead = lead_updates;
-    const unsigned search_budget_ms = horizon == 64 ? 110 : 80;
+    const unsigned search_budget_ms = horizon >= 64 ? 110 : 80;
     const auto origin = follower.actual;
     PlanCandidate selected;
     ++statistics.searches;
@@ -267,7 +269,8 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
     // A deterministic shadow already knows the verified nominal continuation.
     // Re-execute it in a fresh owned branch and extend its tail, saving repeated
     // proposal searches while still requiring a complete new native horizon.
-    if (horizon == 64 && nominal.eligible(previous, follower.queue, lead_updates)) {
+    if (horizon >= 64 &&
+        nominal.eligible(previous, follower.queue, lead_updates, publication_horizon)) {
         const auto consumed = origin.sequence - previous.origin.sequence;
         std::vector<std::uint16_t> warm;
         for (auto i = std::size_t(consumed); i < previous.frames.size(); ++i)
@@ -281,7 +284,10 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
         if (prediction.certifies()) {
             ++statistics.verified;
             ++statistics.warm_selected;
-            selected.unchanged_inputs = warm.size();
+            // The unpublished part is a reusable proposal, not an owner-side
+            // commitment. Only the queued window can be declared unchanged.
+            selected.unchanged_inputs =
+                std::min(warm.size(), std::size_t(publication_horizon - consumed));
             selected.prediction = std::move(prediction);
             return finish();
         }
@@ -330,29 +336,43 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
                 inputs.push_back(std::uint16_t(1 | focus | direction));
             candidates.push_back(std::move(inputs));
         }
-    for (auto &inputs : candidates) {
-        if (boundary.spell < 0) {
-            for (unsigned i = lead; i < inputs.size(); ++i)
-                inputs[i] = std::uint16_t((inputs[i] & ~0x1000) |
-                                          (((origin.sequence + i + 1) & 1) ? 0x1000 : 0));
+    const bool prefer_held = held_recovery && !previous.frames.empty();
+    if (prefer_held)
+        std::rotate(candidates.begin(), candidates.begin() + proposals.inputs.size(),
+                    candidates.end());
+    const auto evaluate = [&](bool held) {
+        for (auto &inputs : candidates) {
+            if (boundary.spell < 0) {
+                for (unsigned i = lead; i < inputs.size(); ++i)
+                    inputs[i] = std::uint16_t((inputs[i] & ~0x1000) |
+                                              (((origin.sequence + i + 1) & 1) ? 0x1000 : 0));
+            }
+            const auto elapsed =
+                std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
+            if (elapsed >= search_budget_ms)
+                break;
+            const auto timeout = std::max(1u, unsigned(search_budget_ms - elapsed));
+            if (held)
+                ++statistics.held_attempts;
+            const auto prediction =
+                held ? s::predict_with_hold(follower.session, origin, inputs, horizon, boundary,
+                                            timeout, follower.advance_dialogue)
+                : horizon == 32
+                    ? s::predict(follower.session, origin, inputs, boundary, timeout)
+                    : s::predict_with_policy(follower.session, follower.policy, origin, inputs,
+                                             horizon, boundary, timeout, follower.advance_dialogue);
+            record(prediction);
+            if (prediction.certifies()) {
+                ++statistics.verified;
+                statistics.held_selected += held;
+                selected.prediction = prediction;
+                return;
+            }
         }
-        const auto elapsed =
-            std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
-        if (elapsed >= search_budget_ms)
-            break;
-        const auto timeout = std::max(1u, unsigned(search_budget_ms - elapsed));
-        const auto prediction =
-            horizon == 32
-                ? s::predict(follower.session, origin, inputs, boundary, timeout)
-                : s::predict_with_policy(follower.session, follower.policy, origin, inputs, horizon,
-                                         boundary, timeout, follower.advance_dialogue);
-        record(prediction);
-        if (prediction.certifies()) {
-            ++statistics.verified;
-            selected.prediction = prediction;
-            break;
-        }
-    }
+    };
+    evaluate(prefer_held);
+    if (held_recovery && !selected.prediction.certifies())
+        evaluate(!prefer_held);
     return finish();
 }
 
@@ -360,16 +380,26 @@ int run(int argc, char **argv) {
     if ((argc != 6 && argc != 7 && argc != 8) ||
         (std::string(argv[4]) != "follow" && std::string(argv[4]) != "mpc") ||
         (argc >= 7 && std::string(argv[6]) != "exact" && std::string(argv[6]) != "behavioral") ||
-        (argc == 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64"))
+        (argc == 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64" &&
+         std::string(argv[7]) != "h64-held" && std::string(argv[7]) != "h128-held" &&
+         std::string(argv[7]) != "h256-held"))
         throw std::runtime_error("usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
-                                 "WALL_SECONDS [behavioral|exact] [h32|h64]");
+                                 "WALL_SECONDS [behavioral|exact] "
+                                 "[h32|h64|h64-held|h128-held|h256-held]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
-    const unsigned verified_horizon = argc == 8 && std::string(argv[7]) == "h64" ? 64 : 32;
-    const unsigned minimum_search_interval = verified_horizon == 64 ? 8 : 4;
-    const unsigned search_budget_ms = verified_horizon == 64 ? 110 : 80;
-    const unsigned replan_remaining = verified_horizon - minimum_search_interval;
+    const bool held_recovery =
+        argc == 8 && (std::string(argv[7]) == "h64-held" || std::string(argv[7]) == "h128-held" ||
+                      std::string(argv[7]) == "h256-held");
+    const unsigned verified_horizon = argc == 8 && std::string(argv[7]) == "h256-held"   ? 256
+                                      : argc == 8 && std::string(argv[7]) == "h128-held" ? 128
+                                      : argc == 8 && std::string(argv[7]) != "h32"       ? 64
+                                                                                         : 32;
+    const unsigned minimum_search_interval = verified_horizon >= 64 ? 8 : 4;
+    const unsigned search_budget_ms = verified_horizon >= 64 ? 110 : 80;
+    const unsigned publication_horizon = std::min(verified_horizon, unsigned(b::capacity));
+    const unsigned replan_remaining = publication_horizon - minimum_search_interval;
     std::size_t used;
     const auto seconds = std::stoul(argv[5], &used);
     if (used != std::string(argv[5]).size() || !seconds || seconds > 7200)
@@ -391,8 +421,8 @@ int run(int argc, char **argv) {
     config.seed = std::uint16_t(recording.seed);
     config.story = recording.story;
     config.prior_final_a_clear = recording.prior_final_a_clear;
-    if (recording.advance_dialogue && verified_horizon != 64)
-        throw std::runtime_error("dialogue_advance_requires_h64");
+    if (recording.advance_dialogue && verified_horizon < 64)
+        throw std::runtime_error("dialogue_advance_requires_at_least_h64");
     config.input_profile = h::InputProfile::SampledGameplay;
     config.dat_path = dat.c_str();
     Mapping map(directory / "commands.bin");
@@ -441,8 +471,9 @@ int run(int argc, char **argv) {
                 follower.queue.size() <= replan_remaining &&
                 follower.actual.sequence >= last_search + minimum_search_interval) {
                 last_search = follower.actual.sequence;
-                const auto candidate = search(follower, previous, {config.story, config.spell},
-                                              statistics, verified_horizon, nominal);
+                const auto candidate =
+                    search(follower, previous, {config.story, config.spell}, statistics,
+                           verified_horizon, nominal, held_recovery, publication_horizon);
                 const auto &prediction = candidate.prediction;
                 follower.drain();
                 if (follower.mismatch)
@@ -458,13 +489,15 @@ int run(int argc, char **argv) {
                     plan.origin = prediction.origin.sequence;
                     plan.epoch = prediction.origin.epoch;
                     plan.first_change = plan.origin + candidate.unchanged_inputs + 1;
-                    plan.count = prediction.frames.size();
+                    plan.count =
+                        std::min(prediction.frames.size(), std::size_t(publication_horizon));
                     for (unsigned i = 0; i < plan.count; ++i)
                         plan.inputs[i] = std::uint16_t(prediction.frames[i].input);
                     if (!b::timely(plan, b::load(map.data + b::Sequence)))
                         ++statistics.stale;
                     else if (!follower.queue.replace(prediction,
-                                                     follower.executed_since(plan.origin)))
+                                                     follower.executed_since(plan.origin),
+                                                     publication_horizon))
                         ++statistics.invalid_prefix;
                     else {
                         b::publish(map.data, plan);
@@ -569,12 +602,16 @@ int run(int argc, char **argv) {
            << ",\"inactive_metadata_updates\":" << statistics.inactive_updates
            << ",\"inactive_metadata_words\":" << statistics.inactive_words
            << ",\"lead_updates\":" << lead_updates << ",\"verified_horizon\":" << verified_horizon
+           << ",\"publication_horizon\":" << publication_horizon
            << ",\"replan_remaining\":" << replan_remaining
            << ",\"minimum_search_interval\":" << minimum_search_interval
            << ",\"search_budget_ms\":" << search_budget_ms
            << ",\"proposal_budget_ms\":" << proposal_budget_ms << ",\"continuation\":\""
-           << (verified_horizon == 64 ? "policy-prefix8" : "fixed") << '"'
-           << ",\"nominal_retry\":\"" << (verified_horizon == 64 ? "after-new-origin" : "disabled")
+           << (held_recovery            ? "policy-prefix8-with-held-recovery"
+               : verified_horizon >= 64 ? "policy-prefix8"
+                                        : "fixed")
+           << '"' << ",\"held_recovery\":" << (held_recovery ? "true" : "false")
+           << ",\"nominal_retry\":\"" << (verified_horizon >= 64 ? "after-new-origin" : "disabled")
            << '"' << ",\"policy_horizon\":24,\"policy_beam\":192,\"policy_diversity_cell\":16"
            << ",\"proposal_boundary\":\"after-forced-lead\",\"search_rng\":\"branch-private\""
            << ",\"start_sha256\":\"" << wine_shadow::file_hash((directory / "start.txt").string())
@@ -590,6 +627,8 @@ int run(int argc, char **argv) {
            << ",\"warm_attempts\":" << statistics.warm_attempts
            << ",\"warm_selected\":" << statistics.warm_selected
            << ",\"fresh_searches\":" << statistics.fresh_searches
+           << ",\"held_attempts\":" << statistics.held_attempts
+           << ",\"held_selected\":" << statistics.held_selected
            << ",\"invalid_prefix\":" << statistics.invalid_prefix
            << ",\"planned_input_calls\":" << b::load(map.data + b::Planned)
            << ",\"fallback_input_calls\":" << b::load(map.data + b::Fallback)

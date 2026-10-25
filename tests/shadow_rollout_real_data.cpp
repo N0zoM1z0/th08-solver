@@ -1,6 +1,7 @@
 #include "modern/headless/session.hpp"
 #include "th08/online_native.hpp"
 #include "th08/plan_prefix.hpp"
+#include "th08/shadow_bridge.hpp"
 #include "th08/shadow_native.hpp"
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_proposal.hpp"
@@ -68,8 +69,75 @@ int story_entry(const char *dat_path, const char *tape_path, bool sampled) {
               << " updates=" << calls << '\n';
     return 0;
 }
+int retained_4b(const char *dat_path, const char *trace_path) {
+    const auto dat = std::filesystem::absolute(dat_path).string();
+    std::ifstream file(trace_path, std::ios::binary);
+    std::vector<s::Packet> tape;
+    s::bridge::Trace bytes;
+    while (file.read(reinterpret_cast<char *>(bytes.data()), bytes.size()))
+        tape.push_back(s::decode(bytes.data(), s::Bytes{}.size()));
+    check(file.eof() && !file.gcount() && tape.size() == 34318,
+          "expected the retained seed42386 Stage4B death journal");
+    const auto previous = std::filesystem::current_path();
+    char scratch[] = "/tmp/th08-held-4b-test-XXXXXX";
+    check(mkdtemp(scratch) != nullptr, "held regression scratch failed");
+    std::filesystem::current_path(scratch);
+    th08::headless::Config config;
+    config.dat_path = dat.c_str();
+    config.stage = 4;
+    config.difficulty = 3;
+    config.shot = 0;
+    config.seed = 42386;
+    config.input_profile = th08::headless::InputProfile::SampledGameplay;
+    th08::headless::Session session(config);
+    th08::online::Configuration settings;
+    settings.horizon = 24;
+    settings.beam = 192;
+    settings.diversity_cell = 16;
+    settings.spawn_guard = 16;
+    settings.reach_filter = settings.hard_phantoms = settings.motion_envelope = true;
+    th08::online::Policy policy(settings);
+    th08::online::Observation observation;
+    th08::online::capture_memory(session, 0, observation, true);
+    policy.observe(observation);
+    s::Packet current;
+    current.state = s::capture(session);
+    for (unsigned i = 0; i < 34256; ++i) {
+        session.step(std::uint16_t(tape[i].input));
+        s::advance_receipt(current, tape[i].input, s::capture(session));
+        check(!s::difference(current, tape[i]), "retained prefix changed execution or RNG");
+        th08::online::capture_memory(session, current.sequence, observation, true);
+        policy.observe(observation);
+    }
+    std::vector<std::uint16_t> prefix;
+    for (unsigned i = 34256; i < 34264; ++i)
+        prefix.push_back(std::uint16_t(tape[i].input));
+    while (prefix.size() < 32)
+        prefix.push_back(s::bridge::fallback(0x45, current.sequence + prefix.size() + 1, false));
+    const auto guided =
+        s::predict_with_policy(session, policy, current, prefix, 64, {false, -1}, 1000);
+    const auto held = s::predict_with_hold(session, current, prefix, 64, {false, -1}, 1000);
+    check(guided.status == s::BranchStatus::Death && !guided.certifies(),
+          "retained policy-tail counterexample no longer reproduces");
+    check(held.status == s::BranchStatus::Horizon && held.completed == 64 && held.certifies(),
+          "held tail did not recover a complete native horizon");
+    for (unsigned i = 0; i < prefix.size(); ++i)
+        check(held.frames[i].input == prefix[i], "held recovery rewrote the immutable prefix");
+    s::Packet after = current;
+    after.state = s::capture(session);
+    check(!s::difference(after, current), "held recovery mutated the actual world");
+    std::cout << "retained4b origin=34256 guided_death=" << guided.completed
+              << " held_complete=" << held.completed << " guided_ms=" << guided.wall_ms
+              << " held_ms=" << held.wall_ms
+              << " charged=" << guided.charged_updates + held.charged_updates << '\n';
+    std::filesystem::current_path(previous);
+    std::filesystem::remove_all(scratch);
+    return 0;
+}
 int main(int argc, char **argv) try {
     if (argc == 4) {
+        if (std::string(argv[3]) == "retained4b")
+            return retained_4b(argv[1], argv[2]);
         check(std::string(argv[3]) == "sampled" || std::string(argv[3]) == "controller",
               "unknown input profile");
         return story_entry(argv[1], argv[2], std::string(argv[3]) == "sampled");
@@ -102,6 +170,22 @@ int main(int argc, char **argv) try {
     check(good.certifies() && good.status == s::BranchStatus::Terminal &&
               good.frames.size() == 1292,
           "complete native future was not verified");
+    const std::vector<std::uint16_t> hold_prefix(actions.begin(), actions.begin() + 8);
+    auto literal_hold = hold_prefix;
+    literal_hold.resize(64, std::uint16_t(hold_prefix.back() & 0xf5));
+    const auto held = s::predict_with_hold(session, origin, hold_prefix, 64, {false, 179}, 10000);
+    const auto literal = s::predict(session, origin, literal_hold, {false, 179}, 10000);
+    check(held.status == literal.status && held.frames.size() == literal.frames.size() &&
+              held.frames.size() == 64 && held.certifies(),
+          "held continuation did not require the complete native horizon");
+    for (unsigned i = 0; i < held.frames.size(); ++i) {
+        if (const auto field = s::difference(held.frames[i], literal.frames[i]))
+            std::cerr << "held mismatch at=" << i << " field=" << field
+                      << " held_input=" << held.frames[i].input
+                      << " literal_input=" << literal.frames[i].input << '\n';
+        check(!s::difference(held.frames[i], literal.frames[i]),
+              "held continuation changed the immutable prefix or its literal native execution");
+    }
     s::Packet actual = origin;
     actual.state = s::capture(session);
     check(!s::difference(origin, actual), "successful child mutated the parent world");

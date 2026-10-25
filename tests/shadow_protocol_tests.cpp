@@ -172,6 +172,22 @@ int main() try {
     extension.observe_attempt(fresh, timeout_tail);
     check(buffered.confirm(fresh.frames[0]) && !extension.eligible(fresh, buffered, 8),
           "interrupted nominal extension consumed the next fresh search budget");
+    s::ActionBuffer bounded(origin);
+    s::NominalExtension bounded_extension;
+    check(bounded.replace(nominal, {}, 16) && bounded.size() == 16 &&
+              bounded_extension.eligible(nominal, bounded, 8, 16),
+          "long certificate could not publish a bounded leading window");
+    check(bounded.confirm(nominal.frames[0]) && bounded.replace(nominal, {nominal.frames[0]}, 16) &&
+              bounded.size() == 15,
+          "bounded publication lost its executed-prefix check");
+    auto invalid_tail = nominal;
+    invalid_tail.frames.back().sequence++;
+    check(!bounded.replace(invalid_tail, {nominal.frames[0]}, 16),
+          "bounded publication skipped validation of the unpublished tail");
+    auto fatal_tail = nominal;
+    fatal_tail.status = s::BranchStatus::Death;
+    check(!bounded.replace(fatal_tail, {nominal.frames[0]}, 16) && bounded.size() == 15,
+          "failed long rollout certified its surviving prefix");
     s::Packet live, native;
     live.state[s::Field::BulletLow] = 17;
     check(!s::compare_live(live, native, false).failure &&
@@ -240,6 +256,12 @@ int main() try {
     b::publish(mapping.data(), plan);
     check(b::read(mapping.data(), torn) && torn.inputs[0] == 0x85 && private_copy.inputs[0] == 0x45,
           "new publication edited the owner's private plan");
+    plan.generation = 8;
+    plan.count = b::capacity;
+    plan.inputs.back() = 0x41;
+    b::publish(mapping.data(), plan);
+    check(b::read(mapping.data(), torn) && torn.count == 128 && torn.inputs[127] == 0x41,
+          "full 128-update native certificate was truncated at the action bridge");
     check(b::fallback(0x10f5, 4, false) == 0xf5 && b::fallback(0x45, 5, false) == 0x1045 &&
               b::fallback(0x45, 5, true) == 0x45,
           "declared fallback changed movement/focus or sampled a bomb");

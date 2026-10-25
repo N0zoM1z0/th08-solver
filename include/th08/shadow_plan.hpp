@@ -1,6 +1,8 @@
 #pragma once
 #include "th08/shadow_rollout.hpp"
+#include <algorithm>
 #include <deque>
+#include <limits>
 #include <optional>
 #include <utility>
 
@@ -24,11 +26,13 @@ class ActionBuffer {
         return pending_.empty() ? nullptr : &pending_.front();
     }
     bool replace(const Prediction &prediction,
-                 const std::vector<Packet> &executed_since_origin = {}) {
+                 const std::vector<Packet> &executed_since_origin = {},
+                 std::size_t maximum_frames = std::numeric_limits<std::size_t>::max()) {
         if (!prediction.certifies() || prediction.origin.sequence > frontier_.sequence)
             return false;
         const auto consumed = frontier_.sequence - prediction.origin.sequence;
-        if (consumed >= prediction.frames.size() || executed_since_origin.size() != consumed)
+        const auto published = std::min(prediction.frames.size(), maximum_frames);
+        if (consumed >= published || executed_since_origin.size() != consumed)
             return false;
         if (!consumed && difference(frontier_, prediction.origin))
             return false;
@@ -47,7 +51,10 @@ class ActionBuffer {
         }
         if (consumed && difference(frontier_, executed_since_origin.back()))
             return false;
-        pending_.assign(prediction.frames.begin() + consumed, prediction.frames.end());
+        // Validate the complete certificate above, even when the transport can
+        // publish only its leading window. Failed longer futures certify nothing.
+        pending_.assign(prediction.frames.begin() + consumed,
+                        prediction.frames.begin() + published);
         return true;
     }
     bool confirm(const Packet &actual) {
@@ -73,14 +80,15 @@ class NominalExtension {
     std::optional<std::uint64_t> failed_origin_;
 
   public:
-    bool eligible(const Prediction &plan, const ActionBuffer &queue, unsigned lead) const {
+    bool eligible(const Prediction &plan, const ActionBuffer &queue, unsigned lead,
+                  std::size_t maximum_frames = std::numeric_limits<std::size_t>::max()) const {
         const auto now = queue.frontier().sequence;
         if (!plan.certifies() || plan.origin.sequence > now ||
             failed_origin_ == plan.origin.sequence)
             return false;
         const auto consumed = now - plan.origin.sequence;
-        return consumed < plan.frames.size() && queue.size() == plan.frames.size() - consumed &&
-               queue.size() > lead;
+        const auto published = std::min(plan.frames.size(), maximum_frames);
+        return consumed < published && queue.size() == published - consumed && queue.size() > lead;
     }
     void observe_attempt(const Prediction &plan, const Prediction &extension) {
         if (!extension.certifies())

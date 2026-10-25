@@ -322,6 +322,12 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-follow-regression
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_follow_real_data.cmake)
     set_tests_properties(headless_shadow_follow_real_data PROPERTIES TIMEOUT 100)
+    set(TH08_SHADOW_FAILURE_TRACE "" CACHE FILEPATH "Optional retained seed42386 Stage4B journal")
+    if(TH08_SHADOW_FAILURE_TRACE)
+      add_test(NAME headless_shadow_retained_4b COMMAND th08_shadow_rollout_test
+        "${TH08_HEADLESS_DAT}" "${TH08_SHADOW_FAILURE_TRACE}" retained4b)
+      set_tests_properties(headless_shadow_retained_4b PROPERTIES TIMEOUT 60)
+    endif()
     add_test(NAME headless_online_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_online>
       -DVERIFIER=$<TARGET_FILE:th08_plan>

@@ -630,7 +630,25 @@ parent's actual world remain private. Complete native execution still decides
 the 64-update horizon or actual terminal. Continuation wall time and requested
 inputs are reported separately from native simulation and file I/O.
 
-Before requesting fresh candidates, `h64` can reuse the unconsumed inputs of the
+The named `h64-held` experiment adds native held-action recovery. On fresh
+searches with an existing plan, the 18 movement/focus prefixes precede Policy
+prefixes and their final action continues through the full horizon. If none
+certifies, Policy-guided tails use the remaining total budget. Startup keeps the
+Policy-first order. A held tail preserves the final shoot bit as well as movement
+and focus; owned dialogue state may still select the recorded Z cadence. Every
+attempt is charged, including incomplete and fatal branches. `h128-held` applies
+that search at horizon128, replan-remaining120, with the same lead8, interval8,
+110ms total and60ms proposal cap. The bridge holds all128 inputs; greater rollout
+work and altered selection order are explicit experiments. `h256-held` verifies
+256 updates while publishing only the first128. The full successful certificate
+is retained and validated; a fatal or incomplete256-update future supplies no
+prefix. Nominal extension may reuse the unconsumed unpublished future as a proposal,
+then freshly verifies a new256-update future. Only the queued published inputs
+are declared unchanged to the owner. Its publication threshold remains120 and
+its budget remains110ms. Reports separate verified and publication horizons. Existing `h32` and
+`h64` keep their prior behavior.
+
+Before requesting fresh candidates, `h64` and its named variants can reuse the unconsumed inputs of the
 previous verified plan. A fresh child re-executes that whole prefix and extends
 its tail to a new complete horizon. This saves repeated proposal searches; it
 does not reuse old collision verdicts for a changed world. The declared first
@@ -665,7 +683,8 @@ Only the owned Native GUI's dialogue-present state selects that behavior in
 proposal generation and guided tails; immutable prefixes retain their actual
 inputs. Complete Native rollouts still decide whether a plan can be adopted.
 The retail input hook executes those same queued inputs without separate key
-injection. Spell practice rejects the flag, and this profile requires H64.
+injection. Spell practice rejects the flag, and this profile requires a verified horizon
+of at least64.
 
 `TH08_SHADOW_PRIOR_FINAL_A_CLEAR=1` names a second-clear story checkpoint for
 double teams at standard difficulties. Both worlds load a fresh score history,

@@ -23,4 +23,9 @@ FutureProposals propose_after_lead(headless::Session &, online::Policy &, const 
 Prediction predict_with_policy(headless::Session &, online::Policy &, const Packet &origin,
                                const std::vector<std::uint16_t> &prefix, std::size_t horizon,
                                Boundary, unsigned timeout_ms, bool advance_dialogue = false);
+// Keep the prefix immutable and hold its final action through a complete native
+// horizon. Dialogue advancement, when requested, still follows owned GUI state.
+Prediction predict_with_hold(headless::Session &, const Packet &origin,
+                             const std::vector<std::uint16_t> &prefix, std::size_t horizon,
+                             Boundary, unsigned timeout_ms, bool advance_dialogue = false);
 } // namespace th08::shadow
