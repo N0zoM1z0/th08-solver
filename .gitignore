@@ -6,6 +6,8 @@
 /reports/local/
 # Owner keeps all preparation material local and removes it from published history.
 /preparations/
+# Original README animation bundle stays local; the selected GIF is in docs/media/.
+/gifs/
 # New experiment artifacts stay local; previously tracked snapshots remain tracked.
 /reports/native/**/*.json
 /reports/native/**/*.rpy

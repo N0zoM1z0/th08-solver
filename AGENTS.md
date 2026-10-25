@@ -60,6 +60,9 @@ this repository, not an ignored checkout, submodule or separate feature branch.
 - All `preparations/` material is local-only. The owner requested a verified ZIP
   download and removal of that directory from all published Git history; never
   reintroduce its files through later commits or old branches
+- The owner authorizes the selected animated README diagram in `docs/media/`.
+  Keep its original `gifs/` bundle, MP4 and Python generator local; this does not
+  introduce a Python implementation/dependency or authorize other video commits
 - Keep only the compact current document set linked by README. Update the document
   that owns the fact instead of adding another roadmap, diary or duplicate checklist
 - Keep current status, future work and historical/component evidence distinct.
