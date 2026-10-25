@@ -199,6 +199,7 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
     m.maxy = m.miny + g_GameManager.playerMovementAreaSize.y;
     m.half = {g_Player.hurtboxHalfSize.x, g_Player.hurtboxHalfSize.y, 0};
     o.bullets.clear();
+    o.graze_half = {g_Player.grazeHalfSize.x, g_Player.grazeHalfSize.y, g_Player.grazeHalfSize.z};
     o.child_births.clear();
     o.unsupported_child_births = 0;
     o.unsupported_lifetimes = 0;
@@ -215,6 +216,8 @@ void capture_memory(headless::Session &session, std::uint64_t update, Observatio
                              b.vector_acceleration_y, b.vector_acceleration_timer,
                              b.vector_acceleration_duration, native.collisionDisabled != 0});
         o.bullets.back().activation_update = native_spawn_clock(native);
+        o.bullets.back().grazed = native.isGrazed != 0;
+        o.bullets.back().graze_ready_in = unsigned(std::max(0, 16 - native.activeTimer.current));
         if (lifetime_horizon) {
             const auto lifetime = capture_collision_lifetime(native, lifetime_horizon);
             auto &copied = o.bullets.back();

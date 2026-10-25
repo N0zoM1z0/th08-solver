@@ -125,6 +125,84 @@ on::Bullet bullet(int slot, float x, float y, float vx, float vy) {
     b.full_width = b.full_height = 2;
     return b;
 }
+void policy_style_contract() {
+    on::Configuration base;
+    base.horizon = 24;
+    base.beam = 73;
+    base.reach_filter = true;
+    const auto sniper = on::with_style("sniper", base);
+    check(sniper.horizon == 24 && sniper.beam == 73 && sniper.reach_filter,
+          "style changed search dimensions or collision configuration");
+    auto empty = scene();
+    on::Policy offense(sniper);
+    check(offense.decide(empty).action & 16,
+          "sniper preference did not move toward its higher anchor");
+    rejects([&] { on::with_style("snipre"); }, "unknown style silently selected a default");
+    auto invalid = base;
+    invalid.style.graze_reward = std::numeric_limits<float>::quiet_NaN();
+    rejects([&] { on::Policy bad(invalid); }, "nonfinite style cost accepted");
+    // Contact during the immutable first movement belongs to every path. A
+    // bullet may not pay repeatedly for staying in, leaving or reentering its
+    // graze box later in this forecast. This was absent from the reviewed proxy.
+    auto contact = scene();
+    contact.bullets.push_back(bullet(0, 212, 400, 0, 0));
+    auto greedy = base;
+    greedy.style.graze_reward = 100;
+    for (bool already_grazed : {false, true}) {
+        contact.bullets.front().grazed = already_grazed;
+        on::Policy plain(base), rewarded(greedy);
+        std::vector<on::ValueProposal> a, b;
+        const auto da = plain.decide(contact, nullptr, &a);
+        const auto db = rewarded.decide(contact, nullptr, &b);
+        check(da.action == db.action && da.depth == db.depth && a.size() == b.size(),
+              "graze proxy rewarded an already consumed contact");
+        for (std::size_t i = 0; i < a.size(); ++i)
+            check(a[i].inputs == b[i].inputs,
+                  "repeated graze proxy changed retained proposal ranking");
+    }
+}
+void legacy_style_signature() {
+    // Pinned against the unchanged 13778ba policy, including all exported
+    // proposals and tie draws over a moving synthetic current-memory corpus.
+    on::Configuration c;
+    c.horizon = 24;
+    c.beam = 192;
+    c.diversity_cell = 16;
+    c.spawn_guard = 16;
+    c.hard_phantoms = c.motion_envelope = c.reach_filter = true;
+    on::Policy policy(c);
+    auto v = scene();
+    std::uint64_t signature = 1469598103934665603ull;
+    const auto mix = [&](std::uint64_t a) {
+        signature ^= a;
+        signature *= 1099511628211ull;
+    };
+    for (unsigned update = 0; update < 96; ++update) {
+        v.update = update;
+        v.bullets.clear();
+        v.lethal_regions = {{float(60 + update % 180), 60, float(92 + update % 180), 92}};
+        for (int slot = 0; slot < 20; ++slot) {
+            auto b =
+                bullet(slot, float(22 + slot * 17), float(180 + (slot * 13 + update * 2) % 240),
+                       float(slot % 3 - 1) * .2f, 2);
+            b.full_width = b.full_height = 4;
+            v.bullets.push_back(b);
+        }
+        std::vector<on::ValueProposal> proposals;
+        const auto d = policy.decide(v, nullptr, &proposals);
+        mix(d.action);
+        mix(d.depth);
+        mix(proposals.size());
+        for (const auto &a : proposals)
+            for (auto input : a.inputs)
+                mix(input);
+        on::detail::apply_movement(v.movement, v.x, v.y,
+                                   on::detail::movement_delta(v.movement, v.latched_input));
+        v.latched_input = d.action;
+    }
+    check(signature == 0xeca066c1adb5a367ull,
+          "default style changed legacy proposals or tie sequence");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -1763,6 +1841,8 @@ void narrow_arc_contract() {
 } // namespace
 int main(int argc, char **argv) {
     try {
+        policy_style_contract();
+        legacy_style_signature();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

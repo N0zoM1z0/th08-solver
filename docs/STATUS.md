@@ -8,9 +8,29 @@ ordinary cards6/10 time out; Last Spells13/32 are absent. Its218996507 stored un
 mean **2,189,965,070 displayed points**. Extra has all14 captures and1,166,969,620
 displayed points. The complete Extra MP4 is retained at capture quality, with audio,
 full decode passing and byte-identical original video bitstream. These establish
-the baseline for the new investigation; different policy styles are being tested.
+the baseline for the new investigation. The owner's latest direction prioritizes
+terminal score under NMNB and full capture; movement style is a resulting metric.
 
-The owner pauses 4B exploration on October 25. Published implementation is
+The first frozen ten-case Native comparison keeps H64, lead8, total110ms and
+proposal60ms, with dialogue advancement. All ten action tapes agree in fresh
+execution on all41 terminal words. Eight complete NMNB cases also pass natural
+replay with matching score and capture outcomes. Two failures remain preserved:
+
+| Proposal preference | Stage1 seed23035: displayed score / captures | 4A seed26528: displayed score / captures |
+| --- | ---: | ---: |
+| baseline | 47,842,200 / 2 of4 | 262,046,000 / 6 of6 |
+| zen | 47,285,190 / 2 of4 | 226,587,920 / 5 of6 |
+| expert | 27,547,250 / 0 of4 | 218,697,150 / 6 of6 |
+| sniper | 70,683,540 / 4 of4 | NMNB failure at7021, card58 |
+| graze | 73,361,460 / 1 of4 | NMNB failure at17050, card66 |
+
+The Stage1 sniper gain is47.7% over baseline and includes its previously missing
+Last Spell. It is not a general replacement: that same preference fails4A.
+More graze or less movement alone does not select the valid high-score run.
+Baseline remains the default; these synchronous Native results are not new live
+Wine or FPS evidence. Current code passes Native/DAT56/56 and core36/36.
+
+The owner pauses 4B exploration on October 25. Its last implementation checkpoint is
 `288c6fe`; the last full live attempt, real seed 39151, dies at 20648 in spell 92
 with exact 41-word agreement. The uncommitted immutable-index experiment is saved
 as a local patch and removed from the working implementation. No 4B jobs remain.

@@ -19,6 +19,42 @@
 #include <stdexcept>
 
 namespace th08::online {
+Configuration with_style(const std::string &name, Configuration configuration) {
+    // The owner's October 25 review supplies the initial proposal preferences.
+    // Contact rewards below additionally track unique bullets along each path.
+    auto &w = configuration.style;
+    w = {};
+    configuration.boss_follow = 0.25f;
+    if (name == "baseline")
+        return configuration;
+    if (name == "zen") {
+        w.anchor_weight = 0.005f;
+        w.change_cost = 0.15f;
+        w.move_cost = 0.05f;
+        w.focused_move_cost = 0.025f;
+        w.reversal_cost = 0.5f;
+    } else if (name == "expert") {
+        w.anchor_weight = 0.006f;
+        w.anchor_y = 390;
+        w.change_cost = 0.08f;
+        w.reversal_cost = 0.6f;
+        w.move_cost = 0.01f;
+        w.edge_cost = 2;
+        w.edge_margin = 40;
+        configuration.boss_follow = 0.6f;
+    } else if (name == "sniper") {
+        w.anchor_weight = 0.05f;
+        w.anchor_y = 360;
+        configuration.boss_follow = 1;
+    } else if (name == "graze") {
+        w.anchor_weight = 0.005f;
+        w.change_cost = 0.05f;
+        w.reversal_cost = 0.3f;
+        w.graze_reward = 0.15f;
+    } else
+        throw std::runtime_error("unknown_online_style");
+    return configuration;
+}
 const char *build_architecture() {
 #ifdef TH08_ONLINE_ARCH_NAME
     return TH08_ONLINE_ARCH_NAME;
@@ -50,6 +86,9 @@ struct HFrame {
     std::vector<int> rstart, ritems;
     std::vector<Box> laabb; // world-space AABB of each laser (index parallel to l)
     std::vector<int> lstart, litems;
+    std::vector<Box> graze_boxes;
+    std::vector<std::uint64_t> graze_bits;
+    std::vector<int> gstart, gitems;
 };
 constexpr float kCell = 16.f, kGx0 = -64.f, kGy0 = -64.f;
 constexpr int kGW = 34, kGH = 38;
@@ -108,6 +147,10 @@ Box laser_aabb(const Laser &l, float padding = 0) {
 }
 void build_index(HFrame &f, const Float3 &half) {
     build_grid(f.risk, half, f.rstart, f.ritems);
+    if (!f.graze_boxes.empty())
+        build_grid(f.graze_boxes, {}, f.gstart, f.gitems);
+    else
+        f.gstart.clear(), f.gitems.clear();
     f.laabb.resize(f.l.size());
     for (std::size_t i = 0; i < f.l.size(); ++i) {
         f.l[i].inverse = detail::prepare_rotation(-f.l[i].angle);
@@ -247,6 +290,19 @@ struct Policy::Impl {
     std::uint64_t last_decided = UINT64_MAX;
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
         : opt(configuration), risk(std::move(tables)), value_model(std::move(value)) {
+        const auto &w = opt.style;
+        for (float cost :
+             {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost, w.move_cost,
+              w.focused_move_cost, w.reversal_cost, w.edge_cost, w.graze_reward})
+            if (!std::isfinite(cost) || cost < 0 || cost > 10000)
+                throw std::runtime_error("invalid_online_style_cost");
+        for (float coordinate : {w.anchor_x, w.anchor_y, w.anchor_x_min, w.anchor_x_max})
+            if (!std::isfinite(coordinate) || std::abs(coordinate) > 1048576)
+                throw std::runtime_error("invalid_online_style_anchor");
+        if (w.anchor_x_min > w.anchor_x_max || w.margin_split < 1 || w.margin_split > 200 ||
+            !std::isfinite(w.edge_margin) || w.edge_margin < 0 || w.edge_margin > 1024 ||
+            (w.edge_cost > 0 && w.edge_margin == 0))
+            throw std::runtime_error("invalid_online_style_bounds");
         if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
             (value_model.loaded && (opt.horizon != int(kValueHorizon) || opt.planner_lag ||
                                     opt.tail_check || opt.warm_fallback || opt.held_fallback ||
@@ -310,6 +366,12 @@ struct Policy::Impl {
         };
         finite(o.x);
         finite(o.y);
+        if (opt.style.graze_reward > 0) {
+            finite(o.graze_half.x);
+            finite(o.graze_half.y);
+            if (o.graze_half.x < 0 || o.graze_half.y < 0)
+                throw std::runtime_error("invalid_online_graze_box");
+        }
         const auto &m = o.movement;
         for (float v : {m.axis[0], m.axis[1], m.diag[0], m.diag[1], m.hmul, m.vmul, m.frm, m.minx,
                         m.maxx, m.miny, m.maxy, m.half.x, m.half.y})
@@ -579,7 +641,21 @@ struct Policy::Impl {
     void kinematic_forecast(const Observation &observation, int horizon,
                             std::vector<HFrame> &frames) {
         for (int j = 1; j <= horizon; ++j)
-            frames[j].b.clear(), frames[j].l.clear(), frames[j].risk.clear();
+            frames[j].b.clear(), frames[j].l.clear(), frames[j].risk.clear(),
+                frames[j].graze_boxes.clear(), frames[j].graze_bits.clear();
+        std::array<std::uint64_t, kSlots> graze_slots{};
+        if (opt.style.graze_reward > 0) {
+            std::vector<std::pair<float, int>> eligible;
+            for (const auto &b : observation.bullets)
+                if (b.slot >= 0 && b.slot < kSlots && b.state == 1 && !b.grazed &&
+                    !b.collision_disabled) {
+                    const float dx = b.x - observation.x, dy = b.y - observation.y;
+                    eligible.emplace_back(dx * dx + dy * dy, b.slot);
+                }
+            std::sort(eligible.begin(), eligible.end());
+            for (std::size_t i = 0; i < std::min<std::size_t>(64, eligible.size()); ++i)
+                graze_slots[eligible[i].second] = std::uint64_t(1) << i;
+        }
         const auto &bs = observation.bullets;
         for (const auto &b : bs) {
             if (b.slot < 0 || b.slot >= kSlots)
@@ -680,6 +756,15 @@ struct Policy::Impl {
                         x += vx, y += vy;
                     }
                     const float g = opt.grow * j;
+                    if (graze_slots[b.slot] && unsigned(j) >= b.graze_ready_in) {
+                        // Source CheckGrazeCollision expands each bullet by 20px
+                        // against the current player graze box. Motion remains a
+                        // conditional proposal hypothesis; native awards decide.
+                        const float gx = w / 2 + 20 + observation.graze_half.x;
+                        const float gy = h / 2 + 20 + observation.graze_half.y;
+                        frames[j].graze_boxes.push_back({x - gx, y - gy, x + gx, y + gy});
+                        frames[j].graze_bits.push_back(graze_slots[b.slot]);
+                    }
                     if (alternate)
                         envelope.advance(x, y, b.alternate_vx, b.alternate_vy);
                     else
@@ -889,7 +974,52 @@ struct Policy::Impl {
         int parent;
         std::uint16_t act;
         float score;
+        std::uint64_t graze_mask = 0;
     };
+    static std::uint64_t graze_contacts(const HFrame &frame, float x, float y) {
+        if (frame.gstart.empty())
+            return 0;
+        const int cell = cell_of(y, kGy0, kGH) * kGW + cell_of(x, kGx0, kGW);
+        std::uint64_t mask = 0;
+        for (int i = frame.gstart[cell]; i < frame.gstart[cell + 1]; ++i) {
+            const int index = frame.gitems[i];
+            const auto &box = frame.graze_boxes[index];
+            if (x >= box.x0 && x <= box.x1 && y >= box.y0 && y <= box.y1)
+                mask |= frame.graze_bits[index];
+        }
+        return mask;
+    }
+    float style_cost(const Node &parent, Node &node, const Speeds &movement,
+                     const HFrame &frame) const {
+        const auto &w = opt.style;
+        float cost = 0;
+        if (node.act & 0xf0)
+            cost += (node.act & 4) ? w.focused_move_cost : w.move_cost;
+        const auto sign = [](std::uint16_t a, unsigned negative, unsigned positive) {
+            return int(bool(a & positive)) - int(bool(a & negative));
+        };
+        if (w.reversal_cost > 0 && (sign(node.act, 64, 128) * sign(parent.act, 64, 128) < 0 ||
+                                    sign(node.act, 16, 32) * sign(parent.act, 16, 32) < 0))
+            cost += w.reversal_cost;
+        if (w.edge_cost > 0) {
+            const float gap = std::min({node.x - movement.minx, movement.maxx - node.x,
+                                        node.y - movement.miny, movement.maxy - node.y});
+            const float amount = std::max(0.f, (w.edge_margin - gap) / w.edge_margin);
+            cost += w.edge_cost * amount * amount;
+        }
+        if (w.graze_reward > 0) {
+            const auto contacts = graze_contacts(frame, node.x, node.y);
+            auto fresh = contacts & ~parent.graze_mask;
+            unsigned count = 0;
+            while (fresh) {
+                fresh &= fresh - 1;
+                ++count;
+            }
+            node.graze_mask |= contacts;
+            cost -= w.graze_reward * count;
+        }
+        return cost;
+    }
     struct ValueContext {
         using Grid = std::array<float, 24 * 28>;
         Grid real{}, ghost{}, spawning{}, actors{}, canonical_gap{};
@@ -1053,6 +1183,8 @@ struct Policy::Impl {
         float x1 = x0, y1 = y0;
         move(sp, x1, y1, latched);
         layers[1].push_back({x1, y1, -1, std::uint16_t(latched & 0xF4), 0.f});
+        if (opt.style.graze_reward > 0)
+            layers[1].back().graze_mask = graze_contacts(frames[1], x1, y1);
         if (probe(frames[1], sp.half, x1, y1, false) == 2)
             return {{std::uint16_t(latched & 0xF4)}, 0};
         // Every successor shares this immutable movement snapshot. Keep the
@@ -1082,7 +1214,9 @@ struct Policy::Impl {
                 move(sp, x, y, action);
                 if (probe(frames[j + 1], sp.half, x, y, false) == 2)
                     break;
-                next.push_back({x, y, 0, action, parent.score});
+                next.push_back({x, y, 0, action, parent.score, parent.graze_mask});
+                if (opt.style.graze_reward > 0)
+                    next.back().graze_mask |= graze_contacts(frames[j + 1], x, y);
                 deepest = j + 1;
                 continue;
             }
@@ -1115,7 +1249,7 @@ struct Policy::Impl {
                         const int hit = probe(frames[j + 1], sp.half, x, y, true);
                         if (hit == 2)
                             continue;
-                        Node n{x, y, pi, a, p.score};
+                        Node n{x, y, pi, a, p.score, p.graze_mask};
                         const float dx = (x - pref_x) / 96.f, dy = (y - pref_y) / 96.f;
                         if ((risk.loaded || opt.spawn_guard > 0 || opt.queued_shots) &&
                             probe_risk(frames[j + 1], sp.half, x, y))
@@ -1129,9 +1263,15 @@ struct Policy::Impl {
                         }
                         if (!(a & 4))
                             n.score += opt.focus_bias;
-                        n.score += (hit == 1 ? (j < 12 ? 40.f : 10.f) : 0.f) +
-                                   0.02f * (dx * dx + dy * dy) + (a != p.act ? 0.01f : 0.f) +
+                        const auto &w = opt.style;
+                        n.score += (hit == 1 ? (j < w.margin_split ? w.margin_early : w.margin_late)
+                                             : 0.f) +
+                                   w.anchor_weight * (dx * dx + dy * dy) +
+                                   (a != p.act ? w.change_cost : 0.f) +
                                    float(xrand() % 1000) * 1e-6f;
+                        if (w.move_cost || w.focused_move_cost || w.reversal_cost || w.edge_cost ||
+                            w.graze_reward)
+                            n.score += style_cost(p, n, sp, frames[j + 1]);
                         next.push_back(n);
                     }
             }
@@ -1360,7 +1500,7 @@ struct Policy::Impl {
             drop_pending();
             a.free_at = u;
             auto rescue = search(frames, opt.emergency_horizon, o.movement, o.latched_input, o.x,
-                                 o.y, pref_x, 400.f, nullptr, opt.emergency_beam);
+                                 o.y, pref_x, opt.style.anchor_y, nullptr, opt.emergency_beam);
             // A bounded rescue may be shallower than the plan just checked.
             if (!a.active.present() || rescue.depth >= checked) {
                 a.active.moves = std::move(rescue.moves);
@@ -1378,7 +1518,7 @@ struct Policy::Impl {
             ensure_index(opt.horizon);
             const auto begin = std::chrono::steady_clock::now();
             auto full = search(frames, opt.horizon, o.movement, o.latched_input, o.x, o.y, pref_x,
-                               400.f, &forced);
+                               opt.style.anchor_y, &forced);
             search_stats.planner_ms =
                 std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - begin)
                     .count();
@@ -1525,13 +1665,14 @@ struct Policy::Impl {
         ensure_index(pending_only ? std::max(opt.executor_check, opt.emergency_horizon)
                                   : forecast_horizon);
         mark(&DecisionTiming::index_ns);
-        float pref_x = 192.f, area = 0;
+        float pref_x = opt.style.anchor_x, area = 0;
         for (const auto &r : observation.lethal_regions) {
             const float a = (r.x1 - r.x0) * (r.y1 - r.y0);
             if (a > area && r.y1 < 300)
-                area = a, pref_x = 192.f + opt.boss_follow * ((r.x0 + r.x1) / 2 - 192.f);
+                area = a, pref_x = opt.style.anchor_x +
+                                   opt.boss_follow * ((r.x0 + r.x1) / 2 - opt.style.anchor_x);
         }
-        pref_x = std::clamp(pref_x, 48.f, 336.f);
+        pref_x = std::clamp(pref_x, opt.style.anchor_x_min, opt.style.anchor_x_max);
         if (opt.planner_lag > 0) {
             const auto executed = lag_decide(observation, pref_x);
             mark(&DecisionTiming::search_ns);
@@ -1543,7 +1684,7 @@ struct Policy::Impl {
             return {std::uint16_t(executed.action | 1), executed.depth, search_stats};
         }
         auto result = search(frames, opt.horizon, sp, observation.latched_input, observation.x,
-                             observation.y, pref_x, 400.f, nullptr, 0, proposals);
+                             observation.y, pref_x, opt.style.anchor_y, nullptr, 0, proposals);
         mark(&DecisionTiming::search_ns);
         check_warm_path(result, observation);
         check_held_directions(result, observation);

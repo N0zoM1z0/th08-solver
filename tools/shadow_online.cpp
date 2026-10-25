@@ -557,10 +557,10 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
 }
 
 int run(int argc, char **argv) {
-    if ((argc != 6 && argc != 7 && argc != 8) ||
+    if ((argc < 6 || argc > 9) ||
         (std::string(argv[4]) != "follow" && std::string(argv[4]) != "mpc") ||
         (argc >= 7 && std::string(argv[6]) != "exact" && std::string(argv[6]) != "behavioral") ||
-        (argc == 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64" &&
+        (argc >= 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64" &&
          std::string(argv[7]) != "h64-held" && std::string(argv[7]) != "h128-held" &&
          std::string(argv[7]) != "h256-held" && std::string(argv[7]) != "h256-pulse" &&
          std::string(argv[7]) != "h512-buffered" && std::string(argv[7]) != "h128-recorded" &&
@@ -568,23 +568,23 @@ int run(int argc, char **argv) {
         throw std::runtime_error("usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
                                  "WALL_SECONDS [behavioral|exact] "
                                  "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
-                                 "h128-recorded|h64-recorded]");
+                                 "h128-recorded|h64-recorded] [baseline|zen|expert|sniper|graze]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
-    const bool recorded_mode = argc == 8 && (std::string(argv[7]) == "h128-recorded" ||
+    const bool recorded_mode = argc >= 8 && (std::string(argv[7]) == "h128-recorded" ||
                                              std::string(argv[7]) == "h64-recorded");
-    const bool recorded_direct = argc == 8 && std::string(argv[7]) == "h128-recorded";
-    const bool buffered = argc == 8 && std::string(argv[7]) == "h512-buffered";
-    const bool pulse_recovery = argc == 8 && std::string(argv[7]) == "h256-pulse";
+    const bool recorded_direct = argc >= 8 && std::string(argv[7]) == "h128-recorded";
+    const bool buffered = argc >= 8 && std::string(argv[7]) == "h512-buffered";
+    const bool pulse_recovery = argc >= 8 && std::string(argv[7]) == "h256-pulse";
     const bool held_recovery =
-        argc == 8 && (std::string(argv[7]) == "h64-held" || std::string(argv[7]) == "h128-held" ||
+        argc >= 8 && (std::string(argv[7]) == "h64-held" || std::string(argv[7]) == "h128-held" ||
                       std::string(argv[7]) == "h256-held" || pulse_recovery);
     const unsigned verified_horizon =
         buffered                                                                ? 512
-        : (argc == 8 && std::string(argv[7]) == "h256-held") || pulse_recovery  ? 256
-        : recorded_direct || (argc == 8 && std::string(argv[7]) == "h128-held") ? 128
-        : argc == 8 && std::string(argv[7]) != "h32"                            ? 64
+        : (argc >= 8 && std::string(argv[7]) == "h256-held") || pulse_recovery  ? 256
+        : recorded_direct || (argc >= 8 && std::string(argv[7]) == "h128-held") ? 128
+        : argc >= 8 && std::string(argv[7]) != "h32"                            ? 64
                                                                                 : 32;
     const unsigned minimum_search_interval = verified_horizon >= 64 ? 8 : 4;
     const unsigned search_budget_ms = buffered ? 480 : verified_horizon >= 64 ? 110 : 80;
@@ -627,6 +627,8 @@ int run(int argc, char **argv) {
     profile.diversity_cell = 16;
     profile.spawn_guard = 16;
     profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
+    const std::string style = argc == 9 ? argv[8] : "baseline";
+    profile = o::with_style(style, profile);
     o::Policy policy(profile);
     Statistics statistics;
     Follower follower(session, policy, statistics, directory / "frames.bin");
@@ -797,6 +799,7 @@ int run(int argc, char **argv) {
            << ",\"shot\":" << config.shot << ",\"spell\":" << config.spell << ",\"sync_mode\":\""
            << (follower.exact ? "exact" : "behavioral") << '"'
            << ",\"input_profile\":\"sampled-gameplay\""
+           << ",\"policy_style\":\"" << style << "\",\"policy_style_revision\":1"
            << ",\"prior_final_a_clear\":" << (recording.prior_final_a_clear ? "true" : "false")
            << ",\"dialogue_advance\":" << (recording.advance_dialogue ? "true" : "false")
            << ",\"actual_complete\":" << (actual_complete ? "true" : "false")

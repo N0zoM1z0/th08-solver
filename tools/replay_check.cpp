@@ -3,6 +3,7 @@
 #include "modern/headless/replay_check.hpp"
 #include "ReplayManager.hpp"
 #include "modern/headless/session.hpp"
+#include "score_audit_report.hpp"
 #include <array>
 #include <charconv>
 #include <cstdio>
@@ -42,19 +43,34 @@ std::string sha256(const std::filesystem::path &path) {
 } // namespace
 
 int main(int argc, char **argv) {
-    if (argc != 4 && argc != 5) {
-        std::fprintf(stderr, "usage: th08_replay_check DAT REPLAY ROWS_OUT [START_STAGE]\n");
+    if (argc < 4) {
+        std::fprintf(stderr, "usage: th08_replay_check DAT REPLAY ROWS_OUT [START_STAGE] "
+                             "[--score-audit OUTPUT.json] [--require-all-captures]\n");
         return 1;
     }
     int stage = 0;
-    if (argc == 5) {
-        const std::string value = argv[4];
+    int option = 4;
+    if (option < argc && argv[option][0] != '-') {
+        const std::string value = argv[option++];
         const auto parsed = std::from_chars(value.data(), value.data() + value.size(), stage);
         if (parsed.ec != std::errc{} || parsed.ptr != value.data() + value.size() || stage < 0 ||
             stage > 8)
             return 1;
     }
     namespace fs = std::filesystem;
+    fs::path audit_path;
+    bool require_captures = false;
+    while (option < argc) {
+        const std::string flag = argv[option++];
+        if (flag == "--score-audit" && option < argc && audit_path.empty())
+            audit_path = fs::absolute(argv[option++]);
+        else if (flag == "--require-all-captures" && !require_captures)
+            require_captures = true;
+        else
+            return 1;
+    }
+    if (require_captures && audit_path.empty())
+        return 1;
     const std::string dat = fs::absolute(argv[1]), replay = fs::absolute(argv[2]);
     // Identify the actual immutable inputs before playback; private paths never
     // enter the report. Archive consumers bind their bytes to this capture.
@@ -83,6 +99,8 @@ int main(int argc, char **argv) {
     try {
         fs::current_path(scratch);
         th08::headless::replay_check_enable(rows);
+        if (!audit_path.empty())
+            th08::headless::score_audit_enable();
         th08::headless::Config config;
         config.dat_path = dat.c_str();
         config.replay = replay.c_str();
@@ -109,6 +127,15 @@ int main(int argc, char **argv) {
     const bool io_error = summary.write_failed || !flush_ok || !close_ok;
     const bool ok =
         !runtime_error && !io_error && summary.finished && summary.natural && summary.rows > 0;
+    bool captures_ok = false, audit_written = audit_path.empty();
+    if (!audit_path.empty()) {
+        std::ofstream audit(audit_path);
+        if (audit) {
+            captures_ok = th08::report::write_score_audit(audit, th08::headless::score_audit(), ok);
+            audit.flush();
+            audit_written = bool(audit);
+        }
+    }
     // Do not interpolate arbitrary replay bytes into JSON. Only the pinned
     // target has a public version label; other bytes remain unsupported.
     const bool known_target_version =
@@ -135,5 +162,5 @@ int main(int argc, char **argv) {
     std::error_code ignored;
     fs::current_path("/", ignored);
     fs::remove_all(scratch, ignored);
-    _exit(ok && report_ok ? 0 : 2);
+    _exit(!ok || !report_ok || !audit_written ? 2 : require_captures && !captures_ok ? 3 : 0);
 }

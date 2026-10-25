@@ -37,6 +37,7 @@ add_library(th08_native_headless STATIC ${th08_game_files}
   "${th08_native}/src/modern/headless/runtime.cpp")
 target_sources(th08_native_headless PRIVATE "${th08_native}/src/modern/headless/session.cpp"
   "${th08_native}/src/modern/headless/body_forecast.cpp"
+  "${th08_native}/src/modern/headless/score_audit.cpp"
   "${th08_native}/src/modern/headless/replay_check.cpp")
 target_compile_features(th08_native_headless PUBLIC cxx_std_17)
 target_compile_definitions(th08_native_headless PUBLIC TH08_MODERN_PORT
@@ -126,6 +127,15 @@ add_executable(th08_replay_check tools/replay_check.cpp)
 target_link_libraries(th08_replay_check PRIVATE th08_native_headless OpenSSL::Crypto)
 target_include_directories(th08_replay_check PRIVATE "${th08_native}/src")
 target_compile_options(th08_replay_check PRIVATE -ffp-contract=off "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+if(BUILD_TESTING AND TH08_HEADLESS_DAT)
+  add_test(NAME headless_score_audit COMMAND ${CMAKE_COMMAND}
+    -DCHECKER=$<TARGET_FILE:th08_replay_check>
+    -DDAT=${TH08_HEADLESS_DAT}
+    -DREPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/score-audit-regression
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_audit_real_data.cmake)
+  set_tests_properties(headless_score_audit PROPERTIES TIMEOUT 75)
+endif()
 add_executable(th08_plan tools/plan.cpp)
 target_link_libraries(th08_plan PRIVATE th08_native_headless OpenSSL::Crypto)
 target_include_directories(th08_plan PRIVATE "${th08_native}/src" "${CMAKE_CURRENT_SOURCE_DIR}/include")
@@ -145,6 +155,20 @@ add_executable(th08_shadow_follow tools/shadow_follow.cpp)
 target_link_libraries(th08_shadow_follow PRIVATE th08_shadow_native OpenSSL::Crypto)
 target_compile_options(th08_shadow_follow PRIVATE -ffp-contract=off)
 add_library(th08_shadow_proposals src/shadow_proposal.cpp src/shadow_recorded.cpp)
+add_executable(th08_shadow_style tools/shadow_style.cpp)
+target_link_libraries(th08_shadow_style PRIVATE th08_shadow_proposals)
+target_compile_options(th08_shadow_style PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+if(BUILD_TESTING AND TH08_HEADLESS_DAT)
+  add_test(NAME headless_shadow_style COMMAND ${CMAKE_COMMAND}
+    -DSOLVER=$<TARGET_FILE:th08_shadow_style>
+    -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+    -DCHECKER=$<TARGET_FILE:th08_replay_check>
+    -DDAT=${TH08_HEADLESS_DAT}
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_style_real_data.cmake)
+  set_tests_properties(headless_shadow_style PROPERTIES TIMEOUT 330)
+endif()
 set_source_files_properties(src/shadow_recorded.cpp PROPERTIES
   COMPILE_OPTIONS "-fpermissive;-include${th08_native}/src/modern/linux/linux_compat.hpp")
 target_link_libraries(th08_shadow_proposals PUBLIC th08_shadow_native th08_online_native)

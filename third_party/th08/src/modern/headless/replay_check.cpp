@@ -4,6 +4,7 @@
 #include "Player.hpp"
 #include "ReplayManager.hpp"
 #include "modern/linux/replay_trace.hpp"
+#include "score_audit.hpp"
 #include <cstring>
 
 namespace th08::headless {
@@ -67,6 +68,8 @@ bool ReplayTraceRecord(ReplayManager *manager) {
         summary.stages[summary.stage_count++] = stage;
     }
     const ZunGlobals &globals = *g_GameManager.globals;
+    // Observe before replay teardown can reset the globals on the final step.
+    score_audit_observe();
     const std::uint32_t row[field_count] = {summary.rows + 1,
                                             std::uint32_t(stage),
                                             std::uint32_t(manager->frameCounter),

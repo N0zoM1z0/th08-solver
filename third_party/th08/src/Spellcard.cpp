@@ -12,6 +12,9 @@
 #include "Spellcard.hpp"
 #include "Global.hpp"
 #include "utils.hpp"
+#ifdef TH08_HEADLESS
+#include "modern/headless/score_audit.hpp"
+#endif
 
 namespace th08
 {
@@ -736,6 +739,9 @@ void Spellcard::StartSpell(i32 spellCardNumber, const u8 *encodedName, i32 enemy
         (this->activeEnemy->timerCallbackThresholdFrames / 60);
     this->timeRemaining = this->activeEnemy->timerCallbackThresholdFrames;
     this->timeLimit = this->activeEnemy->timerCallbackThresholdFrames;
+#ifdef TH08_HEADLESS
+    headless::score_audit_spell_start(*this);
+#endif
 
     for (i = 0; i < 0x30; i++)
     {
@@ -1227,6 +1233,9 @@ void Spellcard::EndSpell()
         g_Gui.flags.lifeDisplayUpdateFrames = 3;
         g_SoundPlayer.PlaySoundByIdx(SOUND_BULLET_0_LOUD, 0);
         g_Background.StopSpellBackground();
+#ifdef TH08_HEADLESS
+        headless::score_audit_spell_end(*this);
+#endif
     }
 
     if (this->activeEnemy != NULL)
@@ -1246,6 +1255,10 @@ void Background::StopSpellBackground()
 // FUNCTION: th08 0x416af0
 void Spellcard::DeactivateWithoutCleanup()
 {
+#ifdef TH08_HEADLESS
+    if (this->flags & SPELLCARD_FLAG_ACTIVE)
+        headless::score_audit_spell_end(*this, true);
+#endif
     this->flags &= ~SPELLCARD_FLAG_ACTIVE;
     this->HideEnemySpellPresentation();
 }

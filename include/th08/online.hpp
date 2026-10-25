@@ -64,6 +64,8 @@ struct Bullet {
     // Current-program hypothesis for this incarnation, not a slot-lifetime
     // guarantee. One-based last potentially colliding update; zero is unknown.
     unsigned collision_until = 0;
+    bool grazed = false;
+    unsigned graze_ready_in = 0;
 };
 struct LaserState {
     float endOffset = 0, startOffset = 0, startLength = 0, width = 0;
@@ -112,6 +114,7 @@ struct Observation {
     float x = 0, y = 0;
     std::uint16_t latched_input = 0;
     Movement movement;
+    Vector graze_half;
     std::vector<Bullet> bullets;
     std::vector<LaserState> lasers;
     std::vector<LaserHitbox> laser_hitboxes;
@@ -132,7 +135,21 @@ struct Observation {
     std::uint32_t unsupported_queued_pooled_lasers = 0;
     std::uint32_t turn_hint_records = 0, unsupported_turn_hints = 0;
 };
+// Heuristic proposal preferences, independent of collision and native safety.
+// Defaults preserve the original cost expression and tie sequence.
+struct StyleWeights {
+    float margin_early = 40, margin_late = 10;
+    int margin_split = 12;
+    float anchor_weight = 0.02f, anchor_x = 192, anchor_y = 400;
+    float anchor_x_min = 48, anchor_x_max = 336;
+    float change_cost = 0.01f, move_cost = 0, focused_move_cost = 0, reversal_cost = 0;
+    float edge_cost = 0, edge_margin = 32;
+    // Once per forecast path for each of at most 64 nearby ungrazed bullets.
+    // This is a contact proxy, not a forecast of native score or laser graze.
+    float graze_reward = 0;
+};
 struct Configuration {
+    StyleWeights style;
     int horizon = 32, beam = 192;
     // Held-input updates beyond retained full-horizon endpoints; H + T <= 200.
     int tail_check = 0;
@@ -166,6 +183,9 @@ struct Configuration {
     int emergency_horizon = 32, emergency_beam = 48;
     bool lazy_index = false; // Delay unused frame indices; forecasts remain unchanged.
 };
+// Revision 1 general profiles: baseline, zen, expert, sniper and graze. Changes
+// only style/boss-follow preferences, never horizon, beam, budgets or physics.
+Configuration with_style(const std::string &name, Configuration configuration = {});
 using SpawnGrid = std::array<float, 24 * 28>;
 // Clipped 3x3 no-warning birth sums over 16-pixel cells. Preserve each center's
 // row-major float addition order; the result owns its storage independently.

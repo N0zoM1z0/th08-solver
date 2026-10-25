@@ -78,6 +78,13 @@ Options options(int argc, char **argv) {
                 o.follower_seed = int(seed);
         } else if (key == "--difficulty")
             o.config.difficulty = int(bounded(4));
+        else if (key == "--input-profile") {
+            if (value == "sampled-gameplay")
+                o.config.input_profile = hl::InputProfile::SampledGameplay;
+            else if (value != "controller")
+                throw std::runtime_error("invalid_shadow_input_profile");
+        } else if (key == "--prior-final-a-clear")
+            o.config.prior_final_a_clear = bounded(1);
         else if (key == "--shot")
             o.config.shot = int(bounded(11));
         else if (key == "--spell")
@@ -192,6 +199,10 @@ int run(Options o) {
         << ",\"calculation_updates\":" << state.calculation_updates << ",\"handoffs\":" << handoffs
         << ",\"seed\":" << o.config.seed << ",\"follower_seed\":" << other.seed
         << ",\"stage\":" << o.config.stage << ",\"shot\":" << o.config.shot
+        << ",\"input_profile\":\""
+        << (o.config.input_profile == hl::InputProfile::SampledGameplay ? "sampled-gameplay"
+                                                                        : "controller")
+        << "\",\"prior_final_a_clear\":" << (o.config.prior_final_a_clear ? "true" : "false")
         << ",\"difficulty\":" << o.config.difficulty << ",\"story\":" << o.config.story
         << ",\"dat_sha256\":\"" << dat_hash << "\",\"actions_sha256\":\"" << actions_hash
         << "\",\"binary_sha256\":\"" << binary_hash << '"' << ",\"spell\":" << o.config.spell
@@ -211,7 +222,10 @@ int run(Options o) {
             out << (i ? "," : "") << observed.state.values[i];
         out << ']';
     }
-    out << "}\n";
+    out << ",\"terminal_projection\":[";
+    for (std::size_t i = 0; i < receipt.state.values.size(); ++i)
+        out << (i ? "," : "") << receipt.state.values[i];
+    out << "]}\n";
     if (!out)
         throw std::runtime_error("shadow_report_failed");
     return mismatch ? 3 : (outcome == "complete" || outcome == "budget" ? 0 : 4);

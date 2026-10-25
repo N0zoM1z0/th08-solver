@@ -96,16 +96,55 @@ Stored/displayed terminal scores are218996507/2189965070 and116696962/1166969620
 These observations describe the matching Native playback and its published state
 projection; replay mode deliberately does not update persistent capture history.
 
+Score auditing preserves the existing replay-check stdout/row interface:
+
+```sh
+build-issue1/th08_replay_check game_data_donottrack/th08.dat \
+  reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy \
+  reports/local/story.rows --score-audit reports/local/story-score.json \
+  --require-all-captures
+```
+
+Exit3 means natural playback succeeded but complete capture coverage failed;
+exit2 means playback/reporting failed. The report uses source card catalogues for
+visited stages, retains skipped Last Spells and reports each lifecycle outcome
+and bonus. `observations` counts replay calculation rows in this mode, not batched
+Session calls. Start/end timestamps count GameManager calculations. The two
+focused real-data regressions cover the old story's negative capture case and a
+complete Stage1 sniper4/4 case, fresh execution and natural replay.
+
+The bounded Native comparison tool is:
+
+```sh
+build-issue1/th08_shadow_style game_data_donottrack/th08.dat \
+  reports/local/score-trial 0 3 1 23035 sniper 70000 0 180
+```
+
+Arguments after the output directory are raw stage, difficulty, shot, seed,
+proposal preference, maximum owner updates, story flag and wall seconds. The
+directory must be fresh. Five revision1 preferences are baseline/zen/expert/sniper/graze.
+Its H64/lead8/110ms/60ms budgets are explicit; it records all rejected work,
+timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
+terminal41-word projection. Periodic Z advances dialogue. Story mode declares
+prior FinalA history except Extra. Output is a tape, source score audit, complete
+result and original-writer replay for a successful terminal. A synchronous owner
+pauses during planning; this tool never supplies online FPS evidence.
+Fresh `th08_shadow_follow` accepts `--input-profile sampled-gameplay` and
+`--prior-final-a-clear 1` for that exact execution contract. The live client also
+accepts a final optional proposal-preference argument after its existing horizon
+profile and records its name/revision. Baseline remains unchanged by default.
+
 Core CTest cases: 36
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
 add two CTests (38 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
-complete-scene, online-stage/replay, shadow-follow and planner-prefix CTests (52 total).
+complete-scene, online-stage/replay, shadow-follow and planner-prefix CTests (54 total,
+including the score-audit and complete style-scene regressions).
 An optional `TH08_SHADOW_FAILURE_TRACE` CMake FILEPATH enables one additional
-retained-journal regression (53 total) against the private seed42386 Stage4B trace.
+retained-journal regression (55 total) against the private seed42386 Stage4B trace.
 `TH08_SHADOW_PULSE_TRACE` adds the private seed56891 move-then-stop regression
-(54 total with both traces). It reconstructs all21120 actual receipts, requires
+(56 total with both traces). It reconstructs all21120 actual receipts, requires
 a fatal held direction and a surviving256-update16-step pulse, compares all256
 rows with a literal Native tape and checks the actual lead/parent remain unchanged.
 
