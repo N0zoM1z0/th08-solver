@@ -46,7 +46,9 @@ telemetry. The 34489-byte replay naturally completes NMNB through raw stages
 terminal. Its per-stage input clocks are 14049/15458/14962/24775/21583/29811;
 these are separate from receipt/calculation counts and video wall time. This is
 the original writer's export of verified actual inputs, without another search.
-Actual retail playback of this selected file remains unchecked.
+Selected Stage2 now also completes actual normal-mode retail replay timing in
+two runs, with all15216 callback packets identical and no death/bomb rows; this
+is a selected-stage playback check. Full retail playback remains unchecked.
 
 Story replay SHA-256: `202622b4e52e3cedc959f5f41d3e745b8f9d51faad33cf09571834f884758c2a`.
 Matched original MP4 SHA-256: `ac7fe1f8abdeb0ecee88d5b7e7b2e26cfa76ae0ee20b56076263dbd9b77fbe03`.
@@ -74,6 +76,8 @@ Normal core tests require no game assets or reconstruction. Optional source comp
 add two CTests (38 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
 complete-scene, online-stage/replay, shadow-follow and planner-prefix CTests (52 total).
+An optional `TH08_SHADOW_FAILURE_TRACE` CMake FILEPATH enables one additional
+retained-journal regression (53 total) against the private seed42386 Stage4B trace.
 
 The common-start shadow follower compares independently initialized Native
 processes under one configuration and the actual input tape. It performs no native
@@ -94,8 +98,15 @@ not complete. Reports bind DAT/binary/actions hashes. This validates Native proc
 synchronization only; replayed input is not a new solver or live Wine result.
 The same real-data test also verifies the complete true-RNG native branch,
 rejects a fatal stationary candidate, checks parent world/RNG/filesystem isolation
-and executes every accepted action through the original Session. The core wire
-contract tests late-prefix agreement, stale receipt rejection and preservation of
+and executes every accepted action through the original Session. Held-tail verification is compared with literal Native execution for the same
+complete64-input action tape, including a released shoot bit and parent isolation.
+The optional retained4B test reconstructs all34256 original receipts: the same
+32-input prefix dies at62 with a Policy tail and survives64 when held. It checks
+the full prefix and parent state, with its diagnostic timeout recorded separately
+from live search budgets. The core wire
+contract also checks bounded publication of a longer successful certificate,
+including unpublished-tail validation and rejection of a fatal longer future. It
+tests late-prefix agreement, stale receipt rejection and preservation of
 an existing plan after a failed proposal. Neither self-comparison is an
 independent physics oracle. A guided child also executes the complete 1292-update
 scene from an eight-input fixed prefix: every remaining input comes from a
@@ -153,7 +164,35 @@ publication and outcome handling. Inter-receipt periods include work between tho
 boundaries, such as rendering, limiting, scheduling and journal writes; they do
 not attribute a slow frame to one component. Total elapsed time starts at the
 first hooked calculation's entry and ends at the last projection timestamp.
-Optional trailing arguments `[behavioral|exact] [h32|h64]` select comparison and
+`TH08_SHADOW_RENDER_TIMING=1` adds an independent `render-times.bin` journal
+without changing the existing228-byte receipt format. Its16-byte little-endian
+header contains uint32 magic0x31544d52, version1, sample size64 and reserved0.
+Each sample has eight uint64 words: receipt sequence, raw stage, elapsed ns,
+Present-end period ns, BeginScene-to-EndScene ns, original Present-call ns, scene
+count and flags (1 no draw,2 failed Present,4 repeated receipt). The first period
+is unavailable. Draw includes submission/synchronization; Present includes backend
+waits. Remaining period time includes original pacing, other callbacks, scheduling
+and preceding profiling writes. These are measured boundaries, not GPU-only costs.
+
+`TH08_SHADOW_OBSERVE_REPLAY=1` requires render timing and rejects history/dialogue
+flags and non-replay gameplay. It forwards original input calls and lets the
+original replay loader restore recorded RNG/inputs. Its `replay-timing.txt` marker
+and absence of `start.txt` distinguish it from a common-start live run. Normal
+retail replay can restart the calculation chain during dialogue; its sequence
+counts observed callbacks, not certified live calculations. Discontinuities are
+retained in `replay-clock-events.tsv`. Ordinary live cursor checks remain strict.
+A selected-stage replay timing run has no Native planner or capture process; record
+its playback mode, software-renderer threads, environment and terminal separately.
+The selected Stage2 comparison uses Wine8, llvmpipe with two renderer threads,
+private game audio, no planner/capture, and the same story replay hash above.
+Only the per-process `vblank_mode` setting changes from unset to0. Mean
+presentations/s improves56.167→59.343; mean Present time7.900→2.342ms.
+All15216 packets agree exactly, including input and all41 fields. The
+[Mesa option documentation](https://dri.freedesktop.org/wiki/ConfigurationOptions/)
+defines0 as disabling swap-interval synchronization. This remains an opt-in
+measured environment choice; local slow windows and scheduling tails remain.
+
+Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held]` select comparison and
 planning profiles (defaults `behavioral h32`).
 Live comparison records numeric bullet/laser digest drift, player differences up
 to 1/64 pixel and inactive spell/route metadata; meaningful gameplay fields remain
@@ -161,7 +200,7 @@ checked. It does not modify either simulation or collision handling. Exact mode
 retains bitwise projection diagnosis. Keep launcher/DLL/config identities with the
 local run receipt as well. New logs,
 tapes and diagnoses stay under ignored `reports/local/`.
-The opt-in `h64` bundle and nominal-prefix extension are specified in
+The opt-in `h64` bundle, named held-recovery variants and nominal-prefix extension are specified in
 [Planner](PLANNER.md#true-rng-shadow-runtime). Do not combine its results with
 default-profile runs or attribute differences solely to horizon. Its reports
 separate branch simulation, guidance, proposal work, conservative timeout charges

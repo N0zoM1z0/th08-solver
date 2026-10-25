@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine and recorded with game audio.
-> [Matching replay](reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy) · [Milestone tag](https://github.com/N0zoM1z0/th08-solver/releases/tag/lunatic-nmnb-4a-finalb-20261024)
+> [Matching replay](reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy) · [Milestone tag](https://github.com/N0zoM1z0/th08-solver/tree/lunatic-nmnb-4a-finalb-20261024)
 
 C++17 simulation, offline planning and current-memory CPU control for Touhou 08. The target is continuous
 No Miss No Bomb runs across all teams/solo shots, standard difficulties and Final
@@ -40,8 +40,7 @@ the live owner never rewinds or waits for a search. Fresh Native following of
 all 231742 actual receipts agrees. Average gameplay rate is 58.565 FPS under the
 recorded software-rendering profile; strict per-frame deadlines and broader seed
 reliability remain open in [Status](docs/STATUS.md). Numeric digest drift stays
-visible, and meaningful gameplay/RNG/lifecycle fields remain checked. Stage 4B
-is deferred by the owner. This separate native-lookahead profile
+visible, and meaningful gameplay/RNG/lifecycle fields remain checked. This separate native-lookahead profile
 preserves the existing current-memory controller's zero-future-update contract.
 Preparation material remains unchanged locally and is excluded from published
 Git history at the owner's request; its download archive is supplied separately.
@@ -57,7 +56,7 @@ Final B practice precedes that new story. The requested deliveries are a full
 Final B recording at capture quality, a compact full-story video, a compact Kaguya
 spell preview, and their matching selected `.rpy` files. Dialogue advancement uses
 periodic Z release/press inputs inside the verified Native futures. Windows
-migration and Stage 4B stay deferred.
+migration stays deferred.
 The new-profile complete Final B practice now clears NMNB at real seed29085:
 30333 actual calculations, matching fresh following and a complete natural
 [replay](reports/native/replays/shadow-recording-v3--finalb-d3-s1-seed29085.rpy).
@@ -69,6 +68,13 @@ The matching [full-story replay](reports/native/replays/shadow-recording-v3--sto
 naturally completes NMNB with the same final score. The full capture and balanced
 compressed delivery both pass complete media decode. These are initial
 functional cases; strict every-frame 60 Hz and general seed reliability remain open.
+
+The October 25 continuation is tracked in [issue #10](https://github.com/N0zoM1z0/th08-solver/issues/10):
+complete Stage 4B, confirm full Extra, and measure local frame-rate deficits.
+The frozen H64 client already clears a complete non-practice Extra entry at real
+seed19732, shot1: 46501 actual calculations, matching fresh following and a natural
+NMNB replay with the same score. Stage 4B recovery and render/presentation timing
+are in development; the tagged story remains the preserved baseline.
 
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the

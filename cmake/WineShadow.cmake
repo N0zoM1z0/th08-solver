@@ -19,6 +19,8 @@ add_custom_command(OUTPUT ${_wine_output}/launch.exe
   VERBATIM)
 add_custom_command(OUTPUT ${_wine_output}/observer.dll
   COMMAND ${CMAKE_COMMAND} -E make_directory ${_wine_output}
+  COMMAND ${TH08_MINGW_CXX} ${_wine_flags} -c ${_wine_shadow}/d3d8_timing_abi.cpp
+    -o ${_wine_output}/d3d8_timing_abi.o
   COMMAND ${TH08_MINGW_CXX} ${_wine_flags} -shared -DTH08_MODERN_PORT
     -fpermissive -fms-extensions -mms-bitfields -Wno-invalid-offsetof
     -I${_wine_shadow}/compat -I${CMAKE_CURRENT_SOURCE_DIR}/third_party/th08/src
@@ -28,7 +30,8 @@ add_custom_command(OUTPUT ${_wine_output}/observer.dll
   DEPENDS tools/wine-shadow/observer.cpp tools/wine-shadow/identity.hpp
     tools/wine-shadow/retail_view.hpp tools/wine-shadow/compat/d3dx8.h
     tools/wine-shadow/compat/d3dx8math.h include/th08/shadow_bridge.hpp
-    include/th08/shadow_protocol.hpp include/th08/shadow_start.hpp ${_wine_abi_headers}
+    include/th08/shadow_protocol.hpp include/th08/shadow_start.hpp include/th08/render_timing.hpp
+    tools/wine-shadow/render_timing.hpp tools/wine-shadow/d3d8_timing_abi.cpp ${_wine_abi_headers}
   VERBATIM)
 add_custom_target(th08_wine_shadow ALL
   DEPENDS ${_wine_output}/launch.exe ${_wine_output}/observer.dll)

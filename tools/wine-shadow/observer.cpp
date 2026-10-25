@@ -1,4 +1,5 @@
 #include "identity.hpp"
+#include "render_timing.hpp"
 #include "retail_view.hpp"
 #include "th08/shadow_bridge.hpp"
 #include "th08/shadow_start.hpp"
@@ -14,6 +15,8 @@ std::uint32_t *shared = nullptr;
 char directory[MAX_PATH];
 bool started = false, spell_seen = false, story = true;
 bool prior_final_a_clear = false, advance_dialogue = false, history_pending = false;
+bool profile_render = false, observe_replay = false;
+RenderTiming render_timing;
 int configured_spell = -1;
 std::uint64_t calculations = 0;
 s::Packet packet;
@@ -42,6 +45,10 @@ bool environment_flag(const char *name, bool &value) {
 }
 
 [[noreturn]] void finish(b::OutcomeCode outcome, unsigned exit_code) {
+    if (!render_timing.close()) {
+        outcome = b::OutcomeCode::Failure;
+        exit_code = 28;
+    }
     if (shared)
         b::save(shared + b::Outcome, std::uint32_t(outcome));
     if (rows != INVALID_HANDLE_VALUE) {
@@ -111,6 +118,17 @@ void diagnostic_bullets() {
     std::fclose(file);
 }
 int __fastcall init_hook() {
+    if (!started && observe_replay && !game().flags.isDemoMode && !game().flags.isReplay)
+        finish(b::OutcomeCode::Failure, 20);
+    if (!started && game().flags.isReplay && observe_replay) {
+        // Observe the original replay's seed/input restoration without a shadow
+        // command producer. Never emit a misleading common-start seed record.
+        cursor.stage = game().currentStage;
+        cursor.frame = 0;
+        started = true;
+        if (!render_timing.install(supervisor().d3dDevice))
+            finish(b::OutcomeCode::Failure, 28);
+    }
     if (!started && !game().flags.isDemoMode && !game().flags.isReplay) {
         // Optional named, reproducible startup checkpoint. This runs before the
         // original gameplay registration; it never replaces the actual RNG.
@@ -174,6 +192,8 @@ int __fastcall init_hook() {
         cursor.frame = 0;
         started = true;
         history_pending = prior_final_a_clear;
+        if (profile_render && !render_timing.install(supervisor().d3dDevice))
+            finish(b::OutcomeCode::Failure, 28);
     }
     return original_init();
 }
@@ -184,6 +204,8 @@ unsigned short __fastcall input_hook() {
         diagnostic_bullets();
         finish(b::OutcomeCode::Stopped, 0);
     }
+    if (observe_replay)
+        return original_input();
     b::Plan proposal;
     if (b::read(shared, proposal) && proposal.generation != examined) {
         examined = proposal.generation;
@@ -208,6 +230,16 @@ unsigned short __fastcall input_hook() {
 int __fastcall calc_hook(void *self, void *) {
     LARGE_INTEGER begin{}, observed{}, end{};
     QueryPerformanceCounter(&begin);
+    if (render_timing.failed())
+        finish(b::OutcomeCode::Failure, 28);
+    if (observe_replay && started && !packet.sequence &&
+        game().gameplaySetupState == GAMEPLAY_SETUP_COMPLETE) {
+        auto *recorder = at<ReplayManager *>(0x18b8a28);
+        if (!recorder || !recorder->replayData)
+            finish(b::OutcomeCode::Failure, 28);
+        configured_spell = recorder->replayData->spellcardNumber;
+        story = !recorder->replayData->isPractice && configured_spell < 0;
+    }
     if (history_pending && game().gameplaySetupState == GAMEPLAY_SETUP_COMPLETE) {
         // Retail setup runs on a worker. Apply the declared score-history
         // checkpoint only after it has loaded, before the first game update.
@@ -225,13 +257,53 @@ int __fastcall calc_hook(void *self, void *) {
     }
     const int result = original_calc(self);
     QueryPerformanceCounter(&observed);
+    if (observe_replay && started && packet.sequence &&
+        supervisor().curState != SupervisorState_GameManager) {
+        char path[MAX_PATH];
+        std::snprintf(path, sizeof(path), "%s/replay-segment-end.txt", directory);
+        if (FILE *file = std::fopen(path, "w")) {
+            std::fprintf(file, "sequence=%llu stage=%u frame=%u supervisor=%u\n",
+                         static_cast<unsigned long long>(packet.sequence),
+                         unsigned(game().currentStage), unsigned(game().gameplayFrameCounter),
+                         unsigned(supervisor().curState));
+            std::fclose(file);
+        }
+        finish(b::OutcomeCode::Stopped, 0);
+    }
     if (started && game().globals) {
         const auto stage = unsigned(game().currentStage), frame = game().gameplayFrameCounter;
         const bool ready = supervisor().curState == SupervisorState_GameManager &&
                            game().gameplaySetupState == GAMEPLAY_SETUP_COMPLETE;
-        const auto event = cursor.observe(stage, frame, ready);
-        if (event == b::UpdateEvent::Unsupported)
+        auto event = cursor.observe(stage, frame, ready);
+        if (observe_replay && ready) {
+            // Replay can restart its calculation chain during skippable dialogue.
+            // This diagnostic counts observed callbacks, not certified live ticks.
+            // Its marker/no start.txt prevents use as a common-start journal.
+            if (event == b::UpdateEvent::Unsupported || event == b::UpdateEvent::None) {
+                char path[MAX_PATH];
+                std::snprintf(path, sizeof(path), "%s/replay-clock-events.tsv", directory);
+                if (FILE *file = std::fopen(path, "a")) {
+                    std::fprintf(file, "%llu\t%u\t%u\t%u\t%u\n",
+                                 static_cast<unsigned long long>(packet.sequence), stage,
+                                 cursor.frame, frame, unsigned(supervisor().curState));
+                    std::fclose(file);
+                }
+            }
+            cursor.frame = frame;
+            event = event == b::UpdateEvent::Control ? event : b::UpdateEvent::Calculation;
+        }
+        if (event == b::UpdateEvent::Unsupported) {
+            char path[MAX_PATH];
+            std::snprintf(path, sizeof(path), "%s/clock-discontinuity.txt", directory);
+            if (FILE *file = std::fopen(path, "w")) {
+                std::fprintf(
+                    file, "replay=%u stage=%u before=%u after=%u ready=%u supervisor=%u setup=%u\n",
+                    unsigned(game().flags.isReplay), stage, cursor.frame, frame, unsigned(ready),
+                    unsigned(supervisor().curState), unsigned(game().gameplaySetupState));
+                std::fclose(file);
+            }
             finish(b::OutcomeCode::Failure, 22);
+        }
         if (event != b::UpdateEvent::None) {
             calculations += event == b::UpdateEvent::Calculation;
             packet.epoch += event == b::UpdateEvent::Control;
@@ -242,6 +314,8 @@ int __fastcall calc_hook(void *self, void *) {
                 cache_diagnostic_bullets();
                 if (packet.sequence == 1)
                     first_tick = begin;
+                if (profile_render)
+                    render_timing.context(packet.sequence, stage, first_tick.QuadPart);
                 QueryPerformanceCounter(&end);
                 const auto bytes = b::trace(packet, ns(end.QuadPart - first_tick.QuadPart),
                                             ns(observed.QuadPart - begin.QuadPart),
@@ -314,6 +388,25 @@ bool setup() {
         directory_size >= sizeof(directory) - 48 || !pinned_executable(executable) ||
         !QueryPerformanceFrequency(&frequency) || frequency.QuadPart <= 0)
         return false;
+    if (!environment_flag("TH08_SHADOW_RENDER_TIMING", profile_render) ||
+        !environment_flag("TH08_SHADOW_OBSERVE_REPLAY", observe_replay) ||
+        (observe_replay && (!profile_render || prior_final_a_clear || advance_dialogue)))
+        return false;
+    if (profile_render) {
+        std::snprintf(path, sizeof(path), "%s/render-times.bin", directory);
+        if (!render_timing.open(path, frequency.QuadPart))
+            return false;
+        if (observe_replay) {
+            std::snprintf(path, sizeof(path), "%s/replay-timing.txt", directory);
+            FILE *mode = std::fopen(path, "w");
+            if (!mode)
+                return false;
+            const bool failed =
+                std::fprintf(mode, "retail-replay-timing-only-v1\n%s\n", retail_sha256) < 0;
+            if (std::fclose(mode) || failed)
+                return false;
+        }
+    }
     const auto limit_size = GetEnvironmentVariableA("TH08_SHADOW_UPDATES", limit, sizeof(limit));
     if (limit_size >= sizeof(limit))
         return false;

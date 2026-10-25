@@ -1,5 +1,55 @@
 # Current handoff status
 
+The October 25 owner request resumes Stage 4B and Extra and investigates local
+gameplay-rate deficits. [Issue #10](https://github.com/N0zoM1z0/th08-solver/issues/10)
+tracks this work. Annotated tag `lunatic-nmnb-4a-finalb-20261024` preserves the
+verified live 4A-to-Final-B Lunatic NMNB milestone at `d538bcc`.
+
+The first fresh current-shadow Extra case completes NMNB with the frozen
+`fbb7758` H64 client, real seed19732, Marisa/Alice and proper non-practice Extra
+initialization: 46501 calculations, zero player-position error and no meaningful
+mismatch. Fresh following agrees on every receipt; the original-writer replay
+naturally completes NMNB with matching raw score116696962. Numeric digest drift
+on2347 updates remains telemetry. The run takes825.1195392 seconds, averaging
+56.357 calculations/s; period p99/max is31.82/58.72ms. Ten unqueued receipts and
+nine fallback sampling calls are startup only. It records51 rejected future
+deaths,10 rollout timeouts,9 planning-budget overruns,373840 charged branch
+updates and204 proposal-lead updates. Historical current-memory Extra failures
+are a separate profile.
+
+The retained4B/seed42386 journal reproduces a search omission at origin34256:
+the same32-input prefix dies at62 updates with a Policy tail, but its held tail
+passes the complete64-update native horizon. A named `h64-held` recovery profile
+preserves the original `h64` behavior and110ms total search budget. Its first
+actual4B/seed12398 attempt still dies in spell92 at20891, with no mismatch:
+189 held candidates,6 selections,180 future deaths and10 timeouts. This failure
+and all costs remain retained. Diagnostic reconstruction finds12 H64-safe
+candidates but only2 H128-safe candidates at20736, motivating a separately named
+`h128-held` experiment with the same110ms budget and explicitly greater native
+work. Its actual seed6750 case dies in spell99 at24967, again with exact
+projection agreement:18 held selections,286 future deaths,27 timeouts and30
+planning-budget overruns. It charges414961 native branch updates plus391 proposal
+updates. The owner averages59.580 calculations/s. At24640, five tested held
+continuations survive256 updates; at24704 none do, despite13 surviving128.
+These are finite-family diagnostics, not an impossibility result. Further
+planning experiments must recognize the trap earlier. The opt-in `h256-held`
+profile now verifies256 updates, publishes only128 and preserves the110ms total;
+its first actual practice is in progress.
+
+Recorded story windows also isolate real local deficits: some complete5-second
+windows reach37–40 calculations/s outside stage handoffs, while measured
+GameManager/observer work averages about1ms. A separate normal-mode retail replay of the same Stage2 inputs, with no
+planner or capture, isolates significant original Present-call waiting. A matched
+`vblank_mode=0` trial raises mean presentation rate from56.167 to59.343/s and
+reduces mean Present from7.900 to2.342ms. All15216 observed callbacks agree in
+inputs and all41 projection words, with zero death/bomb rows. Slow complete
+5-second windows still occur (minimum45.385 versus55.812 presentations/s in
+these two runs). This is one matched software-renderer comparison, not strict
+every-frame60Hz acceptance or a full-story result. Original game pacing remains
+unchanged. The diagnostic callback clock is separate from live certification.
+
+## October 24 runtime and recording evidence
+
 The October 24 owner request starts [issue #8](https://github.com/N0zoM1z0/th08-solver/issues/8):
 implement a true-RNG shadow runtime, common-start synchronization, verified future
 branches and a forward-only Wine input loop. The [review](https://github.com/N0zoM1z0/th08-solver/issues/7)
