@@ -30,6 +30,41 @@ export-header failure, identity-only repair and actual complete playback. The
 The [campaign ledger](reports/native/planner_current_summary.json) records their
 configuration, hashes, verification and retained search costs.
 
+## Score ladder
+
+**Current complete online NMNB best: 2,189,965,070 — Marisa/Alice, 4A → Final B.**
+All scores below are displayed game points. Human WRs are score-attack records;
+our rows retain the NMNB constraint and show spell capture coverage.
+
+| Category, Marisa/Alice | Our online NMNB score | Human WR | Our / WR | Our captures |
+| --- | ---: | ---: | ---: | ---: |
+| Lunatic, Final B | **2,189,965,070** | [Alan: 6,168,365,790](https://maribelhearn.com/wr#IN) | **35.50%** | 33/37 |
+| Extra | **1,166,969,620** | [ASL: 3,021,639,920](https://maribelhearn.com/wr#IN) | **38.62%** | **14/14** |
+
+**Next rung: 2,221,318,760 (+31,353,690).** In the downloaded Royalflare
+Magic Team / Lunatic / Final B archive, keeping each displayed player's best
+score puts our run at **37/60** after insertion:
+
+| Archive comparison rank | Player | Score |
+| ---: | --- | ---: |
+| 1 | Clio | 6,005,139,940 |
+| 2 | Mokou Sheep | 5,675,333,250 |
+| … | … | … |
+| 35 | YK | 2,428,133,650 |
+| 36 | DK | 2,221,318,760 |
+| **37** | **th08-solver · online NMNB** | **2,189,965,070** |
+| 38 | みかみ | 2,170,768,680 |
+| 39 | Eternal | 2,143,070,630 |
+
+Sources checked **2026-10-25**: [current human WR table](https://maribelhearn.com/wr#IN)
+(updated 2026-10-24) and [Royalflare's historical Final B table](https://maribelhearn.com/royalflare/th08#LunaticMagic%20Team).
+The historical comparison contains 62 submissions / 59 displayed player names,
+frozen before Royalflare closed in January 2022; its rank is a score-only archive
+comparison. [Our replay](reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy)
+and [milestone tag](https://github.com/N0zoM1z0/th08-solver/tree/lunatic-nmnb-4a-finalb-20261024)
+identify this baseline. Update this ladder when a higher complete run is verified;
+partial-stage experiment scores stay in [Status](docs/STATUS.md).
+
 ## Current direction
 
 The active [score and spell-capture investigation](https://github.com/N0zoM1z0/th08-solver/issues/11)
