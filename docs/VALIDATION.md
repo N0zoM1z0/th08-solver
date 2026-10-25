@@ -72,6 +72,30 @@ original Native replay writer. It rejects incomplete/stopped/dead recordings and
 existing output paths. Export and fresh natural replay are execution/index checks;
 they do not establish independent physics equivalence or actual retail playback.
 
+The owner's un-compacted Extra delivery is the complete actual `wine-35` movie:
+`reports/local/shadow-runtime-v1/wine-35/extra-baseline-online.mp4`,836.633 seconds,
+1128157155 bytes,640x480 H.264 and48kHz stereo AAC. No second video encode is used.
+Its SHA-256 is `eec2c0a6e9ca064a78e7db45f83341e6d050844b5167029e7bc9275460d312c5`.
+Both its video and the original Matroska capture have canonical Annex-B stream
+SHA-256 `4f7faee6c923b16d974196ce692b13f11479b5d5c3829d4795d620f738d4fd8f`.
+Audio alignment trims13995 original48kHz samples. Complete video/audio decode
+passes. The matching local `complete-extra.rpy` has SHA-256
+`dea524c41bf88b9355ff7d6cd1a978515e1a702ec47ae5d8e47597589104b058`;
+the movie and replay remain ignored, with the earlier live/following evidence in Status.
+
+The October25 read-only source-lifecycle audit repeats both preserved natural
+replays. All121654 story rows and46497 Extra rows remain byte-identical to the
+original captures: row SHA-256 respectively
+`17815533a8e343a54de382f108e88a89cebf184e434e57b877f0c9fbec33330e` and
+`452fc7cc120a6da7c81532eb98f19c47b185bd2fd7e505d82a69016fffd81074`.
+Story's missing Last Spells are one-based cards13/32; ordinary cards6/10 end with
+timer-transition failure. The other33 captures include Kaguya's timed Last Spells.
+Extra captures14/14, including card205. Bonus award values come from `EndSpell`,
+not from an OCR estimate or a positive score delta that might include item pickups.
+Stored/displayed terminal scores are218996507/2189965070 and116696962/1166969620.
+These observations describe the matching Native playback and its published state
+projection; replay mode deliberately does not update persistent capture history.
+
 Core CTest cases: 36
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons

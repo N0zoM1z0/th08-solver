@@ -32,6 +32,12 @@ configuration, hashes, verification and retained search costs.
 
 ## Current direction
 
+The active [score and spell-capture investigation](https://github.com/N0zoM1z0/th08-solver/issues/11)
+keeps NMNB as a hard constraint and targets every spell on the chosen 4A-to-Final-B
+route, including conditional Last Spells. The existing story scores **2,189,965,070**
+displayed points and captures 33/37 route cards; Extra captures all 14. The next
+comparisons explore general movement, offense and graze styles. Stage 4B stays paused.
+
 The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).
 Common-start synchronization, true-RNG branch verification and a forward-only
 Wine action bridge are implemented. After six complete stage-practice clears,
@@ -75,8 +81,8 @@ The October 25 continuation is tracked in [issue #10](https://github.com/N0zoM1z
 complete Stage 4B, confirm full Extra, and measure local frame-rate deficits.
 The frozen H64 client already clears a complete non-practice Extra entry at real
 seed19732, shot1: 46501 actual calculations, matching fresh following and a natural
-NMNB replay with the same score. Stage 4B recovery and render/presentation timing
-are in development; the tagged story remains the preserved baseline.
+NMNB replay with the same score. Stage 4B recovery is paused; renderer timing and
+the tagged story remain preserved evidence.
 
 The existing [memory-based online controller](https://github.com/N0zoM1z0/th08-solver/issues/5)
 tracks standalone-stage coverage, action-dependent failures and the

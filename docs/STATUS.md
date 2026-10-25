@@ -1,5 +1,15 @@
 # Current handoff status
 
+The active October25 scope is [issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11):
+complete Extra delivery at original capture quality, general alternative policies,
+all route-eligible spell captures and higher score under NMNB. The source-lifecycle
+audit of the existing story finds 33 captures out of37 possible route cards:
+ordinary cards6/10 time out; Last Spells13/32 are absent. Its218996507 stored units
+mean **2,189,965,070 displayed points**. Extra has all14 captures and1,166,969,620
+displayed points. The complete Extra MP4 is retained at capture quality, with audio,
+full decode passing and byte-identical original video bitstream. These establish
+the baseline for the new investigation; different policy styles are being tested.
+
 The owner pauses 4B exploration on October 25. Published implementation is
 `288c6fe`; the last full live attempt, real seed 39151, dies at 20648 in spell 92
 with exact 41-word agreement. The uncommitted immutable-index experiment is saved

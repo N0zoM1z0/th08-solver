@@ -22,6 +22,63 @@ Capacity overflow, interrupted children and update exceptions are errors rather
 than empty hazard sets. A mismatch between verification and committed state stops
 the run. Search exhaustion, runtime failure and budget exhaustion remain distinct.
 
+## Spell capture and score objective
+
+[Issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11) orders the new objectives:
+complete NMNB, capture every card in the chosen route's source catalogue, then
+maximize actual terminal displayed score. A skipped conditional Last Spell stays
+in the coverage target. Lunatic4A/FinalB has37 cards; Extra has14. Other branches,
+difficulties and Last Words require separate runs. These are run-level capture
+goals, distinct from populating every Spell Practice entry in a persistent profile.
+
+The restored [Spellcard.cpp](../third_party/th08/src/Spellcard.cpp) distinguishes
+an encounter, capture validity, the final captured flag and delayed bonus payment.
+`EndSpell` records a capture when the timer-transition failure flag is clear and
+capture validity remains set. Ordinary timer callbacks invalidate capture in
+[EnemyManager.cpp](../third_party/th08/src/EnemyManager.cpp); surviving that attack
+without dying does not suffice. Timed survival attacks have different script/flag
+handling and can award a capture at zero remaining time. A timer value alone is
+therefore not a classifier. Misses and bombs invalidate capture through
+[Player.cpp](../third_party/th08/src/Player.cpp). Capture statistics are updated
+only outside replay mode: watching a saved replay does not fill profile captures.
+
+[GameManager.cpp](../third_party/th08/src/GameManager.cpp) stores score in units
+of ten displayed points: `AddScore(points)` adds `points / 10`. Spell bonuses and
+point-item values already use displayed units. Do not compare raw journal scores
+directly with videos or scoreboards. Source score clamps at999999999 stored units.
+
+Several coupled mechanisms matter more than a distance-to-bullet reward:
+
+- Faster ordinary captures preserve bonus and award100–1000 time orbs, reaching
+  1000 within the first one-seventh of the limit. The native timeout-spell path
+  awards700. Time-orb pickup also increases the active spell bonus by8000, subject
+  to its source limit, and increases future point-item value.
+- The stage Last Spell operand compares collected orbs **plus pending capture
+  reward and field orbs** with the stage requirement. Lunatic thresholds for
+  1/2/3/4A/5 are3000/7200/8800/9999/9999. The clock also affects the FinalB clear
+  reward. Omitting an attack by missing its gate is not a complete capture route.
+- [ItemManager.cpp](../third_party/th08/src/ItemManager.cpp) uses collection height
+  or max-value state to price point items. Extremely human gauge doubles their
+  pickup value. Moving above the collection line can attract items; eligibility
+  also depends on power/form/shot. This creates a positioning objective.
+- Native graze awards2000 or4000 displayed points and1/2/3 graze count depending
+  on gauge. At extreme youkai gauge against a boss, it can generate additional
+  time orbs, including extra spell rewards. Ordinary bullets graze once; lasers
+  follow a separate repeated-graze path. Graze also raises rank, changing later
+  nonspell patterns. The source resets boss bullet-rank influence on spell start.
+- [Gui.cpp](../third_party/th08/src/Gui.cpp) clear rewards include stage base,
+  graze, point items and time orbs, then final-stage life/bomb reserves and FinalB
+  clock value, difficulty and configured starting-life scaling. Its displayed
+  bonus is ten times the intermediate integer sum. Retaining NMNB reserves and
+  collecting items therefore have consequences beyond immediate pickup score.
+
+Optimize these with complete native outcomes and explicit resource costs. Ordinary
+speed kills, controlled familiar cancellation, item collection and timed grazing
+can conflict; local graze or damage alone cannot identify the highest-score run.
+The [PND score list](https://thscore.pndsng.com/index.php?th=8), checked October25,
+lists a6,168,365,790 Marisa/Alice score and higher scores for other shots. It is a
+score-attack reference, not an established matching-NMNB bound for this solver.
+
 ## Execution and ownership
 
 `th08_plan` forks a single-threaded headless session. Each branch owns copied
