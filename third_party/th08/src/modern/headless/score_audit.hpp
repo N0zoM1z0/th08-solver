@@ -30,6 +30,10 @@ struct ScoreAudit {
     std::array<ScoreAuditStage, 9> stages{};
     std::vector<SpellAuditRecord> spells;
     std::uint64_t death_rows = 0;
+    // AwardGraze invocations, including repeated laser contacts. The displayed
+    // counter awards 3/2/1 per event and cannot substitute for these counts.
+    std::uint64_t graze_events = 0, extreme_human_graze_events = 0;
+    std::uint64_t extreme_youkai_graze_events = 0;
     int bombs_used = 0, difficulty = 0, shot = 0;
     float deaths = 0;
     std::uint32_t score_raw = 0;
@@ -40,6 +44,7 @@ void score_audit_enable();
 const ScoreAudit &score_audit();
 // Call after each owner update; it neither steps the game nor evaluates ECL.
 void score_audit_observe();
+void score_audit_graze();
 // Narrow lifecycle hooks preserve spells that start/end in the same update.
 // Disabled unless explicitly enabled by a reporting tool, never by a planner.
 void score_audit_spell_start(const Spellcard &spell);

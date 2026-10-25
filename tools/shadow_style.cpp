@@ -1,6 +1,7 @@
 // Synchronous Native experiment for complete-duration style comparisons. It
-// retains the H64 proposal/verification budgets and immutable eight-input lead;
-// computation pauses this owner, so its throughput is not an online FPS result.
+// retains the search budgets and immutable eight-input lead. Verification and
+// publication horizons are explicit; computation pauses this owner, so its
+// throughput is not an online FPS result.
 #include "ReplayManager.hpp"
 #include "modern/headless/session.hpp"
 #include "score_audit_report.hpp"
@@ -12,6 +13,7 @@
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_proposal.hpp"
 #include <chrono>
+#include <deque>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -24,11 +26,12 @@ namespace o = th08::online;
 namespace h = th08::headless;
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
-constexpr unsigned horizon = 64, lead = 8, budget_ms = 110;
+constexpr unsigned lead = 8, budget_ms = 110;
 struct Work {
     std::uint64_t searches = 0, candidates = 0, branch_updates = 0, proposal_updates = 0;
     std::uint64_t future_deaths = 0, timeouts = 0, nominal_adoptions = 0, fresh_adoptions = 0;
     std::uint64_t native_ns = 0, file_io_ns = 0, guidance_ns = 0, overruns = 0;
+    std::uint64_t held_attempts = 0, held_adoptions = 0;
     double total_ms = 0, maximum_ms = 0;
     void branch(const s::Prediction &p) {
         ++candidates;
@@ -44,7 +47,8 @@ struct Work {
 };
 s::Prediction search(h::Session &session, o::Policy &policy, const s::ActionBuffer &queue,
                      const s::Prediction &previous, s::NominalExtension &nominal,
-                     s::Boundary boundary, Work &work) {
+                     s::Boundary boundary, unsigned horizon, unsigned publication,
+                     bool held_recovery, Work &work) {
     const auto begin = Clock::now();
     ++work.searches;
     const auto elapsed = [&] {
@@ -62,7 +66,7 @@ s::Prediction search(h::Session &session, o::Policy &policy, const s::ActionBuff
         return result;
     };
     const auto &origin = queue.frontier();
-    if (nominal.eligible(previous, queue, lead, horizon)) {
+    if (nominal.eligible(previous, queue, lead, publication)) {
         std::vector<std::uint16_t> warm;
         for (auto i = origin.sequence - previous.origin.sequence; i < previous.frames.size(); ++i)
             warm.push_back(std::uint16_t(previous.frames[i].input));
@@ -108,21 +112,36 @@ s::Prediction search(h::Session &session, o::Policy &policy, const s::ActionBuff
             inputs.resize(lead + 24, std::uint16_t(1 | focus | direction));
             candidates.push_back(std::move(inputs));
         }
-    for (auto &inputs : candidates) {
-        for (unsigned i = lead; i < inputs.size(); ++i)
-            inputs[i] = std::uint16_t((inputs[i] & ~0x1000) |
-                                      (((origin.sequence + i + 1) & 1) ? 0x1000 : 0));
-        if (!remaining())
-            break;
-        auto p = s::predict_with_policy(session, policy, origin, inputs, horizon, boundary,
-                                        std::max(1u, remaining()), true);
-        work.branch(p);
-        if (p.certifies()) {
-            ++work.fresh_adoptions;
-            return finish(std::move(p));
+    const bool prefer_held = held_recovery && !previous.frames.empty();
+    if (prefer_held)
+        std::rotate(candidates.begin(), candidates.begin() + proposals.inputs.size(),
+                    candidates.end());
+    s::Prediction selected;
+    const auto evaluate = [&](bool held) {
+        for (auto &inputs : candidates) {
+            for (unsigned i = lead; i < inputs.size(); ++i)
+                inputs[i] = std::uint16_t((inputs[i] & ~0x1000) |
+                                          (((origin.sequence + i + 1) & 1) ? 0x1000 : 0));
+            if (!remaining())
+                break;
+            work.held_attempts += held;
+            auto p = held ? s::predict_with_hold(session, origin, inputs, horizon, boundary,
+                                                 std::max(1u, remaining()), true)
+                          : s::predict_with_policy(session, policy, origin, inputs, horizon,
+                                                   boundary, std::max(1u, remaining()), true);
+            work.branch(p);
+            if (p.certifies()) {
+                ++work.fresh_adoptions;
+                work.held_adoptions += held;
+                selected = std::move(p);
+                return;
+            }
         }
-    }
-    return finish({});
+    };
+    evaluate(prefer_held);
+    if (held_recovery && !selected.certifies())
+        evaluate(!prefer_held);
+    return finish(std::move(selected));
 }
 unsigned number(const char *text, unsigned maximum) {
     const std::string value(text);
@@ -136,7 +155,9 @@ int run(int argc, char **argv) {
     if (argc < 11 || (argc - 11) % 2 != 0)
         throw std::runtime_error("usage: th08_shadow_style DAT OUTPUT_DIR STAGE DIFFICULTY SHOT "
                                  "SEED STYLE MAX_UPDATES STORY WALL_SECONDS "
-                                 "[--collect-items 0|1] [--aim-boss 0|1]");
+                                 "[--collect-items 0|1] [--aim-boss 0|1] "
+                                 "[--survival-focus 0|1] [--verify-horizon 64|128] "
+                                 "[--publish-horizon 64|128] [--held-recovery 0|1]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -153,7 +174,11 @@ int run(int argc, char **argv) {
     config.prior_final_a_clear = config.story && config.stage != 8;
     config.input_profile = h::InputProfile::SampledGameplay;
     auto profile = o::with_style(style);
-    bool collection_override = false, aim_override = false;
+    unsigned horizon = 64, publication = 64;
+    bool held_recovery = false;
+    bool collection_override = false, aim_override = false, horizon_override = false;
+    bool form_override = false;
+    bool publication_override = false, held_override = false;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
         if (key == "--collect-items" && !collection_override) {
@@ -162,10 +187,28 @@ int run(int argc, char **argv) {
         } else if (key == "--aim-boss" && !aim_override) {
             profile.scoring_aim = number(argv[i + 1], 1);
             aim_override = true;
+        } else if (key == "--survival-focus" && !form_override) {
+            profile.scoring_survival_focus = number(argv[i + 1], 1);
+            form_override = true;
+        } else if (key == "--verify-horizon" && !horizon_override) {
+            horizon = number(argv[i + 1], 128);
+            if (horizon != 64 && horizon != 128)
+                throw std::runtime_error("unsupported_native_style_verification_horizon");
+            horizon_override = true;
+        } else if (key == "--publish-horizon" && !publication_override) {
+            publication = number(argv[i + 1], 128);
+            if (publication != 64 && publication != 128)
+                throw std::runtime_error("unsupported_native_style_publication_horizon");
+            publication_override = true;
+        } else if (key == "--held-recovery" && !held_override) {
+            held_recovery = number(argv[i + 1], 1);
+            held_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
     }
+    if (publication > horizon)
+        throw std::runtime_error("publication_exceeds_native_verification");
     profile.horizon = 24;
     profile.beam = 192;
     profile.diversity_cell = 16;
@@ -184,6 +227,7 @@ int run(int argc, char **argv) {
     s::ActionBuffer queue(actual);
     s::Prediction previous;
     s::NominalExtension nominal;
+    std::deque<s::Packet> history;
     o::Observation observation;
     o::capture_policy_memory(session, 0, observation, policy);
     policy.observe(observation);
@@ -191,6 +235,7 @@ int run(int argc, char **argv) {
     Work work;
     std::vector<std::uint16_t> actions;
     std::uint64_t last_search = 0, fallback = 0, moving = 0, focused = 0, changes = 0;
+    std::uint64_t retained_windows = 0, retained_inputs = 0;
     std::uint64_t horizontal_reversals = 0, vertical_reversals = 0;
     int last_horizontal = 0, last_vertical = 0;
     std::uint64_t owner_native_ns = 0, owner_io_ns = 0;
@@ -198,13 +243,27 @@ int run(int argc, char **argv) {
     for (unsigned update = 0; update < maximum_updates; ++update) {
         if (Clock::now() - begin >= std::chrono::seconds(seconds))
             break;
-        if (actual.sequence - last_search >= 8 && queue.size() <= horizon - 8) {
+        if (actual.sequence - last_search >= 8 && queue.size() <= publication - 8) {
             last_search = actual.sequence;
-            auto p = search(session, policy, queue, previous, nominal, {config.story, -1}, work);
+            auto p = search(session, policy, queue, previous, nominal, {config.story, -1}, horizon,
+                            publication, held_recovery, work);
             if (p.certifies()) {
-                if (!queue.replace(p))
+                if (!queue.replace(p, {}, publication))
                     throw std::runtime_error("native_style_certificate_rejected");
                 previous = std::move(p);
+            } else if (horizon > publication && previous.certifies() && queue.size() >= lead &&
+                       actual.sequence >= previous.origin.sequence) {
+                const auto consumed = actual.sequence - previous.origin.sequence;
+                if (consumed <= history.size()) {
+                    const std::vector<s::Packet> executed(history.end() - consumed, history.end());
+                    const auto pending = queue.size();
+                    // Reuse only an earlier complete certificate. The failed
+                    // extension contributes no prefix, even if it ran safely.
+                    if (queue.extend(previous, executed, publication)) {
+                        ++retained_windows;
+                        retained_inputs += queue.size() - pending;
+                    }
+                }
             }
         }
         auto input = s::bridge::fallback(std::uint16_t(actual.input), actual.sequence + 1, false);
@@ -227,6 +286,11 @@ int run(int argc, char **argv) {
         const bool certified = queue.next() != nullptr;
         if (!queue.confirm(actual) && certified)
             throw std::runtime_error("native_style_certificate_execution_mismatch");
+        if (horizon > publication) {
+            history.push_back(actual);
+            if (history.size() > horizon)
+                history.pop_front();
+        }
         moving += bool(input & 0xf0);
         focused += bool(input & 4);
         changes += !actions.empty() && (input & 0xf4) != (actions.back() & 0xf4);
@@ -282,10 +346,14 @@ int run(int argc, char **argv) {
            << ",\"score_goal_revision\":" << (policy.needs_scoring_memory() ? 1 : 0)
            << ",\"collect_items\":" << (profile.scoring_collection ? "true" : "false")
            << ",\"aim_boss\":" << (profile.scoring_aim ? "true" : "false")
+           << ",\"survival_focus\":" << (profile.scoring_survival_focus ? "true" : "false")
+           << ",\"form_goal_revision\":" << (profile.scoring_survival_focus ? 2 : 0)
            << ",\"difficulty\":" << config.difficulty << ",\"shot\":" << config.shot
            << ",\"seed\":" << config.seed << ",\"story\":" << (config.story ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (config.prior_final_a_clear ? "true" : "false")
-           << ",\"input_profile\":\"sampled-gameplay\",\"horizon\":64,\"lead\":8,"
+           << ",\"input_profile\":\"sampled-gameplay\",\"horizon\":" << horizon
+           << ",\"publication_horizon\":" << publication
+           << ",\"lead\":8,"
               "\"search_budget_ms\":110,\"proposal_budget_ms\":60,\"max_updates\":"
            << maximum_updates << ",\"wall_budget_seconds\":" << seconds
            << ",\"updates\":" << actions.size() << ",\"score_raw\":" << h::score_audit().score_raw
@@ -295,8 +363,13 @@ int run(int argc, char **argv) {
            << ",\"candidates\":" << work.candidates
            << ",\"nominal_adoptions\":" << work.nominal_adoptions
            << ",\"fresh_adoptions\":" << work.fresh_adoptions
-           << ",\"fallback_updates\":" << fallback << ",\"future_deaths\":" << work.future_deaths
-           << ",\"timeouts\":" << work.timeouts << ",\"budget_overruns\":" << work.overruns
+           << ",\"held_recovery\":" << (held_recovery ? "true" : "false")
+           << ",\"held_attempts\":" << work.held_attempts
+           << ",\"held_adoptions\":" << work.held_adoptions
+           << ",\"retained_windows\":" << retained_windows
+           << ",\"retained_inputs\":" << retained_inputs << ",\"fallback_updates\":" << fallback
+           << ",\"future_deaths\":" << work.future_deaths << ",\"timeouts\":" << work.timeouts
+           << ",\"budget_overruns\":" << work.overruns
            << ",\"branch_updates\":" << work.branch_updates
            << ",\"proposal_updates\":" << work.proposal_updates
            << ",\"branch_native_ns\":" << work.native_ns

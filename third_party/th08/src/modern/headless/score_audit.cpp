@@ -22,6 +22,13 @@ void score_audit_enable() {
 const ScoreAudit &score_audit() {
     return audit;
 }
+void score_audit_graze() {
+    if (!enabled)
+        return;
+    ++audit.graze_events;
+    audit.extreme_human_graze_events += g_GameManager.GaugeIsExtremelyHuman();
+    audit.extreme_youkai_graze_events += g_GameManager.GaugeIsExtremelyYoukai();
+}
 void score_audit_observe() {
     if (!enabled || !g_GameManager.globals)
         return;

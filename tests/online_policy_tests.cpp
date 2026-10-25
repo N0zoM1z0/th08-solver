@@ -226,6 +226,22 @@ void score_goal_contract() {
     rejects([&] { on::Policy bad(config); },
             "score goal silently used a fixed-height delayed plan");
 }
+void score_form_contract() {
+    auto config = on::with_style("score-survival");
+    auto o = scene();
+    o.scoring.available = o.scoring.can_switch_forms = o.scoring.has_boss = true;
+    o.scoring.boss_x = o.x;
+    o.spell_active = o.scoring.survival_spell = true;
+    on::Policy spell(config);
+    check(spell.decide(o).action & 4, "spell economy did not prefer the youkai form");
+    o.scoring.survival_spell = false;
+    on::Policy nonspell(config);
+    on::Policy baseline(on::with_style("score"));
+    check(nonspell.decide(o).action == baseline.decide(o).action,
+          "survival preference changed an ordinary attack");
+    config.planner_lag = 1;
+    rejects([&] { on::Policy bad(config); }, "form economy accepted the delayed executor");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -1867,6 +1883,7 @@ int main(int argc, char **argv) {
         policy_style_contract();
         legacy_style_signature();
         score_goal_contract();
+        score_form_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

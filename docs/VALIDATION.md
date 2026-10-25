@@ -129,6 +129,13 @@ Optional `--collect-items 0|1` and `--aim-boss 0|1` independently override those
 two controls. The result records both resolved booleans and the score-goal
 revision, so later ablation runs need no source edits. No new ablation matrix is
 required for the current score-improvement campaign.
+`score-survival` enables the separate `--survival-focus 0|1` control, recording
+form-goal revision2. `--verify-horizon 64|128`, `--publish-horizon 64|128` and
+`--held-recovery 0|1` make the search/publication/recovery choices explicit; all
+resolved values, failed branches and retained-window counts are reported. The
+read-only score audit counts physical graze awards separately from displayed
+graze. Its frozen negative replay regression checks their source bounds and the
+unchanged complete25-field row hash.
 Its H64/lead8/110ms/60ms budgets are explicit; it records all rejected work,
 timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
 terminal41-word projection. Periodic Z advances dialogue. Story mode declares

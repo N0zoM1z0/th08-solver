@@ -79,6 +79,16 @@ Several coupled mechanisms matter more than a distance-to-bullet reward:
   bonus is ten times the intermediate integer sum. Retaining NMNB reserves and
   collecting items therefore have consequences beyond immediate pickup score.
 
+`Player::AwardGraze` increments the displayed counter by3 at extreme human gauge,
+2 at moderate human gauge and1 otherwise. Compare actual award events and gauge,
+not just that counter. The opt-in read-only audit now counts total events and
+the two extreme-gauge subsets, including repeated laser contacts. Ordinary boss
+spell graze at extreme youkai can request three time orbs for a team; laser calls
+that suppress extra items request only one. Those pickups also affect spell
+bonus and future point value. `Spellcard::AddBonusProgress` clamps at its score
+limit, so faster capture need not maximize bonus when sustained orb income can
+replenish it. Full capture deadlines remain a hard evaluation requirement.
+
 Optimize these with complete native outcomes and explicit resource costs. Ordinary
 speed kills, controlled familiar cancellation, item collection and timed grazing
 can conflict; local graze or damage alone cannot identify the highest-score run.
@@ -99,6 +109,25 @@ rollouts still decide safety under the unchanged H64/lead8/110ms/60ms contract.
 Baseline actions and tie ordering remain unchanged. The scoring goals reject the
 fixed-height delayed executor and existing branch-value models rather than
 silently mixing unsupported control or training assumptions.
+
+`score-survival` adds a soft focus preference only while the actual source
+`ENEMY_FLAG_TIMEOUT_SPELL` is visible, for a team that can switch forms. Its0.01
+node cost uses the scale of the existing action-change cost; ordinary attacks
+retain the original score preference. This signal describes source timer handling,
+not a proof that HP can never finish the attack early. The blanket all-spell
+form prototype is retired after two complete-duration failures. These preferences
+use no spell-ID decisions or input scripts and remain opt-in.
+
+The Native experiment tool exposes verification64/128 and publication64/128
+independently, with publication bounded by the complete certificate. Optional
+held recovery mirrors the live client's family/order: after a failed nominal,
+held directions precede policy prefixes; if none certifies, guided tails use the
+remaining budget. An earlier successful longer certificate can supply another
+checked publication window after a new search fails. Its executed prefix must
+still match; the failed search supplies no inputs. The live `h128` profile uses
+128 verification/64 publication, while historical `h128-held` publishes128.
+Both retain lead8, interval8, total110ms and proposal60ms. Longer verification is
+not uniformly better: the retained4A counterexample fails under128.
 
 Source-first follow-up should separate orb production from HP loss.
 `Player::CalcDamageToEnemy` checks the hit accumulator before adding at most50

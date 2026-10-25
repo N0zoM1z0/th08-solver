@@ -75,11 +75,11 @@ partial-stage experiment scores stay in [Status](docs/STATUS.md).
 ## Current direction
 
 The active [score and spell-capture investigation](https://github.com/N0zoM1z0/th08-solver/issues/11)
-keeps NMNB as a hard constraint and targets every spell on the chosen 4A-to-Final-B
-route, including conditional Last Spells. The existing story scores **2,189,965,070**
-displayed points and captures 33/37 route cards; Extra captures all 14. The next
-comparisons optimize actual score through offense, collection and graze decisions;
-movement style is an observation rather than an objective. Stage 4B stays paused.
+now focuses on **Extra: at least 2,500,000,000 displayed points, NMNB and 14/14
+spell captures**. Complete Extra trials and fresh original-RNG Wine attempts
+optimize collection, gauge, attack timing and actual terminal score. Movement
+style follows the scoring strategy. New story/4A experiments and Stage 4B stay
+paused; the existing story milestone remains preserved.
 
 The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).
 Common-start synchronization, true-RNG branch verification and a forward-only

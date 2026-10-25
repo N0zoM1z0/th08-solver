@@ -561,15 +561,15 @@ int run(int argc, char **argv) {
         (std::string(argv[4]) != "follow" && std::string(argv[4]) != "mpc") ||
         (argc >= 7 && std::string(argv[6]) != "exact" && std::string(argv[6]) != "behavioral") ||
         (argc >= 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64" &&
-         std::string(argv[7]) != "h64-held" && std::string(argv[7]) != "h128-held" &&
-         std::string(argv[7]) != "h256-held" && std::string(argv[7]) != "h256-pulse" &&
-         std::string(argv[7]) != "h512-buffered" && std::string(argv[7]) != "h128-recorded" &&
-         std::string(argv[7]) != "h64-recorded"))
+         std::string(argv[7]) != "h128" && std::string(argv[7]) != "h64-held" &&
+         std::string(argv[7]) != "h128-held" && std::string(argv[7]) != "h256-held" &&
+         std::string(argv[7]) != "h256-pulse" && std::string(argv[7]) != "h512-buffered" &&
+         std::string(argv[7]) != "h128-recorded" && std::string(argv[7]) != "h64-recorded"))
         throw std::runtime_error(
             "usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
             "WALL_SECONDS [behavioral|exact] "
-            "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
-            "h128-recorded|h64-recorded] [baseline|zen|expert|sniper|graze|score]");
+            "[h32|h64|h128|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
+            "h128-recorded|h64-recorded] [baseline|zen|expert|sniper|graze|score|score-survival]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
@@ -577,20 +577,23 @@ int run(int argc, char **argv) {
                                              std::string(argv[7]) == "h64-recorded");
     const bool recorded_direct = argc >= 8 && std::string(argv[7]) == "h128-recorded";
     const bool buffered = argc >= 8 && std::string(argv[7]) == "h512-buffered";
+    const bool short_publication = argc >= 8 && std::string(argv[7]) == "h128";
     const bool pulse_recovery = argc >= 8 && std::string(argv[7]) == "h256-pulse";
     const bool held_recovery =
         argc >= 8 && (std::string(argv[7]) == "h64-held" || std::string(argv[7]) == "h128-held" ||
                       std::string(argv[7]) == "h256-held" || pulse_recovery);
     const unsigned verified_horizon =
-        buffered                                                                ? 512
-        : (argc >= 8 && std::string(argv[7]) == "h256-held") || pulse_recovery  ? 256
-        : recorded_direct || (argc >= 8 && std::string(argv[7]) == "h128-held") ? 128
-        : argc >= 8 && std::string(argv[7]) != "h32"                            ? 64
-                                                                                : 32;
+        buffered                                                               ? 512
+        : (argc >= 8 && std::string(argv[7]) == "h256-held") || pulse_recovery ? 256
+        : recorded_direct || short_publication || (argc >= 8 && std::string(argv[7]) == "h128-held")
+            ? 128
+        : argc >= 8 && std::string(argv[7]) != "h32" ? 64
+                                                     : 32;
     const unsigned minimum_search_interval = verified_horizon >= 64 ? 8 : 4;
     const unsigned search_budget_ms = buffered ? 480 : verified_horizon >= 64 ? 110 : 80;
     const unsigned active_lead = buffered ? 32 : lead_updates;
-    const unsigned publication_horizon = std::min(verified_horizon, unsigned(b::capacity));
+    const unsigned publication_horizon =
+        short_publication ? 64 : std::min(verified_horizon, unsigned(b::capacity));
     const unsigned replan_remaining = publication_horizon - minimum_search_interval;
     std::size_t used;
     const auto seconds = std::stoul(argv[5], &used);
@@ -804,6 +807,8 @@ int run(int argc, char **argv) {
            << ",\"score_goal_revision\":" << (policy.needs_scoring_memory() ? 1 : 0)
            << ",\"collect_items\":" << (profile.scoring_collection ? "true" : "false")
            << ",\"aim_boss\":" << (profile.scoring_aim ? "true" : "false")
+           << ",\"survival_focus\":" << (profile.scoring_survival_focus ? "true" : "false")
+           << ",\"form_goal_revision\":" << (profile.scoring_survival_focus ? 2 : 0)
            << ",\"prior_final_a_clear\":" << (recording.prior_final_a_clear ? "true" : "false")
            << ",\"dialogue_advance\":" << (recording.advance_dialogue ? "true" : "false")
            << ",\"actual_complete\":" << (actual_complete ? "true" : "false")

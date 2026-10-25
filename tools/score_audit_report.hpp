@@ -52,6 +52,9 @@ inline bool write_score_audit(std::ostream &out, const headless::ScoreAudit &aud
         << ",\"score_displayed\":" << std::uint64_t(audit.score_raw) * 10 << ",\"nmnb\":"
         << (!audit.death_rows && audit.deaths == 0 && !audit.bombs_used ? "true" : "false")
         << ",\"death_rows\":" << audit.death_rows << ",\"bombs_used\":" << audit.bombs_used
+        << ",\"graze_events\":" << audit.graze_events
+        << ",\"extreme_human_graze_events\":" << audit.extreme_human_graze_events
+        << ",\"extreme_youkai_graze_events\":" << audit.extreme_youkai_graze_events
         << ",\"unmatched_events\":" << audit.unmatched_events
         << ",\"expected_unique\":" << expected.size()
         << ",\"encountered_unique\":" << encountered.size()

@@ -1,5 +1,45 @@
 # Current handoff status
 
+The owner's current target is **Extra >= 2,500,000,000 displayed points, NMNB and
+14/14 captures**, then approaching/exceeding the human high score. All new scoring
+experiments focus on proper non-practice Extra, Marisa/Alice. New story/4A work
+is paused alongside4B; ordinary regression coverage remains unchanged.
+
+Extra's best complete Native sample is now **1,595,477,390**, seed19732, with
+14/14 captures, exact fresh41-word execution and matching natural replay. This
+opt-in `score-survival` trial uses128-update verification/publication, lead8 and
+the unchanged110ms/60ms budgets, with held-action recovery. It collects745 point
+items /39564 time orbs and records5391 graze award events,1251 at extreme youkai
+gauge. Its44941 owner updates cost191.983s,726044 branch+245 proposal updates,
+184 rejected future deaths,18 timeouts and19 overruns. The paired seed14956 fails
+before survival attacks, at6/14 captures. This finite result does not promote a
+uniform replacement or update the online ladder.
+
+The earlier128-verification/64-publication score goal completes Native Extra
+seed14956 at1,586,593,180,14/14. Fresh execution and natural replay agree. Its
+new actual Wine seed20014 fails in the nonspell after the midboss at12706, with
+exact41-word agreement and59.877 calculations/s. The preceding H64 score attempt
+seed14956 fails at30514; H128-held seed30526 fails at31058, both in card202 with
+no meaningful mismatch and about59.8 calculations/s. Startup-only wine-60 never
+enters gameplay; its missing-binary preparation race is retained and the launcher
+now requires a completed preparation marker. All attempts/costs remain local.
+The complete online Extra PB stays1,166,969,620.
+
+The human Extra WR replay (ASL) reproduces **3,021,639,920** exactly in Native:
+14/14 captures, no misses and one bomb,1081 points /105531 orbs. It has25998
+physical graze award events,22906 at extreme youkai gauge, versus our latest
+5391/1251. Its displayed graze counter is30808. Counting raw graze alone hides
+the source's3/2/1 increments per event. Several ordinary attacks are captured
+near their limits with large orb income and bonus; source-based attack pacing
+and orb production are the next scoring priority. The reference remains a
+score-attack comparison, not a matching NMNB bound.
+
+Local frozen evidence is in `reports/local/score-styles-20261025/`: `score-goals-r2/`
+retains the rejected owner-goal-refresh idea (Stage1 gain,4A failure),
+`score-h128-v1/`, `extra-form-v1/` retains two failed blanket-form trials, and
+`extra-survival-v2/` retains the current two-case trial. There is no new ablation
+matrix. Current Release Native/DAT CTest passes56/56 (942.95s), core36/36.
+
 The active October25 scope is [issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11):
 complete Extra delivery at original capture quality, general alternative policies,
 all route-eligible spell captures and higher score under NMNB. The source-lifecycle

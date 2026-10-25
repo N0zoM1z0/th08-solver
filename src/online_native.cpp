@@ -4,6 +4,7 @@
 #include "GameManager.hpp"
 #include "ItemManager.hpp"
 #include "Player.hpp"
+#include "Spellcard.hpp"
 #include "Supervisor.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/animation.hpp"
@@ -32,6 +33,9 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
             break;
         }
     score.power = g_GameManager.globals->playerPower;
+    score.can_switch_forms = !g_GameManager.IsSoloHuman() && !g_GameManager.IsSoloYoukai();
+    score.survival_spell = g_Spellcard.IsActive() && g_Spellcard.activeEnemy &&
+                           (g_Spellcard.activeEnemy->flags1 & ENEMY_FLAG_TIMEOUT_SPELL);
     score.collection_line = g_Player.primaryShtFile->pointItemValueLine;
     // Exact eligibility from ItemManager::OnUpdate; it is not a collection
     // promise, since the native world still owns movement and item lifecycle.

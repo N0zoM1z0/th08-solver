@@ -1,6 +1,7 @@
 #include "th_pch.h"
 #ifdef TH08_HEADLESS
 #include "modern/headless/runtime.hpp"
+#include "modern/headless/score_audit.hpp"
 #endif
 
 #include "AsciiManager.hpp"
@@ -503,6 +504,9 @@ lethalPath:
 #pragma var_order(midpoint, gaugeGain, score)
 void Player::AwardGraze(Float3 *position, i32 suppressExtraItems)
 {
+#ifdef TH08_HEADLESS
+    headless::score_audit_graze();
+#endif
     Float3 midpoint;
     i32 gaugeGain;
     i32 score;

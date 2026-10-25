@@ -25,6 +25,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     auto &w = configuration.style;
     w = {};
     configuration.scoring_collection = configuration.scoring_aim = false;
+    configuration.scoring_survival_focus = false;
     configuration.boss_follow = 0.25f;
     if (name == "baseline")
         return configuration;
@@ -47,8 +48,9 @@ Configuration with_style(const std::string &name, Configuration configuration) {
         w.anchor_weight = 0.05f;
         w.anchor_y = 360;
         configuration.boss_follow = 1;
-    } else if (name == "score") {
+    } else if (name == "score" || name == "score-survival") {
         configuration.scoring_collection = configuration.scoring_aim = true;
+        configuration.scoring_survival_focus = name == "score-survival";
         w.anchor_weight = 0.05f;
         configuration.boss_follow = 1;
     } else if (name == "graze") {
@@ -294,6 +296,7 @@ struct Policy::Impl {
     std::uint64_t last_observed = UINT64_MAX;
     std::uint64_t last_decided = UINT64_MAX;
     bool collecting = false;
+    float proposal_focus_bias = 0;
     float collection_x = 192;
     static constexpr unsigned collection_batch = 4, collection_start_bullet_limit = 64;
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
@@ -315,7 +318,8 @@ struct Policy::Impl {
             (value_model.loaded &&
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
               opt.warm_fallback || opt.held_fallback || risk.loaded || !opt.hard_phantoms ||
-              !opt.motion_envelope || opt.scoring_collection || opt.scoring_aim)))
+              !opt.motion_envelope || opt.scoring_collection || opt.scoring_aim ||
+              opt.scoring_survival_focus)))
             throw std::runtime_error("unsupported_branch_value_configuration");
         if (opt.motion_envelope && !opt.hard_phantoms)
             throw std::runtime_error("motion_envelope_requires_hard_phantoms");
@@ -334,7 +338,8 @@ struct Policy::Impl {
             throw std::runtime_error("invalid_online_configuration");
         if (opt.planner_lag > 0 && (opt.held_fallback || opt.warm_fallback || opt.tail_check))
             throw std::runtime_error("unsupported_online_lag_fallback");
-        if (opt.planner_lag > 0 && (opt.scoring_collection || opt.scoring_aim))
+        if (opt.planner_lag > 0 &&
+            (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus))
             throw std::runtime_error("unsupported_scoring_lag_configuration");
         frames.resize(opt.horizon + opt.tail_check + 1);
     }
@@ -377,7 +382,7 @@ struct Policy::Impl {
         };
         finite(o.x);
         finite(o.y);
-        if (opt.scoring_collection || opt.scoring_aim) {
+        if (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus) {
             if (!o.scoring.available)
                 throw std::runtime_error("missing_online_score_memory");
             for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power})
@@ -532,6 +537,15 @@ struct Policy::Impl {
                     sum += item.x;
                 collection_x = sum / float(score.pickups.size());
             }
+        }
+        proposal_focus_bias = opt.focus_bias;
+        if (opt.scoring_survival_focus && observation.scoring.can_switch_forms &&
+            observation.scoring.survival_spell && observation.scoring.has_boss &&
+            observation.spell_active && !collecting) {
+            // Source-marked survival attacks have different opportunity costs
+            // from HP races. Keep this prior on the existing change-cost scale.
+            constexpr float form_bias = 0.01f;
+            proposal_focus_bias += form_bias;
         }
         const auto &bs = observation.bullets;
         std::array<bool, kSlots> seen{};
@@ -1299,7 +1313,7 @@ struct Policy::Impl {
                             n.score += opt.nowarn_weight * r * (j < 16 ? 1.f : 0.25f);
                         }
                         if (!(a & 4))
-                            n.score += opt.focus_bias;
+                            n.score += proposal_focus_bias;
                         const auto &w = opt.style;
                         n.score += (hit == 1 ? (j < w.margin_split ? w.margin_early : w.margin_late)
                                              : 0.f) +
@@ -1747,7 +1761,8 @@ void Policy::observe(const Observation &observation) {
     impl_->observe(observation);
 }
 bool Policy::needs_scoring_memory() const {
-    return impl_->opt.scoring_collection || impl_->opt.scoring_aim;
+    return impl_->opt.scoring_collection || impl_->opt.scoring_aim ||
+           impl_->opt.scoring_survival_focus;
 }
 Decision Policy::decide(const Observation &observation, DecisionTiming *timing,
                         std::vector<ValueProposal> *proposals) {

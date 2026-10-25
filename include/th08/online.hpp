@@ -109,6 +109,7 @@ struct ScorePickup {
 // Current native scoring inputs only; no predicted drops, route script or RNG.
 struct ScoreMemory {
     bool available = false, has_boss = false, auto_collect_eligible = false;
+    bool can_switch_forms = false, survival_spell = false;
     float boss_x = 192, collection_line = 128, power = 0;
     std::vector<ScorePickup> pickups;
 };
@@ -163,6 +164,7 @@ struct StyleWeights {
 struct Configuration {
     StyleWeights style;
     bool scoring_collection = false, scoring_aim = false;
+    bool scoring_survival_focus = false;
     int horizon = 32, beam = 192;
     // Held-input updates beyond retained full-horizon endpoints; H + T <= 200.
     int tail_check = 0;
@@ -196,7 +198,7 @@ struct Configuration {
     int emergency_horizon = 32, emergency_beam = 48;
     bool lazy_index = false; // Delay unused frame indices; forecasts remain unchanged.
 };
-// General proposal controls: baseline, zen, expert, sniper, graze and score.
+// General proposal controls: baseline, zen, expert, sniper, graze, score and score-survival.
 // Score adds current-item collection and literal boss aiming. No preference
 // changes the horizon, beam, verification budgets or physics.
 Configuration with_style(const std::string &name, Configuration configuration = {});
