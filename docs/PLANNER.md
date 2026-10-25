@@ -668,6 +668,18 @@ use only any remaining total budget. Direct/pulse attempt/selection counts and
 the final cursor are reported separately. This changes candidate families and
 ordering explicitly; it does not change collision, game RNG or old profiles.
 
+`h512-buffered` is a separately named scheduling experiment using the original
+H24 guided proposals:512 verified updates,128 published inputs,32 unchanged lead
+inputs,480ms total,60ms proposal cap and minimum interval8. Its512-entry actual
+history supports later certificate windows. The longer input lead accommodates
+slower Native search while the original owner keeps running; it is not a claim
+of lower computation time or16.67ms decisions. Once per publication window
+(128 actual receipts), a fresh solve takes priority over nominal reuse. A failed
+refresh consumes its interval too, allowing ordinary reuse to resume. Reports
+separate forced refreshes, fresh adoptions, original Native costs and retained
+windows. No stage/spell/seed selects this policy; older named profiles retain
+their original budgets, lead and reuse behavior.
+
 Before requesting fresh candidates, `h64` and its named variants can reuse the unconsumed inputs of the
 previous verified plan. A fresh child re-executes that whole prefix and extends
 its tail to a new complete horizon. This saves repeated proposal searches; it

@@ -1,85 +1,78 @@
 # Current handoff status
 
-The October 25 owner request resumes Stage 4B and Extra and investigates local
-gameplay-rate deficits. [Issue #10](https://github.com/N0zoM1z0/th08-solver/issues/10)
-tracks this work. Annotated tag `lunatic-nmnb-4a-finalb-20261024` preserves the
-verified live 4A-to-Final-B Lunatic NMNB milestone at `d538bcc`.
+[Issue #10](https://github.com/N0zoM1z0/th08-solver/issues/10) tracks the October25
+continuation. Tag `lunatic-nmnb-4a-finalb-20261024` preserves the verified live
+4A-to-Final-B Lunatic NMNB story at `d538bcc`. README leads with its milestone
+notice, matching replay and the owner's video/replay Google Drive folder.
 
-The first fresh current-shadow Extra case completes NMNB with the frozen
-`fbb7758` H64 client, real seed19732, Marisa/Alice and proper non-practice Extra
-initialization: 46501 calculations, zero player-position error and no meaningful
-mismatch. Fresh following agrees on every receipt; the original-writer replay
-naturally completes NMNB with matching raw score116696962. Numeric digest drift
-on2347 updates remains telemetry. The run takes825.1195392 seconds, averaging
-56.357 calculations/s; period p99/max is31.82/58.72ms. Ten unqueued receipts and
-nine fallback sampling calls are startup only. It records51 rejected future
-deaths,10 rollout timeouts,9 planning-budget overruns,373840 charged branch
-updates and204 proposal-lead updates. Historical current-memory Extra failures
-are a separate profile.
+Complete Extra now clears NMNB with the frozen `fbb7758` H64 client, actual
+seed19732, Marisa/Alice and proper non-practice initialization:46501 calculations,
+zero meaningful mismatch/player error. Fresh following agrees on every receipt;
+the original-writer replay naturally completes with matching raw score116696962.
+The owner averages56.357 calculations/s over825.1195392s; numeric drift on2347
+updates remains telemetry. It charges373840 branch+204 proposal updates,51 future
+deaths,10 timeouts and9 budget overruns. Startup-only unqueued receipts total10.
 
-The retained4B/seed42386 journal reproduces a search omission at origin34256:
-the same32-input prefix dies at62 updates with a Policy tail, but its held tail
-passes the complete64-update native horizon. A named `h64-held` recovery profile
-preserves the original `h64` behavior and110ms total search budget. Its first
-actual4B/seed12398 attempt still dies in spell92 at20891, with no mismatch:
-189 held candidates,6 selections,180 future deaths and10 timeouts. This failure
-and all costs remain retained. Diagnostic reconstruction finds12 H64-safe
-candidates but only2 H128-safe candidates at20736, motivating a separately named
-`h128-held` experiment with the same110ms budget and explicitly greater native
-work. Its actual seed6750 case dies in spell99 at24967, again with exact
-projection agreement:18 held selections,286 future deaths,27 timeouts and30
-planning-budget overruns. It charges414961 native branch updates plus391 proposal
-updates. The owner averages59.580 calculations/s. At24640, five tested held
-continuations survive256 updates; at24704 none do, despite13 surviving128.
-These are finite-family diagnostics, not an impossibility result. Further
-planning experiments must recognize the trap earlier. The opt-in `h256-held`
-profile verifies256 updates, publishes only128 and preserves the110ms total. Its
-actual seed56891 case dies in spell92 at21533 with exact projection agreement.
-It charges709010 branch plus549 proposal updates,60 future timeouts and288
-future deaths;64 budget overruns and159 unqueued receipts remain visible.
+Stage4B remains unresolved. All following live failures retain exact41-word
+Native/Wine agreement, their real seeds, attempted work, tapes and recordings:
 
-The retained trajectory exposes a different missing family: at21120 no tested
-held direction survives256, while a16-update move followed by a stationary tail
-does. The new opt-in `h256-pulse` tests66 rotating native motion candidates before
-heuristic generation, under the same110ms total. Its private-journal regression
-reconstructs every actual receipt and verifies all256 pulse rows against a literal
-Native tape, preserving parent state and the eight-input lead. Its actual
-seed32821 case dies in spell84 at10927 with exact projection agreement:64 direct
-attempts, no direct selection,18 future timeouts and47 future deaths. It charges
-351874 branch plus8 proposal updates;45 unqueued receipts remain recorded.
+| Profile / case | Real seed | Death receipt / last spell |
+| --- | --- | --- |
+| H64 historical / wine-21 | 42386 | 34318 /99 |
+| H64-held / wine-36 | 12398 | 20891 /92 |
+| H128-held / wine-38 | 6750 | 24967 /99 |
+| H256-held / wine-43 | 56891 | 21533 /92 |
+| H256-pulse / wine-44 | 32821 | 10927 /84 |
+| H256-pulse with retention / wine-45 | 59066 | 20918 /92 |
+| H512 pulse experiment / wine-46 | 33944 | 9702 /80 inactive |
+| Buffered H512 guided control / wine-48 | 31675 | 20130 /92 |
+| Buffered H512 with periodic refresh / wine-50 | 21673 | 20568 /92 |
 
-This exposes a defect in the new long-horizon publication path: after a fresh
-extension failed, still-valid unpublished actions from an earlier successful
-256-update certificate could be lost at the128-input transport boundary. A
-retained-window path now validates the complete old certificate and actual
-executed prefix, keeps queued inputs immutable and publishes its next window.
-It preserves original rollout costs and reports reuse separately. The core
-regression crosses the original publication boundary and rejects malformed/fatal
-certificates. The real-seed59066 case still dies in spell92 at20918 with exact
-projection agreement. Retention works in the live case:14 windows/179 newly queued
-inputs, plus3 direct selections including2 pulses. It charges679055 branch plus8
-proposal updates,27 timeouts,217 future deaths and30 budget overruns. Total
-unqueued receipts are17, maximum streak14. Complete4B remains unresolved.
-At20320 the retained path has13 tested H256-safe futures but only4 H512-safe
-futures; at20384 none survive512 despite19 surviving256. Diagnostic Native512
-branches complete within58.37ms individually; that is not a whole-search timing
-claim. This motivates earlier viability checking rather than more seed retries.
-The normal Native/DAT suite passes54/54; core36/36 and the updated retained-window
-contracts also pass. The separate H48 proposal diagnostic
-hit the existing H24 ValueProposal interface restriction and is classified as
-unsupported for that adapter, not a failed H48 survival result.
+The retained failures prove two generic omissions: a held tail can survive where
+a Policy tail dies, and a short move followed by a stationary tail can survive
+where indefinite movement fails. Private-journal regressions reconstruct every
+actual prefix, compare literal Native tapes and check immutable lead/parent state.
+A separate publication defect in the new long-horizon experiment is fixed:
+successful unpublished certificate windows can extend the queue after a new
+search fails. wine-45 exercises14 reused windows/179 newly queued inputs; costs
+remain charged to the original successful rollout. Failed futures supply none.
 
-Recorded story windows also isolate real local deficits: some complete5-second
-windows reach37–40 calculations/s outside stage handoffs, while measured
-GameManager/observer work averages about1ms. A separate normal-mode retail replay of the same Stage2 inputs, with no
-planner or capture, isolates significant original Present-call waiting. A matched
-`vblank_mode=0` trial raises mean presentation rate from56.167 to59.343/s and
-reduces mean Present from7.900 to2.342ms. All15216 observed callbacks agree in
-inputs and all41 projection words, with zero death/bomb rows. Slow complete
-5-second windows still occur (minimum45.385 versus55.812 presentations/s in
-these two runs). This is one matched software-renderer comparison, not strict
-every-frame60Hz acceptance or a full-story result. Original game pacing remains
-unchanged. The diagnostic callback clock is separate from live certification.
+Longer verification alone did not clear4B. Some complete H512 guided alternatives
+survive but take390–510ms, exceeding the original110ms total. The buffered control
+therefore explicitly uses512 verified updates,128 published inputs, lead32 and
+480ms total (proposal cap60ms). It still fails. The next generic experiment adds
+a fresh solve once per128 actual receipts, preventing indefinite nominal-route
+reuse while preserving certified windows. The actual seed21673 case still
+dies in spell92 at20568, with148 forced refreshes,144 fresh adoptions and50
+retained windows/1824 newly queued inputs. It charges1074122 branch+6425 proposal
+updates,54 timeouts,274 future deaths and55 budget overruns. The actual owner
+averages59.874 calculations/s, with21 unqueued receipts (maximum streak18).
+This is not a4B clear or a computation-speed claim. No stage/spell/seed-specific strategy is
+added. Rejected proposal-uncertainty settings produced the same outcomes; the
+H48 diagnostic hit the H24 proposal-interface restriction and is unsupported for
+that adapter, not an H48 survival result.
+
+Rendering has a measured general improvement. The same normal-mode retail Stage2
+replay produces15216 identical callback packets, inputs and all41 state words,
+with no planner/capture and zero death/bomb rows:
+
+| Renderer setting | Mean presentations/s | Mean Present ms |
+| --- | ---: | ---: |
+| 2 threads, default vblank | 56.167 | 7.900 |
+| 2 threads, vblank0 | 59.343 | 2.342 |
+| 1 thread, vblank0 | 41.045 | 22.418 |
+| 4 threads, vblank0 | 59.997 | 0.043 |
+
+The4-thread case's slowest complete5-second window is59.811 presentations/s;
+period p99 is18.729ms. Original game pacing and image resolution remain unchanged.
+This consumes more renderer threads, without increasing concurrent solver jobs.
+It is a matched selected-stage result, not every-frame or full-story60Hz proof.
+A separate CPU fast-path trial gives mixed cross-scene results and remains a
+local experiment:4A improves6.19%,4B regresses1.97%,FinalB improves1.12%,Extra is
+unchanged over three interleaved pairs, with identical proposal hashes. It is not
+published as a general speedup. Normal Native/DAT54/54 and core36/36 pass at the
+current buffered/refresh implementation. The updated core and full Native/DAT
+suites pass36/36 and54/54 respectively. Generated experimental artifacts remain ignored under reports/local/.
 
 ## October 24 runtime and recording evidence
 

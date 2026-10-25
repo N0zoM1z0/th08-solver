@@ -180,6 +180,8 @@ count and flags (1 no draw,2 failed Present,4 repeated receipt). The first perio
 is unavailable. Draw includes submission/synchronization; Present includes backend
 waits. Remaining period time includes original pacing, other callbacks, scheduling
 and preceding profiling writes. These are measured boundaries, not GPU-only costs.
+The core wire contract also checks the disabled legacy refresh setting and the
+exact128-receipt refresh boundary, including spacing after a failed attempt.
 
 `TH08_SHADOW_OBSERVE_REPLAY=1` requires render timing and rejects history/dialogue
 flags and non-replay gameplay. It forwards original input calls and lets the
@@ -198,8 +200,16 @@ All15216 packets agree exactly, including input and all41 fields. The
 [Mesa option documentation](https://dri.freedesktop.org/wiki/ConfigurationOptions/)
 defines0 as disabling swap-interval synchronization. This remains an opt-in
 measured environment choice; local slow windows and scheduling tails remain.
+A further matched control changes only renderer threads: LP1 reaches41.045/s,
+whereas LP4 reaches59.997/s with mean Present0.043ms. Both match all15216 LP2
+packets exactly. LP4 has a59.811/s slowest complete5-second window and18.729ms
+period p99. It uses additional rendering workers while solver concurrency stays
+fixed. [Mesa documents LP_NUM_THREADS as the renderer thread count](https://docs.mesa3d.org/envvars.html#lp-num-threads).
+The buffered solver profile separately declares512 verification,128 publication,
+lead32,480ms total and128-receipt fresh-planning intervals. Keep this latency and
+compute budget distinct from the original110ms/lead8 controls.
 
-Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held|h256-pulse]` select comparison and
+Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered]` select comparison and
 planning profiles (defaults `behavioral h32`).
 Live comparison records numeric bullet/laser digest drift, player differences up
 to 1/64 pixel and inactive spell/route metadata; meaningful gameplay fields remain

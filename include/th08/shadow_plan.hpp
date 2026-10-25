@@ -97,8 +97,17 @@ class ActionBuffer {
 // fresh alternatives. Only a certificate with a new origin enables reuse again.
 class NominalExtension {
     std::optional<std::uint64_t> failed_origin_;
+    std::uint64_t refreshed_at_ = 0;
 
   public:
+    bool refresh_due(std::uint64_t now, unsigned interval) const {
+        return interval && now >= refreshed_at_ && now - refreshed_at_ >= interval;
+    }
+    // A failed refresh consumes its slot too; ordinary reuse may resume while
+    // its existing successful certificate remains valid.
+    void observe_refresh(std::uint64_t now) {
+        refreshed_at_ = now;
+    }
     bool eligible(const Prediction &plan, const ActionBuffer &queue, unsigned lead,
                   std::size_t maximum_frames = std::numeric_limits<std::size_t>::max()) const {
         const auto now = queue.frontier().sequence;

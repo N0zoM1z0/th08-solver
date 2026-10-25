@@ -153,6 +153,12 @@ int main() try {
     nominal.requested = nominal.attempts = nominal.completed = nominal.frames.size();
     s::ActionBuffer buffered(origin);
     s::NominalExtension extension;
+    check(!extension.refresh_due(127, 128) && extension.refresh_due(128, 128) &&
+              !extension.refresh_due(128, 0),
+          "bounded nominal reuse changed its refresh boundary or legacy disabled profile");
+    extension.observe_refresh(128);
+    check(!extension.refresh_due(129, 128) && extension.refresh_due(256, 128),
+          "a failed periodic refresh could starve ordinary reuse on every next origin");
     check(buffered.replace(nominal) && extension.eligible(nominal, buffered, 8),
           "complete nominal continuation was unavailable for reuse");
     auto dead_tail = nominal;
