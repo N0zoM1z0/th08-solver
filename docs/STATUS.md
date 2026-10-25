@@ -1,5 +1,14 @@
 # Current handoff status
 
+The owner pauses 4B exploration on October 25. Published implementation is
+`288c6fe`; the last full live attempt, real seed 39151, dies at 20648 in spell 92
+with exact 41-word agreement. The uncommitted immutable-index experiment is saved
+as a local patch and removed from the working implementation. No 4B jobs remain.
+Online NMNB coverage remains 1/2/3/4A/5/Final A/Final B and Extra for the validated
+Marisa/Alice configuration. Full-route and Extra 60Hz with the newer renderer
+settings still require complete live confirmation; the old completed Extra
+averages 56.357 calculations/s.
+
 [Issue #10](https://github.com/N0zoM1z0/th08-solver/issues/10) tracks the October25
 continuation. Tag `lunatic-nmnb-4a-finalb-20261024` preserves the verified live
 4A-to-Final-B Lunatic NMNB story at `d538bcc`. README leads with its milestone
