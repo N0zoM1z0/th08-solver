@@ -218,8 +218,14 @@ The buffered solver profile separately declares512 verification,128 publication,
 lead32,480ms total and128-receipt fresh-planning intervals. Keep this latency and
 compute budget distinct from the original110ms/lead8 controls.
 
-Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered]` select comparison and
+Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|h128-recorded]` select comparison and
 planning profiles (defaults `behavioral h32`).
+The recorded mode uses128 verification/publication, lead8 and110ms total, with
+Native conditional hazard recording and independent full-path verification.
+`recorded_*` fields separate geometry/search work and timeouts; its recording
+updates are also charged in `proposal_*` totals. The real-data contract checks
+literal replay, immutable lead, parent RNG/filesystem isolation and the retained
+4B failure; the ordinary current-memory Policy remains unchanged.
 Live comparison records numeric bullet/laser digest drift, player differences up
 to 1/64 pixel and inactive spell/route metadata; meaningful gameplay fields remain
 checked. It does not modify either simulation or collision handling. Exact mode

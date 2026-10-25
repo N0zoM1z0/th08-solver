@@ -5,6 +5,7 @@
 #include "th08/shadow_native.hpp"
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_proposal.hpp"
+#include "th08/shadow_recorded.hpp"
 #include "th08/shadow_start.hpp"
 #include "wine-shadow/file_hash.hpp"
 #include <algorithm>
@@ -78,6 +79,7 @@ struct Scratch {
     }
 };
 struct Statistics {
+    s::RecordedWork recorded;
     std::uint64_t searches = 0, candidates = 0, verified = 0, stale = 0, invalid_prefix = 0;
     std::uint64_t terminal_before_change = 0;
     std::uint64_t warm_attempts = 0, warm_selected = 0;
@@ -283,7 +285,8 @@ bool publish_retained(Follower &follower, const s::Prediction &prediction, Mappi
 }
 PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Boundary boundary,
                      Statistics &statistics, PlanningWindow window, s::NominalExtension &nominal,
-                     bool held_recovery, unsigned publication_horizon, bool pulse_recovery) {
+                     bool held_recovery, unsigned publication_horizon, bool pulse_recovery,
+                     s::RecordedPlanner *recorded_planner) {
     const auto begin = Clock::now();
     const unsigned lead = window.lead, horizon = window.horizon,
                    search_budget_ms = window.budget_ms;
@@ -310,6 +313,70 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
         if (prediction.status == s::BranchStatus::Fault)
             throw std::runtime_error("shadow_native_branch_fault");
     };
+    if (recorded_planner) {
+        std::vector<std::uint16_t> inputs;
+        auto last = std::uint16_t(origin.input);
+        const auto consumed = origin.sequence - previous.origin.sequence;
+        for (unsigned i = 0; i < horizon; ++i) {
+            last = b::fallback(last, origin.sequence + i + 1, boundary.spell >= 0);
+            if (previous.certifies() && consumed + i < previous.frames.size() &&
+                (i >= lead || follower.queue.size() > i))
+                last = std::uint16_t(previous.frames[consumed + i].input);
+            inputs.push_back(last);
+        }
+        const std::vector<std::uint16_t> prefix(inputs.begin(), inputs.begin() + lead);
+        const auto remaining_budget = [&] {
+            const auto elapsed =
+                std::chrono::duration_cast<std::chrono::milliseconds>(Clock::now() - begin).count();
+            return elapsed < search_budget_ms ? search_budget_ms - unsigned(elapsed) : 0u;
+        };
+        if (!previous.certifies() ||
+            nominal.eligible(previous, follower.queue, lead, publication_horizon)) {
+            ++statistics.warm_attempts;
+            auto prediction = s::predict_recorded_tape(follower.session, origin, inputs, lead,
+                                                       boundary, std::max(1u, remaining_budget()),
+                                                       follower.advance_dialogue);
+            record(prediction);
+            nominal.observe_attempt(previous, prediction);
+            if (prediction.certifies()) {
+                ++statistics.warm_selected;
+                ++statistics.verified;
+                selected.unchanged_inputs = std::max(lead, unsigned(follower.queue.size()));
+                selected.prediction = std::move(prediction);
+                selected.nominal = true;
+                return finish();
+            }
+        }
+        if (!remaining_budget())
+            return finish();
+        auto result = recorded_planner->solve(follower.session, origin, prefix, inputs, boundary,
+                                              remaining_budget());
+        statistics.proposal_attempts += result.work.attempts;
+        statistics.proposal_completed += result.work.completed;
+        statistics.proposal_charged += result.work.charged;
+        statistics.proposal_native_ns += result.work.native_ns;
+        statistics.proposal_io_ns += result.work.file_io_ns;
+        auto &work = statistics.recorded;
+        work.forecasts += result.work.forecasts;
+        work.searches += result.work.searches;
+        work.paths += result.work.paths;
+        work.capture_ns += result.work.capture_ns;
+        work.search_ns += result.work.search_ns;
+        work.forecast_timeouts += result.work.forecast_timeouts;
+        work.search_timeouts += result.work.search_timeouts;
+        work.forecast_deaths += result.work.forecast_deaths;
+        statistics.proposal_deaths += result.work.forecast_deaths;
+        for (const auto &checked : result.checks)
+            record(checked);
+        if (result.native_fault)
+            throw std::runtime_error("shadow_recorded_native_fault");
+        if (result.selected.certifies()) {
+            ++statistics.verified;
+            ++statistics.fresh_searches;
+            selected.prediction = std::move(result.selected);
+        }
+        return finish();
+    }
     // A deterministic shadow already knows the verified nominal continuation.
     // Re-execute it in a fresh owned branch and extend its tail, saving repeated
     // proposal searches while still requiring a complete new native horizon.
@@ -467,13 +534,15 @@ int run(int argc, char **argv) {
         (argc == 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64" &&
          std::string(argv[7]) != "h64-held" && std::string(argv[7]) != "h128-held" &&
          std::string(argv[7]) != "h256-held" && std::string(argv[7]) != "h256-pulse" &&
-         std::string(argv[7]) != "h512-buffered"))
-        throw std::runtime_error("usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
-                                 "WALL_SECONDS [behavioral|exact] "
-                                 "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered]");
+         std::string(argv[7]) != "h512-buffered" && std::string(argv[7]) != "h128-recorded"))
+        throw std::runtime_error(
+            "usage: th08_shadow_online DAT RUN_DIRECTORY OUTPUT follow|mpc "
+            "WALL_SECONDS [behavioral|exact] "
+            "[h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|h128-recorded]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
+    const bool recorded_mode = argc == 8 && std::string(argv[7]) == "h128-recorded";
     const bool buffered = argc == 8 && std::string(argv[7]) == "h512-buffered";
     const bool pulse_recovery = argc == 8 && std::string(argv[7]) == "h256-pulse";
     const bool held_recovery =
@@ -482,7 +551,7 @@ int run(int argc, char **argv) {
     const unsigned verified_horizon =
         buffered                                                               ? 512
         : (argc == 8 && std::string(argv[7]) == "h256-held") || pulse_recovery ? 256
-        : argc == 8 && std::string(argv[7]) == "h128-held"                     ? 128
+        : recorded_mode || (argc == 8 && std::string(argv[7]) == "h128-held")  ? 128
         : argc == 8 && std::string(argv[7]) != "h32"                           ? 64
                                                                                : 32;
     const unsigned minimum_search_interval = verified_horizon >= 64 ? 8 : 4;
@@ -529,6 +598,12 @@ int run(int argc, char **argv) {
     o::Policy policy(profile);
     Statistics statistics;
     Follower follower(session, policy, statistics, directory / "frames.bin");
+    std::unique_ptr<s::RecordedPlanner> recorded_planner;
+    if (mpc && recorded_mode) {
+        s::RecordedOptions options;
+        options.advance_dialogue = recording.advance_dialogue;
+        recorded_planner = std::make_unique<s::RecordedPlanner>(options);
+    }
     follower.history_limit = std::max(256u, verified_horizon);
     follower.advance_dialogue = recording.advance_dialogue;
     follower.exact = argc >= 7 && std::string(argv[6]) == "exact";
@@ -566,7 +641,8 @@ int run(int argc, char **argv) {
                     search(follower, previous, {config.story, config.spell}, statistics,
                            {verified_horizon, active_lead, search_budget_ms,
                             buffered ? publication_horizon : 0},
-                           nominal, held_recovery, publication_horizon, pulse_recovery);
+                           nominal, held_recovery, publication_horizon, pulse_recovery,
+                           recorded_planner.get());
                 const auto &prediction = candidate.prediction;
                 follower.drain();
                 if (follower.mismatch)
@@ -710,17 +786,24 @@ int run(int argc, char **argv) {
            << ",\"replan_remaining\":" << replan_remaining
            << ",\"minimum_search_interval\":" << minimum_search_interval
            << ",\"search_budget_ms\":" << search_budget_ms
-           << ",\"proposal_budget_ms\":" << proposal_budget_ms << ",\"continuation\":\""
-           << (held_recovery            ? "policy-prefix8-with-held-recovery"
+           << ",\"proposal_budget_ms\":" << (recorded_mode ? search_budget_ms : proposal_budget_ms)
+           << ",\"continuation\":\""
+           << (recorded_mode            ? "recorded-native-geometry-and-literal-extension"
+               : held_recovery          ? "policy-prefix8-with-held-recovery"
                : verified_horizon >= 64 ? "policy-prefix8"
                                         : "fixed")
            << '"' << ",\"held_recovery\":" << (held_recovery ? "true" : "false")
            << ",\"pulse_recovery\":" << (pulse_recovery ? "true" : "false")
            << ",\"recovery_order\":\""
-           << (pulse_recovery ? "rotating-native-motion-before-policy" : "profile-default") << '"'
-           << ",\"nominal_retry\":\"" << (verified_horizon >= 64 ? "after-new-origin" : "disabled")
-           << '"' << ",\"policy_horizon\":24,\"policy_beam\":192,\"policy_diversity_cell\":16"
-           << ",\"proposal_boundary\":\"after-forced-lead\",\"search_rng\":\"branch-private\""
+           << (recorded_mode    ? "recorded-default-then-independent-region-goals"
+               : pulse_recovery ? "rotating-native-motion-before-policy"
+                                : "profile-default")
+           << '"' << ",\"nominal_retry\":\""
+           << (verified_horizon >= 64 ? "after-new-origin" : "disabled") << '"'
+           << ",\"policy_horizon\":24,\"policy_beam\":192,\"policy_diversity_cell\":16"
+           << ",\"proposal_boundary\":\"after-forced-lead\",\"search_rng\":\""
+           << (recorded_mode ? "owned-primary-and-independent-region-streams" : "branch-private")
+           << '"' << ",\"recorded_geometry\":" << (recorded_mode ? "true" : "false")
            << ",\"start_sha256\":\"" << wine_shadow::file_hash((directory / "start.txt").string())
            << "\",\"trace_sha256\":\""
            << wine_shadow::file_hash((directory / "frames.bin").string())
@@ -759,6 +842,14 @@ int run(int argc, char **argv) {
            << ",\"proposal_charged\":" << statistics.proposal_charged
            << ",\"proposal_native_ms\":" << double(statistics.proposal_native_ns) / 1e6
            << ",\"proposal_io_ms\":" << double(statistics.proposal_io_ns) / 1e6
+           << ",\"recorded_forecasts\":" << statistics.recorded.forecasts
+           << ",\"recorded_searches\":" << statistics.recorded.searches
+           << ",\"recorded_paths\":" << statistics.recorded.paths
+           << ",\"recorded_capture_ms\":" << double(statistics.recorded.capture_ns) / 1e6
+           << ",\"recorded_search_ms\":" << double(statistics.recorded.search_ns) / 1e6
+           << ",\"recorded_forecast_timeouts\":" << statistics.recorded.forecast_timeouts
+           << ",\"recorded_forecast_deaths\":" << statistics.recorded.forecast_deaths
+           << ",\"recorded_search_timeouts\":" << statistics.recorded.search_timeouts
            << ",\"branch_native_ms\":" << double(statistics.branch_native_ns) / 1e6
            << ",\"branch_io_ms\":" << double(statistics.branch_io_ns) / 1e6
            << ",\"continuation_ms\":" << double(statistics.guidance_ns) / 1e6

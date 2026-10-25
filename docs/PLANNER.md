@@ -680,6 +680,32 @@ separate forced refreshes, fresh adoptions, original Native costs and retained
 windows. No stage/spell/seed selects this policy; older named profiles retain
 their original budgets, lead and reuse behavior.
 
+`h128-recorded` adds a separate Native-geometry proposal path:128 verified and
+published updates, lead8, minimum interval8 and110ms total. That budget includes
+literal nominal verification, recording, proposal search and independent final
+verification. A nominal tail repeats its final held action instead of returning
+to the H24 current-memory Policy. Owned GUI state still advances dialogue after
+the forced lead. A failed nominal origin is not repeatedly retried while its
+existing certificate runs down; fresh proposals receive the remaining budget.
+
+The recorder forks the actual Native world, including action-dependent RNG and
+lifecycle state. It observes bullet boxes, pooled/direct laser calls and lethal
+regions at their collision phase, stopping at death, terminal or unsupported
+behavior. These are conditional samples, not hazards guaranteed for another path.
+The float32 proposal beam uses width192, cell16 and the original one-update latch.
+It considers the default spatial alternatives, then fixed field goals spanning
+x48/192/336 and y96/240/400. No stage, spell or seed chooses a goal. Additional
+goals have independent proposal RNG streams and preserve the primary stream;
+unused groups are never computed. Up to four counterexample recordings refine
+the proposal constraints, within the same total budget. Only a complete independent
+Native verification can publish inputs. Failed recordings cannot certify prefixes.
+
+The planner owns reusable bounded geometry storage; it retains no mutable Native
+checkpoint process. Recorder work is charged under proposal attempts/updates,
+separately from all verification attempts. Reports also expose recording/search
+counts, capture/search time and timeouts; Native timing excludes file I/O. The
+ordinary profiles keep their existing algorithms and budgets.
+
 Before requesting fresh candidates, `h64` and its named variants can reuse the unconsumed inputs of the
 previous verified plan. A fresh child re-executes that whole prefix and extends
 its tail to a new complete horizon. This saves repeated proposal searches; it

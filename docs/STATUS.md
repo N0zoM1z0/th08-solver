@@ -28,6 +28,31 @@ Native/Wine agreement, their real seeds, attempted work, tapes and recordings:
 | Buffered H512 guided control / wine-48 | 31675 | 20130 /92 |
 | Buffered H512 with periodic refresh / wine-50 | 21673 | 20568 /92 |
 | Frozen original H64 control / wine-52 | 7794 | 20292 /92 |
+| Recorded Native geometry H128 / wine-53 | 30774 | 10386 /84 |
+
+The new recorded-geometry path completes forward-only Native continuations from
+two actual prefixes: seed21673 at19200 completes at32678; seed42386 at34200
+completes at45862. Every committed receipt matches its independent verification,
+without rewinding the owner. The production component reproduces both complete
+input tapes byte-for-byte while reducing proposal searches612→94 and630→110;
+unused region searches are skipped, with all Native verification work unchanged.
+Removing the extra region candidates stops the two controls at23880 and38632.
+A third frozen seed7794 reaches spell99 at25552 but has no complete continuation;
+the separate4A-from-zero control exhausts its180s budget alive at36456. These
+Native experiments are distinct from a new live clear.
+
+The first actual `h128-recorded` practice uses real seed30774, the unchanged110ms
+total budget and lead8. It dies in spell84 with exact41-word agreement, zero drift
+and59.963 calculations/s. Its160 verification timeouts and10 proposal-search
+timeouts motivate removing repeated failed nominal work before another live run.
+The original recordings, all failed candidates and costs remain local.
+
+The owner's October25 Claude review has been read and extracted locally. Its
+future-hazard/tail-diversity recommendations agree with this experiment; persistent
+holder extension is a separate optimization to evaluate, including reconstruction
+and invalidation costs. Its assumed-shot sim runs and2-vCPU timing are not treated
+as exact reconstructions of our actual journals or measurements of this host.
+Preparation files and analysis patches remain unchanged and ignored.
 
 The retained failures prove two generic omissions: a held tail can survive where
 a Policy tail dies, and a short move followed by a stationary tail can survive

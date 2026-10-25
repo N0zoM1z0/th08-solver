@@ -5,6 +5,7 @@
 #include "th08/shadow_native.hpp"
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_proposal.hpp"
+#include "th08/shadow_recorded.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -17,6 +18,35 @@ void check(bool value, const char *message) {
 std::string contents(const char *path) {
     std::ifstream stream(path, std::ios::binary);
     return {std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>()};
+}
+void recorded_contract(th08::headless::Session &session, const s::Packet &origin,
+                       const std::vector<std::uint16_t> &lead,
+                       const std::vector<std::uint16_t> &nominal, s::Boundary boundary) {
+    const auto score = contents("score.dat"), config = contents("th08.cfg");
+    s::RecordedOptions options;
+    options.horizon = unsigned(nominal.size());
+    s::RecordedPlanner planner(options);
+    const auto result = planner.solve(session, origin, lead, nominal, boundary, 10000);
+    check(!result.native_fault && result.selected.certifies() && result.work.forecasts > 0 &&
+              result.work.searches > 0 && !result.checks.empty(),
+          "recorded geometry did not produce an independently verified complete future");
+    check(result.work.charged == result.work.attempts &&
+              result.work.completed == result.work.attempts,
+          "recorded forecast work was hidden or a partial update was certified");
+    std::vector<std::uint16_t> literal;
+    for (const auto &frame : result.selected.frames)
+        literal.push_back(std::uint16_t(frame.input));
+    check(std::equal(lead.begin(), lead.end(), literal.begin()),
+          "recorded proposal changed the immutable lead");
+    const auto replay = s::predict(session, origin, literal, boundary, 10000);
+    check(replay.certifies() && replay.frames.size() == result.selected.frames.size(),
+          "recorded proposal failed literal Native execution");
+    for (unsigned i = 0; i < replay.frames.size(); ++i)
+        check(!s::difference(replay.frames[i], result.selected.frames[i]),
+              "recorded verification disagreed with literal Native execution");
+    check(s::capture(session).values == origin.state.values && contents("score.dat") == score &&
+              contents("th08.cfg") == config,
+          "recorded future changed the actual world, RNG or filesystem");
 }
 int story_entry(const char *dat_path, const char *tape_path, bool sampled) {
     const auto dat = std::filesystem::absolute(dat_path).string();
@@ -172,6 +202,10 @@ int retained_4b(const char *dat_path, const char *trace_path, bool pulse_case = 
               << " held_complete=" << held.completed << " guided_ms=" << guided.wall_ms
               << " held_ms=" << held.wall_ms
               << " charged=" << guided.charged_updates + held.charged_updates << '\n';
+    auto recorded_nominal = prefix;
+    recorded_nominal.resize(128, std::uint16_t(recorded_nominal.back() & 0xf5));
+    const std::vector<std::uint16_t> recorded_lead(prefix.begin(), prefix.begin() + 8);
+    recorded_contract(session, current, recorded_lead, recorded_nominal, {false, -1});
     std::filesystem::current_path(previous);
     std::filesystem::remove_all(scratch);
     return 0;
@@ -219,6 +253,7 @@ int main(int argc, char **argv) try {
     literal_hold.resize(64, std::uint16_t(hold_prefix.back() & 0xf5));
     const auto held = s::predict_with_hold(session, origin, hold_prefix, 64, {false, 179}, 10000);
     const auto literal = s::predict(session, origin, literal_hold, {false, 179}, 10000);
+    recorded_contract(session, origin, hold_prefix, literal_hold, {false, 179});
     check(held.status == literal.status && held.frames.size() == literal.frames.size() &&
               held.frames.size() == 64 && held.certifies(),
           "held continuation did not require the complete native horizon");

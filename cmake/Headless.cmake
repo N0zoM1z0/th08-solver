@@ -144,7 +144,9 @@ target_compile_options(th08_shadow_native PRIVATE -ffp-contract=off
 add_executable(th08_shadow_follow tools/shadow_follow.cpp)
 target_link_libraries(th08_shadow_follow PRIVATE th08_shadow_native OpenSSL::Crypto)
 target_compile_options(th08_shadow_follow PRIVATE -ffp-contract=off)
-add_library(th08_shadow_proposals src/shadow_proposal.cpp)
+add_library(th08_shadow_proposals src/shadow_proposal.cpp src/shadow_recorded.cpp)
+set_source_files_properties(src/shadow_recorded.cpp PROPERTIES
+  COMPILE_OPTIONS "-fpermissive;-include${th08_native}/src/modern/linux/linux_compat.hpp")
 target_link_libraries(th08_shadow_proposals PUBLIC th08_shadow_native th08_online_native)
 target_compile_options(th08_shadow_proposals PRIVATE -ffp-contract=off)
 add_executable(th08_shadow_online tools/shadow_online.cpp)
