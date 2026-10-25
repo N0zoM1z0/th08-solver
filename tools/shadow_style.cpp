@@ -27,12 +27,17 @@ namespace o = th08::online;
 namespace h = th08::headless;
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
-constexpr unsigned lead = 8, budget_ms = 110;
+constexpr unsigned lead = 8;
+struct SearchOptions {
+    unsigned horizon = 64, publication = 64, budget_ms = 110;
+    bool held_recovery = false, baseline_recovery = false;
+};
 struct Work {
     std::uint64_t searches = 0, candidates = 0, branch_updates = 0, proposal_updates = 0;
     std::uint64_t future_deaths = 0, timeouts = 0, nominal_adoptions = 0, fresh_adoptions = 0;
     std::uint64_t native_ns = 0, file_io_ns = 0, guidance_ns = 0, overruns = 0;
     std::uint64_t held_attempts = 0, held_adoptions = 0;
+    std::uint64_t safety_attempts = 0, safety_adoptions = 0;
     double total_ms = 0, maximum_ms = 0;
     void branch(const s::Prediction &p) {
         ++candidates;
@@ -46,10 +51,13 @@ struct Work {
             throw std::runtime_error("native_style_branch_fault");
     }
 };
-s::Prediction search(h::Session &session, o::Policy &policy, const s::ActionBuffer &queue,
-                     const s::Prediction &previous, s::NominalExtension &nominal,
-                     s::Boundary boundary, unsigned horizon, unsigned publication,
-                     bool held_recovery, Work &work) {
+s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
+                     const s::ActionBuffer &queue, const s::Prediction &previous,
+                     s::NominalExtension &nominal, s::Boundary boundary,
+                     const SearchOptions &options, Work &work) {
+    const auto horizon = options.horizon, publication = options.publication,
+               budget_ms = options.budget_ms;
+    const bool held_recovery = options.held_recovery;
     const auto begin = Clock::now();
     ++work.searches;
     const auto elapsed = [&] {
@@ -89,6 +97,17 @@ s::Prediction search(h::Session &session, o::Policy &policy, const s::ActionBuff
             sequence <= previous.origin.sequence + previous.frames.size())
             last = std::uint16_t(previous.frames[sequence - previous.origin.sequence - 1].input);
         prefix.push_back(last);
+    }
+    if (options.baseline_recovery && !previous.frames.empty() && remaining()) {
+        ++work.safety_attempts;
+        auto repair = s::predict_with_policy(session, safety, origin, prefix, horizon, boundary,
+                                             remaining(), true, &policy);
+        work.branch(repair);
+        if (repair.certifies()) {
+            ++work.fresh_adoptions;
+            ++work.safety_adoptions;
+            return finish(std::move(repair));
+        }
     }
     if (!remaining())
         return finish({});
@@ -160,7 +179,9 @@ int run(int argc, char **argv) {
                                  "[--survival-focus 0|1] [--verify-horizon 64|128|256] "
                                  "[--publish-horizon 64|128] [--held-recovery 0|1] "
                                  "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
-                                 "[--survival-flow 0|1]");
+                                 "[--survival-flow 0|1] [--attack-pacing 0|1] "
+                                 "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
+                                 "[--search-budget-ms VALUE]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -185,6 +206,9 @@ int run(int argc, char **argv) {
     bool boss_collection_override = false, precollect_override = false;
     bool survival_bias_override = false;
     bool survival_flow_override = false;
+    bool pacing_override = false, attack_bias_override = false, recovery_override = false;
+    bool budget_override = false, baseline_recovery = false;
+    unsigned budget_ms = 110;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
         if (key == "--collect-items" && !collection_override) {
@@ -226,6 +250,25 @@ int run(int argc, char **argv) {
         } else if (key == "--survival-flow" && !survival_flow_override) {
             profile.scoring_survival_flow = number(argv[i + 1], 1);
             survival_flow_override = true;
+        } else if (key == "--attack-pacing" && !pacing_override) {
+            profile.scoring_attack_pacing = number(argv[i + 1], 1);
+            pacing_override = true;
+        } else if (key == "--attack-focus-bias" && !attack_bias_override) {
+            std::size_t used = 0;
+            profile.attack_focus_bias = std::stof(argv[i + 1], &used);
+            if (used != std::string(argv[i + 1]).size() ||
+                !std::isfinite(profile.attack_focus_bias) || profile.attack_focus_bias < 0 ||
+                profile.attack_focus_bias > 10000)
+                throw std::runtime_error("invalid_native_attack_focus_bias");
+            attack_bias_override = true;
+        } else if (key == "--baseline-recovery" && !recovery_override) {
+            baseline_recovery = number(argv[i + 1], 1);
+            recovery_override = true;
+        } else if (key == "--search-budget-ms" && !budget_override) {
+            budget_ms = number(argv[i + 1], 1000);
+            if (!budget_ms)
+                throw std::runtime_error("invalid_native_search_budget");
+            budget_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
@@ -238,6 +281,7 @@ int run(int argc, char **argv) {
     profile.spawn_guard = 16;
     profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
     o::Policy policy(profile);
+    o::Policy safety(o::with_style("baseline", profile));
     fs::create_directories(output.parent_path());
     if (!fs::create_directory(output))
         throw std::runtime_error("native_style_output_already_exists");
@@ -254,6 +298,8 @@ int run(int argc, char **argv) {
     o::Observation observation;
     o::capture_policy_memory(session, 0, observation, policy);
     policy.observe(observation);
+    if (baseline_recovery)
+        safety.observe(observation);
     const auto begin = Clock::now();
     Work work;
     std::vector<std::uint16_t> actions;
@@ -268,8 +314,10 @@ int run(int argc, char **argv) {
             break;
         if (actual.sequence - last_search >= 8 && queue.size() <= publication - 8) {
             last_search = actual.sequence;
-            auto p = search(session, policy, queue, previous, nominal, {config.story, -1}, horizon,
-                            publication, held_recovery, work);
+            const SearchOptions options{horizon, publication, budget_ms, held_recovery,
+                                        baseline_recovery};
+            auto p = search(session, policy, safety, queue, previous, nominal, {config.story, -1},
+                            options, work);
             if (p.certifies()) {
                 if (!queue.replace(p, {}, publication))
                     throw std::runtime_error("native_style_certificate_rejected");
@@ -339,6 +387,8 @@ int run(int argc, char **argv) {
         }
         o::capture_policy_memory(session, actual.sequence, observation, policy);
         policy.observe(observation);
+        if (baseline_recovery)
+            safety.observe(observation);
     }
     const auto elapsed = std::chrono::duration<double>(Clock::now() - begin).count();
     std::ofstream tape("plan.actions");
@@ -374,6 +424,9 @@ int run(int argc, char **argv) {
            << ",\"survival_focus_bias\":" << profile.survival_focus_bias
            << ",\"survival_flow\":" << (profile.scoring_survival_flow ? "true" : "false")
            << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
+           << ",\"attack_pacing\":" << (profile.scoring_attack_pacing ? "true" : "false")
+           << ",\"attack_pacing_revision\":" << (profile.scoring_attack_pacing ? 1 : 0)
+           << ",\"attack_focus_bias\":" << profile.attack_focus_bias
            << ",\"boss_collect\":" << (profile.scoring_boss_collection ? "true" : "false")
            << ",\"precollect\":" << (profile.scoring_precollect ? "true" : "false")
            << ",\"difficulty\":" << config.difficulty << ",\"shot\":" << config.shot
@@ -381,10 +434,10 @@ int run(int argc, char **argv) {
            << ",\"prior_final_a_clear\":" << (config.prior_final_a_clear ? "true" : "false")
            << ",\"input_profile\":\"sampled-gameplay\",\"horizon\":" << horizon
            << ",\"publication_horizon\":" << publication
-           << ",\"lead\":8,"
-              "\"search_budget_ms\":110,\"proposal_budget_ms\":60,\"max_updates\":"
-           << maximum_updates << ",\"wall_budget_seconds\":" << seconds
-           << ",\"updates\":" << actions.size() << ",\"score_raw\":" << h::score_audit().score_raw
+           << ",\"lead\":8,\"search_budget_ms\":" << budget_ms
+           << ",\"proposal_budget_ms\":60,\"max_updates\":" << maximum_updates
+           << ",\"wall_budget_seconds\":" << seconds << ",\"updates\":" << actions.size()
+           << ",\"score_raw\":" << h::score_audit().score_raw
            << ",\"score_displayed\":" << std::uint64_t(h::score_audit().score_raw) * 10
            << ",\"all_visited_stage_spells_captured\":" << (captures ? "true" : "false")
            << ",\"wall_seconds\":" << elapsed << ",\"searches\":" << work.searches
@@ -394,6 +447,9 @@ int run(int argc, char **argv) {
            << ",\"held_recovery\":" << (held_recovery ? "true" : "false")
            << ",\"held_attempts\":" << work.held_attempts
            << ",\"held_adoptions\":" << work.held_adoptions
+           << ",\"baseline_recovery\":" << (baseline_recovery ? "true" : "false")
+           << ",\"safety_attempts\":" << work.safety_attempts
+           << ",\"safety_adoptions\":" << work.safety_adoptions
            << ",\"retained_windows\":" << retained_windows
            << ",\"retained_inputs\":" << retained_inputs << ",\"fallback_updates\":" << fallback
            << ",\"future_deaths\":" << work.future_deaths << ",\"timeouts\":" << work.timeouts

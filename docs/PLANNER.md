@@ -158,6 +158,29 @@ Two cleaned-profile trials and a corrected-geometry trial fail at13/14. A
 mirrored-stream contract catches the missing expansion and checks goal direction.
 The default controller remains unchanged.
 
+The separate opt-in `--attack-pacing 1` uses current source HP-to-callback,
+remaining updates, damage-reduction state, extreme-youkai state, collected orbs,
+orb value and bonus decay. After60 mature observations it estimates DPS from a
+120-update damage history; the capture reserve is1.5*HP/DPS+240 updates. With
+700 additional updates,16 nearby slow ordinary bullets and8 macro contacts,
+it releases new fire and samples income. It waits at most1200 updates for the
+gauge/income experiment; after source extreme-youkai activation it measures240
+updates. Orb rate*(current orb value+8000) must exceed current bonus decay to
+continue. The reserve or low remaining HP restores fire. This is a proposal
+proxy: bonus caps, future decay, PIV and clear-bonus effects are not an exact
+terminal value model. Carried shots and the source20-update shot cycle remain
+owned by Native; releasing the key does not instantly remove damage.
+
+`--attack-focus-bias` independently controls the pacing form prior (default5).
+The Native harness can try `--baseline-recovery 1` after a failed nominal future.
+The baseline owns movement; the branch-owned primary policy observes every
+future packet and supplies fire intent, including transitions back to capture.
+The fixed input lead is preserved, and only a complete Native future certifies
+publication. Additional safety attempts/adoptions and all rollout work are
+reported. `--search-budget-ms` explicitly changes only this synchronous Native
+experiment's total budget (default110); the250ms scoring prototype supplies no
+claim about live deadlines or60FPS capability.
+
 Per-spell score audits snapshot collected orbs, point count/value and score after
 the preceding capture payout is settled, then again at the source end hook.
 The frozen story regression checks fast80-update transitions and the unchanged

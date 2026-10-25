@@ -27,6 +27,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_collection = configuration.scoring_aim = false;
     configuration.scoring_survival_focus = false;
     configuration.scoring_survival_flow = false;
+    configuration.scoring_attack_pacing = false;
     configuration.scoring_boss_collection = false;
     configuration.scoring_precollect = false;
     configuration.boss_follow = 0.25f;
@@ -315,6 +316,15 @@ struct Policy::Impl {
     float proposal_focus_bias = 0;
     float collection_x = 192;
     bool preparing_collection = false;
+    struct AttackPacing {
+        enum class Phase { Probe, Sample, Farm, Capture };
+        Phase phase = Phase::Probe;
+        int spell = -1, initial_hp = 0, previous_hp = 0, income_orbs = 0;
+        std::uint64_t samples = 0, sample_begin = 0, income_begin = 0;
+        std::array<int, 120> recent_damage{};
+        std::int64_t damage = 0;
+        bool farming = false;
+    } attack;
     static constexpr unsigned collection_batch = 4, collection_start_bullet_limit = 64;
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
         : opt(configuration), proposal_style(configuration.style), risk(std::move(tables)),
@@ -322,7 +332,7 @@ struct Policy::Impl {
         const auto &w = opt.style;
         for (float cost : {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost,
                            w.move_cost, w.focused_move_cost, w.reversal_cost, w.edge_cost,
-                           w.graze_reward, opt.survival_focus_bias})
+                           w.graze_reward, opt.survival_focus_bias, opt.attack_focus_bias})
             if (!std::isfinite(cost) || cost < 0 || cost > 10000)
                 throw std::runtime_error("invalid_online_style_cost");
         for (float coordinate : {w.anchor_x, w.anchor_y, w.anchor_x_min, w.anchor_x_max})
@@ -339,7 +349,8 @@ struct Policy::Impl {
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
               opt.warm_fallback || opt.held_fallback || risk.loaded || !opt.hard_phantoms ||
               !opt.motion_envelope || opt.scoring_collection || opt.scoring_aim ||
-              opt.scoring_survival_focus || opt.scoring_survival_flow)))
+              opt.scoring_survival_focus || opt.scoring_survival_flow ||
+              opt.scoring_attack_pacing)))
             throw std::runtime_error("unsupported_branch_value_configuration");
         if (opt.motion_envelope && !opt.hard_phantoms)
             throw std::runtime_error("motion_envelope_requires_hard_phantoms");
@@ -358,8 +369,9 @@ struct Policy::Impl {
             throw std::runtime_error("invalid_online_configuration");
         if (opt.planner_lag > 0 && (opt.held_fallback || opt.warm_fallback || opt.tail_check))
             throw std::runtime_error("unsupported_online_lag_fallback");
-        if (opt.planner_lag > 0 && (opt.scoring_collection || opt.scoring_aim ||
-                                    opt.scoring_survival_focus || opt.scoring_survival_flow))
+        if (opt.planner_lag > 0 &&
+            (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus ||
+             opt.scoring_survival_flow || opt.scoring_attack_pacing))
             throw std::runtime_error("unsupported_scoring_lag_configuration");
         frames.resize(opt.horizon + opt.tail_check + 1);
     }
@@ -403,18 +415,22 @@ struct Policy::Impl {
         finite(o.x);
         finite(o.y);
         if (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus ||
-            opt.scoring_survival_flow) {
+            opt.scoring_survival_flow || opt.scoring_attack_pacing) {
             if (!o.scoring.available)
                 throw std::runtime_error("missing_online_score_memory");
             for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power,
-                            o.scoring.impending_x})
+                            o.scoring.impending_x, o.scoring.orb_value, o.scoring.bonus_decay})
                 finite(v);
+            if (opt.scoring_attack_pacing &&
+                (o.scoring.capture_hp < 0 || o.scoring.collected_orbs < 0 ||
+                 o.scoring.orb_value < 0 || o.scoring.bonus_decay < 0))
+                throw std::runtime_error("invalid_online_attack_memory");
             for (const auto &item : o.scoring.pickups) {
                 finite(item.x);
                 finite(item.y);
             }
         }
-        if (opt.style.graze_reward > 0 || opt.scoring_survival_flow) {
+        if (opt.style.graze_reward > 0 || opt.scoring_survival_flow || opt.scoring_attack_pacing) {
             finite(o.graze_half.x);
             finite(o.graze_half.y);
             if (o.graze_half.x < 0 || o.graze_half.y < 0)
@@ -528,7 +544,7 @@ struct Policy::Impl {
     }
 
     bool flow_active = false;
-    float flow_x = 192, flow_y = 360;
+    float flow_x = 192, flow_y = 360, flow_contacts = 0;
     std::uint64_t macro_due = 0;
     int macro_spell = -1;
     void update_flow_goal(const Observation &o) {
@@ -591,8 +607,86 @@ struct Policy::Impl {
                     best = value;
                     flow_x = px;
                     flow_y = py;
+                    flow_contacts = float(std::max(0, contacts[cell] - danger[cell]));
                 }
             }
+    }
+
+    void update_attack_pacing(const Observation &o) {
+        auto &a = attack;
+        using Phase = AttackPacing::Phase;
+        a.farming = false;
+        const auto &s = o.scoring;
+        if (!opt.scoring_attack_pacing || !s.can_switch_forms || !o.spell_active || !s.has_boss) {
+            a.spell = -1;
+            return;
+        }
+        update_flow_goal(o);
+        bool graze_goal = s.survival_spell && opt.scoring_survival_focus;
+        if (!s.survival_spell && s.spell_damageable && s.capture_hp > 0 && s.spell_remaining > 0) {
+            if (a.spell != o.spell || !a.initial_hp) {
+                a.spell = o.spell;
+                a.phase = Phase::Probe;
+                a.initial_hp = a.previous_hp = s.capture_hp;
+                a.samples = 0;
+                a.damage = 0;
+                a.recent_damage.fill(0);
+            }
+            if (a.phase == Phase::Probe && s.reduction_remaining <= 0) {
+                auto &old = a.recent_damage[a.samples % a.recent_damage.size()];
+                a.damage -= old;
+                old = std::max(0, a.previous_hp - s.capture_hp);
+                a.damage += old;
+                ++a.samples;
+            }
+            a.previous_hp = s.capture_hp;
+            if (a.samples >= 60 && a.damage > 0) {
+                // Exclude initial projectile flight/damage reduction. Keep a
+                // conservative capture reserve; Native rollouts still decide
+                // actual HP, shot carry-over, safety and timeout outcomes.
+                const float dps = float(a.damage) /
+                                  float(std::min<std::uint64_t>(a.samples, a.recent_damage.size()));
+                const float reserve = 1.5f * float(s.capture_hp) / dps + 240;
+                if ((a.phase != Phase::Probe && float(s.spell_remaining) <= reserve) ||
+                    s.capture_hp < a.initial_hp / 5)
+                    a.phase = Phase::Capture;
+                else if (a.phase == Phase::Probe && float(s.spell_remaining) > reserve + 700) {
+                    unsigned slow_nearby = 0;
+                    for (const auto &b : o.bullets) {
+                        const float dx = b.x - o.x, dy = b.y - o.y;
+                        slow_nearby += b.state == 1 && !b.collision_disabled && !b.grazed &&
+                                       dx * dx + dy * dy < 160 * 160 &&
+                                       b.vx * b.vx + b.vy * b.vy <= 9;
+                    }
+                    if (slow_nearby >= 16 && flow_contacts >= 8) {
+                        a.phase = Phase::Sample;
+                        a.sample_begin = o.update;
+                        a.income_begin = 0;
+                    }
+                }
+            }
+            if (a.phase == Phase::Sample) {
+                // Releasing fire lets the gauge decay. Measure realized income
+                // after source extreme-youkai activation, with a bounded wait.
+                if (!a.income_begin && s.extreme_youkai) {
+                    a.income_begin = o.update;
+                    a.income_orbs = s.collected_orbs;
+                }
+                if (a.income_begin && o.update - a.income_begin >= 240) {
+                    const float rate = float(std::max(0, s.collected_orbs - a.income_orbs)) /
+                                       float(o.update - a.income_begin);
+                    a.phase =
+                        rate * (s.orb_value + 8000) > s.bonus_decay ? Phase::Farm : Phase::Capture;
+                } else if (o.update - a.sample_begin >= 1200)
+                    a.phase = Phase::Capture;
+            }
+            a.farming = a.phase == Phase::Sample || a.phase == Phase::Farm;
+            graze_goal = a.farming;
+        }
+        if (graze_goal) {
+            flow_active = true;
+            proposal_focus_bias += opt.attack_focus_bias;
+        }
     }
 
     void observe(const Observation &observation) {
@@ -653,6 +747,7 @@ struct Policy::Impl {
         flow_active = opt.scoring_survival_flow && observation.scoring.can_switch_forms &&
                       observation.scoring.survival_spell && observation.scoring.has_boss &&
                       observation.spell_active;
+        update_attack_pacing(observation);
         if (flow_active) {
             update_flow_goal(observation);
             proposal_style.anchor_weight = 0.03f;
@@ -1496,7 +1591,8 @@ struct Policy::Impl {
                 int cursor = index;
                 for (int j = deepest; j > 1; --j) {
                     proposal.inputs.push_back(
-                        std::uint16_t(layers[j][cursor].act | (preparing_collection ? 0 : 1)));
+                        std::uint16_t(layers[j][cursor].act |
+                                      ((preparing_collection || attack.farming) ? 0 : 1)));
                     cursor = layers[j][cursor].parent;
                 }
                 std::reverse(proposal.inputs.begin(), proposal.inputs.end());
@@ -1867,8 +1963,9 @@ struct Policy::Impl {
             previous_plan_update = observation.update;
         }
         mark(&DecisionTiming::fallback_ns);
-        return {std::uint16_t(result.moves.front() | (preparing_collection ? 0 : 1)), result.depth,
-                search_stats};
+        return {std::uint16_t(result.moves.front() |
+                              ((preparing_collection || attack.farming) ? 0 : 1)),
+                result.depth, search_stats};
     }
 };
 Policy::Policy(Configuration configuration, RiskTables risk, BranchValueModel value)
@@ -1877,9 +1974,13 @@ Policy::~Policy() = default;
 void Policy::observe(const Observation &observation) {
     impl_->observe(observation);
 }
+bool Policy::wants_fire() const {
+    return !impl_->preparing_collection && !impl_->attack.farming;
+}
 bool Policy::needs_scoring_memory() const {
     return impl_->opt.scoring_collection || impl_->opt.scoring_aim ||
-           impl_->opt.scoring_survival_focus || impl_->opt.scoring_survival_flow;
+           impl_->opt.scoring_survival_focus || impl_->opt.scoring_survival_flow ||
+           impl_->opt.scoring_attack_pacing;
 }
 Decision Policy::decide(const Observation &observation, DecisionTiming *timing,
                         std::vector<ValueProposal> *proposals) {

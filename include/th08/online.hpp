@@ -110,6 +110,12 @@ struct ScorePickup {
 struct ScoreMemory {
     bool available = false, has_boss = false, auto_collect_eligible = false;
     bool can_switch_forms = false, survival_spell = false;
+    bool spell_damageable = false, extreme_youkai = false;
+    // Actual effective HP to the next callback and source update counts. Orb
+    // value/bonus decay use displayed score units per orb/per native update.
+    int capture_hp = 0, spell_remaining = 0, reduction_remaining = 0;
+    int collected_orbs = 0;
+    float orb_value = 100, bonus_decay = 0;
     float boss_x = 192, collection_line = 128, power = 0;
     // Unconditional counts on currently damageable enemies, at current power;
     // periodic/random drops are omitted. X is a count-weighted current origin,
@@ -171,6 +177,8 @@ struct Configuration {
     bool scoring_collection = false, scoring_aim = false;
     bool scoring_survival_focus = false;
     bool scoring_survival_flow = false;
+    bool scoring_attack_pacing = false;
+    float attack_focus_bias = 5;
     float survival_focus_bias = 0.01f;
     bool scoring_boss_collection = false;
     bool scoring_precollect = false;
@@ -275,6 +283,9 @@ class Policy {
   public:
     explicit Policy(Configuration configuration, RiskTables risk = {}, BranchValueModel value = {});
     bool needs_scoring_memory() const;
+    // Fire intent after the latest observation, including collection preparation
+    // and attack pacing. Movement recovery may preserve this owned goal.
+    bool wants_fire() const;
     ~Policy();
     Policy(const Policy &) = delete;
     Policy &operator=(const Policy &) = delete;

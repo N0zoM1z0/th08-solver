@@ -156,7 +156,15 @@ Mirroring a distant stream must change its proposed endpoint; this regression
 fails when the macro omits the source's20-pixel graze expansion. Native safety
 verification remains unchanged, and the corrected complete-duration trial's
 13/14 failure remains recorded in Status.
-Its H64/lead8/110ms/60ms budgets are explicit; it records all rejected work,
+Default Native budgets are H64/lead8/110ms/60ms; overrides are explicit.
+`--attack-pacing` has a separate contract for excluding source damage reduction
+from mature DPS, waiting for extreme-youkai state, profitable/unprofitable orb
+samples, bounded unproductive warmup, capture deadlines and fire intent in both
+decisions and retained proposals. `--attack-focus-bias`, `--baseline-recovery`
+and `--search-budget-ms` are independent reported Native experiment controls.
+The complete local prototype and every weaker/failed trial remain in Status;
+fresh terminal/replay agreement is not an independent physics oracle.
+The tool records all rejected work,
 timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
 terminal41-word projection. Periodic Z advances dialogue. Story mode declares
 prior FinalA history except Extra. Output is a tape, source score audit, complete

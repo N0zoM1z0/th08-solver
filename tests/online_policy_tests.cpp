@@ -326,6 +326,74 @@ void score_flow_contract() {
     check(left_end + 16 < endpoint(proposals),
           "distant mirrored streams received the same empty macro goal");
 }
+void score_attack_pacing_contract() {
+    auto config = on::with_style("score-harvest");
+    config.scoring_attack_pacing = true;
+    config.horizon = 24;
+    auto initial = scene();
+    initial.spell = 7;
+    initial.spell_active = true;
+    auto &score = initial.scoring;
+    score.available = score.has_boss = score.can_switch_forms = score.spell_damageable = true;
+    score.capture_hp = 10000;
+    score.spell_remaining = 6000;
+    score.orb_value = 1000;
+    score.bonus_decay = 2000;
+    for (int i = 0; i < 16; ++i) {
+        auto b = bullet(i, 96, 288 + float(i) * 3, 0, .5f);
+        b.full_width = b.full_height = 4;
+        initial.bullets.push_back(b);
+    }
+    const auto warm = [&](on::Policy &policy, on::Observation &o) {
+        o.scoring.reduction_remaining = 1;
+        for (unsigned i = 0; i < 20; ++i, ++o.update) {
+            o.scoring.capture_hp -= 10;
+            policy.observe(o);
+            check(policy.wants_fire(), "pacing measured DPS during source damage reduction");
+        }
+        o.scoring.reduction_remaining = 0;
+        for (unsigned i = 0; i < 60; ++i, ++o.update) {
+            o.scoring.capture_hp -= 10;
+            policy.observe(o);
+        }
+        check(!policy.wants_fire(), "mature safe damage reserve did not start an income sample");
+    };
+    on::Policy policy(config);
+    auto o = initial;
+    warm(policy, o);
+    for (unsigned i = 0; i < 300; ++i, ++o.update)
+        policy.observe(o);
+    check(!policy.wants_fire(), "income sample ended before the source gauge was ready");
+    o.scoring.extreme_youkai = true;
+    for (unsigned i = 0; i <= 240; ++i, ++o.update) {
+        o.scoring.collected_orbs += 2;
+        policy.observe(o);
+    }
+    std::vector<on::ValueProposal> proposals;
+    const auto farm = policy.decide(o, nullptr, &proposals);
+    check(!policy.wants_fire() && !(farm.action & 1) && !proposals.empty() &&
+              std::all_of(proposals.front().inputs.begin(), proposals.front().inputs.end(),
+                          [](auto input) { return !(input & 1); }),
+          "profitable pacing lost its fire intent in a decision or proposal");
+    ++o.update;
+    o.scoring.spell_remaining = 1;
+    check(policy.decide(o).action & 1, "capture deadline did not restore fire");
+
+    on::Policy bounded(config);
+    auto waiting = initial;
+    warm(bounded, waiting);
+    for (unsigned i = 0; i <= 1200; ++i, ++waiting.update)
+        bounded.observe(waiting);
+    check(bounded.wants_fire(), "unproductive gauge warmup had no finite exit");
+
+    on::Policy unprofitable(config);
+    auto empty = initial;
+    warm(unprofitable, empty);
+    empty.scoring.extreme_youkai = true;
+    for (unsigned i = 0; i <= 240; ++i, ++empty.update)
+        unprofitable.observe(empty);
+    check(unprofitable.wants_fire(), "zero realized income prolonged an ordinary attack");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -1970,6 +2038,7 @@ int main(int argc, char **argv) {
         score_form_contract();
         score_precollect_contract();
         score_flow_contract();
+        score_attack_pacing_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

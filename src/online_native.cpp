@@ -36,6 +36,28 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
     score.can_switch_forms = !g_GameManager.IsSoloHuman() && !g_GameManager.IsSoloYoukai();
     score.survival_spell = g_Spellcard.IsActive() && g_Spellcard.activeEnemy &&
                            (g_Spellcard.activeEnemy->flags1 & ENEMY_FLAG_TIMEOUT_SPELL);
+    score.capture_hp = score.spell_remaining = score.reduction_remaining = 0;
+    score.spell_damageable = false;
+    score.extreme_youkai = g_GameManager.GaugeIsExtremelyYoukai();
+    score.collected_orbs = g_GameManager.GetTimeOrbs();
+    score.orb_value =
+        g_Player.itemTimeOrbMode ? 100.f
+        : g_GameManager.globals->pointItemsCollectedInStage >= 2000
+            ? 10000.f
+            : float(std::max(100, (g_GameManager.globals->pointItemsCollected / 2) * 10));
+    score.bonus_decay = float((std::uint32_t(g_Spellcard.bonusCounter) / 60 + 9) / 10 * 10);
+    if (g_Spellcard.IsActive() && g_Spellcard.activeEnemy) {
+        const auto &boss = *g_Spellcard.activeEnemy;
+        int floor = 0;
+        for (int threshold : boss.lifeCallbackThresholds)
+            floor = std::max(floor, threshold);
+        const auto hp = std::int64_t(boss.life) - floor + 1;
+        score.capture_hp =
+            int(std::clamp(hp, std::int64_t(0), std::int64_t(std::numeric_limits<int>::max())));
+        score.spell_remaining = g_Spellcard.timeRemaining.current;
+        score.spell_damageable = boss.flags1 & ENEMY_FLAG_DAMAGEABLE;
+        score.reduction_remaining = boss.damageReductionTimer.current;
+    }
     score.collection_line = g_Player.primaryShtFile->pointItemValueLine;
     score.impending_points = 0;
     score.impending_x = 192;

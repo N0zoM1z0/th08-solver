@@ -30,9 +30,13 @@ FutureProposals propose_after_lead(headless::Session &, online::Policy &, const 
                                    unsigned timeout_ms, bool advance_dialogue = false);
 // The fixed candidate is followed by branch-owned Policy replanning in batches
 // of at most eight submitted inputs. The complete horizon/terminal is required.
+// An optional branch-owned goal policy is observed on every actual future
+// packet; it owns fire intent while the movement policy supplies directions.
+// Neither policy nor the actual owner is advanced outside the isolated child.
 Prediction predict_with_policy(headless::Session &, online::Policy &, const Packet &origin,
                                const std::vector<std::uint16_t> &prefix, std::size_t horizon,
-                               Boundary, unsigned timeout_ms, bool advance_dialogue = false);
+                               Boundary, unsigned timeout_ms, bool advance_dialogue = false,
+                               online::Policy *goal_policy = nullptr);
 // Keep the prefix immutable and hold its final action through a complete native
 // horizon. Dialogue advancement, when requested, still follows owned GUI state.
 Prediction predict_with_hold(headless::Session &, const Packet &origin,

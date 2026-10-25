@@ -144,10 +144,11 @@ Prediction predict_with_hold(headless::Session &session, const Packet &origin,
 Prediction predict_with_policy(headless::Session &session, online::Policy &policy,
                                const Packet &origin, const std::vector<std::uint16_t> &prefix,
                                std::size_t horizon, Boundary boundary, unsigned timeout_ms,
-                               bool advance_dialogue) {
+                               bool advance_dialogue, online::Policy *goal_policy) {
     class Guidance final : public RolloutGuidance {
         headless::Session &session_;
         online::Policy &policy_;
+        online::Policy *goal_;
         online::Observation observation_;
         std::array<std::uint16_t, 8> pending_{};
         unsigned position_ = 0, count_ = 0;
@@ -158,14 +159,17 @@ Prediction predict_with_policy(headless::Session &session, online::Policy &polic
 
       public:
         Guidance(headless::Session &session, online::Policy &policy, bool dialogue,
-                 bool advance_dialogue)
-            : session_(session), policy_(policy), dialogue_(dialogue),
+                 bool advance_dialogue, online::Policy *goal)
+            : session_(session), policy_(policy), goal_(goal), dialogue_(dialogue),
               advance_dialogue_(advance_dialogue) {}
         void observe(const Packet &packet) override {
             sequence_ = packet.sequence;
             actual_input_ = std::uint16_t(packet.input);
-            online::capture_policy_memory(session_, sequence_, observation_, policy_);
+            online::capture_policy_memory(session_, sequence_, observation_,
+                                          goal_ ? *goal_ : policy_);
             policy_.observe(observation_);
+            if (goal_ && goal_ != &policy_)
+                goal_->observe(observation_);
         }
         std::uint16_t next_input() override {
             if (advance_dialogue_ && session_.state().dialogue_present) {
@@ -185,11 +189,13 @@ Prediction predict_with_policy(headless::Session &session, online::Policy &polic
                 } else
                     pending_.fill(decision.action);
             }
-            const auto input = pending_[position_++];
+            auto input = pending_[position_++];
+            if (goal_)
+                input = std::uint16_t((input & ~1u) | (goal_->wants_fire() ? 1u : 0u));
             return std::uint16_t((input & ~0x1000) |
                                  ((dialogue_ && ((sequence_ + 1) & 1)) ? 0x1000 : 0));
         }
-    } guidance(session, policy, boundary.spell < 0, advance_dialogue);
+    } guidance(session, policy, boundary.spell < 0, advance_dialogue, goal_policy);
     return predict_guided(session, origin, prefix, horizon, guidance, boundary, timeout_ms);
 }
 FutureProposals propose_after_lead(headless::Session &session, online::Policy &policy,

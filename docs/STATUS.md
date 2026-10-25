@@ -5,7 +5,38 @@ The owner's current target is **Extra >= 2,500,000,000 displayed points, NMNB an
 experiments focus on proper non-practice Extra, Marisa/Alice. New story/4A work
 is paused alongside4B; ordinary regression coverage remains unchanged.
 
-The best complete local Native result is **2,205,160,930**, seed19732, NMNB
+The best complete local Native result is **2,308,450,110**, seed19732, NMNB
+and14/14, from a complete Extra entry without prefix repair. The frozen
+`extra-flow-v10` source-pacing prototype waits for extreme-youkai gauge before
+measuring realized orb income. Generic baseline movement recovery preserves
+the primary policy's fire intent on each future update. Its67165 owner updates
+collect944 points /84947 orbs; exact fresh41-word execution and natural replay
+agree. It costs407.655s,2191882 branch+544 proposal updates,633 rejected future
+deaths,53 timeouts,57 overruns and96 safety attempts/29 adoptions, under explicit
+256/128/lead8/250ms/60ms budgets. Fresh following costs another39.145s. This
+does not change the110ms live profile or establish new online FPS/score evidence.
+The stronger40-point focus-prior prototype also completes14/14, but scores only
+2,192,904,520 with921 points /76777 orbs,390.343s,2138054 branch+688 proposal
+updates,67 timeouts and75 overruns. It is retained rather than promoted.
+The integrated current-source case separately completes at2,197,464,170,
+896 points /76162 orbs,66277 updates and409.637s. Fresh execution and natural
+replay agree, with2171795 branch+472 proposal updates,633 rejected future deaths,
+44 timeouts,50 overruns and91 safety attempts/31 adoptions. Its tape first
+differs from v10 at11048; finite wall-budget searches and action-dependent
+outcomes remain recorded rather than assuming a score-identical port.
+
+A separate read-only `CollectPoint` price audit preserves every original25-word
+replay row for ASL and v10. ASL collects all1081 points above the price line at
+extreme-human gauge, for1,062,330,020 points. V10 collects944 points for625,587,010:
+213 are below full height price and242 lack human doubling. Keeping those same
+items/PIV snapshots but assigning full-height human prices would add180,729,810;
+this is a static pricing ceiling, not an achieved policy gain. The source pickup
+reach is32 pixels, while our collection goal sits only12 pixels above the line;
+91 low-priced items are touched even with the player above the line. A local
+prototype tests a pickup-reach-derived target and a separate collection form
+prior. Its complete-run outcome must determine whether the insight pays off.
+
+The preceding complete local Native result is **2,205,160,930**, seed19732, NMNB
 and14/14, with exact fresh41-word execution and matching natural replay. It
 preserves50760 successful inputs from the scoring prototype `extra-flow-v9`,
 then completes with the generic baseline H64 policy. The whole56813-update run
@@ -118,8 +149,8 @@ retains the rejected owner-goal-refresh idea (Stage1 gain,4A failure),
 `extra-precollect-v1` and `extra-farm-*`/`extra-economy-v4` retain new positive and
 negative evidence; `extra-flow-v*` and `extra-flow-v9-repair-*` retain the new
 macro/income trials and prefix repair. No new ablation matrix is run. Current
-Release Native/DAT CTest passes56/56 (893.39s), core36/36 (8.67s), including the
-audit and corrected-flow scope. One intermediate full run retains a planner-prefix
+Release Native/DAT CTest passes56/56 (903.93s), core36/36 (8.23s), including the
+audit, corrected flow and integrated attack-pacing scope. One intermediate full run retains a planner-prefix
 binary-identity failure caused by relinking during the check; the focused rerun
 and two later full runs with frozen binaries pass. The audit is published at
 `489a171`; all new experiment tapes/reports remain ignored under `reports/local/`.
