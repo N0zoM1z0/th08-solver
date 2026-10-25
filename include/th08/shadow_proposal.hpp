@@ -11,6 +11,16 @@ struct FutureProposals {
     std::uint64_t native_ns = 0, file_io_ns = 0;
     double wall_ms = 0;
 };
+struct MotionProposal {
+    std::vector<std::uint16_t> inputs;
+    // Zero holds the movement indefinitely; otherwise stop after this many
+    // submitted movement inputs, preserving shoot/focus in the held tail.
+    unsigned movement_updates = 0;
+};
+// Fixed generic recovery family: both focus states, nine held directions and
+// 16/32/64-update pulses for the eight nonstationary directions. The actual lead
+// remains immutable. These are proposals, without a safety verdict.
+std::vector<MotionProposal> motion_recovery_proposals(const std::vector<std::uint16_t> &lead);
 // Propose at the state where new inputs can actually take effect. Only the
 // isolated child advances the forced lead and the inherited Policy history/tie
 // RNG. These proposals certify nothing; verify each complete lead+candidate

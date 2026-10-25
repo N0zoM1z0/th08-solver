@@ -89,6 +89,30 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
     out.status = BranchStatus::Horizon;
 }
 } // namespace
+std::vector<MotionProposal> motion_recovery_proposals(const std::vector<std::uint16_t> &lead) {
+    if (lead.empty() || lead.size() > 32)
+        throw std::runtime_error("invalid_shadow_motion_lead");
+    for (auto input : lead)
+        input_value(input);
+    std::vector<MotionProposal> out;
+    out.reserve(66);
+    for (unsigned focus : {4u, 0u})
+        for (unsigned direction : {0u, 16u, 32u, 64u, 128u, 80u, 144u, 96u, 160u}) {
+            const auto motion = std::uint16_t(1 | focus | direction);
+            auto held = lead;
+            held.insert(held.end(), 24, motion);
+            out.push_back({std::move(held), 0});
+            if (!direction)
+                continue;
+            for (unsigned duration : {16u, 32u, 64u}) {
+                auto pulse = lead;
+                pulse.insert(pulse.end(), duration, motion);
+                pulse.push_back(std::uint16_t(1 | focus));
+                out.push_back({std::move(pulse), duration});
+            }
+        }
+    return out;
+}
 Prediction predict_with_hold(headless::Session &session, const Packet &origin,
                              const std::vector<std::uint16_t> &prefix, std::size_t horizon,
                              Boundary boundary, unsigned timeout_ms, bool advance_dialogue) {

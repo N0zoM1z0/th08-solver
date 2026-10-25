@@ -33,8 +33,41 @@ updates. The owner averages59.580 calculations/s. At24640, five tested held
 continuations survive256 updates; at24704 none do, despite13 surviving128.
 These are finite-family diagnostics, not an impossibility result. Further
 planning experiments must recognize the trap earlier. The opt-in `h256-held`
-profile now verifies256 updates, publishes only128 and preserves the110ms total;
-its first actual practice is in progress.
+profile verifies256 updates, publishes only128 and preserves the110ms total. Its
+actual seed56891 case dies in spell92 at21533 with exact projection agreement.
+It charges709010 branch plus549 proposal updates,60 future timeouts and288
+future deaths;64 budget overruns and159 unqueued receipts remain visible.
+
+The retained trajectory exposes a different missing family: at21120 no tested
+held direction survives256, while a16-update move followed by a stationary tail
+does. The new opt-in `h256-pulse` tests66 rotating native motion candidates before
+heuristic generation, under the same110ms total. Its private-journal regression
+reconstructs every actual receipt and verifies all256 pulse rows against a literal
+Native tape, preserving parent state and the eight-input lead. Its actual
+seed32821 case dies in spell84 at10927 with exact projection agreement:64 direct
+attempts, no direct selection,18 future timeouts and47 future deaths. It charges
+351874 branch plus8 proposal updates;45 unqueued receipts remain recorded.
+
+This exposes a defect in the new long-horizon publication path: after a fresh
+extension failed, still-valid unpublished actions from an earlier successful
+256-update certificate could be lost at the128-input transport boundary. A
+retained-window path now validates the complete old certificate and actual
+executed prefix, keeps queued inputs immutable and publishes its next window.
+It preserves original rollout costs and reports reuse separately. The core
+regression crosses the original publication boundary and rejects malformed/fatal
+certificates. The real-seed59066 case still dies in spell92 at20918 with exact
+projection agreement. Retention works in the live case:14 windows/179 newly queued
+inputs, plus3 direct selections including2 pulses. It charges679055 branch plus8
+proposal updates,27 timeouts,217 future deaths and30 budget overruns. Total
+unqueued receipts are17, maximum streak14. Complete4B remains unresolved.
+At20320 the retained path has13 tested H256-safe futures but only4 H512-safe
+futures; at20384 none survive512 despite19 surviving256. Diagnostic Native512
+branches complete within58.37ms individually; that is not a whole-search timing
+claim. This motivates earlier viability checking rather than more seed retries.
+The normal Native/DAT suite passes54/54; core36/36 and the updated retained-window
+contracts also pass. The separate H48 proposal diagnostic
+hit the existing H24 ValueProposal interface restriction and is classified as
+unsupported for that adapter, not a failed H48 survival result.
 
 Recorded story windows also isolate real local deficits: some complete5-second
 windows reach37–40 calculations/s outside stage handoffs, while measured

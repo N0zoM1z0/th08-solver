@@ -72,6 +72,25 @@ class ActionBuffer {
         frontier_ = actual;
         return matched;
     }
+    // Publish a later window of the same complete certificate. Keep every
+    // pending action immutable and validate all actual receipts since its origin.
+    // This reuses successful Native work; it creates no new rollout/cost verdict.
+    bool extend(const Prediction &prediction, const std::vector<Packet> &executed_since_origin,
+                std::size_t maximum_pending) {
+        if (!prediction.certifies() || prediction.origin.sequence > frontier_.sequence)
+            return false;
+        const auto consumed = frontier_.sequence - prediction.origin.sequence;
+        if (consumed >= prediction.frames.size() || pending_.empty())
+            return false;
+        const auto count =
+            std::min(maximum_pending, prediction.frames.size() - std::size_t(consumed));
+        if (count <= pending_.size())
+            return false;
+        for (std::size_t i = 0; i < pending_.size(); ++i)
+            if (difference(pending_[i], prediction.frames[consumed + i]))
+                return false;
+        return replace(prediction, executed_since_origin, consumed + count);
+    }
 };
 // A failed tail extension belongs to the nominal plan, even as the actual
 // frontier advances. Retrying that same prefix can spend the budget needed for

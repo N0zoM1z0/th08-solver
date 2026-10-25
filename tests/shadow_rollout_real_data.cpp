@@ -69,15 +69,15 @@ int story_entry(const char *dat_path, const char *tape_path, bool sampled) {
               << " updates=" << calls << '\n';
     return 0;
 }
-int retained_4b(const char *dat_path, const char *trace_path) {
+int retained_4b(const char *dat_path, const char *trace_path, bool pulse_case = false) {
     const auto dat = std::filesystem::absolute(dat_path).string();
     std::ifstream file(trace_path, std::ios::binary);
     std::vector<s::Packet> tape;
     s::bridge::Trace bytes;
     while (file.read(reinterpret_cast<char *>(bytes.data()), bytes.size()))
         tape.push_back(s::decode(bytes.data(), s::Bytes{}.size()));
-    check(file.eof() && !file.gcount() && tape.size() == 34318,
-          "expected the retained seed42386 Stage4B death journal");
+    check(file.eof() && !file.gcount() && tape.size() == (pulse_case ? 21533u : 34318u),
+          "unexpected retained Stage4B death journal");
     const auto previous = std::filesystem::current_path();
     char scratch[] = "/tmp/th08-held-4b-test-XXXXXX";
     check(mkdtemp(scratch) != nullptr, "held regression scratch failed");
@@ -87,7 +87,7 @@ int retained_4b(const char *dat_path, const char *trace_path) {
     config.stage = 4;
     config.difficulty = 3;
     config.shot = 0;
-    config.seed = 42386;
+    config.seed = pulse_case ? 56891 : 42386;
     config.input_profile = th08::headless::InputProfile::SampledGameplay;
     th08::headless::Session session(config);
     th08::online::Configuration settings;
@@ -102,7 +102,8 @@ int retained_4b(const char *dat_path, const char *trace_path) {
     policy.observe(observation);
     s::Packet current;
     current.state = s::capture(session);
-    for (unsigned i = 0; i < 34256; ++i) {
+    const unsigned origin = pulse_case ? 21120 : 34256;
+    for (unsigned i = 0; i < origin; ++i) {
         session.step(std::uint16_t(tape[i].input));
         s::advance_receipt(current, tape[i].input, s::capture(session));
         check(!s::difference(current, tape[i]), "retained prefix changed execution or RNG");
@@ -110,8 +111,49 @@ int retained_4b(const char *dat_path, const char *trace_path) {
         policy.observe(observation);
     }
     std::vector<std::uint16_t> prefix;
-    for (unsigned i = 34256; i < 34264; ++i)
+    for (unsigned i = origin; i < origin + 8; ++i)
         prefix.push_back(std::uint16_t(tape[i].input));
+    if (pulse_case) {
+        const auto motions = s::motion_recovery_proposals(prefix);
+        check(motions.size() == 66 && motions[26].movement_updates == 16,
+              "motion recovery lost its fixed family/order");
+        auto pulse = motions[26].inputs;
+        check(pulse.size() == 25 && pulse[8] == 0x65 && pulse.back() == 5,
+              "pulse did not stop with its shoot/focus preserved");
+        for (unsigned i = 8; i < pulse.size(); ++i)
+            pulse[i] = s::bridge::fallback(pulse[i], current.sequence + i + 1, false);
+        auto fixed = prefix;
+        while (fixed.size() < 32)
+            fixed.push_back(s::bridge::fallback(0x65, current.sequence + fixed.size() + 1, false));
+        const auto held =
+            s::predict_with_hold(session, current, fixed, 256, {false, -1}, 1000, true);
+        const auto stopped =
+            s::predict_with_hold(session, current, pulse, 256, {false, -1}, 1000, true);
+        check(held.status == s::BranchStatus::Death && !held.certifies() && stopped.certifies() &&
+                  stopped.frames.size() == 256,
+              "retained move-then-stop counterexample no longer reproduces");
+        for (unsigned i = 0; i < prefix.size(); ++i)
+            check(stopped.frames[i].input == prefix[i], "pulse recovery rewrote the actual lead");
+        auto literal = pulse;
+        while (literal.size() < 256)
+            literal.push_back(s::bridge::fallback(5, current.sequence + literal.size() + 1, false));
+        const auto replay = s::predict(session, current, literal, {false, -1}, 1000);
+        check(replay.certifies(), "literal pulse tape did not survive");
+        for (unsigned i = 0; i < 256; ++i)
+            check(!s::difference(stopped.frames[i], replay.frames[i]),
+                  "pulse prediction differs from its literal Native tape");
+        s::Packet after = current;
+        after.state = s::capture(session);
+        check(!s::difference(after, current), "pulse recovery mutated the actual world");
+        std::cout << "retainedpulse origin=" << origin << " held_death=" << held.completed
+                  << " pulse_complete=" << stopped.completed << " pulse_ms=" << stopped.wall_ms
+                  << " charged="
+                  << held.charged_updates + stopped.charged_updates + replay.charged_updates
+                  << '\n';
+        std::filesystem::current_path(previous);
+        std::filesystem::remove_all(scratch);
+        return 0;
+    }
     while (prefix.size() < 32)
         prefix.push_back(s::bridge::fallback(0x45, current.sequence + prefix.size() + 1, false));
     const auto guided =
@@ -138,6 +180,8 @@ int main(int argc, char **argv) try {
     if (argc == 4) {
         if (std::string(argv[3]) == "retained4b")
             return retained_4b(argv[1], argv[2]);
+        if (std::string(argv[3]) == "retainedpulse")
+            return retained_4b(argv[1], argv[2], true);
         check(std::string(argv[3]) == "sampled" || std::string(argv[3]) == "controller",
               "unknown input profile");
         return story_entry(argv[1], argv[2], std::string(argv[3]) == "sampled");

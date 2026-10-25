@@ -645,8 +645,28 @@ is retained and validated; a fatal or incomplete256-update future supplies no
 prefix. Nominal extension may reuse the unconsumed unpublished future as a proposal,
 then freshly verifies a new256-update future. Only the queued published inputs
 are declared unchanged to the owner. Its publication threshold remains120 and
-its budget remains110ms. Reports separate verified and publication horizons. Existing `h32` and
+its budget remains110ms. Reports separate verified and publication horizons.
+If a new search fails, the remaining successful certificate can extend the
+published window: the actual executed prefix must still match, all queued inputs
+remain unchanged, and the complete original certificate must remain valid. The
+wire window rebases to the current actual frontier; the Native certificate keeps
+its original origin and full cost counters. Failed futures never supply this
+extension. Retained-window attempts, accepted windows and newly queued inputs
+are separate counters; reusing a proof does not charge another Native rollout.
+This prevents a128-input transport limit from discarding the safe latter half
+of a256-update forecast. Existing `h32` and
 `h64` keep their prior behavior.
+
+The separately named `h256-pulse` recovery tests a rotating family of66 native
+motion proposals before paying for heuristic generation: both focus states,
+nine held directions and16/32/64-update moves followed by a stationary tail for
+each nonstationary direction. A persistent attempt cursor advances across actual
+search origins so the110ms cap cannot repeatedly starve later directions. Native
+verification includes the unchanged eight-input lead and the complete256-update
+future; only128 inputs publish. Nominal reuse still runs first. Policy proposals
+use only any remaining total budget. Direct/pulse attempt/selection counts and
+the final cursor are reported separately. This changes candidate families and
+ordering explicitly; it does not change collision, game RNG or old profiles.
 
 Before requesting fresh candidates, `h64` and its named variants can reuse the unconsumed inputs of the
 previous verified plan. A fresh child re-executes that whole prefix and extends

@@ -78,6 +78,10 @@ unsupported-instruction and online-policy contracts; private DAT enables the
 complete-scene, online-stage/replay, shadow-follow and planner-prefix CTests (52 total).
 An optional `TH08_SHADOW_FAILURE_TRACE` CMake FILEPATH enables one additional
 retained-journal regression (53 total) against the private seed42386 Stage4B trace.
+`TH08_SHADOW_PULSE_TRACE` adds the private seed56891 move-then-stop regression
+(54 total with both traces). It reconstructs all21120 actual receipts, requires
+a fatal held direction and a surviving256-update16-step pulse, compares all256
+rows with a literal Native tape and checks the actual lead/parent remain unchanged.
 
 The common-start shadow follower compares independently initialized Native
 processes under one configuration and the actual input tape. It performs no native
@@ -105,7 +109,10 @@ The optional retained4B test reconstructs all34256 original receipts: the same
 the full prefix and parent state, with its diagnostic timeout recorded separately
 from live search budgets. The core wire
 contract also checks bounded publication of a longer successful certificate,
-including unpublished-tail validation and rejection of a fatal longer future. It
+including unpublished-tail validation and rejection of a fatal longer future.
+It also crosses an earlier publication boundary using the remaining successful
+certificate after a fresh extension fails, preserving queued inputs and original
+rollout counters. Fatal or malformed retained certificates cannot extend a queue. It
 tests late-prefix agreement, stale receipt rejection and preservation of
 an existing plan after a failed proposal. Neither self-comparison is an
 independent physics oracle. A guided child also executes the complete 1292-update
@@ -192,7 +199,7 @@ All15216 packets agree exactly, including input and all41 fields. The
 defines0 as disabling swap-interval synchronization. This remains an opt-in
 measured environment choice; local slow windows and scheduling tails remain.
 
-Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held]` select comparison and
+Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held|h256-pulse]` select comparison and
 planning profiles (defaults `behavioral h32`).
 Live comparison records numeric bullet/laser digest drift, player differences up
 to 1/64 pixel and inactive spell/route metadata; meaningful gameplay fields remain

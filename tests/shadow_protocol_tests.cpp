@@ -188,6 +188,15 @@ int main() try {
     fatal_tail.status = s::BranchStatus::Death;
     check(!bounded.replace(fatal_tail, {nominal.frames[0]}, 16) && bounded.size() == 15,
           "failed long rollout certified its surviving prefix");
+    check(!bounded.extend(fatal_tail, {nominal.frames[0]}, 16) &&
+              !bounded.extend(invalid_tail, {nominal.frames[0]}, 16) && bounded.size() == 15,
+          "invalid longer future extended the live queue");
+    check(bounded.extend(nominal, {nominal.frames[0]}, 16) && bounded.size() == 16,
+          "successful unpublished future was discarded after a tail-extension failure");
+    for (unsigned i = 1; i < 16; ++i)
+        check(bounded.confirm(nominal.frames[i]), "retained certificate rewrote pending inputs");
+    check(bounded.next() && bounded.next()->sequence == 17 && nominal.completed == 32,
+          "retained window did not pass the original publication boundary or changed costs");
     s::Packet live, native;
     live.state[s::Field::BulletLow] = 17;
     check(!s::compare_live(live, native, false).failure &&

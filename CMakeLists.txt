@@ -328,6 +328,12 @@ if(BUILD_TESTING)
         "${TH08_HEADLESS_DAT}" "${TH08_SHADOW_FAILURE_TRACE}" retained4b)
       set_tests_properties(headless_shadow_retained_4b PROPERTIES TIMEOUT 60)
     endif()
+    set(TH08_SHADOW_PULSE_TRACE "" CACHE FILEPATH "Optional retained seed56891 Stage4B journal")
+    if(TH08_SHADOW_PULSE_TRACE)
+      add_test(NAME headless_shadow_retained_pulse COMMAND th08_shadow_rollout_test
+        "${TH08_HEADLESS_DAT}" "${TH08_SHADOW_PULSE_TRACE}" retainedpulse)
+      set_tests_properties(headless_shadow_retained_pulse PROPERTIES TIMEOUT 60)
+    endif()
     add_test(NAME headless_online_real_data COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_online>
       -DVERIFIER=$<TARGET_FILE:th08_plan>
