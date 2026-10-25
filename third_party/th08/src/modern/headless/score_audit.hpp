@@ -23,6 +23,13 @@ struct SpellAuditRecord {
     std::uint64_t start_update = 0, end_update = 0;
     int limit = 0, remaining = 0, bonus = 0, pending_time_orbs = 0;
     int time_orbs = 0, field_time_orbs = 0, time_requirement = 0;
+    // Literal lifecycle-hook boundaries; capture rewards may still be pending.
+    int time_orbs_start = 0, point_items_start = 0, point_items_end = 0;
+    int point_value_start = 0, point_value_end = 0;
+    std::uint32_t score_raw_start = 0, score_raw_end = 0;
+    std::uint64_t graze_events = 0, extreme_human_graze_events = 0;
+    std::uint64_t extreme_youkai_graze_events = 0, extra_item_suppressed_graze_events = 0;
+    std::uint64_t ordinary_extreme_youkai_graze_events = 0;
     bool survival = false, last_spell = false;
     SpellAuditOutcome outcome = SpellAuditOutcome::Open;
 };
@@ -34,6 +41,8 @@ struct ScoreAudit {
     // counter awards 3/2/1 per event and cannot substitute for these counts.
     std::uint64_t graze_events = 0, extreme_human_graze_events = 0;
     std::uint64_t extreme_youkai_graze_events = 0;
+    std::uint64_t extra_item_suppressed_graze_events = 0;
+    std::uint64_t ordinary_extreme_youkai_graze_events = 0;
     int bombs_used = 0, difficulty = 0, shot = 0;
     float deaths = 0;
     std::uint32_t score_raw = 0;
@@ -44,7 +53,7 @@ void score_audit_enable();
 const ScoreAudit &score_audit();
 // Call after each owner update; it neither steps the game nor evaluates ECL.
 void score_audit_observe();
-void score_audit_graze();
+void score_audit_graze(bool suppress_extra_items);
 // Narrow lifecycle hooks preserve spells that start/end in the same update.
 // Disabled unless explicitly enabled by a reporting tool, never by a planner.
 void score_audit_spell_start(const Spellcard &spell);

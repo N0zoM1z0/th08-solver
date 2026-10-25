@@ -142,6 +142,16 @@ an input prefix. Ordinary-spell milking prototypes are retired after their
 negative full-scene trials; source economics still motivates future work, not
 a claim that keeping an attack alive automatically raises terminal score.
 
+Per-spell score audits snapshot collected orbs, point count/value and score after
+the preceding capture payout is settled, then again at the source end hook.
+The frozen story regression checks fast80-update transitions and the unchanged
+complete replay-row hash. Spell bonus is reported separately: it is deferred
+until its reward effect or the next start, not necessarily included at end.
+Carried items can still be collected during the new spell; these are temporal
+boundaries, not causal attribution or a reset of field state. Graze audit counts
+also distinguish ordinary extreme-youkai events from extra-item-suppressed
+contacts. A universal three-orb multiplier would overvalue the latter.
+
 The Native experiment tool exposes verification64/128/256 and publication64/128
 independently, with publication bounded by the complete certificate. Optional
 held recovery mirrors the live client's family/order: after a failed nominal,

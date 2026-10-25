@@ -22,12 +22,21 @@ void score_audit_enable() {
 const ScoreAudit &score_audit() {
     return audit;
 }
-void score_audit_graze() {
+void score_audit_graze(bool suppress_extra_items) {
     if (!enabled)
         return;
-    ++audit.graze_events;
-    audit.extreme_human_graze_events += g_GameManager.GaugeIsExtremelyHuman();
-    audit.extreme_youkai_graze_events += g_GameManager.GaugeIsExtremelyYoukai();
+    const bool human = g_GameManager.GaugeIsExtremelyHuman();
+    const bool youkai = g_GameManager.GaugeIsExtremelyYoukai();
+    const auto count = [&](auto &record) {
+        ++record.graze_events;
+        record.extreme_human_graze_events += human;
+        record.extreme_youkai_graze_events += youkai;
+        record.extra_item_suppressed_graze_events += suppress_extra_items;
+        record.ordinary_extreme_youkai_graze_events += youkai && !suppress_extra_items;
+    };
+    count(audit);
+    if (open_spell != no_open_spell)
+        count(audit.spells[open_spell]);
 }
 void score_audit_observe() {
     if (!enabled || !g_GameManager.globals)
@@ -67,6 +76,10 @@ void score_audit_spell_start(const Spellcard &spell) {
     record.spell = spell.spellCardNumber;
     record.start_update = replay_calculation_updates();
     record.limit = spell.timeLimit.current;
+    record.time_orbs_start = g_GameManager.GetTimeOrbs();
+    record.point_items_start = g_GameManager.globals->pointItemsCollectedInStage;
+    record.score_raw_start = g_GameManager.globals->score;
+    record.point_value_start = g_GameManager.globals->pointItemValue;
     record.last_spell = Spellcard::IsLastSpell(record.spell) != 0;
     record.survival = spell.activeEnemy && (spell.activeEnemy->flags1 & ENEMY_FLAG_TIMEOUT_SPELL);
     audit.spells.push_back(record);
@@ -86,6 +99,9 @@ void score_audit_spell_end(const Spellcard &spell, bool abandoned) {
     record.end_update = replay_calculation_updates();
     record.remaining = spell.timeRemaining.current;
     record.time_orbs = g_GameManager.GetTimeOrbs();
+    record.point_items_end = g_GameManager.globals->pointItemsCollectedInStage;
+    record.score_raw_end = g_GameManager.globals->score;
+    record.point_value_end = g_GameManager.globals->pointItemValue;
     record.field_time_orbs = g_ItemManager.GetTimeOrbCount();
     record.time_requirement = g_GameManager.GetLastSpellTimeOrbThreshold();
     if (abandoned)

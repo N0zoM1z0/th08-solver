@@ -739,10 +739,6 @@ void Spellcard::StartSpell(i32 spellCardNumber, const u8 *encodedName, i32 enemy
         (this->activeEnemy->timerCallbackThresholdFrames / 60);
     this->timeRemaining = this->activeEnemy->timerCallbackThresholdFrames;
     this->timeLimit = this->activeEnemy->timerCallbackThresholdFrames;
-#ifdef TH08_HEADLESS
-    headless::score_audit_spell_start(*this);
-#endif
-
     for (i = 0; i < 0x30; i++)
     {
         this->spellName[i] = encodedName[i] ^ 0xAA;
@@ -772,6 +768,10 @@ void Spellcard::StartSpell(i32 spellCardNumber, const u8 *encodedName, i32 enemy
         }
     }
 
+#ifdef TH08_HEADLESS
+    // Settle the preceding capture before measuring this attack's income.
+    headless::score_audit_spell_start(*this);
+#endif
     this->flags &= ~SPELLCARD_FLAG_BONUS_UPDATES_DISABLED;
     this->spellEffect = g_EffectManager.SpawnEffectInFixedSlot(
         (((*reinterpret_cast<u32 *>(&g_GameManager.flags) >>

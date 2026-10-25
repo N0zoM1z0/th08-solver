@@ -143,6 +143,11 @@ resolved values, failed branches and retained-window counts are reported. The
 read-only score audit counts physical graze awards separately from displayed
 graze. Its frozen negative replay regression checks their source bounds and the
 unchanged complete25-field row hash.
+Per-spell audits now record source-boundary score, collected-orb, point-count and
+point-value snapshots, plus physical/ordinary/suppressed graze counts. The start
+hook follows preceding-reward settlement; a focused fast-transition regression
+guards against charging that bonus to the new spell. Fields remain additive in
+audit schema1 and no instrumentation changes gameplay/RNG.
 Its H64/lead8/110ms/60ms budgets are explicit; it records all rejected work,
 timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
 terminal41-word projection. Periodic Z advances dialogue. Story mode declares

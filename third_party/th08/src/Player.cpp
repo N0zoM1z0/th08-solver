@@ -505,7 +505,7 @@ lethalPath:
 void Player::AwardGraze(Float3 *position, i32 suppressExtraItems)
 {
 #ifdef TH08_HEADLESS
-    headless::score_audit_graze();
+    headless::score_audit_graze(suppressExtraItems != 0);
 #endif
     Float3 midpoint;
     i32 gaugeGain;

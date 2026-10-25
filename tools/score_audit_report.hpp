@@ -55,6 +55,9 @@ inline bool write_score_audit(std::ostream &out, const headless::ScoreAudit &aud
         << ",\"graze_events\":" << audit.graze_events
         << ",\"extreme_human_graze_events\":" << audit.extreme_human_graze_events
         << ",\"extreme_youkai_graze_events\":" << audit.extreme_youkai_graze_events
+        << ",\"extra_item_suppressed_graze_events\":" << audit.extra_item_suppressed_graze_events
+        << ",\"ordinary_extreme_youkai_graze_events\":"
+        << audit.ordinary_extreme_youkai_graze_events
         << ",\"unmatched_events\":" << audit.unmatched_events
         << ",\"expected_unique\":" << expected.size()
         << ",\"encountered_unique\":" << encountered.size()
@@ -91,7 +94,20 @@ inline bool write_score_audit(std::ostream &out, const headless::ScoreAudit &aud
             << ",\"limit_frames\":" << s.limit << ",\"remaining_frames\":" << s.remaining
             << ",\"bonus_displayed\":" << s.bonus
             << ",\"pending_time_orbs\":" << s.pending_time_orbs
+            << ",\"time_orbs_at_start\":" << s.time_orbs_start
             << ",\"time_orbs_at_end\":" << s.time_orbs
+            << ",\"point_items_at_start\":" << s.point_items_start
+            << ",\"point_items_at_end\":" << s.point_items_end
+            << ",\"point_value_at_start\":" << s.point_value_start
+            << ",\"point_value_at_end\":" << s.point_value_end
+            << ",\"score_displayed_at_start\":" << std::uint64_t(s.score_raw_start) * 10
+            << ",\"score_displayed_at_end\":" << std::uint64_t(s.score_raw_end) * 10
+            << ",\"graze_events\":" << s.graze_events
+            << ",\"extreme_human_graze_events\":" << s.extreme_human_graze_events
+            << ",\"extreme_youkai_graze_events\":" << s.extreme_youkai_graze_events
+            << ",\"extra_item_suppressed_graze_events\":" << s.extra_item_suppressed_graze_events
+            << ",\"ordinary_extreme_youkai_graze_events\":"
+            << s.ordinary_extreme_youkai_graze_events
             << ",\"field_time_orbs_at_end\":" << s.field_time_orbs
             << ",\"time_requirement\":" << s.time_requirement << '}';
         first = false;
