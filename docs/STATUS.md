@@ -5,7 +5,58 @@ The owner's current target is **Extra >= 2,500,000,000 displayed points, NMNB an
 experiments focus on proper non-practice Extra, Marisa/Alice. New story/4A work
 is paused alongside4B; ordinary regression coverage remains unchanged.
 
-Extra's best complete Native sample is now **1,871,533,920**, seed19732, NMNB and
+The best complete local Native result is **2,205,160,930**, seed19732, NMNB
+and14/14, with exact fresh41-word execution and matching natural replay. It
+preserves50760 successful inputs from the scoring prototype `extra-flow-v9`,
+then completes with the generic baseline H64 policy. The whole56813-update run
+collects965 point items /68629 time orbs. Continuation costs16.034s,48538 branch
+and37 proposal updates,12 rejected future deaths, zero timeouts and one overrun;
+solver wall time including prefix reconstruction is20.699s. The original failed
+v9 attempt remains charged:340.572s,1752204 branch+444 proposal updates,
+79 safety attempts/24 adoptions,47 timeouts and50 overruns. A separate generic
+score-survival continuation fails at13/14 and is retained too. This is offline
+prefix repair, without a claim of a timely live handoff or a new online PB.
+
+The source audit found that the new macro contact forecast omitted the20-pixel
+expansion in `Player::CheckGrazeCollision`; the existing local graze forecast
+already included it. A fixed-input diagnostic recorded413 samples with zero
+macro contacts despite nearby streams. A mirrored-stream regression fails
+before the correction and passes after it. With the corrected contact geometry,
+v9 captures ordinary cards196/198 after collecting5878/15195 time orbs during
+their source intervals, versus830/11455 in ASL's reference. Card IDs identify
+measurements only; policy decisions use current bullets, source state, income
+and a damage reserve. The original v9 attempt captures the first13 cards but
+fails the last; its score becomes a complete result only after the repair above.
+Carried items can contribute to an interval, so these comparisons do not assign
+every collected orb to that card or constitute a component ablation.
+
+The earlier complete `extra-flow-v6` result scores1,970,924,450 at44509 updates,
+167.769s,719537 branch+325 proposal updates,165 rejected future deaths,
+17 timeouts and19 overruns, under128/128/lead8/110ms/60ms. Its ordinary pacing
+never activates and its macro contacts are empty because of the geometry bug;
+the result supports the combined sustained-focus/local-graze proposal, not the
+then-broken macro target. Its final spell collects4442 orbs and awards45,536,000
+bonus, versus2850/32,672,000 in ASL's reference and1001/17,984,000 in harvest.
+
+The cleaned opt-in `score-flow` uses only the source-survival signal; ordinary
+attacks retain harvest behavior. Its first seed19732 and new randomly drawn
+seed37854 both fail in the last spell at13/14; the corrected-geometry seed19732
+trial also fails at13/14. It remains experimental. A wider
+256/128 Native prototype with explicit250ms total budget, source-income sampling
+and a baseline safety-policy fallback completes at1,926,415,230,14/14. It charges
+48 safety attempts/10 adoptions,1454498 branch+312 proposal updates and249.413s;
+its ordinary sampling gate also never activates. These local experiments do not
+change the110ms live profile or the online score ladder.
+
+A separate Native continuation preserves the first38000 actual wine-63 inputs,
+then completes NMNB/14/14 at1,923,125,200 with H64 harvest. Fresh execution and
+natural replay agree. Reconstruction costs4.128s and continuation about23s;
+the first changed input is38006. The probe does not reconstruct the historical
+pending queue or prove a timely live handoff. Its preceding H128 continuation
+fails at13/14; both attempts and costs remain local under `extra-ahead-*`.
+
+The maintained `score-harvest` complete Native sample scores **1,871,533,920**,
+seed19732, NMNB and
 14/14 captures, with exact fresh41-word execution and matching natural replay.
 The opt-in `score-harvest` combines quiet nonspell boss collection with the existing
 edge cost, keeping128-update verification/publication, lead8,110ms/60ms budgets
@@ -32,9 +83,9 @@ points,931 points /33909 orbs. Exact fresh execution agrees. A separate prior5
 trial fails at10/14 before source-survival attacks become active. Its differing
 wall-budget search outcomes cannot be attributed to the inactive form prior.
 
-The ordinary-spell pacing prototypes are retired from current code. Off-axis
+The first ordinary-spell pacing prototypes are retired from current code. Off-axis
 shooting, explicit fire release, a mature-DPS reserve and a graze-income gate all
-have retained complete-duration failures; none raises the complete score. The
+have retained complete-duration failures. The
 first three128-horizon candidates fail at8683/10689/13417 with2/14 captures;
 256 verification fails before the first capture. Combining the income gate with
 harvest fails at10/14,997,572,820 partial points. Physical graze income must
@@ -65,9 +116,13 @@ retains the rejected owner-goal-refresh idea (Stage1 gain,4A failure),
 `score-h128-v1/`, `extra-form-v1/` retains two failed blanket-form trials, and
 `extra-survival-v2/` retains the preceding two-case trial. `extra-harvest-v1/v2`,
 `extra-precollect-v1` and `extra-farm-*`/`extra-economy-v4` retain new positive and
-negative evidence. No new ablation matrix is run. Current Release Native/DAT
-CTest passes56/56 (952.95s), core36/36 (8.83s), including documentation and the
-unchanged legacy action signature.
+negative evidence; `extra-flow-v*` and `extra-flow-v9-repair-*` retain the new
+macro/income trials and prefix repair. No new ablation matrix is run. Current
+Release Native/DAT CTest passes56/56 (893.39s), core36/36 (8.67s), including the
+audit and corrected-flow scope. One intermediate full run retains a planner-prefix
+binary-identity failure caused by relinking during the check; the focused rerun
+and two later full runs with frozen binaries pass. The audit is published at
+`489a171`; all new experiment tapes/reports remain ignored under `reports/local/`.
 
 The active October25 scope is [issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11):
 complete Extra delivery at original capture quality, general alternative policies,

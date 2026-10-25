@@ -148,6 +148,14 @@ point-value snapshots, plus physical/ordinary/suppressed graze counts. The start
 hook follows preceding-reward settlement; a focused fast-transition regression
 guards against charging that bonus to the new spell. Fields remain additive in
 audit schema1 and no instrumentation changes gameplay/RNG.
+`score-flow`/`--survival-flow 0|1` exposes the separate source-survival stream
+proposal, with its resolved strength and flow-goal revision recorded. The policy
+contract checks that ordinary attacks keep the harvest result and that an active
+survival proposal travels toward an observed ordinary stream with focus.
+Mirroring a distant stream must change its proposed endpoint; this regression
+fails when the macro omits the source's20-pixel graze expansion. Native safety
+verification remains unchanged, and the corrected complete-duration trial's
+13/14 failure remains recorded in Status.
 Its H64/lead8/110ms/60ms budgets are explicit; it records all rejected work,
 timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
 terminal41-word projection. Periodic Z advances dialogue. Story mode declares

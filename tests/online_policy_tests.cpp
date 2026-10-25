@@ -280,6 +280,52 @@ void score_precollect_contract() {
     check((leave.action & 32) && (leave.action & 1),
           "empty drop/item state retained a stale collection goal");
 }
+void score_flow_contract() {
+    auto config = on::with_style("score-flow");
+    config.horizon = 24;
+    auto o = scene();
+    o.scoring.available = o.scoring.has_boss = o.scoring.can_switch_forms = true;
+    o.scoring.boss_x = o.x;
+    // A narrow SHT graze box still receives the source's extra20-pixel
+    // ordinary-bullet expansion. Omitting it makes all stream targets empty.
+    o.graze_half = {0, 0, 0};
+    for (int i = 0; i < 16; ++i) {
+        auto b = bullet(i, 96, 288 + float(i) * 3, 0, .5f);
+        b.full_width = b.full_height = 4;
+        o.bullets.push_back(b);
+    }
+    const auto ordinary = on::Policy(config).decide(o);
+    auto base = on::with_style("score-harvest");
+    base.horizon = 24;
+    check(ordinary.action == on::Policy(base).decide(o).action,
+          "source-survival flow changed an ordinary attack");
+    o.spell_active = o.scoring.survival_spell = true;
+    std::vector<on::ValueProposal> proposals;
+    const auto flow = on::Policy(config).decide(o, nullptr, &proposals);
+    // The existing edge cost can first move upward. The complete proposal must
+    // still travel toward the stream rather than requiring a particular first
+    // movement when that competes with the escape margin.
+    const bool left = !proposals.empty() &&
+                      std::any_of(proposals.front().inputs.begin(), proposals.front().inputs.end(),
+                                  [](auto input) { return input & 64; });
+    check(left && (flow.action & 4),
+          "source-survival flow did not seek the observed ordinary stream in focus");
+    const auto endpoint = [&](const std::vector<on::ValueProposal> &paths) {
+        check(!paths.empty(), "stream goal omitted a complete proposal");
+        float x = o.x, y = o.y;
+        for (auto input : paths.front().inputs)
+            on::detail::apply_movement(o.movement, x, y,
+                                       on::detail::movement_delta(o.movement, input));
+        return x;
+    };
+    const float left_end = endpoint(proposals);
+    auto mirror = o;
+    for (auto &b : mirror.bullets)
+        b.x = 384 - b.x;
+    on::Policy(config).decide(mirror, nullptr, &proposals);
+    check(left_end + 16 < endpoint(proposals),
+          "distant mirrored streams received the same empty macro goal");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -1923,6 +1969,7 @@ int main(int argc, char **argv) {
         score_goal_contract();
         score_form_contract();
         score_precollect_contract();
+        score_flow_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

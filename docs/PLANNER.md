@@ -142,6 +142,22 @@ an input prefix. Ordinary-spell milking prototypes are retired after their
 negative full-scene trials; source economics still motivates future work, not
 a claim that keeping an attack alive automatically raises terminal score.
 
+The experimental `score-flow` adds a source-survival-only stream goal, with a
+recorded5.01 focus prior. Every64 updates it ranks70 stationary targets on a
+32-pixel grid over x48..336/y208..400. Current ungrazed ordinary bullets with
+speed at most3 pixels/update are extrapolated192 updates in16-update samples.
+Contact bounds include the source's20-pixel bullet expansion as well as the
+bullet/player graze half sizes. The target cost combines unique contact opportunity, a body-danger proxy and
+travel distance. Current lethal bodies and movement bounds exclude targets.
+Local proposal contact reward3 and anchor weight0.03 apply only in this mode;
+native collision/margin costs and true-RNG safety verification remain intact.
+This long linear hypothesis is not a192-update Native certificate. The complete
+local precursor scores1,970,924,450, but its omitted20-pixel expansion left all
+macro contact counts empty; this score does not validate that macro target.
+Two cleaned-profile trials and a corrected-geometry trial fail at13/14. A
+mirrored-stream contract catches the missing expansion and checks goal direction.
+The default controller remains unchanged.
+
 Per-spell score audits snapshot collected orbs, point count/value and score after
 the preceding capture payout is settled, then again at the source end hook.
 The frozen story regression checks fast80-update transitions and the unchanged

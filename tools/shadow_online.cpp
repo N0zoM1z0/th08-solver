@@ -571,7 +571,7 @@ int run(int argc, char **argv) {
             "[h32|h64|h128|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
             "h128-recorded|h64-recorded] "
             "[baseline|zen|expert|sniper|graze|score|score-survival|score-harvest|score-"
-            "precollect]");
+            "precollect|score-flow]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
@@ -812,6 +812,8 @@ int run(int argc, char **argv) {
            << ",\"survival_focus\":" << (profile.scoring_survival_focus ? "true" : "false")
            << ",\"form_goal_revision\":" << (profile.scoring_survival_focus ? 2 : 0)
            << ",\"survival_focus_bias\":" << profile.survival_focus_bias
+           << ",\"survival_flow\":" << (profile.scoring_survival_flow ? "true" : "false")
+           << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
            << ",\"boss_collect\":" << (profile.scoring_boss_collection ? "true" : "false")
            << ",\"precollect\":" << (profile.scoring_precollect ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (recording.prior_final_a_clear ? "true" : "false")

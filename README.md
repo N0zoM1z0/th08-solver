@@ -81,9 +81,10 @@ optimize collection, gauge, attack timing and actual terminal score. Movement
 style follows the scoring strategy. New story/4A experiments and Stage 4B stay
 paused; the existing story milestone remains preserved.
 
-The current complete Native Extra best is **1,871,533,920, NMNB and 14/14 captures**,
-with fresh execution and natural replay agreement. The opt-in harvest profile
-raises the tested complete score; [Status](docs/STATUS.md) records the profile,
+The current complete Native Extra best is **2,205,160,930, NMNB and 14/14 captures**,
+with fresh execution and natural replay agreement. This offline result preserves
+a successful scoring prefix and repairs the final segment with the generic
+baseline policy. [Status](docs/STATUS.md) records the source insights, all search
 costs and separate live verification.
 
 The owner now authorizes a [true-RNG shadow runtime and Wine planning loop](https://github.com/N0zoM1z0/th08-solver/issues/8).

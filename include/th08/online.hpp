@@ -170,6 +170,7 @@ struct Configuration {
     StyleWeights style;
     bool scoring_collection = false, scoring_aim = false;
     bool scoring_survival_focus = false;
+    bool scoring_survival_flow = false;
     float survival_focus_bias = 0.01f;
     bool scoring_boss_collection = false;
     bool scoring_precollect = false;
@@ -207,7 +208,7 @@ struct Configuration {
     bool lazy_index = false; // Delay unused frame indices; forecasts remain unchanged.
 };
 // General proposal controls: baseline, zen, expert, sniper, graze, score,
-// score-survival, score-harvest and score-precollect.
+// score-survival, score-harvest, score-precollect and score-flow.
 // Score adds current-item collection and literal boss aiming. No preference
 // changes the horizon, beam, verification budgets or physics.
 Configuration with_style(const std::string &name, Configuration configuration = {});

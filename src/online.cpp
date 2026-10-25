@@ -26,6 +26,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     w = {};
     configuration.scoring_collection = configuration.scoring_aim = false;
     configuration.scoring_survival_focus = false;
+    configuration.scoring_survival_flow = false;
     configuration.scoring_boss_collection = false;
     configuration.scoring_precollect = false;
     configuration.boss_follow = 0.25f;
@@ -51,11 +52,14 @@ Configuration with_style(const std::string &name, Configuration configuration) {
         w.anchor_y = 360;
         configuration.boss_follow = 1;
     } else if (name == "score" || name == "score-survival" || name == "score-harvest" ||
-               name == "score-precollect") {
+               name == "score-precollect" || name == "score-flow") {
         configuration.scoring_collection = configuration.scoring_aim = true;
         configuration.scoring_survival_focus = name != "score";
         configuration.scoring_boss_collection =
-            name == "score-harvest" || name == "score-precollect";
+            name == "score-harvest" || name == "score-precollect" || name == "score-flow";
+        configuration.scoring_survival_flow = name == "score-flow";
+        if (configuration.scoring_survival_flow)
+            configuration.survival_focus_bias = 5.01f;
         configuration.scoring_precollect = name == "score-precollect";
         w.anchor_weight = 0.05f;
         if (configuration.scoring_boss_collection) {
@@ -110,6 +114,7 @@ struct HFrame {
 constexpr float kCell = 16.f, kGx0 = -64.f, kGy0 = -64.f;
 constexpr int kGW = 34, kGH = 38;
 constexpr float kMargin = 1.5f;
+constexpr float kGrazeExpansion = 20.f; // Source Player::CheckGrazeCollision ordinary bullets.
 inline int cell_of(float v, float origin, int n) {
     const float c = std::floor((v - origin) / kCell);
     return c <= 0 ? 0 : c >= n - 1 ? n - 1 : int(c);
@@ -296,6 +301,7 @@ inline int probe(const HFrame &f, const Float3 &half, float x, float y, bool wan
 } // namespace
 struct Policy::Impl {
     Configuration opt;
+    StyleWeights proposal_style;
     const RiskTables risk;
     const BranchValueModel value_model;
     Movement current_movement;
@@ -311,7 +317,8 @@ struct Policy::Impl {
     bool preparing_collection = false;
     static constexpr unsigned collection_batch = 4, collection_start_bullet_limit = 64;
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
-        : opt(configuration), risk(std::move(tables)), value_model(std::move(value)) {
+        : opt(configuration), proposal_style(configuration.style), risk(std::move(tables)),
+          value_model(std::move(value)) {
         const auto &w = opt.style;
         for (float cost : {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost,
                            w.move_cost, w.focused_move_cost, w.reversal_cost, w.edge_cost,
@@ -332,7 +339,7 @@ struct Policy::Impl {
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
               opt.warm_fallback || opt.held_fallback || risk.loaded || !opt.hard_phantoms ||
               !opt.motion_envelope || opt.scoring_collection || opt.scoring_aim ||
-              opt.scoring_survival_focus)))
+              opt.scoring_survival_focus || opt.scoring_survival_flow)))
             throw std::runtime_error("unsupported_branch_value_configuration");
         if (opt.motion_envelope && !opt.hard_phantoms)
             throw std::runtime_error("motion_envelope_requires_hard_phantoms");
@@ -351,8 +358,8 @@ struct Policy::Impl {
             throw std::runtime_error("invalid_online_configuration");
         if (opt.planner_lag > 0 && (opt.held_fallback || opt.warm_fallback || opt.tail_check))
             throw std::runtime_error("unsupported_online_lag_fallback");
-        if (opt.planner_lag > 0 &&
-            (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus))
+        if (opt.planner_lag > 0 && (opt.scoring_collection || opt.scoring_aim ||
+                                    opt.scoring_survival_focus || opt.scoring_survival_flow))
             throw std::runtime_error("unsupported_scoring_lag_configuration");
         frames.resize(opt.horizon + opt.tail_check + 1);
     }
@@ -395,7 +402,8 @@ struct Policy::Impl {
         };
         finite(o.x);
         finite(o.y);
-        if (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus) {
+        if (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus ||
+            opt.scoring_survival_flow) {
             if (!o.scoring.available)
                 throw std::runtime_error("missing_online_score_memory");
             for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power,
@@ -406,7 +414,7 @@ struct Policy::Impl {
                 finite(item.y);
             }
         }
-        if (opt.style.graze_reward > 0) {
+        if (opt.style.graze_reward > 0 || opt.scoring_survival_flow) {
             finite(o.graze_half.x);
             finite(o.graze_half.y);
             if (o.graze_half.x < 0 || o.graze_half.y < 0)
@@ -519,6 +527,74 @@ struct Policy::Impl {
         }
     }
 
+    bool flow_active = false;
+    float flow_x = 192, flow_y = 360;
+    std::uint64_t macro_due = 0;
+    int macro_spell = -1;
+    void update_flow_goal(const Observation &o) {
+        // Rank ordinary-bullet streams using a bounded linear hypothesis.
+        // The cached stationary targets reduce chatter/work; neither their
+        // contacts nor danger proxy certify future scripts or collision safety.
+        if (macro_spell == o.spell && o.update < macro_due)
+            return;
+        macro_spell = o.spell;
+        macro_due = o.update + 64;
+        constexpr int nx = 10, ny = 7, cells = nx * ny;
+        std::array<int, cells> contacts{}, danger{};
+        for (const auto &b : o.bullets) {
+            if (b.state != 1 || b.collision_disabled || b.grazed || b.vx * b.vx + b.vy * b.vy > 9)
+                continue;
+            std::array<bool, cells> seen{}, hit{};
+            const float ex = b.full_width / 2 + kGrazeExpansion + o.graze_half.x;
+            const float ey = b.full_height / 2 + kGrazeExpansion + o.graze_half.y;
+            const float hx = o.movement.half.x + b.full_width / 2 + 1.5f;
+            const float hy = o.movement.half.y + b.full_height / 2 + 1.5f;
+            for (int dt = 0; dt <= 192; dt += 16) {
+                if (unsigned(dt) < b.graze_ready_in)
+                    continue;
+                const float bx = b.x + b.vx * dt, by = b.y + b.vy * dt;
+                const int x0 = std::max(0, int(std::ceil((bx - ex - 48) / 32)));
+                const int x1 = std::min(nx - 1, int(std::floor((bx + ex - 48) / 32)));
+                const int y0 = std::max(0, int(std::ceil((by - ey - 208) / 32)));
+                const int y1 = std::min(ny - 1, int(std::floor((by + ey - 208) / 32)));
+                for (int y = y0; y <= y1; ++y)
+                    for (int x = x0; x <= x1; ++x) {
+                        const int cell = y * nx + x;
+                        seen[cell] = true;
+                        hit[cell] = hit[cell] || (std::abs(48 + x * 32 - bx) < hx &&
+                                                  std::abs(208 + y * 32 - by) < hy);
+                    }
+            }
+            for (int i = 0; i < cells; ++i) {
+                contacts[i] += seen[i];
+                danger[i] += hit[i];
+            }
+        }
+        float best = -1e30f;
+        for (int y = 0; y < ny; ++y)
+            for (int x = 0; x < nx; ++x) {
+                const float px = 48 + x * 32, py = 208 + y * 32;
+                if (px < o.movement.minx || px > o.movement.maxx || py < o.movement.miny ||
+                    py > o.movement.maxy)
+                    continue;
+                bool blocked = false;
+                for (const auto &r : o.lethal_regions)
+                    blocked = blocked || (px >= r.x0 - 8 && px <= r.x1 + 8 && py >= r.y0 - 8 &&
+                                          py <= r.y1 + 8);
+                if (blocked)
+                    continue;
+                const int cell = y * nx + x;
+                const float dx = px - o.x, dy = py - o.y;
+                const float value =
+                    contacts[cell] - 3.f * danger[cell] - .02f * std::sqrt(dx * dx + dy * dy);
+                if (value > best) {
+                    best = value;
+                    flow_x = px;
+                    flow_y = py;
+                }
+            }
+    }
+
     void observe(const Observation &observation) {
         validate(observation);
         if (last_observed == observation.update)
@@ -569,8 +645,18 @@ struct Policy::Impl {
             observation.scoring.survival_spell && observation.scoring.has_boss &&
             observation.spell_active && !collecting) {
             // Source-marked survival attacks have different opportunity costs
-            // from HP races. Keep this prior on the existing change-cost scale.
+            // from HP races. The default prior uses the action-change scale;
+            // stronger recorded profiles can give sustained form more weight.
             proposal_focus_bias += opt.survival_focus_bias;
+        }
+        proposal_style = opt.style;
+        flow_active = opt.scoring_survival_flow && observation.scoring.can_switch_forms &&
+                      observation.scoring.survival_spell && observation.scoring.has_boss &&
+                      observation.spell_active;
+        if (flow_active) {
+            update_flow_goal(observation);
+            proposal_style.anchor_weight = 0.03f;
+            proposal_style.graze_reward = 3;
         }
         const auto &bs = observation.bullets;
         std::array<bool, kSlots> seen{};
@@ -720,7 +806,7 @@ struct Policy::Impl {
             frames[j].b.clear(), frames[j].l.clear(), frames[j].risk.clear(),
                 frames[j].graze_boxes.clear(), frames[j].graze_bits.clear();
         std::array<std::uint64_t, kSlots> graze_slots{};
-        if (opt.style.graze_reward > 0) {
+        if (proposal_style.graze_reward > 0) {
             std::vector<std::pair<float, int>> eligible;
             for (const auto &b : observation.bullets)
                 if (b.slot >= 0 && b.slot < kSlots && b.state == 1 && !b.grazed &&
@@ -836,8 +922,8 @@ struct Policy::Impl {
                         // Source CheckGrazeCollision expands each bullet by 20px
                         // against the current player graze box. Motion remains a
                         // conditional proposal hypothesis; native awards decide.
-                        const float gx = w / 2 + 20 + observation.graze_half.x;
-                        const float gy = h / 2 + 20 + observation.graze_half.y;
+                        const float gx = w / 2 + kGrazeExpansion + observation.graze_half.x;
+                        const float gy = h / 2 + kGrazeExpansion + observation.graze_half.y;
                         frames[j].graze_boxes.push_back({x - gx, y - gy, x + gx, y + gy});
                         frames[j].graze_bits.push_back(graze_slots[b.slot]);
                     }
@@ -1067,7 +1153,7 @@ struct Policy::Impl {
     }
     float style_cost(const Node &parent, Node &node, const Speeds &movement,
                      const HFrame &frame) const {
-        const auto &w = opt.style;
+        const auto &w = proposal_style;
         float cost = 0;
         if (node.act & 0xf0)
             cost += (node.act & 4) ? w.focused_move_cost : w.move_cost;
@@ -1259,7 +1345,7 @@ struct Policy::Impl {
         float x1 = x0, y1 = y0;
         move(sp, x1, y1, latched);
         layers[1].push_back({x1, y1, -1, std::uint16_t(latched & 0xF4), 0.f});
-        if (opt.style.graze_reward > 0)
+        if (proposal_style.graze_reward > 0)
             layers[1].back().graze_mask = graze_contacts(frames[1], x1, y1);
         if (probe(frames[1], sp.half, x1, y1, false) == 2)
             return {{std::uint16_t(latched & 0xF4)}, 0};
@@ -1291,7 +1377,7 @@ struct Policy::Impl {
                 if (probe(frames[j + 1], sp.half, x, y, false) == 2)
                     break;
                 next.push_back({x, y, 0, action, parent.score, parent.graze_mask});
-                if (opt.style.graze_reward > 0)
+                if (proposal_style.graze_reward > 0)
                     next.back().graze_mask |= graze_contacts(frames[j + 1], x, y);
                 deepest = j + 1;
                 continue;
@@ -1339,7 +1425,7 @@ struct Policy::Impl {
                         }
                         if (!(a & 4))
                             n.score += proposal_focus_bias;
-                        const auto &w = opt.style;
+                        const auto &w = proposal_style;
                         n.score += (hit == 1 ? (j < w.margin_split ? w.margin_early : w.margin_late)
                                              : 0.f) +
                                    w.anchor_weight * (dx * dx + dy * dy) +
@@ -1757,6 +1843,10 @@ struct Policy::Impl {
             pref_x = std::clamp(collection_x, sp.minx, sp.maxx);
             pref_y = std::clamp(observation.scoring.collection_line - 12, sp.miny, sp.maxy);
         }
+        if (flow_active) {
+            pref_x = std::clamp(flow_x, sp.minx, sp.maxx);
+            pref_y = std::clamp(flow_y, sp.miny, sp.maxy);
+        }
         if (opt.planner_lag > 0) {
             const auto executed = lag_decide(observation, pref_x);
             mark(&DecisionTiming::search_ns);
@@ -1789,7 +1879,7 @@ void Policy::observe(const Observation &observation) {
 }
 bool Policy::needs_scoring_memory() const {
     return impl_->opt.scoring_collection || impl_->opt.scoring_aim ||
-           impl_->opt.scoring_survival_focus;
+           impl_->opt.scoring_survival_focus || impl_->opt.scoring_survival_flow;
 }
 Decision Policy::decide(const Observation &observation, DecisionTiming *timing,
                         std::vector<ValueProposal> *proposals) {

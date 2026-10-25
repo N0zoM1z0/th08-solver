@@ -159,7 +159,8 @@ int run(int argc, char **argv) {
                                  "[--collect-items 0|1] [--aim-boss 0|1] "
                                  "[--survival-focus 0|1] [--verify-horizon 64|128|256] "
                                  "[--publish-horizon 64|128] [--held-recovery 0|1] "
-                                 "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE]");
+                                 "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
+                                 "[--survival-flow 0|1]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -183,6 +184,7 @@ int run(int argc, char **argv) {
     bool publication_override = false, held_override = false;
     bool boss_collection_override = false, precollect_override = false;
     bool survival_bias_override = false;
+    bool survival_flow_override = false;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
         if (key == "--collect-items" && !collection_override) {
@@ -221,6 +223,9 @@ int run(int argc, char **argv) {
                 profile.survival_focus_bias > 10000)
                 throw std::runtime_error("invalid_native_survival_bias");
             survival_bias_override = true;
+        } else if (key == "--survival-flow" && !survival_flow_override) {
+            profile.scoring_survival_flow = number(argv[i + 1], 1);
+            survival_flow_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
@@ -367,6 +372,8 @@ int run(int argc, char **argv) {
            << ",\"survival_focus\":" << (profile.scoring_survival_focus ? "true" : "false")
            << ",\"form_goal_revision\":" << (profile.scoring_survival_focus ? 2 : 0)
            << ",\"survival_focus_bias\":" << profile.survival_focus_bias
+           << ",\"survival_flow\":" << (profile.scoring_survival_flow ? "true" : "false")
+           << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
            << ",\"boss_collect\":" << (profile.scoring_boss_collection ? "true" : "false")
            << ",\"precollect\":" << (profile.scoring_precollect ? "true" : "false")
            << ",\"difficulty\":" << config.difficulty << ",\"shot\":" << config.shot
