@@ -1,6 +1,6 @@
 # Current handoff status
 
-Updated 2026-10-26. Public scoring controls: `13da22f`; selected replay milestone:
+Updated 2026-10-26. Public scoring controls: `805b4e2`; selected replay milestone:
 `6b01b24`. The owner resumed Native score attack on 2026-10-26: download and study top human
 replays, document source-backed insights, then test Extra and the complete
 Lunatic route offline. Save tested progress directly on main. The preceding
@@ -28,7 +28,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **389/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **394/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -271,6 +271,36 @@ so none is accepted. Its retained complete story remains4,311,260,760,0 bombs,
 37/37; cost26.8441s and365012 charged branch updates, no timeout. Relaxing capture
 coverage alone does not repair the action/RNG timing of those edited tails.
 New artifacts stay local.
+
+The completed no-bomb batch retains the earlier bests; it does not beat either
+human reference. All four following runs explicitly allow missing captures but
+forbid bombs. Costs include rejected futures and initial incumbent verification
+where applicable; no trial is selected merely for finishing faster.
+
+| Local run / task | Terminal result / bombs / captures | Wall seconds / charged branch + proposal updates |
+| --- | --- | --- |
+| `extra-no-bomb-optional-captures-h1024-v1`,384 | Failed card202 at46526;1,309,226,090 partial /0 /10 |379.239 /472731+33 |
+| `story-no-bomb-optional-captures-h1024-v1`,385 | Complete4,035,533,800 /0 /37 of37 |702.288 /840881+21 |
+| `extra-no-bomb-optional-captures-economic-tail-v1`,386 | Complete2,620,568,090 /0 /14 of14 |117.186 /138928+6 |
+| `story-no-bomb-optional-captures-fire-refine-v1`,387 | Retained4,311,260,760 /0 /37 of37;0 of96 edits accepted |26.8441 /365012+0 |
+
+The Extra economic continuation has exactly the incumbent's full72557 input
+tape and41-word terminal. Its newly written replay bytes differ and stay local;
+the selected historical replay is unchanged. Tasks390–393
+freshly execute Extra/story from their original retail entries and naturally
+play their exports: both complete, match exact41-word terminals, displayed
+scores, zero bombs, all capture outcomes and `ysopwnab`. This is Native execution
+agreement, not independent retail equivalence. No Wine playback is launched.
+
+The conservative story loses earlier income: stage3 PIV484030 versus the
+incumbent498580, terminal PIV863360 versus918390, and1306 collected points versus
+1340. Capture coverage was optional in search, but this profile still chooses
+all37 captures. The
+relaxed acceptance gate alone supplies no new farming policy; longer verification
+and changed pacing/recovery are not measured scoring gains. Next work should
+target the earlier source income/production bottleneck with adaptive continuations,
+keeping the certified incumbent. This batch and its verification are finished;
+no owned solver, queue or test driver remains running.
 
 Focused parameter verification passes3/3 in198.62s, including its incumbent
 fixture. It proves actual source bomb consumption and lost capture, complete
