@@ -328,6 +328,64 @@ and verification receipts stay local in
 The earlier selected replay bytes remain unchanged. Retail playback waits for
 the owner's human-score target; the seed-acquisition run is separate evidence.
 
+The selected next story continuation is
+[Story4,311,260,760](../reports/native/replays/story-native-nmnb-4a-finalb-4311260760-seed1805.rpy),
+47437 bytes, SHA-256
+`a20f0dac5c00ea61d6eee673e554bf5ac5cabda2fe8c5c73d48178e2255d8c04`.
+It retains the original retail seed1805, Magic Team Lunatic entry/history,
+SampledGameplay and `ysopwnab`, with NMNB and37/37. It reconstructs49753 actual
+inputs from the early no-fire graze trial, then uses the conservative v3
+H512/publication256/beam384/30s/reserve2/480/capture-fire profile. Those inputs
+precede the failed ancestor's4A encounter; the entire new run is executed from
+original entry without world/RNG/item resets. The ancestor fails later at71183
+and stays charged. Its early-graze policy SHA-256 is
+`52f360f88531418f12a3d8228a4898eed652d15d84f240f4173bff6721b52e6f`;
+its full failed tape SHA-256 is
+`4d8db5ff61f221000fb47889816f2b9781a45978ae8385731e6e50837480fcff`.
+
+The completed continuation charges136061 owner updates/440.974s,
+452782+15 branch/proposal updates,654 rejected deaths,0 timeouts/overruns and
+169 repairs/1 adoption, in addition to the ancestor's408.359s. Producer/source
+and verification-tool hashes are the same v3 identities immediately above.
+Full selected-tape SHA-256:
+`25d844d137a70be1346015d49620e8a70645090b3642d18aa590b93e5bdc330e`.
+Fresh exact41-word terminal agreement passes. Natural136148 rows SHA-256:
+`a1e39f043f91f223afcf83997a05eabd45f6356de67386959fc37620b0d1f4e7`.
+Score431126076 stored units,37 captures, zero death/bomb rows and the selected
+name all agree. Complete local producer/check receipts are in
+`reports/local/retail-score-offline-20261026/story-retail-early-prefix-safe-tail-v3/`.
+
+The selected real-seed Extra progress is
+[Extra2,504,560,470](../reports/native/replays/extra-native-nmnb-2504560470-seed46997.rpy),
+28886 bytes, SHA-256
+`e2a98fdde8ae9071ffb282890ddb2bb6d01f858e759cebbaa153fafe4d74ecab`.
+It uses the original retail seed46997, raw stage8/difficulty4/shot1/story=true,
+prior-Final-A=false, SampledGameplay and `ysopwnab`, with NMNB and14/14. The
+first61756 literal inputs come from the verified source suppressed-hit-period2
+incumbent, then the off-axis policy regenerates the last HP/survival tail.
+Both execute freshly from the same original entry. The current-episode score
+crosses2.5B; historical seed10025 still has the higher2,589,417,330 Extra record.
+
+The tail uses H512/publication256, lead1/nominal1/interval128, policyH24/beam384,
+30s search/7200s owner, reserve1.5/240, capture-fire recovery and hit-income1.
+Its completed attempt charges72637 owner updates/64.1007s including literal
+prefix reconstruction,62027+6 branch/proposal updates,129 rejected deaths,
+0 timeouts/overruns and0 future repairs. The incumbent's585.409s remains charged.
+Producer SHA-256:
+`30011df351374b760ee81247e932c5e5aef5264141a5d8f7b99071432676eb4a`;
+CLI source is v3 above, paired off-axis policy SHA-256:
+`fb5e60414a2e3953fabc1183a589d0c717f81b777040f3a96cf8418715f8f1f4`.
+Full tape SHA-256:
+`44b98efb7cddd71f0488013ec1bba30cb027245bba5ac968f37d596a20d42523`.
+Fresh41-word agreement and natural72633 rows pass; natural row SHA-256:
+`0065922919b0af0c70e450bb88faab15aaf03ae4f7d064cb69e6520df61a7e21`.
+Score250456047 stored units,14 captures, zero death/bomb rows and `ysopwnab`
+agree. Local provenance/checks remain in
+`reports/local/retail-score-offline-20261026/extra-retail-last-hp-offaxis-v4/`.
+Both newly selected files preserve the original writer's exact metadata bytes.
+The frozen public runtime's full Release Native/DAT suite passes59/59 in1078.17s;
+the maintained-document check is rerun after these selected results are added.
+
 ## Selected Extra score replay
 
 The owner-selected [highest Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)

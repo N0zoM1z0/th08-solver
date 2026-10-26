@@ -46,7 +46,9 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
 | **Current Native Extra** | **2,589,417,330 /14 of 14** | Seed10025, complete from entry,500ms offline search; selected progress replay |
-| **Current Native Lunatic4A→FinalB** | **4,160,457,200 /37 of 37** | Original retail seed1805, full entry, audited Native future-repair v3; selected replay |
+| Current retail-seeded Extra |2,504,560,470 /14 of 14 | Captured seed46997, source hit-window prefix and adaptive off-axis tail; selected current-episode replay |
+| **Current Native Lunatic4A→FinalB** | **4,311,260,760 /37 of 37** | Original retail seed1805, early-graze prefix plus audited conservative continuation; selected replay |
+| Selected retail-seeded full-entry story |4,160,457,200 /37 of 37 | Seed1805, audited Native future-repair v3; earlier bytes preserved |
 | Selected conservative story continuation |4,126,102,910 /37 of 37 | Seed40755, offline checkpoint continuation; earlier bytes preserved |
 | Selected survival-priority story |3,903,603,650 /37 of 37 | Seed40755, source-survival form priority and bias5; earlier bytes preserved |
 | Native story price baseline |3,890,487,560 /37 of 37 | Seed40755, complete from entry,500ms offline search; selected earlier progress replay |
@@ -79,8 +81,9 @@ identities and commands. Both remain below their explicit human-reference target
 exit5 and `objective_met:false` distinguish valid progress from meeting that goal.
 No retail Wine playback is started for them yet. The source-survival priority
 follow-up reaches3,903,603,650; the subsequent offline continuation reaches
-4,126,102,910. The new retail-seeded full-entry story reaches4,160,457,200,
-37/37, NMNB. Earlier selected replay bytes remain unchanged.
+4,126,102,910. The new retail-seeded full-entry story reaches4,160,457,200;
+its follow-up continuation reaches4,311,260,760,37/37, NMNB. Earlier selected
+replay bytes remain unchanged.
 
 The baseline common profile is Magic Team, SampledGameplay, score-harvest, held/baseline
 recovery,500ms total/60ms proposal, priced collection, upper-stage positioning,
@@ -306,7 +309,74 @@ proposal that preserves pre-charge mature DPS rather than treating deliberately
 missed shots as slow capture damage. Full-board targets/all-speed stream
 proposals and off-axis variants are now running, with no outcome claimed yet.
 All alter proposals, not Native game behavior; no seed/card or human-input
-scripts are used. The ledger is283/320 at this publication checkpoint.
+scripts are used. That first publication checkpoint ends at283/320.
+
+The restricted hit-window focus candidate improves the Extra46997 incumbent to
+**2,493,554,650, NMNB,14/14**, from2,384,787,210. It uses period2 focus changes
+only while actual source HP suppression/current nonboss hit-income targets are
+present, with `--hit-income 1`, H256/publication128 and3000ms. This is a named
+combined profile, not evidence attributing the gain to focus alone. It has925
+points/90541 orbs/PIV752710, and passes exact fresh/natural replay. The run
+charges72997 owner updates/585.409s,2391293+168 branch/proposal updates,
+605 rejected deaths,0 timeouts,1 rejected future capture failure and52 repair
+attempts/5 adoptions. It remains below the selected historical Extra high score.
+Precollection alone completes2,438,900,780,14/14; combining it with period2/7
+profiles gives2,258,162,220/2,279,504,160, so the gains are not additive.
+
+Read-only policy logging over the full off-axis tape preserves its exact41-word
+terminal and explains its weak result: focused charging can deplete HP before
+extreme-youkai. Source `Player::AwardGraze` adds100 gauge in youkai form;
+`Item::CollectTimeOrb` adds111 with focused pickup, so no-fire grazing can establish
+the gauge through actual interactions. Earlier no-fire sampling removes the
+16-slow-nearby-bullet gate while retaining mature DPS, the capture reserve and
+Native safety. Its H1024 full attempts fail later: Extra at48656/card202,
+1,101,464,970 partial/10 captures,269.713s/397592+11 branch/proposal updates;
+story at71183 in4A,1,342,161,530 partial/18 captures,408.359s/594588+11.
+They charge569/541 repairs with3/2 adoptions,1038/941 rejected deaths and
+0 timeouts; story rejects2 future capture failures. Neither exports a replay.
+
+The failed story's first49753 actual inputs cover three captured stages and
+raise carried PIV to498580 versus469260 in the earlier selected story. A new
+candidate reconstructs those inputs from original entry, then runs the known
+conservative generic policy with the same H512/beam384/30s/reserve2/480 profile.
+It completes **4,311,260,760, NMNB,37/37**, with fresh exact terminal and natural
+replay agreement. This adds150,803,560 over4,160,457,200. The completed attempt
+charges136061 owner updates/440.974s,452782+15 branch/proposal updates,
+654 rejected deaths,0 timeouts/overruns and169 repair attempts/1 adoption. The
+failed ancestor's cost remains charged. No world/RNG/item reset occurs; only
+complete full-entry acceptance establishes the new result. Final PIV918390,
+clock5; stage points55/147/313/328/187/310 and orbs8459/12800/18455/23610/16596/43756.
+[Validation](VALIDATION.md#selected-native-progress-replays) owns the exact lineage.
+
+Full-board targets alone, off-axis charging, relaxed proposal guards and the
+first final-survival suffix remain below the story incumbent. Interrupted
+tasks295/296 have no result: the queue session exits143 with no surviving owner;
+the actual Native exit signal/counters and interruption cause are unavailable.
+Both stay charged, with original files retained. Independent process groups
+retry them as297/299, yielding the completed scores recorded above and a
+3,947,291,450 story,37/37. The normal frozen-binary Release Native/DAT CTest
+passes **59/59 in1078.17s**. Deeper Native repair profiles and explicit terminal
+Extra refinements continue under the same four-owner/320-task limits.
+
+The terminal Extra portfolio reconstructs the verified2,493,554,650 prefix at
+61756 inputs before the last ordinary HP attack, or66879 before the final source
+survival attack. Faster capture, full-board faster capture and final-survival
+full-board tails complete2,455,253,060/2,465,152,040/2,489,337,510,14/14.
+An adaptive off-axis tail with1.5/240 reserve instead completes
+**2,504,560,470, NMNB,14/14**, adding11,005,820 to this episode's best. It charges
+72637 owner updates/64.1007s including prefix reconstruction,62027+6 branch/proposal
+updates,129 rejected deaths,0 timeouts/overruns and0 future-repair attempts. The
+585.409s ancestor remains charged. Fresh exact41-word terminal and natural replay
+pass;925 points/90992 orbs/PIV754960. This selected real-seed progress remains
+below the historical Native2,589,417,330 score and the human target.
+
+Deeper repair v4 explicitly raises the extra-attempt limit128→384 and tests
+lookbacks32/64/128/256/512/1024 under the declared search budget. Extra/story
+early-graze retries still fail at the identical48656/71183 boundaries and emit
+byte-identical failed tapes to their shallower ancestors. Their extra work is
+retained, not a scoring gain. A longer H2048 story and selective post-4A/FinalB
+continuations are pending at this checkpoint. The ledger is315/320; preserve
+room for any new best's fresh/natural verification before publishing it.
 
 ## What produced the gain
 
@@ -542,7 +612,7 @@ independent for later ablations; no new ablation matrix is requested now.
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (283/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
+   (315/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not
