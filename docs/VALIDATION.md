@@ -5,6 +5,90 @@ Current scoring mechanisms are in [Planner](PLANNER.md#spell-capture-and-score-o
 This page owns reproducible commands, exact artifact identities and test contracts.
 Historical component commands below retain their named build/profile assumptions.
 
+## Native score-first workflow
+
+The owner selected Native exploration for proper Magic Team Extra and complete
+Lunatic4A→FinalB. Require NMNB,14/14 or37/37 captures and a displayed score
+strictly above3,021,639,920 or6,168,365,790 respectively before retail Wine replay
+validation. Live Wine solving is paused. Native budgets are explicit offline
+compute limits; they need not meet an online frame deadline.
+
+New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
+bytes. The original `ReplayData::playerName[8]` is followed by reserved and
+practice-mode bytes; longer strings are rejected instead of overwriting mode.
+`--replay-name` accepts1..8 identifier bytes. The checker reports the eight bytes
+as `player_name_hex` (`79736f70776e6162` for this name), avoiding arbitrary binary
+or legacy-encoded text in JSON. Historical selected replay bytes remain unchanged.
+
+Use `--require-all-captures 1 --target-score DISPLAYED` for the active campaign.
+The report separates game completion, capture coverage, exported replay and
+`objective_met`. Exit3 means capture failure; exit5 means a complete qualifying
+NMNB/capture run below the explicit score target. Such below-target replays may
+be exported for Native progress, but do not pass the retail-playback gate.
+
+## Selected Native progress replays
+
+The owner selected both October26 Native progress files for publication. They
+retain the original writer's exact bytes, player name `ysopwnab`, proper
+non-practice entry and SampledGameplay. No prefix repair is used. Both have
+exact fresh41-word terminal agreement and natural original-writer replay with
+zero death/bomb-input rows, matching score and all eligible captures.
+
+| Field | Extra | Lunatic4A→FinalB |
+| --- | --- | --- |
+| Replay | [Extra2,589,417,330](../reports/native/replays/extra-native-nmnb-2589417330-seed10025.rpy) | [Story3,890,487,560](../reports/native/replays/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy) |
+| Displayed / stored score |2,589,417,330 /258941733 |3,890,487,560 /389048756 |
+| Captures |14/14 |37/37 |
+| Initial stage / difficulty / shot / seed |8 /4 /1 /10025 |0 /3 /1 /40755 |
+| Prior FinalA clear |false |true |
+| Owner updates / solve seconds |69381 /448.547 |119637 /479.403 |
+| Replay bytes |26995 |35865 |
+| Replay SHA-256 |`5fb88138ce1a301b9695f1b3ebff2039fb36eb046242bbff7c7a590c6de76898` |`6b9bb1a5158946194c336240b2f4209cdf407e298e62cfc1386e0790fb3e9ce4` |
+| Natural calculation rows |69377 |119724 |
+| Natural25-field row SHA-256 |`eb25c17721fe088bca05e9bfe6a4d2ceb93684173538f92aa2caa4a481223d56` |`903b45fb0945a89ddde66c198ddd4058c738b9412669db0b9f2e5a9fe1fe98bd` |
+
+The common profile uses score-harvest, held/baseline recovery,500ms total/60ms
+proposal, priced collection/upper-stage positioning and collection/human bias5.
+Extra uses H256/publication128 and pacing1.5*HP/DPS+240. Story uses
+H128/publication64 without ordinary pacing. Both retain the original lead8;
+these are offline compute profiles. The producers are main parent `d434e7e`
+plus this Native replay-name/objective change. Frozen solver SHA-256:
+`f03447bad8b1699d483be000c628bdbedffce094995537207583235257250ada`;
+source patch SHA-256:
+`c5760b747bc4d33b15c42ec78c4669b80817ea216de8571b5449c534ae1ad4e4`.
+Fresh follower SHA-256:
+`8c591082ee7d9623c133e26af4af91f80034ae52a5af273226dedf96cda4789b`;
+checker SHA-256:
+`326e24173f55613a8ac782f93c222124b2557d112d2bb12d5f943fa96a7bea92`.
+The DAT and1.00d export target are the same as the v15 section below.
+
+Complete local manifests, tapes, reports and rows remain under
+`reports/local/native-score-offline-20261026/{extra-native-baseline-v1,story-native-price-v1}/`.
+Only the two selected replay files are newly published. Both are below the human
+score target, so retail Wine playback waits. Reproduce natural verification:
+
+```sh
+mkdir -p reports/local/native-progress-check
+build-extra-live/th08_replay_check game_data_donottrack/th08.dat \
+  reports/native/replays/extra-native-nmnb-2589417330-seed10025.rpy \
+  reports/local/native-progress-check/extra.rows \
+  --score-audit reports/local/native-progress-check/extra-audit.json \
+  --require-all-captures
+build-extra-live/th08_replay_check game_data_donottrack/th08.dat \
+  reports/native/replays/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy \
+  reports/local/native-progress-check/story.rows \
+  --score-audit reports/local/native-progress-check/story-audit.json \
+  --require-all-captures
+```
+
+For fresh story tape following, add `--prior-final-a-clear 1` as well as
+`--stage 1 --story 1 --difficulty 3 --shot 1 --seed 40755` and the sampled input
+profile. Omitting this history follows6A instead of the producer's6B. The first
+incorrect verification is retained locally; the corrected configuration agrees.
+
+This Native-first progress passes the normal Release Native/DAT suite56/56
+in970.10s, core36/36 in8.37s and focused writer/name/capture checks2/2 in39.85s.
+
 ## Selected Extra score replay
 
 The owner-selected [highest Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)

@@ -14,8 +14,13 @@ foreach(controls IN ITEMS "--publish-horizon;129" "--lead-updates;128"
     message(FATAL_ERROR "Unsafe live controls were not rejected before owner wait: ${rejected} ${error}")
   endif()
 endforeach()
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 1 0 1
+  --replay-name ysopwnable RESULT_VARIABLE rejected ERROR_VARIABLE error TIMEOUT 3)
+if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_replay_name_requires")
+  message(FATAL_ERROR "Oversized name could overwrite the retail replay mode: ${rejected} ${error}")
+endif()
 execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 70000 0 180
-  --collect-items 1 --aim-boss 1
+  --collect-items 1 --aim-boss 1 --require-all-captures 1 --target-score 1
   RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 200)
 if(NOT result STREQUAL "0")
   message(FATAL_ERROR "Complete style scene failed: ${result} ${stdout} ${stderr}")
@@ -25,6 +30,10 @@ if(NOT original MATCHES "\"collect_items\":true" OR
    NOT original MATCHES "\"aim_boss\":true" OR
    NOT original MATCHES "\"score_goal_revision\":1")
   message(FATAL_ERROR "Score experiment did not record its independent controls: ${original}")
+endif()
+if(NOT original MATCHES "\"replay_name\":\"ysopwnab\"" OR
+   NOT original MATCHES "\"objective_met\":true")
+  message(FATAL_ERROR "Qualified Native objective or owner replay identity missing: ${original}")
 endif()
 file(READ "${WORK}/score-audit.json" audit)
 foreach(pair IN ITEMS "complete:true" "nmnb:true" "expected_unique:4" "captured_unique:4"
@@ -56,6 +65,9 @@ execute_process(COMMAND "${CHECKER}" "${DAT}" "${WORK}/native.rpy" "${WORK}/natu
 if(NOT result STREQUAL "0" OR NOT replay MATCHES "\"natural\":true" OR
    NOT replay MATCHES "\"death_rows\":0" OR NOT replay MATCHES "\"bomb_input_rows\":0")
   message(FATAL_ERROR "Natural style replay/captures failed: ${result} ${replay} ${stderr}")
+endif()
+if(NOT replay MATCHES "\"player_name_hex\":\"79736f70776e6162\"")
+  message(FATAL_ERROR "Retail-format player name did not preserve the selected eight bytes: ${replay}")
 endif()
 string(REGEX MATCH "\"score_raw\":([0-9]+)" unused "${original}")
 set(score "${CMAKE_MATCH_1}")

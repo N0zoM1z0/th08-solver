@@ -195,7 +195,8 @@ int run(int argc, char **argv) {
             "[--search-budget-ms VALUE] [--priced-collection 0|1] "
             "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
             "[--capture-factor VALUE] [--capture-padding UPDATES] [--hit-income 0|1] "
-            "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture]");
+            "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture] "
+            "[--replay-name NAME] [--require-all-captures 0|1] [--target-score DISPLAYED]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -228,6 +229,10 @@ int run(int argc, char **argv) {
     bool hit_income_override = false;
     bool recovery_style_override = false, recovery_fire_override = false;
     std::string recovery_style = "baseline", recovery_fire = "preserve";
+    std::string replay_name = "ysopwnab";
+    bool name_override = false, captures_override = false, target_override = false;
+    bool require_captures = false;
+    std::uint64_t target_score = 0;
     unsigned budget_ms = 110;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
@@ -321,6 +326,25 @@ int run(int argc, char **argv) {
             if (recovery_fire != "preserve" && recovery_fire != "capture")
                 throw std::runtime_error("invalid_native_recovery_fire");
             recovery_fire_override = true;
+        } else if (key == "--replay-name" && !name_override) {
+            replay_name = argv[i + 1];
+            if (replay_name.empty() || replay_name.size() > 8 ||
+                replay_name.find_first_not_of(
+                    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-") !=
+                    std::string::npos)
+                throw std::runtime_error(
+                    "native_replay_name_requires_1_to_8_ascii_identifier_bytes");
+            name_override = true;
+        } else if (key == "--require-all-captures" && !captures_override) {
+            require_captures = number(argv[i + 1], 1);
+            captures_override = true;
+        } else if (key == "--target-score" && !target_override) {
+            const std::string text = argv[i + 1];
+            std::size_t used = 0;
+            target_score = std::stoull(text, &used);
+            if (used != text.size() || target_score > 9999999990ULL)
+                throw std::runtime_error("invalid_native_displayed_score_target");
+            target_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
@@ -456,12 +480,14 @@ int run(int argc, char **argv) {
     audit.close();
     if (!tape || !audit)
         throw std::runtime_error("native_style_output_failed");
-    if (outcome == "complete") {
+    const bool export_eligible = outcome == "complete" && (!require_captures || captures);
+    const bool objective_met = export_eligible && session.state().score * 10ULL > target_score;
+    if (export_eligible) {
         const auto child = fork();
         if (child < 0)
             throw std::runtime_error("native_style_writer_fork_failed");
         if (!child) {
-            th08::ReplayManager::SaveReplay("native.rpy", "STYLE   ");
+            th08::ReplayManager::SaveReplay("native.rpy", replay_name.c_str());
             _exit(fs::exists("native.rpy") ? 0 : 1);
         }
         if (!th08::plan::wait_for_child(child).exited() || !fs::exists("native.rpy"))
@@ -471,6 +497,11 @@ int run(int argc, char **argv) {
     report << "{\"schema_version\":1,\"evidence\":\"synchronous-native-style-experiment\","
               "\"online_fps_evidence\":false,\"style_revision\":1,\"style\":\""
            << style << "\",\"outcome\":\"" << outcome << "\",\"stage\":" << config.stage
+           << ",\"replay_name\":\"" << replay_name << '"'
+           << ",\"require_all_captures\":" << (require_captures ? "true" : "false")
+           << ",\"target_score_displayed\":" << target_score
+           << ",\"objective_met\":" << (objective_met ? "true" : "false")
+           << ",\"replay_exported\":" << (export_eligible ? "true" : "false")
            << ",\"score_goal_revision\":" << (policy.needs_scoring_memory() ? 1 : 0)
            << ",\"collect_items\":" << (profile.scoring_collection ? "true" : "false")
            << ",\"aim_boss\":" << (profile.scoring_aim ? "true" : "false")
@@ -535,7 +566,11 @@ int run(int argc, char **argv) {
     if (!report)
         throw std::runtime_error("native_style_report_failed");
     std::cout << outcome << '\n';
-    return outcome == "complete" ? 0 : 2;
+    if (outcome != "complete")
+        return 2;
+    if (require_captures && !captures)
+        return 3;
+    return target_override && !objective_met ? 5 : 0;
 }
 } // namespace
 int main(int argc, char **argv) {

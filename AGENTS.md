@@ -4,6 +4,11 @@ Read README.md, docs/STATUS.md and the affected interfaces before changing code.
 Follow the owner's latest scope. The owner authorized a tracked native headless TH08
 import and solver experiments over complete real-data scenes. Keep upstream code in
 this repository, not an ignored checkout, submodule or separate feature branch.
+The October 26 scope is Native-first scoring for Extra and the complete Magic
+Team Lunatic 4A-to-Final-B route. Require NMNB, every eligible capture and a score
+above the corresponding human reference before Wine retail replay validation.
+Online MPC and live Wine solving are paused. New scoring replay names use the
+owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
 
 ## Solver-first scope
 
@@ -79,6 +84,11 @@ this repository, not an ignored checkout, submodule or separate feature branch.
 - The October 26 handoff also authorizes the selected highest-scoring Native Extra
   replay `reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy`.
   Preserve its exact bytes and provenance; other new experiment artifacts stay local
+- The Native-first continuation also authorizes the selected complete progress
+  replays `extra-native-nmnb-2589417330-seed10025.rpy` and
+  `story-native-nmnb-4a-finalb-3890487560-seed40755.rpy` under
+  `reports/native/replays/`. Preserve exact bytes and provenance; failed tapes,
+  experiment reports and videos remain local
 - The owner also authorizes selected compact learned policy/risk snapshots under
   `models/`. Preserve exact weights/tables with schema, hashes, provenance and
   training/evaluation limitations. This exception does not include raw datasets,

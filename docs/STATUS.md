@@ -2,11 +2,13 @@
 
 Updated 2026-10-26, continuing from handoff `b58aad0`.
 The Extra target of **2,500,000,000 displayed points, NMNB and 14/14 captures**
-is achieved by a frozen Native prototype. The active phase targets actual Wine
-EXE scoring, complete NMNB/14-of-14 and then a higher score than the human Magic
-Team reference. Native experiments and source probes run while Wine plays.
-New story/4A and 4B work is
-paused. [Issue11](https://github.com/N0zoM1z0/th08-solver/issues/11) retains the
+is achieved by a frozen Native prototype. The owner now requests **Native-only
+score exploration**, followed by Wine retail **replay playback** only after the
+export meets NMNB, all captures and the human-reference score target. Online MPC
+and live Wine solving are paused. Extra requires14/14 and >3,021,639,920; the
+complete Magic Team Lunatic4A→FinalB route requires37/37 and >6,168,365,790.
+New replay names are `ysopwnab`. Stage4B remains outside this route.
+[Issue11](https://github.com/N0zoM1z0/th08-solver/issues/11) retains the
 source investigation and experiment discussion.
 
 ## Verified results
@@ -19,14 +21,16 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
-| **Highest Native, frozen v15** | **2,564,311,730 /14 of 14** | Seed 19732, complete from Extra entry; no prefix repair |
+| **Current Native Extra** | **2,589,417,330 /14 of 14** | Seed10025, complete from entry,500ms offline search; selected progress replay |
+| **Current Native Lunatic4A→FinalB** | **3,890,487,560 /37 of 37** | Seed40755, complete story from entry,500ms offline search; selected progress replay |
+| Selected Native v15 snapshot | 2,564,311,730 /14 of 14 | Seed19732, frozen prototype; original bytes preserved |
 | Main price/staging controls | 2,453,582,120 /14 of 14 | Seed 10025, complete from entry, reserve 1.2/120 |
 | Main successful prefix + expert recovery | 2,464,473,300 /14 of 14 | Seed 19732, separately charged offline checkpoint continuation |
 | Main rerun with v15-style settings | 1,683,795,810 partial /13 of 14 | Seed 19732, final-card hit at 65137; failed NMNB |
 | Actual online Extra PB | 1,166,969,620 /14 of 14 | wine-35, real seed 19732, frozen H64 client |
 | Actual online Lunatic 4A→FinalB | 2,189,965,070 /33 of 37 | Recorded story, real seed 40755; missing captures remain known |
 
-The [selected highest replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
+The [selected v15 replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
 is 26949 bytes, SHA-256
 `2bf469a6cbe59732f53b2a7b2ef208d3b450fc272e4c9c172eff244502b0c2d4`.
 It records the frozen v15 prototype, not a promise that current-main searches
@@ -35,9 +39,64 @@ owns its exact input/binary provenance, verification commands and retail limits.
 
 The human reference is the 2026-10-25 ASL snapshot: 3,021,639,920, Magic Team,
 14/14, no misses and **one bomb**. Its replay reproduces that score exactly in
-Native. The selected NMNB score is 84.86% of it; the reference is not a matching
+Native. The historical v15 NMNB score is84.86% of it; the reference is not a matching
 NMNB upper bound. Human inputs were measured, never copied into our controller.
 The source links and dated scoreboard snapshot are in [README](../README.md).
+
+## Native score-first progress
+
+The two new selected replays are complete from entry, with exact fresh41-word
+terminal agreement, natural replay NMNB/all-capture checks and the selected name
+`ysopwnab`. [Validation](VALIDATION.md#selected-native-progress-replays) owns their
+identities and commands. Both remain below their explicit human-reference target;
+exit5 and `objective_met:false` distinguish valid progress from meeting that goal.
+No retail Wine playback is started for them yet.
+
+The common profile is Magic Team, SampledGameplay, score-harvest, held/baseline
+recovery,500ms total/60ms proposal, priced collection, upper-stage positioning,
+collection/human preferences5, original8-update lead. Extra seed10025 uses
+H256/publication128 and pacing with1.5/240 reserve. Story seed40755 uses
+H128/publication64 without ordinary pacing, prior-Final-A-clear=true, ending at7.
+These are named combined profiles, not component ablations or new holdouts.
+
+| Run | Owner updates / solve seconds | Branch+proposal updates | Rejected deaths / timeouts / overruns |
+| --- | --- | --- | --- |
+| Extra native baseline v1 |69381 /448.547 |2239860+120 |277 /8 /8 |
+| Story native price v1 |119637 /479.403 |1975206+2016 |538 /0 /0 |
+
+Extra finishes with984 points/86136 orbs. Story finishes with1265 points,
+100100 collected stage-orb inventory total, PIV800510 and clock5; all37 captures.
+Its stage point counts are61/147/299/326/202/230. The first story fresh-follow
+invocation omitted prior-Final-A history and entered6A; it is retained as a
+verification configuration failure. The corrected true-history follow agrees
+exactly. Reproduction must preserve that history, not only seed and inputs.
+
+The reviewed local research package is
+`preparations/10.26-gpt/TH08_Scoring_Research_2026-10-26.zip`, SHA-256
+`93ff9119decc6e0132e894a06b078ef5c1c829aa0cc782577e04fbfe77577b40`.
+All141 manifest entries verify; originals and the full package remain local.
+Its source references, instrumented ledgers and negative controls support:
+
+- Extra v15 generated1011 large points and collected1010. The missing production
+  and early PIV schedule matter more than chasing an assumed71 dropped items.
+- The historical online story generated1254 large points and collected623;
+  collection/price is a different bottleneck from Extra. The new Native result
+  already changes that baseline; old static losses are not additional gains.
+- `AddBonusProgress` cap, counter and freeze gates invalidate flat8000 valuation.
+  Capture-born items and pending payout must not be counted before they exist or
+  counted again after cash settlement. Ring-slot failures are real and cannot be
+  repaired by changing the game's allocator.
+- First-safe return and full nominal-tail reuse can postpone fresh economic
+  decisions for nearly an entire horizon. The next Native change should keep a
+  certified incumbent and compare a few newly verified economic alternatives.
+  Longer offline budgets and checkpoint continuations are available; their work
+  remains charged and final tapes must execute freshly from original entry.
+- The new story's five final timeout cards have1642 physical graze events, all
+  extreme-human and none extreme-youkai. Check whether the economic human prior
+  suppresses the explicit survival-form goal before extending riskier farming.
+
+Package synthetic formula examples are not integrated code or verified gains.
+The active ledger is234/320 at this checkpoint; concurrency remains at most4.
 
 ## What produced the gain
 
@@ -164,7 +223,7 @@ and zen H64 fail 13/14, with 15.334 s/13.857 s including reconstruction,
 27968+76 /24729+77 branch/proposal work and 8 timeouts/overruns each. The first
 changed input is 61792. The original 391.341 s failed run stays charged.
 
-### Actual Wine and offline-ahead evidence
+### Historical Wine and offline-ahead evidence — live solving paused
 
 The first live port of the high-score controls is wine-64, original real seed
 47691. Pacing, price clearance/staging and5-point economic form preferences use
@@ -246,7 +305,8 @@ independent for later ablations; no new ablation matrix is requested now.
 | --- | --- | --- |
 | Final-card reliability: main seed 19732 fails; expert checkpoint tail succeeds | Freeze the failing frontier and compare a bounded generic neutral/held/move-then-stop recovery portfolio, with explicit observer warming and work accounting. Integrate only if complete episodes improve | Complete from entry on old and predeclared fresh seeds, exact fresh execution and natural replay; retain the original failures |
 | Prototype/main and same-seed reruns diverge | Bind source/binary/options, log the first differing candidate/certificate, timeouts, tie state and action. Test whether a deterministic work cap is useful as a separately named profile; do not silently replace time budgets | Explain observed divergence with evidence; preserve current ordering, budgets and failure meaning for baseline |
-| High-score controls now run live; wine-64 meets publication lead but fails a H256 trap | Continue explicit shorter verification/publication profiles and bounded generic recovery. Preserve source/binary/option identities and account for every failed run | Original-RNG actual Wine, forward-only inputs, no owner wait/rewind, complete NMNB/14/14, matching exported replay; report p99/max periods and planning/queue misses |
+| Native first-safe selection and stale economic tails | Preserve a certified incumbent; compare a few fresh same-boundary Native candidates with cash plus unsettled economic value, and trigger refresh on relevant events | Higher complete NMNB/all-capture terminal score; charge every added branch and reject observed capture failures |
+| Native scores remain below the human references | Extra: early production/chain termination and PIV timing. Story: supply collection/price and form scheduling. Use reviewed source facts and new Native baselines | >3,021,639,920 Extra and >6,168,365,790 full route, followed by successful retail replay playback |
 | Orb/bonus opportunity remains below ASL | Use actual per-spell income and source cap/decay state to choose whether to extend, reposition, then capture. Include point/PIV/clear rewards rather than optimizing raw graze | Higher complete terminal score without capture loss; charge every longer attempt and retry |
 | Pickup loss: v15 still has 49 low-height and 33 non-doubled items | Measure transit pickups, gauge convergence and missed drops. Test geometry-aware staging/return paths, preserving actual carried shots and item state | Actual point income and complete score improve, not merely a static price ceiling |
 | Suppressed-HP hit income is real; additional policy profit remains unproven | Read-only selected Extra follow traces1164 spawned/collected time orbs from nonboss reduction windows and663 from nondamageable actors, preserving all41 terminal words and83160-orb accounting. Test opt-in current reduction-target aiming, preserving old failures | Incremental collected income and complete score, including collection prices, capture-speed/bonus and added search costs; existing pickups alone are not additional profit |
@@ -270,7 +330,8 @@ independent for later ablations; no new ablation matrix is requested now.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
    (215/320 after handoff checks); do not reset the ledger to hide earlier attempts.
-4. Require complete actual Wine scoring results alongside Native development.
+4. Optimize Native complete trajectories first. Require qualified exported
+   replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not
    relink while a binary-identity regression is running. Publish only tested code
    and maintained prose on main, using the repository's English commit prefix.

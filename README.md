@@ -3,25 +3,25 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
-> **Native Extra score milestone: 2,564,311,730, NMNB and 14/14 captures.**
-> [Highest Extra replay](reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy) · [Story replay](reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
+> **Native NMNB scores: Extra 2,589,417,330 (14/14); Lunatic story 3,890,487,560 (37/37).**
+> [Extra replay](reports/native/replays/extra-native-nmnb-2589417330-seed10025.rpy) · [Native story replay](reports/native/replays/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
-C++17 Touhou 08 solver. A Native shadow follows actual Wine inputs, forks game
-states with their own RNG, and returns verified future inputs while Wine plays.
-Scoring uses source-directed attack timing, item collection and form control.
+C++17 Touhou 08 solver. Current work searches complete Native trajectories for
+NMNB, all captures and higher scores, then exports `.rpy` files for retail replay
+validation. Scoring uses source attack timing, item collection and form control.
 [How it works](docs/PLANNER.md#true-rng-shadow-runtime).
 
 | Marisa/Alice result | Our NMNB score | Human reference¹ | Captures |
 | --- | ---: | ---: | ---: |
 | Online Lunatic 4A → Final B | 2,189,965,070 | Alan: 6,168,365,790 | 33/37 |
 | Online Extra | 1,166,969,620 | ASL: 3,021,639,920 | 14/14 |
-| **Native Extra, frozen prototype** | **2,564,311,730** | ASL: 3,021,639,920 | **14/14** |
+| **Native Extra** | **2,589,417,330** | ASL: 3,021,639,920 | **14/14** |
+| **Native Lunatic 4A → Final B** | **3,890,487,560** | Alan: 6,168,365,790 | **37/37** |
 
-The Native best has fresh execution and natural replay agreement. Main's complete
-new-seed result is 2,453,582,120; final-spell reliability and online scoring remain
-open. The Native best is 84.86% of ASL's reference.
+Both Native progress replays have fresh execution and natural replay agreement;
+their player name is `ysopwnab`. Native scoring continues toward the human references.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;
 ASL's replay uses one bomb. [Status](docs/STATUS.md) owns the
 results, failed trials, costs, unresolved problems and proposed next steps.

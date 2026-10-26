@@ -1,5 +1,10 @@
 # Native planner and experiment protocol
 
+The active owner workflow is offline Native scoring for Extra and complete
+Lunatic4A→FinalB, exporting `ysopwnab` replays. Retail Wine playback follows a
+qualified NMNB/all-capture score; online MPC is paused. Historical live protocols
+below remain component evidence. [Status](STATUS.md) owns the current targets.
+
 The target is continuous No Miss No Bomb runs for all twelve team/solo shots,
 four standard difficulties and both final routes, plus Extra, with input tapes
 and real `.rpy` files. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
