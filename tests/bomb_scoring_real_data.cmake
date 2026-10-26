@@ -1,0 +1,103 @@
+cmake_minimum_required(VERSION 3.16)
+file(REMOVE_RECURSE "${WORK}")
+file(MAKE_DIRECTORY "${WORK}")
+# Use our fixed Native regression scene. Inject X into an actual ordinary
+# spell, then let Native planning own every later state and input.
+file(READ "${INCUMBENT}/score-audit.json" original_audit)
+string(REGEX MATCH "\"start_update\":([0-9]+)" unused "${original_audit}")
+math(EXPR bomb_index "${CMAKE_MATCH_1} + 64")
+math(EXPR prefix_count "${bomb_index} + 1")
+file(STRINGS "${INCUMBENT}/plan.actions" inputs)
+list(GET inputs ${bomb_index} input)
+math(EXPR input "${input} | 2")
+list(REMOVE_AT inputs ${bomb_index})
+list(INSERT inputs ${bomb_index} ${input})
+list(SUBLIST inputs 0 ${prefix_count} prefix)
+string(REPLACE ";" "\n" prefix "${prefix}")
+file(WRITE "${WORK}/bomb-prefix.actions" "${prefix}\n")
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}/run" 0 3 1 23035 score 70000 0 100
+  --collect-items 1 --aim-boss 1 --held-recovery 1 --baseline-recovery 1
+  --allow-bombs 1 --require-all-captures 0 --verify-captures 0
+  --prefix-actions "${WORK}/bomb-prefix.actions" --prefix-updates ${prefix_count}
+  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 110)
+if(NOT result STREQUAL "0")
+  message(FATAL_ERROR "No-miss bomb scene failed: ${result} ${stdout} ${stderr}")
+endif()
+file(READ "${WORK}/run/result.json" planned)
+file(READ "${WORK}/run/score-audit.json" audit)
+if(NOT planned MATCHES "\"allow_bombs\":true" OR
+   NOT planned MATCHES "\"require_all_captures\":false" OR
+   NOT planned MATCHES "\"no_miss\":true" OR
+   NOT audit MATCHES "\"bombs_used\":[1-9][0-9]*" OR
+   NOT audit MATCHES "\"outcome\":\"invalidated\"" OR
+   NOT audit MATCHES "\"all_visited_stage_spells_captured\":false")
+  message(FATAL_ERROR "Bomb permission/capture loss was not real source behavior: ${planned} ${audit}")
+endif()
+execute_process(COMMAND "${FOLLOWER}" --dat "${DAT}" --actions "${WORK}/run/plan.actions"
+  --output "${WORK}/fresh.json" --stage 1 --difficulty 3 --shot 1 --seed 23035
+  --story 0 --input-profile sampled-gameplay --frames 70000 --allow-bombs 1
+  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 25)
+file(READ "${WORK}/fresh.json" fresh)
+string(REGEX MATCH [=["terminal_projection":\[[0-9,]+\]]=] planned_end "${planned}")
+string(REGEX MATCH [=["terminal_projection":\[[0-9,]+\]]=] fresh_end "${fresh}")
+if(NOT result STREQUAL "0" OR NOT fresh MATCHES "\"outcome\":\"complete\"" OR
+   planned_end STREQUAL "" OR NOT planned_end STREQUAL fresh_end)
+  message(FATAL_ERROR "Bomb tape failed fresh exact execution: ${result} ${stdout} ${stderr}")
+endif()
+execute_process(COMMAND "${CHECKER}" "${DAT}" "${WORK}/run/native.rpy" "${WORK}/natural.rows"
+  --score-audit "${WORK}/natural-audit.json"
+  RESULT_VARIABLE result OUTPUT_VARIABLE natural ERROR_VARIABLE stderr TIMEOUT 25)
+file(READ "${WORK}/natural-audit.json" natural_audit)
+string(REGEX MATCH "\"score_raw\":([0-9]+)" unused "${planned}")
+set(score "${CMAKE_MATCH_1}")
+string(REGEX MATCH "\"bombs_used\":([0-9]+)" unused "${audit}")
+set(bombs "${CMAKE_MATCH_1}")
+string(REGEX MATCH "\"captured_unique\":([0-9]+)" unused "${audit}")
+set(captures "${CMAKE_MATCH_1}")
+if(NOT result STREQUAL "0" OR NOT natural MATCHES "\"natural\":true" OR
+   NOT natural MATCHES "\"endScore\":${score}([,}]|$)" OR
+   NOT natural MATCHES "\"death_rows\":0" OR
+   NOT natural MATCHES "\"player_name_hex\":\"79736f70776e6162\"" OR
+   NOT natural_audit MATCHES "\"bombs_used\":${bombs}([,}]|$)" OR
+   NOT natural_audit MATCHES "\"captured_unique\":${captures}([,}]|$)")
+  message(FATAL_ERROR "Bomb replay score/count/captures disagree: ${natural} ${natural_audit}")
+endif()
+# Both constraints are independent, reversible CLI choices. Requiring captures
+# rejects the same complete no-miss bomb tape; forbidding X rejects its inputs.
+foreach(goal IN ITEMS relaxed captures no-bombs)
+  set(allow 1)
+  set(require 0)
+  if(goal STREQUAL "captures")
+    set(require 1)
+  elseif(goal STREQUAL "no-bombs")
+    set(allow 0)
+  endif()
+  execute_process(COMMAND "${REFINER}" "${DAT}" "${WORK}/${goal}" 0 3 1 23035 0 0
+    "${WORK}/run/plan.actions" --trials 0 --allow-bombs ${allow}
+    --require-all-captures ${require}
+    RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 15)
+  if(goal STREQUAL "relaxed")
+    if(NOT result STREQUAL "0")
+      message(FATAL_ERROR "Relaxed goal rejected complete bomb incumbent: ${stdout} ${stderr}")
+    endif()
+  elseif(goal STREQUAL "captures")
+    if(NOT result STREQUAL "2" OR EXISTS "${WORK}/${goal}/native.rpy")
+      message(FATAL_ERROR "Strict capture goal accepted lost capture: ${stdout} ${stderr}")
+    endif()
+  elseif(NOT result STREQUAL "1" OR NOT stderr MATCHES "NMNB input bits")
+    message(FATAL_ERROR "Default NMNB input guard was weakened: ${result} ${stderr}")
+  endif()
+endforeach()
+# Dying can precede the ordinary death counter increment. A failed owner must
+# not report no_miss=true simply because deaths is still zero on that update.
+string(REPEAT "5\n" 25000 held)
+file(WRITE "${WORK}/held.actions" "${held}")
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}/failed" 0 3 1 23035 score 30000 0 15
+  --allow-bombs 0 --require-all-captures 0
+  --prefix-actions "${WORK}/held.actions" --prefix-updates 25000
+  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 20)
+file(READ "${WORK}/failed/result.json" failed)
+if(NOT result STREQUAL "2" OR NOT failed MATCHES "\"outcome\":\"nmnb_failure\"" OR
+   NOT failed MATCHES "\"no_miss\":false" OR EXISTS "${WORK}/failed/native.rpy")
+  message(FATAL_ERROR "Dying owner falsely reported a no-miss result: ${result} ${failed} ${stderr}")
+endif()

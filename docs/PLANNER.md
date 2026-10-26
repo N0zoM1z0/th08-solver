@@ -348,6 +348,17 @@ their rejected futures and native/proposal costs in the ordinary totals.
 
 ### Audit and publication contracts
 
+Offline score experiments can independently permit bombs and require captures.
+`--allow-bombs 1` admits X only in the explicitly configured Native owner,
+rollout, buffer and fresh follower; default transports retain their NMNB input
+mask. No-miss failure checks stay mandatory. `--require-all-captures 0` allows
+capture loss while the source audit still records the full catalogue/outcomes.
+The complete-tape refiner can test bomb windows against a complete terminal;
+the planner's bomb proposals are a bounded recovery family. Native source owns
+all inventory, bomb timing and scoring effects. An ignored X input is not an
+actual bomb use. [Validation](VALIDATION.md#bomb-and-capture-constraints) owns CLI
+controls and verification; strict historical records retain their identities.
+
 Per-spell score audits snapshot collected orbs, point count/value and score after
 the preceding capture payout is settled, then again at the source end hook.
 The frozen story regression checks fast80-update transitions and the unchanged

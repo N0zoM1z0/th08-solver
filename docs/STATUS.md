@@ -8,10 +8,14 @@ handoff batch is finished; its artifacts and failures retain their identities.
 
 Current verified Magic Team Native bests are **Extra 2,620,568,090, NMNB 14/14**,
 and **Lunatic 1→2→3→4A→5→Final B: 4,311,260,760, NMNB 37/37**. The next score gates
-remain strictly above 3,021,639,920 and 6,168,365,790 respectively. Optimize Native
-offline first; run retail Wine replay validation after the corresponding export
-meets NMNB, all captures and its human-reference score gate. Online MPC remains
-paused. Stage4B is outside this route. Replay name is exactly `ysopwnab`.
+remain strictly above 3,021,639,920 and 6,168,365,790 respectively. The owner
+subsequently made the constraints independent CLI controls. The latest scope is
+**No Miss, No Bomb, captures optional**; bomb experiments are paused. Preserve
+NMNB/all-capture records separately.
+Optimize Native offline first; retail Wine replay validation waits for a
+complete no-miss result above its human reference under the declared goal.
+Online MPC remains paused. Stage4B is outside this route. Replay name is exactly
+`ysopwnab`.
 
 ## Operational resume contract
 
@@ -24,14 +28,14 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **364/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **389/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
-| Objective | Proper non-practice entry, NMNB,14/14 Extra or37/37 story, then higher actual complete terminal score. Use `--require-all-captures 1 --verify-captures 1` and the recorded target/name |
+| Objective | Proper entry, No Miss, No Bomb, higher complete terminal score. Current trials use `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual bombs (must be zero) and capture outcomes. Restore `--require-all-captures 1 --verify-captures 1` for all captures |
 | Checkpoint | Literal first N inputs from the same owned episode, executed from original entry. N counts Native owner updates, not spell seconds or replay-row line counts. Preserve RNG, bullets, actors, items, latch and observer history |
 | Acceptance | Inspect each `exit.json`, `run/result.json` and `run/score-audit.json`. A driver exit 0 is not a candidate success. Exit 5 may be valid below-target progress; abort/incomplete/failed rollouts never certify |
-| Replay gate | For selected improvements require original-entry fresh exact 41-word terminal agreement and natural original-writer score/NMNB/capture/name agreement. This is execution agreement, not an independent physics oracle |
+| Replay gate | For selected improvements require original-entry fresh exact 41-word terminal agreement and natural original-writer score/no-miss/bomb-count/capture-outcome/name agreement under the declared constraints. This is execution agreement, not an independent physics oracle |
 | Reproducibility | Freeze source, binary, exact args, seed receipt, DAT hash, prefix hash, budget, outcome and all additional costs. Keep stable tie order; label combined profiles and heuristic assumptions |
 | Verification | Release timing; Native CPU excludes I/O. Relevant tests plus normal CTest before code publication. Freeze binaries during CTest; never relink concurrently. Documentation-only cleanup reruns the documentation test |
 | Artifacts | New JSON/CSV/actions/replays stay in ignored `reports/local/`; publish only explicitly selected progress replays with exact provenance. Preparations, raw DAT/EXE/assets, original GIF bundle/generator and videos stay local |
@@ -181,9 +185,9 @@ The complete-route gap starts early: after stage3, Alan/Clio have PIV761140/
 explain the gap. At FinalB entry Alan carries PIV1097240 versus699610; at the
 end he has450 stage points versus310. Our FinalB43756 orbs are already near
 his49944. This prioritizes earlier orb generation and actual point production,
-not only the final five timeout cards. Human inputs remain descriptive evidence,
-not copied controller actions. The game's action-dependent RNG and our all-
-capture constraint prevent treating their timed routes as interchangeable tails.
+not only the final five timeout cards. Human tapes remain descriptive evidence,
+not controller action tables. Action-dependent RNG prevents treating their timed
+routes as interchangeable tails, even under the relaxed capture goal.
 
 Source implications: `Item::CollectTimeOrb` gives cash, PIV through
 `AddTimeOrbs`, and capped `AddBonusProgress(8000)`; the latter also raises
@@ -193,7 +197,90 @@ therefore compare opposite sides of settlement. Ordinary capture orbs also
 fall with remaining time. The existing pacing prior's flat8000/orb is not a
 source valuation once capped, frozen or decaying. A bounded experiment should
 compare selective farming/capture and pending settlement explicitly, then accept
-only better complete NMNB/all-capture score from the fixed retail entry.
+only better complete no-miss score under the declared constraints from the fixed
+retail entry. This insight is not an implemented valuation change.
+
+Tasks373–381 add a read-only `ItemManager` request/spawn/pickup probe for the seven
+reproduced human tapes and both current Native bests. Every probe's complete
+25-word row stream agrees exactly with its stock checker stream. The frozen
+source/binary, CSV, row hashes and resource costs stay in the local research
+directory. Actual large-point income is:
+
+| Tape | Requested / spawned / collected points | Point income | Static same-item price headroom |
+| --- | ---: | ---: | ---: |
+| ASL Extra |1130 /1084 /1081 |1,062,330,020 |0 |
+| yeswill Extra |1129 /1083 /1083 |978,369,580 |1,342,560 |
+| A.War Extra |1081 /1080 /1080 |941,061,780 |9,619,700 |
+| Current Native Extra |1042 /1041 /1015 |825,841,790 |55,681,290 |
+| Alan story |1662 /1662 /1660 |2,698,355,080 |82,610,980 |
+| Clio story |1631 /1631 /1628 |2,636,087,670 |40,710,110 |
+| Mokou Sheep story |1631 /1614 /1611 |2,504,782,800 |71,424,000 |
+| less story |1640 /1640 /1640 |2,335,441,590 |87,518,710 |
+| Current Native story |1368 /1368 /1340 |1,263,269,100 |192,755,140 |
+
+Headroom holds the same collected items and their current PIV fixed; it is not
+an attainable trajectory gain. All1081 ASL pickups are maximum-price extreme-
+human pickups. Alan misses only2 spawned points; our story misses28, but294
+fewer requested points and lower earlier PIV are the larger measured differences.
+Source allocation/bounds failures remain failures; no allocator is changed.
+
+### Parameterized relaxed scoring investigation
+
+The owner requested independent bomb/capture controls, then paused bomb
+experiments because of their additional variables. Current trials retain No
+Miss and No Bomb with captures optional. Both offline tools expose `--allow-bombs 0|1` and
+`--require-all-captures 0|1`. The refiner retains strict defaults; the planner's
+existing capture option and campaign specs remain explicit. Live clients retain
+their default bomb-input rejection. The original seed receipts and NMNB progress
+replays are unchanged.
+
+The human bomb trace makes the comparison more specific: ASL's only X window
+starts at calculation18349, in the post-Keine stage section, outside a spell.
+Alan uses three X windows during card47 at49050/49437/49817. This suggests testing
+stage production and deliberate lost-capture farming as distinct opportunities.
+Input-clock offsets are never transplanted between seeds. New adaptive tests
+inject a declared bomb into our own episode prefix, then replan the entire tail.
+
+Tasks366/367 first tested full-terminal bomb edits without adapting the timed
+tail. Extra tries70 edits:66 die and4 finish with unchanged score and no actual
+bomb activation. Story tries80:74 die and6 finish unchanged with no activation.
+No edit is accepted; incumbents remain2,620,568,090 (0 bombs,14/14) and
+4,311,260,760 (0 bombs,37/37). Costs are10.7873s and46.5016s respectively, with
+full charged branch work in `*-bomb-terminal-refine-v1/run/result.json`. This
+reproduces the timing constraint: inserting a bomb into a successful action tape
+does not supply a safe continuation.
+
+Tasks368/369 are charged setup failures: zero capture-reserve factor is rejected
+by the existing policy's minimum1 guard before any owner update. No gameplay
+result is inferred. Tasks370/371 use supported factor1, zero padding and one
+human-form bomb proposal in our own prefixes (Extra index16274; story index44796,
+within its card47), followed by fresh Native planning. Extra fails at54430,
+card202, after5 actual bombs and7 captures:1,118,686,830 partial score. It costs
+407.046s and489768 branch updates, no rollout timeout. This is not a completed
+score. Story and tasks382/383 were stopped on the owner's scope change; they
+certify no gameplay result. Their charged wall times are731.095s/224.155s/224.062s.
+Tasks382/383 used a named combined profile:
+focused bomb at the same own-prefix boundary, H1024/publication512, factor2/
+padding480 and capture-fire recovery. Tasks384/385 use the original no-bomb
+prefixes, the same conservative profile and optional captures. Extra fails at
+46526/card202,0 bombs,10 captures and1,309,226,090 partial points:379.239s,
+472731 branch+33 proposal updates, no timeout. Task386 returns to the certified
+60879-input Extra prefix and bounded cash comparison. Task387 tests96 longer
+fire-release edits with the full-terminal story oracle; all96 edited tails die,
+so none is accepted. Its retained complete story remains4,311,260,760,0 bombs,
+37/37; cost26.8441s and365012 charged branch updates, no timeout. Relaxing capture
+coverage alone does not repair the action/RNG timing of those edited tails.
+New artifacts stay local.
+
+Focused parameter verification passes3/3 in198.62s, including its incumbent
+fixture. It proves actual source bomb consumption and lost capture, complete
+no-miss execution, fresh exact41-word agreement, natural replay score/bomb/
+capture agreement, and independent rejection when either constraint is restored.
+The normal Release Native/DAT suite passes60/60 in1133.30s (task372). A subsequent
+report-only correction also rejects a dying owner before its death counter has
+incremented. Final focused verification passes3/3 in26.15s (task388), reusing the
+completed normal suite's immutable incumbent fixture. It covers that failure,
+the actual bomb/capture scene, default input rejection and documentation.
 
 ## Native score-first evidence (chronological)
 
@@ -857,14 +944,15 @@ continuation feasibility, not a live handoff or permission to rewind the owner.
 
 ## Unresolved problems and proposed next work
 
-No next experiment is running or authorized by the handoff itself. After the
-owner resumes, retain NMNB/all captures and accept only higher complete score.
+The handoff itself authorized no new work; the owner has now resumed exploration.
+Current trials require No Miss and No Bomb, allow missing captures, and accept
+only higher complete score. Restore all captures explicitly when requested.
 Keep independent options for later ablations; the owner has not requested an
 ablation matrix now. The following are proposals, not verified gains.
 
 | Current problem / evidence | Next bounded investigation | Acceptance |
 | --- | --- | --- |
-| Both human-score gates remain unmet | Extra first: actual item production, parent-chain termination, form/pickup price and orb/bonus timing; retain story4.311B while studying FinalB | Higher complete NMNB14/14 or37/37 score, exact fresh/natural verification; Wine playback only after the target |
+| Both human-score gates remain unmet | Extra first: actual item production, parent-chain termination, form/pickup price and orb/bonus timing; retain story4.311B while studying FinalB | Higher complete No Miss/No Bomb score under the declared capture goal, exact fresh/natural verification; Wine playback only after the target |
 | Endpoint cash can prefer locally profitable inputs with worse full score | Value real pending capture rewards, source bonus cap/decay and remaining actual point opportunities. Fixed600*PIV fails both episodes; do not treat an assumed future item count as guaranteed | Whole-terminal gain with all extra rollout/retry costs charged |
 | More Native horizon can fail before reaching a known-safe existing tail | Freshly certify the literal incumbent suffix at a checkpoint, then compare economic alternatives. After edits, re-execute that suffix in the new branch; never assume unchanged RNG or safety | Retain a certified incumbent; incomplete/failed futures remain proposals only |
 | Familiar-chain value is nonlinear; broad focus loses score | Read current parent/child/chain state and projectile/form timing. Preserve source hit income and human pickup price; test selective mother targeting or maturation only with declared assumptions | Better actual collected income and complete score; distinguish live chain length from linkedChildCount |

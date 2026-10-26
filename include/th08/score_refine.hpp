@@ -2,13 +2,15 @@
 #include "th08/shadow_rollout.hpp"
 
 namespace th08::shadow {
-enum class ScoreEdit { Focus, Human, Fire, ReleaseFire };
-enum class ScoreEditFamily { Form, Fire };
+enum class ScoreEdit { Focus, Human, Fire, ReleaseFire, BombHuman, BombFocus };
+enum class ScoreEditFamily { Form, Fire, Bomb };
 const char *score_edit_name(ScoreEdit);
 struct ScoreRefineOptions {
     ScoreEditFamily family = ScoreEditFamily::Form;
     unsigned trials = 96, window = 240, interval = 1800;
     unsigned timeout_ms = 30000, wall_seconds = 1200;
+    bool allow_bombs = false, require_all_captures = true;
+    unsigned first_update = 64;
 };
 struct ScoreRefineTrial {
     std::size_t first = 0, window = 0;
@@ -26,8 +28,9 @@ struct ScoreRefineResult {
 };
 // Entry-session coordinate refinement of our own complete Native input tape.
 // The caller enables the source audit before constructing the session. Only
-// unexecuted inputs change; each accepted suffix must finish NMNB, capture the
-// identical source spell set, keep the final route and improve actual cash.
+// unexecuted inputs change; each accepted suffix must finish without a miss,
+// satisfy the declared bomb/capture goals, keep the final route and improve
+// actual cash. Defaults retain NMNB and the identical captured source spell set.
 // Trials are sequential forks. Budget exhaustion keeps executing the certified
 // incumbent, rather than treating a partial candidate as progress.
 ScoreRefineResult refine_score_tape(headless::Session &, std::vector<std::uint16_t> &inputs,

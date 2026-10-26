@@ -33,6 +33,7 @@ struct SearchOptions {
     bool capture_recovery = false;
     unsigned lead = 8, nominal_warm_updates = 0;
     unsigned economic_proposals = 0;
+    bool allow_bombs = false;
 };
 struct Work {
     std::uint64_t searches = 0, candidates = 0, branch_updates = 0, proposal_updates = 0;
@@ -218,6 +219,25 @@ s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
     evaluate(prefer_held);
     if (held_recovery && !selected.certifies())
         evaluate(!prefer_held);
+    if (options.allow_bombs && !selected.certifies()) {
+        // X is a one-update proposal after the immutable lead. The original
+        // runtime decides inventory, lockouts, capture loss and invulnerability.
+        // It never turns an incomplete ordinary future into a certificate.
+        for (unsigned focus : {0u, 4u}) {
+            if (!remaining())
+                break;
+            auto inputs = prefix;
+            inputs.push_back(std::uint16_t(3u | focus));
+            auto p = s::predict_with_policy(session, policy, origin, inputs, horizon, boundary,
+                                            remaining(), true);
+            work.branch(p);
+            if (p.certifies()) {
+                ++work.fresh_adoptions;
+                selected = std::move(p);
+                break;
+            }
+        }
+    }
     return finish(std::move(selected));
 }
 unsigned number(const char *text, unsigned maximum) {
@@ -255,7 +275,8 @@ int run(int argc, char **argv) {
             "[--capture-factor VALUE] [--capture-padding UPDATES] [--hit-income 0|1] "
             "[--drop-target 0|1] [--economic-proposals 0..4] "
             "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture] "
-            "[--replay-name NAME] [--require-all-captures 0|1] [--target-score DISPLAYED] "
+            "[--replay-name NAME] [--allow-bombs 0|1] [--require-all-captures 0|1] "
+            "[--target-score DISPLAYED] "
             "[--prefix-actions FILE --prefix-updates UPDATES]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
@@ -292,6 +313,7 @@ int run(int argc, char **argv) {
     std::string replay_name = "ysopwnab";
     bool name_override = false, captures_override = false, target_override = false;
     bool require_captures = false;
+    bool allow_bombs = false, bombs_override = false;
     std::uint64_t target_score = 0;
     fs::path prefix_path;
     unsigned prefix_updates = 0;
@@ -438,6 +460,9 @@ int run(int argc, char **argv) {
                 throw std::runtime_error(
                     "native_replay_name_requires_1_to_8_ascii_identifier_bytes");
             name_override = true;
+        } else if (key == "--allow-bombs" && !bombs_override) {
+            allow_bombs = number(argv[i + 1], 1);
+            bombs_override = true;
         } else if (key == "--require-all-captures" && !captures_override) {
             require_captures = number(argv[i + 1], 1);
             captures_override = true;
@@ -473,7 +498,7 @@ int run(int argc, char **argv) {
     std::vector<std::uint16_t> prefix;
     if (!prefix_path.empty()) {
         std::ifstream stream(prefix_path);
-        th08::plan::PrefixParser parser(400000);
+        th08::plan::PrefixParser parser(400000, allow_bombs);
         std::array<char, 65536> buffer;
         while (stream) {
             stream.read(buffer.data(), buffer.size());
@@ -501,7 +526,7 @@ int run(int argc, char **argv) {
     s::Packet actual;
     actual.kind = s::Kind::State;
     actual.state = s::capture(session);
-    s::ActionBuffer queue(actual);
+    s::ActionBuffer queue(actual, allow_bombs);
     s::Prediction previous;
     s::NominalExtension nominal;
     std::deque<s::Packet> history;
@@ -532,9 +557,10 @@ int run(int argc, char **argv) {
             const SearchOptions options{
                 horizon,       publication,          budget_ms,
                 held_recovery, baseline_recovery,    recovery_fire == "capture",
-                lead_updates,  nominal_warm_updates, economic_proposals};
+                lead_updates,  nominal_warm_updates, economic_proposals,
+                allow_bombs};
             auto p = search(session, policy, safety, queue, previous, nominal,
-                            {config.story, -1, verify_captures}, options, work);
+                            {config.story, -1, verify_captures, allow_bombs}, options, work);
             if (p.certifies()) {
                 if (!queue.replace(p, {}, publication))
                     throw std::runtime_error("native_style_certificate_rejected");
@@ -576,7 +602,7 @@ int run(int argc, char **argv) {
             std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - step_begin).count();
         owner_io_ns += io;
         owner_native_ns += std::uint64_t(ns) > io ? std::uint64_t(ns) - io : 0;
-        s::advance_receipt(actual, input, s::capture(session));
+        s::advance_receipt(actual, input, s::capture(session), allow_bombs);
         const bool certified = queue.next() != nullptr;
         if (!queue.confirm(actual) && certified)
             throw std::runtime_error("native_style_certificate_execution_mismatch");
@@ -600,8 +626,9 @@ int run(int argc, char **argv) {
         }
         actions.push_back(input);
         h::score_audit_observe();
-        if (state.player_state == 2 || state.deaths != 0 || actual.state[s::Field::BombsUsed]) {
-            outcome = "nmnb_failure";
+        if (state.player_state == 2 || state.deaths != 0 ||
+            (!allow_bombs && actual.state[s::Field::BombsUsed])) {
+            outcome = allow_bombs ? "no_miss_failure" : "nmnb_failure";
             break;
         }
         if (verify_captures && s::capture_goal_failed(config.story, stage_before, state)) {
@@ -648,6 +675,7 @@ int run(int argc, char **argv) {
            << style << "\",\"outcome\":\"" << outcome << "\",\"stage\":" << config.stage
            << ",\"replay_name\":\"" << replay_name << '"'
            << ",\"require_all_captures\":" << (require_captures ? "true" : "false")
+           << ",\"allow_bombs\":" << (allow_bombs ? "true" : "false")
            << ",\"verify_captures\":" << (verify_captures ? "true" : "false")
            << ",\"target_score_displayed\":" << target_score
            << ",\"objective_met\":" << (objective_met ? "true" : "false")
@@ -689,6 +717,11 @@ int run(int argc, char **argv) {
            << ",\"prefix_inputs_available\":" << prefix.size()
            << ",\"score_raw\":" << h::score_audit().score_raw
            << ",\"score_displayed\":" << std::uint64_t(h::score_audit().score_raw) * 10
+           << ",\"bombs_used\":" << h::score_audit().bombs_used
+           << ",\"no_miss\":"
+           << (session.state().deaths == 0 && session.state().player_state != 2 ? "true" : "false")
+           << ",\"captured_spells\":"
+           << h::score_capture_coverage(h::score_audit(), outcome == "complete").captured.size()
            << ",\"all_visited_stage_spells_captured\":" << (captures ? "true" : "false")
            << ",\"wall_seconds\":" << elapsed << ",\"searches\":" << work.searches
            << ",\"candidates\":" << work.candidates

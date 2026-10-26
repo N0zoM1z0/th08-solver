@@ -24,6 +24,10 @@ std::uint16_t edited(std::uint16_t input, ScoreEdit edit) {
         return std::uint16_t(input | 1);
     case ScoreEdit::ReleaseFire:
         return std::uint16_t(input & ~1);
+    case ScoreEdit::BombHuman:
+        return std::uint16_t((input | 2) & ~4);
+    case ScoreEdit::BombFocus:
+        return std::uint16_t(input | 6);
     }
     throw std::runtime_error("unknown_score_edit");
 }
@@ -38,16 +42,22 @@ const char *score_edit_name(ScoreEdit edit) {
         return "fire";
     case ScoreEdit::ReleaseFire:
         return "release-fire";
+    case ScoreEdit::BombHuman:
+        return "bomb-human";
+    case ScoreEdit::BombFocus:
+        return "bomb-focus";
     }
     throw std::runtime_error("unknown_score_edit");
 }
 ScoreRefineResult refine_score_tape(headless::Session &session, std::vector<std::uint16_t> &inputs,
                                     bool story, const ScoreRefineOptions &options) {
-    if ((options.family != ScoreEditFamily::Form && options.family != ScoreEditFamily::Fire) ||
-        inputs.empty() || inputs.size() > 400000 || options.trials > 10000 || !options.window ||
+    if ((options.family != ScoreEditFamily::Form && options.family != ScoreEditFamily::Fire &&
+         options.family != ScoreEditFamily::Bomb) ||
+        (options.family == ScoreEditFamily::Bomb && !options.allow_bombs) || inputs.empty() ||
+        inputs.size() > 400000 || options.trials > 10000 || !options.window ||
         options.window > 3600 || !options.interval || options.interval > 400000 ||
         !options.timeout_ms || options.timeout_ms > 60000 || !options.wall_seconds ||
-        options.wall_seconds > 7200 || session.state().frame != 0)
+        options.wall_seconds > 7200 || options.first_update > 400000 || session.state().frame != 0)
         throw std::runtime_error("invalid_score_refinement_configuration");
     const auto begin = Clock::now();
     const auto expired = [&] {
@@ -56,17 +66,20 @@ ScoreRefineResult refine_score_tape(headless::Session &session, std::vector<std:
     Packet origin;
     origin.state = capture(session);
     ScoreRefineResult result;
-    result.initial = evaluate_tape(session, origin, inputs, 0, {story, -1}, options.timeout_ms);
+    const Boundary boundary{story, -1, options.require_all_captures, options.allow_bombs};
+    result.initial = evaluate_tape(session, origin, inputs, 0, boundary, options.timeout_ms);
     if (!result.initial.certifies() || result.initial.completed != inputs.size()) {
         result.wall_seconds = std::chrono::duration<double>(Clock::now() - begin).count();
         return result;
     }
     result.selected = result.initial;
     auto previous_phase = phase(session.state());
-    std::size_t phase_start = 0, next_trial = 64;
+    std::size_t phase_start = 0, next_trial = options.first_update;
     const auto edits = options.family == ScoreEditFamily::Form
                            ? std::array<ScoreEdit, 2>{ScoreEdit::Focus, ScoreEdit::Human}
-                           : std::array<ScoreEdit, 2>{ScoreEdit::ReleaseFire, ScoreEdit::Fire};
+                       : options.family == ScoreEditFamily::Fire
+                           ? std::array<ScoreEdit, 2>{ScoreEdit::ReleaseFire, ScoreEdit::Fire}
+                           : std::array<ScoreEdit, 2>{ScoreEdit::BombHuman, ScoreEdit::BombFocus};
     for (std::size_t i = 0; i < inputs.size(); ++i) {
         const auto before = session.state();
         const auto current_phase = phase(before);
@@ -99,7 +112,7 @@ ScoreRefineResult refine_score_tape(headless::Session &session, std::vector<std:
                 trial.window = end - i;
                 trial.edit = edit;
                 trial.evaluation =
-                    evaluate_tape(session, origin, candidate, i, {story, -1}, options.timeout_ms);
+                    evaluate_tape(session, origin, candidate, i, boundary, options.timeout_ms);
                 const auto &evaluation = trial.evaluation;
                 trial.accepted =
                     evaluation.certifies() &&
@@ -129,7 +142,8 @@ ScoreRefineResult refine_score_tape(headless::Session &session, std::vector<std:
         ++origin.sequence;
         origin.epoch += before.stage != after.stage;
         origin.input = inputs[i];
-        if (after.player_state == 2 || after.deaths != 0 || headless::score_audit().bombs_used)
+        if (after.player_state == 2 || after.deaths != 0 ||
+            (!options.allow_bombs && headless::score_audit().bombs_used))
             throw std::runtime_error("refined_incumbent_execution_failed_nmnb");
         if (stage_terminal(story, after)) {
             if (i + 1 != inputs.size())
@@ -140,7 +154,8 @@ ScoreRefineResult refine_score_tape(headless::Session &session, std::vector<std:
     const auto terminal = capture(session);
     if (!stage_terminal(story, session.state()) ||
         terminal.values != result.selected.terminal.values ||
-        !headless::score_capture_coverage(headless::score_audit(), true).all)
+        (options.require_all_captures &&
+         !headless::score_capture_coverage(headless::score_audit(), true).all))
         throw std::runtime_error("refined_incumbent_terminal_disagrees_with_oracle");
     result.search_budget_exhausted =
         result.search_budget_exhausted || expired() || result.trials.size() >= options.trials;

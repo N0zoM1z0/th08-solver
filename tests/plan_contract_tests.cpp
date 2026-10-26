@@ -484,6 +484,15 @@ void prefix_contract() {
         check(false, "invalid or over-budget prefix was accepted");
     };
     invalid("5 2", 3);
+    th08::plan::PrefixParser bombs(3, true);
+    bombs.append("3 7 4103", 8);
+    check(bombs.finish() == std::vector<std::uint16_t>({3, 7, 4103}),
+          "explicit scoring prefix lost bomb, focus or dialogue bits");
+    try {
+        th08::plan::scoring_input_value(8, true);
+        check(false, "bomb permission admitted unsupported menu input");
+    } catch (const std::invalid_argument &) {
+    }
     invalid("5 65536", 3);
     invalid("5 -1", 3);
     invalid("5 1junk", 3);

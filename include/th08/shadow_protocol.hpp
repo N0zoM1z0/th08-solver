@@ -113,12 +113,12 @@ struct Packet {
 inline constexpr std::uint32_t magic = 0x53483038, version = 1;
 inline constexpr std::size_t header_words = 10;
 using Bytes = std::array<std::uint8_t, 4 * (header_words + std::size_t(Field::Count))>;
-inline void input_value(std::uint32_t input) {
-    if (input & ~0x10f5u)
+inline void input_value(std::uint32_t input, bool allow_bombs = false) {
+    if (input & ~(allow_bombs ? 0x10f7u : 0x10f5u))
         throw std::runtime_error("unsupported_shadow_input");
 }
-inline Bytes encode(const Packet &packet) {
-    input_value(packet.input);
+inline Bytes encode(const Packet &packet, bool allow_bombs = false) {
+    input_value(packet.input, allow_bombs);
     Bytes bytes{};
     const auto word = [&](std::size_t index, std::uint32_t value) {
         for (unsigned byte = 0; byte < 4; ++byte)
@@ -138,7 +138,7 @@ inline Bytes encode(const Packet &packet) {
         word(header_words + i, packet.state.values[i]);
     return bytes;
 }
-inline Packet decode(const void *data, std::size_t size) {
+inline Packet decode(const void *data, std::size_t size, bool allow_bombs = false) {
     if (size != Bytes{}.size())
         throw std::runtime_error("incomplete_shadow_packet");
     const auto *bytes = static_cast<const std::uint8_t *>(data);
@@ -156,7 +156,7 @@ inline Packet decode(const void *data, std::size_t size) {
     packet.epoch = word(6) | (std::uint64_t(word(7)) << 32);
     packet.input = word(8);
     packet.status = word(9);
-    input_value(packet.input);
+    input_value(packet.input, allow_bombs);
     for (std::size_t i = 0; i < packet.state.values.size(); ++i)
         packet.state.values[i] = word(header_words + i);
     return packet;
@@ -178,8 +178,9 @@ inline const char *difference(const Packet &owner, const Packet &follower) {
 }
 // Input receipts advance exactly once. Epoch changes are observed stage changes,
 // including control-only handoffs; an ordinary frame may not reset any history.
-inline void advance_receipt(Packet &receipt, std::uint32_t input, const Projection &after) {
-    input_value(input);
+inline void advance_receipt(Packet &receipt, std::uint32_t input, const Projection &after,
+                            bool allow_bombs = false) {
+    input_value(input, allow_bombs);
     receipt.epoch += receipt.state[Field::Stage] != after[Field::Stage];
     ++receipt.sequence;
     receipt.input = input;

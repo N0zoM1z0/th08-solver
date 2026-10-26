@@ -5,6 +5,7 @@
 #include "th08/plan_contracts.hpp"
 #include "th08/plan_prefix.hpp"
 #include "th08/shadow_native.hpp"
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -42,22 +43,28 @@ const char *status_name(s::BranchStatus status) {
     throw std::runtime_error("unknown_refinement_status");
 }
 void write_evaluation(std::ostream &out, const s::TapeEvaluation &e) {
+    float bombs = 0;
+    const auto bits = e.terminal[s::Field::BombsUsed];
+    std::memcpy(&bombs, &bits, sizeof(bombs));
     out << "{\"status\":\"" << status_name(e.status)
         << "\",\"score_displayed\":" << e.score_displayed()
         << ",\"all_captures\":" << (e.all_captures ? "true" : "false")
         << ",\"expected_captures\":" << e.expected_captures << ",\"captured\":" << e.captured
-        << ",\"requested\":" << e.requested << ",\"attempts\":" << e.attempts
-        << ",\"completed\":" << e.completed << ",\"charged_updates\":" << e.charged_updates
-        << ",\"native_ns\":" << e.native_ns << ",\"file_io_ns\":" << e.file_io_ns
-        << ",\"wall_ms\":" << e.wall_ms << '}';
+        << ",\"allow_bombs\":" << (e.allow_bombs ? "true" : "false")
+        << ",\"require_all_captures\":" << (e.require_all_captures ? "true" : "false")
+        << ",\"bombs_used\":" << bombs << ",\"requested\":" << e.requested
+        << ",\"attempts\":" << e.attempts << ",\"completed\":" << e.completed
+        << ",\"charged_updates\":" << e.charged_updates << ",\"native_ns\":" << e.native_ns
+        << ",\"file_io_ns\":" << e.file_io_ns << ",\"wall_ms\":" << e.wall_ms << '}';
 }
 int run(int argc, char **argv) {
     if (argc < 10 || (argc - 10) % 2)
         throw std::runtime_error(
             "usage: th08_score_refine DAT OUTPUT_DIR STAGE DIFFICULTY SHOT SEED STORY "
-            "PRIOR_FINAL_A INPUT_TAPE [--family form|fire] [--trials N] [--window UPDATES] "
+            "PRIOR_FINAL_A INPUT_TAPE [--family form|fire|bomb] [--trials N] [--window UPDATES] "
             "[--interval UPDATES] [--timeout-ms MS] [--wall-seconds SECONDS] "
-            "[--target-score DISPLAYED]");
+            "[--target-score DISPLAYED] [--allow-bombs 0|1] [--require-all-captures 0|1] "
+            "[--first-update UPDATES]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const auto input = fs::absolute(argv[9]);
@@ -78,9 +85,17 @@ int run(int argc, char **argv) {
         if (!supplied.insert(key).second)
             throw std::runtime_error("duplicate_score_refinement_option");
         if (key == "--family") {
-            if (value != "form" && value != "fire")
+            if (value != "form" && value != "fire" && value != "bomb")
                 throw std::runtime_error("unknown_score_refinement_family");
-            options.family = value == "form" ? s::ScoreEditFamily::Form : s::ScoreEditFamily::Fire;
+            options.family = value == "form"   ? s::ScoreEditFamily::Form
+                             : value == "fire" ? s::ScoreEditFamily::Fire
+                                               : s::ScoreEditFamily::Bomb;
+        } else if (key == "--allow-bombs") {
+            options.allow_bombs = number(argv[i + 1], 1);
+        } else if (key == "--require-all-captures") {
+            options.require_all_captures = number(argv[i + 1], 1);
+        } else if (key == "--first-update") {
+            options.first_update = number(argv[i + 1], 400000);
         } else if (key == "--trials")
             options.trials = number(argv[i + 1], 10000);
         else if (key == "--window")
@@ -101,7 +116,9 @@ int run(int argc, char **argv) {
     if (!options.window || !options.interval || !options.timeout_ms || !options.wall_seconds)
         throw std::runtime_error("empty_score_refinement_budget");
     std::ifstream tape(input);
-    p::PrefixParser parser(400000);
+    if (options.family == s::ScoreEditFamily::Bomb && !options.allow_bombs)
+        throw std::runtime_error("bomb_refinement_requires_allow_bombs");
+    p::PrefixParser parser(400000, options.allow_bombs);
     std::array<char, 65536> buffer;
     while (tape) {
         tape.read(buffer.data(), buffer.size());
@@ -128,7 +145,7 @@ int run(int argc, char **argv) {
         report.close();
         if (!report)
             throw std::runtime_error("score_refinement_rejection_report_failed");
-        std::cerr << "refinement_requires_complete_nmnb_all_capture_incumbent\n";
+        std::cerr << "refinement_requires_complete_incumbent_satisfying_declared_goals\n";
         return 2;
     }
     std::ofstream final_tape("plan.actions"), audit("score-audit.json");
@@ -137,7 +154,7 @@ int run(int argc, char **argv) {
     const bool all = th08::report::write_score_audit(audit, h::score_audit(), true);
     final_tape.close();
     audit.close();
-    if (!all || !final_tape || !audit)
+    if ((options.require_all_captures && !all) || !final_tape || !audit)
         throw std::runtime_error("score_refinement_output_failed");
     const auto child = fork();
     if (child < 0)
@@ -168,7 +185,10 @@ int run(int argc, char **argv) {
            << config.stage << ",\"difficulty\":" << config.difficulty << ",\"shot\":" << config.shot
            << ",\"seed\":" << config.seed << ",\"story\":" << (config.story ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (config.prior_final_a_clear ? "true" : "false")
-           << ",\"family\":\"" << (options.family == s::ScoreEditFamily::Form ? "form" : "fire")
+           << ",\"family\":\""
+           << (options.family == s::ScoreEditFamily::Form   ? "form"
+               : options.family == s::ScoreEditFamily::Fire ? "fire"
+                                                            : "bomb")
            << "\",\"trial_limit\":" << options.trials << ",\"window\":" << options.window
            << ",\"interval\":" << options.interval << ",\"timeout_ms\":" << options.timeout_ms
            << ",\"wall_budget_seconds\":" << options.wall_seconds
@@ -177,7 +197,15 @@ int run(int argc, char **argv) {
            << ",\"score_displayed\":" << result.selected.score_displayed()
            << ",\"target_score_displayed\":" << target
            << ",\"objective_met\":" << (objective_met ? "true" : "false")
-           << ",\"all_visited_stage_spells_captured\":true,\"accepted\":" << accepted
+           << ",\"no_miss\":" << (session.state().deaths == 0 ? "true" : "false")
+           << ",\"bombs_used\":" << h::score_audit().bombs_used
+           << ",\"captured_spells\":" << result.selected.captured
+           << ",\"expected_spells\":" << result.selected.expected_captures
+           << ",\"allow_bombs\":" << (options.allow_bombs ? "true" : "false")
+           << ",\"require_all_captures\":" << (options.require_all_captures ? "true" : "false")
+           << ",\"first_update\":" << options.first_update
+           << ",\"replay_exported\":true,\"all_visited_stage_spells_captured\":"
+           << (all ? "true" : "false") << ",\"accepted\":" << accepted
            << ",\"unchanged\":" << result.unchanged << ",\"future_deaths\":" << deaths
            << ",\"timeouts\":" << timeouts << ",\"faults\":" << faults
            << ",\"branch_updates\":" << charged << ",\"branch_native_ns\":" << native_ns

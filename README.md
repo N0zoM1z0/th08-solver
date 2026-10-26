@@ -9,8 +9,10 @@
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
 C++17 Touhou 08 solver. Capture the real Wine seed, search Native trajectories for
-NMNB, all captures and higher scores, then export `.rpy` files for retail replay
-validation. Scoring uses source attack timing, item collection and form control.
+the declared no-miss/bomb/capture goal and higher scores, then export `.rpy` files
+for retail replay validation. Scoring uses source attack timing, item collection
+and form control. Bomb permission and capture requirements are independent
+[CLI controls](docs/VALIDATION.md#bomb-and-capture-constraints).
 [How it works](docs/PLANNER.md#true-rng-shadow-runtime).
 
 | Marisa/Alice result | Our NMNB score | Human reference¹ | Captures |

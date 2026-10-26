@@ -39,24 +39,24 @@ void transfer(int fd, void *data, std::size_t length, bool writing, unsigned tim
         length -= std::size_t(count);
     }
 }
-void send_packet(int fd, const Packet &packet, unsigned timeout) {
-    auto bytes = encode(packet);
+void send_packet(int fd, const Packet &packet, unsigned timeout, bool allow_bombs = false) {
+    auto bytes = encode(packet, allow_bombs);
     transfer(fd, bytes.data(), bytes.size(), true, timeout);
 }
-Packet receive_packet(int fd, unsigned timeout) {
+Packet receive_packet(int fd, unsigned timeout, bool allow_bombs = false) {
     Bytes bytes{};
     transfer(fd, bytes.data(), bytes.size(), false, timeout);
-    return decode(bytes.data(), bytes.size());
+    return decode(bytes.data(), bytes.size(), allow_bombs);
 }
 void follow(int fd, const headless::Config &config, const std::filesystem::path &directory,
-            unsigned timeout) {
+            unsigned timeout, bool allow_bombs) {
     std::filesystem::current_path(directory);
     headless::Session session(config);
     Packet receipt;
     receipt.state = capture(session);
-    send_packet(fd, receipt, timeout);
+    send_packet(fd, receipt, timeout, allow_bombs);
     for (;;) {
-        const auto request = receive_packet(fd, timeout);
+        const auto request = receive_packet(fd, timeout, allow_bombs);
         if (request.kind == Kind::Stop)
             return;
         if (request.kind != Kind::Advance || request.status ||
@@ -66,8 +66,8 @@ void follow(int fd, const headless::Config &config, const std::filesystem::path 
         if (stage_terminal(config.story, before) || before.player_state == 2)
             throw std::runtime_error("shadow_input_after_terminal");
         session.step(std::uint16_t(request.input));
-        advance_receipt(receipt, request.input, capture(session));
-        send_packet(fd, receipt, timeout);
+        advance_receipt(receipt, request.input, capture(session), allow_bombs);
+        send_packet(fd, receipt, timeout, allow_bombs);
     }
 }
 } // namespace
@@ -75,8 +75,10 @@ struct Follower::Impl {
     int fd = -1;
     pid_t child = -1;
     unsigned timeout;
+    bool allow_bombs;
     std::filesystem::path directory;
-    Impl(const headless::Config &config, unsigned limit) : timeout(limit) {
+    Impl(const headless::Config &config, unsigned limit, bool bombs)
+        : timeout(limit), allow_bombs(bombs) {
         if (!config.dat_path || !std::filesystem::path(config.dat_path).is_absolute() || !timeout ||
             timeout > 60000)
             throw std::runtime_error("invalid_shadow_process_configuration");
@@ -101,7 +103,7 @@ struct Follower::Impl {
             close(sockets[0]);
             int code = 0;
             try {
-                follow(sockets[1], config, directory, timeout);
+                follow(sockets[1], config, directory, timeout, allow_bombs);
             } catch (...) {
                 Packet error;
                 error.kind = Kind::Failure;
@@ -137,11 +139,11 @@ struct Follower::Impl {
         std::filesystem::remove_all(directory, error);
     }
 };
-Follower::Follower(const headless::Config &config, unsigned timeout)
-    : impl_(new Impl(config, timeout)) {}
+Follower::Follower(const headless::Config &config, unsigned timeout, bool allow_bombs)
+    : impl_(new Impl(config, timeout, allow_bombs)) {}
 Follower::~Follower() = default;
 Packet Follower::initial() {
-    return receive_packet(impl_->fd, impl_->timeout);
+    return receive_packet(impl_->fd, impl_->timeout, impl_->allow_bombs);
 }
 Packet Follower::advance(std::uint64_t sequence, std::uint64_t epoch, std::uint32_t input) {
     Packet request;
@@ -149,7 +151,7 @@ Packet Follower::advance(std::uint64_t sequence, std::uint64_t epoch, std::uint3
     request.sequence = sequence;
     request.epoch = epoch;
     request.input = input;
-    send_packet(impl_->fd, request, impl_->timeout);
-    return receive_packet(impl_->fd, impl_->timeout);
+    send_packet(impl_->fd, request, impl_->timeout, impl_->allow_bombs);
+    return receive_packet(impl_->fd, impl_->timeout, impl_->allow_bombs);
 }
 } // namespace th08::shadow

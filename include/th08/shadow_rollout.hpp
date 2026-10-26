@@ -21,6 +21,8 @@ struct Boundary {
     // Optional full-stage/story goal, requiring an explicitly enabled source
     // audit. Failed encounters and missing completed-stage gates cannot certify.
     bool require_captures = false;
+    // Native offline opt-in. No-miss checks remain mandatory in every branch.
+    bool allow_bombs = false;
 };
 struct Prediction {
     Packet origin;
@@ -53,13 +55,14 @@ struct TapeEvaluation {
     std::array<std::uint64_t, 4> expected_spells{};
     unsigned expected_captures = 0, captured = 0;
     bool all_captures = false;
+    bool require_all_captures = true, allow_bombs = false;
     std::uint64_t requested = 0, attempts = 0, completed = 0, charged_updates = 0;
     std::uint64_t native_ns = 0, file_io_ns = 0;
     double wall_ms = 0;
     bool certifies() const {
-        return status == BranchStatus::Terminal && all_captures && completed > 0 &&
-               attempts == completed && !terminal[Field::Deaths] && !terminal[Field::BombsUsed] &&
-               terminal[Field::PlayerState] != 2;
+        return status == BranchStatus::Terminal && (!require_all_captures || all_captures) &&
+               completed > 0 && attempts == completed && !terminal[Field::Deaths] &&
+               (allow_bombs || !terminal[Field::BombsUsed]) && terminal[Field::PlayerState] != 2;
     }
     std::uint64_t score_displayed() const {
         return std::uint64_t(terminal[Field::Score]) * 10;

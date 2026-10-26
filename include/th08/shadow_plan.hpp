@@ -13,9 +13,11 @@ namespace th08::shadow {
 class ActionBuffer {
     Packet frontier_;
     std::deque<Packet> pending_;
+    bool allow_bombs_ = false;
 
   public:
-    explicit ActionBuffer(Packet initial) : frontier_(std::move(initial)) {}
+    explicit ActionBuffer(Packet initial, bool allow_bombs = false)
+        : frontier_(std::move(initial)), allow_bombs_(allow_bombs) {}
     const Packet &frontier() const {
         return frontier_;
     }
@@ -44,7 +46,7 @@ class ActionBuffer {
                 frame.epoch !=
                     previous.epoch + (frame.state[Field::Stage] != previous.state[Field::Stage]))
                 return false;
-            input_value(frame.input);
+            input_value(frame.input, allow_bombs_);
             if (i < consumed && difference(frame, executed_since_origin[i]))
                 return false;
             previous = frame;
@@ -58,7 +60,7 @@ class ActionBuffer {
         return true;
     }
     bool confirm(const Packet &actual) {
-        input_value(actual.input);
+        input_value(actual.input, allow_bombs_);
         if (actual.kind != Kind::State || actual.status ||
             actual.sequence != frontier_.sequence + 1 ||
             actual.epoch !=

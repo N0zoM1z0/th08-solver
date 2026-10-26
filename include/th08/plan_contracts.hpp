@@ -101,6 +101,16 @@ inline std::uint16_t nmnb_input_value(unsigned input) {
     return std::uint16_t(input);
 }
 
+// Offline score experiments may admit X explicitly. Menu, pause and other
+// unsupported bits remain invalid; existing callers retain the NMNB contract.
+inline std::uint16_t scoring_input_value(unsigned input, bool allow_bombs) {
+    if (!allow_bombs)
+        return nmnb_input_value(input);
+    if (input > 65535 || (input & ~0x10f7u))
+        throw std::invalid_argument("verification requires supported scoring input bits");
+    return std::uint16_t(input);
+}
+
 inline std::uint16_t nmnb_input(std::string_view value) {
     return nmnb_input_value(integer<unsigned>(value, "action"));
 }

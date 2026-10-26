@@ -11,7 +11,8 @@ namespace th08::plan {
 // whitespace never require an unbounded string allocation.
 class PrefixParser {
   public:
-    explicit PrefixParser(std::size_t maximum_frames) : maximum_frames_(maximum_frames) {}
+    explicit PrefixParser(std::size_t maximum_frames, bool allow_bombs = false)
+        : maximum_frames_(maximum_frames), allow_bombs_(allow_bombs) {}
 
     void append(const char *bytes, std::size_t length) {
         for (std::size_t i = 0; i < length; ++i) {
@@ -21,7 +22,7 @@ class PrefixParser {
                 continue;
             }
             if (c < '0' || c > '9' || value_ > (65535u - unsigned(c - '0')) / 10u)
-                throw std::invalid_argument("prefix requires integer NMNB actions in 0..65535");
+                throw std::invalid_argument("prefix requires integer actions in 0..65535");
             value_ = value_ * 10u + unsigned(c - '0');
             token_ = true;
         }
@@ -38,12 +39,13 @@ class PrefixParser {
             return;
         if (actions_.size() >= maximum_frames_)
             throw std::invalid_argument("prefix exceeds the total --frames budget");
-        actions_.push_back(nmnb_input_value(value_));
+        actions_.push_back(scoring_input_value(value_, allow_bombs_));
         token_ = false;
         value_ = 0;
     }
 
     std::size_t maximum_frames_;
+    bool allow_bombs_ = false;
     std::vector<std::uint16_t> actions_;
     unsigned value_ = 0;
     bool token_ = false;

@@ -11,7 +11,8 @@ namespace th08::shadow {
 // mutations are acknowledged real inputs; this follower performs no lookahead.
 class Follower {
   public:
-    explicit Follower(const headless::Config &config, unsigned timeout_ms = 30000);
+    explicit Follower(const headless::Config &config, unsigned timeout_ms = 30000,
+                      bool allow_bombs = false);
     ~Follower();
     Follower(const Follower &) = delete;
     Follower &operator=(const Follower &) = delete;

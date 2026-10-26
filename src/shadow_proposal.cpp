@@ -234,13 +234,13 @@ FutureProposals propose_after_lead(headless::Session &session, online::Policy &p
     if (boundary.require_captures && (!headless::score_audit_enabled() || boundary.spell >= 0))
         throw std::runtime_error("capture_proposals_require_audited_stage_or_story");
     for (auto input : lead)
-        input_value(input);
+        input_value(input, boundary.allow_bombs);
     Packet actual = origin;
     actual.state = capture(session);
     if (difference(actual, origin))
         throw std::runtime_error("shadow_proposal_origin_mismatch");
     if (origin.state[Field::PlayerState] == 2 || origin.state[Field::Deaths] ||
-        origin.state[Field::BombsUsed])
+        (!boundary.allow_bombs && origin.state[Field::BombsUsed]))
         throw std::runtime_error("shadow_proposal_after_nmnb_failure");
     unsigned threads = 0;
     for (const auto &entry : std::filesystem::directory_iterator("/proc/self/task")) {

@@ -5,8 +5,12 @@ Follow the owner's latest scope. The owner authorized a tracked native headless 
 import and solver experiments over complete real-data scenes. Keep upstream code in
 this repository, not an ignored checkout, submodule or separate feature branch.
 The October 26 scope is Native-first scoring for Extra and the complete Magic
-Team Lunatic 4A-to-Final-B route. Require NMNB, every eligible capture and a score
-above the corresponding human reference before Wine retail replay validation.
+Team Lunatic 4A-to-Final-B route. The latest continuation makes bomb permission
+and full-capture requirements independent CLI controls: the latest scope is
+No Miss, No Bomb, captures optional. Bomb experiments are paused. Preserve strict NMNB/all-capture
+defaults and historical records, and record actual bomb use/captures for every
+trial. Require a complete no-miss score above the corresponding human reference
+under its declared constraints before Wine retail replay validation.
 Before each new scoring episode, launch the owned Wine retail game and capture
 its original RNG seed at the observer's pre-RegisterChain boundary. Record the
 entry configuration, checkpoint and seed provenance before Native exploration.

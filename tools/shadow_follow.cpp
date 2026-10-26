@@ -45,6 +45,7 @@ struct Options {
     hl::Config config;
     std::uint64_t frames = 1000000;
     int follower_seed = -1;
+    bool allow_bombs = false;
 };
 Options options(int argc, char **argv) {
     Options o;
@@ -66,6 +67,8 @@ Options options(int argc, char **argv) {
             o.actions = fs::absolute(value).string();
         else if (key == "--output")
             o.output = fs::absolute(value).string();
+        else if (key == "--allow-bombs")
+            o.allow_bombs = bounded(1);
         else if (key == "--frames")
             o.frames = n();
         else if (key == "--seed" || key == "--follower-seed") {
@@ -133,7 +136,7 @@ int run(Options o) {
     std::ifstream tape(o.actions);
     if (!tape)
         throw std::runtime_error("shadow_actions_unreadable");
-    plan::PrefixParser parser(1000000);
+    plan::PrefixParser parser(1000000, o.allow_bombs);
     std::array<char, 65536> buffer;
     while (tape) {
         tape.read(buffer.data(), buffer.size());
@@ -149,7 +152,7 @@ int run(Options o) {
     if (o.follower_seed >= 0)
         other.seed = std::uint16_t(o.follower_seed);
     const auto begin = std::chrono::steady_clock::now();
-    sh::Follower follower(other);
+    sh::Follower follower(other, 30000, o.allow_bombs);
     Scratch scratch;
     hl::Session owner(o.config);
     sh::Packet receipt;
@@ -173,7 +176,7 @@ int run(Options o) {
         observed = follower.advance(receipt.sequence + 1, receipt.epoch, actions[i]);
         owner.step(actions[i]);
         const auto epoch = receipt.epoch;
-        sh::advance_receipt(receipt, actions[i], sh::capture(owner));
+        sh::advance_receipt(receipt, actions[i], sh::capture(owner), o.allow_bombs);
         handoffs += receipt.epoch != epoch;
         mismatch = sh::difference(receipt, observed);
         const auto after = owner.state();
@@ -209,6 +212,7 @@ int run(Options o) {
         << ",\"score\":" << state.score << ",\"rng_seed\":" << state.rng_seed
         << ",\"rng_draws\":" << state.rng_draws << ",\"deaths\":" << state.deaths
         << ",\"player_state\":" << state.player_state
+        << ",\"allow_bombs\":" << (o.allow_bombs ? "true" : "false")
         << ",\"future_native_updates\":0,\"rewinds\":0,\"deadline_enforced\":false,\"retail_"
            "validated\":false"
         << ",\"projection_words\":" << sh::field_names.size() << ",\"wall_seconds\":"

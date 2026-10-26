@@ -8,9 +8,12 @@ Historical component commands below retain their named build/profile assumptions
 ## Native score-first workflow
 
 The owner selected Native exploration for proper Magic Team Extra and complete
-Lunatic4A→FinalB. Require NMNB,14/14 or37/37 captures and a displayed score
-strictly above3,021,639,920 or6,168,365,790 respectively before retail Wine replay
-validation. Live Wine solving is paused. Native budgets are explicit offline
+Lunatic4A→FinalB. The latest continuation requires No Miss and No Bomb, permits
+missing captures and retains independent CLI controls. Bomb experiments are
+paused. Require a complete
+displayed score strictly above3,021,639,920 or6,168,365,790 respectively before
+retail Wine replay validation. Historical NMNB/all-capture results retain their
+identities. Live Wine solving is paused. Native budgets are explicit offline
 compute limits; they need not meet an online frame deadline.
 
 Before every new scoring episode, launch the owned Wine retail game and capture
@@ -127,8 +130,8 @@ checks bounded single-action proposals and a complete Native guided horizon.
 ### Complete-tape refinement
 
 `th08_score_refine` requires our own complete Native `plan.actions` plus its
-original entry configuration. The initial tape must complete NMNB/all-captures;
-an incomplete, dead or interrupted incumbent is rejected before owner execution.
+original entry configuration. Defaults require NMNB/all-captures. An incomplete,
+dead or interrupted incumbent is rejected before owner execution.
 The source audit includes gated Last Spells. Example for the saved Extra baseline:
 
 ```sh
@@ -147,6 +150,40 @@ same capture catalogue and final route replace the incumbent. Exit2 rejects an
 invalid incumbent, recording its status and cost in `result.json`; exit5 exports
 a valid progress replay below the requested target. The chosen name remains
 `ysopwnab`. Fresh tape following and natural `.rpy` checks remain required.
+
+### Bomb and capture constraints
+
+The offline planner `th08_shadow_style` and complete-tape refiner expose two
+independent controls:
+
+| Goal | Planner controls | Refiner controls |
+| --- | --- | --- |
+| Original NMNB/all captures | `--allow-bombs 0 --require-all-captures 1 --verify-captures 1` | `--allow-bombs 0 --require-all-captures 1` |
+| Current No Miss, No Bomb, captures optional | `--allow-bombs 0 --require-all-captures 0 --verify-captures 0` | `--allow-bombs 0 --require-all-captures 0` |
+| Available opt-in, currently paused: bombs permitted, captures optional | `--allow-bombs 1 --require-all-captures 0 --verify-captures 0` | `--allow-bombs 1 --require-all-captures 0` |
+
+Bomb permission defaults off. Refiner capture coverage defaults on; the planner's
+existing capture controls are explicit in campaign specifications. No Miss is
+mandatory. The planner tries one-update human/focused bomb prefixes after ordinary
+recovery fails, with the immutable lead retained. Native source decides inventory,
+lockouts, form, cancellation, capture invalidation and invulnerability. Bomb
+permission does not guarantee a useful bomb or a higher complete score.
+
+Refiner `--family bomb --allow-bombs 1` compares human/focused X windows against
+the complete incumbent terminal. Use `--window 1` for a one-update pulse and
+`--first-update N` to begin trials at a declared owner-input index (default64).
+Every edit still needs a complete no-miss tail, the original final route and
+strictly higher actual terminal score. Restoring either constraint rejects tapes
+that violate it; no partial result is certified. `result.json` records both
+controls, actual `bombs_used`, capture counts and trial costs. `score-audit.json`
+records every encountered/missing spell and its outcome, including failed captures.
+
+Fresh verification of a bomb tape needs follower `--allow-bombs 1`; its default
+input parser and process transport continue to reject X. The original-writer
+replay checker already accepts human bomb replays. Omit `--require-all-captures`
+for the relaxed replay check, and compare no-miss state, score, actual bomb count,
+capture outcomes and name against the producer. The focused
+`headless_bomb_scoring` CTest covers this complete scene and both strict rejections.
 
 ### Slowdown metadata in Native exports
 
@@ -564,11 +601,11 @@ a separate check, not a property established by the export target header.
 
 ## Resume Extra scoring on main
 
-The current [operational handoff](STATUS.md#operational-resume-contract) owns
-resource limits, the356/640 ledger and the owner-requested stop after this batch.
-No next candidate is started by this documentation. When the owner resumes, use
-the existing retail-seeded episode and a fresh output directory, rather than
-copying a historical Native-selected seed or launching online MPC.
+The current [operational contract](STATUS.md#operational-resume-contract) owns
+resource limits and the cumulative640-task window. The owner has resumed with
+No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
+a fresh output directory, rather than copying a historical Native-selected seed
+or launching online MPC.
 
 The local guarded launcher at
 `reports/local/retail-score-offline-20261026/run-batch.cjs` reads the proper
@@ -587,8 +624,8 @@ setsid --wait node reports/local/retail-score-offline-20261026/run-normal-ctest.
   normal-release-next-001
 ```
 
-The current suite already passes59/59; documentation-only cleanup requires only
-the documentation CTest. These helper/receipt/tape paths belong to this working
+The parameterized implementation passes60/60, plus final focused reporter checks;
+documentation-only cleanup requires the documentation CTest. These helper/receipt/tape paths belong to this working
 copy; a clone contains the selected replays and maintained provenance, not the
 ignored local producers and action tapes.
 
@@ -609,7 +646,10 @@ cat > reports/local/retail-score-offline-20261026/next-spec.json <<'JSON'
     "source_files": ["include/th08/online.hpp", "src/online.cpp", "src/online_native.cpp"],
     "reason": "Reproduce the verified Extra suffix from its own original-entry prefix",
     "controls": {
-      "--verify-horizon": 512,
+        "--allow-bombs": 0,
+        "--require-all-captures": 0,
+        "--verify-captures": 0,
+        "--verify-horizon": 512,
       "--publish-horizon": 256,
       "--lead-updates": 1,
       "--nominal-warm-updates": 1,
@@ -641,17 +681,24 @@ prior-Final-A history. The last FinalB cash/PIV trials are already negative.
 
 After completion, inspect each `exit.json` (including memory abort reason),
 `run/result.json` and capture audit. The launcher may exit0 while a child failed.
-A Native exit5 is below-target valid progress only if full NMNB/all captures
-actually pass. Verify a proposed improvement through the guarded checker:
+A Native exit5 is below-target valid progress only if the complete result meets
+its declared bomb/capture constraints. The older guarded checker below targets
+strict NMNB/all-capture exports:
 
 ```sh
 setsid --wait node reports/local/retail-score-offline-20261026/verify-runs.cjs \
   extra-next-suffix-001
 ```
 
-This requires fresh verification output and checks original-entry fresh exact
+That strict checker requires fresh verification output and checks original-entry fresh exact
 41-word terminal agreement plus natural replay NMNB, score, all captures and the
-eight-byte name. Preserve exact selected original-writer bytes. A lower/partial/
+eight-byte name. Optional-capture outputs instead compare their exact capture
+count/outcomes; do not run the strict helper unchanged or interpret a missing
+capture as a verifier failure under the relaxed goal. The current local
+`reports/local/human-score-research-20261026/run-guarded.cjs` binds entry receipts,
+source/binary/argument identities and memory limits for parameterized trials;
+`no-bomb-optional-captures-v1.json` records the latest two profiles. Preserve exact
+selected original-writer bytes. A lower/partial/
 resource-aborted run remains charged and local. Do not edit NaN slowdown metadata
 into a fabricated measured percentage. Current frozen success/negative profiles
 and prototype/source locations are in [Status](STATUS.md#operational-resume-contract).

@@ -77,7 +77,7 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
             input = guidance->next_input();
             out.guidance_ns +=
                 std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - start).count();
-            input_value(input);
+            input_value(input, boundary.allow_bombs);
         }
         const auto start = Clock::now();
         const auto io_before = session.file_io_time_ns();
@@ -103,7 +103,7 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
         if (summary || boundary.require_captures)
             headless::score_audit_observe();
         if (!summary) {
-            advance_receipt(current, input, capture(session));
+            advance_receipt(current, input, capture(session), boundary.allow_bombs);
             out.records[out.frames++] = current;
         }
         if (after.player_state == 2 || after.deaths != initial_deaths) {
@@ -143,14 +143,14 @@ static OwnedResult predict_owned(headless::Session &session, const Packet &origi
         !timeout_ms || timeout_ms > 60000)
         throw std::runtime_error("invalid_shadow_rollout_budget");
     for (auto input : inputs)
-        input_value(input);
+        input_value(input, boundary.allow_bombs);
     if (boundary.require_captures && (!headless::score_audit_enabled() || boundary.spell >= 0))
         throw std::runtime_error("capture_verification_requires_audited_stage_or_story");
     Packet actual = origin;
     actual.state = capture(session);
     if (difference(origin, actual))
         throw std::runtime_error("shadow_rollout_origin_mismatch");
-    if (origin.state[Field::Deaths] || origin.state[Field::BombsUsed] ||
+    if (origin.state[Field::Deaths] || (!boundary.allow_bombs && origin.state[Field::BombsUsed]) ||
         origin.state[Field::PlayerState] == 2)
         throw std::runtime_error("shadow_rollout_after_nmnb_failure");
     unsigned threads = 0;
@@ -194,8 +194,7 @@ static OwnedResult predict_owned(headless::Session &session, const Packet &origi
                     audit, arena.data->status == BranchStatus::Terminal);
                 evaluation.expected_captures = unsigned(coverage.expected.size());
                 evaluation.captured = unsigned(coverage.captured.size());
-                evaluation.all_captures =
-                    coverage.all && !audit.death_rows && !audit.deaths && !audit.bombs_used;
+                evaluation.all_captures = coverage.all && !audit.death_rows && !audit.deaths;
                 for (int spell : coverage.expected) {
                     if (spell < 0 || spell >= 256)
                         throw std::runtime_error("unsupported_tape_capture_catalogue");
@@ -259,6 +258,8 @@ static OwnedResult predict_owned(headless::Session &session, const Packet &origi
         if (!interrupted)
             evaluation = arena.data->evaluation;
         evaluation.status = result.status;
+        evaluation.require_all_captures = boundary.require_captures;
+        evaluation.allow_bombs = boundary.allow_bombs;
         evaluation.requested = result.requested;
         evaluation.attempts = result.attempts;
         evaluation.completed = result.completed;

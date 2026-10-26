@@ -187,6 +187,17 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_refine_real_data.cmake)
   set_tests_properties(headless_score_refine PROPERTIES TIMEOUT 120
     FIXTURES_REQUIRED native_score_incumbent)
+  add_test(NAME headless_bomb_scoring COMMAND ${CMAKE_COMMAND}
+    -DSOLVER=$<TARGET_FILE:th08_shadow_style>
+    -DREFINER=$<TARGET_FILE:th08_score_refine>
+    -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+    -DCHECKER=$<TARGET_FILE:th08_replay_check>
+    -DDAT=${TH08_HEADLESS_DAT}
+    -DINCUMBENT=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/bomb-scoring-regression
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/bomb_scoring_real_data.cmake)
+  set_tests_properties(headless_bomb_scoring PROPERTIES TIMEOUT 180
+    FIXTURES_REQUIRED native_score_incumbent)
 endif()
 set_source_files_properties(src/shadow_recorded.cpp PROPERTIES
   COMPILE_OPTIONS "-fpermissive;-include${th08_native}/src/modern/linux/linux_compat.hpp")
