@@ -121,9 +121,14 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   action/replay tapes or experiment reports; those remain under `reports/local/`
 - For authorized assistant changes to this N0zoM1z0 repository, use
   `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
-- The owner requires low process concurrency on the shared host. Follow the active
-  campaign resource revision; the current limit is four concurrent solver jobs and
-  320 total campaign tasks. Do not raise concurrency merely because CPU/RAM are free
+- The owner requires low process concurrency on the shared host. The October26
+  continuation authorizes cumulative budget extensions while bounding memory;
+  the active window is640 total campaign tasks, without resetting the ledger.
+  Record further extensions before using them; this authorization does not raise
+  the four-concurrent-solver limit. Use a2GiB per-process address-space limit,
+  a2GiB summed-RSS limit per owned solver tree, and host-memory admission/abort
+  guards. Preserve12GiB MemAvailable before admission; stop owned work below8GiB.
+  Resource-aborted work remains charged and cannot certify a gameplay result
 - The owner requested direct main progress commits, not feature branches/PRs.
   Fetch first, preserve others' work, never force an unrelated change, and publish
   only tested scope. Do not infer permission to continue beyond the latest request

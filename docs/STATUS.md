@@ -425,9 +425,14 @@ first-safe acceptance alone does not use a longer compute budget to maximize cas
 
 All producer sources, CSVs, row hashes and incomplete-probe evidence stay in
 `reports/local/retail-score-offline-20261026/point-income-probe-v{6,7}/`.
-The ledger has reached **320/320** with no remaining campaign tasks. No further
-solver experiment or retail playback is launched. Both human-score targets
-remain unmet; selected Native progress and the exact resumption points are saved.
+That checkpoint ends at **320/320**. The owner subsequently authorizes more
+offline work under bounded memory. The active window is now640 cumulative tasks,
+with the original ledger retained and at most4 concurrent solvers. Further
+recorded budget extensions are authorized under the same memory conditions.
+Each solver process has a2GiB address-space limit; each owned process tree has
+a2GiB summed-RSS guard. Admission requires12GiB host MemAvailable; below8GiB,
+owned work is stopped and recorded as a resource abort. Historical measured
+solver peaks are about80MiB RSS. Both human-score targets remain unmet.
 
 ## What produced the gain
 
@@ -663,8 +668,8 @@ independent for later ablations; no new ablation matrix is requested now.
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (320/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
-   The owner must revise that resource limit before another campaign task.
+   (320/640 at the new memory-bounded window); do not reset the ledger to hide
+   earlier attempts. Record any further authorized extension before using it.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not
