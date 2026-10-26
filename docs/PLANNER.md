@@ -24,12 +24,18 @@ the run. Search exhaustion, runtime failure and budget exhaustion remain distinc
 
 ## Spell capture and score objective
 
-[Issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11) orders the new objectives:
+[Issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11) sets the scoring objectives:
 complete NMNB, capture every card in the chosen route's source catalogue, then
 maximize actual terminal displayed score. A skipped conditional Last Spell stays
 in the coverage target. Lunatic4A/FinalB has37 cards; Extra has14. Other branches,
 difficulties and Last Words require separate runs. These are run-level capture
 goals, distinct from populating every Spell Practice entry in a persistent profile.
+
+Current outcomes and historical failures belong in [Status](STATUS.md); this
+section describes the implemented mechanisms and their limits. New experiments
+are restricted to Extra until the owner changes scope.
+
+### Source economics and capture boundaries
 
 The restored [Spellcard.cpp](../third_party/th08/src/Spellcard.cpp) distinguishes
 an encounter, capture validity, the final captured flag and delayed bonus payment.
@@ -51,7 +57,8 @@ Several coupled mechanisms matter more than a distance-to-bullet reward:
 
 - Faster ordinary captures preserve bonus and award100–1000 time orbs, reaching
   1000 within the first one-seventh of the limit. The native timeout-spell path
-  awards700. Time-orb pickup also increases the active spell bonus by8000, subject
+  requests700. These are pending requests, emitted in deferred batches, not a
+  guarantee of that many realized pickups. Time-orb pickup also increases the active spell bonus by8000, subject
   to its source limit, and increases future point-item value.
 - The stage Last Spell operand compares collected orbs **plus pending capture
   reward and field orbs** with the stage requirement. Lunatic thresholds for
@@ -96,6 +103,8 @@ The [PND score list](https://thscore.pndsng.com/index.php?th=8), checked October
 lists a6,168,365,790 Marisa/Alice score and higher scores for other shots. It is a
 score-attack reference, not an established matching-NMNB bound for this solver.
 
+### Collection and form controls
+
 The opt-in `score` preference adds two independent current-memory controls:
 `Configuration::scoring_collection` and `scoring_aim`. The Native adapter owns a
 copy of visible point/useful power items, literal boss position, current power
@@ -104,8 +113,9 @@ starts with at least four useful items and fewer than64 observed bullets, aims
 12 pixels above that source line and retains its intent until items disappear,
 eligibility ends or a boss arrives. This hysteresis prevents turning back while
 the last items are still approaching. Boss aiming uses its actual position and
-the ordinary400-pixel vertical anchor. These are proposal goals; complete Native
-rollouts still decide safety under the unchanged H64/lead8/110ms/60ms contract.
+the ordinary400-pixel vertical anchor. These are proposal goals. Complete Native
+rollouts decide safety with the explicitly selected budgets; the Native harness
+default is H64/lead8/110ms/60ms.
 Baseline actions and tie ordering remain unchanged. The scoring goals reject the
 fixed-height delayed executor and existing branch-value models rather than
 silently mixing unsupported control or training assumptions.
@@ -121,26 +131,28 @@ use no spell-ID decisions or input scripts and remain opt-in.
 `score-harvest` allows a collection trip during a quiet nonspell boss interval:
 the existing four-item/<64-bullet entry gate remains; an active spell or128
 observed bullets ends a boss trip. Its existing edge-cost term is2 with40-pixel
-margin. This combination raises one complete Extra sample to1,871,533,920 NMNB,
-14/14; it does not establish which component caused the gain or general seed
-reliability. The baseline and original `score` behavior remain unchanged.
+margin. The baseline and original `score` behavior remain unchanged. Complete
+scoring outcomes and weaker variants are recorded in Status.
 
 `score-precollect` also reads unconditional point-drop counts on currently active,
 damageable enemies when no boss is present. Current power decides whether a
 power-or-point drop counts; periodic/random drops are omitted. The count-weighted
 current X is a proposal target, not a predicted RNG scatter. A qualifying batch
 can start the collection climb before its kill. New shot commands are withheld
-until reaching12 pixels above the SHT collection line; existing shots remain
+until reaching the configured collection goal (12 pixels above the SHT line
+by default, or source pickup reach+2 with priced collection); existing shots remain
 live and Native branches decide their actual effects. Real drops continue the
-trip until collection; empty actor/item state clears it. Its first complete-
-duration trial fails at13/14 and remains experimental.
+trip until collection; empty actor/item state clears it. Precollection remains
+experimental, with failed and weaker complete trials retained in Status.
 
 Boss collection, precollection and source-survival focus strength are independent
 recorded controls. The survival prior defaults to0.01; changing its nonnegative
 strength does not affect ordinary attacks. No failed/incomplete branch certifies
-an input prefix. Ordinary-spell milking prototypes are retired after their
-negative full-scene trials; source economics still motivates future work, not
-a claim that keeping an attack alive automatically raises terminal score.
+an input prefix. The first ordinary-spell milking variants were discarded after
+failed full scenes; the maintained attack-pacing control below supersedes them.
+Extending an attack must still improve a complete valid terminal score.
+
+### Stream proposals and attack pacing
 
 The experimental `score-flow` adds a source-survival-only stream goal, with a
 recorded5.01 focus prior. Every64 updates it ranks70 stationary targets on a
@@ -152,16 +164,18 @@ travel distance. Current lethal bodies and movement bounds exclude targets.
 Local proposal contact reward3 and anchor weight0.03 apply only in this mode;
 native collision/margin costs and true-RNG safety verification remain intact.
 This long linear hypothesis is not a192-update Native certificate. The complete
-local precursor scores1,970,924,450, but its omitted20-pixel expansion left all
-macro contact counts empty; this score does not validate that macro target.
-Two cleaned-profile trials and a corrected-geometry trial fail at13/14. A
-mirrored-stream contract catches the missing expansion and checks goal direction.
+precursor had empty macro contacts because it omitted the20-pixel expansion;
+its valid score does not validate that earlier target. The mirrored-stream
+contract catches the omission and checks goal direction. The source-survival-only
+profile still has complete-duration failures in Status.
 The default controller remains unchanged.
 
 The separate opt-in `--attack-pacing 1` uses current source HP-to-callback,
 remaining updates, damage-reduction state, extreme-youkai state, collected orbs,
 orb value and bonus decay. After60 mature observations it estimates DPS from a
-120-update damage history; the capture reserve is1.5*HP/DPS+240 updates. With
+120-update damage history. That measured firing rate is retained through the
+income experiment; it is not an exact future damage model. The default capture
+reserve is1.5*HP/DPS+240 updates. With
 700 additional updates,16 nearby slow ordinary bullets and8 macro contacts,
 it releases new fire and samples income. It waits at most1200 updates for the
 gauge/income experiment; after source extreme-youkai activation it measures240
@@ -183,6 +197,8 @@ reported. `--search-budget-ms` explicitly changes only this synchronous Native
 experiment's total budget (default110); the250ms scoring prototype supplies no
 claim about live deadlines or60FPS capability.
 
+### Price-aware positioning
+
 Point goals use current source pickup geometry. `--priced-collection 1` sets
 player target Y to collection_line-pickup_reach_y-2, clamped to movement bounds.
 The intended item pickup is above the price line. Auto-attraction
@@ -197,6 +213,8 @@ recorded, with no card, seed or human-input lookup. Height is a proposal goal,
 not a promise about prices during transit. Pacer/source-survival graze goals
 retain priority over the general human preference. Precollection, when enabled,
 uses the same price-aware target before restoring new fire.
+
+### Audit and publication contracts
 
 Per-spell score audits snapshot collected orbs, point count/value and score after
 the preceding capture payout is settled, then again at the source end hook.
@@ -219,28 +237,10 @@ still match; the failed search supplies no inputs. The live `h128` profile uses
 Both retain lead8, interval8, total110ms and proposal60ms. Longer verification is
 not uniformly better: the retained4A counterexample fails under128.
 
-Source-first follow-up should separate orb production from HP loss.
-`Player::CalcDamageToEnemy` checks the hit accumulator before adding at most50
-damage to it; Marisa/Alice uses threshold40, and a fresh enemy starts at that
-threshold. Eligible extreme-human shots can therefore produce orbs before
-`EnemyManager::OnUpdate` applies spell division, reduction timers and damageable
-flags. Familiar damage reaches the parent through another division and a life
-callback floor. This suggests targeting fresh/linked enemies and using reduced-HP
-windows as economic opportunities. It does not establish a profitable strategy:
-target availability, source collision callbacks, gauge, item collection, timer
-bonus decay, capture deadlines and the extra hazard exposure all matter. Retained
-real-data traces distinguish an accumulator interaction from an actual spawned or
-collected orb. Shooting release also has latency: a running20-update shot cycle
-and existing projectiles can keep dealing damage after Z is released. Evaluate
-any harvesting controller through full outcomes, with independently recorded
-target/form/fire controls; do not encode spell IDs, seeds or human input tapes.
-In the complete seed40755 score-goal tape, a read-only follow finds19847 stable
-extreme-human accumulator interactions with no enemy HP loss, including16286
-while both sampled boundaries retain a reduction timer. It reproduces the full
-2,596,027,940 score and NMNB state. These are interaction observations, not19847
-proven orb spawns or additional profit; the current controller already benefits
-from some such windows. The next experiment must measure incremental collected
-orbs and terminal score, including any lost speed bonus or capture.
+Unimplemented source-based opportunities, including familiar/reduction-window orb
+production, are kept in [Status](STATUS.md#unresolved-problems-and-proposed-next-work).
+Current pacing uses observed income; it does not target enemies or certify those
+opportunities as incremental profit.
 
 ## Execution and ownership
 
@@ -322,19 +322,13 @@ aliasing. The existing three-argument offline interface uses a fresh workspace.
 
 ## Current-memory online policy
 
-[Issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5) records the integration
-order: complete the standalone-stage baseline over different seeds, diagnose Stage
-4B, add student-state teacher corrections, then evaluate continuous routes and actual
-deadline behavior. The owner also authorizes a continuous natural-4A story while
-the remaining standalone 4B/Extra failures are investigated.
-The first uniform learned-risk candidate fixes nine entries, shot 0, Lunatic
-(Extra difficulty for Extra), a seed-zero control and two fresh diagnosis seeds
-per entry. Two additional distinct seeds per entry remain held out until the
-candidate passes diagnosis and its identities are frozen. Earlier failed candidates
-and costs remain evidence after tuning. This does not cover other shots/difficulties.
-Current
-process memory is an authorized input. Pixel recognition, menus and a strict
-human-visible information boundary are not prerequisites.
+This component uses current process memory without Native future steps.
+[Issue #5](https://github.com/N0zoM1z0/th08-solver/issues/5) preserves its earlier
+stage/learning campaigns and evaluation profiles. Those historical 4B/Extra
+investigation orders are not the active queue; Extra scoring uses the separate
+shadow rollout path below. Current process memory is authorized input. Pixel
+recognition, menus and a strict human-visible information boundary are not
+prerequisites.
 
 `online::Observation` owns copied current player/movement state, active offscreen
 bullets, collision-disabled flags, transform/acceleration fields, pooled-laser
@@ -793,17 +787,11 @@ for candidate prediction. The real owner cannot rewind; future planning must not
 change its executed or latched prefix. This does not relax the zero-native-future
 contract of the existing current-memory policy.
 
-The latest owner sequence validates complete stage practice one stage at a time
-before returning to a full story. Each case includes the entire stage, midboss,
-boss and internal transitions, with actual NMNB, fresh input following and clock
-costs recorded separately. Diagnose failures before advancing; confirm with fresh
-seeds under a uniform final profile before story integration. The first natural
-handoff remains a separate smoke check. Practice initialization legitimately
-resets state, so isolated clears do not certify carried world/RNG at story joins.
-The owner subsequently deferred 4B and selected the 4A route. Continue with
-Marisa/Alice (shot1), whose natural branch is 4A and which matches the historical
-validated 4A story. Earlier shot0 Stage 1/2/3 clears remain component evidence;
-complete the selected route and confirm a uniform shot1 profile before story.
+The recorded shot1 Lunatic4A→FinalB story and proper Extra already complete
+online; their exact profiles and limits are in Status. Stage4B and new story
+experiments are paused while Extra scoring is the active research scope. Earlier
+practice/shot0 successes remain component evidence: practice initialization resets
+state, so isolated clears alone do not certify carried world/RNG at story joins.
 
 The first `th08_shadow_follow` gate implements common-start Native input following
 over a versioned wire projection. It compares independently initialized processes,
@@ -816,10 +804,10 @@ terminal can certify a plan; death, fault and timeout cannot certify even an ear
 surviving prefix. `ActionBuffer` checks late results against every executed input
 and projected state, replacing only the remaining suffix. The complete ID179
 regression verifies 1292 updates, rejects a fatal candidate and executes the
-verified queue without divergence. This is a branch-verification primitive, not
-yet a candidate-search policy or online deadline result. The actual Wine
-observation/input bridge has now passed controlled complete-spell gates; continuous
-gameplay agreement and actual 60 FPS acceptance remain open in [Status](STATUS.md).
+verified queue without divergence. The search/client built on this primitive has
+complete live clears; the primitive test itself is not a deadline result. Live
+score conversion, broad seed reliability and every-frame60Hz remain open in
+[Status](STATUS.md). The synchronous250ms scoring harness is a separate profile.
 
 `th08_shadow_online` follows a local Wine observation journal and publishes plans
 through a versioned mapped file. The default `h32` profile fixes lead 8, verified horizon 32,
@@ -1065,11 +1053,16 @@ weights, a hard memory limit and a lower high-water limit, with no additional sw
 check available memory before launch. CPU parallelism does not justify risking OOM
 or changing unrelated workloads. Keep machine addresses, usernames, private paths
 and raw logs out of public artifacts. Record technical profiles and sanitized results.
-The existing offline campaign retains four simultaneous solver jobs, with 320 tasks,
+The active Extra campaign permits at most four concurrent solver jobs and320
+cumulative campaign tasks; compilation uses two jobs. The handoff ledger is
+recorded in Status. Do not increase concurrency because the shared host is idle.
+The following unit sizes are historical campaign profiles, not current launch
+instructions. The earlier offline campaign retained four simultaneous solver jobs, with320 tasks,
 four CPU cores and 12 GiB memory for the entire batch. The online baseline uses a
 separate low-priority units with at most four independent controllers in total,
 96 tasks per unit,
-6 CPU cores, 6 GiB memory high-water and 8 GiB hard limit; compilation uses six jobs.
+6 CPU cores, 6 GiB memory high-water and 8 GiB hard limit. Its historical six-job
+compile setting is superseded by the two-job limit above.
 When ablations overlap, reduce the older queue and reserve a solver slot before
 starting another. The combined task limits remain at most 320; holdout work is gated.
 Student-state teacher corrections use two planners at most, a 192-task/four-core

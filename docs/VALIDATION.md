@@ -1,5 +1,136 @@
 # Validation, provenance and reproduction
 
+Current scoring mechanisms are in [Planner](PLANNER.md#spell-capture-and-score-objective);
+[Status](STATUS.md) owns outcomes, unresolved work and proposed experiments.
+This page owns reproducible commands, exact artifact identities and test contracts.
+Historical component commands below retain their named build/profile assumptions.
+
+## Selected Extra score replay
+
+The owner-selected [highest Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
+is an unchanged original-writer export of the frozen v15 Native prototype:
+
+| Field | Value |
+| --- | --- |
+| Displayed / stored score | 2,564,311,730 /256431173 |
+| Outcome | Complete NMNB, all 14 eligible spells captured |
+| Entry | Raw stage 8, difficulty 4, shot 1, seed 19732, story=true, priorFinalA=false, SampledGameplay |
+| Owner updates | 68429, from complete Extra entry without prefix repair |
+| Replay | 26949 bytes; SHA-256 `2bf469a6cbe59732f53b2a7b2ef208d3b450fc272e4c9c172eff244502b0c2d4` |
+| Natural playback | 68425 calculation rows, replay input clock 67925, no death/bomb-input rows, matching terminal score and 14/14 capture outcomes |
+| Complete 25-field row SHA-256 | `f172b6a60cc440696fd2f4d9015c2ae4a4848b766a4ddb6a8745da0bb47d834a` |
+| Recorded full action tape SHA-256 | `c66646b84430d4e3b881bca7a6667772f5b32c9bd3261b5f0b1eebfb2f0bfd53` |
+| Frozen solver binary SHA-256 | `740826437ca21e952e6ff29d55496a766ee089721d162570669aa3e89dfa68a6` |
+| Frozen/fresh replay checker SHA-256 | `ee9fd522cb1795d7750227ffe5206eb66d691dcafd4ddd060486864d7501aba3` |
+| DAT SHA-256 | `9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb` |
+| Export compatibility target | Retail 1.00d, size 840704, checksum 2724749753, version 0100d |
+
+The producer manifest records main parent `576c5f1` **plus local prototype edits**;
+that parent alone is not the solver identity. The complete local manifest is
+`reports/local/score-styles-20261025/extra-flow-v15/manifest.json`, task 207;
+prototype source snapshots are in `alpha-v15-src/`. Policy source SHA-256:
+`a3b5cf8d300287b8a4762995c12a9a989e7126f51b7a5b21fa50e593ef5ec691`;
+Native adapter SHA-256:
+`f00d548075dffe1dce60ba95bbdcc8465b71306dcf97a62e525d1e2ef0e1f743`.
+
+The explicit profile is 256-update verification,128 publication,8-update lead,
+250 ms total search,60 ms proposal, held recovery and neutral baseline movement
+recovery preserving primary fire intent. Collection uses source pickup reach+2,
+no-boss upper-stage positioning and 5-point collection/economic human preferences;
+active graze goals take priority. Capture reserve is 1.5*observedHP/DPS+240.
+Source gauge warmup/income sampling and the corrected 20-pixel ordinary graze
+expansion are enabled. The original 408.479 s solve, rejected work, fresh verification
+and weaker/failed attempts are charged separately in Status.
+
+The October 26 handoff repeats natural replay, every spell outcome/bonus and fresh
+41-word terminal agreement on the exact recorded action tape. Calculation rows,
+Session API calls, replay clock and original owner updates are different units;
+they are not expected to share one count. Fresh execution/natural replay verify
+Native execution and export agreement. This selected run has **no actual online
+Wine scoring run or retail playback validation**. It remains a frozen prototype
+result; current-main searches can choose a different action-dependent future.
+
+Handoff checks pass Release Native/DAT CTest **56/56 (933.85 s)** and core
+**36/36 (8.49 s)**. Fresh tape execution costs29.622s in this verification;
+the original38.097s follow remains part of the original experiment's accounting.
+Documentation path/heading checks and14 local chapter-anchor checks pass.
+The fresh checks and publication receipt stay in
+`reports/local/handoff-cleanup-20261026/`; only the selected `.rpy` is newly published.
+
+Reproduce the tracked replay from a Release headless build and owned DAT:
+
+```sh
+mkdir -p reports/local/extra-replay-check
+build-headless/th08_replay_check game_data_donottrack/th08.dat \
+  reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy \
+  reports/local/extra-replay-check/extra.rows \
+  --score-audit reports/local/extra-replay-check/audit.json \
+  --require-all-captures > reports/local/extra-replay-check/result.json
+sha256sum reports/local/extra-replay-check/extra.rows
+```
+
+Require exit 0, natural completion, zero death/bomb rows, raw terminal 256431173,
+14/14 captures and the exact row hash above. To watch in an owned retail game,
+copy the unchanged file into an unused `replay/th8_XX.rpy` slot. Retail viewing is
+a separate check, not a property established by the export target header.
+
+## Resume Extra scoring on main
+
+Build with the private DAT configuration described under
+[local build](#local-build-and-core-checks) and
+[Native reproduction](#native-headless-reproduction-and-acceleration-checks).
+Use a fresh output directory for each attempt. This is the integrated seed 10025
+profile that previously completed at 2,453,582,120, NMNB/14/14:
+
+```sh
+build-headless/th08_shadow_style game_data_donottrack/th08.dat \
+  reports/local/extra-main-next 8 4 1 10025 score-harvest 100000 1 900 \
+  --verify-horizon 256 --publish-horizon 128 --held-recovery 1 \
+  --attack-pacing 1 --baseline-recovery 1 --search-budget-ms 250 \
+  --priced-collection 1 --upper-stage 1 --collection-bias 5 --human-bias 5 \
+  --capture-factor 1.2 --capture-padding 120
+```
+
+For the integrated v15-style seed 19732 profile, change the seed and use
+`--capture-factor 1.5 --capture-padding 240`. Its last main run **failed 13/14**;
+this command does not promise the selected prototype's2,564,311,730. Freeze
+source/binary/options and report every attempt. Wall-time budgets, timeouts and
+proposal ordering can change the trajectory. Prefer a recorded bounded failure
+investigation over repeatedly searching until only a favorable tape is reported.
+
+After a complete solve, verify full inputs and the original-writer replay:
+
+```sh
+build-headless/th08_shadow_follow --dat game_data_donottrack/th08.dat \
+  --actions reports/local/extra-main-next/plan.actions \
+  --output reports/local/extra-main-next/fresh-follow.json \
+  --stage extra --difficulty 4 --shot 1 --seed 10025 --story 1 \
+  --input-profile sampled-gameplay --frames 100000
+build-headless/th08_replay_check game_data_donottrack/th08.dat \
+  reports/local/extra-main-next/native.rpy reports/local/extra-main-next/natural.rows \
+  --score-audit reports/local/extra-main-next/natural-audit.json \
+  --require-all-captures > reports/local/extra-main-next/natural.json
+```
+
+Require matching all 41 terminal words, score and every capture outcome/bonus.
+A failed or incomplete solve cannot certify a successful full run; its partial
+score stays labeled as such. The synchronous Native owner waits during planning,
+so its throughput is not actual online FPS. The live `th08_shadow_online` CLI has
+style/horizon profiles but not this full Native scoring/recovery switch set.
+Online integration needs its own explicit configuration, real original RNG,
+publication/slack telemetry and complete forward-only Wine validation.
+
+The Native harness fixes proposal H24/beam 192/cell 16/guard 16 and an 8-update
+search interval. Optional verification 64/128/256, publication 64/128, held recovery,
+pacing, capture reserve, price target, stage anchor and form controls are reported
+independently. No source edits are needed for later ablations. Current work
+prioritizes higher valid score; no ablation matrix is required for this handoff.
+
+## Selected online recordings and replay provenance
+
+These are preserved online/media results with their own profiles. They do not
+become the producer of the selected2.564-billion Native replay above.
+
 The owner-requested [recorded Stage 4A replay](../reports/native/replays/shadow-recording-v2--stage4a-d3-s1-seed34235.rpy)
 corresponds to the actual split-capture Lunatic Marisa/Alice practice, real seed34235.
 The original Native replay writer consumes a fresh execution of all 43597 actual
@@ -83,6 +214,8 @@ passes. The matching local `complete-extra.rpy` has SHA-256
 `dea524c41bf88b9355ff7d6cd1a978515e1a702ec47ae5d8e47597589104b058`;
 the movie and replay remain ignored, with the earlier live/following evidence in Status.
 
+## Source capture audit and Native scoring contracts
+
 The October25 read-only source-lifecycle audit repeats both preserved natural
 replays. All121654 story rows and46497 Extra rows remain byte-identical to the
 original captures: row SHA-256 respectively
@@ -123,8 +256,9 @@ build-issue1/th08_shadow_style game_data_donottrack/th08.dat \
 
 Arguments after the output directory are raw stage, difficulty, shot, seed,
 proposal preference, maximum owner updates, story flag and wall seconds. The
-directory must be fresh. Preferences are baseline/zen/expert/sniper/graze and
-`score`; the latter enables current-item collection and literal boss aiming.
+directory must be fresh. Preferences include baseline/zen/expert/sniper/graze and the score family
+(`score`, `score-survival`, `score-harvest`, `score-precollect`, `score-flow`).
+The score base enables current-item collection and literal boss aiming.
 Optional `--collect-items 0|1` and `--aim-boss 0|1` independently override those
 two controls. The result records both resolved booleans and the score-goal
 revision, so later ablation runs need no source edits. No new ablation matrix is
@@ -774,6 +908,10 @@ named and evaluated separately rather than relabelling a failed practice result.
 
 ## Native fork planner and replay gate
 
+This section reproduces the preserved earlier offline portfolio and its report
+producers. Its named profiles, build identities and timing results are historical;
+the current Extra scoring entry points are at the top of this page.
+
 The C++ replay suite requires the accepted corpus, manifest and schema from upstream
 `02ff72f29e7b4928f21c5a2fb0f57ffa0cec5415`. Pass their locations explicitly; raw replay
 captures and game data remain local. The default full gate pins the 108-entry manifest
@@ -1005,7 +1143,7 @@ last-line traversal reached address 1 in `strncmp`. A known accepted retail repl
 loaded and played under the same Wine configuration. Native round trips alone had
 therefore missed an incompatible file header.
 
-Recording now declares the pinned retail target explicitly: size `840704`, checksum
+Recording declares the pinned retail target explicitly: size `840704`, checksum
 `2724749753`, version `0100d`. Reports keep that declaration separate from the native
 producer's SHA256. It neither changes gameplay/RNG nor certifies retail execution.
 `headless_replay_export_contract` first failed with serialized size zero, then passed
@@ -1097,7 +1235,7 @@ malformed checkpoints and the bounded-search counterexample/recovery. Planner te
 compare statuses, exact action/position bits, tie-breaking and attempted budgets with
 the retained reference. Other tests guard their named component contracts.
 
-## Reproduce the current solver evidence
+## Reproduce the legacy subset evidence
 
 Run serially for useful Release timings. Serialization occurs after timed execution.
 Exit 0 means the report/check ran; inspect each outcome, since collision/search failure

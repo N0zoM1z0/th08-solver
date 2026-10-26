@@ -1,8 +1,8 @@
 # Generated evidence index
 
 This directory retains published solver snapshots and explicitly scoped older
-component baselines, plus the owner's explicitly requested complete online 4A story
-captures. All other new replays, action tapes and experiment JSON stay under ignored
+component baselines, selected online recording replays and the owner-selected
+highest-scoring Native Extra replay. Other new replays, action tapes and experiment JSON stay under ignored
 `reports/local/`; [Status](../../docs/STATUS.md) owns current campaign progress.
 A report's producer/input/scope controls
 its meaning; its presence is not a claim that every original spell or stage runs.
@@ -11,6 +11,7 @@ See [Status](../../docs/STATUS.md), [Scenarios](../../docs/SCENARIOS.md) and
 
 | Producer | Records | Meaning |
 |---|---|---|
+| Frozen source-directed Extra prototype v15, task207; original Native writer | [Extra NMNB 2,564,311,730](replays/extra-native-nmnb-2564311730-seed19732.rpy) | Proper non-practice Extra, Magic Team, seed19732, 14/14; exact fresh terminal and natural replay agreement. This selected 26949-byte replay is Native planning evidence. [Provenance and verification](../../docs/VALIDATION.md#selected-extra-score-replay); [handoff and unresolved work](../../docs/STATUS.md). No matching live Wine run is claimed |
 | Manual publication audit of frozen online results and fresh native C++ verification | `online_story_4a_validation.json`, `replays/online-story-4a-v1--s{0,29768}.{rpy,actions}` | Two complete forward-only shot-1 Lunatic Final A stories through natural 4A; exact original bytes, profile/model identities, decision latency, fresh action transitions and natural playback. The original batch remains 2/3. This frozen publication predates the later retail checks recorded in [Status](../../docs/STATUS.md); it establishes no enforced-deadline or current-main controller coverage |
 | `th08_plan_matrix` and frozen experiment configuration | `planner_route_matrix.json`, `planner_route_protocol.json` | All 108 team/solo, difficulty, Final A/B and Extra full-run combinations, explicit unlock/entry profiles and generic bounded portfolio; enumeration is not completion evidence |
 | `th08_planner_report`, retired initial route group | `planner_route_initial_summary.json` | 50 finalized process-limit runtime failures with exact failed prefixes; 58 missing-exit records retain the composer's `pending` label but were interrupted when that launch was stopped; zero verified completions |

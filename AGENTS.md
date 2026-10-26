@@ -76,6 +76,9 @@ this repository, not an ignored checkout, submodule or separate feature branch.
   recorded Stage 4A, standalone Final B and complete 4A-to-Final-B story. Keep their
   exact identities/provenance in maintained documentation. This does not authorize
   committing videos, action tapes or new experiment reports
+- The October 26 handoff also authorizes the selected highest-scoring Native Extra
+  replay `reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy`.
+  Preserve its exact bytes and provenance; other new experiment artifacts stay local
 - The owner also authorizes selected compact learned policy/risk snapshots under
   `models/`. Preserve exact weights/tables with schema, hashes, provenance and
   training/evaluation limitations. This exception does not include raw datasets,

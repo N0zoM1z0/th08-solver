@@ -22,6 +22,8 @@
 !/reports/native/replays/shadow-recording-v2--stage4a-d3-s1-seed34235.rpy
 !/reports/native/replays/shadow-recording-v3--finalb-d3-s1-seed29085.rpy
 !/reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy
+# Owner-selected highest-scoring complete Native Extra replay, October 26 handoff.
+!/reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy
 **/private_resources/
 __pycache__/
 *.py[cod]
