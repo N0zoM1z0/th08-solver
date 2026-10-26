@@ -3,13 +3,13 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
-> **Native NMNB scores: Extra 2,589,417,330 (14/14); Lunatic story 3,903,603,650 (37/37).**
-> [Extra replay](reports/native/replays/extra-native-nmnb-2589417330-seed10025.rpy) · [Native story replay](reports/native/replays/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
+> **Native NMNB scores: Extra 2,589,417,330 (14/14); Lunatic story 4,126,102,910 (37/37).**
+> [Extra replay](reports/native/replays/extra-native-nmnb-2589417330-seed10025.rpy) · [Native story replay](reports/native/replays/story-native-nmnb-4a-finalb-4126102910-seed40755.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
-C++17 Touhou 08 solver. Current work searches complete Native trajectories for
-NMNB, all captures and higher scores, then exports `.rpy` files for retail replay
+C++17 Touhou 08 solver. Capture the real Wine seed, search Native trajectories for
+NMNB, all captures and higher scores, then export `.rpy` files for retail replay
 validation. Scoring uses source attack timing, item collection and form control.
 [How it works](docs/PLANNER.md#true-rng-shadow-runtime).
 
@@ -18,7 +18,7 @@ validation. Scoring uses source attack timing, item collection and form control.
 | Online Lunatic 4A → Final B | 2,189,965,070 | Alan: 6,168,365,790 | 33/37 |
 | Online Extra | 1,166,969,620 | ASL: 3,021,639,920 | 14/14 |
 | **Native Extra** | **2,589,417,330** | ASL: 3,021,639,920 | **14/14** |
-| **Native Lunatic 4A → Final B** | **3,903,603,650** | Alan: 6,168,365,790 | **37/37** |
+| **Native Lunatic 4A → Final B** | **4,126,102,910** | Alan: 6,168,365,790 | **37/37** |
 
 Both Native progress replays have fresh execution and natural replay agreement;
 their player name is `ysopwnab`. Native scoring continues toward the human references.

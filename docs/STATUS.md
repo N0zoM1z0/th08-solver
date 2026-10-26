@@ -7,9 +7,33 @@ score exploration**, followed by Wine retail **replay playback** only after the
 export meets NMNB, all captures and the human-reference score target. Online MPC
 and live Wine solving are paused. Extra requires14/14 and >3,021,639,920; the
 complete Magic Team Lunatic4A→FinalB route requires37/37 and >6,168,365,790.
-New replay names are `ysopwnab`. Stage4B remains outside this route.
+New replay names are `ysopwnab`. Stage4B remains outside this route. Before a new
+scoring episode, capture its original retail Wine seed at the pre-RegisterChain
+boundary and freeze it for offline candidates. Wine seed acquisition is allowed;
+live solving stays paused. Keep the seed receipt and entry/checkpoint provenance.
+The existing Extra seed10025 results are historical Native benchmarks, not fresh
+retail acquisitions under this rule. Story seed40755 retains its original
+recorded Wine provenance; do not relabel old experiments as new seed receipts.
 [Issue11](https://github.com/N0zoM1z0/th08-solver/issues/11) retains the
 source investigation and experiment discussion.
+
+The next episodes now have validated original retail receipts, acquired before
+any Native candidate in those episodes:
+
+| Episode | Seed | Raw entry stage / difficulty / shot / prior FinalA |
+| --- | ---: | --- |
+| `extra-entry-v4` |46997 |8 /4 /1 /false |
+| `story-4a-finalb-entry-v1` |1805 |0 /3 /1 /true |
+
+Both use story=true, spell=-1 and dialogue advance. Each acquisition exits0
+after one228-byte observed update, without a command producer or replay. The
+initial three Extra startup attempts fail in menu automation before any valid
+`start.txt`; they remain charged. The working driver reacquires the owned game
+window after Wine startup replaces it and waits for menu readiness. Receipts,
+frozen launcher/observer, entry configurations and startup logs remain local in
+`reports/local/retail-seed-episodes-20261026/`; [Validation](VALIDATION.md#native-score-first-workflow)
+owns their exact receipt identities. Use these captured seeds for the next
+candidate batches, keeping each fixed across strategy changes and continuations.
 
 ## Verified results
 
@@ -22,7 +46,8 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
 | **Current Native Extra** | **2,589,417,330 /14 of 14** | Seed10025, complete from entry,500ms offline search; selected progress replay |
-| **Current Native Lunatic4A→FinalB** | **3,903,603,650 /37 of 37** | Seed40755, source-survival form priority and bias5; selected progress replay |
+| **Current Native Lunatic4A→FinalB** | **4,126,102,910 /37 of 37** | Seed40755, offline checkpoint continuation with conservative capture reserve; selected replay |
+| Selected survival-priority story |3,903,603,650 /37 of 37 | Seed40755, source-survival form priority and bias5; earlier bytes preserved |
 | Native story price baseline |3,890,487,560 /37 of 37 | Seed40755, complete from entry,500ms offline search; selected earlier progress replay |
 | Selected Native v15 snapshot | 2,564,311,730 /14 of 14 | Seed19732, frozen prototype; original bytes preserved |
 | Main price/staging controls | 2,453,582,120 /14 of 14 | Seed 10025, complete from entry, reserve 1.2/120 |
@@ -52,10 +77,10 @@ terminal agreement, natural replay NMNB/all-capture checks and the selected name
 identities and commands. Both remain below their explicit human-reference target;
 exit5 and `objective_met:false` distinguish valid progress from meeting that goal.
 No retail Wine playback is started for them yet. The source-survival priority
-follow-up improves story to3,903,603,650,37/37, NMNB; the earlier3,890,487,560
-replay is preserved unchanged.
+follow-up reaches3,903,603,650; the subsequent offline continuation reaches
+4,126,102,910,37/37, NMNB. Earlier selected replay bytes remain unchanged.
 
-The common profile is Magic Team, SampledGameplay, score-harvest, held/baseline
+The baseline common profile is Magic Team, SampledGameplay, score-harvest, held/baseline
 recovery,500ms total/60ms proposal, priced collection, upper-stage positioning,
 collection/human preferences5, original8-update lead. Extra seed10025 uses
 H256/publication128 and pacing with1.5/240 reserve. Story seed40755 uses
@@ -67,8 +92,9 @@ These are named combined profiles, not component ablations or new holdouts.
 | Extra native baseline v1 |69381 /448.547 |2239860+120 |277 /8 /8 |
 | Story native price v1 |119637 /479.403 |1975206+2016 |538 /0 /0 |
 | Story source-survival priority v2 |119637 /515.804 |1975206+2016 |538 /0 /0 |
+| Story conservative checkpoint continuation |128013 /215.523 |305829+16 |387 /0 /0 |
 
-Extra finishes with984 points/86136 orbs. Story finishes with1265 points,
+The Extra baseline finishes with984 points/86136 orbs. The story price baseline finishes with1265 points,
 100100 collected stage-orb inventory total, PIV800510 and clock5; all37 captures.
 Its stage point counts are61/147/299/326/202/230. The first story fresh-follow
 invocation omitted prior-Final-A history and entered6A; it is retained as a
@@ -184,17 +210,51 @@ The story counterpart from the selected tape midpoint59818 completes NMNB at
 4,071,061,590 but36/37: ordinary Stage4A card74 times out. It charges134125
 owner updates/300.741s,395896+20 branch/proposal updates,748 future deaths,
 67 repair attempts/6 adoptions and0 timeouts. The capture gate rejects export;
-this is not a new best. Native safety horizons currently do not reject a future
-ordinary capture failure, motivating an explicit capture-aware rollout goal.
+this is not a new best. Those safety-only horizons do not reject a future
+ordinary capture failure, motivating the explicit capture-aware goal below.
 
 The wider H48/beam512 guidance prototype stops with `native_style_proposal_fault`
-after5.790s: the root proposal interface is explicitly four paths of23 inputs,
-while H48 produces longer paths. This is an interface limit, not an unexplained
-gameplay opcode. Its manifest/error/wall cost remain; the CLI throws before
+after5.790s. Further source inspection locates the first rejection in the fixed
+24-update learned-feature proposal API; the four23-input transport is a related
+limit. A longer ordinary policy horizon is not a longer learned-feature path.
+Its manifest/error/wall cost remain; the CLI throws before
 writing detailed work counters, which must not be reported as zero. A compatible
-wider adapter or a direct-guidance experiment is needed before retrying it.
+wider adapter is now tested; that prototype result remains a failure.
 
-The active ledger is253/320 at this checkpoint; concurrency remains at most4.
+The optional capture-aware rollout goal and wider ordinary-decision adapter are
+implemented and pass the normal Release Native/DAT suite59/59 in919.31s. Their
+first private story attempts falsely reject the Stage1→2 control
+handoff at11426: currentStage is already1 while the prior clear flag persists,
+so the new unfinished catalogue is not yet a failed goal. The correction checks
+the stage that just ended, shares that boundary logic across owner/rollouts and
+adds a selected-story lifecycle regression with the recording clear flag
+projected explicitly. The original attempts and focused failures stay local.
+The timeout regression uses explicit synthetic invulnerability, rather than
+claiming that fixture as a playable NMNB route. Wider ordinary guidance keeps
+the learned24-update schema intact. Neither addition has a verified score gain
+yet; the selected replay below comes from the earlier frozen prototype.
+
+While that boundary is checked, a generic reserve/fire portfolio uses the frozen
+earlier binary. It retains61710 actual inputs before the first failed encounter
+of the4,071,061,590 tape, reconstructing the world and observer history from
+entry. Reserve2*HP/DPS+480, H512/publication256, lead1/nominal1/interval128,
+30s search/7200s owner and capture-fire recovery complete **4,126,102,910,
+NMNB,37/37**. Only5 future-repair attempts/1 adoption are needed. Fresh exact
+terminal and natural original-writer replay checks pass; no state override or
+human input is used in the scored run. This combined offline continuation adds
+222,499,260 over the previous selected story, not a component ablation.
+Stage points are61/147/299/326/194/258; stage orbs6020/12868/14940/20698/17254/41540,
+final PIV866600, clock5. [Validation](VALIDATION.md#selected-native-progress-replays)
+owns its exact producer and prefix lineage.
+
+The companion no-pacing tail completes3,880,310,940,37/37 in155.912s,
+119549 owner/251357+6 branch/proposal updates, with no future repairs. Extra
+reserve1.2/120 with the existing H256/full-tail profile completes2,483,229,780,
+14/14 in492.130s,69077 owner updates and8 repair attempts/2 adoptions, below
+the selected Extra score. These alternatives are retained, not promoted.
+
+The active ledger is266/320 after fresh/natural checks and retail seed acquisition;
+concurrency remains at most4. No scoring candidate has run on the new receipts yet.
 
 ## What produced the gain
 
@@ -422,12 +482,15 @@ independent for later ablations; no new ablation matrix is requested now.
    [shadow_style.cpp](../tools/shadow_style.cpp), and live orchestration in
    [shadow_online.cpp](../tools/shadow_online.cpp). Live scoring/scheduling controls
    are explicit; never infer the active profile from the style name alone.
-2. Replay the tracked highest score before changing a strategy. Reconstruct the
-   failed main case from its full tape/checkpoint; preserve RNG, bullets, items,
+2. For new scoring, first validate the owned retail seed receipt and exact entry.
+   Continue the captured Extra46997 or story1805 episode above; a new episode
+   requires its own retail acquisition before Native planning. Keep regression
+   fixtures and historical benchmarks labelled separately. Reconstruct a prefix
+   only from that episode's own entry/seed, preserving RNG, bullets, items,
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (253/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
+   (266/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not

@@ -13,6 +13,47 @@ strictly above3,021,639,920 or6,168,365,790 respectively before retail Wine repl
 validation. Live Wine solving is paused. Native budgets are explicit offline
 compute limits; they need not meet an online frame deadline.
 
+Before every new scoring episode, launch the owned Wine retail game and capture
+the original seed at the observer's **pre-RegisterChain** initialization boundary,
+the same boundary as Native `Session`. A seed read after stage initialization
+is not interchangeable. Save the initialization receipt, entry stage/difficulty/
+shot/story/history, executable/DAT/observer identities and seed-source provenance
+under the ignored local episode directory before starting Native search. Reuse
+that seed for the episode's candidate comparisons. A new episode gets a new
+retail seed receipt; do not choose or reroll Native seeds after inspecting scores.
+Historical benchmarks and fixed regression fixtures remain explicitly labelled.
+Wine is used for this seed acquisition and, after qualification, retail replay
+playback. Live Wine solving/online MPC remain paused.
+
+Use the existing owned-process Wine launcher/observer with
+`TH08_SHADOW_UPDATES=1`, `TH08_SHADOW_OBSERVE_REPLAY=0` and no Native command
+producer. Declare `TH08_SHADOW_CHECKPOINT=8,4,1,-1,1` for Extra, or
+`0,3,1,-1,1` for the story; the checkpoint chooses the entry and never writes
+RNG. Set `TH08_SHADOW_PRIOR_FINAL_A_CLEAR=0` or `1` respectively and
+`TH08_SHADOW_ADVANCE_DIALOGUE=1`. Use an owned game copy, dedicated Wine prefix
+and fresh output directory. After normal menu confirmation, the observer writes
+`start.txt` atomically before registration and exits after one observed update.
+Validate its V2 fields, pinned retail hash, successful launcher exit and one
+228-byte trace row. Preserve failed startup attempts; they are not valid seed
+receipts. Record the validated receipt hash in the Native episode configuration.
+Menu automation may retry a missed confirmation; a valid captured seed is never
+discarded after a score preview. Seed acquisition is not a gameplay certificate.
+
+The first episodes under this rule are in
+`reports/local/retail-seed-episodes-20261026/`. Extra `extra-entry-v4` captures
+seed46997; `story-4a-finalb-entry-v1` captures seed1805. Both freeze the existing
+observer SHA-256 `9647fef617cfef1611296cd4eb611c399db6e20aab439f027f91c07ead5bb24e`
+and launcher SHA-256 `2fdeee516adf32dd14b682256969edca63e06537be8f2c95920b239a9565ade1`.
+They use the pinned retail/DAT identities documented below. Each directory keeps
+the exact driver, manifest, `start.txt`, `seed-receipt.json` and `native-entry.json`.
+`native-entry.json` binds the receipt hash before Native planning; its stage is
+the raw runtime index, not the follower CLI's human stage label.
+
+| Identity | Extra46997 | Story1805 |
+| --- | --- | --- |
+| Original `start.txt` SHA-256 |`db65567c75aa3e3cbc2e85ef96914fea18ceae84106ce0919044dd67086f8126` |`80c1d2c1c72d3c8e41b8e861235bda537e0a05d2c416e2789b90ccaf7fa211b3` |
+| Seed receipt SHA-256 |`fcecb629fffb3a7973d37da14b73c6c61250db6e38a80e4995d4bee738a93c92` |`88516cae49c9c04a2ebc0857f88eb81b3d0ed7277ff4c4c95a1a8b39d55ae133` |
+
 New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
 bytes. The original `ReplayData::playerName[8]` is followed by reserved and
 practice-mode bytes; longer strings are rejected instead of overwriting mode.
@@ -39,6 +80,9 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | `--lead-updates` |8 |1..32, below publication |
 | `--nominal-warm-updates` |0 |0 means full old tail; otherwise lead..verification |
 | `--replan-updates` |8 |1..publication |
+| `--policy-horizon` |24 |2..200, with lead+horizon-1 at most verification |
+| `--policy-beam` |192 |1..8192 |
+| `--verify-captures` |0 |0/1;1 requires the all-capture run goal |
 | Positional `WALL_SECONDS` |Explicit |1..7200 per owner attempt |
 
 For example, H512/publication256,5000ms, lead1/nominal1 and interval128 spends
@@ -64,6 +108,18 @@ in970.95s. The focused checkpoint regression passes1/1 in35.65s and verifies
 literal-prefix retention plus a regenerated continuation with H512/publication256,
 lead1/nominal1/interval128/2000ms, fresh exact terminal execution and natural
 original-writer replay. Invalid schedules and an overlong terminal prefix fail.
+
+The capture-aware/wider-guidance follow-up passes the normal Release Native/DAT
+suite **59/59 in919.31s**, with frozen test binaries. The checkpoint regression
+now also uses policyH48/beam256 and capture verification. A source ordinary-spell
+timeout fixture demonstrates that safety-only survival certifies while the
+capture goal rejects the same Native trajectory, preserving all41 fields until
+the stop and leaving the parent world/audit unchanged. Its explicit synthetic
+invulnerability isolates capture semantics and is not NMNB gameplay evidence.
+A selected-story replay regression covers Stage1→2, including a read-only
+projection of the recording owner's carried clear flag; it checks the previous
+catalogue without falsely failing the unfinished new one. The H48 adapter test
+checks bounded single-action proposals and a complete Native guided horizon.
 
 ### Complete-tape refinement
 
@@ -112,9 +168,10 @@ the external replay remains local.
 
 ## Selected Native progress replays
 
-The owner selected both October26 Native progress files for publication. They
+The owner selected the October26 Native progress files for publication. They
 retain the original writer's exact bytes, player name `ysopwnab`, proper
-non-practice entry and SampledGameplay. No prefix repair is used. Both have
+non-practice entry and SampledGameplay. The original two baseline files below
+use no prefix repair. All selected progress files have
 exact fresh41-word terminal agreement and natural original-writer replay with
 zero death/bomb-input rows, matching score and all eligible captures.
 
@@ -148,8 +205,8 @@ The DAT and1.00d export target are the same as the v15 section below.
 
 Complete local manifests, tapes, reports and rows remain under
 `reports/local/native-score-offline-20261026/{extra-native-baseline-v1,story-native-price-v1}/`.
-Only the two selected replay files are newly published. Both are below the human
-score target, so retail Wine playback waits. Reproduce natural verification:
+The two baseline files and selected follow-ups below are published. They remain
+below the human score target, so retail Wine playback waits. Reproduce natural verification:
 
 ```sh
 mkdir -p reports/local/native-progress-check
@@ -194,6 +251,37 @@ checker SHA-256:
 The original-writer name remains `ysopwnab`. Complete manifests and checks are
 under `reports/local/native-score-offline-20261026/story-survival-prior-v2/`.
 The earlier selected story replay remains unchanged.
+
+The selected offline continuation is
+[Story4,126,102,910](../reports/native/replays/story-native-nmnb-4a-finalb-4126102910-seed40755.rpy),
+42372 bytes, SHA-256
+`00d9207984e33c17d9090ba22e7a9b0dc4872540aaf662e625403ce2c35ef930`.
+It is NMNB,37/37, with the same original entry/seed40755/prior-Final-A history
+and `ysopwnab`. The full128013-input tape includes61710 literally reconstructed
+inputs from the failed4,071,061,590/36-of37 prototype tape; that tape itself
+reconstructs59818 inputs from the selected3,903,603,650 run. No world/RNG/item
+reset occurs at either boundary. The new tail uses reserve2/480, source ordinary
+pacing, survival bias5, H512/publication256, lead1/nominal1/interval128,
+30s search/7200s owner, and capture-fire recovery in the frozen generic
+future-repair prototype. The complete attempt charges215.523s/305829+16
+branch/proposal updates/387 future deaths/0 timeouts/5 repair attempts/1 adoption;
+the original failures remain separately charged. These are combined profiles.
+Full fresh41-word terminal agreement and natural original-writer replay pass.
+Natural128100 rows SHA-256:
+`f6dc6766095d643c2ccb4547cd743142ad0d81753d3595ef2bc6abcbc48a2258`.
+Frozen producer SHA-256:
+`f141348215249d9367f35c3fb03333853326921653e0965bc3b7e8402d430aac`;
+private producer source SHA-256:
+`55e42bbb3eaaa705c2706261860b01277ee007e5be268a79f0ce5a7646151692`.
+Follower SHA-256:
+`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5`;
+checker SHA-256:
+`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
+The producer is the frozen local future-repair prototype, not an assertion that
+current-main searches regenerate identical actions. Complete identities, prefix
+lineage and verification receipts stay under
+`reports/local/native-score-offline-20261026/conservative-tail-score-v1/story-conservative-capture-v1/`
+and its referenced prototype manifests. Earlier selected replay bytes stay unchanged.
 
 The complete-tape refiner, survival-priority regression and unavailable-slowdown
 JSON reporting pass the full Release Native/DAT suite57/57 in1020.13s. The new

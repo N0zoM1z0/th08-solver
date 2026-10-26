@@ -7,7 +7,14 @@ this repository, not an ignored checkout, submodule or separate feature branch.
 The October 26 scope is Native-first scoring for Extra and the complete Magic
 Team Lunatic 4A-to-Final-B route. Require NMNB, every eligible capture and a score
 above the corresponding human reference before Wine retail replay validation.
-Online MPC and live Wine solving are paused. New scoring replay names use the
+Before each new scoring episode, launch the owned Wine retail game and capture
+its original RNG seed at the observer's pre-RegisterChain boundary. Record the
+entry configuration, checkpoint and seed provenance before Native exploration.
+Keep that captured seed fixed across the episode's offline candidates; never
+replace it with a Native-selected or hindsight-selected seed. Historical fixed
+benchmarks and regression fixtures keep their original identities. Wine is used
+for seed acquisition and qualified retail replay playback; online MPC and live
+Wine solving remain paused. New scoring replay names use the
 owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
 
 ## Solver-first scope
@@ -21,7 +28,8 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
 - Preserve carried bullets, RNG, actors and lifecycle state across transitions.
   Reset only where the modeled transition actually resets them
 - Unknown gameplay opcodes/state must stop the affected case. Classify synthetic,
-  DAT-controlled and source-faithful evidence separately. No game launch is required
+  DAT-controlled and source-faithful evidence separately. Fixed Native regression
+  cases require no game launch; new scoring episodes follow the seed policy above
 
 ## Code quality
 
@@ -92,6 +100,9 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
 - The owner's continuing progress-replay authorization also covers the selected
   story improvement `story-native-nmnb-4a-finalb-3903603650-seed40755.rpy` in the
   same directory. Preserve earlier selected replays unchanged
+- Continuing progress-replay authorization also covers the selected Native
+  story `story-native-nmnb-4a-finalb-4126102910-seed40755.rpy`; retain its exact
+  checkpoint-continuation provenance and all earlier selected bytes
 - The owner also authorizes selected compact learned policy/risk snapshots under
   `models/`. Preserve exact weights/tables with schema, hashes, provenance and
   training/evaluation limitations. This exception does not include raw datasets,
