@@ -129,10 +129,17 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   continuation authorizes cumulative budget extensions while bounding memory;
   the active window is640 total campaign tasks, without resetting the ledger.
   Record further extensions before using them; this authorization does not raise
-  the four-concurrent-solver limit. Use a2GiB per-process address-space limit,
+  the four-concurrent-driver limit, including solver, probe, replay-verification
+  and test owners. Native rollout fork children belong to their single owner;
+  do not start four solvers plus an extra test driver. Use a2GiB per-process
+  address-space limit,
   a2GiB summed-RSS limit per owned solver tree, and host-memory admission/abort
   guards. Preserve12GiB MemAvailable before admission; stop owned work below8GiB.
   Resource-aborted work remains charged and cannot certify a gameplay result
+- At an owner-requested session handoff, finish the already-running authorized
+  batch, record its outcomes and leave no owned experiment queue/test driver
+  running. A proposed next step or unused budget is not authorization to start
+  another batch during cleanup
 - The owner requested direct main progress commits, not feature branches/PRs.
   Fetch first, preserve others' work, never force an unrelated change, and publish
   only tested scope. Do not infer permission to continue beyond the latest request

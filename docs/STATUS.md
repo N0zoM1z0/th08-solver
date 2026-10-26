@@ -1,21 +1,88 @@
 # Current handoff status
 
-Updated 2026-10-26, continuing from handoff `b58aad0`.
-The Extra target of **2,500,000,000 displayed points, NMNB and 14/14 captures**
-is achieved by a frozen Native prototype. The owner now requests **Native-only
-score exploration**, followed by Wine retail **replay playback** only after the
-export meets NMNB, all captures and the human-reference score target. Online MPC
-and live Wine solving are paused. Extra requires14/14 and >3,021,639,920; the
-complete Magic Team Lunatic4A→FinalB route requires37/37 and >6,168,365,790.
-New replay names are `ysopwnab`. Stage4B remains outside this route. Before a new
-scoring episode, capture its original retail Wine seed at the pre-RegisterChain
-boundary and freeze it for offline candidates. Wine seed acquisition is allowed;
-live solving stays paused. Keep the seed receipt and entry/checkpoint provenance.
-The existing Extra seed10025 results are historical Native benchmarks, not fresh
-retail acquisitions under this rule. Story seed40755 retains its original
-recorded Wine provenance; do not relabel old experiments as new seed receipts.
-[Issue11](https://github.com/N0zoM1z0/th08-solver/issues/11) retains the
-source investigation and experiment discussion.
+Updated 2026-10-26. Public scoring controls: `13da22f`; selected replay milestone:
+`6b01b24`. The owner's latest request is to finish the current batch, organize
+this handoff and stop for a new session. **That batch is finished. No owned
+solver, experiment queue or test owner remains running.** Start new exploration
+only when the owner requests it in the next session.
+
+Current verified Magic Team Native bests are **Extra 2,620,568,090, NMNB 14/14**,
+and **Lunatic 1→2→3→4A→5→Final B: 4,311,260,760, NMNB 37/37**. The next score gates
+remain strictly above 3,021,639,920 and 6,168,365,790 respectively. Optimize Native
+offline first; run retail Wine replay validation after the corresponding export
+meets NMNB, all captures and its human-reference score gate. Online MPC remains
+paused. Stage4B is outside this route. Replay name is exactly `ysopwnab`.
+
+## Operational resume contract
+
+Read this section, [verified results](#verified-results),
+[unresolved work](#unresolved-problems-and-proposed-next-work) and the
+[current command](VALIDATION.md#resume-extra-scoring-on-main) before launching.
+Later sections preserve chronological/component evidence, not a second active plan.
+
+| Requirement | Active contract |
+| --- | --- |
+| Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
+| Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **356/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
+| Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
+| Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
+| Objective | Proper non-practice entry, NMNB,14/14 Extra or37/37 story, then higher actual complete terminal score. Use `--require-all-captures 1 --verify-captures 1` and the recorded target/name |
+| Checkpoint | Literal first N inputs from the same owned episode, executed from original entry. N counts Native owner updates, not spell seconds or replay-row line counts. Preserve RNG, bullets, actors, items, latch and observer history |
+| Acceptance | Inspect each `exit.json`, `run/result.json` and `run/score-audit.json`. A driver exit 0 is not a candidate success. Exit 5 may be valid below-target progress; abort/incomplete/failed rollouts never certify |
+| Replay gate | For selected improvements require original-entry fresh exact 41-word terminal agreement and natural original-writer score/NMNB/capture/name agreement. This is execution agreement, not an independent physics oracle |
+| Reproducibility | Freeze source, binary, exact args, seed receipt, DAT hash, prefix hash, budget, outcome and all additional costs. Keep stable tie order; label combined profiles and heuristic assumptions |
+| Verification | Release timing; Native CPU excludes I/O. Relevant tests plus normal CTest before code publication. Freeze binaries during CTest; never relink concurrently. Documentation-only cleanup reruns the documentation test |
+| Artifacts | New JSON/CSV/actions/replays stay in ignored `reports/local/`; publish only explicitly selected progress replays with exact provenance. Preparations, raw DAT/EXE/assets, original GIF bundle/generator and videos stay local |
+
+The active local launcher is
+`reports/local/retail-score-offline-20261026/run-batch.cjs`, with
+`memory-guard.cjs` and `verify-runs.cjs` in the same directory. Use the current
+guarded driver and fresh output names; do not use the older interrupted queue.
+The driver verifies the seed receipt, freezes producer sources/binary/controls,
+appends a task, applies `prlimit` and watches only its owned process group.
+Do not terminate other agents' processes on this shared host. The ledger has
+legacy repeated lifecycle rows: allocate the next ID from the maximum first
+column, not TSV line count. The untracked owner file `image.png` predates this
+work; leave it untouched and unstaged.
+
+Public controls `--drop-target` and `--economic-proposals` default off.
+`--economic-proposals 4` plus the recorded60879-input parent prefix reproduces
+the selected2.620B full input tape and terminal in current public code. The
+full-entry2.603B parent also uses private hit-window pulse/future-repair code;
+main alone is not claimed to regenerate that entire parent. Recompile every
+affected private translation unit against current headers/libraries after an
+interface change; do not relink old `.o` files across `online.hpp` or rollout
+ABI changes. Frozen standalone binaries remain the original run evidence.
+
+Current local entry points, relative to
+`reports/local/retail-score-offline-20261026/`:
+
+| Evidence / producer | Directory |
+| --- | --- |
+| Selected full-entry Extra parent | `extra-drop-target-h256-v1/`; full72133-input tape, original replay and fresh/natural verification |
+| Selected highest Extra | `extra-newbest-cash-compare-v1/`; full72557-input tape,60879-input parent prefix, frozen prototype and exact verification |
+| Current public reproduction | `extra-main-cash-confirm-v2/`; same tape/terminal, final public source/binary hashes; `extra-main-cash-compare-v1/verification/` owns earlier public fresh/natural checks |
+| Selected highest story | `story-retail-early-prefix-safe-tail-v3/`; full136061-input tape; original-entry early-graze prefix49753 plus conservative continuation; full verification |
+| Source-faithful private repair / pulse | `future-repair-v3/`, `suppressed-hit-pulse-v1/period2/`, `drop-target-v1/`; frozen C++/compile/link inputs, not portable old object files |
+| Economic prototype sources | `cash-compare-v1/` matches public32-update comparison; `cash-compare-pulse64-v2/` and `piv-potential-v3/` are non-winning variants |
+| Read-only diagnostics | `point-income-probe-v7/`, `pool-pressure-probe-v8/`, `pool-transition-probe-v9/`, `chain-probe-v1/`; exact stock-row gates, source/CSV identities |
+| Final batch, negative profiles | `extra-family-focus-{human,neutral}-margin-v1/`; source under `family-focus-v1/`; audited owner results, unselected and not freshly replay-promoted |
+| Current full test suite | `drop-target-cash-main-validation-v3/{ctest.log,exit.json,resources.txt}`:59/59 in1191.44s. Earlier deliberately interrupted suites stay recorded |
+
+For every run, read `manifest.json`, `frozen-bin/`, `exit.json`,
+`run/{result.json,score-audit.json,plan.actions,native.rpy}` when present, and
+`verification/{verified.json,identities.json}` for selected successful exports.
+A missing verification directory on a rejected profile does not make it a
+verified result. [Validation](VALIDATION.md#selected-native-progress-replays)
+owns the published file sizes, exact hashes and producer identities.
+
+## Validated retail episodes
+
+Extra seed10025 is a historical Native benchmark, not a fresh retail acquisition
+under the current rule. Story seed40755 retains its historical Wine provenance;
+do not relabel old experiments as new receipts.
 
 The active episodes have validated original retail receipts, acquired before
 any Native candidate in those episodes:
@@ -39,8 +106,8 @@ candidate batches, keeping each fixed across strategy changes and continuations.
 
 All scores are displayed points. These are Marisa/Alice (shot 1); Extra uses
 proper non-practice entry, difficulty 4, story=true, no prior-Final-A history.
-"Complete" below requires NMNB, all eligible captures, exact fresh 41-word
-terminal agreement and natural original-writer replay with matching score/captures.
+In this verified-results table, "complete" requires NMNB, all eligible captures,
+exact fresh 41-word terminal agreement and natural original-writer replay with matching score/captures.
 Fresh replay checks execution agreement, not independent physics or retail equivalence.
 
 | Evidence | Score / captures | Scope |
@@ -73,7 +140,7 @@ Native. The historical v15 NMNB score is84.86% of it; the reference is not a mat
 NMNB upper bound. Human inputs were measured, never copied into our controller.
 The source links and dated scoreboard snapshot are in [README](../README.md).
 
-## Native score-first progress
+## Native score-first evidence (chronological)
 
 The selected Native progress replays are complete from entry, with exact fresh41-word
 terminal agreement, natural replay NMNB/all-capture checks and the selected name
@@ -123,8 +190,9 @@ Its source references, instrumented ledgers and negative controls support:
   counted again after cash settlement. Ring-slot failures are real and cannot be
   repaired by changing the game's allocator.
 - First-safe return and full nominal-tail reuse can postpone fresh economic
-  decisions for nearly an entire horizon. The next Native change should keep a
-  certified incumbent and compare a few newly verified economic alternatives.
+  decisions for nearly an entire horizon. This motivated retaining a certified
+  incumbent and comparing fresh economic alternatives, now available through
+  the optional bounded cash-comparison control.
   Longer offline budgets and checkpoint continuations are available; their work
   remains charged and final tapes must execute freshly from original entry.
 - The new story's five final timeout cards have1642 physical graze events, all
@@ -147,7 +215,7 @@ The first Extra form/fire passes try59/46 candidates and accept0. Form has58
 deaths and1 equal-score completion; fire has43 deaths,2 incomplete tails and1
 equal-score completion. All costs remain local: form7.97808s/79499 charged
 updates, fire12.3233s/168738, each including the initial69381-update incumbent
-verification. The selected2,589,417,330 incumbent remains intact. This exposes
+verification. That2,589,417,330 historical snapshot remains unchanged. This exposes
 the next constraint: changing a form/kill can invalidate the old timed tail;
 safe adaptive continuation is needed before claiming a scoring benefit.
 
@@ -262,7 +330,7 @@ the selected Extra score. These alternatives are retained, not promoted.
 The seed-acquisition checkpoint ends at266/320. The active campaign below
 continues the same ledger; concurrency remains at most4.
 
-## Retail-seeded score exploration
+## Retail-seeded experiment evidence (chronological)
 
 All candidates bind the original Extra46997/story1805 receipts above before
 launch. The first full-entry main profiles complete NMNB,14/14 and37/37.
@@ -308,7 +376,8 @@ withholding fire, then rechecks realized farm income every240 updates. It also
 completes below baseline. Current evidence motivates an off-axis charging
 proposal that preserves pre-charge mature DPS rather than treating deliberately
 missed shots as slow capture damage. Full-board targets/all-speed stream
-proposals and off-axis variants are now running, with no outcome claimed yet.
+proposals and off-axis variants were unfinished at that publication checkpoint;
+their completed outcomes follow below.
 All alter proposals, not Native game behavior; no seed/card or human-input
 scripts are used. That first publication checkpoint ends at283/320.
 
@@ -357,7 +426,8 @@ Both stay charged, with original files retained. Independent process groups
 retry them as297/299, yielding the completed scores recorded above and a
 3,947,291,450 story,37/37. The normal frozen-binary Release Native/DAT CTest
 passes **59/59 in1078.17s**. Deeper Native repair profiles and explicit terminal
-Extra refinements continue under the same four-owner/320-task limits.
+Extra refinements were then launched under the four-owner/320-task window;
+their outcomes and the later authorized640-task window are recorded below.
 
 The terminal Extra portfolio reconstructs the verified2,493,554,650 prefix at
 61756 inputs before the last ordinary HP attack, or66879 before the final source
@@ -503,10 +573,16 @@ causal comparison. Source `DetachEnemyChain(1)` pays per live chain member, then
 adds2*linkedChildCount orbs and localized cancel regions; killing an attached
 child separately gives a different small reward and gauge reset. `CountParentChain`
 and linkedChildCount differ in real events and must not be silently equated.
-The next generic input prototype focuses briefly while a currently damageable
-parent chain is above/in the player shooting lane, gated by current gauge,
-without a stage/card schedule. Its full-entry trials are running; no gain is
-claimed yet. Exact source/row checks and CSVs stay in local `chain-probe-v1/`.
+The final generic input prototype focuses while a currently damageable parent
+chain is above/in the player shooting lane, gated by current gauge, without a
+stage/card schedule. Both full-entry trials finish Native NMNB14/14 but lose
+score: human-margin2,403,247,570 (974 points/78899 orbs,494.223s), neutral-margin
+2,478,813,720 (925 points/91687 orbs,524.270s). They charge2298381+128 and
+2419101+312 branch/proposal updates,389/978 rejected deaths,0 timeouts/overruns,
+43/29 repairs with3 adoptions each. Neither is selected or promoted to a public
+default; no new fresh/natural verification is claimed for these rejected runs.
+Exact source/row checks and CSVs stay in local `chain-probe-v1/`; family producer
+sources and complete rejected artifacts remain local. This closes tasks355/356.
 
 The failed H1024 case motivates retaining a freshly re-executed known incumbent
 suffix at an offline checkpoint before proposing changes. Reusing input data is
@@ -526,7 +602,7 @@ reproduces the selected exact input tape and terminal at131.492s.
 Local sources, manifests, diagnostics and failed setup attempts remain under
 `reports/local/retail-score-offline-20261026/`; the cumulative ledger is retained.
 
-## What produced the gain
+## Established scoring mechanisms
 
 The policy uses current source state and general geometry, without a seed/card
 movement script. Card numbers below identify measurements only. Complete
@@ -588,15 +664,16 @@ Other source constraints to preserve:
   capture at zero time; that flag does not prove HP immunity. Watching a replay
   does not populate persistent Spell Practice capture history.
 
-## Exploration retained for the next session
+## Historical component exploration
 
 Local paths in this section are relative to
 `reports/local/score-styles-20261025/`. Every attempt keeps its frozen binary,
 source identity, seed/profile, tape, result and verification where applicable.
 The task ledger is `reports/local/shadow-runtime-v1/tasks.tsv`:213/320 campaign
 tasks before cleanup,215/320 after the two replay/follow revalidation tasks,
-at most 4 solver jobs. New reports, tapes and replays stay local
-except the one owner-selected highest replay. No ablation matrix has been run.
+at most4 solver jobs at that checkpoint. New reports/tapes/replays stayed local
+except the then-selected highest replay. Later explicitly selected progress
+files are listed in current provenance; no ablation matrix has been run.
 
 | Experiment / local directory | Complete score or failure | Lesson |
 | --- | --- | --- |
@@ -725,59 +802,45 @@ continuation feasibility, not a live handoff or permission to rewind the owner.
 
 ## Unresolved problems and proposed next work
 
-These are proposed solutions, not implemented/verified gains. Preserve NMNB,
-14/14 Extra or37/37 story and actual terminal score as the acceptance criteria. Keep options
-independent for later ablations; no new ablation matrix is requested now.
+No next experiment is running or authorized by the handoff itself. After the
+owner resumes, retain NMNB/all captures and accept only higher complete score.
+Keep independent options for later ablations; the owner has not requested an
+ablation matrix now. The following are proposals, not verified gains.
 
-| Problem / evidence | Proposed next experiment | Required acceptance |
+| Current problem / evidence | Next bounded investigation | Acceptance |
 | --- | --- | --- |
-| Final-card reliability: main seed 19732 fails; expert checkpoint tail succeeds | Freeze the failing frontier and compare a bounded generic neutral/held/move-then-stop recovery portfolio, with explicit observer warming and work accounting. Integrate only if complete episodes improve | Complete from entry on old and predeclared fresh seeds, exact fresh execution and natural replay; retain the original failures |
-| Prototype/main and same-seed reruns diverge | Bind source/binary/options, log the first differing candidate/certificate, timeouts, tie state and action. Test whether a deterministic work cap is useful as a separately named profile; do not silently replace time budgets | Explain observed divergence with evidence; preserve current ordering, budgets and failure meaning for baseline |
-| Native first-safe selection and stale economic tails | Complete-tape strict-score selection is implemented; literal form/fire windows accept0/105 because the old timed continuation usually dies. Try a generic adaptive continuation or event-aligned proposal while preserving the actual world | Higher complete NMNB/all-capture terminal score; charge every added branch and reject observed capture failures |
-| Native scores remain below the human references | Extra: early production/chain termination and PIV timing. Story: supply collection/price and form scheduling. Use reviewed source facts and new Native baselines | >3,021,639,920 Extra and >6,168,365,790 full route, followed by successful retail replay playback |
-| Orb/bonus opportunity remains below ASL | Use actual per-spell income and source cap/decay state to choose whether to extend, reposition, then capture. Include point/PIV/clear rewards rather than optimizing raw graze | Higher complete terminal score without capture loss; charge every longer attempt and retry |
-| Pickup loss: v15 still has 49 low-height and 33 non-doubled items | Measure transit pickups, gauge convergence and missed drops. Test geometry-aware staging/return paths, preserving actual carried shots and item state | Actual point income and complete score improve, not merely a static price ceiling |
-| Suppressed-HP hit income is real; additional policy profit remains unproven | Read-only selected Extra follow traces1164 spawned/collected time orbs from nonboss reduction windows and663 from nondamageable actors, preserving all41 terminal words and83160-orb accounting. Test opt-in current reduction-target aiming, preserving old failures | Incremental collected income and complete score, including collection prices, capture-speed/bonus and added search costs; existing pickups alone are not additional profit |
-| Short horizons can enter traps beyond their certificate | Test longer strategic targets/viability proposals with true-RNG Native safety; a longer horizon remains an explicit cost | Complete affected Extra durations and failure cases; no approximate safety certificate or seed/card script |
+| Both human-score gates remain unmet | Extra first: actual item production, parent-chain termination, form/pickup price and orb/bonus timing; retain story4.311B while studying FinalB | Higher complete NMNB14/14 or37/37 score, exact fresh/natural verification; Wine playback only after the target |
+| Endpoint cash can prefer locally profitable inputs with worse full score | Value real pending capture rewards, source bonus cap/decay and remaining actual point opportunities. Fixed600*PIV fails both episodes; do not treat an assumed future item count as guaranteed | Whole-terminal gain with all extra rollout/retry costs charged |
+| More Native horizon can fail before reaching a known-safe existing tail | Freshly certify the literal incumbent suffix at a checkpoint, then compare economic alternatives. After edits, re-execute that suffix in the new branch; never assume unchanged RNG or safety | Retain a certified incumbent; incomplete/failed futures remain proposals only |
+| Familiar-chain value is nonlinear; broad focus loses score | Read current parent/child/chain state and projectile/form timing. Preserve source hit income and human pickup price; test selective mother targeting or maturation only with declared assumptions | Better actual collected income and complete score; distinguish live chain length from linkedChildCount |
+| Selected full-entry parent uses private repair/focus code | Port only measured useful behavior through typed interfaces if needed. Current public optional drop/cash goals are already integrated; five parent repair adoptions are not proof a larger framework is needed | Focused contract plus full-duration Native case and normal CTest; no old-object/new-header ABI mixing |
+| Parent2.603B still leaves26 spawned points and trails ASL's1081 points | Trace production and pickup timing on the current tape; static55,681,290 price headroom is not a guaranteed trajectory gain. Avoid returning to superseded925-point assumptions | Actual point income and complete score improve without sacrificing capture/orb economics |
+| Story FinalB cash/PIV trials lose76 points and many orbs | Compare source event-aligned capture/collection/form continuations while keeping earlier strong stages and their carried PIV intact | Beat4,311,260,760 from original retail-seed entry, not just a better isolated card |
 
 ### Resume here
 
-1. Read the result distinctions above, [Planner](PLANNER.md#spell-capture-and-score-objective),
-   [source replay provenance](VALIDATION.md#selected-extra-score-replay) and the
-   [scoring commands](VALIDATION.md#resume-extra-scoring-on-main). Main interfaces
-   are `ScoreMemory`/`Configuration` in [online.hpp](../include/th08/online.hpp),
-   `capture_policy_memory` in [online_native.cpp](../src/online_native.cpp), policy
-   history/pacing/goals in [online.cpp](../src/online.cpp), branch guidance in
-   [shadow_proposal.cpp](../src/shadow_proposal.cpp), synchronous orchestration in
-   [shadow_style.cpp](../tools/shadow_style.cpp), and live orchestration in
-   [shadow_online.cpp](../tools/shadow_online.cpp). Live scoring/scheduling controls
-   are explicit; never infer the active profile from the style name alone.
-2. For new scoring, first validate the owned retail seed receipt and exact entry.
-   Continue the captured Extra46997 or story1805 episode above; a new episode
-   requires its own retail acquisition before Native planning. Keep regression
-   fixtures and historical benchmarks labelled separately. Reconstruct a prefix
-   only from that episode's own entry/seed, preserving RNG, bullets, items,
-   actors, latch and observer history. A fresh replay is a separate verification.
-3. Freeze source/binary/configuration and a bounded complete-duration experiment
-   before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (356/640 at the latest recorded launch); do not reset the ledger to hide
-   earlier attempts. Record any further authorized extension before using it.
-4. Optimize Native complete trajectories first. Require qualified exported
-   replays before retail Wine playback; do not resume live MPC scoring.
-   Freeze all binaries for the normal CTest suite; do not
-   relink while a binary-identity regression is running. Publish only tested code
-   and maintained prose on main, using the repository's English commit prefix.
+Use the [operational contract](#operational-resume-contract), the guarded
+[current command](VALIDATION.md#resume-extra-scoring-on-main) and the current
+local inventory near the top. Code ownership is: current facts in
+[online_native.cpp](../src/online_native.cpp), typed score/configuration in
+[online.hpp](../include/th08/online.hpp), proposal goals/history in
+[online.cpp](../src/online.cpp), Native guidance in
+[shadow_proposal.cpp](../src/shadow_proposal.cpp), fork certificate semantics in
+[shadow_rollout.cpp](../src/shadow_rollout.cpp), and synchronous experiment/score
+comparison in [shadow_style.cpp](../tools/shadow_style.cpp).
 
-Local evidence inventory: `extra-flow-v15/manifest.json` binds the highest run;
-`alpha-v15-src/` freezes prototype sources; `point-income-audit-v1/`,
-`point-income-v12/`, `point-income-v15/` own price probes and unchanged-row hashes;
-`extra-phase-economy-v2/` owns corrected ASL/harvest/ahead/v6 interval audits;
-`pacing-v10-follow-*.{csv,json,txt}` owns read-only gate diagnoses;
-`extra-point-stage-main-*/` owns main results/recoveries. These private artifacts
-are useful locally; the tracked replay, maintained conclusions and commit history
-remain available without them.
+Historical v15 local inventory: `extra-flow-v15/manifest.json` binds that older
+run; `alpha-v15-src/` freezes its sources; `point-income-audit-v1/`,
+`point-income-v12/`, `point-income-v15/`, `extra-phase-economy-v2/` and
+`pacing-v10-follow-*` retain earlier probes. They are not the current producer
+or active episode. Preserve useful history without using it as the next command.
 
 ## Validation and preserved historical work
+
+Current public scoring code passes **59/59 in1191.44s**; see the current local
+test inventory above and [Validation](VALIDATION.md#selected-native-progress-replays).
+The remaining paragraphs retain earlier component checkpoints, not the current
+test count or active campaign limits.
 
 The complete-tape refiner, source-survival priority fix and slowdown metadata
 reporting pass Release Native/DAT CTest **57/57 in1020.13s**. The new end-to-end
@@ -802,7 +865,7 @@ unchanged; no new reports, tapes, videos or experiment replays are published.
 
 At `667597f`, Release Native/DAT CTest passes 56/56 in 889.37 s and core 36/36
 in 8.47 s. The 56-test local configuration includes two private retained-trace
-regressions; a normal DAT build has 54. There are 36 core CTests without private
+regressions; the then-normal DAT build had54. There are 36 core CTests without private
 data, plus two optional pinned-source checks. Fresh handoff verification is
 recorded in [Validation](VALIDATION.md#selected-extra-score-replay).
 The October26 cleanup reruns both suites: **56/56 in933.85s**, **36/36 in8.49s**,

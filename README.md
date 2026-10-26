@@ -40,7 +40,7 @@ also needs SDL2/image/ttf, Fontconfig and your own ignored `th08.dat`.
 
 | Document | Purpose |
 | --- | --- |
-| [Status / handoff](docs/STATUS.md) | Current evidence, experiments, problems and resumption plan |
+| [Status / handoff](docs/STATUS.md#operational-resume-contract) | Current state, experiment rules, resource limits and resumption plan |
 | [Planner](docs/PLANNER.md) | Policy mechanisms, Native safety and online protocol |
 | [Validation](docs/VALIDATION.md) | Reproduction, selected replay provenance and tests |
 | [Architecture](docs/ARCHITECTURE.md) · [Scenarios](docs/SCENARIOS.md) | Code ownership, checkpoints and terminal contracts |

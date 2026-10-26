@@ -61,7 +61,8 @@ practice-mode bytes; longer strings are rejected instead of overwriting mode.
 as `player_name_hex` (`79736f70776e6162` for this name), avoiding arbitrary binary
 or legacy-encoded text in JSON. Historical selected replay bytes remain unchanged.
 
-Use `--require-all-captures 1 --target-score DISPLAYED` for the active campaign.
+Use `--require-all-captures 1 --verify-captures 1 --replay-name ysopwnab`
+and `--target-score DISPLAYED` for the active campaign.
 The report separates game completion, capture coverage, exported replay and
 `objective_met`. Exit3 means capture failure; exit5 means a complete qualifying
 NMNB/capture run below the explicit score target. Such below-target replays may
@@ -83,6 +84,8 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | `--policy-horizon` |24 |2..200, with lead+horizon-1 at most verification |
 | `--policy-beam` |192 |1..8192 |
 | `--verify-captures` |0 |0/1;1 requires the all-capture run goal |
+| `--drop-target` |0 |0/1, current source enemy target; no budget/physics change |
+| `--economic-proposals` |0 |0..4 extra full-Native horizon fire/focus comparisons, sharing total search budget |
 | Positional `WALL_SECONDS` |Explicit |1..7200 per owner attempt |
 
 For example, H512/publication256,5000ms, lead1/nominal1 and interval128 spends
@@ -561,10 +564,107 @@ a separate check, not a property established by the export target header.
 
 ## Resume Extra scoring on main
 
+The current [operational handoff](STATUS.md#operational-resume-contract) owns
+resource limits, the356/640 ledger and the owner-requested stop after this batch.
+No next candidate is started by this documentation. When the owner resumes, use
+the existing retail-seeded episode and a fresh output directory, rather than
+copying a historical Native-selected seed or launching online MPC.
+
+The local guarded launcher at
+`reports/local/retail-score-offline-20261026/run-batch.cjs` reads the proper
+entry from its hash-bound seed receipt. It freezes binary/source/controls and
+charges one task per owner. `memory-guard.cjs` enforces process address space,
+summed owned RSS and host-memory admission/abort bounds. Count all other active
+owned drivers before launch: the script's one-to-four-case input is not a global
+concurrency lock. Only its own process groups may be terminated.
+
+For a later code change, build Release with `--parallel 2`, stop all relinking
+before verification, and run the full suite through the local guarded helper
+with a fresh report basename:
+
+```sh
+setsid --wait node reports/local/retail-score-offline-20261026/run-normal-ctest.cjs \
+  normal-release-next-001
+```
+
+The current suite already passes59/59; documentation-only cleanup requires only
+the documentation CTest. These helper/receipt/tape paths belong to this working
+copy; a clone contains the selected replays and maintained provenance, not the
+ignored local producers and action tapes.
+
+The following records the public2.620B suffix profile using the current highest
+full input tape. It is a reproduction example, not a reason to rerun a settled
+case. Clone the spec to a unique name and record why any new controls/prefix
+change when designing a new experiment. These Node scripts are local campaign
+orchestration; production solver/build/tests remain C++17/CMake.
+
+```sh
+cat > reports/local/retail-score-offline-20261026/next-spec.json <<'JSON'
+[
+  {
+    "name": "extra-next-suffix-001",
+    "kind": "extra",
+    "binary": "build-extra-live/th08_shadow_style",
+    "source_file": "tools/shadow_style.cpp",
+    "source_files": ["include/th08/online.hpp", "src/online.cpp", "src/online_native.cpp"],
+    "reason": "Reproduce the verified Extra suffix from its own original-entry prefix",
+    "controls": {
+      "--verify-horizon": 512,
+      "--publish-horizon": 256,
+      "--lead-updates": 1,
+      "--nominal-warm-updates": 1,
+      "--replan-updates": 128,
+      "--search-budget-ms": 30000,
+      "--policy-beam": 384,
+      "--hit-income": 1,
+      "--capture-factor": 1.2,
+      "--capture-padding": 120,
+      "--recovery-fire": "preserve",
+      "--economic-proposals": 4,
+      "--prefix-actions": "/home/yann/yann/touhou/th08-solver/reports/local/retail-score-offline-20261026/extra-main-cash-confirm-v2/run/plan.actions",
+      "--prefix-updates": 60879
+    }
+  }
+]
+JSON
+setsid --wait node reports/local/retail-score-offline-20261026/run-batch.cjs \
+  reports/local/retail-score-offline-20261026/next-spec.json
+```
+
+The driver adds the active NMNB/capture/name/score-target and declared collection/
+form defaults,400000 maximum updates and7200s owner wall budget; inspect its
+manifest's actual args. The selected full-entry parent additionally uses private
+focus-pulse/repair sources. A new public full-entry `--drop-target 1` experiment
+is a different profile, not a claim to regenerate that parent. For story use
+`kind: "story"` and its own seed1805/prefix; never attach Extra inputs or omit
+prior-Final-A history. The last FinalB cash/PIV trials are already negative.
+
+After completion, inspect each `exit.json` (including memory abort reason),
+`run/result.json` and capture audit. The launcher may exit0 while a child failed.
+A Native exit5 is below-target valid progress only if full NMNB/all captures
+actually pass. Verify a proposed improvement through the guarded checker:
+
+```sh
+setsid --wait node reports/local/retail-score-offline-20261026/verify-runs.cjs \
+  extra-next-suffix-001
+```
+
+This requires fresh verification output and checks original-entry fresh exact
+41-word terminal agreement plus natural replay NMNB, score, all captures and the
+eight-byte name. Preserve exact selected original-writer bytes. A lower/partial/
+resource-aborted run remains charged and local. Do not edit NaN slowdown metadata
+into a fabricated measured percentage. Current frozen success/negative profiles
+and prototype/source locations are in [Status](STATUS.md#operational-resume-contract).
+
+### Historical Native and online commands
+
+These commands retain earlier benchmark/recovery profiles. They are not the
+active retail-seeded campaign or an instruction to resume Wine solving.
+
 Build with the private DAT configuration described under
 [local build](#local-build-and-core-checks) and
 [Native reproduction](#native-headless-reproduction-and-acceleration-checks).
-Use a fresh output directory for each attempt. This is the integrated seed 10025
+The following is the historical integrated seed10025
 profile that previously completed at 2,453,582,120, NMNB/14/14:
 
 ```sh
@@ -628,11 +728,10 @@ baseline/preserve. These controls keep the original total budget and forced lead
 their extra Native work is charged. Wine-66 is a separately recorded trial of
 expert/capture, not an established replacement for the complete online PB.
 
-The Native harness fixes proposal H24/beam 192/cell 16/guard 16 and an 8-update
-search interval. Optional verification 64/128/256, publication 64/128, held recovery,
-pacing, capture reserve, price target, stage anchor and form controls are reported
-independently. No source edits are needed for later ablations. Current work
-prioritizes higher valid score; no ablation matrix is required for this handoff.
+Those older commands used proposal H24/beam192 and an8-update interval. Current
+Native horizon/beam/lead/publication overrides are listed above; do not infer a
+fixed current budget from an old command. These Native-selected seeds and live
+Wine examples remain historical, with online MPC paused.
 
 ## Selected online recordings and replay provenance
 
