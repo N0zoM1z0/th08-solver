@@ -29,6 +29,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_survival_flow = false;
     configuration.scoring_attack_pacing = false;
     configuration.scoring_hit_income = false;
+    configuration.scoring_drop_target = false;
     configuration.scoring_boss_collection = false;
     configuration.scoring_precollect = false;
     configuration.scoring_priced_collection = configuration.scoring_upper_stage = false;
@@ -360,7 +361,8 @@ struct Policy::Impl {
               opt.warm_fallback || opt.held_fallback || risk.loaded || !opt.hard_phantoms ||
               !opt.motion_envelope || opt.scoring_collection || opt.scoring_aim ||
               opt.scoring_survival_focus || opt.scoring_survival_flow ||
-              opt.scoring_attack_pacing || opt.scoring_hit_income || opt.economic_human_bias > 0)))
+              opt.scoring_attack_pacing || opt.scoring_hit_income || opt.scoring_drop_target ||
+              opt.economic_human_bias > 0)))
             throw std::runtime_error("unsupported_branch_value_configuration");
         if (opt.motion_envelope && !opt.hard_phantoms)
             throw std::runtime_error("motion_envelope_requires_hard_phantoms");
@@ -382,7 +384,7 @@ struct Policy::Impl {
         if (opt.planner_lag > 0 &&
             (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus ||
              opt.scoring_survival_flow || opt.scoring_attack_pacing || opt.scoring_hit_income ||
-             opt.economic_human_bias > 0))
+             opt.scoring_drop_target || opt.economic_human_bias > 0))
             throw std::runtime_error("unsupported_scoring_lag_configuration");
         frames.resize(opt.horizon + opt.tail_check + 1);
     }
@@ -427,7 +429,7 @@ struct Policy::Impl {
         finite(o.y);
         if (opt.scoring_collection || opt.scoring_aim || opt.scoring_survival_focus ||
             opt.scoring_survival_flow || opt.scoring_attack_pacing || opt.scoring_hit_income ||
-            opt.economic_human_bias > 0) {
+            opt.scoring_drop_target || opt.economic_human_bias > 0) {
             if (!o.scoring.available)
                 throw std::runtime_error("missing_online_score_memory");
             for (float v : {o.scoring.boss_x, o.scoring.collection_line, o.scoring.power,
@@ -436,6 +438,8 @@ struct Policy::Impl {
                 finite(v);
             if (o.scoring.pickup_reach_y < 0)
                 throw std::runtime_error("invalid_online_pickup_box");
+            if (opt.scoring_drop_target && o.scoring.has_drop_target)
+                finite(o.scoring.drop_target_x);
             if (opt.scoring_attack_pacing &&
                 (o.scoring.capture_hp < 0 || o.scoring.collected_orbs < 0 ||
                  o.scoring.orb_value < 0 || o.scoring.bonus_decay < 0))
@@ -1973,6 +1977,11 @@ struct Policy::Impl {
             pref_y = collection_goal_y(observation);
         if (opt.scoring_aim && observation.scoring.has_boss)
             pref_x = std::clamp(observation.scoring.boss_x, sp.minx, sp.maxx);
+        // Choose a real enemy lane instead of the empty midpoint of a group.
+        // Hit-income windows, existing pickup trips and graze goals take priority.
+        if (opt.scoring_drop_target && !observation.scoring.has_boss &&
+            observation.scoring.has_drop_target)
+            pref_x = std::clamp(observation.scoring.drop_target_x, sp.minx, sp.maxx);
         if (opt.scoring_hit_income && !observation.scoring.has_boss) {
             float best = 0;
             for (const auto &target : observation.scoring.income_targets) {
@@ -2035,7 +2044,7 @@ bool Policy::needs_scoring_memory() const {
     return impl_->opt.scoring_collection || impl_->opt.scoring_aim ||
            impl_->opt.scoring_survival_focus || impl_->opt.scoring_survival_flow ||
            impl_->opt.scoring_attack_pacing || impl_->opt.scoring_hit_income ||
-           impl_->opt.economic_human_bias > 0;
+           impl_->opt.scoring_drop_target || impl_->opt.economic_human_bias > 0;
 }
 bool Policy::needs_hit_income_memory() const {
     return impl_->opt.scoring_hit_income;

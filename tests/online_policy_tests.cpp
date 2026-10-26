@@ -481,6 +481,38 @@ void hit_income_goal_contract() {
     o.scoring.income_targets.front().x = std::numeric_limits<float>::quiet_NaN();
     rejects([&] { on::Policy(config).decide(o); }, "nonfinite income target was accepted");
 }
+void drop_target_goal_contract() {
+    auto config = on::with_style("score-harvest");
+    config.horizon = 24;
+    auto o = scene();
+    o.x = 192;
+    o.y = 240;
+    o.scoring.available = o.scoring.auto_collect_eligible = true;
+    o.scoring.has_drop_target = true;
+    o.scoring.drop_target_x = 320;
+    const auto original = on::Policy(config).decide(o).action;
+    config.scoring_drop_target = true;
+    check((on::Policy(config).decide(o).action & 128) && !(original & 128),
+          "drop-bearing actor did not select its shooting lane");
+    o.scoring.has_drop_target = false;
+    check(on::Policy(config).decide(o).action == original,
+          "removed actor left a stale drop target");
+    o.scoring.has_drop_target = true;
+    o.scoring.pickups.assign(4, {64, 120, on::PickupKind::Point});
+    check(on::Policy(config).decide(o).action & 64,
+          "future drop target displaced already existing point items");
+    o.scoring.pickups.clear();
+    o.scoring.has_boss = true;
+    check(on::Policy(config).decide(o).action == original,
+          "stage drop target displaced boss aiming");
+    o.scoring.has_boss = false;
+    config.scoring_hit_income = true;
+    o.scoring.income_targets = {{64, 176, 100}};
+    check(on::Policy(config).decide(o).action & 64,
+          "drop target displaced a current source hit-income window");
+    o.scoring.drop_target_x = std::numeric_limits<float>::quiet_NaN();
+    rejects([&] { on::Policy(config).decide(o); }, "nonfinite drop target was accepted");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -2128,6 +2160,7 @@ int main(int argc, char **argv) {
         score_attack_pacing_contract();
         point_price_goal_contract();
         hit_income_goal_contract();
+        drop_target_goal_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

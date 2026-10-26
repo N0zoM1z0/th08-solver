@@ -324,6 +324,28 @@ below the chosen actor for upward shots. Item trips and boss/graze goals retain
 priority. This is a current-memory hypothesis, not a future hit, reward or safety
 promise. Native rollouts retain all carried shots, RNG, HP and lifecycle changes.
 
+Native `--drop-target 1` is a separate, default-off input goal. For current
+damageable enemies above the player, the adapter ranks unconditional large-point
+drops at the current power by `count / (HP * (1 + abs(dx)/48))`. Stable ties keep
+the first source slot. The goal aims at one real actor; the existing count-weighted
+centroid remains the precollection input. Bosses, actual item trips, hit-income
+windows and active graze goals retain priority. This predicts neither RNG scatter
+nor a successful kill. Native continuations decide safety and realized income.
+The selected Extra gain uses this goal together with the recorded focus-pulse
+and larger-search profile; its result does not isolate the goal's contribution.
+
+Native `--economic-proposals 0..4` defaults to0. After a complete safe forecast,
+it retains that incumbent and tries up to the requested number of32-update
+fire/focus alternatives, preserving the immutable lead and incumbent movement
+inputs. Each alternative re-executes the full Native horizon with its own RNG
+and policy continuation. Only strictly higher endpoint cash replaces the
+incumbent; ties and failed/incomplete futures retain it. These are horizon
+proposals: only a higher complete NMNB/all-capture score selects a progress file.
+Extra work shares the declared total search budget, with a2000ms soft comparison
+slice checked before each candidate. An in-flight candidate may consume the
+remaining total budget. Reports record attempted/adopted comparisons and include
+their rejected futures and native/proposal costs in the ordinary totals.
+
 ### Audit and publication contracts
 
 Per-spell score audits snapshot collected orbs, point count/value and score after

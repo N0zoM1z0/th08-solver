@@ -89,6 +89,9 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
         g_Player.itemCollectionHalfSize.y + g_Player.primaryShtFile->itemCollectionBoxSize / 2;
     score.impending_points = 0;
     score.impending_x = 192;
+    score.has_drop_target = false;
+    score.drop_target_x = 192;
+    double best_drop_priority = 0;
     double weighted_drop_x = 0;
     const bool full_power = g_GameManager.GetPower() >= 128;
     if (!score.has_boss)
@@ -102,6 +105,17 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
                 (full_power ? std::uint64_t(std::max(0, enemy.powerOrPointItemDropCount)) : 0);
             score.impending_points += count;
             weighted_drop_x += double(enemy.worldPosition.x) * double(count);
+            if (count && enemy.worldPosition.y >= 0 && enemy.worldPosition.y < o.y &&
+                enemy.worldPosition.x >= o.movement.minx &&
+                enemy.worldPosition.x <= o.movement.maxx) {
+                const double reach = 1 + std::abs(enemy.worldPosition.x - o.x) / 48.;
+                const double priority = double(count) / (std::max(1, enemy.life) * reach);
+                if (priority > best_drop_priority) {
+                    best_drop_priority = priority;
+                    score.has_drop_target = true;
+                    score.drop_target_x = enemy.worldPosition.x;
+                }
+            }
         }
     if (score.impending_points)
         score.impending_x = float(weighted_drop_x / double(score.impending_points));

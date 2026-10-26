@@ -24,7 +24,7 @@ execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 100 0 1
 if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_prefix_requires")
   message(FATAL_ERROR "Unpaired checkpoint controls were accepted: ${rejected} ${error}")
 endif()
-foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96"
+foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-proposals;5"
                           "--nominal-warm-updates;4" "--replan-updates;65")
   execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 100 0 1
     ${controls} RESULT_VARIABLE rejected ERROR_VARIABLE error TIMEOUT 3)
@@ -33,7 +33,7 @@ foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96"
   endif()
 endforeach()
 execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 70000 0 180
-  --collect-items 1 --aim-boss 1 --require-all-captures 1 --target-score 1
+  --collect-items 1 --aim-boss 1 --drop-target 1 --economic-proposals 4 --require-all-captures 1 --target-score 1
   RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 200)
 if(NOT result STREQUAL "0")
   message(FATAL_ERROR "Complete style scene failed: ${result} ${stdout} ${stderr}")
@@ -41,6 +41,10 @@ endif()
 file(READ "${WORK}/result.json" original)
 if(NOT original MATCHES "\"collect_items\":true" OR
    NOT original MATCHES "\"aim_boss\":true" OR
+   NOT original MATCHES "\"drop_target\":true" OR
+   NOT original MATCHES "\"drop_target_revision\":1" OR
+   NOT original MATCHES "\"economic_proposals\":4" OR
+   NOT original MATCHES "\"economic_attempts\":[1-9][0-9]*" OR
    NOT original MATCHES "\"score_goal_revision\":1")
   message(FATAL_ERROR "Score experiment did not record its independent controls: ${original}")
 endif()

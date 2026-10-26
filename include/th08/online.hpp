@@ -131,6 +131,10 @@ struct ScoreMemory {
     // not a promise about RNG scatter, a future kill or a realized pickup.
     std::uint64_t impending_points = 0;
     float impending_x = 192;
+    // One current damageable drop-bearing actor above the player, ranked by
+    // drop count / (HP * horizontal travel cost). No future death is assumed.
+    bool has_drop_target = false;
+    float drop_target_x = 192;
     std::vector<ScorePickup> pickups;
     std::vector<IncomeTarget> income_targets;
 };
@@ -189,6 +193,7 @@ struct Configuration {
     bool scoring_survival_flow = false;
     bool scoring_attack_pacing = false;
     bool scoring_hit_income = false;
+    bool scoring_drop_target = false;
     float attack_focus_bias = 5;
     float attack_reserve_factor = 1.5f;
     unsigned attack_reserve_updates = 240;
