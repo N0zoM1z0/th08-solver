@@ -148,7 +148,53 @@ online frame-rate result. The checker preserves the metadata bits and reports
 unavailable slowdown as JSON null. [Validation](VALIDATION.md#slowdown-metadata-in-native-exports)
 owns the source explanation and comparison. No replay bytes are rewritten.
 
-The active ledger is244/320 at this checkpoint; concurrency remains at most4.
+The next owner instruction explicitly prioritizes score over solve speed.
+Native continuation now imports a literal input prefix while reconstructing
+actual observation history; new explicit controls allow larger horizons/budgets,
+shorter nominal reuse and larger certified execution blocks. Defaults and live
+Wine behavior remain unchanged. The focused checkpoint regression executes the
+original prefix, regenerates its tail, checks fresh exact terminal/natural replay
+and rejects an overlong terminal prefix; invalid schedules are rejected early.
+
+Three named H512/publication256 profiles use5000ms per search, lead1/nominal1,
+interval128 and7200s total: Extra baseline, a private all-speed continuous-stream
+proposal, and full story with ordinary pacing/bias5. All fail NMNB: Extra baseline
+card202 at50325, partial1,331,016,900,10/14,162.107s/247020+8 branch/proposal
+updates/321 future deaths/1 timeout; swept Extra card202 at50323,
+partial1,282,440,870,10/14,167.321s/247186+12/480 deaths/0 timeouts; story
+Stage4A card70 at71326, partial1,322,251,780,18/37,
+183.982s/308586+7/303 deaths/0 timeouts. Baseline reaches5004.97ms once;
+swept/story maxima4071.62/1883.45ms remain below the5s search allowance.
+These are named profiles, not gains. The private stream variant uses only its geometry change, without
+the earlier failed gauge-warm experiment. Initial tasks245–247 fail before
+initialization because the launcher writes the wall argument into the first
+control slot; exits20–25ms and manifests remain intact. Corrected tasks248–250
+rebuild the argument list from named controls. No failed work is hidden.
+
+The private future-repair experiment uses failed predictions only as proposal
+inputs, intervenes before a predicted collision and verifies each complete
+horizon again from the unchanged actual origin. It tries at most128 additional
+rollouts per search under a30s allowance. From the selected Extra tape's midpoint
+spell checkpoint38824, it completes2,480,556,950,14/14, NMNB:68349 owner updates,
+257.885s,523376+28 branch/proposal updates,2130 future deaths,0 timeouts,
+986 repair attempts/12 adoptions. This restores completion for the named long
+profile but does not beat the selected score; it is not promoted.
+
+The story counterpart from the selected tape midpoint59818 completes NMNB at
+4,071,061,590 but36/37: ordinary Stage4A card74 times out. It charges134125
+owner updates/300.741s,395896+20 branch/proposal updates,748 future deaths,
+67 repair attempts/6 adoptions and0 timeouts. The capture gate rejects export;
+this is not a new best. Native safety horizons currently do not reject a future
+ordinary capture failure, motivating an explicit capture-aware rollout goal.
+
+The wider H48/beam512 guidance prototype stops with `native_style_proposal_fault`
+after5.790s: the root proposal interface is explicitly four paths of23 inputs,
+while H48 produces longer paths. This is an interface limit, not an unexplained
+gameplay opcode. Its manifest/error/wall cost remain; the CLI throws before
+writing detailed work counters, which must not be reported as zero. A compatible
+wider adapter or a direct-guidance experiment is needed before retrying it.
+
+The active ledger is253/320 at this checkpoint; concurrency remains at most4.
 
 ## What produced the gain
 
@@ -381,7 +427,7 @@ independent for later ablations; no new ablation matrix is requested now.
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (244/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
+   (253/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not
@@ -406,6 +452,12 @@ incomplete and timed-out incumbents with charged work, then checks fresh exact
 terminal execution and natural original-writer replay. Focused2/2 passes48.19s;
 the final documentation check passes. New selected story bytes and previous
 selected replays are preserved; other generated experiment artifacts remain local.
+
+The offline checkpoint/budget controls pass a subsequent normal Release
+Native/DAT suite **57/57 in970.95s**, including long-H512/publication256/lead1/
+nominal1/interval128 continuation, literal-prefix agreement, fresh terminal and
+natural replay checks, invalid schedules and terminal-prefix rejection.
+Focused checkpoint validation passes1/1 in35.65s.
 
 The live scoring port and optional current reduction target pass the normal
 Release Native/DAT suite56/56 in1175.95s and core36/36 in12.75s. The earlier port

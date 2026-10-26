@@ -72,6 +72,31 @@ remaining timed inputs. An early kill or form change can make that suffix unsafe
 or out of phase, so this bounded coordinate search can reject useful strategies.
 It neither proves optimality nor supplies retail or online-FPS evidence.
 
+### Offline checkpoints and compute controls
+
+The owner prioritizes higher complete score before reducing compute cost.
+Native `th08_shadow_style` therefore accepts explicit larger search budgets and
+verification/publication horizons through2048 updates. Lead, nominal-prefix
+reuse and replanning interval are independent recorded controls. Defaults retain
+H64/publication64,110ms, lead8, interval8 and full nominal reuse. Live Wine
+controls and scheduling are unchanged.
+
+An offline profile can use lead1 and nominal reuse1 so the owned rollout makes
+fresh policy decisions after one input, rather than copying nearly a whole old
+tail. Larger certified execution blocks let it spend time on the longer future.
+Every replacement still requires a complete Native horizon or the real terminal;
+when no certificate remains, retries keep at most the original8-update spacing.
+Longer budgets are search opportunities, not evidence of better score or safety.
+
+`--prefix-actions FILE --prefix-updates N` executes the firstN inputs literally
+from the declared original entry, observing every actual update in both policy
+histories. Fresh planning then continues the same world, RNG, carried projectiles,
+items and actor lifecycles. Prefix execution costs remain in owner work. An early
+terminal before the requested boundary is rejected. This supports a generic
+offline edit/replan/complete-score loop without requiring a serialized checkpoint
+or reusing one future across different actions. Final full-entry fresh execution
+and natural replay checks still apply.
+
 ### Source economics and capture boundaries
 
 The restored [Spellcard.cpp](../third_party/th08/src/Spellcard.cpp) distinguishes

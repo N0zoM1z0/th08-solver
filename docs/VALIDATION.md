@@ -26,6 +26,45 @@ The report separates game completion, capture coverage, exported replay and
 NMNB/capture run below the explicit score target. Such below-target replays may
 be exported for Native progress, but do not pass the retail-playback gate.
 
+### Offline compute budgets and checkpoint continuation
+
+The owner now prioritizes complete score before optimizing solve speed. Native
+`th08_shadow_style` records these independent controls; defaults are preserved:
+
+| Control | Default | Accepted Native range |
+| --- | ---: | --- |
+| `--verify-horizon` |64 | Powers of two64..2048 |
+| `--publish-horizon` |64 | Powers of two64..2048, at most verification |
+| `--search-budget-ms` |110 |1..60000 per search |
+| `--lead-updates` |8 |1..32, below publication |
+| `--nominal-warm-updates` |0 |0 means full old tail; otherwise lead..verification |
+| `--replan-updates` |8 |1..publication |
+| Positional `WALL_SECONDS` |Explicit |1..7200 per owner attempt |
+
+For example, H512/publication256,5000ms, lead1/nominal1 and interval128 spends
+more computation on freshly guided future actions. All proposed actions still
+execute through the owned Native world. A certified block may be consumed while
+the owner is synchronous; no-certificate retry spacing remains at most8 updates.
+The normal proposal budget remains60ms. Record complete score/outcome and work
+before deciding whether the larger profile helps.
+
+Append `--prefix-actions PATH --prefix-updates N` to continue after an explicit
+input checkpoint. The original entry configuration, seed and sampled input
+profile must match its provenance. The tool executes and observes all firstN
+inputs, then plans from the same owned world without resetting RNG, carried
+shots/items, actors or lifecycle state. Prefix reconstruction is included in
+owner updates and Native work. Both options are required together; short files,
+invalid NMNB actions and an actual terminal beforeN are rejected. The output
+contains the full prefix plus regenerated continuation, with requested/executed
+prefix counts for auditing. All generated tapes/replays/reports stay local until
+a selected progress replay is authorized for publication.
+
+These checkpoint/compute controls pass the normal Release Native/DAT suite57/57
+in970.95s. The focused checkpoint regression passes1/1 in35.65s and verifies
+literal-prefix retention plus a regenerated continuation with H512/publication256,
+lead1/nominal1/interval128/2000ms, fresh exact terminal execution and natural
+original-writer replay. Invalid schedules and an overlong terminal prefix fail.
+
 ### Complete-tape refinement
 
 `th08_score_refine` requires our own complete Native `plan.actions` plus its

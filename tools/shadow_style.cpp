@@ -1,12 +1,12 @@
 // Synchronous Native experiment for complete-duration style comparisons. It
-// retains the search budgets and immutable eight-input lead. Verification and
-// publication horizons are explicit; computation pauses this owner, so its
-// throughput is not an online FPS result.
+// records explicit search budgets, lead and verification/publication horizons.
+// Computation pauses this owner, so its throughput is not an online FPS result.
 #include "ReplayManager.hpp"
 #include "modern/headless/session.hpp"
 #include "score_audit_report.hpp"
 #include "th08/online_native.hpp"
 #include "th08/plan_contracts.hpp"
+#include "th08/plan_prefix.hpp"
 #include "th08/shadow_bridge.hpp"
 #include "th08/shadow_dialogue.hpp"
 #include "th08/shadow_native.hpp"
@@ -27,11 +27,11 @@ namespace o = th08::online;
 namespace h = th08::headless;
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
-constexpr unsigned lead = 8;
 struct SearchOptions {
     unsigned horizon = 64, publication = 64, budget_ms = 110;
     bool held_recovery = false, baseline_recovery = false;
     bool capture_recovery = false;
+    unsigned lead = 8, nominal_warm_updates = 0;
 };
 struct Work {
     std::uint64_t searches = 0, candidates = 0, branch_updates = 0, proposal_updates = 0;
@@ -57,7 +57,7 @@ s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
                      s::NominalExtension &nominal, s::Boundary boundary,
                      const SearchOptions &options, Work &work) {
     const auto horizon = options.horizon, publication = options.publication,
-               budget_ms = options.budget_ms;
+               budget_ms = options.budget_ms, lead = options.lead;
     const bool held_recovery = options.held_recovery;
     const auto begin = Clock::now();
     ++work.searches;
@@ -78,7 +78,10 @@ s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
     const auto &origin = queue.frontier();
     if (nominal.eligible(previous, queue, lead, publication)) {
         std::vector<std::uint16_t> warm;
-        for (auto i = origin.sequence - previous.origin.sequence; i < previous.frames.size(); ++i)
+        for (auto i = origin.sequence - previous.origin.sequence;
+             i < previous.frames.size() &&
+             (!options.nominal_warm_updates || warm.size() < options.nominal_warm_updates);
+             ++i)
             warm.push_back(std::uint16_t(previous.frames[i].input));
         auto p = s::predict_with_policy(session, policy, origin, warm, horizon, boundary, budget_ms,
                                         true);
@@ -187,16 +190,19 @@ int run(int argc, char **argv) {
             "usage: th08_shadow_style DAT OUTPUT_DIR STAGE DIFFICULTY SHOT "
             "SEED STYLE MAX_UPDATES STORY WALL_SECONDS "
             "[--collect-items 0|1] [--aim-boss 0|1] "
-            "[--survival-focus 0|1] [--verify-horizon 64|128|256] "
-            "[--publish-horizon 64|128] [--held-recovery 0|1] "
+            "[--survival-focus 0|1] [--verify-horizon 64|128|256|512|1024|2048] "
+            "[--publish-horizon 64|128|256|512|1024|2048] [--held-recovery 0|1] "
             "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
             "[--survival-flow 0|1] [--attack-pacing 0|1] "
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
-            "[--search-budget-ms VALUE] [--priced-collection 0|1] "
+            "[--search-budget-ms VALUE] [--lead-updates 1..32] "
+            "[--nominal-warm-updates 0|UPDATES] [--replan-updates UPDATES] "
+            "[--priced-collection 0|1] "
             "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
             "[--capture-factor VALUE] [--capture-padding UPDATES] [--hit-income 0|1] "
             "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture] "
-            "[--replay-name NAME] [--require-all-captures 0|1] [--target-score DISPLAYED]");
+            "[--replay-name NAME] [--require-all-captures 0|1] [--target-score DISPLAYED] "
+            "[--prefix-actions FILE --prefix-updates UPDATES]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -233,7 +239,13 @@ int run(int argc, char **argv) {
     bool name_override = false, captures_override = false, target_override = false;
     bool require_captures = false;
     std::uint64_t target_score = 0;
+    fs::path prefix_path;
+    unsigned prefix_updates = 0;
+    bool prefix_count_override = false;
     unsigned budget_ms = 110;
+    unsigned lead_updates = 8, nominal_warm_updates = 0;
+    unsigned replan_updates = 8;
+    bool lead_override = false, warm_override = false, interval_override = false;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
         if (key == "--collect-items" && !collection_override) {
@@ -246,13 +258,13 @@ int run(int argc, char **argv) {
             profile.scoring_survival_focus = number(argv[i + 1], 1);
             form_override = true;
         } else if (key == "--verify-horizon" && !horizon_override) {
-            horizon = number(argv[i + 1], 256);
-            if (horizon != 64 && horizon != 128 && horizon != 256)
+            horizon = number(argv[i + 1], 2048);
+            if (horizon < 64 || (horizon & (horizon - 1)))
                 throw std::runtime_error("unsupported_native_style_verification_horizon");
             horizon_override = true;
         } else if (key == "--publish-horizon" && !publication_override) {
-            publication = number(argv[i + 1], 128);
-            if (publication != 64 && publication != 128)
+            publication = number(argv[i + 1], 2048);
+            if (publication < 64 || (publication & (publication - 1)))
                 throw std::runtime_error("unsupported_native_style_publication_horizon");
             publication_override = true;
         } else if (key == "--held-recovery" && !held_override) {
@@ -290,10 +302,23 @@ int run(int argc, char **argv) {
             baseline_recovery = number(argv[i + 1], 1);
             recovery_override = true;
         } else if (key == "--search-budget-ms" && !budget_override) {
-            budget_ms = number(argv[i + 1], 1000);
+            budget_ms = number(argv[i + 1], 60000);
             if (!budget_ms)
                 throw std::runtime_error("invalid_native_search_budget");
             budget_override = true;
+        } else if (key == "--lead-updates" && !lead_override) {
+            lead_updates = number(argv[i + 1], 32);
+            if (!lead_updates)
+                throw std::runtime_error("empty_native_style_lead");
+            lead_override = true;
+        } else if (key == "--nominal-warm-updates" && !warm_override) {
+            nominal_warm_updates = number(argv[i + 1], 2048);
+            warm_override = true;
+        } else if (key == "--replan-updates" && !interval_override) {
+            replan_updates = number(argv[i + 1], 2048);
+            if (!replan_updates)
+                throw std::runtime_error("empty_native_replan_interval");
+            interval_override = true;
         } else if (key == "--capture-factor" && !reserve_factor_override) {
             profile.attack_reserve_factor = preference(argv[i + 1]);
             reserve_factor_override = true;
@@ -345,14 +370,41 @@ int run(int argc, char **argv) {
             if (used != text.size() || target_score > 9999999990ULL)
                 throw std::runtime_error("invalid_native_displayed_score_target");
             target_override = true;
+        } else if (key == "--prefix-actions" && prefix_path.empty()) {
+            prefix_path = fs::absolute(argv[i + 1]);
+        } else if (key == "--prefix-updates" && !prefix_count_override) {
+            prefix_updates = number(argv[i + 1], maximum_updates);
+            prefix_count_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
     }
     if (publication > horizon)
         throw std::runtime_error("publication_exceeds_native_verification");
+    if (lead_updates >= publication || replan_updates > publication ||
+        (nominal_warm_updates &&
+         (nominal_warm_updates < lead_updates || nominal_warm_updates > horizon)))
+        throw std::runtime_error("native_warm_prefix_must_cover_lead_within_horizon");
     if (!baseline_recovery && (recovery_style_override || recovery_fire_override))
         throw std::runtime_error("recovery_controls_require_enabled_recovery");
+    const bool has_prefix_file = !prefix_path.empty();
+    if (has_prefix_file != prefix_count_override)
+        throw std::runtime_error("native_prefix_requires_actions_and_update_count");
+    std::vector<std::uint16_t> prefix;
+    if (!prefix_path.empty()) {
+        std::ifstream stream(prefix_path);
+        th08::plan::PrefixParser parser(400000);
+        std::array<char, 65536> buffer;
+        while (stream) {
+            stream.read(buffer.data(), buffer.size());
+            parser.append(buffer.data(), std::size_t(stream.gcount()));
+        }
+        if (!stream.eof())
+            throw std::runtime_error("native_prefix_read_failed");
+        prefix = parser.finish();
+        if (prefix.size() < prefix_updates)
+            throw std::runtime_error("native_prefix_shorter_than_requested");
+    }
     profile.horizon = 24;
     profile.beam = 192;
     profile.diversity_cell = 16;
@@ -390,18 +442,25 @@ int run(int argc, char **argv) {
     for (unsigned update = 0; update < maximum_updates; ++update) {
         if (Clock::now() - begin >= std::chrono::seconds(seconds))
             break;
-        if (actual.sequence - last_search >= 8 && queue.size() <= publication - 8) {
+        // Offline execution may consume a larger verified block. With no
+        // certificate available, retain the original at-most-eight-update
+        // retry spacing rather than blindly holding through the long interval.
+        const auto interval = queue.next() ? replan_updates : std::min(8u, replan_updates);
+        if (update >= prefix_updates && actual.sequence - last_search >= interval &&
+            queue.size() <= publication - replan_updates) {
             last_search = actual.sequence;
             const SearchOptions options{horizon,           publication,
                                         budget_ms,         held_recovery,
-                                        baseline_recovery, recovery_fire == "capture"};
+                                        baseline_recovery, recovery_fire == "capture",
+                                        lead_updates,      nominal_warm_updates};
             auto p = search(session, policy, safety, queue, previous, nominal, {config.story, -1},
                             options, work);
             if (p.certifies()) {
                 if (!queue.replace(p, {}, publication))
                     throw std::runtime_error("native_style_certificate_rejected");
                 previous = std::move(p);
-            } else if (horizon > publication && previous.certifies() && queue.size() >= lead &&
+            } else if (horizon > publication && previous.certifies() &&
+                       queue.size() >= lead_updates &&
                        actual.sequence >= previous.origin.sequence) {
                 const auto consumed = actual.sequence - previous.origin.sequence;
                 if (consumed <= history.size()) {
@@ -417,7 +476,11 @@ int run(int argc, char **argv) {
             }
         }
         auto input = s::bridge::fallback(std::uint16_t(actual.input), actual.sequence + 1, false);
-        if (queue.next())
+        // Checkpoint inputs execute literally and warm both observers below.
+        // The same owned world/RNG/actors continue into fresh planning.
+        if (update < prefix_updates)
+            input = prefix[update];
+        else if (queue.next())
             input = std::uint16_t(queue.next()->input);
         else {
             ++fallback;
@@ -461,7 +524,8 @@ int run(int argc, char **argv) {
             break;
         }
         if (s::stage_terminal(config.story, state)) {
-            outcome = "complete";
+            outcome = update + 1 < prefix_updates ? "prefix_terminal_before_requested_boundary"
+                                                  : "complete";
             break;
         }
         o::capture_policy_memory(session, actual.sequence, observation, policy);
@@ -526,10 +590,14 @@ int run(int argc, char **argv) {
            << ",\"seed\":" << config.seed << ",\"story\":" << (config.story ? "true" : "false")
            << ",\"prior_final_a_clear\":" << (config.prior_final_a_clear ? "true" : "false")
            << ",\"input_profile\":\"sampled-gameplay\",\"horizon\":" << horizon
-           << ",\"publication_horizon\":" << publication
-           << ",\"lead\":8,\"search_budget_ms\":" << budget_ms
+           << ",\"publication_horizon\":" << publication << ",\"lead\":" << lead_updates
+           << ",\"nominal_warm_updates\":" << nominal_warm_updates
+           << ",\"replan_updates\":" << replan_updates << ",\"search_budget_ms\":" << budget_ms
            << ",\"proposal_budget_ms\":60,\"max_updates\":" << maximum_updates
            << ",\"wall_budget_seconds\":" << seconds << ",\"updates\":" << actions.size()
+           << ",\"prefix_updates_requested\":" << prefix_updates << ",\"prefix_updates_executed\":"
+           << std::min<std::size_t>(prefix_updates, actions.size())
+           << ",\"prefix_inputs_available\":" << prefix.size()
            << ",\"score_raw\":" << h::score_audit().score_raw
            << ",\"score_displayed\":" << std::uint64_t(h::score_audit().score_raw) * 10
            << ",\"all_visited_stage_spells_captured\":" << (captures ? "true" : "false")
