@@ -386,6 +386,38 @@ Both newly selected files preserve the original writer's exact metadata bytes.
 The frozen public runtime's full Release Native/DAT suite passes59/59 in1078.17s;
 the maintained-document check is rerun after these selected results are added.
 
+The final selected Extra continuation is
+[Extra2,508,068,110](../reports/native/replays/extra-native-nmnb-2508068110-seed46997.rpy),
+29318 bytes, SHA-256
+`e826b1c49b513937098e768ce7d60d544649de6d0d28cd7c6d62275358c95455`.
+It retains the same original retail Extra entry/seed46997 and the verified
+61756-input prefix from2,493,554,650. The regenerated suffix uses the stock v3
+policy with reserve1.2/120, preserve-fire recovery, hit-income1 and the same
+H512/publication256/lead1/nominal1/interval128/beam384/30s schedule. It completes
+NMNB,14/14 in73237 updates/57.5388s including prefix reconstruction,
+55282+5 branch/proposal updates,131 rejected deaths and0 timeouts/overruns/repairs.
+The585.409s ancestor remains charged. Producer/CLI-source hashes match v3 above.
+Full tape SHA-256:
+`7619204268bdbf80150aa180bdf54e0147ec9233c352c0acbcb36d85853c8844`.
+Fresh exact41-word agreement and natural73233 rows pass; natural row SHA-256:
+`ed6b58e464a55a519e665245e29db8c5070c516d0a450965a22b7663cf5174a3`.
+Score250806811 stored units,14 captures, zero death/bomb rows and `ysopwnab`
+agree. Complete local provenance is in
+`reports/local/retail-score-offline-20261026/extra-retail-terminal-orb-income-v5/`.
+
+The final read-only item-economy probe uses the current source ItemManager with
+request/allocation/pickup logging. It changes no gameplay control flow, input or
+RNG. Tasks319/320 preserve exactly the Extra natural rows immediately above and
+the Story4,311,260,760 natural rows above; complete logged pickups equal925/1340
+source-audit points. Per-event `fflush` is required because `th08_replay_check`
+deliberately uses `_exit`. The first buffered attempt's exact gameplay rows pass,
+but its truncated CSV is explicitly incomplete and excluded from whole-run
+economy conclusions. Corrected identities and checks remain local in
+`reports/local/retail-score-offline-20261026/point-income-probe-v7/{extra,story}/`;
+[Status](STATUS.md#measured-point-economy-and-next-scoring-work) owns measured
+totals, limits and the proposed scoring experiments. New replays/reports/tapes
+outside the explicitly selected files remain ignored.
+
 ## Selected Extra score replay
 
 The owner-selected [highest Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)

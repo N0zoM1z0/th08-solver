@@ -46,7 +46,7 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
 | **Current Native Extra** | **2,589,417,330 /14 of 14** | Seed10025, complete from entry,500ms offline search; selected progress replay |
-| Current retail-seeded Extra |2,504,560,470 /14 of 14 | Captured seed46997, source hit-window prefix and adaptive off-axis tail; selected current-episode replay |
+| Current retail-seeded Extra |2,508,068,110 /14 of 14 | Captured seed46997, source hit-window prefix and terminal1.2/120 continuation; selected current-episode replay |
 | **Current Native Lunatic4A→FinalB** | **4,311,260,760 /37 of 37** | Original retail seed1805, early-graze prefix plus audited conservative continuation; selected replay |
 | Selected retail-seeded full-entry story |4,160,457,200 /37 of 37 | Seed1805, audited Native future-repair v3; earlier bytes preserved |
 | Selected conservative story continuation |4,126,102,910 /37 of 37 | Seed40755, offline checkpoint continuation; earlier bytes preserved |
@@ -374,9 +374,60 @@ Deeper repair v4 explicitly raises the extra-attempt limit128→384 and tests
 lookbacks32/64/128/256/512/1024 under the declared search budget. Extra/story
 early-graze retries still fail at the identical48656/71183 boundaries and emit
 byte-identical failed tapes to their shallower ancestors. Their extra work is
-retained, not a scoring gain. A longer H2048 story and selective post-4A/FinalB
-continuations are pending at this checkpoint. The ledger is315/320; preserve
-room for any new best's fresh/natural verification before publishing it.
+retained, not a scoring gain. H2048 eventually completes NMNB,37/37 at
+3,795,050,440:145381 owner updates/1734.82s,2890244+35 branch/proposal updates,
+3095 rejected deaths,7 timeouts/overruns,3 rejected future capture failures and
+1629 repairs/13 adoptions. More lookahead restores completion but loses score.
+Post-4A and FinalB-only early-graze continuations complete4,073,958,800 and
+4,166,960,860,37/37, below the selected4,311,260,760. The acceptance criterion
+remains actual complete score, rather than a larger budget or local orb count.
+
+The final Extra reserve1.2/120 tail from the same61756-input incumbent prefix
+completes **2,508,068,110, NMNB,14/14**. It uses the stock v3 policy, preserve-fire
+recovery and the recorded H512/beam384/30s schedule; no off-axis override.
+It charges73237 owner updates/57.5388s,55282+5 branch/proposal updates,
+131 rejected deaths,0 timeouts/overruns and0 future repairs. Fresh exact terminal
+and natural replay pass. The selected current-episode replay retains925 points,
+92024 orbs and PIV760120; historical Native seed10025 remains the higher Extra score.
+
+### Measured point economy and next scoring work
+
+The final source probe records every large-point request, successful allocation
+and pickup without changing inputs or RNG. Both complete tapes preserve the
+exact original natural25-field rows, and logged pickup counts equal the source
+audit925/1340. The first buffered probe loses its final log block because the
+checker uses `_exit`; its incomplete totals are rejected. The corrected probe
+flushes each event and validates complete CSV records before reporting totals.
+
+| Current selected run | Requests / spawned / collected | Actual large-point income | Same-items static price headroom |
+| --- | --- | --- | --- |
+| Extra46997 |976 /930 /925 |748,388,270 |65,896,350 |
+| Story1805 |1368 /1368 /1340 |1,263,269,100 |192,755,140 |
+
+Extra has1 request outside source X bounds and **45 pool-exhaustion rejections
+in one burst at source frame56723**. Only5 successfully spawned large points
+go uncollected. Its48 low-value pickups and142 non-extreme-human pickups are
+overlapping categories. Story has28 uncollected large points,150 low-value and
+167 non-extreme-human pickups. Its static price losses by raw stage0/1/2/3/5/7
+are2,261,880/8,331,170/15,752,450/68,378,810/46,898,080/51,132,750.
+These ceilings hold the actual goods/PIV fixed, not the altered trajectory or
+future score; they are opportunities to test, not verified additional gains.
+
+Next, test a generic free-item-slot reserve before an imminent enemy/drop payout,
+using current source occupancy, carried shots and actual Native continuation.
+The45 rejected Extra points occur before the current61756-input tail checkpoint,
+so later tail tweaks cannot recover them. Preserve the game's allocator; change
+kill/collection timing. Separately compare a sticky current-actor drop target to
+the current weighted centroid, which can aim between separated enemies, and
+prepare source human/full-value pickup timing without losing profitable grazing.
+Finally, retain complete-terminal score comparison across adaptive continuations:
+first-safe acceptance alone does not use a longer compute budget to maximize cash.
+
+All producer sources, CSVs, row hashes and incomplete-probe evidence stay in
+`reports/local/retail-score-offline-20261026/point-income-probe-v{6,7}/`.
+The ledger has reached **320/320** with no remaining campaign tasks. No further
+solver experiment or retail playback is launched. Both human-score targets
+remain unmet; selected Native progress and the exact resumption points are saved.
 
 ## What produced the gain
 
@@ -612,7 +663,8 @@ independent for later ablations; no new ablation matrix is requested now.
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (315/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
+   (320/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
+   The owner must revise that resource limit before another campaign task.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not
