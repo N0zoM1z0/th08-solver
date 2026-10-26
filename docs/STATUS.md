@@ -1,10 +1,10 @@
 # Current handoff status
 
 Updated 2026-10-26. Public scoring controls: `13da22f`; selected replay milestone:
-`6b01b24`. The owner's latest request is to finish the current batch, organize
-this handoff and stop for a new session. **That batch is finished. No owned
-solver, experiment queue or test owner remains running.** Start new exploration
-only when the owner requests it in the next session.
+`6b01b24`. The owner resumed Native score attack on 2026-10-26: download and study top human
+replays, document source-backed insights, then test Extra and the complete
+Lunatic route offline. Save tested progress directly on main. The preceding
+handoff batch is finished; its artifacts and failures retain their identities.
 
 Current verified Magic Team Native bests are **Extra 2,620,568,090, NMNB 14/14**,
 and **Lunatic 1→2→3→4A→5→Final B: 4,311,260,760, NMNB 37/37**. The next score gates
@@ -24,7 +24,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **356/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **364/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -139,6 +139,61 @@ The human reference is the 2026-10-25 ASL snapshot: 3,021,639,920, Magic Team,
 Native. The historical v15 NMNB score is84.86% of it; the reference is not a matching
 NMNB upper bound. Human inputs were measured, never copied into our controller.
 The source links and dated scoreboard snapshot are in [README](../README.md).
+
+## Human replay study, 2026-10-26
+
+A fresh [world-record table](https://maribelhearn.com/wr#IN) snapshot still lists
+Magic Team ASL3,021,639,920 and Alan6,168,365,790. Eight original replay files
+were downloaded into ignored `reports/local/human-score-research-20261026/`.
+`cases.json` binds URLs, timestamps and SHA-256; each stock run records its
+frozen checker/DAT hashes, resource guard, exact rows and source score audit.
+Tasks357–364 are read-only evidence, not new scoring episodes or seed selection.
+Scores below are actual natural Native playback, not inferred from filenames.
+
+| Player / source | Native displayed score | Bombs / captures | Collected large points / stage-orb sum |
+| --- | ---: | ---: | ---: |
+| [ASL](https://maribelhearn.com/media/replays/th8_udExMT.rpy), Extra WR |3,021,639,920 |1 /14 |1081 /105531 |
+| [yeswill](https://maribelhearn.com/replays/royalflare/th08/th8_ud0a27.rpy), Extra |2,741,980,300 |4 /14 |1083 /83415 |
+| [A.War](https://maribelhearn.com/replays/royalflare/th08/th8_ud29dc.rpy), Extra |2,633,042,840 |3 /14 |1080 /73573 |
+| [Alan](https://maribelhearn.com/media/replays/th8_udLuMT.rpy), Lunatic FinalB WR |6,168,365,790 |8 /33 |1660 /208581 |
+| [Clio](https://maribelhearn.com/replays/royalflare/th08/th8_ud29d6.rpy), Lunatic FinalB |6,005,139,940 |12 /32 |1628 /204074 |
+| [Mokou Sheep](https://maribelhearn.com/replays/royalflare/th08/th8_ud2bbe.rpy), Lunatic FinalB |5,675,333,250 |11 /30 |1611 /187363 |
+| [less](https://maribelhearn.com/replays/royalflare/th08/th8_ud285a.rpy), Lunatic FinalB |5,382,503,000 |7 /31 |1640 /170443 |
+
+The RF Extra LET2,556,875,270 file is retained but excluded from strategy
+comparisons: Native naturally terminates at940,494,920 with5 captures, unlike
+its advertised result. Its SHA-256 is
+`14ae0d73479b816a5cf6088c0f7721743ef4e524725059dbfcfb7af84f49b417`.
+No cause or retail mismatch is established. Death-row counts are observations
+of dying/dead state, not numbers of misses. Human records are unrestricted
+score references; none of these seven reproduced files is an NMNB certificate.
+
+ASL waits3349/3591/3395 updates on cards192/193/194 and5376/4180 on198/199,
+but kills195/196/197/200/201/202 in824/1648/1249/1162/1172/1032. Our2.620B
+tape instead spends1975/4079/2388/3649/3988/3651 on those latter six. Card199
+collects16998 interval orbs for ASL versus10376 for us; conversely our198
+collects16233 versus11455. Literal lifecycle intervals include carried items
+and unsettled rewards, so these differences are timing evidence, not causal
+per-card profit or a safe schedule to copy across seeds.
+
+The complete-route gap starts early: after stage3, Alan/Clio have PIV761140/
+756770; ours498580. Their point totals559/551 versus ours515 alone cannot
+explain the gap. At FinalB entry Alan carries PIV1097240 versus699610; at the
+end he has450 stage points versus310. Our FinalB43756 orbs are already near
+his49944. This prioritizes earlier orb generation and actual point production,
+not only the final five timeout cards. Human inputs remain descriptive evidence,
+not copied controller actions. The game's action-dependent RNG and our all-
+capture constraint prevent treating their timed routes as interchangeable tails.
+
+Source implications: `Item::CollectTimeOrb` gives cash, PIV through
+`AddTimeOrbs`, and capped `AddBonusProgress(8000)`; the latter also raises
+future decay below the cap. `Spellcard::EndSpell/OnUpdateImpl` defer capture
+cash and direct orb/PIV rewards by130 updates. A cash-only short rollout can
+therefore compare opposite sides of settlement. Ordinary capture orbs also
+fall with remaining time. The existing pacing prior's flat8000/orb is not a
+source valuation once capped, frozen or decaying. A bounded experiment should
+compare selective farming/capture and pending settlement explicitly, then accept
+only better complete NMNB/all-capture score from the fixed retail entry.
 
 ## Native score-first evidence (chronological)
 
