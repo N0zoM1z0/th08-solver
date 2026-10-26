@@ -103,6 +103,9 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
 - Continuing progress-replay authorization also covers the selected Native
   story `story-native-nmnb-4a-finalb-4126102910-seed40755.rpy`; retain its exact
   checkpoint-continuation provenance and all earlier selected bytes
+- Continuing progress-replay authorization covers the selected retail-seeded
+  Native story `story-native-nmnb-4a-finalb-4160457200-seed1805.rpy`; preserve
+  its seed receipt, full-entry provenance and all earlier selected bytes
 - The owner also authorizes selected compact learned policy/risk snapshots under
   `models/`. Preserve exact weights/tables with schema, hashes, provenance and
   training/evaluation limitations. This exception does not include raw datasets,

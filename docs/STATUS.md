@@ -17,7 +17,7 @@ recorded Wine provenance; do not relabel old experiments as new seed receipts.
 [Issue11](https://github.com/N0zoM1z0/th08-solver/issues/11) retains the
 source investigation and experiment discussion.
 
-The next episodes now have validated original retail receipts, acquired before
+The active episodes have validated original retail receipts, acquired before
 any Native candidate in those episodes:
 
 | Episode | Seed | Raw entry stage / difficulty / shot / prior FinalA |
@@ -46,7 +46,8 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
 | **Current Native Extra** | **2,589,417,330 /14 of 14** | Seed10025, complete from entry,500ms offline search; selected progress replay |
-| **Current Native Lunatic4A→FinalB** | **4,126,102,910 /37 of 37** | Seed40755, offline checkpoint continuation with conservative capture reserve; selected replay |
+| **Current Native Lunatic4A→FinalB** | **4,160,457,200 /37 of 37** | Original retail seed1805, full entry, audited Native future-repair v3; selected replay |
+| Selected conservative story continuation |4,126,102,910 /37 of 37 | Seed40755, offline checkpoint continuation; earlier bytes preserved |
 | Selected survival-priority story |3,903,603,650 /37 of 37 | Seed40755, source-survival form priority and bias5; earlier bytes preserved |
 | Native story price baseline |3,890,487,560 /37 of 37 | Seed40755, complete from entry,500ms offline search; selected earlier progress replay |
 | Selected Native v15 snapshot | 2,564,311,730 /14 of 14 | Seed19732, frozen prototype; original bytes preserved |
@@ -78,7 +79,8 @@ identities and commands. Both remain below their explicit human-reference target
 exit5 and `objective_met:false` distinguish valid progress from meeting that goal.
 No retail Wine playback is started for them yet. The source-survival priority
 follow-up reaches3,903,603,650; the subsequent offline continuation reaches
-4,126,102,910,37/37, NMNB. Earlier selected replay bytes remain unchanged.
+4,126,102,910. The new retail-seeded full-entry story reaches4,160,457,200,
+37/37, NMNB. Earlier selected replay bytes remain unchanged.
 
 The baseline common profile is Magic Team, SampledGameplay, score-harvest, held/baseline
 recovery,500ms total/60ms proposal, priced collection, upper-stage positioning,
@@ -253,8 +255,58 @@ reserve1.2/120 with the existing H256/full-tail profile completes2,483,229,780,
 14/14 in492.130s,69077 owner updates and8 repair attempts/2 adoptions, below
 the selected Extra score. These alternatives are retained, not promoted.
 
-The active ledger is266/320 after fresh/natural checks and retail seed acquisition;
-concurrency remains at most4. No scoring candidate has run on the new receipts yet.
+The seed-acquisition checkpoint ends at266/320. The active campaign below
+continues the same ledger; concurrency remains at most4.
+
+## Retail-seeded score exploration
+
+All candidates bind the original Extra46997/story1805 receipts above before
+launch. The first full-entry main profiles complete NMNB,14/14 and37/37.
+Both pass fresh exact41-word terminal execution and natural original-writer
+replay, including score, capture catalogue and `ysopwnab`. Their outputs remain
+local under `reports/local/retail-score-offline-20261026/`.
+
+The private future-repair v3 is recompiled against current audited Native
+libraries, retaining the shared corrected stage-handoff check. Failed futures
+remain proposal material, with at most128 additional full-horizon attempts per
+search. H512/publication256, lead1/nominal1/interval128, beam384,30s search and
+reserve2/480 are explicit combined profiles, not component ablations. They
+complete both episodes. Story improves332,831,920 over its same-seed baseline
+and34,354,290 over the earlier selected story. Its new4,160,457,200 replay passes
+fresh/natural checks and is selected for publication. Extra does not improve.
+
+| Named complete profile | Score / captures | Owner updates / seconds | Branch+proposal updates | Rejected deaths / timeouts / overruns |
+| --- | --- | --- | --- | --- |
+| Extra retail baseline |2,384,787,210 /14 |69629 /525.503 |2275692+304 |703 /28 /28 |
+| Story retail baseline |3,827,625,280 /37 |118109 /545.516 |1923219+1048 |327 /1 /1 |
+| Extra long future repair v3 |2,301,642,690 /14 |58909 /366.169 |552241+27 |1869 /0 /0 |
+| Story long future repair v3 |**4,160,457,200 /37** |124549 /543.230 |624148+15 |790 /0 /0 |
+| Extra human-focus period2 |2,179,267,180 /14 |60869 /394.031 |487927+23 |1342 /0 /0 |
+| Story human-focus period2 |3,812,879,650 /37 |126693 /624.708 |786697+19 |1426 /0 /0 |
+| Extra warm/rolling farm |2,181,756,540 /14 |52821 /286.459 |493360+26 |1438 /0 /0 |
+
+Extra/Story long repair charge874/319 repair attempts and8/4 adoptions. The
+human-focus profiles charge447/645 attempts and7/7 adoptions; warm/rolling
+charges556/9. No profile above rejects a future capture event. These costs
+include failed proposals, and complete scores remain below the human targets.
+The selected story's stage points are61/146/306/328/192/278; stage orbs
+6403/12427/15020/23027/15388/42304; final PIV872860 and clock5.
+
+Source `Player.cpp` separates immediate shot-file selection, the7-update stable
+form threshold and the30-update gauge-ramp threshold. A named private proposal
+tests alternating focus while already extreme-human and human during ordinary
+boss phases; it changes inputs only. The first period2 profiles complete but
+do not improve score, so no scoring alpha or public policy change is claimed.
+The compiled period7 variant has not run at this checkpoint.
+
+The warm/rolling candidate uses focused fire to reach extreme-youkai before
+withholding fire, then rechecks realized farm income every240 updates. It also
+completes below baseline. Current evidence motivates an off-axis charging
+proposal that preserves pre-charge mature DPS rather than treating deliberately
+missed shots as slow capture damage. Full-board targets/all-speed stream
+proposals and off-axis variants are now running, with no outcome claimed yet.
+All alter proposals, not Native game behavior; no seed/card or human-input
+scripts are used. The ledger is283/320 at this publication checkpoint.
 
 ## What produced the gain
 
@@ -490,7 +542,7 @@ independent for later ablations; no new ablation matrix is requested now.
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (266/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
+   (283/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not

@@ -290,6 +290,44 @@ terminal replay, natural `.rpy`, incomplete-incumbent rejection and timeout work
 charging. The initial focused pair passes2/2 in48.19s; the final documentation
 check passes after the selected story and measured negative trials are recorded.
 
+The selected retail-seeded full-entry story is
+[Story4,160,457,200](../reports/native/replays/story-native-nmnb-4a-finalb-4160457200-seed1805.rpy),
+41117 bytes, SHA-256
+`76d8860c334abffac0fdf8eb42b34ee34e86771f837f8383d0fd35e0660b0768`.
+It is Magic Team Lunatic4A→FinalB, NMNB,37/37, with `ysopwnab`, raw stage0,
+difficulty3, shot1, story=true, prior-Final-A=true and SampledGameplay. Seed1805
+is bound to the original Wine acquisition receipt documented above before any
+Native candidate. This run starts from original entry with no imported prefix.
+
+The producer is the frozen private future-repair v3, rebuilt against main
+`5a5f2af`'s audited Native libraries and corrected owner handoff. It uses
+H512/publication256, lead1/nominal1/interval128, policyH24/beam384,30s per
+search/7200s owner, source pacing and reserve2/480, priced/upper collection,
+collection/human/survival biases5 and capture-fire recovery. Every accepted
+proposal still completes its Native horizon or the actual terminal; failed
+partial paths are only proposal material. The run charges124549 owner updates,
+543.230s,624148+15 branch/proposal updates,790 rejected future deaths,
+0 timeouts/overruns and319 repair attempts/4 adoptions. This is a named combined
+profile, not a component ablation. The main CLI without that private search
+does not promise to regenerate its tape.
+
+Frozen producer/source SHA-256:
+`71b1b3e972017e3165ec29ea3ea41521baaea318219432b8a398476ae5821caf` /
+`fe4f63d18f860e628baada77e242dd0702b2164bbbca96f8f67028ce25f75d8c`.
+Full input-tape SHA-256:
+`d055afa43af7511a47cd837f964d6839830c21dfb134baf10652c467c00cb872`.
+Fresh follower/checker hashes remain
+`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5` /
+`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
+Fresh41-word terminal agreement passes; natural124636 rows have SHA-256
+`7f6a2825695608aeaf4c9e58f39d7d1f562599cef8bbf353eecacb963d6fdd2b`.
+Natural score416045720 stored units,37 captures, zero death/bomb rows and the
+selected name all agree. Complete manifests, frozen tools/sources, input tape
+and verification receipts stay local in
+`reports/local/retail-score-offline-20261026/story-retail-long-repair-v3/`.
+The earlier selected replay bytes remain unchanged. Retail playback waits for
+the owner's human-score target; the seed-acquisition run is separate evidence.
+
 ## Selected Extra score replay
 
 The owner-selected [highest Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
