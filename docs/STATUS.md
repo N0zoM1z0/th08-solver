@@ -45,8 +45,9 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
-| **Current Native Extra** | **2,589,417,330 /14 of 14** | Seed10025, complete from entry,500ms offline search; selected progress replay |
-| Current retail-seeded Extra |2,508,068,110 /14 of 14 | Captured seed46997, source hit-window prefix and terminal1.2/120 continuation; selected current-episode replay |
+| **Current Native Extra** | **2,620,568,090 /14 of 14** | Captured retail seed46997, actual drop-target prefix and bounded Native cash comparison; selected replay |
+| Selected full-entry retail-seeded Extra |2,603,278,620 /14 of 14 | Seed46997, source drop-target/hit-window profile; selected parent replay |
+| Earlier Native Extra benchmark |2,589,417,330 /14 of 14 | Historical seed10025, complete from entry,500ms offline search; original bytes preserved |
 | **Current Native Lunatic4A→FinalB** | **4,311,260,760 /37 of 37** | Original retail seed1805, early-graze prefix plus audited conservative continuation; selected replay |
 | Selected retail-seeded full-entry story |4,160,457,200 /37 of 37 | Seed1805, audited Native future-repair v3; earlier bytes preserved |
 | Selected conservative story continuation |4,126,102,910 /37 of 37 | Seed40755, offline checkpoint continuation; earlier bytes preserved |
@@ -399,12 +400,13 @@ audit925/1340. The first buffered probe loses its final log block because the
 checker uses `_exit`; its incomplete totals are rejected. The corrected probe
 flushes each event and validates complete CSV records before reporting totals.
 
-| Current selected run | Requests / spawned / collected | Actual large-point income | Same-items static price headroom |
+| Audited run | Requests / spawned / collected | Actual large-point income | Same-items static price headroom |
 | --- | --- | --- | --- |
-| Extra46997 |976 /930 /925 |748,388,270 |65,896,350 |
+| Earlier Extra46997,2.508B |976 /930 /925 |748,388,270 |65,896,350 |
+| Drop-target Extra46997,2.603B |1042 /1041 /1015 |824,889,570 |55,681,290 |
 | Story1805 |1368 /1368 /1340 |1,263,269,100 |192,755,140 |
 
-Extra has1 request outside source X bounds and **45 pool-exhaustion rejections
+The earlier2.508B Extra has1 request outside source X bounds and **45 pool-exhaustion rejections
 in one burst at source frame56723**. Only5 successfully spawned large points
 go uncollected. Its48 low-value pickups and142 non-extreme-human pickups are
 overlapping categories. Story has28 uncollected large points,150 low-value and
@@ -433,6 +435,96 @@ Each solver process has a2GiB address-space limit; each owned process tree has
 a2GiB summed-RSS guard. Admission requires12GiB host MemAvailable; below8GiB,
 owned work is stopped and recorded as a resource abort. Historical measured
 solver peaks are about80MiB RSS. Both human-score targets remain unmet.
+
+
+### Memory-bounded follow-up and new Extra high
+
+The selected Extra now reaches **2,620,568,090, NMNB,14/14**, or86.73% of the
+dated3,021,639,920 human reference. It uses the same original retail seed46997.
+The full-entry parent reaches2,603,278,620 with1015 points/89095 orbs/PIV745480.
+A generic current-actor goal ranks actual damageable drop-bearing enemies above
+the player by drop count divided by current HP and horizontal travel cost. Boss,
+existing-item, hit-income and graze goals retain priority. The combined profile
+also uses the earlier source hit-window focus pulse, beam384 and12s total search;
+this is not a component ablation. It charges72133 owner updates/620.136s,
+2396093+240 branch/proposal updates,1012 rejected deaths,0 timeouts/overruns and
+145 future repairs/5 adoptions. Fresh exact terminal and natural replay pass.
+
+The read-only parent audit preserves the exact stock natural rows. Compared with
+the earlier2.508B tape, it requests66 more large points and avoids45 full-pool
+rejections:1041 spawn,1015 are collected,26 go uncollected, and1 request lies
+outside source X bounds. These are observed combined-profile effects. The prior
+pool audit sees1961 normal-rising and105 apex-rising items at the45 failed requests.
+A second probe places those requests at56723, before the EndSpell clear at56724;
+at that later hook2089 slots are already occupied. Do not attribute the original
+point loss to the later clear. Ordinary rising orbs return early only after
+shotTimer becomes negative; releasing fire must outlast the source20-update loop.
+
+The new cash comparison retains a certified incumbent, tests at most4 Native
+32-update fire/focus alternatives and selects strictly higher horizon cash.
+It re-executes each branch with its own true RNG, with all extra work charged.
+From60879 literal parent inputs, H512/publication256/lead1/nominal1/interval128,
+beam384/30s/reserve1.2/120 completes **2,620,568,090** in72557 updates/114.434s.
+It makes271 comparisons/34 adoptions,138928+6 branch/proposal updates,328 rejected
+deaths,0 timeouts/overruns and0 future repairs. Points remain1015; orbs rise to
+91083 and PIV755420. The620.136s parent remains charged. Fresh exact41-word and
+natural replay agree. Original selected exports and provenance are in
+[Validation](VALIDATION.md#selected-native-progress-replays).
+
+Public Native controls now expose default-off `--drop-target 1` and
+`--economic-proposals 0..4`; [Planner](PLANNER.md#spell-capture-and-score-objective)
+owns their contracts. The full-entry parent additionally uses private focus-pulse
+and future-repair sources frozen locally; public controls alone do not promise
+the identical full-entry tape. The final public build reproduces the2.620B suffix
+with the identical full72557-input tape and41-word terminal in131.492s, including
+the original60879-input prefix. Whole-terminal score remains the acceptance test.
+
+Negative trials remain charged and do not replace the incumbent:
+
+| Trial | Complete score / outcome | Cost and implication |
+| --- | --- | --- |
+| Pool reserve64 /256, original warm-tail reuse |2,446,807,820 both,14/14 |147.194s/145.025s;925 points; simple pressure-triggered release does not recover score |
+| Pool release with32-update hysteresis, H512/fresh goals |2,482,263,120,14/14 |441.536s; larger budget and sustained release still lose total cash |
+| Drop-target H512/fresh-goal Extra |2,442,045,300,14/14 |907.964s; longer lookahead is not automatically more profitable |
+| Drop-target full Lunatic story |3,757,933,990,37/37 |474.469s;1387 points but fewer orbs; selected4,311,260,760 remains |
+| Cash comparison, H1024 at53599 |NMNB failure at53621 |68.5239s;516 failed futures,0 economic comparisons; initial continuation never certifies |
+| Cash comparison, earlier2.508B prefix61756 |2,492,881,310,14/14 |157.521s;271 comparisons/30 adoptions; horizon cash can lose full-run score |
+| Stock1.2/120 tail from new2.603B prefix60879 |2,583,293,380,14/14 |53.9381s; lower than both selected parent and cash-comparison tail |
+| Longer cash horizon, H1024 from60879 |2,600,269,250,14/14 |216.644s;256 comparisons/32 adoptions |
+| Longer64-update cash alternatives |2,612,213,530,14/14 |93.1615s;278 comparisons/22 adoptions |
+| Cash comparison, story FinalB continuation |3,970,812,430,37/37 |319.910s;681 comparisons/81 adoptions; FinalB234 points/30398 orbs versus310/43756 |
+| Explicit PIV potential, Extra/story |2,618,756,400 /3,966,533,780, all captures |129.395s/370.387s; fixed600*PIV plus displayed cash is a heuristic and does not beat either incumbent |
+
+A separate read-only chain ledger preserves exact full natural rows for both
+the2.603B parent and the dated ASL reference. Before source frame21000 it observes
+52 independent familiar deaths/24 parent-chain rewards for our tape, versus1/34
+for ASL. Seeds and timing differ: this is descriptive evidence, not a controlled
+causal comparison. Source `DetachEnemyChain(1)` pays per live chain member, then
+adds2*linkedChildCount orbs and localized cancel regions; killing an attached
+child separately gives a different small reward and gauge reset. `CountParentChain`
+and linkedChildCount differ in real events and must not be silently equated.
+The next generic input prototype focuses briefly while a currently damageable
+parent chain is above/in the player shooting lane, gated by current gauge,
+without a stage/card schedule. Its full-entry trials are running; no gain is
+claimed yet. Exact source/row checks and CSVs stay in local `chain-probe-v1/`.
+
+The failed H1024 case motivates retaining a freshly re-executed known incumbent
+suffix at an offline checkpoint before proposing changes. Reusing input data is
+allowed; assuming that suffix remains safe after a changed branch is not. Longer
+Native farming horizons should also value delayed PIV and unsettled bonuses;
+endpoint cash alone is not a complete economic objective. Story needs a strategy
+that preserves its earlier orb/PIV gains while improving later capture/pickup cash.
+The2.603B owner peaks at136,847,360 summed-RSS bytes, with host MemAvailable
+never below27,696,214,016 bytes. No follow-up solver hits a memory abort.
+The integrated default-off goals pass the normal Release Native/DAT suite
+**59/59 in1191.44s**, plus the maintained-document check. The full suite peaks
+at1,002,758,144 summed-RSS bytes; its minimum host MemAvailable is12,034,150,400
+bytes, above the8GiB abort threshold. No memory abort occurs. Two earlier
+partial suites were deliberately stopped before relinking and remain charged;
+neither is reported as a pass. The final public full-entry Extra continuation
+reproduces the selected exact input tape and terminal at131.492s.
+Local sources, manifests, diagnostics and failed setup attempts remain under
+`reports/local/retail-score-offline-20261026/`; the cumulative ledger is retained.
 
 ## What produced the gain
 
@@ -668,7 +760,7 @@ independent for later ablations; no new ablation matrix is requested now.
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (320/640 at the new memory-bounded window); do not reset the ledger to hide
+   (356/640 at the latest recorded launch); do not reset the ledger to hide
    earlier attempts. Record any further authorized extension before using it.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.

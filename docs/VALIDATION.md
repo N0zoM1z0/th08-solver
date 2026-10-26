@@ -386,7 +386,7 @@ Both newly selected files preserve the original writer's exact metadata bytes.
 The frozen public runtime's full Release Native/DAT suite passes59/59 in1078.17s;
 the maintained-document check is rerun after these selected results are added.
 
-The final selected Extra continuation is
+The earlier selected Extra continuation is
 [Extra2,508,068,110](../reports/native/replays/extra-native-nmnb-2508068110-seed46997.rpy),
 29318 bytes, SHA-256
 `e826b1c49b513937098e768ce7d60d544649de6d0d28cd7c6d62275358c95455`.
@@ -418,9 +418,81 @@ economy conclusions. Corrected identities and checks remain local in
 totals, limits and the proposed scoring experiments. New replays/reports/tapes
 outside the explicitly selected files remain ignored.
 
+The selected current Extra files are the full-entry
+[2,603,278,620 parent](../reports/native/replays/extra-native-nmnb-2603278620-seed46997.rpy)
+and its
+[2,620,568,090 continuation](../reports/native/replays/extra-native-nmnb-2620568090-seed46997.rpy).
+Both retain original retail seed46997, proper Extra8/4/1/story=true/priorFinalA=false
+and player `ysopwnab`. Fresh41-word terminal and natural NMNB14/14 agreement pass.
+
+| Identity | Full-entry parent | Cash-comparison continuation |
+| --- | --- | --- |
+| Task / owner updates / seconds |324 /72133 /620.136 |338 /72557 /114.434 |
+| Replay bytes |28613 |28968 |
+| Replay SHA-256 |`d6e7b34da1a08ea00889af106dabfb7fb97910cdef54288b3ab29323ad7eeb7c` |`332f5fe46d8f7419bc3e58cf40032d8625060472332f04aa71da637f503d616c` |
+| Full input tape SHA-256 |`602b3859599184c4dcc2de31fc863a3b7b4191d663d6abfbdffb26bafd580546` |`47bf615c33c300dd29ce22cd28c4ca04b17662d9add6d4152b4c7d6a90ee84c9` |
+| Natural rows / SHA-256 |72129 /`9be971dbfb2cb00ef8d6040e02d632d7ea76a3304bc90df9bb9ecedba9640571` |72553 /`cb4de67f40a68533950af55f5b33502397be8e47d7e3483e5a652d363b91d368` |
+| Producer binary SHA-256 |`dbf54e5da1001533f6cdd8eb4029952d5db6834c95294b8c7291587fecd822de` |`0efbbae585285e9b0f2ae3d8a7c35ce006b5c3228b5e33915cf93bb7753746b4` |
+
+The parent uses score-harvest, held/baseline preserve-fire recovery, current
+source drop-count/HP/reach target, source hit-window focus-pulse2, hit-income1,
+priced/upper collection, human/collection/survival bias5, H256/publication128,
+lead8/nominal0/interval8, beam384,12s total search and reserve1.5/240. Its CLI
+is the recorded future-repair v3 source, SHA-256
+`fe4f63d18f860e628baada77e242dd0702b2164bbbca96f8f67028ce25f75d8c`. Its frozen adapter/kernel/proposal sources are
+`a9a505e2267e5c1ac10a96e90a87140e6ae525e94095e42ebf7f0146b5df5000`,
+`8203243bbf77019d3bdcebc57262b602d2beea7befb9d52765cf63415e1508f1` and
+`53e884e46a339f88687d480e92226d90580f0dc7bda1e83beefed6acaf1b8155`, respectively.
+This is a named combined profile, not a component ablation.
+
+The continuation executes60879 literal parent inputs from original entry and
+warms its observers; it resets no world, bullets, items, actors or RNG. Then the
+stock policy uses H512/publication256/lead1/nominal1/interval128, beam384,30s total
+search, reserve1.2/120 and preserve-fire recovery. Up to4 Native32-update fire/focus
+comparisons retain stable ties, preserve the fixed lead/movement and require full
+horizon certificates. It records271 attempts/34 adoptions,138928+6 branch/proposal
+updates,328 rejected future deaths,0 timeouts/overruns and0 future repairs. Its
+CLI source SHA-256 is `7acc4e6c9629ca028977508ffdb6e30c13266a12c35adf27eae5d41969364747`. Parent work stays charged.
+
+Parent follower/checker SHA-256:
+`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5` /
+`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
+Continuation follower/checker SHA-256:
+`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5` /
+`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
+The instrumentation over the parent preserves its stock natural rows and logs
+1042 requests/1041 spawned/1015 collected large points, with1 X-bound rejection
+and0 full-pool rejections. Its exact read-only source/binary/row identities are
+local in `extra-drop-target-h256-v1/pool-audit-v9/`.
+
+Complete frozen sources, compile/link commands, seed-bound manifests, literal
+tapes, resource records and verification outputs stay in
+`reports/local/retail-score-offline-20261026/{extra-drop-target-h256-v1,extra-newbest-cash-compare-v1}/`.
+The final public Native producer reproduces the identical72557-input tape and
+41-word terminal in131.492s, using `--economic-proposals 4` and the same original
+60879-input prefix. Its binary SHA-256 is
+`a92af259282880aba49d5a2550da4f0aeaa44c09bb84cd84b55210dd3ac545f4`; CLI source SHA-256 is
+`71adf15044d54b143845629c155f1db22087bcb0123a57e2faf83e4cad4fe8ba`. The selected replay retains the first verified
+prototype export's exact bytes; public-run exports remain local. The preceding
+public build also passes fresh/natural verification with the same inputs.
+
+Public Native now exposes default-off `--drop-target` and
+`--economic-proposals`; the selected parent additionally uses the separately
+frozen private focus-pulse/repair producer. Neither replay meets the human-score
+gate yet, so Wine playback remains pending. The Native slowdown metadata remains
+the original unmeasured writer value.
+
+The integrated default-off goals pass the normal Release Native/DAT suite
+**59/59 in1191.44s**, plus the maintained-document check. The full suite peaks
+at1,002,758,144 summed-RSS bytes; its minimum host MemAvailable is12,034,150,400
+bytes, above the8GiB abort threshold. No memory abort occurs. Two earlier
+partial suites were deliberately stopped before relinking and remain charged;
+neither is reported as a pass. The final public full-entry Extra continuation
+reproduces the selected exact input tape and terminal at131.492s.
+
 ## Selected Extra score replay
 
-The owner-selected [highest Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
+The owner-selected [historical v15 Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
 is an unchanged original-writer export of the frozen v15 Native prototype:
 
 | Field | Value |
