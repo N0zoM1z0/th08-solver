@@ -6,6 +6,7 @@
 #include "score_audit_report.hpp"
 #include <array>
 #include <charconv>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
@@ -96,6 +97,9 @@ int main(int argc, char **argv) {
     std::uint32_t target_size = 0, target_checksum = 0;
     std::array<char, 7> target_version{};
     std::array<char, 17> player_name_hex{};
+    std::array<char, 48> slowdown_json{};
+    std::snprintf(slowdown_json.data(), slowdown_json.size(), "null");
+    std::uint32_t slowdown_bits = 0;
     bool runtime_error = false;
     try {
         fs::current_path(scratch);
@@ -114,6 +118,13 @@ int main(int argc, char **argv) {
             target_size = std::uint32_t(header.exeSize);
             target_checksum = std::uint32_t(header.exeChecksum);
             std::memcpy(target_version.data(), header.exeVersion, 6);
+            // Headless recording has no draw/FPS samples. The original writer
+            // consequently stores 0/0 NaN here. Preserve those bytes; JSON null
+            // expresses unavailable metadata without inventing a measured 0%.
+            std::memcpy(&slowdown_bits, &header.slowDownRate, sizeof(slowdown_bits));
+            if (std::isfinite(header.slowDownRate))
+                std::snprintf(slowdown_json.data(), slowdown_json.size(), "%.9g",
+                              double(header.slowDownRate));
             constexpr char digits[] = "0123456789abcdef";
             for (unsigned i = 0; i < 8; ++i) {
                 const auto byte = static_cast<unsigned char>(header.playerName[i]);
@@ -152,15 +163,16 @@ int main(int argc, char **argv) {
                 "\"replay_sha256\":\"%s\",\"dat_sha256\":\"%s\",\"binary_sha256\":\"%s\","
                 "\"replay_target_exe_size\":%u,\"replay_target_exe_checksum\":%u,"
                 "\"replay_target_version\":\"%s\",\"player_name_hex\":\"%s\","
+                "\"slowdown_percent\":%s,\"slowdown_ieee754_bits\":%u,"
                 "\"rows\":%u,\"finished\":%s,\"natural\":%s,\"steps\":%llu,"
                 "\"runtime_error\":%s,\"io_error\":%s,\"death_rows\":%u,"
                 "\"bomb_input_rows\":%u,\"stages\":[",
                 replay_sha256.c_str(), dat_sha256.c_str(), binary_sha256.c_str(), target_size,
                 target_checksum, known_target_version ? "0100d" : "unsupported",
-                player_name_hex.data(), summary.rows, summary.finished ? "true" : "false",
-                summary.natural ? "true" : "false", static_cast<unsigned long long>(steps),
-                runtime_error ? "true" : "false", io_error ? "true" : "false", summary.death_rows,
-                summary.bomb_input_rows);
+                player_name_hex.data(), slowdown_json.data(), slowdown_bits, summary.rows,
+                summary.finished ? "true" : "false", summary.natural ? "true" : "false",
+                static_cast<unsigned long long>(steps), runtime_error ? "true" : "false",
+                io_error ? "true" : "false", summary.death_rows, summary.bomb_input_rows);
     for (int i = 0; i < summary.stage_count; ++i)
         std::printf("%s{\"stage\":%d,\"frames\":%u,\"endScore\":%u}", i ? "," : "",
                     summary.stages[i], summary.stage_frames[summary.stages[i]],

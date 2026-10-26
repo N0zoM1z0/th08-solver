@@ -1,6 +1,7 @@
 #pragma once
 #include <array>
 #include <cstdint>
+#include <set>
 #include <vector>
 
 namespace th08 {
@@ -49,6 +50,14 @@ struct ScoreAudit {
     // Unmatched lifecycle events cannot certify complete capture coverage.
     unsigned unmatched_events = 0;
 };
+struct ScoreCaptureCoverage {
+    std::set<int> expected, encountered, captured;
+    unsigned unsuccessful = 0;
+    bool all = false;
+};
+// Uses the source catalogue for every visited stage, including gated Last
+// Spells. Reporting and complete-trajectory selection must use the same goal.
+ScoreCaptureCoverage score_capture_coverage(const ScoreAudit &, bool complete);
 void score_audit_enable();
 const ScoreAudit &score_audit();
 // Call after each owner update; it neither steps the game nor evaluates ECL.

@@ -443,6 +443,12 @@ void point_price_goal_contract() {
     o.scoring.survival_spell = o.spell_active = true;
     check(on::Policy(survival).decide(o).action & 4,
           "human point preference overrode an active source-survival graze goal");
+    survival = on::with_style("score-harvest");
+    survival.horizon = 24;
+    survival.economic_human_bias = 1000;
+    survival.survival_focus_bias = 5;
+    check(on::Policy(survival).decide(o).action & 4,
+          "human point preference overrode source-survival form without flow or pacing");
     o.scoring.pickup_reach_y = -1;
     rejects([&] { on::Policy(priced).decide(o); }, "negative source pickup reach was accepted");
 }

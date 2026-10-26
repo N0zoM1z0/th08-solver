@@ -89,6 +89,9 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   `story-native-nmnb-4a-finalb-3890487560-seed40755.rpy` under
   `reports/native/replays/`. Preserve exact bytes and provenance; failed tapes,
   experiment reports and videos remain local
+- The owner's continuing progress-replay authorization also covers the selected
+  story improvement `story-native-nmnb-4a-finalb-3903603650-seed40755.rpy` in the
+  same directory. Preserve earlier selected replays unchanged
 - The owner also authorizes selected compact learned policy/risk snapshots under
   `models/`. Preserve exact weights/tables with schema, hashes, provenance and
   training/evaluation limitations. This exception does not include raw datasets,

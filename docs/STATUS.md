@@ -22,7 +22,8 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
 | **Current Native Extra** | **2,589,417,330 /14 of 14** | Seed10025, complete from entry,500ms offline search; selected progress replay |
-| **Current Native Lunatic4A→FinalB** | **3,890,487,560 /37 of 37** | Seed40755, complete story from entry,500ms offline search; selected progress replay |
+| **Current Native Lunatic4A→FinalB** | **3,903,603,650 /37 of 37** | Seed40755, source-survival form priority and bias5; selected progress replay |
+| Native story price baseline |3,890,487,560 /37 of 37 | Seed40755, complete from entry,500ms offline search; selected earlier progress replay |
 | Selected Native v15 snapshot | 2,564,311,730 /14 of 14 | Seed19732, frozen prototype; original bytes preserved |
 | Main price/staging controls | 2,453,582,120 /14 of 14 | Seed 10025, complete from entry, reserve 1.2/120 |
 | Main successful prefix + expert recovery | 2,464,473,300 /14 of 14 | Seed 19732, separately charged offline checkpoint continuation |
@@ -45,12 +46,14 @@ The source links and dated scoreboard snapshot are in [README](../README.md).
 
 ## Native score-first progress
 
-The two new selected replays are complete from entry, with exact fresh41-word
+The selected Native progress replays are complete from entry, with exact fresh41-word
 terminal agreement, natural replay NMNB/all-capture checks and the selected name
 `ysopwnab`. [Validation](VALIDATION.md#selected-native-progress-replays) owns their
 identities and commands. Both remain below their explicit human-reference target;
 exit5 and `objective_met:false` distinguish valid progress from meeting that goal.
-No retail Wine playback is started for them yet.
+No retail Wine playback is started for them yet. The source-survival priority
+follow-up improves story to3,903,603,650,37/37, NMNB; the earlier3,890,487,560
+replay is preserved unchanged.
 
 The common profile is Magic Team, SampledGameplay, score-harvest, held/baseline
 recovery,500ms total/60ms proposal, priced collection, upper-stage positioning,
@@ -63,6 +66,7 @@ These are named combined profiles, not component ablations or new holdouts.
 | --- | --- | --- | --- |
 | Extra native baseline v1 |69381 /448.547 |2239860+120 |277 /8 /8 |
 | Story native price v1 |119637 /479.403 |1975206+2016 |538 /0 /0 |
+| Story source-survival priority v2 |119637 /515.804 |1975206+2016 |538 /0 /0 |
 
 Extra finishes with984 points/86136 orbs. Story finishes with1265 points,
 100100 collected stage-orb inventory total, PIV800510 and clock5; all37 captures.
@@ -96,7 +100,55 @@ Its source references, instrumented ledgers and negative controls support:
   suppresses the explicit survival-form goal before extending riskier farming.
 
 Package synthetic formula examples are not integrated code or verified gains.
-The active ledger is234/320 at this checkpoint; concurrency remains at most4.
+The source-survival priority bug is fixed: outside flow/pacing, the economic
+human prior no longer overrides an active source survival-form goal. The
+score-harvest regression covers this independently of macro flow. With the
+named bias5 profile, the five final timeout cards now have1771 physical graze
+events,1695 at extreme-youkai versus0 in the earlier tape. Actual complete
+story score improves13,116,090. This combined profile is not a bias ablation;
+individual card intervals still include carried items and delayed settlement.
+
+`th08_score_refine` implements the complete-terminal comparison proposed by the
+research review. It evaluates the entire remaining true-RNG Native tape before
+accepting any edit, preserving NMNB, the exact capture catalogue and final stage.
+The first Extra form/fire passes try59/46 candidates and accept0. Form has58
+deaths and1 equal-score completion; fire has43 deaths,2 incomplete tails and1
+equal-score completion. All costs remain local: form7.97808s/79499 charged
+updates, fire12.3233s/168738, each including the initial69381-update incumbent
+verification. The selected2,589,417,330 incumbent remains intact. This exposes
+the next constraint: changing a form/kill can invalidate the old timed tail;
+safe adaptive continuation is needed before claiming a scoring benefit.
+
+Follow-up source-economic profiles all complete Native NMNB,14/14, but do not
+beat the incumbent. They use the same predeclared seed10025,500ms budget and
+whole-entry acceptance, not a component ablation or held-out result:
+
+| Named profile | Score / owner updates / solve seconds | Branch+proposal updates / rejected deaths / timeouts |
+| --- | --- | --- |
+| Human bias0 between priced collections |2,313,546,260 /65677 /481.653 |2206349+704 /2104 /68 |
+| Current reduction-target hit income |2,496,594,790 /68221 /475.148 |2217214+224 /551 /19 |
+| No ordinary pacing |2,137,930,300 /47229 /314.593 |1564684+312 /667 /30 |
+
+A private paired adapter/policy tests source current bonus headroom plus nominal
+clear-orb value instead of flat8000. It completes2,589,417,330,14/14 in448.751s,
+2240019+120 branch/proposal updates,291 rejected future deaths and7 timeouts.
+The full69381-input tape is byte-identical to the incumbent (SHA-256
+`4997feed5ecfcb523e383ac9db8eedd767b79ca291de5af5d2487106aff2dcbc`):
+this valuation correction alone changes no selected input and proves no gain.
+The current pacer samples once, then stays in Farm until its capture reserve;
+rolling re-evaluation and adaptive continuations remain proposed improvements.
+Extra point extends are200/666/9999 in the source, so984→1000 is not an extra-life
+threshold to exploit. This differs from the normal-story extend table.
+All manifests/tapes/costs remain in
+`reports/local/native-score-offline-20261026/`.
+
+The uploaded Extra replay is byte-identical to the selected file. Its `nan%`
+slowdown is the original writer's0/0 with no headless draw/FPS samples, not an
+online frame-rate result. The checker preserves the metadata bits and reports
+unavailable slowdown as JSON null. [Validation](VALIDATION.md#slowdown-metadata-in-native-exports)
+owns the source explanation and comparison. No replay bytes are rewritten.
+
+The active ledger is244/320 at this checkpoint; concurrency remains at most4.
 
 ## What produced the gain
 
@@ -298,14 +350,14 @@ continuation feasibility, not a live handoff or permission to rewind the owner.
 ## Unresolved problems and proposed next work
 
 These are proposed solutions, not implemented/verified gains. Preserve NMNB,
-14/14 and actual terminal score as the acceptance criteria. Keep options
+14/14 Extra or37/37 story and actual terminal score as the acceptance criteria. Keep options
 independent for later ablations; no new ablation matrix is requested now.
 
 | Problem / evidence | Proposed next experiment | Required acceptance |
 | --- | --- | --- |
 | Final-card reliability: main seed 19732 fails; expert checkpoint tail succeeds | Freeze the failing frontier and compare a bounded generic neutral/held/move-then-stop recovery portfolio, with explicit observer warming and work accounting. Integrate only if complete episodes improve | Complete from entry on old and predeclared fresh seeds, exact fresh execution and natural replay; retain the original failures |
 | Prototype/main and same-seed reruns diverge | Bind source/binary/options, log the first differing candidate/certificate, timeouts, tie state and action. Test whether a deterministic work cap is useful as a separately named profile; do not silently replace time budgets | Explain observed divergence with evidence; preserve current ordering, budgets and failure meaning for baseline |
-| Native first-safe selection and stale economic tails | Preserve a certified incumbent; compare a few fresh same-boundary Native candidates with cash plus unsettled economic value, and trigger refresh on relevant events | Higher complete NMNB/all-capture terminal score; charge every added branch and reject observed capture failures |
+| Native first-safe selection and stale economic tails | Complete-tape strict-score selection is implemented; literal form/fire windows accept0/105 because the old timed continuation usually dies. Try a generic adaptive continuation or event-aligned proposal while preserving the actual world | Higher complete NMNB/all-capture terminal score; charge every added branch and reject observed capture failures |
 | Native scores remain below the human references | Extra: early production/chain termination and PIV timing. Story: supply collection/price and form scheduling. Use reviewed source facts and new Native baselines | >3,021,639,920 Extra and >6,168,365,790 full route, followed by successful retail replay playback |
 | Orb/bonus opportunity remains below ASL | Use actual per-spell income and source cap/decay state to choose whether to extend, reposition, then capture. Include point/PIV/clear rewards rather than optimizing raw graze | Higher complete terminal score without capture loss; charge every longer attempt and retry |
 | Pickup loss: v15 still has 49 low-height and 33 non-doubled items | Measure transit pickups, gauge convergence and missed drops. Test geometry-aware staging/return paths, preserving actual carried shots and item state | Actual point income and complete score improve, not merely a static price ceiling |
@@ -329,7 +381,7 @@ independent for later ablations; no new ablation matrix is requested now.
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
-   (215/320 after handoff checks); do not reset the ledger to hide earlier attempts.
+   (244/320 at this checkpoint); do not reset the ledger to hide earlier attempts.
 4. Optimize Native complete trajectories first. Require qualified exported
    replays before retail Wine playback; do not resume live MPC scoring.
    Freeze all binaries for the normal CTest suite; do not
@@ -346,6 +398,14 @@ are useful locally; the tracked replay, maintained conclusions and commit histor
 remain available without them.
 
 ## Validation and preserved historical work
+
+The complete-tape refiner, source-survival priority fix and slowdown metadata
+reporting pass Release Native/DAT CTest **57/57 in1020.13s**. The new end-to-end
+refinement regression preserves complete source capture coverage, rejects safe
+incomplete and timed-out incumbents with charged work, then checks fresh exact
+terminal execution and natural original-writer replay. Focused2/2 passes48.19s;
+the final documentation check passes. New selected story bytes and previous
+selected replays are preserved; other generated experiment artifacts remain local.
 
 The live scoring port and optional current reduction target pass the normal
 Release Native/DAT suite56/56 in1175.95s and core36/36 in12.75s. The earlier port

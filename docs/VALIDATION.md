@@ -26,6 +26,51 @@ The report separates game completion, capture coverage, exported replay and
 NMNB/capture run below the explicit score target. Such below-target replays may
 be exported for Native progress, but do not pass the retail-playback gate.
 
+### Complete-tape refinement
+
+`th08_score_refine` requires our own complete Native `plan.actions` plus its
+original entry configuration. The initial tape must complete NMNB/all-captures;
+an incomplete, dead or interrupted incumbent is rejected before owner execution.
+The source audit includes gated Last Spells. Example for the saved Extra baseline:
+
+```sh
+build-extra-live/th08_score_refine game_data_donottrack/th08.dat \
+  reports/local/extra-refine 8 4 1 10025 1 0 \
+  reports/local/native-score-offline-20261026/extra-native-baseline-v1/run/plan.actions \
+  --family form --trials 96 --window 240 --interval 1800 \
+  --timeout-ms 30000 --wall-seconds 1200 --target-score 3021639920
+```
+
+Positional flags after the seed are story and prior-Final-A history. Use
+`0 3 1 40755 1 1` for the full story configuration. `--family fire` explores
+fire-on/released-fire windows instead. Every trial completes the actual remaining
+Native trajectory; only strict final-score improvements retaining NMNB, the
+same capture catalogue and final route replace the incumbent. Exit2 rejects an
+invalid incumbent, recording its status and cost in `result.json`; exit5 exports
+a valid progress replay below the requested target. The chosen name remains
+`ysopwnab`. Fresh tape following and natural `.rpy` checks remain required.
+
+### Slowdown metadata in Native exports
+
+The original writer computes slowdown from the supervisor's accumulated lag
+numerator/denominator. `Supervisor::CalculateFps(shouldDraw)` updates these
+counters through the drawing/FPS path. Headless `Session::step` deliberately
+executes only the calculation chain, so both counters remain0; the writer's
+0/0 produces IEEE754 NaN. This is unavailable rendering-performance metadata,
+not a measurement of Native solver time or retail playback speed. The slowdown
+fields are not read by the gameplay replay executor.
+
+Silent Selene's [uploaded Native Extra](https://www.silentselene.net/replays/th08/89742)
+therefore displays `nan%`; its downloaded bytes have the exact selected replay
+SHA-256 below. The [human comparison](https://www.silentselene.net/replays/th08/54125)
+displays0.3102%. `th08_replay_check` exposes finite values as `slowdown_percent`,
+nonfinite values as JSON `null`, and preserves `slowdown_ieee754_bits` for
+diagnosis. Selected replay bytes are preserved; no measured0% is invented.
+The downloaded human replay decodes to0.31015873%, matching the site's rounded
+display, and completes naturally in Native. Its SHA-256 is
+`78e559c1deb8fca62941b1ee4ade69ecc9ca8bf6ec2acd99882e6794268a7e92`;
+the external replay remains local.
+
 ## Selected Native progress replays
 
 The owner selected both October26 Native progress files for publication. They
@@ -88,6 +133,35 @@ incorrect verification is retained locally; the corrected configuration agrees.
 
 This Native-first progress passes the normal Release Native/DAT suite56/56
 in970.10s, core36/36 in8.37s and focused writer/name/capture checks2/2 in39.85s.
+
+The selected source-survival follow-up is
+[Story3,903,603,650](../reports/native/replays/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy),
+36213 bytes, SHA-256
+`1d4d1338a6af34049ee1a9d0ad51d65f9d61d6b672b3f24894d8387574d2186e`.
+It retains the same complete story entry, seed40755, prior-Final-A history,
+SampledGameplay,500ms/H128/publication64 and collection/human bias5, with the
+source survival-form priority fix and explicit `--survival-bias 5`. It completes
+NMNB,37/37 in119637 owner updates/515.804s; fresh41-word terminal agreement and
+natural replay verification pass. Natural119724 rows SHA-256:
+`99aeb5ede5ca99e6301ba992b5bad2b8dfd8820087706953d035d4afa0aff35d`.
+Frozen solver SHA-256:
+`d6c145a9fe077d7dfe90b88185cc80e37d19a31452bc2af73a56a1982c19265c`;
+parent `cb6f47a`, source patch SHA-256:
+`be41529b785ef3581182a201db01e736433d3a018637b4024bd548238186968b`.
+Fresh follower SHA-256:
+`f7e112e93a739fd692044c116faca426cf3600f808703b7c35e3439a77cdd59f`;
+checker SHA-256:
+`8aa8344addb7e5a542895473a36bf76ddcf81e77c732bce4aa30e30ecd609fc7`.
+The original-writer name remains `ysopwnab`. Complete manifests and checks are
+under `reports/local/native-score-offline-20261026/story-survival-prior-v2/`.
+The earlier selected story replay remains unchanged.
+
+The complete-tape refiner, survival-priority regression and unavailable-slowdown
+JSON reporting pass the full Release Native/DAT suite57/57 in1020.13s. The new
+refinement CTest covers full-duration capture/score retention, fresh exact
+terminal replay, natural `.rpy`, incomplete-incumbent rejection and timeout work
+charging. The initial focused pair passes2/2 in48.19s; the final documentation
+check passes after the selected story and measured negative trials are recorded.
 
 ## Selected Extra score replay
 

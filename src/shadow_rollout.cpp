@@ -1,4 +1,5 @@
 #include "th08/shadow_rollout.hpp"
+#include "modern/headless/score_audit.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/shadow_native.hpp"
 #include <cerrno>
@@ -21,6 +22,7 @@ struct Shared {
     std::uint32_t frames = 0;
     std::uint64_t attempts = 0, completed = 0, native_ns = 0, file_io_ns = 0;
     std::uint64_t guidance_ns = 0, guidance_requests = 0;
+    TapeEvaluation evaluation;
     std::array<Packet, maximum_horizon> records;
 };
 class Arena {
@@ -40,7 +42,8 @@ class Arena {
     Arena &operator=(const Arena &) = delete;
 };
 void run(headless::Session &session, const Packet &origin, const std::vector<std::uint16_t> &inputs,
-         std::size_t horizon, RolloutGuidance *guidance, Boundary boundary, Shared &out) {
+         std::size_t horizon, RolloutGuidance *guidance, Boundary boundary, Shared &out,
+         bool summary, std::size_t first) {
     auto current = origin;
     const float initial_deaths = session.state().deaths;
     bool spell_seen = session.state().spell_active;
@@ -61,8 +64,8 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
             return;
         }
         std::uint16_t input;
-        if (index < inputs.size())
-            input = inputs[index];
+        if (first + index < inputs.size())
+            input = inputs[first + index];
         else {
             const auto start = Clock::now();
             ++out.guidance_requests;
@@ -92,8 +95,12 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
         out.file_io_ns += io;
         out.native_ns += std::uint64_t(ns) > io ? std::uint64_t(ns) - io : 0;
         ++out.completed;
-        advance_receipt(current, input, capture(session));
-        out.records[out.frames++] = current;
+        if (summary)
+            headless::score_audit_observe();
+        else {
+            advance_receipt(current, input, capture(session));
+            out.records[out.frames++] = current;
+        }
         if (after.player_state == 2 || after.deaths != initial_deaths) {
             out.status = BranchStatus::Death;
             return;
@@ -110,12 +117,21 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
     out.status = BranchStatus::Horizon;
 }
 } // namespace
-static Prediction predict_owned(headless::Session &session, const Packet &origin,
-                                const std::vector<std::uint16_t> &inputs, std::size_t horizon,
-                                RolloutGuidance *guidance, Boundary boundary, unsigned timeout_ms) {
+struct OwnedResult {
+    Prediction prediction;
+    TapeEvaluation evaluation;
+};
+static OwnedResult predict_owned(headless::Session &session, const Packet &origin,
+                                 const std::vector<std::uint16_t> &inputs, std::size_t horizon,
+                                 RolloutGuidance *guidance, Boundary boundary, unsigned timeout_ms,
+                                 bool summary = false, std::size_t first = 0) {
     const auto begin = Clock::now();
-    if (inputs.empty() || inputs.size() > horizon || horizon > maximum_horizon ||
-        (!guidance && horizon != inputs.size()) || !timeout_ms || timeout_ms > 60000)
+    if (inputs.empty() || first >= inputs.size() || !horizon ||
+        (!summary && (inputs.size() > horizon || horizon > maximum_horizon ||
+                      (!guidance && horizon != inputs.size()))) ||
+        (summary && (guidance || inputs.size() > 400000 || horizon != inputs.size() - first ||
+                     origin.sequence != first || boundary.spell >= 0)) ||
+        !timeout_ms || timeout_ms > 60000)
         throw std::runtime_error("invalid_shadow_rollout_budget");
     for (auto input : inputs)
         input_value(input);
@@ -158,7 +174,24 @@ static Prediction predict_owned(headless::Session &session, const Packet &origin
             _exit(2);
         try {
             std::filesystem::current_path(cleanup.directory);
-            run(session, origin, inputs, horizon, guidance, boundary, *arena.data);
+            run(session, origin, inputs, horizon, guidance, boundary, *arena.data, summary, first);
+            if (summary) {
+                auto &evaluation = arena.data->evaluation;
+                evaluation.terminal = capture(session);
+                const auto &audit = headless::score_audit();
+                const auto coverage = headless::score_capture_coverage(
+                    audit, arena.data->status == BranchStatus::Terminal);
+                evaluation.expected_captures = unsigned(coverage.expected.size());
+                evaluation.captured = unsigned(coverage.captured.size());
+                evaluation.all_captures =
+                    coverage.all && !audit.death_rows && !audit.deaths && !audit.bombs_used;
+                for (int spell : coverage.expected) {
+                    if (spell < 0 || spell >= 256)
+                        throw std::runtime_error("unsupported_tape_capture_catalogue");
+                    evaluation.expected_spells[unsigned(spell) / 64] |= std::uint64_t(1)
+                                                                        << (unsigned(spell) % 64);
+                }
+            }
         } catch (...) {
             arena.data->status = BranchStatus::Fault;
         }
@@ -188,7 +221,8 @@ static Prediction predict_owned(headless::Session &session, const Packet &origin
         while (waitpid(child, &status, 0) < 0 && errno == EINTR) {
         }
     }
-    Prediction result;
+    OwnedResult owned;
+    auto &result = owned.prediction;
     result.origin = origin;
     result.requested = horizon;
     result.status = timed_out ? BranchStatus::Timeout : arena.data->status;
@@ -205,20 +239,44 @@ static Prediction predict_owned(headless::Session &session, const Packet &origin
     const bool interrupted =
         result.status == BranchStatus::Timeout || result.status == BranchStatus::Fault;
     result.charged_updates = interrupted ? horizon : result.completed;
-    if (!interrupted && arena.data->frames <= maximum_horizon)
+    if (!summary && !interrupted && arena.data->frames <= maximum_horizon)
         result.frames.assign(arena.data->records.begin(),
                              arena.data->records.begin() + arena.data->frames);
     result.wall_ms = std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
-    return result;
+    if (summary) {
+        auto &evaluation = owned.evaluation;
+        if (!interrupted)
+            evaluation = arena.data->evaluation;
+        evaluation.status = result.status;
+        evaluation.requested = result.requested;
+        evaluation.attempts = result.attempts;
+        evaluation.completed = result.completed;
+        evaluation.charged_updates = result.charged_updates;
+        evaluation.native_ns = result.native_ns;
+        evaluation.file_io_ns = result.file_io_ns;
+        evaluation.wall_ms = result.wall_ms;
+    }
+    return owned;
 }
 Prediction predict(headless::Session &session, const Packet &origin,
                    const std::vector<std::uint16_t> &inputs, Boundary boundary,
                    unsigned timeout_ms) {
-    return predict_owned(session, origin, inputs, inputs.size(), nullptr, boundary, timeout_ms);
+    return predict_owned(session, origin, inputs, inputs.size(), nullptr, boundary, timeout_ms)
+        .prediction;
+}
+TapeEvaluation evaluate_tape(headless::Session &session, const Packet &origin,
+                             const std::vector<std::uint16_t> &inputs, std::size_t first,
+                             Boundary boundary, unsigned timeout_ms) {
+    if (first >= inputs.size())
+        throw std::runtime_error("empty_native_tape_suffix");
+    return predict_owned(session, origin, inputs, inputs.size() - first, nullptr, boundary,
+                         timeout_ms, true, first)
+        .evaluation;
 }
 Prediction predict_guided(headless::Session &session, const Packet &origin,
                           const std::vector<std::uint16_t> &prefix, std::size_t horizon,
                           RolloutGuidance &guidance, Boundary boundary, unsigned timeout_ms) {
-    return predict_owned(session, origin, prefix, horizon, &guidance, boundary, timeout_ms);
+    return predict_owned(session, origin, prefix, horizon, &guidance, boundary, timeout_ms)
+        .prediction;
 }
 } // namespace th08::shadow

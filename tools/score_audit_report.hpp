@@ -1,9 +1,7 @@
 #pragma once
 #include "Spellcard.hpp"
 #include "modern/headless/score_audit.hpp"
-#include <algorithm>
 #include <ostream>
-#include <set>
 
 namespace th08::report {
 inline const char *spell_outcome(headless::SpellAuditOutcome outcome) {
@@ -25,26 +23,11 @@ inline const char *spell_outcome(headless::SpellAuditOutcome outcome) {
 // Coverage is the source catalogue for the stages actually visited, including
 // conditional Last Spells. Skipping a gate never silently shrinks the target.
 inline bool write_score_audit(std::ostream &out, const headless::ScoreAudit &audit, bool complete) {
-    using O = headless::SpellAuditOutcome;
-    std::set<int> expected, encountered, captured;
-    unsigned failures = 0;
-    for (int stage = 0; stage < int(audit.stages.size()); ++stage)
-        if (audit.stages[stage].seen)
-            for (int i = 0; i < g_SpellcardCountPerStage[stage]; ++i) {
-                const int spell = g_SpellcardNumbersPerStage[stage][i];
-                if (Spellcard::GetDifficultyFromSpellCard(spell) == audit.difficulty)
-                    expected.insert(spell);
-            }
-    for (const auto &spell : audit.spells) {
-        encountered.insert(spell.spell);
-        if (spell.outcome == O::Captured)
-            captured.insert(spell.spell);
-        else
-            ++failures;
-    }
-    const bool all =
-        complete && !expected.empty() && !failures && !audit.unmatched_events &&
-        std::includes(captured.begin(), captured.end(), expected.begin(), expected.end());
+    const auto coverage = headless::score_capture_coverage(audit, complete);
+    const auto &expected = coverage.expected, &encountered = coverage.encountered,
+               &captured = coverage.captured;
+    const auto failures = coverage.unsuccessful;
+    const bool all = coverage.all;
     out << "{\"schema_version\":1,\"evidence\":\"native-source-lifecycle-audit\","
            "\"score_raw_unit\":10,\"complete\":"
         << (complete ? "true" : "false") << ",\"difficulty\":" << audit.difficulty

@@ -159,6 +159,13 @@ add_executable(th08_shadow_style tools/shadow_style.cpp)
 target_link_libraries(th08_shadow_style PRIVATE th08_shadow_proposals)
 target_compile_options(th08_shadow_style PRIVATE -ffp-contract=off
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+add_library(th08_score_refinement src/score_refine.cpp)
+target_link_libraries(th08_score_refinement PUBLIC th08_shadow_native)
+target_compile_options(th08_score_refinement PRIVATE -ffp-contract=off)
+add_executable(th08_score_refine tools/score_refine.cpp)
+target_link_libraries(th08_score_refine PRIVATE th08_score_refinement)
+target_compile_options(th08_score_refine PRIVATE -ffp-contract=off
+  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 if(BUILD_TESTING AND TH08_HEADLESS_DAT)
   add_test(NAME headless_shadow_style COMMAND ${CMAKE_COMMAND}
     -DSOLVER=$<TARGET_FILE:th08_shadow_style>
@@ -169,6 +176,17 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
     -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_style_real_data.cmake)
   set_tests_properties(headless_shadow_style PROPERTIES TIMEOUT 330)
+  set_tests_properties(headless_shadow_style PROPERTIES FIXTURES_SETUP native_score_incumbent)
+  add_test(NAME headless_score_refine COMMAND ${CMAKE_COMMAND}
+    -DREFINER=$<TARGET_FILE:th08_score_refine>
+    -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+    -DCHECKER=$<TARGET_FILE:th08_replay_check>
+    -DDAT=${TH08_HEADLESS_DAT}
+    -DINCUMBENT=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/score-refine-regression
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_refine_real_data.cmake)
+  set_tests_properties(headless_score_refine PROPERTIES TIMEOUT 120
+    FIXTURES_REQUIRED native_score_incumbent)
 endif()
 set_source_files_properties(src/shadow_recorded.cpp PROPERTIES
   COMPILE_OPTIONS "-fpermissive;-include${th08_native}/src/modern/linux/linux_compat.hpp")

@@ -5,6 +5,7 @@
 #include "Player.hpp"
 #include "Spellcard.hpp"
 #include "replay_check.hpp"
+#include <algorithm>
 
 namespace th08::headless {
 namespace {
@@ -21,6 +22,28 @@ void score_audit_enable() {
 }
 const ScoreAudit &score_audit() {
     return audit;
+}
+ScoreCaptureCoverage score_capture_coverage(const ScoreAudit &record, bool complete) {
+    ScoreCaptureCoverage coverage;
+    for (int stage = 0; stage < int(record.stages.size()); ++stage)
+        if (record.stages[stage].seen)
+            for (int i = 0; i < g_SpellcardCountPerStage[stage]; ++i) {
+                const int spell = g_SpellcardNumbersPerStage[stage][i];
+                if (Spellcard::GetDifficultyFromSpellCard(spell) == record.difficulty)
+                    coverage.expected.insert(spell);
+            }
+    for (const auto &spell : record.spells) {
+        coverage.encountered.insert(spell.spell);
+        if (spell.outcome == SpellAuditOutcome::Captured)
+            coverage.captured.insert(spell.spell);
+        else
+            ++coverage.unsuccessful;
+    }
+    coverage.all = complete && !coverage.expected.empty() && !coverage.unsuccessful &&
+                   !record.unmatched_events &&
+                   std::includes(coverage.captured.begin(), coverage.captured.end(),
+                                 coverage.expected.begin(), coverage.expected.end());
+    return coverage;
 }
 void score_audit_graze(bool suppress_extra_items) {
     if (!enabled)

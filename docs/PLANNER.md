@@ -37,8 +37,40 @@ difficulties and Last Words require separate runs. These are run-level capture
 goals, distinct from populating every Spell Practice entry in a persistent profile.
 
 Current outcomes and historical failures belong in [Status](STATUS.md); this
-section describes the implemented mechanisms and their limits. New experiments
-are restricted to Extra until the owner changes scope.
+section describes the implemented mechanisms and their limits. Current Native
+experiments cover Extra and the complete Magic Team Lunatic4A→FinalB route.
+
+### Complete-tape score refinement
+
+`th08_score_refine` starts with our own complete Native input tape. Before
+changing it, an isolated Native child must finish the entire tape NMNB and
+capture the source catalogue for every visited stage, including gated Last
+Spells. The reporting tool explicitly enables the lifecycle audit; reporting
+and selection share `score_capture_coverage`, so they cannot silently use
+different capture goals.
+
+The refiner advances the owner through the certified incumbent. At spaced
+boundaries after a64-update phase warmup, it tries two form alternatives or two
+fire alternatives over an explicit update window. These edits have no seed,
+card-number or human-input lookup. Each trial forks the actual current world
+and executes the **entire remaining tape** with its own action-dependent RNG,
+bullets, actors, items and transitions. It accepts only complete NMNB/all-capture
+results with the identical expected spell set, identical final stage and a
+strictly higher actual terminal score. Ties retain the incumbent. Final owner
+execution must match the selected trial's complete41-word terminal projection.
+
+This evaluates delayed bonus, clear rewards, PIV and carried-item effects through
+the source instead of adding an approximate local economic reward. Trial death,
+fault, timeout and tape exhaustion never certify an edit. All attempts and the
+initial incumbent evaluation are charged; interrupted branches charge the full
+remaining-tape cap. A search budget stops new trials and leaves the incumbent
+executable. The exported final tape still needs fresh following and natural
+original-writer replay verification.
+
+The current proposal family changes only focus or fire bits and retains the
+remaining timed inputs. An early kill or form change can make that suffix unsafe
+or out of phase, so this bounded coordinate search can reject useful strategies.
+It neither proves optimality nor supplies retail or online-FPS evidence.
 
 ### Source economics and capture boundaries
 

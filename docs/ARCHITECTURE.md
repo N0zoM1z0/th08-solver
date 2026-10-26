@@ -30,6 +30,8 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Owned current-memory observations and online proposal history | `online.hpp`, `online.cpp`, `online_model.cpp`; the optional previous-plan cache belongs to each `Policy` and is rechecked against new observations |
 | Common-start shadow synchronization | `shadow_protocol.hpp`, `shadow_native.*`, `shadow_process.*`, `tools/shadow_follow.cpp`; fixed-width wire values and a single-threaded independently initialized follower process |
 | True-RNG branch verification and committed action frontier | `shadow_rollout.*`, `shadow_plan.hpp`; isolated native child futures and checked consecutive execution receipts |
+| Offline terminal-score refinement | `score_refine.*`, `tools/score_refine.cpp`; complete remaining-tape evaluation, identical capture/route goals and strict terminal-score selection |
+| Source capture coverage | `modern/headless/score_audit.*`; one source-catalogue goal shared by reporting and complete-trajectory selection |
 | Local Wine observation/input bridge and future proposals | `shadow_bridge.hpp`, `shadow_proposal.*`, `tools/shadow_online.cpp`, `tools/wine-shadow/`; pinned retail ABI adapter, owned launcher and branch-owned proposal history |
 | Native observation adapter and online execution/reporting | `online_native.*`, `tools/online.cpp`; no native future updates or live rewinds |
 | Replay projection and strict corpus gate | `modern/headless/replay_check.*`, `tools/replay_check.cpp`, `tools/replay_suite.cpp` |

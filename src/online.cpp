@@ -764,9 +764,11 @@ struct Policy::Impl {
         proposal_focus_bias = opt.focus_bias;
         if (collecting && observation.scoring.can_switch_forms)
             proposal_focus_bias -= opt.collection_focus_bias;
-        if (opt.scoring_survival_focus && observation.scoring.can_switch_forms &&
+        const bool survival_focus =
+            opt.scoring_survival_focus && observation.scoring.can_switch_forms &&
             observation.scoring.survival_spell && observation.scoring.has_boss &&
-            observation.spell_active && !collecting) {
+            observation.spell_active && !collecting;
+        if (survival_focus) {
             // Source-marked survival attacks have different opportunity costs
             // from HP races. The default prior uses the action-change scale;
             // stronger recorded profiles can give sustained form more weight.
@@ -777,7 +779,7 @@ struct Policy::Impl {
                       observation.scoring.survival_spell && observation.scoring.has_boss &&
                       observation.spell_active;
         update_attack_pacing(observation);
-        if (!flow_active && observation.scoring.can_switch_forms)
+        if (!flow_active && !survival_focus && observation.scoring.can_switch_forms)
             proposal_focus_bias -= opt.economic_human_bias;
         if (flow_active) {
             update_flow_goal(observation);
