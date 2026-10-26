@@ -191,11 +191,22 @@ defaults remain1.5 and240, and the1.2/120 complete trial retains its extra costs
 The Native harness can try `--baseline-recovery 1` after a failed nominal future.
 The baseline owns movement; the branch-owned primary policy observes every
 future packet and supplies fire intent, including transitions back to capture.
+The explicit `--recovery-style expert|zen` chooses another movement policy;
+`--recovery-fire capture` instead keeps recovery fire enabled to prioritize ending
+an attack after a rejected nominal future. Both require enabled recovery. The
+default style/fire remain baseline/preserve. These are additional Native-checked
+proposals within the same total budget, not permission to publish a failed tail.
 The fixed input lead is preserved, and only a complete Native future certifies
 publication. Additional safety attempts/adoptions and all rollout work are
-reported. `--search-budget-ms` explicitly changes only this synchronous Native
-experiment's total budget (default110); the250ms scoring prototype supplies no
-claim about live deadlines or60FPS capability.
+reported. `--search-budget-ms` explicitly selects the total search budget. Both
+the synchronous Native harness and live client expose the pacing, reserve,
+price/staging/form and baseline recovery controls. The live client additionally
+accepts `--lead-updates` (1..32) and `--publish-horizon`, bounded by the verified
+horizon and wire capacity. Larger budgets do not pause Wine. Each publication
+must still match all executed inputs and arrive before its first changed input.
+Search rows record owner progress and queue sizes; reports include publication
+consumption/slack, rejected future work, stale plans and owner timing. Synchronous
+throughput is not online FPS. Actual live outcomes and costs belong to Status.
 
 ### Price-aware positioning
 
@@ -213,6 +224,15 @@ recorded, with no card, seed or human-input lookup. Height is a proposal goal,
 not a promise about prices during transit. Pacer/source-survival graze goals
 retain priority over the general human preference. Precollection, when enabled,
 uses the same price-aware target before restoring new fire.
+
+`--hit-income 1` is an independent, default-off experiment. A current SHT
+descriptor with negative extreme-gauge behavior can generate human shot-hit orbs
+before enemy HP suppression. With no boss, the Native adapter copies accepted
+nonboss shot targets with at least24 remaining reduction updates. The proposal
+ranks current targets by remaining window and travel distance, aiming64 pixels
+below the chosen actor for upward shots. Item trips and boss/graze goals retain
+priority. This is a current-memory hypothesis, not a future hit, reward or safety
+promise. Native rollouts retain all carried shots, RNG, HP and lifecycle changes.
 
 ### Audit and publication contracts
 
@@ -237,8 +257,8 @@ still match; the failed search supplies no inputs. The live `h128` profile uses
 Both retain lead8, interval8, total110ms and proposal60ms. Longer verification is
 not uniformly better: the retained4A counterexample fails under128.
 
-Unimplemented source-based opportunities, including familiar/reduction-window orb
-production, are kept in [Status](STATUS.md#unresolved-problems-and-proposed-next-work).
+Remaining source-based opportunities, including net reduction-window income,
+are kept in [Status](STATUS.md#unresolved-problems-and-proposed-next-work).
 Current pacing uses observed income; it does not target enemies or certify those
 opportunities as incremental profit.
 

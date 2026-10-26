@@ -1,10 +1,11 @@
 # Current handoff status
 
-Updated 2026-10-26 at main `667597f`, before this documentation/replay handoff.
+Updated 2026-10-26, continuing from handoff `b58aad0`.
 The Extra target of **2,500,000,000 displayed points, NMNB and 14/14 captures**
-is achieved by a frozen Native prototype. The next scoring phase can improve
-main's reliability and move the policy into actual online play. This handoff runs
-verification only; it starts no new scoring campaign. New story/4A and 4B work is
+is achieved by a frozen Native prototype. The active phase targets actual Wine
+EXE scoring, complete NMNB/14-of-14 and then a higher score than the human Magic
+Team reference. Native experiments and source probes run while Wine plays.
+New story/4A and 4B work is
 paused. [Issue11](https://github.com/N0zoM1z0/th08-solver/issues/11) retains the
 source investigation and experiment discussion.
 
@@ -165,7 +166,20 @@ changed input is 61792. The original 391.341 s failed run stays charged.
 
 ### Actual Wine and offline-ahead evidence
 
-The latest actual scoring attempt is wine-63, original real seed 12421,
+The first live port of the high-score controls is wine-64, original real seed
+47691. Pacing, price clearance/staging and5-point economic form preferences use
+H256/publication128/lead24,250ms total/60ms proposal, baseline+held recovery and
+reserve1.2/120. It fails at54833 on card202:1,421,550,830 partial points,
+887 items/74374 orbs. There is no meaningful mismatch or player-position error.
+6779 searches charge1750462 branch+589 proposal updates,153 rejected future
+deaths,32 rollout/2 proposal timeouts,58 baseline attempts/23 adoptions. No plan
+is stale and no prefix is rejected. Publication consumption p99 is8 updates,
+minimum publication slack10. The final trap outlasts the verified queue;
+18 unqueued updates include14 startup updates. Over926.807s it averages59.163
+calculations/s; period p99/max24.117/57.878ms, search p99/max159.475/258.251ms.
+The failure remains charged; it is not a completed score or deadline proof.
+
+The preceding actual attempt is wine-63, original real seed 12421,
 score-harvest 128 verification/publication, lead 8/110 ms/60 ms. It is hit in the last
 card at 41863 calculations:1,222,798,110 partial points,903 items/40017 orbs.
 Fresh 41-word following agrees, no meaningful mismatch/position error;1209
@@ -174,6 +188,47 @@ over 700.833 s (period p99 20.087 ms, max 66.781 ms). It charges 678012 branch+3
 proposal updates,283 rejected future deaths,28 timeouts,34 overruns and 31
 unqueued receipts. A Last Spell hit invalidates this target even before the
 ordinary death counter increments. The complete online PB remains wine-35.
+
+Wine-65 tests H128/publication64/lead16/200ms, retaining price/pacing and1.2/120
+reserve. Original seed52387 fails at37577/card198:946,361,780 partial points,
+720 items/47785 orbs. No meaningful mismatch, player error, stale plan or prefix
+rejection. Work is602781 branch+134 proposal updates,66 rejected future deaths,
+18 rollout timeouts,37 recovery attempts/19 adoptions,24 unqueued updates.
+Over649.547s the mean is57.851 calculations/s; period p99/max30.671/99.877ms,
+search p99/max153.235/208.869ms and minimum publication slack7. Shortening the
+certificate alone does not resolve this failure. Wine-66 uses a separately
+recorded expert/capture recovery profile; its outcome is not yet verified here.
+
+Source probes in `reports/local/extra-live-score-20261026/` preserve the selected
+v15 tape's full41-word terminal and all83160 time-orb pickups. Slot provenance
+separates1164 collected orbs from nonboss reduction-window shots,663 from
+nondamageable actors,2883 from reduced boss shots,2192 from attached-target
+shots,5565 from other human shots,52179 from graze and18514 from other sources.
+The categories are disjoint; no new income is claimed from these existing orbs.
+The independent default-off `--hit-income` goal tries current nonboss reduction
+targets. Task219 completes Native seed47691 at2,430,681,420 NMNB but only13/14:
+ordinary card199 times out. This is an unsuccessful scoring target, not a new PB.
+It charges648.646s,2407386 branch+808 proposal updates,694 rejected future deaths,
+109 timeouts/123 overruns and176 recovery attempts/48 adoptions. Fresh41-word
+execution agrees. Natural replay matches the score and13/14 outcome, and
+`--require-all-captures` correctly rejects it with exit3.
+
+A second read-only ledger measures79 consecutive240-update no-fire windows;
+25 have negative cash+current-bonus+Extra orb/graze clear value, before assigning
+any unseen future point/PIV income. Several zero-orb windows lose over1.7million
+points of this current valuation. Source `Player::OnUpdate` moves gauge toward
+zero without shooting and resets its shooting ramp. A named local gauge-ready
+prototype tests focused fire during reduction, then firing through gauge warmup
+before withholding Z at extreme-youkai. It retains mature damage observations
+while warming. Task222 fails card202 at44683,1,382,409,240 partial points with
+63468 orbs and10 captures. It charges323.749s,1462497 branch+395 proposal updates,
+674 rejected future deaths,45 timeouts/50 overruns and67 recovery attempts/15
+adoptions. It is not promoted. A separate local expert/capture continuation
+profile retains that original failure and starts again from full Extra entry.
+
+The ledger reaches225/320 after the first two live attempts, source probes,
+Native hit-income experiment, Wine-66 launch and fresh/natural checks; later
+prototype tasks append to the same ledger. At most4 solver jobs remain allowed.
 
 `extra-ahead-h64` preserves 38000 actual wine-63 inputs and completes offline at
 1,923,125,200,14/14. Its H128 companion fails 13/14. The H64 first changed input
@@ -191,10 +246,10 @@ independent for later ablations; no new ablation matrix is requested now.
 | --- | --- | --- |
 | Final-card reliability: main seed 19732 fails; expert checkpoint tail succeeds | Freeze the failing frontier and compare a bounded generic neutral/held/move-then-stop recovery portfolio, with explicit observer warming and work accounting. Integrate only if complete episodes improve | Complete from entry on old and predeclared fresh seeds, exact fresh execution and natural replay; retain the original failures |
 | Prototype/main and same-seed reruns diverge | Bind source/binary/options, log the first differing candidate/certificate, timeouts, tie state and action. Test whether a deterministic work cap is useful as a separately named profile; do not silently replace time budgets | Explain observed divergence with evidence; preserve current ordering, budgets and failure meaning for baseline |
-|2.5 bn policy is Native-only,250 ms search exceeds the 133 ms 8-frame lead | First measure publication slack and branch backlog; test an ahead Native planner with rolling verified buffers. Alternatively test a separately named 110 ms/shorter-publication profile. Current live CLI lacks the full scoring/recovery option set | Original-RNG actual Wine, forward-only inputs, no owner wait/rewind, complete NMNB/14/14, matching exported replay; report p99/max periods and planning/queue misses |
+| High-score controls now run live; wine-64 meets publication lead but fails a H256 trap | Continue explicit shorter verification/publication profiles and bounded generic recovery. Preserve source/binary/option identities and account for every failed run | Original-RNG actual Wine, forward-only inputs, no owner wait/rewind, complete NMNB/14/14, matching exported replay; report p99/max periods and planning/queue misses |
 | Orb/bonus opportunity remains below ASL | Use actual per-spell income and source cap/decay state to choose whether to extend, reposition, then capture. Include point/PIV/clear rewards rather than optimizing raw graze | Higher complete terminal score without capture loss; charge every longer attempt and retry |
 | Pickup loss: v15 still has 49 low-height and 33 non-doubled items | Measure transit pickups, gauge convergence and missed drops. Test geometry-aware staging/return paths, preserving actual carried shots and item state | Actual point income and complete score improve, not merely a static price ceiling |
-| Source familiar/reduction-window production remains unproven | Read-only old story follow counted 19847 extreme-human hit-accumulator interactions without enemy HP loss (16286 with reduction at both sampled boundaries). Trace actual spawned/collected orbs before proposing generic target selection | Incremental collected income and complete score, including capture-speed/bonus costs; these interactions alone are not orb spawns |
+| Suppressed-HP hit income is real; additional policy profit remains unproven | Read-only selected Extra follow traces1164 spawned/collected time orbs from nonboss reduction windows and663 from nondamageable actors, preserving all41 terminal words and83160-orb accounting. Test opt-in current reduction-target aiming, preserving old failures | Incremental collected income and complete score, including collection prices, capture-speed/bonus and added search costs; existing pickups alone are not additional profit |
 | Short horizons can enter traps beyond their certificate | Test longer strategic targets/viability proposals with true-RNG Native safety; a longer horizon remains an explicit cost | Complete affected Extra durations and failure cases; no approximate safety certificate or seed/card script |
 
 ### Resume here
@@ -207,16 +262,16 @@ independent for later ablations; no new ablation matrix is requested now.
    history/pacing/goals in [online.cpp](../src/online.cpp), branch guidance in
    [shadow_proposal.cpp](../src/shadow_proposal.cpp), synchronous orchestration in
    [shadow_style.cpp](../tools/shadow_style.cpp), and live orchestration in
-   [shadow_online.cpp](../tools/shadow_online.cpp). The last has a narrower CLI; do not assume Native
-   experiment switches already apply to Wine.
+   [shadow_online.cpp](../tools/shadow_online.cpp). Live scoring/scheduling controls
+   are explicit; never infer the active profile from the style name alone.
 2. Replay the tracked highest score before changing a strategy. Reconstruct the
    failed main case from its full tape/checkpoint; preserve RNG, bullets, items,
    actors, latch and observer history. A fresh replay is a separate verification.
 3. Freeze source/binary/configuration and a bounded complete-duration experiment
    before launch. Use at most 4 solver jobs and the remaining campaign task budget
    (215/320 after handoff checks); do not reset the ledger to hide earlier attempts.
-4. Prefer the final-card and prototype/main diagnosis before launching another
-   long Wine scoring run. Freeze all binaries for the normal CTest suite; do not
+4. Require complete actual Wine scoring results alongside Native development.
+   Freeze all binaries for the normal CTest suite; do not
    relink while a binary-identity regression is running. Publish only tested code
    and maintained prose on main, using the repository's English commit prefix.
 
@@ -230,6 +285,13 @@ are useful locally; the tracked replay, maintained conclusions and commit histor
 remain available without them.
 
 ## Validation and preserved historical work
+
+The live scoring port and optional current reduction target pass the normal
+Release Native/DAT suite56/56 in1175.95s and core36/36 in12.75s. The earlier port
+suite also passes56/56 in1189.57s. Final recovery-control/source-policy checks
+pass4/4 in34.55s, including invalid schedule/option rejection before owner wait.
+Logs are under `reports/local/extra-live-score-20261026/`. The selected replay is
+unchanged; no new reports, tapes, videos or experiment replays are published.
 
 At `667597f`, Release Native/DAT CTest passes 56/56 in 889.37 s and core 36/36
 in 8.47 s. The 56-test local configuration includes two private retained-trace

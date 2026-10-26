@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cerrno>
 #include <chrono>
+#include <cmath>
 #include <cstring>
 #include <deque>
 #include <fcntl.h>
@@ -19,6 +20,7 @@
 #include <iostream>
 #include <numeric>
 #include <poll.h>
+#include <set>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -35,6 +37,20 @@ struct PlanningWindow {
     unsigned horizon, lead, budget_ms;
     unsigned refresh_updates = 0;
 };
+unsigned number(const char *text, unsigned maximum) {
+    std::size_t used = 0;
+    const auto value = std::stoul(text, &used);
+    if (used != std::strlen(text) || value > maximum)
+        throw std::runtime_error("invalid_shadow_control_number");
+    return unsigned(value);
+}
+float preference(const char *text) {
+    std::size_t used = 0;
+    const auto value = std::stof(text, &used);
+    if (used != std::strlen(text) || !std::isfinite(value) || value < 0 || value > 10000)
+        throw std::runtime_error("invalid_shadow_control_preference");
+    return value;
+}
 struct Mapping {
     std::uint32_t *data = nullptr;
     explicit Mapping(const fs::path &path) {
@@ -88,6 +104,7 @@ struct Statistics {
     std::uint64_t held_attempts = 0, held_selected = 0;
     std::uint64_t direct_attempts = 0, direct_selected = 0, recovery_cursor = 0;
     std::uint64_t pulse_attempts = 0, pulse_selected = 0;
+    std::uint64_t safety_attempts = 0, safety_selected = 0;
     std::uint64_t retained_attempts = 0, retained_windows = 0, retained_inputs = 0;
     std::uint64_t branch_attempts = 0, branch_completed = 0, branch_charged = 0;
     std::uint64_t branch_native_ns = 0, branch_io_ns = 0, owner_native_ns = 0;
@@ -104,6 +121,7 @@ struct Statistics {
     std::uint64_t proposal_native_ns = 0, proposal_io_ns = 0;
     double elapsed_ms = 0;
     std::vector<double> planning_ms, periods_ms;
+    std::vector<double> consumed_updates, publication_slack;
 };
 double percentile(std::vector<double> values, double q) {
     if (values.empty())
@@ -286,7 +304,8 @@ bool publish_retained(Follower &follower, const s::Prediction &prediction, Mappi
 PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Boundary boundary,
                      Statistics &statistics, PlanningWindow window, s::NominalExtension &nominal,
                      bool held_recovery, unsigned publication_horizon, bool pulse_recovery,
-                     s::RecordedPlanner *recorded_planner) {
+                     s::RecordedPlanner *recorded_planner, o::Policy *safety,
+                     bool capture_recovery) {
     const auto begin = Clock::now();
     const unsigned lead = window.lead,
                    horizon = recorded_planner
@@ -452,6 +471,24 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
         std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
     if (elapsed_before_proposal >= search_budget_ms)
         return finish();
+    if (safety && !previous.frames.empty()) {
+        ++statistics.safety_attempts;
+        auto prediction = s::predict_with_policy(
+            follower.session, *safety, origin, prefix, horizon, boundary,
+            std::max(1u, unsigned(search_budget_ms - elapsed_before_proposal)),
+            follower.advance_dialogue, capture_recovery ? nullptr : &follower.policy);
+        record(prediction);
+        if (prediction.certifies()) {
+            ++statistics.verified;
+            ++statistics.safety_selected;
+            selected.prediction = std::move(prediction);
+            return finish();
+        }
+    }
+    const auto elapsed_before_guidance =
+        std::chrono::duration<double, std::milli>(Clock::now() - begin).count();
+    if (elapsed_before_guidance >= search_budget_ms)
+        return finish();
     ++statistics.fresh_searches;
     if (pulse_recovery && !previous.frames.empty()) {
         const auto motions = s::motion_recovery_proposals(prefix);
@@ -557,7 +594,7 @@ PlanCandidate search(Follower &follower, const s::Prediction &previous, s::Bound
 }
 
 int run(int argc, char **argv) {
-    if ((argc < 6 || argc > 9) ||
+    if ((argc < 6 || (argc > 9 && (argc - 9) % 2 != 0)) ||
         (std::string(argv[4]) != "follow" && std::string(argv[4]) != "mpc") ||
         (argc >= 7 && std::string(argv[6]) != "exact" && std::string(argv[6]) != "behavioral") ||
         (argc >= 8 && std::string(argv[7]) != "h32" && std::string(argv[7]) != "h64" &&
@@ -571,7 +608,14 @@ int run(int argc, char **argv) {
             "[h32|h64|h128|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|"
             "h128-recorded|h64-recorded] "
             "[baseline|zen|expert|sniper|graze|score|score-survival|score-harvest|score-"
-            "precollect|score-flow]");
+            "precollect|score-flow] "
+            "[--attack-pacing 0|1] [--baseline-recovery 0|1] "
+            "[--search-budget-ms MS] [--lead-updates UPDATES] "
+            "[--publish-horizon UPDATES] [--priced-collection 0|1] "
+            "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
+            "[--capture-factor VALUE] [--capture-padding UPDATES] "
+            "[--attack-focus-bias VALUE] [--hit-income 0|1] "
+            "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto directory = fs::absolute(argv[2]), output = fs::absolute(argv[3]);
     const bool mpc = std::string(argv[4]) == "mpc";
@@ -592,10 +636,73 @@ int run(int argc, char **argv) {
         : argc >= 8 && std::string(argv[7]) != "h32" ? 64
                                                      : 32;
     const unsigned minimum_search_interval = verified_horizon >= 64 ? 8 : 4;
-    const unsigned search_budget_ms = buffered ? 480 : verified_horizon >= 64 ? 110 : 80;
-    const unsigned active_lead = buffered ? 32 : lead_updates;
-    const unsigned publication_horizon =
+    unsigned search_budget_ms = buffered ? 480 : verified_horizon >= 64 ? 110 : 80;
+    unsigned active_lead = buffered ? 32 : lead_updates;
+    unsigned publication_horizon =
         short_publication ? 64 : std::min(verified_horizon, unsigned(b::capacity));
+    o::Configuration profile;
+    profile.horizon = 24;
+    profile.beam = 192;
+    profile.diversity_cell = 16;
+    profile.spawn_guard = 16;
+    profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
+    const std::string style = argc >= 9 ? argv[8] : "baseline";
+    profile = o::with_style(style, profile);
+    bool baseline_recovery = false;
+    std::string recovery_style = "baseline", recovery_fire = "preserve";
+    std::set<std::string> controls;
+    for (int i = 9; i < argc; i += 2) {
+        const std::string key = argv[i];
+        if (!controls.insert(key).second)
+            throw std::runtime_error("duplicate_shadow_control");
+        if (key == "--attack-pacing")
+            profile.scoring_attack_pacing = number(argv[i + 1], 1);
+        else if (key == "--baseline-recovery")
+            baseline_recovery = number(argv[i + 1], 1);
+        else if (key == "--search-budget-ms")
+            search_budget_ms = number(argv[i + 1], 1000);
+        else if (key == "--lead-updates")
+            active_lead = number(argv[i + 1], b::capacity);
+        else if (key == "--publish-horizon")
+            publication_horizon = number(argv[i + 1], b::capacity);
+        else if (key == "--priced-collection")
+            profile.scoring_priced_collection = number(argv[i + 1], 1);
+        else if (key == "--upper-stage")
+            profile.scoring_upper_stage = number(argv[i + 1], 1);
+        else if (key == "--collection-bias")
+            profile.collection_focus_bias = preference(argv[i + 1]);
+        else if (key == "--human-bias")
+            profile.economic_human_bias = preference(argv[i + 1]);
+        else if (key == "--capture-factor")
+            profile.attack_reserve_factor = preference(argv[i + 1]);
+        else if (key == "--capture-padding")
+            profile.attack_reserve_updates = number(argv[i + 1], 10000);
+        else if (key == "--attack-focus-bias")
+            profile.attack_focus_bias = preference(argv[i + 1]);
+        else if (key == "--hit-income")
+            profile.scoring_hit_income = number(argv[i + 1], 1);
+        else if (key == "--recovery-style") {
+            recovery_style = argv[i + 1];
+            if (recovery_style != "baseline" && recovery_style != "expert" &&
+                recovery_style != "zen")
+                throw std::runtime_error("invalid_shadow_control_recovery_style");
+        } else if (key == "--recovery-fire") {
+            recovery_fire = argv[i + 1];
+            if (recovery_fire != "preserve" && recovery_fire != "capture")
+                throw std::runtime_error("invalid_shadow_control_recovery_fire");
+        } else
+            throw std::runtime_error("unknown_shadow_control");
+    }
+    // Explicit experimental scheduling must fit the existing wire capacity.
+    // Lead is an immutable prefix, not a permission to pause the owner.
+    if (!active_lead || active_lead > 32 || !search_budget_ms ||
+        publication_horizon <= active_lead || publication_horizon > verified_horizon ||
+        publication_horizon <= minimum_search_interval || profile.attack_reserve_factor < 1 ||
+        profile.attack_reserve_factor > 10 ||
+        (!baseline_recovery &&
+         (controls.count("--recovery-style") || controls.count("--recovery-fire"))) ||
+        (argc > 9 && (recorded_mode || verified_horizon < 64)))
+        throw std::runtime_error("incompatible_shadow_controls");
     const unsigned replan_remaining = publication_horizon - minimum_search_interval;
     std::size_t used;
     const auto seconds = std::stoul(argv[5], &used);
@@ -627,15 +734,8 @@ int run(int argc, char **argv) {
                binary_hash = wine_shadow::file_hash("/proc/self/exe");
     Scratch scratch;
     h::Session session(config);
-    o::Configuration profile;
-    profile.horizon = 24;
-    profile.beam = 192;
-    profile.diversity_cell = 16;
-    profile.spawn_guard = 16;
-    profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
-    const std::string style = argc == 9 ? argv[8] : "baseline";
-    profile = o::with_style(style, profile);
     o::Policy policy(profile);
+    o::Policy safety(o::with_style(recovery_style, profile));
     Statistics statistics;
     Follower follower(session, policy, statistics, directory / "frames.bin");
     std::unique_ptr<s::RecordedPlanner> recorded_planner;
@@ -655,6 +755,11 @@ int run(int argc, char **argv) {
     std::uint32_t generation = 0;
     std::uint64_t last_search = 0;
     bool timed_out = false, native_fault = false;
+    std::ofstream searches(output.string() + ".searches.tsv");
+    if (!searches)
+        throw std::runtime_error("cannot_write_shadow_searches");
+    searches << "origin\treceipt\towner\tqueued_before\tqueued_after\tunchanged\tcertified\t"
+                "published\tnominal\tbranch_updates\tsearch_ms\n";
     try {
         while (!follower.mismatch) {
             follower.drain();
@@ -680,12 +785,14 @@ int run(int argc, char **argv) {
                 follower.queue.size() <= replan_remaining &&
                 follower.actual.sequence >= last_search + minimum_search_interval) {
                 last_search = follower.actual.sequence;
+                const auto queued_before = follower.queue.size();
                 const auto candidate =
                     search(follower, previous, {config.story, config.spell}, statistics,
                            {verified_horizon, active_lead, search_budget_ms,
                             buffered ? publication_horizon : 0},
                            nominal, held_recovery, publication_horizon, pulse_recovery,
-                           recorded_planner.get());
+                           recorded_planner.get(), baseline_recovery ? &safety : nullptr,
+                           recovery_fire == "capture");
                 const auto &prediction = candidate.prediction;
                 follower.drain();
                 if (follower.mismatch)
@@ -721,11 +828,23 @@ int run(int argc, char **argv) {
                             ++statistics.fresh_adoptions;
                         }
                         published = true;
+                        statistics.consumed_updates.push_back(
+                            double(follower.actual.sequence - prediction.origin.sequence));
+                        statistics.publication_slack.push_back(
+                            double(std::int64_t(plan.first_change) -
+                                   std::int64_t(b::load(map.data + b::Sequence))));
                     }
                 }
                 if (!published && verified_horizon > publication_horizon)
                     publish_retained(follower, previous, map, generation, publication_horizon,
                                      statistics, active_lead);
+                searches << last_search << '\t' << follower.actual.sequence << '\t'
+                         << b::load(map.data + b::Sequence) << '\t' << queued_before << '\t'
+                         << follower.queue.size() << '\t' << candidate.unchanged_inputs << '\t'
+                         << prediction.certifies() << '\t' << published << '\t' << candidate.nominal
+                         << '\t' << statistics.branch_charged << '\t'
+                         << statistics.planning_ms.back() << '\n';
+                searches.flush();
             }
             poll(nullptr, 0, 1);
         }
@@ -816,6 +935,15 @@ int run(int argc, char **argv) {
            << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
            << ",\"boss_collect\":" << (profile.scoring_boss_collection ? "true" : "false")
            << ",\"precollect\":" << (profile.scoring_precollect ? "true" : "false")
+           << ",\"attack_pacing\":" << (profile.scoring_attack_pacing ? "true" : "false")
+           << ",\"attack_focus_bias\":" << profile.attack_focus_bias
+           << ",\"hit_income\":" << (profile.scoring_hit_income ? "true" : "false")
+           << ",\"capture_factor\":" << profile.attack_reserve_factor
+           << ",\"capture_padding\":" << profile.attack_reserve_updates
+           << ",\"priced_collection\":" << (profile.scoring_priced_collection ? "true" : "false")
+           << ",\"upper_stage\":" << (profile.scoring_upper_stage ? "true" : "false")
+           << ",\"collection_bias\":" << profile.collection_focus_bias
+           << ",\"human_bias\":" << profile.economic_human_bias
            << ",\"prior_final_a_clear\":" << (recording.prior_final_a_clear ? "true" : "false")
            << ",\"dialogue_advance\":" << (recording.advance_dialogue ? "true" : "false")
            << ",\"actual_complete\":" << (actual_complete ? "true" : "false")
@@ -844,8 +972,8 @@ int run(int argc, char **argv) {
            << ",\"continuation\":\""
            << (recorded_mode   ? (recorded_direct ? "recorded-native-geometry-and-literal-extension"
                                                   : "policy-h64-with-recorded-region-recovery")
-               : held_recovery ? "policy-prefix8-with-held-recovery"
-               : verified_horizon >= 64 ? "policy-prefix8"
+               : held_recovery ? "policy-with-held-recovery"
+               : verified_horizon >= 64 ? "policy"
                                         : "fixed")
            << '"' << ",\"held_recovery\":" << (held_recovery ? "true" : "false")
            << ",\"pulse_recovery\":" << (pulse_recovery ? "true" : "false")
@@ -883,6 +1011,13 @@ int run(int argc, char **argv) {
            << ",\"direct_selected\":" << statistics.direct_selected
            << ",\"pulse_attempts\":" << statistics.pulse_attempts
            << ",\"pulse_selected\":" << statistics.pulse_selected
+           << ",\"baseline_recovery\":" << (baseline_recovery ? "true" : "false")
+           << ",\"recovery_style\":\"" << recovery_style << '"' << ",\"recovery_fire\":\""
+           << recovery_fire << '"' << ",\"safety_attempts\":" << statistics.safety_attempts
+           << ",\"safety_selected\":" << statistics.safety_selected
+           << ",\"publication_consumed_p99_updates\":"
+           << percentile(statistics.consumed_updates, .99)
+           << ",\"publication_slack_min_updates\":" << percentile(statistics.publication_slack, 0)
            << ",\"recovery_cursor\":" << statistics.recovery_cursor
            << ",\"retained_attempts\":" << statistics.retained_attempts
            << ",\"retained_windows\":" << statistics.retained_windows

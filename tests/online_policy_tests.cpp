@@ -446,6 +446,35 @@ void point_price_goal_contract() {
     o.scoring.pickup_reach_y = -1;
     rejects([&] { on::Policy(priced).decide(o); }, "negative source pickup reach was accepted");
 }
+void hit_income_goal_contract() {
+    auto config = on::with_style("score-harvest");
+    config.horizon = 24;
+    config.scoring_upper_stage = true;
+    auto o = scene();
+    o.x = 192;
+    o.y = 240;
+    o.scoring.available = o.scoring.auto_collect_eligible = true;
+    o.scoring.collection_line = 160;
+    o.scoring.pickup_reach_y = 32;
+    o.scoring.income_targets = {{320, 176, 100}};
+    const auto original = on::Policy(config).decide(o).action;
+    config.scoring_hit_income = true;
+    check(on::Policy(config).needs_hit_income_memory() &&
+              (on::Policy(config).decide(o).action & 128) && !(original & 128),
+          "source reduction income target did not change the stage shooting lane");
+    o.scoring.income_targets.front().reduction_updates = 0;
+    check(on::Policy(config).decide(o).action == original,
+          "expired reduction kept an income target alive");
+    o.scoring.income_targets.front().reduction_updates = 100;
+    o.scoring.has_boss = true;
+    auto disabled = config;
+    disabled.scoring_hit_income = false;
+    check(on::Policy(config).decide(o).action == on::Policy(disabled).decide(o).action,
+          "stage hit-income preference displaced boss or capture goals");
+    o.scoring.has_boss = false;
+    o.scoring.income_targets.front().x = std::numeric_limits<float>::quiet_NaN();
+    rejects([&] { on::Policy(config).decide(o); }, "nonfinite income target was accepted");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -2092,6 +2121,7 @@ int main(int argc, char **argv) {
         score_flow_contract();
         score_attack_pacing_contract();
         point_price_goal_contract();
+        hit_income_goal_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

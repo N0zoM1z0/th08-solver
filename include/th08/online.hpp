@@ -106,6 +106,12 @@ struct ScorePickup {
     float x = 0, y = 0;
     PickupKind kind = PickupKind::Point;
 };
+// Current accepted-shot targets whose native HP loss is suppressed. Remaining
+// reduction is a current timer, not a promise that the actor or state persists.
+struct IncomeTarget {
+    float x = 0, y = 0;
+    int reduction_updates = 0;
+};
 // Current native scoring inputs only; no predicted drops, route script or RNG.
 struct ScoreMemory {
     bool available = false, has_boss = false, auto_collect_eligible = false;
@@ -126,6 +132,7 @@ struct ScoreMemory {
     std::uint64_t impending_points = 0;
     float impending_x = 192;
     std::vector<ScorePickup> pickups;
+    std::vector<IncomeTarget> income_targets;
 };
 
 // Owned current-memory snapshot. The native adapter may reuse its vector capacity
@@ -181,6 +188,7 @@ struct Configuration {
     bool scoring_survival_focus = false;
     bool scoring_survival_flow = false;
     bool scoring_attack_pacing = false;
+    bool scoring_hit_income = false;
     float attack_focus_bias = 5;
     float attack_reserve_factor = 1.5f;
     unsigned attack_reserve_updates = 240;
@@ -290,6 +298,7 @@ class Policy {
   public:
     explicit Policy(Configuration configuration, RiskTables risk = {}, BranchValueModel value = {});
     bool needs_scoring_memory() const;
+    bool needs_hit_income_memory() const;
     // Fire intent after the latest observation, including collection preparation
     // and attack pacing. Movement recovery may preserve this owned goal.
     bool wants_fire() const;

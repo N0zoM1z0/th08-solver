@@ -31,6 +31,7 @@ constexpr unsigned lead = 8;
 struct SearchOptions {
     unsigned horizon = 64, publication = 64, budget_ms = 110;
     bool held_recovery = false, baseline_recovery = false;
+    bool capture_recovery = false;
 };
 struct Work {
     std::uint64_t searches = 0, candidates = 0, branch_updates = 0, proposal_updates = 0;
@@ -100,8 +101,9 @@ s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
     }
     if (options.baseline_recovery && !previous.frames.empty() && remaining()) {
         ++work.safety_attempts;
-        auto repair = s::predict_with_policy(session, safety, origin, prefix, horizon, boundary,
-                                             remaining(), true, &policy);
+        auto repair =
+            s::predict_with_policy(session, safety, origin, prefix, horizon, boundary, remaining(),
+                                   true, options.capture_recovery ? nullptr : &policy);
         work.branch(repair);
         if (repair.certifies()) {
             ++work.fresh_adoptions;
@@ -192,7 +194,8 @@ int run(int argc, char **argv) {
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--priced-collection 0|1] "
             "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
-            "[--capture-factor VALUE] [--capture-padding UPDATES]");
+            "[--capture-factor VALUE] [--capture-padding UPDATES] [--hit-income 0|1] "
+            "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
     const std::string style = argv[7];
@@ -222,6 +225,9 @@ int run(int argc, char **argv) {
     bool price_override = false, upper_override = false, collection_bias_override = false;
     bool human_bias_override = false;
     bool reserve_factor_override = false, reserve_updates_override = false;
+    bool hit_income_override = false;
+    bool recovery_style_override = false, recovery_fire_override = false;
+    std::string recovery_style = "baseline", recovery_fire = "preserve";
     unsigned budget_ms = 110;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
@@ -301,19 +307,35 @@ int run(int argc, char **argv) {
         } else if (key == "--human-bias" && !human_bias_override) {
             profile.economic_human_bias = preference(argv[i + 1]);
             human_bias_override = true;
+        } else if (key == "--hit-income" && !hit_income_override) {
+            profile.scoring_hit_income = number(argv[i + 1], 1);
+            hit_income_override = true;
+        } else if (key == "--recovery-style" && !recovery_style_override) {
+            recovery_style = argv[i + 1];
+            if (recovery_style != "baseline" && recovery_style != "expert" &&
+                recovery_style != "zen")
+                throw std::runtime_error("invalid_native_recovery_style");
+            recovery_style_override = true;
+        } else if (key == "--recovery-fire" && !recovery_fire_override) {
+            recovery_fire = argv[i + 1];
+            if (recovery_fire != "preserve" && recovery_fire != "capture")
+                throw std::runtime_error("invalid_native_recovery_fire");
+            recovery_fire_override = true;
         } else {
             throw std::runtime_error("unknown_or_duplicate_native_score_control");
         }
     }
     if (publication > horizon)
         throw std::runtime_error("publication_exceeds_native_verification");
+    if (!baseline_recovery && (recovery_style_override || recovery_fire_override))
+        throw std::runtime_error("recovery_controls_require_enabled_recovery");
     profile.horizon = 24;
     profile.beam = 192;
     profile.diversity_cell = 16;
     profile.spawn_guard = 16;
     profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
     o::Policy policy(profile);
-    o::Policy safety(o::with_style("baseline", profile));
+    o::Policy safety(o::with_style(recovery_style, profile));
     fs::create_directories(output.parent_path());
     if (!fs::create_directory(output))
         throw std::runtime_error("native_style_output_already_exists");
@@ -346,8 +368,9 @@ int run(int argc, char **argv) {
             break;
         if (actual.sequence - last_search >= 8 && queue.size() <= publication - 8) {
             last_search = actual.sequence;
-            const SearchOptions options{horizon, publication, budget_ms, held_recovery,
-                                        baseline_recovery};
+            const SearchOptions options{horizon,           publication,
+                                        budget_ms,         held_recovery,
+                                        baseline_recovery, recovery_fire == "capture"};
             auto p = search(session, policy, safety, queue, previous, nominal, {config.story, -1},
                             options, work);
             if (p.certifies()) {
@@ -458,6 +481,7 @@ int run(int argc, char **argv) {
            << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
            << ",\"attack_pacing\":" << (profile.scoring_attack_pacing ? "true" : "false")
            << ",\"attack_pacing_revision\":" << (profile.scoring_attack_pacing ? 2 : 0)
+           << ",\"hit_income\":" << (profile.scoring_hit_income ? "true" : "false")
            << ",\"attack_focus_bias\":" << profile.attack_focus_bias
            << ",\"attack_reserve_factor\":" << profile.attack_reserve_factor
            << ",\"attack_reserve_updates\":" << profile.attack_reserve_updates
@@ -486,7 +510,8 @@ int run(int argc, char **argv) {
            << ",\"held_attempts\":" << work.held_attempts
            << ",\"held_adoptions\":" << work.held_adoptions
            << ",\"baseline_recovery\":" << (baseline_recovery ? "true" : "false")
-           << ",\"safety_attempts\":" << work.safety_attempts
+           << ",\"recovery_style\":\"" << recovery_style << '"' << ",\"recovery_fire\":\""
+           << recovery_fire << '"' << ",\"safety_attempts\":" << work.safety_attempts
            << ",\"safety_adoptions\":" << work.safety_adoptions
            << ",\"retained_windows\":" << retained_windows
            << ",\"retained_inputs\":" << retained_inputs << ",\"fallback_updates\":" << fallback

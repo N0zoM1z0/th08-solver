@@ -162,6 +162,7 @@ target_compile_options(th08_shadow_style PRIVATE -ffp-contract=off
 if(BUILD_TESTING AND TH08_HEADLESS_DAT)
   add_test(NAME headless_shadow_style COMMAND ${CMAKE_COMMAND}
     -DSOLVER=$<TARGET_FILE:th08_shadow_style>
+    -DONLINE=$<TARGET_FILE:th08_shadow_online>
     -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
     -DCHECKER=$<TARGET_FILE:th08_replay_check>
     -DDAT=${TH08_HEADLESS_DAT}

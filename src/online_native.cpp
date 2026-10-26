@@ -22,6 +22,7 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
     auto &score = o.scoring;
     score.available = policy.needs_scoring_memory();
     score.pickups.clear();
+    score.income_targets.clear();
     if (!score.available)
         return;
     score.has_boss = false;
@@ -33,6 +34,31 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
             break;
         }
     score.power = g_GameManager.globals->playerPower;
+    if (policy.needs_hit_income_memory() && !score.has_boss) {
+        // A negative SHT descriptor enables human-gauge hit orbs before enemy
+        // reduction is applied. Inspect the owned source data, not a shot ID.
+        const auto *file = g_Player.primaryShtFile;
+        unsigned level = 0;
+        while (level < file->shotPowerLevelCount &&
+               g_GameManager.GetPower() >= file->shotPowerLevels[level].minimumPower)
+            ++level;
+        bool produces_orbs = false;
+        if (level < file->shotPowerLevelCount) {
+            const auto *descriptor = reinterpret_cast<const PlayerShotDescriptor *>(
+                reinterpret_cast<const std::uint8_t *>(file) +
+                file->shotPowerLevels[level].descriptorsOffset);
+            for (unsigned i = 0; i < 128 && descriptor[i].fireInterval >= 0; ++i)
+                produces_orbs |= descriptor[i].extremeGaugeBehavior < 0;
+        }
+        if (produces_orbs)
+            for (auto &enemy : g_EnemyManager.enemies) {
+                constexpr unsigned required = ENEMY_FLAG_ACTIVE | ENEMY_FLAG_ACCEPTS_DAMAGE;
+                if ((enemy.flags1 & required) == required && !(enemy.flags1 & ENEMY_FLAG_BOSS) &&
+                    enemy.life > 0 && enemy.damageReductionTimer >= 24)
+                    score.income_targets.push_back({enemy.worldPosition.x, enemy.worldPosition.y,
+                                                    int(enemy.damageReductionTimer)});
+            }
+    }
     score.can_switch_forms = !g_GameManager.IsSoloHuman() && !g_GameManager.IsSoloYoukai();
     score.survival_spell = g_Spellcard.IsActive() && g_Spellcard.activeEnemy &&
                            (g_Spellcard.activeEnemy->flags1 & ENEMY_FLAG_TIMEOUT_SPELL);

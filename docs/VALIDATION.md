@@ -115,10 +115,33 @@ build-headless/th08_replay_check game_data_donottrack/th08.dat \
 Require matching all 41 terminal words, score and every capture outcome/bonus.
 A failed or incomplete solve cannot certify a successful full run; its partial
 score stays labeled as such. The synchronous Native owner waits during planning,
-so its throughput is not actual online FPS. The live `th08_shadow_online` CLI has
-style/horizon profiles but not this full Native scoring/recovery switch set.
-Online integration needs its own explicit configuration, real original RNG,
-publication/slack telemetry and complete forward-only Wine validation.
+so its throughput is not actual online FPS. The live `th08_shadow_online` CLI
+now exposes pacing, reserve, price/staging/form, baseline recovery and total
+search budget. For example, after launching an isolated Wine observer/owner:
+
+```sh
+build-issue1/th08_shadow_online game_data_donottrack/th08.dat RUN_DIRECTORY \
+  reports/local/extra-live/comparison.json mpc 2400 behavioral h256-held \
+  score-harvest --attack-pacing 1 --baseline-recovery 1 --search-budget-ms 250 \
+  --lead-updates 24 --publish-horizon 128 --priced-collection 1 --upper-stage 1 \
+  --collection-bias 5 --human-bias 5 --capture-factor 1.2 --capture-padding 120
+```
+
+Create the output parent first. `RUN_DIRECTORY` must contain the real observer's
+versioned start, journal and mapped command file. This is the failed wine-64
+profile, not a complete online result. Lead is an immutable1..32-input prefix;
+publication must exceed lead and fit both the complete certificate and128-input
+wire capacity. Invalid/duplicate controls are rejected before waiting for an
+owner. Search telemetry is `comparison.json.searches.tsv`; preserve it with the
+report, original RNG start, frozen binary/source/options and actual inputs.
+The owner continues while branches run. Completion, NMNB and capture/export
+checks are required separately from favorable average FPS or publication slack.
+With `--baseline-recovery 1`, `--recovery-style expert|zen` selects the alternate
+movement policy, and `--recovery-fire capture` enables new fire in that recovery
+instead of preserving the primary pacer's fire intent. Defaults remain
+baseline/preserve. These controls keep the original total budget and forced lead;
+their extra Native work is charged. Wine-66 is a separately recorded trial of
+expert/capture, not an established replacement for the complete online PB.
 
 The Native harness fixes proposal H24/beam 192/cell 16/guard 16 and an 8-update
 search interval. Optional verification 64/128/256, publication 64/128, held recovery,
