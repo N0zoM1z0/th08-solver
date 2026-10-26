@@ -320,6 +320,22 @@ int main(int argc, char **argv) try {
     check(future.status == s::BranchStatus::Horizon && !future.inputs.empty() &&
               future.attempts == 8 && future.completed == 8 && future.charged_updates == 8,
           "proposal work did not own and charge its forced lead");
+    th08::online::Configuration wider_profile = profile;
+    wider_profile.horizon = 48;
+    th08::online::Policy wider(wider_profile);
+    wider.observe(observation);
+    const auto wider_future =
+        s::propose_after_lead(session, wider, origin, lead, {false, 179}, 1000);
+    check(!wider.supports_value_proposals() && wider_future.status == s::BranchStatus::Horizon &&
+              !wider_future.inputs.empty(),
+          "wider policy proposals failed the bounded native adapter");
+    for (const auto &path : wider_future.inputs)
+        check(path.size() == 1,
+              "wider Native action was misrepresented as a learned24-update proposal");
+    const auto wider_rollout =
+        s::predict_with_policy(session, wider, origin, lead, 64, {false, 179}, 10000);
+    check(wider_rollout.certifies() && wider_rollout.guidance_requests > 0,
+          "wider ordinary Native guidance failed its full verified continuation");
     actual.state = s::capture(session);
     check(!s::difference(actual, origin) && contents("score.dat") == score_before &&
               contents("th08.cfg") == config_before,

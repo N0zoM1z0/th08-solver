@@ -58,6 +58,11 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
     observe();
     for (std::size_t index = 0; index < horizon; ++index) {
         const auto before = session.state();
+        if (boundary.require_captures &&
+            capture_goal_failed(boundary.story, before.stage, before)) {
+            out.status = BranchStatus::CaptureFailure;
+            return;
+        }
         if (stage_terminal(boundary.story, before) ||
             (boundary.spell >= 0 && spell_seen && !before.spell_active)) {
             out.status = BranchStatus::Terminal;
@@ -95,14 +100,18 @@ void run(headless::Session &session, const Packet &origin, const std::vector<std
         out.file_io_ns += io;
         out.native_ns += std::uint64_t(ns) > io ? std::uint64_t(ns) - io : 0;
         ++out.completed;
-        if (summary)
+        if (summary || boundary.require_captures)
             headless::score_audit_observe();
-        else {
+        if (!summary) {
             advance_receipt(current, input, capture(session));
             out.records[out.frames++] = current;
         }
         if (after.player_state == 2 || after.deaths != initial_deaths) {
             out.status = BranchStatus::Death;
+            return;
+        }
+        if (boundary.require_captures && capture_goal_failed(boundary.story, before.stage, after)) {
+            out.status = BranchStatus::CaptureFailure;
             return;
         }
         spell_seen = spell_seen || after.spell_active;
@@ -135,6 +144,8 @@ static OwnedResult predict_owned(headless::Session &session, const Packet &origi
         throw std::runtime_error("invalid_shadow_rollout_budget");
     for (auto input : inputs)
         input_value(input);
+    if (boundary.require_captures && (!headless::score_audit_enabled() || boundary.spell >= 0))
+        throw std::runtime_error("capture_verification_requires_audited_stage_or_story");
     Packet actual = origin;
     actual.state = capture(session);
     if (difference(origin, actual))

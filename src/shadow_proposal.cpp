@@ -1,4 +1,5 @@
 #include "th08/shadow_proposal.hpp"
+#include "modern/headless/score_audit.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/online_native.hpp"
 #include "th08/shadow_dialogue.hpp"
@@ -23,6 +24,7 @@ struct Result {
     unsigned count = 0;
     std::uint64_t attempts = 0, completed = 0, native_ns = 0, file_io_ns = 0;
     std::array<std::array<std::uint16_t, 23>, 4> inputs{};
+    std::array<unsigned, 4> lengths{};
 };
 void run(headless::Session &session, online::Policy &policy, const Packet &origin,
          const std::vector<std::uint16_t> &lead, Boundary boundary, Result &out,
@@ -30,6 +32,7 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
     bool spell_seen = session.state().spell_active;
     online::Observation observation;
     for (unsigned i = 0; i < lead.size(); ++i) {
+        const auto before_stage = session.state().stage;
         const auto begin = Clock::now();
         const auto io_before = session.file_io_time_ns();
         ++out.attempts;
@@ -50,8 +53,14 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
         }
         record_time();
         ++out.completed;
+        if (boundary.require_captures)
+            headless::score_audit_observe();
         if (state.player_state == 2 || state.deaths != 0) {
             out.status = BranchStatus::Death;
+            return;
+        }
+        if (boundary.require_captures && capture_goal_failed(boundary.story, before_stage, state)) {
+            out.status = BranchStatus::CaptureFailure;
             return;
         }
         spell_seen = spell_seen || state.spell_active;
@@ -70,6 +79,15 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
             out.inputs[0][i] = previous;
         }
         out.count = 1;
+        out.lengths[0] = 23;
+        out.status = BranchStatus::Horizon;
+        return;
+    }
+    if (!policy.supports_value_proposals()) {
+        const auto decision = policy.decide(observation);
+        input_value(decision.action);
+        out.inputs[0][0] = decision.action;
+        out.lengths[0] = out.count = 1;
         out.status = BranchStatus::Horizon;
         return;
     }
@@ -78,9 +96,10 @@ void run(headless::Session &session, online::Policy &policy, const Packet &origi
     if (proposals.size() > 4)
         throw std::runtime_error("shadow_proposal_capacity");
     for (const auto &proposal : proposals) {
-        if (proposal.inputs.size() != 23)
+        if (proposal.inputs.empty() || proposal.inputs.size() > out.inputs[0].size())
             throw std::runtime_error("shadow_proposal_horizon");
-        for (unsigned i = 0; i < 23; ++i) {
+        out.lengths[out.count] = unsigned(proposal.inputs.size());
+        for (unsigned i = 0; i < proposal.inputs.size(); ++i) {
             input_value(proposal.inputs[i]);
             out.inputs[out.count][i] = proposal.inputs[i];
         }
@@ -177,17 +196,25 @@ Prediction predict_with_policy(headless::Session &session, online::Policy &polic
                 return dialogue_input(actual_input_, sequence_ + 1);
             }
             if (position_ == count_) {
-                std::vector<online::ValueProposal> proposals;
-                const auto decision = policy_.decide(observation_, nullptr, &proposals);
-                count_ = pending_.size();
                 position_ = 0;
-                if (!proposals.empty()) {
-                    count_ = std::min<std::size_t>(count_, proposals.front().inputs.size());
-                    if (!count_)
-                        throw std::runtime_error("empty_shadow_policy_continuation");
-                    std::copy_n(proposals.front().inputs.begin(), count_, pending_.begin());
-                } else
-                    pending_.fill(decision.action);
+                if (!policy_.supports_value_proposals()) {
+                    // Wider Native guidance makes a fresh ordinary decision
+                    // each update; the learned24-update feature schema stays
+                    // unchanged and supplies no invented longer value path.
+                    pending_[0] = policy_.decide(observation_).action;
+                    count_ = 1;
+                } else {
+                    std::vector<online::ValueProposal> proposals;
+                    const auto decision = policy_.decide(observation_, nullptr, &proposals);
+                    count_ = pending_.size();
+                    if (!proposals.empty()) {
+                        count_ = std::min<std::size_t>(count_, proposals.front().inputs.size());
+                        if (!count_)
+                            throw std::runtime_error("empty_shadow_policy_continuation");
+                        std::copy_n(proposals.front().inputs.begin(), count_, pending_.begin());
+                    } else
+                        pending_.fill(decision.action);
+                }
             }
             auto input = pending_[position_++];
             if (goal_)
@@ -204,6 +231,8 @@ FutureProposals propose_after_lead(headless::Session &session, online::Policy &p
     const auto begin = Clock::now();
     if (lead.empty() || lead.size() > 32 || !timeout_ms || timeout_ms > 1000)
         throw std::runtime_error("invalid_shadow_proposal_budget");
+    if (boundary.require_captures && (!headless::score_audit_enabled() || boundary.spell >= 0))
+        throw std::runtime_error("capture_proposals_require_audited_stage_or_story");
     for (auto input : lead)
         input_value(input);
     Packet actual = origin;
@@ -296,7 +325,10 @@ FutureProposals propose_after_lead(headless::Session &session, online::Policy &p
         if (raw.count > 4)
             throw std::runtime_error("shadow_proposal_corrupt_result");
         for (unsigned i = 0; i < raw.count; ++i) {
-            result.inputs.emplace_back(raw.inputs[i].begin(), raw.inputs[i].end());
+            if (!raw.lengths[i] || raw.lengths[i] > raw.inputs[i].size())
+                throw std::runtime_error("shadow_proposal_corrupt_length");
+            result.inputs.emplace_back(raw.inputs[i].begin(),
+                                       raw.inputs[i].begin() + raw.lengths[i]);
         }
     }
     result.wall_ms = std::chrono::duration<double, std::milli>(Clock::now() - begin).count();

@@ -5,6 +5,11 @@ Lunatic4A→FinalB, exporting `ysopwnab` replays. Retail Wine playback follows a
 qualified NMNB/all-capture score; online MPC is paused. Historical live protocols
 below remain component evidence. [Status](STATUS.md) owns the current targets.
 
+Each new scoring episode first captures the real owned Wine retail seed at the
+pre-RegisterChain boundary, records its entry/provenance, and keeps it fixed for
+offline Native candidates. Native does not select a replacement seed. Wine seed
+acquisition precedes planning; qualified retail replay validation follows it.
+
 The target is continuous No Miss No Bomb runs for all twelve team/solo shots,
 four standard difficulties and both final routes, plus Extra, with input tapes
 and real `.rpy` files. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
@@ -39,6 +44,29 @@ goals, distinct from populating every Spell Practice entry in a persistent profi
 Current outcomes and historical failures belong in [Status](STATUS.md); this
 section describes the implemented mechanisms and their limits. Current Native
 experiments cover Extra and the complete Magic Team Lunatic4A→FinalB route.
+
+### Capture-aware Native horizons
+
+`--verify-captures 1` adds the enabled source capture audit to Native branch and
+owner acceptance; it requires `--require-all-captures 1`. A closed failed encounter,
+unmatched lifecycle event or missing completed-stage gate returns
+`CaptureFailure` and cannot certify a prefix. An open card remains eligible.
+The shared boundary check validates the stage that just ended at a handoff:
+`currentStage` can already name the next stage while the old clear flag persists.
+Only the real final terminal validates the complete visited-stage catalogue.
+The audit observes original updates without changing gameplay or RNG.
+
+This optional goal rejects a future loss of capture within the checked horizon;
+it does not guarantee a later capture beyond that horizon. Whole-run acceptance
+still requires the complete source catalogue. Historical safety-only profiles
+keep their declared behavior unless this control is explicitly enabled.
+
+`--policy-horizon` and `--policy-beam` separately control proposal guidance.
+The learned value-feature interface retains its fixed24-update schema. Other
+policy horizons use ordinary single-action decisions, freshly generated on
+each guided Native update; they do not fabricate longer learned-feature paths.
+Native verification, rather than the proposal horizon or beam size, certifies
+the actions. Wider guidance is tested, with no scoring gain claimed for it yet.
 
 ### Complete-tape score refinement
 

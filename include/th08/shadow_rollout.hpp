@@ -6,10 +6,21 @@ namespace th08::headless {
 class Session;
 }
 namespace th08::shadow {
-enum class BranchStatus : std::uint32_t { Incomplete, Horizon, Terminal, Death, Fault, Timeout };
+enum class BranchStatus : std::uint32_t {
+    Incomplete,
+    Horizon,
+    Terminal,
+    Death,
+    Fault,
+    Timeout,
+    CaptureFailure
+};
 struct Boundary {
     bool story = false;
     int spell = -1;
+    // Optional full-stage/story goal, requiring an explicitly enabled source
+    // audit. Failed encounters and missing completed-stage gates cannot certify.
+    bool require_captures = false;
 };
 struct Prediction {
     Packet origin;

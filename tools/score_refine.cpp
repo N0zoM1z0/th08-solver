@@ -36,6 +36,8 @@ const char *status_name(s::BranchStatus status) {
         return "fault";
     case s::BranchStatus::Timeout:
         return "timeout";
+    case s::BranchStatus::CaptureFailure:
+        return "capture_failure";
     }
     throw std::runtime_error("unknown_refinement_status");
 }

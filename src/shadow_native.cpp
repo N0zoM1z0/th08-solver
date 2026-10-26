@@ -1,6 +1,7 @@
 #include "th08/shadow_native.hpp"
 #include "BulletManager.hpp"
 #include "GameManager.hpp"
+#include "modern/headless/score_audit.hpp"
 #include "modern/headless/session.hpp"
 #include "th08/plan_route.hpp"
 #include <cstring>
@@ -9,6 +10,15 @@ namespace th08::shadow {
 bool stage_terminal(bool story, const headless::State &state) {
     return story ? plan::story_terminal(state.stage, state.stage_complete, 8)
                  : state.stage_complete;
+}
+bool capture_goal_failed(bool story, int previous_stage, const headless::State &after) {
+    if (!headless::score_audit_enabled())
+        throw std::runtime_error("capture_goal_requires_enabled_source_audit");
+    const auto &audit = headless::score_audit();
+    return headless::score_capture_failed(audit) ||
+           (previous_stage != after.stage &&
+            !headless::score_capture_coverage(audit, true, previous_stage).all) ||
+           (stage_terminal(story, after) && !headless::score_capture_coverage(audit, true).all);
 }
 namespace {
 std::uint32_t bits(float value) {

@@ -57,6 +57,7 @@ math(EXPR checkpoint "${input_count} - 64")
 execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}/resumed" 0 3 1 23035 score 70000 0 180
   --collect-items 1 --aim-boss 1 --require-all-captures 1 --target-score 1
   --verify-horizon 512 --publish-horizon 256 --lead-updates 1 --replan-updates 128
+  --policy-horizon 48 --policy-beam 256 --verify-captures 1
   --nominal-warm-updates 1 --search-budget-ms 2000
   --prefix-actions "${WORK}/plan.actions" --prefix-updates "${checkpoint}"
   RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 200)
@@ -69,6 +70,8 @@ if(NOT original MATCHES "\"prefix_updates_requested\":${checkpoint}," OR
    NOT original MATCHES "\"lead\":1," OR NOT original MATCHES "\"horizon\":512," OR
    NOT original MATCHES "\"publication_horizon\":256," OR
    NOT original MATCHES "\"replan_updates\":128," OR
+   NOT original MATCHES "\"policy_horizon\":48," OR
+   NOT original MATCHES "\"verify_captures\":true," OR
    NOT original MATCHES "\"nominal_warm_updates\":1," OR
    NOT original MATCHES "\"search_budget_ms\":2000,")
   message(FATAL_ERROR "Checkpoint reconstruction was not charged: ${original}")

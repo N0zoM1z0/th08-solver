@@ -39,6 +39,7 @@ struct Work {
     std::uint64_t native_ns = 0, file_io_ns = 0, guidance_ns = 0, overruns = 0;
     std::uint64_t held_attempts = 0, held_adoptions = 0;
     std::uint64_t safety_attempts = 0, safety_adoptions = 0;
+    std::uint64_t capture_failures = 0;
     double total_ms = 0, maximum_ms = 0;
     void branch(const s::Prediction &p) {
         ++candidates;
@@ -47,6 +48,7 @@ struct Work {
         file_io_ns += p.file_io_ns;
         guidance_ns += p.guidance_ns;
         future_deaths += p.status == s::BranchStatus::Death;
+        capture_failures += p.status == s::BranchStatus::CaptureFailure;
         timeouts += p.status == s::BranchStatus::Timeout;
         if (p.status == s::BranchStatus::Fault)
             throw std::runtime_error("native_style_branch_fault");
@@ -122,6 +124,7 @@ s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
     work.native_ns += proposals.native_ns;
     work.file_io_ns += proposals.file_io_ns;
     work.future_deaths += proposals.status == s::BranchStatus::Death;
+    work.capture_failures += proposals.status == s::BranchStatus::CaptureFailure;
     work.timeouts += proposals.status == s::BranchStatus::Timeout;
     if (proposals.status == s::BranchStatus::Fault)
         throw std::runtime_error("native_style_proposal_fault");
@@ -197,6 +200,7 @@ int run(int argc, char **argv) {
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--lead-updates 1..32] "
             "[--nominal-warm-updates 0|UPDATES] [--replan-updates UPDATES] "
+            "[--policy-horizon 2..200] [--policy-beam 1..8192] [--verify-captures 0|1] "
             "[--priced-collection 0|1] "
             "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
             "[--capture-factor VALUE] [--capture-padding UPDATES] [--hit-income 0|1] "
@@ -246,6 +250,9 @@ int run(int argc, char **argv) {
     unsigned lead_updates = 8, nominal_warm_updates = 0;
     unsigned replan_updates = 8;
     bool lead_override = false, warm_override = false, interval_override = false;
+    unsigned policy_horizon = 24, policy_beam = 192;
+    bool policy_horizon_override = false, policy_beam_override = false;
+    bool verify_captures = false, verify_captures_override = false;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
         if (key == "--collect-items" && !collection_override) {
@@ -319,6 +326,19 @@ int run(int argc, char **argv) {
             if (!replan_updates)
                 throw std::runtime_error("empty_native_replan_interval");
             interval_override = true;
+        } else if (key == "--policy-horizon" && !policy_horizon_override) {
+            policy_horizon = number(argv[i + 1], 200);
+            if (policy_horizon < 2)
+                throw std::runtime_error("empty_native_policy_horizon");
+            policy_horizon_override = true;
+        } else if (key == "--policy-beam" && !policy_beam_override) {
+            policy_beam = number(argv[i + 1], 8192);
+            if (!policy_beam)
+                throw std::runtime_error("empty_native_policy_beam");
+            policy_beam_override = true;
+        } else if (key == "--verify-captures" && !verify_captures_override) {
+            verify_captures = number(argv[i + 1], 1);
+            verify_captures_override = true;
         } else if (key == "--capture-factor" && !reserve_factor_override) {
             profile.attack_reserve_factor = preference(argv[i + 1]);
             reserve_factor_override = true;
@@ -387,6 +407,8 @@ int run(int argc, char **argv) {
         throw std::runtime_error("native_warm_prefix_must_cover_lead_within_horizon");
     if (!baseline_recovery && (recovery_style_override || recovery_fire_override))
         throw std::runtime_error("recovery_controls_require_enabled_recovery");
+    if (policy_horizon + lead_updates - 1 > horizon || (verify_captures && !require_captures))
+        throw std::runtime_error("native_policy_or_capture_goal_exceeds_declared_scope");
     const bool has_prefix_file = !prefix_path.empty();
     if (has_prefix_file != prefix_count_override)
         throw std::runtime_error("native_prefix_requires_actions_and_update_count");
@@ -405,8 +427,8 @@ int run(int argc, char **argv) {
         if (prefix.size() < prefix_updates)
             throw std::runtime_error("native_prefix_shorter_than_requested");
     }
-    profile.horizon = 24;
-    profile.beam = 192;
+    profile.horizon = int(policy_horizon);
+    profile.beam = int(policy_beam);
     profile.diversity_cell = 16;
     profile.spawn_guard = 16;
     profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
@@ -453,8 +475,8 @@ int run(int argc, char **argv) {
                                         budget_ms,         held_recovery,
                                         baseline_recovery, recovery_fire == "capture",
                                         lead_updates,      nominal_warm_updates};
-            auto p = search(session, policy, safety, queue, previous, nominal, {config.story, -1},
-                            options, work);
+            auto p = search(session, policy, safety, queue, previous, nominal,
+                            {config.story, -1, verify_captures}, options, work);
             if (p.certifies()) {
                 if (!queue.replace(p, {}, publication))
                     throw std::runtime_error("native_style_certificate_rejected");
@@ -487,6 +509,7 @@ int run(int argc, char **argv) {
             if (session.state().dialogue_present)
                 input = s::dialogue_input(input, actual.sequence + 1);
         }
+        const int stage_before = int(actual.state[s::Field::Stage]);
         const auto step_begin = Clock::now();
         const auto io_before = session.file_io_time_ns();
         const auto state = session.step(input);
@@ -521,6 +544,10 @@ int run(int argc, char **argv) {
         h::score_audit_observe();
         if (state.player_state == 2 || state.deaths != 0 || actual.state[s::Field::BombsUsed]) {
             outcome = "nmnb_failure";
+            break;
+        }
+        if (verify_captures && s::capture_goal_failed(config.story, stage_before, state)) {
+            outcome = "capture_failure";
             break;
         }
         if (s::stage_terminal(config.story, state)) {
@@ -563,6 +590,7 @@ int run(int argc, char **argv) {
            << style << "\",\"outcome\":\"" << outcome << "\",\"stage\":" << config.stage
            << ",\"replay_name\":\"" << replay_name << '"'
            << ",\"require_all_captures\":" << (require_captures ? "true" : "false")
+           << ",\"verify_captures\":" << (verify_captures ? "true" : "false")
            << ",\"target_score_displayed\":" << target_score
            << ",\"objective_met\":" << (objective_met ? "true" : "false")
            << ",\"replay_exported\":" << (export_eligible ? "true" : "false")
@@ -593,6 +621,7 @@ int run(int argc, char **argv) {
            << ",\"publication_horizon\":" << publication << ",\"lead\":" << lead_updates
            << ",\"nominal_warm_updates\":" << nominal_warm_updates
            << ",\"replan_updates\":" << replan_updates << ",\"search_budget_ms\":" << budget_ms
+           << ",\"policy_horizon\":" << policy_horizon << ",\"policy_beam\":" << policy_beam
            << ",\"proposal_budget_ms\":60,\"max_updates\":" << maximum_updates
            << ",\"wall_budget_seconds\":" << seconds << ",\"updates\":" << actions.size()
            << ",\"prefix_updates_requested\":" << prefix_updates << ",\"prefix_updates_executed\":"
@@ -615,6 +644,7 @@ int run(int argc, char **argv) {
            << ",\"retained_windows\":" << retained_windows
            << ",\"retained_inputs\":" << retained_inputs << ",\"fallback_updates\":" << fallback
            << ",\"future_deaths\":" << work.future_deaths << ",\"timeouts\":" << work.timeouts
+           << ",\"future_capture_failures\":" << work.capture_failures
            << ",\"budget_overruns\":" << work.overruns
            << ",\"branch_updates\":" << work.branch_updates
            << ",\"proposal_updates\":" << work.proposal_updates
@@ -634,6 +664,8 @@ int run(int argc, char **argv) {
     if (!report)
         throw std::runtime_error("native_style_report_failed");
     std::cout << outcome << '\n';
+    if (outcome == "capture_failure")
+        return 3;
     if (outcome != "complete")
         return 2;
     if (require_captures && !captures)

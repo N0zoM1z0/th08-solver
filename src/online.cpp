@@ -1905,12 +1905,15 @@ struct Policy::Impl {
         search_stats.held_selected = selected;
     }
 
+    bool supports_value_proposals() const {
+        return opt.horizon == int(kValueHorizon) && !opt.planner_lag && !opt.tail_check &&
+               !opt.warm_fallback && !opt.held_fallback;
+    }
     Decision choose(const Observation &observation, DecisionTiming *timing,
                     std::vector<ValueProposal> *proposals) {
         if (proposals) {
             proposals->clear();
-            if (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
-                opt.warm_fallback || opt.held_fallback)
+            if (!supports_value_proposals())
                 throw std::runtime_error("unsupported_branch_proposal_configuration");
         }
         using Timer = std::chrono::steady_clock;
@@ -2036,6 +2039,9 @@ bool Policy::needs_scoring_memory() const {
 }
 bool Policy::needs_hit_income_memory() const {
     return impl_->opt.scoring_hit_income;
+}
+bool Policy::supports_value_proposals() const {
+    return impl_->supports_value_proposals();
 }
 Decision Policy::decide(const Observation &observation, DecisionTiming *timing,
                         std::vector<ValueProposal> *proposals) {

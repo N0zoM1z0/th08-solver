@@ -299,6 +299,9 @@ class Policy {
     explicit Policy(Configuration configuration, RiskTables risk = {}, BranchValueModel value = {});
     bool needs_scoring_memory() const;
     bool needs_hit_income_memory() const;
+    // Learned branch features have a fixed24-update schema. Native guidance
+    // can use ordinary single-action decisions for other policy horizons.
+    bool supports_value_proposals() const;
     // Fire intent after the latest observation, including collection preparation
     // and attack pacing. Movement recovery may preserve this owned goal.
     bool wants_fire() const;

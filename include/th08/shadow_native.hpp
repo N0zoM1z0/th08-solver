@@ -24,4 +24,7 @@ NativeDiagnostics diagnostics(headless::Session &session);
 // Story stage-clear can precede a control-only handoff. Only the original
 // Final/Extra boundary terminates the complete story case.
 bool stage_terminal(bool story, const headless::State &state);
+// Read the enabled source audit after an update. The raw stage can advance
+// while the old clear flag persists: validate the stage that just ended.
+bool capture_goal_failed(bool story, int previous_stage, const headless::State &after);
 } // namespace th08::shadow

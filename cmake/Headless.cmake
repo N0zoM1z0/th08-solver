@@ -203,6 +203,17 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
   add_executable(th08_shadow_rollout_test tests/shadow_rollout_real_data.cpp)
   target_link_libraries(th08_shadow_rollout_test PRIVATE th08_shadow_proposals)
   target_compile_options(th08_shadow_rollout_test PRIVATE -ffp-contract=off)
+  add_executable(th08_shadow_capture_goal_test tests/shadow_capture_goal_real_data.cpp)
+  target_link_libraries(th08_shadow_capture_goal_test PRIVATE th08_shadow_native)
+  target_compile_options(th08_shadow_capture_goal_test PRIVATE -ffp-contract=off
+    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+  add_test(NAME headless_shadow_capture_goal COMMAND th08_shadow_capture_goal_test
+    "${TH08_HEADLESS_DAT}")
+  set_tests_properties(headless_shadow_capture_goal PROPERTIES TIMEOUT 45)
+  add_test(NAME headless_shadow_capture_handoff COMMAND th08_shadow_capture_goal_test
+    "${TH08_HEADLESS_DAT}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy")
+  set_tests_properties(headless_shadow_capture_handoff PROPERTIES TIMEOUT 45)
 endif()
 add_executable(th08_online tools/online.cpp)
 target_link_libraries(th08_online PRIVATE th08_online_native OpenSSL::Crypto)

@@ -57,7 +57,12 @@ struct ScoreCaptureCoverage {
 };
 // Uses the source catalogue for every visited stage, including gated Last
 // Spells. Reporting and complete-trajectory selection must use the same goal.
-ScoreCaptureCoverage score_capture_coverage(const ScoreAudit &, bool complete);
+// stage=-1 selects all visited stages; a single stage is useful at a handoff,
+// when currentStage has advanced but the previous clear flag still persists.
+ScoreCaptureCoverage score_capture_coverage(const ScoreAudit &, bool complete, int stage = -1);
+// Open encounters are not failures. These queries never enable/reset the audit.
+bool score_capture_failed(const ScoreAudit &);
+bool score_audit_enabled();
 void score_audit_enable();
 const ScoreAudit &score_audit();
 // Call after each owner update; it neither steps the game nor evaluates ECL.

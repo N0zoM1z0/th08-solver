@@ -20,19 +20,31 @@ void score_audit_enable() {
     open_spell = no_open_spell;
     enabled = true;
 }
+bool score_audit_enabled() {
+    return enabled;
+}
+bool score_capture_failed(const ScoreAudit &record) {
+    return record.unmatched_events ||
+           std::any_of(record.spells.begin(), record.spells.end(), [](const auto &spell) {
+               return spell.outcome != SpellAuditOutcome::Open &&
+                      spell.outcome != SpellAuditOutcome::Captured;
+           });
+}
 const ScoreAudit &score_audit() {
     return audit;
 }
-ScoreCaptureCoverage score_capture_coverage(const ScoreAudit &record, bool complete) {
+ScoreCaptureCoverage score_capture_coverage(const ScoreAudit &record, bool complete, int selected) {
     ScoreCaptureCoverage coverage;
     for (int stage = 0; stage < int(record.stages.size()); ++stage)
-        if (record.stages[stage].seen)
+        if (record.stages[stage].seen && (selected < 0 || selected == stage))
             for (int i = 0; i < g_SpellcardCountPerStage[stage]; ++i) {
                 const int spell = g_SpellcardNumbersPerStage[stage][i];
                 if (Spellcard::GetDifficultyFromSpellCard(spell) == record.difficulty)
                     coverage.expected.insert(spell);
             }
     for (const auto &spell : record.spells) {
+        if (selected >= 0 && spell.stage != selected)
+            continue;
         coverage.encountered.insert(spell.spell);
         if (spell.outcome == SpellAuditOutcome::Captured)
             coverage.captured.insert(spell.spell);
