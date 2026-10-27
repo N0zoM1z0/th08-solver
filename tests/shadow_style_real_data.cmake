@@ -25,6 +25,8 @@ if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_prefix_requires")
   message(FATAL_ERROR "Unpaired checkpoint controls were accepted: ${rejected} ${error}")
 endif()
 foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-proposals;5"
+                          "--farm-to-timeout;1"
+                          "--farm-to-timeout;1;--attack-pacing;1;--require-all-captures;1"
                           "--nominal-warm-updates;4" "--replan-updates;65")
   execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 100 0 1
     ${controls} RESULT_VARIABLE rejected ERROR_VARIABLE error TIMEOUT 3)

@@ -192,6 +192,9 @@ struct Configuration {
     bool scoring_survival_focus = false;
     bool scoring_survival_flow = false;
     bool scoring_attack_pacing = false;
+    // Experimental: keep a measured profitable farm past its capture reserve.
+    // Native callers must opt out of the all-capture goal separately.
+    bool scoring_farm_to_timeout = false;
     bool scoring_hit_income = false;
     bool scoring_drop_target = false;
     float attack_focus_bias = 5;

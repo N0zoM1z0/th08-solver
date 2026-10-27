@@ -265,7 +265,7 @@ int run(int argc, char **argv) {
             "[--survival-focus 0|1] [--verify-horizon 64|128|256|512|1024|2048] "
             "[--publish-horizon 64|128|256|512|1024|2048] [--held-recovery 0|1] "
             "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
-            "[--survival-flow 0|1] [--attack-pacing 0|1] "
+            "[--survival-flow 0|1] [--attack-pacing 0|1] [--farm-to-timeout 0|1] "
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--lead-updates 1..32] "
             "[--nominal-warm-updates 0|UPDATES] [--replan-updates UPDATES] "
@@ -303,6 +303,7 @@ int run(int argc, char **argv) {
     bool survival_bias_override = false;
     bool survival_flow_override = false;
     bool pacing_override = false, attack_bias_override = false, recovery_override = false;
+    bool timeout_farm_override = false;
     bool budget_override = false, baseline_recovery = false;
     bool price_override = false, upper_override = false, collection_bias_override = false;
     bool human_bias_override = false;
@@ -371,6 +372,9 @@ int run(int argc, char **argv) {
         } else if (key == "--attack-pacing" && !pacing_override) {
             profile.scoring_attack_pacing = number(argv[i + 1], 1);
             pacing_override = true;
+        } else if (key == "--farm-to-timeout" && !timeout_farm_override) {
+            profile.scoring_farm_to_timeout = number(argv[i + 1], 1);
+            timeout_farm_override = true;
         } else if (key == "--attack-focus-bias" && !attack_bias_override) {
             std::size_t used = 0;
             profile.attack_focus_bias = std::stof(argv[i + 1], &used);
@@ -492,6 +496,9 @@ int run(int argc, char **argv) {
         throw std::runtime_error("recovery_controls_require_enabled_recovery");
     if (policy_horizon + lead_updates - 1 > horizon || (verify_captures && !require_captures))
         throw std::runtime_error("native_policy_or_capture_goal_exceeds_declared_scope");
+    if (profile.scoring_farm_to_timeout &&
+        (!profile.scoring_attack_pacing || require_captures || verify_captures))
+        throw std::runtime_error("timeout_farming_requires_optional_captures_and_pacing");
     const bool has_prefix_file = !prefix_path.empty();
     if (has_prefix_file != prefix_count_override)
         throw std::runtime_error("native_prefix_requires_actions_and_update_count");
@@ -690,6 +697,8 @@ int run(int argc, char **argv) {
            << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
            << ",\"attack_pacing\":" << (profile.scoring_attack_pacing ? "true" : "false")
            << ",\"attack_pacing_revision\":" << (profile.scoring_attack_pacing ? 2 : 0)
+           << ",\"farm_to_timeout\":" << (profile.scoring_farm_to_timeout ? "true" : "false")
+           << ",\"farm_to_timeout_revision\":" << (profile.scoring_farm_to_timeout ? 1 : 0)
            << ",\"hit_income\":" << (profile.scoring_hit_income ? "true" : "false")
            << ",\"drop_target\":" << (profile.scoring_drop_target ? "true" : "false")
            << ",\"drop_target_revision\":" << (profile.scoring_drop_target ? 1 : 0)
@@ -717,8 +726,7 @@ int run(int argc, char **argv) {
            << ",\"prefix_inputs_available\":" << prefix.size()
            << ",\"score_raw\":" << h::score_audit().score_raw
            << ",\"score_displayed\":" << std::uint64_t(h::score_audit().score_raw) * 10
-           << ",\"bombs_used\":" << h::score_audit().bombs_used
-           << ",\"no_miss\":"
+           << ",\"bombs_used\":" << h::score_audit().bombs_used << ",\"no_miss\":"
            << (session.state().deaths == 0 && session.state().player_state != 2 ? "true" : "false")
            << ",\"captured_spells\":"
            << h::score_capture_coverage(h::score_audit(), outcome == "complete").captured.size()

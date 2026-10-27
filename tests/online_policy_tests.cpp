@@ -379,6 +379,27 @@ void score_attack_pacing_contract() {
     o.scoring.spell_remaining = 1;
     check(policy.decide(o).action & 1, "capture deadline did not restore fire");
 
+    auto timeout_config = config;
+    timeout_config.scoring_farm_to_timeout = true;
+    on::Policy timeout_farm(timeout_config);
+    auto continuous = initial;
+    warm(timeout_farm, continuous);
+    continuous.scoring.extreme_youkai = true;
+    for (unsigned i = 0; i <= 240; ++i, ++continuous.update) {
+        continuous.scoring.collected_orbs += 2;
+        timeout_farm.observe(continuous);
+    }
+    continuous.scoring.spell_remaining = 1;
+    timeout_farm.observe(continuous);
+    check(!timeout_farm.wants_fire(),
+          "optional-capture farm ignored measured income at the capture reserve");
+    ++continuous.update;
+    for (unsigned i = 0; i <= 240; ++i, ++continuous.update)
+        timeout_farm.observe(continuous);
+    check(timeout_farm.wants_fire(), "stale orb income retained an unproductive timeout farm");
+    check(!on::with_style("baseline", timeout_config).scoring_farm_to_timeout,
+          "ordinary recovery inherited the optional timeout goal");
+
     on::Policy bounded(config);
     auto waiting = initial;
     warm(bounded, waiting);

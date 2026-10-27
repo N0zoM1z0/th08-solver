@@ -169,6 +169,15 @@ recovery fails, with the immutable lead retained. Native source decides inventor
 lockouts, form, cancellation, capture invalidation and invulnerability. Bomb
 permission does not guarantee a useful bomb or a higher complete score.
 
+For the capture-optional Native planner, `--farm-to-timeout 1 --attack-pacing 1`
+allows a measured profitable farm to continue past the capture reserve. It
+requires `--require-all-captures 0 --verify-captures 0`; the active campaign also
+passes `--allow-bombs 0`. Every240 updates the income sample refreshes, and zero
+income restores fire. This is a default-off proposal preference, not a promise
+of timeout or scoring profit. Reports record `farm_to_timeout` and its revision;
+the source audit owns actual timeout/capture outcomes. Historical benchmarks and
+their original controls keep their identities.
+
 Refiner `--family bomb --allow-bombs 1` compares human/focused X windows against
 the complete incumbent terminal. Use `--window 1` for a one-update pulse and
 `--first-update N` to begin trials at a declared owner-input index (default64).
@@ -205,6 +214,43 @@ The downloaded human replay decodes to0.31015873%, matching the site's rounded
 display, and completes naturally in Native. Its SHA-256 is
 `78e559c1deb8fca62941b1ee4ade69ecc9ca8bf6ec2acd99882e6794268a7e92`;
 the external replay remains local.
+
+## October27 verified Native progress
+
+The current No Miss/No Bomb campaign allows missing captures. Extra improves
+to2,624,965,020,14/14; the complete1→2→3→4A→5→FinalB story improves to
+4,444,083,080,36/37, with only ordinary card58 timing out. Both keep the original
+retail seed receipts (46997/1805), entry/history and eight-byte `ysopwnab` name.
+Both remain below their human-reference targets; no Wine replay is launched.
+
+New artifacts remain local under
+`reports/local/score-continue-20261027/selected/`, with `provenance.json` and the
+original producer/verification directories under the existing local campaign:
+
+| Local replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-native-nmnb-2624965020-seed46997.rpy` |28892 |`9791826a7e91dcd9e9cf9f652b11a86e127345034352704242ea10988201825c` |
+| `story-native-nmnb-4a-finalb-4444083080-seed1805.rpy` |51805 |`0a6f1cc3b36cd0dcfcd748d16b0815866c3042a686dca9783b90d8000b910386` |
+
+Extra producer `oct27-extra-strong-focus-tail-v3/` retains60879 inputs from the
+verified2.620B tape, then uses H256/publication128/interval64, bias10, reserve1.2/
+120 and four bounded cash comparisons. Its complete72597-input tape hashes to
+`75bed4fc7161615078b4be763b9248b439ad3c2201b83964b840703348901f5e`.
+
+Story producer `oct27-story-58-prefix-safe-tail-h128-v3/` reconstructs59476 inputs
+from `oct27-story-selective58-timeout-v2/`, which itself retains56276 inputs of
+the old4.311B incumbent. The failed later parent remains charged and unused.
+The continuation disables timeout farming, with H128/publication64/interval32,
+reserve1.5/240 and capture-fire recovery. Its complete143157-input tape hashes to
+`c2fe3b2def69a87c23891e7227818ed19ed7772090be3decefe77ac3777c38f6`.
+
+`verification/{verified.json,identities.json}` in both producer directories
+records fresh original-entry exact41-word terminal agreement and natural
+original-writer score, no-miss/no-bomb, exact spell outcomes and name agreement.
+The local guarded `reports/local/score-continue-20261027/verify-no-bomb.cjs`
+compares capture outcomes instead of imposing all captures. Checks are Native
+execution agreement, not an independent retail oracle. Earlier tracked selected
+replays retain their exact bytes; these new progress files are not published.
 
 ## Selected Native progress replays
 

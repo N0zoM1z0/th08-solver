@@ -348,6 +348,16 @@ their rejected futures and native/proposal costs in the ordinary totals.
 
 ### Audit and publication contracts
 
+Native-only `--farm-to-timeout 1` is an optional pacing proposal for capture-
+optional experiments. It leaves the existing damage probe and gauge/income
+sample intact. After a positive sample, it can keep no-fire past the ordinary
+capture reserve; a rolling240-update realized-orb sample restores fire when the
+stream becomes unproductive. The unchanged cash+8000 bonus proxy is heuristic:
+bonus caps, lost capture payout and future PIV make it unsuitable as a terminal
+score oracle. Carried shots can still kill the boss, and recovery can still fire.
+Actual timeout, safety and score are decided by Native execution. The default
+is off and strict all-capture CLI goals reject this experiment.
+
 Offline score experiments can independently permit bombs and require captures.
 `--allow-bombs 1` admits X only in the explicitly configured Native owner,
 rollout, buffer and fresh follower; default transports retain their NMNB input

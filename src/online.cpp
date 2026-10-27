@@ -28,6 +28,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_survival_focus = false;
     configuration.scoring_survival_flow = false;
     configuration.scoring_attack_pacing = false;
+    configuration.scoring_farm_to_timeout = false;
     configuration.scoring_hit_income = false;
     configuration.scoring_drop_target = false;
     configuration.scoring_boss_collection = false;
@@ -355,6 +356,8 @@ struct Policy::Impl {
         if (!std::isfinite(opt.attack_reserve_factor) || opt.attack_reserve_factor < 1 ||
             opt.attack_reserve_factor > 10 || opt.attack_reserve_updates > 10000)
             throw std::runtime_error("invalid_online_capture_reserve");
+        if (opt.scoring_farm_to_timeout && !opt.scoring_attack_pacing)
+            throw std::runtime_error("timeout_farming_requires_attack_pacing");
         if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
             (value_model.loaded &&
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
@@ -673,8 +676,10 @@ struct Policy::Impl {
                                   float(std::min<std::uint64_t>(a.samples, a.recent_damage.size()));
                 const float reserve = opt.attack_reserve_factor * float(s.capture_hp) / dps +
                                       opt.attack_reserve_updates;
-                if ((a.phase != Phase::Probe && float(s.spell_remaining) <= reserve) ||
-                    s.capture_hp < a.initial_hp / 5)
+                const bool continue_farm = opt.scoring_farm_to_timeout && a.phase == Phase::Farm;
+                if (!continue_farm &&
+                    ((a.phase != Phase::Probe && float(s.spell_remaining) <= reserve) ||
+                     s.capture_hp < a.initial_hp / 5))
                     a.phase = Phase::Capture;
                 else if (a.phase == Phase::Probe && float(s.spell_remaining) > reserve + 700) {
                     unsigned slow_nearby = 0;
@@ -691,7 +696,8 @@ struct Policy::Impl {
                     }
                 }
             }
-            if (a.phase == Phase::Sample) {
+            if (a.phase == Phase::Sample ||
+                (opt.scoring_farm_to_timeout && a.phase == Phase::Farm)) {
                 // Releasing fire lets the gauge decay. Measure realized income
                 // after source extreme-youkai activation, with a bounded wait.
                 if (!a.income_begin && s.extreme_youkai) {
@@ -703,7 +709,14 @@ struct Policy::Impl {
                                        float(o.update - a.income_begin);
                     a.phase =
                         rate * (s.orb_value + 8000) > s.bonus_decay ? Phase::Farm : Phase::Capture;
-                } else if (o.update - a.sample_begin >= 1200)
+                    if (opt.scoring_farm_to_timeout && a.phase == Phase::Farm) {
+                        // Rolling realized income prevents a once-profitable
+                        // stream from retaining no-fire after it disappears.
+                        // The existing bonus proxy is heuristic, not future cash.
+                        a.income_begin = o.update;
+                        a.income_orbs = s.collected_orbs;
+                    }
+                } else if (a.phase == Phase::Sample && o.update - a.sample_begin >= 1200)
                     a.phase = Phase::Capture;
             }
             a.farming = a.phase == Phase::Sample || a.phase == Phase::Farm;

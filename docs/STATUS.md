@@ -1,13 +1,15 @@
 # Current handoff status
 
-Updated 2026-10-26. Public scoring controls: `805b4e2`; selected replay milestone:
+Updated 2026-10-27. Public scoring controls: current main with the optional
+October27 timeout-farm proposal (previous controls `805b4e2`); selected replay milestone:
 `6b01b24`. The owner resumed Native score attack on 2026-10-26: download and study top human
 replays, document source-backed insights, then test Extra and the complete
 Lunatic route offline. Save tested progress directly on main. The preceding
 handoff batch is finished; its artifacts and failures retain their identities.
 
-Current verified Magic Team Native bests are **Extra 2,620,568,090, NMNB 14/14**,
-and **Lunatic 1→2→3→4A→5→Final B: 4,311,260,760, NMNB 37/37**. The next score gates
+Current verified Magic Team Native bests are **Extra 2,624,965,020, NMNB 14/14**,
+and **Lunatic 1→2→3→4A→5→Final B: 4,444,083,080, NMNB 36/37**. The preserved
+all-capture story remains4,311,260,760,37/37. The next score gates
 remain strictly above 3,021,639,920 and 6,168,365,790 respectively. The owner
 subsequently made the constraints independent CLI controls. The latest scope is
 **No Miss, No Bomb, captures optional**; bomb experiments are paused. Preserve
@@ -28,7 +30,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **394/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **410/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -110,16 +112,19 @@ candidate batches, keeping each fixed across strategy changes and continuations.
 
 All scores are displayed points. These are Marisa/Alice (shot 1); Extra uses
 proper non-practice entry, difficulty 4, story=true, no prior-Final-A history.
-In this verified-results table, "complete" requires NMNB, all eligible captures,
-exact fresh 41-word terminal agreement and natural original-writer replay with matching score/captures.
+In this verified-results table, "complete" requires NMNB, the declared capture
+goal, exact fresh41-word terminal agreement and natural original-writer replay
+with matching score/capture outcomes. Capture totals remain explicit.
 Fresh replay checks execution agreement, not independent physics or retail equivalence.
 
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
-| **Current Native Extra** | **2,620,568,090 /14 of 14** | Captured retail seed46997, actual drop-target prefix and bounded Native cash comparison; selected replay |
+| **Current Native Extra** | **2,624,965,020 /14 of14** | Seed46997,60879-input incumbent prefix, H256/focus10 late continuation; new bytes local |
+| **Current Native Lunatic4A→FinalB** | **4,444,083,080 /36 of37** | Seed1805, isolated58-timeout prefix59476 and H128 capture continuation; only58 times out; new bytes local |
+| Preserved Native Extra |2,620,568,090 /14 of14 | Captured retail seed46997, actual drop-target prefix and bounded Native cash comparison; selected replay |
 | Selected full-entry retail-seeded Extra |2,603,278,620 /14 of 14 | Seed46997, source drop-target/hit-window profile; selected parent replay |
 | Earlier Native Extra benchmark |2,589,417,330 /14 of 14 | Historical seed10025, complete from entry,500ms offline search; original bytes preserved |
-| **Current Native Lunatic4A→FinalB** | **4,311,260,760 /37 of 37** | Original retail seed1805, early-graze prefix plus audited conservative continuation; selected replay |
+| **Preserved all-capture Native story** | **4,311,260,760 /37 of37** | Original retail seed1805, early-graze prefix plus audited conservative continuation; selected replay |
 | Selected retail-seeded full-entry story |4,160,457,200 /37 of 37 | Seed1805, audited Native future-repair v3; earlier bytes preserved |
 | Selected conservative story continuation |4,126,102,910 /37 of 37 | Seed40755, offline checkpoint continuation; earlier bytes preserved |
 | Selected survival-priority story |3,903,603,650 /37 of 37 | Seed40755, source-survival form priority and bias5; earlier bytes preserved |
@@ -143,6 +148,75 @@ The human reference is the 2026-10-25 ASL snapshot: 3,021,639,920, Magic Team,
 Native. The historical v15 NMNB score is84.86% of it; the reference is not a matching
 NMNB upper bound. Human inputs were measured, never copied into our controller.
 The source links and dated scoreboard snapshot are in [README](../README.md).
+
+## October27 Native continuation
+
+The owner resumed No Miss/No Bomb scoring with captures optional. Extra46997
+and story1805 retain their original retail receipts. Task395 passes2/2 focused
+policy/contract tests in0.97s. The new default-off Native `--farm-to-timeout 1`
+keeps only a positive sampled ordinary farm past its capture reserve, refreshes
+realized income every240 updates and restores fire if income disappears. It
+retains the existing heuristic bonus proxy; full-terminal score remains the
+acceptance criterion. Strict capture CLI goals reject the option.
+
+Tasks396/397 are the first named combined profiles: H512/publication256/lead1,
+replan128,30s search cap, beam384, current drop/hit goals,1.5/240 capture reserve
+and goal-preserving recovery. They reconstruct5400 Extra or33000 story inputs
+from the selected incumbent before applying the new preference. Immutable
+binary/sources, receipts, prefixes, DAT/argument identities and memory guards
+are frozen in `oct27-{extra,story}-timeout-income-v1/` under the existing local
+campaign directory. Both fail NMNB: Extra at49318/card202 with1,114,545,830 partial
+score,0 bombs,8 captures; story at74326/card70 with1,196,955,920 partial,0 bombs,
+12 captures. Ordinary timeouts are196/198 and36/43/47/54/58/62 respectively.
+They charge224072+7 /240580+22 branch/proposal updates and187.603s/192.208s;
+neither has rollout timeouts or resource aborts. These are failures, not scores.
+
+Broad timeout farming loses cash, capture rewards and point opportunities.
+At the end of story stage3, the trial has PIV515800 versus498580 but only
+790,926,970 cash versus909,002,910 and298 points versus313. Extra's two ordinary
+timeouts are followed by a90-point deficit from the corresponding captured
+attacks; new field-item timing can add other pickup losses. Source timer callbacks
+also use `DetachEnemyChain(0)`, unlike rewarded chain termination. No allocator
+or scoring rule is changed to erase these costs.
+
+Task399 isolates the incumbent prefix up to56276 before card58; it times out58/62
+then fails in4A. Card58's interval has10505 orbs versus4622. At card62 start it
+has PIV575370 versus547770, cash1,132,642,200 versus1,148,375,220, and168
+stage points versus183. These are actual checkpoint economics, not a guaranteed
+future profit. Tasks401/402 retain only its first59476 safe inputs, disable
+timeout farming, and test H512/publication256/interval128/factor2/padding480 or
+H128/publication64/interval32/factor1.5/padding240 capture-fire continuations.
+Both preserve the entire carried world by reconstructing from original entry.
+The original failed parent remains charged. Task400 separately starts from the
+incumbent Extra31814-input prefix and tests factor1/padding0 with four bounded
+cash alternatives, without forcing timeout; it fails at51318,0 bombs,8 captures,
+1,186,091,310 partial points,231.274s. Cards198/199 time out. Task401 completes
+H512 at4,181,877,290,0 bombs,36/37 in278.040s. Task402's H128 continuation reaches
+**4,444,083,080,0 misses,0 bombs,36/37**, improving132,822,320 over the preserved
+all-capture best. Only58 times out. It costs335.835s,346664 branch+9 proposal
+updates and232 rejected future deaths, no rollout timeout.
+
+Task403 retains the original60879 Extra inputs and tests a named H256/
+publication128/interval64, focus/survival bias10,1.2/120 reserve, four-cash-proposal
+profile. It reaches **2,624,965,020,0 misses,0 bombs,14/14**, a4,396,930 gain,
+at72597 inputs:107.637s,127219 branch+2 proposal updates,276 rejected future
+deaths and no timeout. Its terminal has1015 points/91692 orbs/PIV758460.
+The new story collects1321 large points, versus1340 in the old best;
+its FinalB entry PIV762670 and terminal PIV1001230 exceed the old699610/918390.
+These are combined strategy/controller profiles, not isolated component gains.
+
+Tasks404–406/409 verify both new bests from original entry: fresh exact41-word
+terminal, natural original-writer score, zero misses/bombs, exact capture
+outcomes and name agree. Exact bytes remain under ignored
+`reports/local/score-continue-20261027/selected/`; [Validation](VALIDATION.md#october27-verified-native-progress)
+owns hashes and lineage. Earlier selected replays remain unchanged. Both human
+reference gates remain unmet; no Wine playback is started.
+
+Task398 passes the normal Release Native/DAT suite60/60 in1050.11s. Tasks407/408
+are separately charged follow-ups: an H128 story tail from the original captured58
+prefix58764, and an H128 Extra late-tail profile, to measure controller/prefix
+alternatives without crediting only the winning targets. Their outcomes remain
+pending. No Wine solving is running.
 
 ## Human replay study, 2026-10-26
 
