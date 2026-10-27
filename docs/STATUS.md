@@ -39,11 +39,11 @@ separate; new Scarlet entries require new original retail seed receipts.
 
 ### Scarlet priority, new retail receipts and4GiB resources
 
-Current verified Scarlet bests are **Extra2,979,717,840,NMNB14/14**, task744,
-and **complete Lunatic5,383,092,450,NMNB35/37**, task737 (10/74 time out).
-Fresh747/748 and natural749/750 pass exact41-word terminal, score, outcomes,
-zero-miss/bomb and name checks. They remain separate from the higher Magic
-records and the6B/all-shot targets. Selected bytes stay local;
+Current verified Scarlet bests are **Extra3,072,999,650,NMNB14/14**, task769,
+and **complete Lunatic5,544,203,730,NMNB35/37**, task768 (10/74 time out).
+Fresh772/773 and natural774/775 pass exact41-word terminal, score, outcomes,
+zero-miss/bomb and name checks. Scarlet now owns the highest Native Extra;
+Magic retains the higher story score. The6B/all-shot targets remain unmet. Selected bytes stay local;
 [Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns hashes.
 
 The owner now permits every shot and prefers Scarlet Team. Same-shot references
@@ -237,9 +237,43 @@ comparisons; strict cash improvement adopts, stable ties keep the incumbent.
 Task744 keeps734's first60958 inputs and reaches **2,979,717,840,NMNB14/14**,
 with620 movement attempts/46 adoptions. Its66925 inputs cost105.505s plus
 734's499.38s and all earlier production/selection costs. Fresh747/natural749
-pass. The prototype remains local: its positive complete result motivates an
-opt-in generic CLI implementation with a focused contract test and normal suite
-before public code promotion. No public motion control exists yet.
+pass. Public `--economic-movement 0..4` now exposes this comparison during active
+spells; zero preserves the old path. Fire/form alternatives run first and both
+kinds share a2000ms admission window and the unchanged total search budget.
+Each admitted future may use the remaining total budget. Focused756 passes;
+full real-data754 reproduces744's entire tape and41-word terminal exactly.
+Normal767 passes60/60 after resource-aborted760; comment-only rebuild780 keeps
+the exact tested binary hash. Failed setup/test/retry costs remain charged.
+
+Using the public control for every remaining Mokou spell,761 completes
+2,980,273,700,NMNB14/14, fresh765/natural766 pass. The555,860 gain over744 costs
+819.817s and925213+15 branch/proposal updates, plus the shared prefix costs.
+Movement alone does not account for the subsequent larger improvement.
+
+Second-road guide763 keeps734's first10728 inputs and uses4200 source XY/fire/
+form hints from the matched human road boundary. The source bomb is masked;
+only independently executed Native futures may survive. It enters195 with656
+points/25851 orbs, versus634/24995, and safely reaches19000 with701/27304.
+Full764 is host-resource-aborted at33792 inputs and certifies no prefix.
+Fresh original-entry recovery769 reexecutes its committed inputs, then uses
+H128/cash4/movement4 to complete **3,072,999,650,NMNB14/14**,68837 inputs,
+1061 points/116882 orbs/PIV884410. Recovery costs572.449s,645093+10 branch/
+proposal updates,3341/377 fire/form and3587/288 movement attempts/adoptions;
+original764's346.968s and earlier guide/selection costs remain additional.
+The all-shot Extra gate remains105,461,180 above this result. Removing fire/form
+comparison in771 instead yields2,664,945,130,13/14; its unchanged charge0 is a
+confound, so blanket removal is not promoted.
+
+Story759 keeps737's first45000 inputs and enables movement4 for its public
+H256/cash4/upper-flow1/charge1 tail. The declared wall limit increases3600→7200s
+to charge the extra comparisons. It is resource-aborted at126976 inputs;
+fresh768 reexecutes that committed prefix and completes **5,544,203,730,NMNB35/37**,
+153941 inputs,457.310s recovery,455425+1 branch/proposal updates,1315/195 fire/
+form and1283/76 movement attempts/adoptions. Original759's1267.625s and all
+prefix costs remain charged. The score is6,395,540 below Magic's best and
+455,796,270 below6B. A fresh human first9000-input story proposal776 dies at2860;
+shorter2700 plus combined pose guidance779 is safe but ends Stage1 with only50
+points/12716 orbs, versus55/12755. Neither is selected as a new full-route prefix.
 
 Stock-row-gated point probe743 shows734 collects **all1039 spawned points**:
 1040 requests, one outside-boundary rejection at X=-224.54776,1015 extreme-human
@@ -249,9 +283,12 @@ points, not pickup loss. Do not infer a new collection-gate defect from this tap
 Root probes745/746 also match complete stock rows. One right root at X320
 escapes with68 HP and12 point/power drops unawarded; the human kills it after
 the left root and before center. This accounts for12 of the30 road points.
-The chain-only probe omits childless unparented actors, so18 remain unexplained.
+The chain-only probe omits childless unparented actors. Full-root probes757/758
+also pass complete stock-row gates:147 human versus129 Native single-point
+deaths explain the remaining18. Together these18 and the right-root12 exactly
+explain315 versus285 requested road points. Some deficits precede the bomb.
 The human's bomb is at gameplay18416; the evidence does not attribute all30
-points to it. Exact ledgers and the coverage limit remain local.
+points to it. Exact ledgers and probe provenance remain local.
 
 The final old Magic combination640 completes5,341,512,260,NMNB33/37 and is
 unselected. Stage5 pickup-priority650 enters104 with199 points/11018 orbs,
@@ -494,7 +531,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **751/768 allocated task IDs** at publication checks. The October27 continuation records successive64-task extensions640→704→768 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **762/832 allocated task IDs** at the next extension checkpoint. The October27 continuation records successive64-task extensions640→704→768→832 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |

@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
-> **Native NMNB scores: Extra 3,013,913,970 (14/14); Lunatic story 5,550,599,270 (36/37).**
+> **Native NMNB scores: Extra 3,072,999,650 (Scarlet, 14/14); Lunatic story 5,550,599,270 (Magic, 36/37).**
 > Selected progress: [Extra 3.010B replay](reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy) · [Story 5.025B replay](reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
@@ -35,9 +35,9 @@ complete Lunatic route. These October27 [all-shot records](https://maribelhearn.
 are both solo Youmu; the table above preserves the earlier Magic Team references.
 All shots may now be explored, with the owner's preferred **Scarlet Team
 (Sakuya/Remilia)** taking priority. Its verified Native results are
-**Extra2,979,717,840 (14/14)** and **complete Lunatic5,383,092,450 (35/37)**,
+**Extra3,072,999,650 (14/14)** and **complete Lunatic5,544,203,730 (35/37)**,
 both No Miss/No Bomb, at their own original retail seeds9098/32796.
-The higher Native records in the table remain Magic Team results.
+Scarlet now owns our highest Extra result; Magic retains the higher story score.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;
 ASL's replay uses one bomb. [Status](docs/STATUS.md) owns the
 results, failed trials, costs, unresolved problems and proposed next steps.

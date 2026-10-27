@@ -25,6 +25,8 @@ if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_prefix_requires")
   message(FATAL_ERROR "Unpaired checkpoint controls were accepted: ${rejected} ${error}")
 endif()
 foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-proposals;5"
+                          "--economic-movement;5"
+                          "--economic-movement;1;--economic-movement;1"
                           "--farm-to-timeout;1"
                           "--farm-charge-fire;1"
                           "--checkpoint-updates;63"
@@ -53,6 +55,8 @@ if(NOT original MATCHES "\"collect_items\":true" OR
    NOT original MATCHES "\"drop_target\":true" OR
    NOT original MATCHES "\"drop_target_revision\":1" OR
    NOT original MATCHES "\"economic_proposals\":4" OR
+   NOT original MATCHES "\"economic_movement\":0," OR
+   NOT original MATCHES "\"motion_economic_attempts\":0," OR
    NOT original MATCHES "\"economic_attempts\":[1-9][0-9]*" OR
    NOT original MATCHES "\"score_goal_revision\":1")
   message(FATAL_ERROR "Score experiment did not record its independent controls: ${original}")
@@ -95,6 +99,58 @@ if(NOT partial_inputs STREQUAL expected_partial_inputs OR
    NOT partial_metadata MATCHES "\"gameplay_certificate\":false," OR
    EXISTS "${WORK}/partial-checkpoint/native.rpy")
   message(FATAL_ERROR "A partial input checkpoint certified a replay or changed its executed inputs: ${partial_report} ${partial_metadata}")
+endif()
+# Exercise the opt-in comparison inside a real active spell, independently of
+# fire/form proposals. The original complete fixture owns this literal prefix;
+# the new owner must execute it unchanged and may certify only its new futures.
+file(READ "${WORK}/score-audit.json" movement_source_audit)
+string(REGEX MATCH "\"card\":13,[^}]*\"start_update\":([0-9]+)" movement_spell "${movement_source_audit}")
+if(NOT movement_spell)
+  message(FATAL_ERROR "Complete source fixture has no last-spell checkpoint")
+endif()
+set(movement_prefix "${CMAKE_MATCH_1}")
+math(EXPR movement_limit "${movement_prefix} + 256")
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}/movement" 0 3 1 23035 score ${movement_limit} 0 180
+  --prefix-actions "${WORK}/plan.actions" --prefix-updates ${movement_prefix}
+  --economic-proposals 0 --economic-movement 4 --verify-horizon 128
+  --lead-updates 1 --replan-updates 32 --search-budget-ms 2000
+  --held-recovery 1 --baseline-recovery 1 --allow-bombs 0 --require-all-captures 0
+  RESULT_VARIABLE movement_result OUTPUT_VARIABLE movement_stdout ERROR_VARIABLE movement_stderr TIMEOUT 60)
+if(NOT movement_result STREQUAL "2")
+  message(FATAL_ERROR "Movement comparison changed partial-owner failure meaning: ${movement_result} ${movement_stdout} ${movement_stderr}")
+endif()
+file(READ "${WORK}/movement/result.json" movement_report)
+file(STRINGS "${WORK}/movement/plan.actions" movement_inputs)
+list(SUBLIST prefix_inputs 0 ${movement_prefix} movement_expected_prefix)
+list(SUBLIST movement_inputs 0 ${movement_prefix} movement_actual_prefix)
+if(NOT movement_expected_prefix STREQUAL movement_actual_prefix OR
+   NOT movement_report MATCHES "\"outcome\":\"budget\"" OR
+   NOT movement_report MATCHES "\"updates\":${movement_limit}," OR
+   NOT movement_report MATCHES "\"economic_proposals\":0," OR
+   NOT movement_report MATCHES "\"economic_attempts\":0," OR
+   NOT movement_report MATCHES "\"economic_movement\":4," OR
+   NOT movement_report MATCHES "\"motion_economic_attempts\":[1-9][0-9]*," OR
+   NOT movement_report MATCHES "\"no_miss\":true," OR
+   NOT movement_report MATCHES "\"bombs_used\":0," OR
+   NOT movement_report MATCHES "\"replay_exported\":false" OR
+   EXISTS "${WORK}/movement/native.rpy")
+  message(FATAL_ERROR "Movement comparison altered its literal prefix, escaped constraints or certified an incomplete run: ${movement_report}")
+endif()
+execute_process(COMMAND "${FOLLOWER}" --dat "${DAT}" --actions "${WORK}/movement/plan.actions"
+  --output "${WORK}/movement-fresh.json" --stage 1 --difficulty 3 --shot 1 --seed 23035
+  --story 0 --prior-final-a-clear 0 --input-profile sampled-gameplay --frames ${movement_limit}
+  RESULT_VARIABLE movement_fresh_result OUTPUT_VARIABLE movement_fresh_stdout ERROR_VARIABLE movement_fresh_stderr TIMEOUT 60)
+file(READ "${WORK}/movement-fresh.json" movement_fresh)
+string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" movement_projection "${movement_report}")
+set(movement_projection "${CMAKE_MATCH_1}")
+string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" movement_fresh_projection "${movement_fresh}")
+# MATCHES conditions below overwrite CMAKE_MATCH_1; retain both captures first.
+set(movement_fresh_projection "${CMAKE_MATCH_1}")
+if(NOT movement_fresh_result STREQUAL "0" OR
+   NOT movement_fresh MATCHES "\"outcome\":\"budget\"" OR
+   NOT movement_fresh MATCHES "\"deaths\":0," OR
+   movement_projection STREQUAL "" OR NOT movement_projection STREQUAL movement_fresh_projection)
+  message(FATAL_ERROR "Movement tape failed fresh exact Native execution: ${movement_fresh_result} ${movement_fresh_stdout} ${movement_fresh_stderr} ${movement_fresh}")
 endif()
 math(EXPR checkpoint "${input_count} - 64")
 execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}/resumed" 0 3 1 23035 score 70000 0 180

@@ -226,7 +226,11 @@ The tail charges105.505s,108352+1 branch/proposal updates,493 fire/form attempts
 734's499.38s and earlier prefix/guide/abort/build/selection costs; it is not a
 105-second whole-route solve. The private comparison changes proposals only,
 keeps the original shared economic/total budgets and does not claim independent
-physics equivalence. It is not yet a public CLI feature.
+physics equivalence. The public opt-in control is now `--economic-movement 0..4`;
+real-data754 reproduces the entire744 tape and terminal exactly. Focused756 and
+normal767 (60/60) pass. Comment-only rebuild780 preserves the tested binary SHA-256
+`23c0ad8d01f9cf09b055b71911f5ad2859a31ffe9ebefcba37e2b2a0a99f9a4f`.
+Resource-aborted normal760 remains charged and does not count as a test pass.
 
 Story737 keeps724's35209 first-two-stage inputs, uses the same-shot Stage3 road
 pose guide/adaptation733 through45000, then public H256/publication128/replan64/
@@ -236,10 +240,27 @@ Its154837 inputs cost1214.64s,1446574+15 branch/proposal updates and5163 economi
 attempts/690 adoptions, plus all earlier prefix, aborted713 and recovery724
 costs. Actions hash
 `a9023eb9790aa13069701504170e618a39b0be8fc7dc246c001a752b368c66da`.
-All selected files/provenance remain under the local directory above. The
-higher overall Native records remain Magic3.014B/5.551B; global gates and6B
-remain unmet. Public code stays at1edc70d, normal69360/60; later progress changes
-only maintained prose, with the documentation CTest repeated before publication.
+All selected files/provenance remain under the local directory above. Earlier
+selected bytes remain unchanged. New verified selected improvements are:
+
+| Local selected replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-scarlet-native-nmnb-2980273700-seed9098.rpy` |27311 |`73d06b933b7ea7bf583c88cb88e385796fa0885ee25300b8e0f3d2c619c1e629` |
+| `extra-scarlet-native-nmnb-3072999650-seed9098.rpy` |28983 |`d4ce7c74d70c0e987dc6f307e1a6904146212bfd0a35e0600fc8e50dd8bbdb95` |
+| `story-scarlet-native-nmnb-4a-finalb-5544203730-seed32796.rpy` |59400 |`82dda92a2e8309eac5510b01213cc891557d17e3641690254bf2d533d96b18bf` |
+
+Tasks761/769/768 produce these three complete NMNB results; their fresh checks
+765/772/773 and natural checks766/774/775 pass all41 terminal words, capture
+outcomes, natural completion, exact score, zero misses/bombs and `ysopwnab`.
+Their action SHA-256 values are respectively
+`ded4571c2a09a05b396e06c5095df97330b468b2c3d325c6b94fdb36eeb80389`,
+`624e6bd7ca381e46184f47e45180862f24b1f344c71b436a087848d39ec6edb8` and
+`30186d0edb01bb9622124f6e0f15499965f0bb2ab1238427ef6fc49e94cf36d3`.
+769 follows763's second-road proposal and freshly reexecutes the committed33792
+inputs of resource-aborted764;768 freshly reexecutes126976 inputs of aborted759.
+Original aborts certify nothing and remain charged. Status owns full lineage,
+profiles and separate original/recovery costs. Scarlet3.073B now leads Native
+Extra; Magic5.551B still leads story. The6B and all-shot gates remain unmet.
 
 New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
 bytes. The original `ReplayData::playerName[8]` is followed by reserved and
@@ -273,6 +294,7 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | `--verify-captures` |0 |0/1;1 requires the all-capture run goal |
 | `--drop-target` |0 |0/1, current source enemy target; no budget/physics change |
 | `--economic-proposals` |0 |0..4 extra full-Native horizon fire/focus comparisons, sharing total search budget |
+| `--economic-movement` |0 |0..4 active-spell movement comparisons; independent of fire/focus comparisons |
 | `--checkpoint-updates` |0 |0 disables;64..400000 executed inputs between prefix saves |
 | Positional `WALL_SECONDS` |Explicit |1..7200 per owner attempt |
 
@@ -282,6 +304,21 @@ execute through the owned Native world. A certified block may be consumed while
 the owner is synchronous; no-certificate retry spacing remains at most8 updates.
 The normal proposal budget remains60ms. Record complete score/outcome and work
 before deciding whether the larger profile helps.
+
+`--economic-movement N` compares up toN differing cardinal pulses in stable
+up/down/left/right order, only while a spell is active and dialogue is absent.
+Each pulse keeps the certified lead and the incumbent's fire/form bits, changes
+only direction for16 Native updates, then continues with ordinary guidance in
+its own Native world. Fire/form alternatives run first; both kinds share the
+existing2000ms economic admission window within the total search budget. An
+admitted Native future can use the remaining total budget, as with the existing
+fire/form comparison;2000ms is not a hard per-rollout deadline. The new control
+does not require `--economic-proposals` to be enabled. Zero keeps the old path.
+Only certified complete-horizon/terminal futures compete; strictly higher raw
+cash adopts, while stable ties retain the incumbent. This horizon ranking is
+not a guarantee of capture or higher complete-route score. Reports record the
+requested count/revision, separate `motion_economic_attempts`/`adoptions`, and
+charge every extra attempt to the existing branch counters and timing.
 
 Append `--prefix-actions PATH --prefix-updates N` to continue after an explicit
 input checkpoint. The original entry configuration, seed and sampled input
@@ -1175,7 +1212,7 @@ a separate check, not a property established by the export target header.
 ## Resume Extra scoring on main
 
 The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative768-task window, including the October27
+resource limits and the cumulative832-task window, including the October27
 recorded64-task extension before use. The owner has resumed with
 No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
 a fresh output directory, rather than copying a historical Native-selected seed

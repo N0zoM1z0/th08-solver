@@ -112,6 +112,7 @@ struct SearchOptions {
     unsigned lead = 8, nominal_warm_updates = 0;
     unsigned economic_proposals = 0;
     bool allow_bombs = false;
+    unsigned economic_movement = 0;
 };
 struct Work {
     std::uint64_t searches = 0, candidates = 0, branch_updates = 0, proposal_updates = 0;
@@ -121,6 +122,7 @@ struct Work {
     std::uint64_t safety_attempts = 0, safety_adoptions = 0;
     std::uint64_t capture_failures = 0;
     std::uint64_t economic_attempts = 0, economic_adoptions = 0;
+    std::uint64_t motion_economic_attempts = 0, motion_economic_adoptions = 0;
     double total_ms = 0, maximum_ms = 0;
     void branch(const s::Prediction &p) {
         ++candidates;
@@ -152,8 +154,8 @@ s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
         return ms < budget_ms ? std::max(1u, unsigned(budget_ms - ms)) : 0u;
     };
     const auto finish = [&](s::Prediction result) {
-        // Keep the certified incumbent while spending the remaining explicit
-        // budget on at most four exact, action-dependent Native continuations.
+        // Keep the certified incumbent while comparing up to four fire/form
+        // alternatives. Optional movement alternatives follow in the same window.
         // Cash at this horizon is a proposal ranking, never a terminal-score proof.
         const auto compare_start = Clock::now();
         if (options.economic_proposals && result.certifies() && result.frames.size() > lead + 32 &&
@@ -195,6 +197,57 @@ s::Prediction search(h::Session &session, o::Policy &policy, o::Policy &safety,
                 // Stable ties retain the incumbent. Never compare partial futures.
                 if (a[s::Field::Score] > b[s::Field::Score]) {
                     ++work.economic_adoptions;
+                    result = std::move(alternative);
+                }
+            }
+        }
+        // Opt-in active-spell movement comparison. Each pulse preserves the
+        // incumbent's fire/form bits and immutable lead, then lets ordinary
+        // guidance continue in its own action-dependent Native future. A
+        // higher horizon cash value is only a proposal ranking, not a promise
+        // of capture or higher final score. Failed/partial futures never compete.
+        // Fire/form comparisons run first; both kinds share the same 2000ms
+        // admission window and total search budget. An admitted future may use
+        // the remaining total budget, as before. Zero preserves the old path.
+        constexpr unsigned motion_updates = 16;
+        if (options.economic_movement && result.certifies() &&
+            result.frames.size() > lead + motion_updates && session.state().spell_active &&
+            !session.state().dialogue_present) {
+            const auto seed_inputs = result.frames;
+            unsigned tried = 0;
+            // Stable order: up, down, left, right. Equal cash retains the
+            // incumbent, so enabling a smaller count is a declared search change.
+            for (const unsigned direction : {16u, 32u, 64u, 128u}) {
+                if (!remaining() ||
+                    std::chrono::duration<double, std::milli>(Clock::now() - compare_start)
+                            .count() >= 2000)
+                    break;
+                std::vector<std::uint16_t> proposal;
+                bool differs = false;
+                for (unsigned i = 0; i < lead + motion_updates; ++i) {
+                    auto input = std::uint16_t(seed_inputs[i].input);
+                    if (i >= lead) {
+                        const auto changed = std::uint16_t((input & ~0xf0u) | direction);
+                        differs |= changed != input;
+                        input = changed;
+                    }
+                    proposal.push_back(input);
+                }
+                if (!differs)
+                    continue;
+                if (tried++ >= options.economic_movement)
+                    break;
+                const auto timeout_ms = remaining();
+                if (!timeout_ms)
+                    break;
+                ++work.motion_economic_attempts;
+                auto alternative =
+                    s::predict_with_policy(session, policy, queue.frontier(), proposal, horizon,
+                                           boundary, timeout_ms, true);
+                work.branch(alternative);
+                if (alternative.certifies() && alternative.frames.back().state[s::Field::Score] >
+                                                   result.frames.back().state[s::Field::Score]) {
+                    ++work.motion_economic_adoptions;
                     result = std::move(alternative);
                 }
             }
@@ -354,7 +407,7 @@ int run(int argc, char **argv) {
             "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
             "[--capture-factor VALUE] [--capture-padding UPDATES] [--hit-income 0|1] "
             "[--drop-target 0|1] [--drop-follow 0|1] [--parent-chain-bias VALUE] "
-            "[--economic-proposals 0..4] "
+            "[--economic-proposals 0..4] [--economic-movement 0..4] "
             "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture] "
             "[--replay-name NAME] [--allow-bombs 0|1] [--require-all-captures 0|1] "
             "[--target-score DISPLAYED] "
@@ -416,6 +469,8 @@ int run(int argc, char **argv) {
     bool verify_captures = false, verify_captures_override = false;
     unsigned economic_proposals = 0;
     bool economic_override = false;
+    unsigned economic_movement = 0;
+    bool movement_override = false;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
         if (key == "--collect-items" && !collection_override) {
@@ -540,6 +595,9 @@ int run(int argc, char **argv) {
         } else if (key == "--economic-proposals" && !economic_override) {
             economic_proposals = number(argv[i + 1], 4);
             economic_override = true;
+        } else if (key == "--economic-movement" && !movement_override) {
+            economic_movement = number(argv[i + 1], 4);
+            movement_override = true;
         } else if (key == "--drop-target" && !drop_target_override) {
             profile.scoring_drop_target = number(argv[i + 1], 1);
             drop_target_override = true;
@@ -676,7 +734,7 @@ int run(int argc, char **argv) {
                 horizon,       publication,          budget_ms,
                 held_recovery, baseline_recovery,    recovery_fire == "capture",
                 lead_updates,  nominal_warm_updates, economic_proposals,
-                allow_bombs};
+                allow_bombs,   economic_movement};
             auto p = search(session, policy, safety, queue, previous, nominal,
                             {config.story, -1, verify_captures, allow_bombs}, options, work);
             if (p.certifies()) {
@@ -871,6 +929,10 @@ int run(int argc, char **argv) {
            << ",\"economic_compare_slice_ms\":" << (economic_proposals ? 2000 : 0)
            << ",\"economic_attempts\":" << work.economic_attempts
            << ",\"economic_adoptions\":" << work.economic_adoptions
+           << ",\"economic_movement\":" << economic_movement
+           << ",\"economic_movement_revision\":" << (economic_movement ? 1 : 0)
+           << ",\"motion_economic_attempts\":" << work.motion_economic_attempts
+           << ",\"motion_economic_adoptions\":" << work.motion_economic_adoptions
            << ",\"held_recovery\":" << (held_recovery ? "true" : "false")
            << ",\"held_attempts\":" << work.held_attempts
            << ",\"held_adoptions\":" << work.held_adoptions
