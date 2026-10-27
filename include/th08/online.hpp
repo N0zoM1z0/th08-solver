@@ -208,6 +208,10 @@ struct Configuration {
     // Experimental: keep a measured profitable farm past its capture reserve.
     // Native callers must opt out of the all-capture goal separately.
     bool scoring_farm_to_timeout = false;
+    // Opt-in Sample-phase proposal: hold fire while the focused shooting gauge
+    // is charging, then release at the first observed extreme-youkai state.
+    // Actual HP, carried shots and the ordinary capture reserve still govern.
+    bool scoring_farm_charge_fire = false;
     bool scoring_hit_income = false;
     bool scoring_drop_target = false;
     // Requires drop_target. Allow its stage-only lane proposal to move downward

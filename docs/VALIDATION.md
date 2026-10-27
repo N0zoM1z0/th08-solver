@@ -178,6 +178,14 @@ of timeout or scoring profit. Reports record `farm_to_timeout` and its revision;
 the source audit owns actual timeout/capture outcomes. Historical benchmarks and
 their original controls keep their identities.
 
+`--farm-charge-fire 1 --attack-pacing 1` is a separate default-off Native
+experiment. It fires only during the initial Sample gauge preparation, then
+releases fire for the ordinary realized-income sample. It preserves the capture
+reserve and bounded wait. The report records `farm_charge_fire` and
+`farm_charge_fire_revision`; complete score and actual capture outcomes decide
+whether the preparation helped. [Planner](PLANNER.md#stream-proposals-and-attack-pacing)
+owns the fire-intent priority and sample boundary.
+
 The default-off `--drop-follow 1 --drop-target 1` experiment proposes a position
 below current drop-bearing stage actors after their reduction window ends.
 Reports record `drop_follow` and its revision. It retains the same NMNB/capture

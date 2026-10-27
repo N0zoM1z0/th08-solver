@@ -1,8 +1,8 @@
 # Current handoff status
 
 Updated 2026-10-27. Public scoring controls include the optional timeout-farm,
-drop-follow and revision2 parent-chain proposals; selected published replay milestone:
-`6b01b24`. The owner resumed Native score attack on 2026-10-26: download and study top human
+drop-follow, revision2 parent-chain and bounded gauge-preparation proposals;
+selected published replay milestone: `6e2ca1a`. The owner resumed Native score attack on 2026-10-26: download and study top human
 replays, document source-backed insights, then test Extra and the complete
 Lunatic route offline. Save tested progress directly on main. The preceding
 handoff batch is finished; its artifacts and failures retain their identities.
@@ -31,6 +31,49 @@ complete Lunatic route. Historical Magic Team references above keep their
 identities; the new all-shot references own the retail replay gate. Continue
 the fixed Magic Team episodes first, keeping NMNB and optional captures.
 
+### All-shot reference and gauge investigation
+
+The October27 download manifest is local
+`reports/local/global-score-20261027/human-replays.json`; it records the record
+page, original replay URLs, bytes and SHA-256. Stock source playback at tasks
+496/497/500 reproduces all three advertised scores exactly: solo Youmu Extra
+3,178,460,830 (1 bomb,13/14), solo Youmu Lunatic7,053,332,460 (10 bombs,35/37)
+and Levea's Ghost Team Extra3,024,418,500 (2 bombs,14/14). These are human
+comparison tapes, not NMNB certificates. IwanaM's Lunatic uses4B; our fixed
+Magic Team episode uses4A. The new absolute target includes that route
+difference and must not be described as a matched-route comparison. Downloaded
+bytes and complete source rows stay local; historical same-shot references stay
+unchanged.
+
+Read-only probes499/506 require exact complete stock-row byte agreement. The
+selected3.010B Extra spawns1045 of1046 requested points, collects all1045, and
+has58,071,120 of same-item price headroom. The single failed request is outside
+the spawn boundary; this tape has no point-pool exhaustion. The selected5.025B
+story's same-item price headroom is249,874,760. These ceilings preserve the
+actual items and PIV; neither alone covers the new score gap. Earlier orb
+income, item production and subsequent pricing must be considered together.
+
+The default-off `--farm-charge-fire 1 --attack-pacing 1` prepares the shooting
+gauge only before the first extreme-youkai Sample observation. Task502's
+declared18000-update Extra probe is safe with3/3 Keine captures. Task503's first
+story stage finishes at14529 inputs with61 points/9939 orbs,4/4 captures and
+142,784,320 cash. Task505 continues that literal prefix with human5 and no
+economic comparison, completing4,777,389,000,NMNB36/37 (77 timeout),539.683s.
+It is unselected and has no fresh replay promotion. Compare its no-cash profile
+with the4.708B no-cash route, rather than attributing the selected5.025B cash
+profile's difference to charging alone. Tasks501/504 pass focused2/2 and normal
+Release Native/DAT60/60; the ordinary default remains unchanged.
+
+A separate local revision2 prototype also focuses during the entire damage
+Probe. Task509's Extra fragment improves card192 interval income to3113 orbs;
+task510 instead reduces story Stage1 to7423 orbs, with early captures on6/10.
+It is not the public control or a selected whole-route result. Task507's setup
+failure remains charged. Stock-row-gated chain probes512/513 also retain the
+full parent/child death ledgers for Alan and the5.025B tape; boss and stage
+income need separate investigation before changing the current stage-only
+chain prior. Artifacts are under the existing local campaign directory with
+`global-*` names. Extra's revision2 full tail, task511, is still in progress.
+
 ## Operational resume contract
 
 Read this section, [verified results](#verified-results),
@@ -42,7 +85,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **495/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **514/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -94,7 +137,7 @@ Current local entry points, relative to
 | Economic prototype sources | `cash-compare-v1/` matches public32-update comparison; `cash-compare-pulse64-v2/` and `piv-potential-v3/` are non-winning variants |
 | Read-only diagnostics | `point-income-probe-v7/`, `pool-pressure-probe-v8/`, `pool-transition-probe-v9/`, `chain-probe-v1/`; exact stock-row gates, source/CSV identities |
 | Final batch, negative profiles | `extra-family-focus-{human,neutral}-margin-v1/`; source under `family-focus-v1/`; audited owner results, unselected and not freshly replay-promoted |
-| Current full test suite | `target-parent-chain-normal-v2/{stdout.log,exit.json,resources.txt}`:60/60 in1133.27s. The obsolete revision1 suite is explicitly interrupted and charged |
+| Current full test suite | `global-charge-normal-v1/{stdout.log,exit.json,resources.txt}`:60/60 in1099.82s; focused task501 also passes2/2. The obsolete parent-chain revision1 suite remains explicitly interrupted and charged |
 
 For every run, read `manifest.json`, `frozen-bin/`, `exit.json`,
 `run/{result.json,score-audit.json,plan.actions,native.rpy}` when present, and

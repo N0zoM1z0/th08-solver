@@ -266,6 +266,7 @@ int run(int argc, char **argv) {
             "[--publish-horizon 64|128|256|512|1024|2048] [--held-recovery 0|1] "
             "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
             "[--survival-flow 0|1] [--attack-pacing 0|1] [--farm-to-timeout 0|1] "
+            "[--farm-charge-fire 0|1] "
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--lead-updates 1..32] "
             "[--nominal-warm-updates 0|UPDATES] [--replan-updates UPDATES] "
@@ -305,6 +306,7 @@ int run(int argc, char **argv) {
     bool survival_flow_override = false;
     bool pacing_override = false, attack_bias_override = false, recovery_override = false;
     bool timeout_farm_override = false;
+    bool charge_fire_override = false;
     bool budget_override = false, baseline_recovery = false;
     bool price_override = false, upper_override = false, collection_bias_override = false;
     bool human_bias_override = false;
@@ -378,6 +380,9 @@ int run(int argc, char **argv) {
         } else if (key == "--farm-to-timeout" && !timeout_farm_override) {
             profile.scoring_farm_to_timeout = number(argv[i + 1], 1);
             timeout_farm_override = true;
+        } else if (key == "--farm-charge-fire" && !charge_fire_override) {
+            profile.scoring_farm_charge_fire = number(argv[i + 1], 1);
+            charge_fire_override = true;
         } else if (key == "--attack-focus-bias" && !attack_bias_override) {
             std::size_t used = 0;
             profile.attack_focus_bias = std::stof(argv[i + 1], &used);
@@ -713,6 +718,8 @@ int run(int argc, char **argv) {
            << ",\"attack_pacing_revision\":" << (profile.scoring_attack_pacing ? 2 : 0)
            << ",\"farm_to_timeout\":" << (profile.scoring_farm_to_timeout ? "true" : "false")
            << ",\"farm_to_timeout_revision\":" << (profile.scoring_farm_to_timeout ? 1 : 0)
+           << ",\"farm_charge_fire\":" << (profile.scoring_farm_charge_fire ? "true" : "false")
+           << ",\"farm_charge_fire_revision\":" << (profile.scoring_farm_charge_fire ? 1 : 0)
            << ",\"hit_income\":" << (profile.scoring_hit_income ? "true" : "false")
            << ",\"drop_target\":" << (profile.scoring_drop_target ? "true" : "false")
            << ",\"drop_target_revision\":" << (profile.scoring_drop_target ? 1 : 0)

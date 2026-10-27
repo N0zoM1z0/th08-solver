@@ -29,6 +29,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_survival_flow = false;
     configuration.scoring_attack_pacing = false;
     configuration.scoring_farm_to_timeout = false;
+    configuration.scoring_farm_charge_fire = false;
     configuration.scoring_hit_income = false;
     configuration.scoring_drop_target = false;
     configuration.scoring_drop_follow = false;
@@ -331,8 +332,14 @@ struct Policy::Impl {
         std::uint64_t samples = 0, sample_begin = 0, income_begin = 0;
         std::array<int, 120> recent_damage{};
         std::int64_t damage = 0;
-        bool farming = false;
+        bool farming = false, charging = false;
     } attack;
+    // One fire intent for decisions, value proposals and Native continuations.
+    // A charging proposal may shoot; an actual collection preparation still
+    // owns no-fire. None of these preferences certify damage or future safety.
+    bool wants_fire() const {
+        return !preparing_collection && (!attack.farming || attack.charging);
+    }
     static constexpr unsigned collection_batch = 4, collection_start_bullet_limit = 64;
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
         : opt(configuration), proposal_style(configuration.style), risk(std::move(tables)),
@@ -362,6 +369,8 @@ struct Policy::Impl {
             throw std::runtime_error("invalid_online_capture_reserve");
         if (opt.scoring_farm_to_timeout && !opt.scoring_attack_pacing)
             throw std::runtime_error("timeout_farming_requires_attack_pacing");
+        if (opt.scoring_farm_charge_fire && !opt.scoring_attack_pacing)
+            throw std::runtime_error("farm_charging_requires_attack_pacing");
         if (opt.scoring_drop_follow && !opt.scoring_drop_target)
             throw std::runtime_error("drop_follow_requires_drop_target");
         if (opt.parent_chain_focus_bias > 0 && !opt.scoring_drop_target)
@@ -654,6 +663,7 @@ struct Policy::Impl {
         auto &a = attack;
         using Phase = AttackPacing::Phase;
         a.farming = false;
+        a.charging = false;
         const auto &s = o.scoring;
         if (!opt.scoring_attack_pacing || !s.can_switch_forms || !o.spell_active || !s.has_boss) {
             a.spell = -1;
@@ -730,6 +740,16 @@ struct Policy::Impl {
                     a.phase = Phase::Capture;
             }
             a.farming = a.phase == Phase::Sample || a.phase == Phase::Farm;
+            // Source focused shooting builds the gauge, while sustained
+            // no-fire resets its shooting ramp. Allow bounded preparation
+            // before the first extreme-youkai observation. Once income_begin
+            // is set, measure the ordinary no-fire sample; do not charge again
+            // inside it and mistake charged shot income for a sustainable farm.
+            // The existing HP/deadline checks above and 1200-update Sample
+            // bound can end preparation. Carried shots can still kill the boss;
+            // Native execution, rather than this prior, decides that outcome.
+            a.charging =
+                opt.scoring_farm_charge_fire && a.phase == Phase::Sample && !a.income_begin;
             graze_goal = a.farming;
         }
         if (graze_goal) {
@@ -1670,8 +1690,7 @@ struct Policy::Impl {
                 int cursor = index;
                 for (int j = deepest; j > 1; --j) {
                     proposal.inputs.push_back(
-                        std::uint16_t(layers[j][cursor].act |
-                                      ((preparing_collection || attack.farming) ? 0 : 1)));
+                        std::uint16_t(layers[j][cursor].act | (wants_fire() ? 1 : 0)));
                     cursor = layers[j][cursor].parent;
                 }
                 std::reverse(proposal.inputs.begin(), proposal.inputs.end());
@@ -2081,9 +2100,8 @@ struct Policy::Impl {
             previous_plan_update = observation.update;
         }
         mark(&DecisionTiming::fallback_ns);
-        return {std::uint16_t(result.moves.front() |
-                              ((preparing_collection || attack.farming) ? 0 : 1)),
-                result.depth, search_stats};
+        return {std::uint16_t(result.moves.front() | (wants_fire() ? 1 : 0)), result.depth,
+                search_stats};
     }
 };
 Policy::Policy(Configuration configuration, RiskTables risk, BranchValueModel value)
@@ -2093,7 +2111,7 @@ void Policy::observe(const Observation &observation) {
     impl_->observe(observation);
 }
 bool Policy::wants_fire() const {
-    return !impl_->preparing_collection && !impl_->attack.farming;
+    return impl_->wants_fire();
 }
 bool Policy::needs_scoring_memory() const {
     return impl_->opt.scoring_collection || impl_->opt.scoring_aim ||

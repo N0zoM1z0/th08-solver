@@ -344,7 +344,7 @@ void score_attack_pacing_contract() {
         b.full_width = b.full_height = 4;
         initial.bullets.push_back(b);
     }
-    const auto warm = [&](on::Policy &policy, on::Observation &o) {
+    const auto warm = [&](on::Policy &policy, on::Observation &o, bool charge_fire = false) {
         o.scoring.reduction_remaining = 1;
         for (unsigned i = 0; i < 20; ++i, ++o.update) {
             o.scoring.capture_hp -= 10;
@@ -356,7 +356,8 @@ void score_attack_pacing_contract() {
             o.scoring.capture_hp -= 10;
             policy.observe(o);
         }
-        check(!policy.wants_fire(), "mature safe damage reserve did not start an income sample");
+        check(policy.wants_fire() == charge_fire,
+              "mature income sample lost its configured preparation fire intent");
     };
     on::Policy policy(config);
     auto o = initial;
@@ -378,6 +379,47 @@ void score_attack_pacing_contract() {
     ++o.update;
     o.scoring.spell_remaining = 1;
     check(policy.decide(o).action & 1, "capture deadline did not restore fire");
+
+    auto charge_config = config;
+    charge_config.scoring_farm_charge_fire = true;
+    on::Policy charger(charge_config);
+    auto charging = initial;
+    warm(charger, charging, true);
+    proposals.clear();
+    const auto preparation = charger.decide(charging, nullptr, &proposals);
+    check(charger.wants_fire() && (preparation.action & 1) && !proposals.empty() &&
+              std::all_of(proposals.front().inputs.begin(), proposals.front().inputs.end(),
+                          [](auto input) { return input & 1; }),
+          "gauge preparation disagreed across fire transport, decision and proposal");
+    ++charging.update;
+    charging.scoring.extreme_youkai = true;
+    for (unsigned i = 0; i <= 240; ++i, ++charging.update) {
+        charging.scoring.collected_orbs += 2;
+        charger.observe(charging);
+    }
+    charging.scoring.extreme_youkai = false;
+    proposals.clear();
+    const auto measured = charger.decide(charging, nullptr, &proposals);
+    check(!charger.wants_fire() && !(measured.action & 1) && !proposals.empty() &&
+              std::all_of(proposals.front().inputs.begin(), proposals.front().inputs.end(),
+                          [](auto input) { return !(input & 1); }),
+          "profitable no-fire farm restarted charging after the first gauge activation");
+    ++charging.update;
+    charging.scoring.spell_remaining = 1;
+    check(charger.decide(charging).action & 1, "capture reserve did not end charged farming");
+
+    on::Policy charge_bound(charge_config);
+    auto stalled = initial;
+    warm(charge_bound, stalled, true);
+    for (unsigned i = 0; i <= 1200; ++i, ++stalled.update)
+        charge_bound.observe(stalled);
+    stalled.scoring.extreme_youkai = true;
+    check(charge_bound.decide(stalled).action & 1,
+          "failed gauge preparation survived the finite sample bound");
+    check(!on::with_style("baseline", charge_config).scoring_farm_charge_fire,
+          "ordinary recovery inherited gauge preparation");
+    charge_config.scoring_attack_pacing = false;
+    rejects([&] { on::Policy invalid(charge_config); }, "charging lacked an attack-pacing owner");
 
     auto timeout_config = config;
     timeout_config.scoring_farm_to_timeout = true;

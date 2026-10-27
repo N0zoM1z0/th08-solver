@@ -26,6 +26,7 @@ if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_prefix_requires")
 endif()
 foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-proposals;5"
                           "--farm-to-timeout;1"
+                          "--farm-charge-fire;1"
                           "--drop-follow;1"
                           "--parent-chain-bias;5"
                           "--parent-chain-bias;nan;--drop-target;1"

@@ -277,6 +277,17 @@ owned by Native; releasing the key does not instantly remove damage.
 `--capture-factor` and `--capture-padding` independently expose that reserve;
 defaults remain1.5 and240, and the1.2/120 complete trial retains its extra costs.
 
+Native `--farm-charge-fire 1` optionally holds fire during the initial Sample
+gauge preparation, before the first observed extreme-youkai state. It requires
+attack pacing and defaults off. The ordinary capture reserve, low-HP exit and
+1200-update Sample bound still apply. Once the first activation starts the
+240-update income measurement, fire is released and does not restart inside
+that sample. This distinguishes shot-assisted preparation from the subsequent
+no-fire income measurement. Carried shots can still end the attack early; no
+gauge activation or score gain is guaranteed. Collection preparation retains
+priority. Decisions, value proposals and Native recovery read one shared fire
+intent. Reports include `farm_charge_fire` and its revision.
+
 `--attack-focus-bias` independently controls the pacing form prior (default5).
 The Native harness can try `--baseline-recovery 1` after a failed nominal future.
 The baseline owns movement; the branch-owned primary policy observes every
