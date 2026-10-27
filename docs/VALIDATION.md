@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **6,130,475,890,34/37**,10/54/74 timeouts
-(1114, fresh1125/natural1126). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **6,291,093,190,36/37**,only10 timeout
+(1172, fresh1191/natural1192). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
@@ -259,7 +259,7 @@ The actual private producer SHA-256 is
 bec5b40 over the unchanged source kernel and pinned GCC12/libc/loader closure.
 Both source hashes and the original receipt are bound by the progress/journal
 metadata; the NPC demonstration is proposal guidance, not transplanted state.
-New6.130B task1114 retains1047's actual first116226 inputs through the first
+Preceding6.130B task1114 retains1047's actual first116226 inputs through the first
 five stages, banking3,161,704,460/PIV1028490 at FinalB entry. Task1107 reapplies
 public H256/publication128/replan64/parent100/human5/collection5/cash4 to first151
 at121103 inputs, banking3,945,539,370. Public H128/publication64/replan32/cash4/
@@ -273,6 +273,15 @@ The frozen public tail producer hash is
 private NPC/profile lineage. Actual work is160589 owner inputs,675421 branch/
 1 proposal update,1234 searches and666.584s concurrent wall, with all prefix,
 prior component and failed/lower trial costs retained in the campaign ledger.
+New6.291B task1172 uses the exact117737-input prefix of1161: focused17/25/29
+through1133, actual complete Stage3/4A/5 recomputation1141, then public H256/
+parent100/human5/collection5/cash4 to first151. Its entry receipts are
+3,357,599,860/PIV1059960 at FinalB and4,087,330,040/PIV1086510 at first151.
+Public H128/publication64/replan32/cash4/movement4/reserve1.2+120 completes
+6,291,093,190,NMNB36/37,only10 timeout. Fresh1191/natural1192 pass all eight
+checks. Its63563-byte replay SHA-256 is
+`47f0e80219e70944b18d6c27b5718f49410b7cbe47418fffd4e0799c656d78dc`; actions
+`cb30a7a1937ed45670f36c27506ab111df48d8796420423a3dd39aef9ceed1c9`.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.

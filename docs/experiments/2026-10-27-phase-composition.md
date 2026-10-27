@@ -1116,7 +1116,7 @@ first151 to1139/1141, with human/collection bias5 or20, before a complete tail.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1149|`vps-scarlet-luna-bridge29parent1143-dynamic-to-stage5-v12`|running/unresolved|—|—/37|—|
+|1149|`vps-scarlet-luna-bridge29parent1143-dynamic-to-stage5-v12`|stage_boundary|3351239510|24/37|0|
 
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
@@ -1178,9 +1178,9 @@ Native must generate its own safe trajectories and actual rewards.
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
 |1163|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell128`|running/unresolved|—|—/37|—|
-|1164|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell256`|running/unresolved|—|—/37|—|
-|1165|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell128`|running/unresolved|—|—/37|—|
-|1166|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell256`|running/unresolved|—|—/37|—|
+|1164|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell256`|stage_boundary|3030280460|23/37|0|
+|1165|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell128`|stage_boundary|2987632270|22/37|0|
+|1166|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell256`|stage_boundary|2947854110|22/37|0|
 
 
 Preparation audit1158 records a resource-contract violation: a generated-table
@@ -1208,11 +1208,113 @@ public H128 with reserve1.2 or1.5; these are the only full-score authorities.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1171|`vps-scarlet-luna-early151parent1159-reserve1p2-full-v17`|running/unresolved|—|—/37|—|
-|1172|`vps-scarlet-luna-early151parent1161-reserve1p2-full-v17`|running/unresolved|—|—/37|—|
-|1173|`vps-scarlet-luna-early151parent1161-reserve1p5-full-v17`|running/unresolved|—|—/37|—|
-|1174|`vps-scarlet-luna-early151parent1162-reserve1p2-full-v17`|running/unresolved|—|—/37|—|
+|1171|`vps-scarlet-luna-early151parent1159-reserve1p2-full-v17`|complete|6206681780|35/37|0|
+|1172|`vps-scarlet-luna-early151parent1161-reserve1p2-full-v17`|complete|6291093190|36/37|0|
+|1173|`vps-scarlet-luna-early151parent1161-reserve1p5-full-v17`|complete|6245340470|36/37|0|
+|1174|`vps-scarlet-luna-early151parent1162-reserve1p2-full-v17`|complete|6224401230|36/37|0|
 
+
+## Verified6.291B original-world composition
+
+Task1172 verifies **6,291,093,190,NMNB36/37**, only10 timeout. Fresh1191 and
+natural1192 pass all eight checks, including41-word terminal, exact complete
+score, no-miss/bombs, capture outcomes and name. The gain over1114 is160,617,300;
+208,906,810 remains to6.5B. The63563-byte replay SHA-256 is
+47f0e80219e70944b18d6c27b5718f49410b7cbe47418fffd4e0799c656d78dc; actions
+cb30a7a1937ed45670f36c27506ab111df48d8796420423a3dd39aef9ceed1c9.
+
+The literal117737-input prefix belongs to1161. It retains1112's focused17,
+1122's shoot/focused25 and1133's shoot/focused29, then1141 recomputes the actual
+intervening world through Stage5. It banks3,357,599,860/PIV1059960 at112770
+inputs, with no reset or transplantation. Public H256/cash4/movement4/
+parent100/human5/collection5 reaches first151 at4,087,330,040/PIV1086510.
+Public H128/publication64/replan32/reserve1.2+120 completes the entire route.
+Actual producer work is156693 owner inputs,666699 branch/
+1 proposal updates and669.08 seconds as reported; the
+remote owner wall receipt is669.25s. Earlier phase/probe/retry/selection costs
+remain charged; no component score is added to create this result.
+
+The alternate same-world reserve1.5 tail1173 completes6,245,340,470; bias20
+parent tail1174 completes6,224,401,230. Both remain below this new overall record.
+H64 tasks1182/1183 fail CLI validation before Native because publication32 is
+unsupported by the frozen public CLI. They are charged setup failures, not
+unsafe gameplay or low scores; no incomplete result certifies a prefix.
+The H256 tail1184 remains a separate measured profile. No Wine solving occurs.
+
+## Later spell control and negative source-clock results
+
+Read-only1177 reexecutes1141's actual first-five-stage tape. Its complete partial
+spell audit and all41 final words match; the explicit terminal event is
+prefix_end, never route_end. Actual raw3 spell77 starts at82452 inputs,74 ends
+at82292, and116 starts at107827. These are new incoming-world coordinates.
+
+Build1178 tests targeted77 flow at H256/cash0/movement4. Feedback6001179 yields
+5548 orbs/timeout,2,192,143,590 cash at86352 inputs. Shoot6001180 captures3827
+orbs with24,207,000 bonus,2,187,603,350 at86009. Shoot9001181 captures2645 with
+22,351,300 bonus. All enter at−10000 and exit+10000; baseline1141 gets212 orbs.
+The first two new worlds are recomputed through Stage5 in1185/1186, not combined
+by adding a local gain. Neither partial keeps a replay.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1179|`vps-scarlet-luna-after1141-card77-v19-feedback600`|phase_boundary|timeout|5548|0|86352|
+|1180|`vps-scarlet-luna-after1141-card77-v19-shoot600`|phase_boundary|captured|3827|24207000|86009|
+|1181|`vps-scarlet-luna-after1141-card77-v19-shoot900`|phase_boundary|captured|2645|22351300|85656|
+
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1185|`vps-scarlet-luna-after77parent1179-dynamic-to-stage5-v21`|running/unresolved|—|—/37|—|
+|1186|`vps-scarlet-luna-after77parent1180-dynamic-to-stage5-v21`|running/unresolved|—|—/37|—|
+
+
+Actual74 ends with+9800 gauge;160 updates later77 starts−10000. Build1187
+therefore tests just that bridge: restart control, focused/inherit-fire and
+focused/quiet. Economic form mutations are disabled only during an enabled
+bridge, so they cannot bypass its proposed focus; this is a declared search
+change and its actual costs remain recorded. H256 road/H128 spell otherwise
+keeps the original NPC recipe. Three owners share2 CPU cores initially to keep
+all active service quotas within32, without changing their wall/search limits.
+The1188 control reproduces **all84876 original actual inputs and all41 terminal
+words**.1189 enters77 at+10000 and captures773 orbs, versus control212/−10000;
+quiet1190 enters+9625 and captures534. Carrying gauge helps, but is substantially
+weaker than active77 flow. Inputs and pending items stay source-owned.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1188|`vps-scarlet-luna-after74-bridge77-v22-control`|phase_boundary|captured|212|13071690|84876|
+|1189|`vps-scarlet-luna-after74-bridge77-v22-inherit`|phase_boundary|captured|773|11957180|85554|
+|1190|`vps-scarlet-luna-after74-bridge77-v22-quiet`|phase_boundary|captured|534|14798950|84932|
+
+
+The quiet25→29 bridge1143 initially loses local cash, but its complete actual
+first-five-stage recomputation1149 reaches3,351,239,510/PIV1084380 at115562
+inputs. This is6,360,350 less cash but24420 more PIV than1141; its77 captures
+4219 orbs. It is retained in the beam because later realized value can reverse
+a local cash ordering.1194/1195 apply public first151 collectors before a full
+tail. None of this is a full-route score projection.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1194|`vps-scarlet-luna-bridge5parent1149-public-finalb151-v25-bias5`|running/unresolved|—|—/37|—|
+|1195|`vps-scarlet-luna-bridge5parent1149-public-finalb151-v25-bias20`|running/unresolved|—|—/37|—|
+
+
+The scoped source-clock boss poses are not automatically better than the
+existing Native scorer. Stage5 variants1165/1166 reach2,987,632,270/PIV1037120
+and2,947,854,110/PIV1011250, both below the old actual entry3,161,704,460.
+Raw4A spell2561164 reaches3,030,280,460/PIV995630. Retain these negative results;
+lookup coverage did not establish reward quality. Raw4A spell1281163 is
+reported in the batch table without inferring a favorable completion.
+
+Build1193 tests real116 farming from the107827-input checkpoint. Human116 gets
+5813 orbs versus1141's1952; its median Y201.59,1634/2895 rows above Y208 and
+2714 focused rows suggest a different grazing position. Both enter−10000, so
+cold entry alone is not the explanation. Human rows are from the previously
+stock-row-gated replay, not transplanted state. Actual Native rollouts test
+feedback600 and shooting600/900 with source option anchors, HP, damage and RNG.
+The postdeadline low-HP observations in earlier work remain non-captures; no
+physics rule is changed to rescue them.
 
 ## Source accounting and operating record
 
