@@ -22,9 +22,14 @@ complete no-miss result above its human reference under the declared goal.
 Online MPC remains paused. Stage4B is outside this route. Replay name is exactly
 `ysopwnab`.
 
-This requested Native batch is finished. Its experiments are recorded below;
-no owned solver, probe, replay checker or test driver remains
-running. Further scoring toward the human references is future work.
+The owner resumed on October27 and selected the two3B/5B milestone replays for
+publication. The new final comparison is the maximum across all12 team/solo
+shots in the [October27 record table](https://maribelhearn.com/wr#IN):
+**Extra3,178,460,830, Sakurei, solo Youmu,21 June2022**, and
+**Lunatic7,053,332,460, IwanaM, solo Youmu,14 July2026**. First reach6B on the
+complete Lunatic route. Historical Magic Team references above keep their
+identities; the new all-shot references own the retail replay gate. Continue
+the fixed Magic Team episodes first, keeping NMNB and optional captures.
 
 ## Operational resume contract
 
@@ -37,7 +42,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **494/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **495/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -82,9 +87,9 @@ Current local entry points, relative to
 | Latest verified story / all captures | `target-story-captured77-cash-h256-p64-v2/`; full146229-input tape,106321-input captured77 prefix; fresh/natural checks; bytes local |
 | Preserved timeout77 story | `target-story-parent-finalb-cash-h256-v2/`; full144885-input tape,105673-input parent-v1 prefix; only77 times out; bytes local |
 | Preserved timeout58 story | `oct27-story-58-prefix-safe-tail-h128-v3/`; full143157-input tape,59476-input timeout58 prefix; bytes local |
-| Preserved highest tracked Extra | `extra-newbest-cash-compare-v1/`; full72557-input tape,60879-input parent prefix, frozen prototype and exact verification |
+| Published highest Extra | `reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy`;30331 bytes; public pipeline and exact identity in Validation |
 | Current public reproduction | `extra-main-cash-confirm-v2/`; same tape/terminal, final public source/binary hashes; `extra-main-cash-compare-v1/verification/` owns earlier public fresh/natural checks |
-| Preserved highest tracked story | `story-retail-early-prefix-safe-tail-v3/`; full136061-input tape; original-entry early-graze prefix49753 plus conservative continuation; full verification |
+| Published highest story | `reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy`;55241 bytes; captured77 prefix and exact identity in Validation |
 | Source-faithful private repair / pulse | `future-repair-v3/`, `suppressed-hit-pulse-v1/period2/`, `drop-target-v1/`; frozen C++/compile/link inputs, not portable old object files |
 | Economic prototype sources | `cash-compare-v1/` matches public32-update comparison; `cash-compare-pulse64-v2/` and `piv-potential-v3/` are non-winning variants |
 | Read-only diagnostics | `point-income-probe-v7/`, `pool-pressure-probe-v8/`, `pool-transition-probe-v9/`, `chain-probe-v1/`; exact stock-row gates, source/CSV identities |
@@ -133,9 +138,9 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
-| **Current Native Extra** | **3,010,040,230 /14 of14** | Seed46997, public first5400/17000-input schedules, H128/drop-follow/cash4; new bytes local |
+| **Current Native Extra** | **3,010,040,230 /14 of14** | Seed46997, public first5400/17000-input schedules, H128/drop-follow/cash4; owner-selected bytes published |
 | Verified drop-follow Extra |2,825,597,670 /14 of14 | Seed46997,14026-input incumbent prefix, H128/focus10/drop-follow continuation; bytes local |
-| **Current Native Lunatic4A→FinalB / all captures** | **5,025,195,380 /37 of37** | Seed1805,106321-input captured77 prefix; revision2/H256/publication64/cash4; new bytes local |
+| **Current Native Lunatic4A→FinalB / all captures** | **5,025,195,380 /37 of37** | Seed1805,106321-input captured77 prefix; revision2/H256/publication64/cash4; owner-selected bytes published |
 | Preserved capture-optional story |4,827,562,920 /36 of37 | Seed1805,105673-input parent-v1 prefix; only77 times out; bytes local |
 | Preserved all-capture Native story |4,708,495,930 /37 of37 | Seed1805,14409-input incumbent prefix; revision2 parent100/H128; bytes local |
 | Preserved capture-optional story |4,444,083,080 /36 of37 | Seed1805, isolated58-timeout prefix59476; only58 times out; bytes local |

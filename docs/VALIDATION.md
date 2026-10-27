@@ -247,13 +247,15 @@ writer replay agrees on score, zero misses/bombs, exact captures and name.
 This is Native execution agreement. Both separate human-reference retail gates
 remain unmet, so no Wine playback is launched.
 
-Selected bytes stay in `reports/local/target-3b5b-20261027/selected/`, alongside
-`provenance.json`; these are not new published replay binaries:
+The owner selected these two exact files for publication on October27. Copies
+under `reports/native/replays/` retain the verified bytes; the original local
+`reports/local/target-3b5b-20261027/selected/provenance.json` and producer
+directories remain the full execution evidence:
 
-| Local replay | Bytes | SHA-256 |
+| Published replay | Bytes | SHA-256 |
 | --- | ---: | --- |
-| `extra-native-nmnb-3010040230-seed46997.rpy` |30331 |`d5d95ec115afee3ef2c301b378af9385e77d9b2e89edae572641146e24b8aad5` |
-| `story-native-nmnb-4a-finalb-5025195380-seed1805.rpy` |55241 |`1d53cd6a624a3e0821f11951ec9c1fd24752c76894b76908eea8451a5ead7dbc` |
+| [Extra3.010B](../reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy) |30331 |`d5d95ec115afee3ef2c301b378af9385e77d9b2e89edae572641146e24b8aad5` |
+| [Complete story5.025B](../reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy) |55241 |`1d53cd6a624a3e0821f11951ec9c1fd24752c76894b76908eea8451a5ead7dbc` |
 
 Extra is entirely produced by the public implementation. First,
 `target-extra-firststage-human100-v1/` starts from the proper retail-seeded entry

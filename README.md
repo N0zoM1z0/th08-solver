@@ -4,7 +4,7 @@
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
 > **Native NMNB scores: Extra 3,010,040,230 (14/14); Lunatic story 5,025,195,380 (37/37).**
-> Preserved progress: [Extra 2.620B replay](reports/native/replays/extra-native-nmnb-2620568090-seed46997.rpy) · [Story 4.311B replay](reports/native/replays/story-native-nmnb-4a-finalb-4311260760-seed1805.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
+> Selected progress: [Extra 3.010B replay](reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy) · [Story 5.025B replay](reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
@@ -25,10 +25,14 @@ and form control. Bomb permission and capture requirements are independent
 
 The latest Native results have fresh execution and natural replay agreement;
 their player name is `ysopwnab`. Both current bests capture every eligible spell;
-the preserved capture-optional story times out77. New replay bytes stay local; their exact identities
+the preserved capture-optional story times out77. The owner-selected3.010B/5.025B
+replays are published; other new replay bytes stay local. Their exact identities
 are in [Validation](docs/VALIDATION.md#october27-verified-native-progress).
 The requested Native milestones, Extra above3B and complete Lunatic above5B,
-are achieved. The dated human references remain separate targets and retail gates.
+are achieved. The owner now targets the highest human scores across all12 shots:
+Extra above3,178,460,830 and Lunatic above7,053,332,460, first reaching6B on the
+complete Lunatic route. These October27 [all-shot records](https://maribelhearn.com/wr#IN)
+are both solo Youmu; the table above preserves the earlier Magic Team references.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;
 ASL's replay uses one bomb. [Status](docs/STATUS.md) owns the
 results, failed trials, costs, unresolved problems and proposed next steps.

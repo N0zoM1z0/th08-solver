@@ -11,9 +11,12 @@ No Miss, No Bomb, captures optional. Bomb experiments are paused. Preserve stric
 defaults and historical records, and record actual bomb use/captures for every
 trial. Require a complete no-miss score above the corresponding human reference
 under its declared constraints before Wine retail replay validation.
-The latest requested Native milestones are Extra above3,000,000,000 and the
-complete Lunatic route above5,000,000,000. Keep those targets distinct from the
-historical human references and the retail replay gate.
+The owner resumed after the3B/5B Native milestones. The final comparison now
+uses the highest published human score across all12 team/solo shots: Extra
+above3,178,460,830 and Lunatic above7,053,332,460 in the October27 snapshot.
+First reach6,000,000,000 on the complete Lunatic route. Preserve historical
+same-shot references separately; use the all-shot reference for the new retail
+replay gate. The current Magic Team episodes remain valid fixed-seed candidates.
 Before each new scoring episode, launch the owned Wine retail game and capture
 its original RNG seed at the observer's pre-RegisterChain boundary. Record the
 entry configuration, checkpoint and seed provenance before Native exploration.
@@ -126,6 +129,12 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   Extra `extra-native-nmnb-2603278620-seed46997.rpy` and
   `extra-native-nmnb-2620568090-seed46997.rpy`; preserve their full-entry/prefix
   lineage, exact verification and all earlier selected bytes
+- The October27 owner explicitly selects the verified milestone replays
+  `extra-native-nmnb-3010040230-seed46997.rpy` and
+  `story-native-nmnb-4a-finalb-5025195380-seed1805.rpy` for publication under
+  `reports/native/replays/`. Preserve exact hashes, original retail receipts,
+  complete input-prefix lineage and all earlier selected bytes. This does not
+  authorize raw tapes, experiment reports, videos or other new replay binaries
 - The owner also authorizes selected compact learned policy/risk snapshots under
   `models/`. Preserve exact weights/tables with schema, hashes, provenance and
   training/evaluation limitations. This exception does not include raw datasets,
