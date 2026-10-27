@@ -238,10 +238,50 @@ the external replay remains local.
 
 ## October27 verified Native progress
 
-Current verified bests are **Extra2,979,939,680,NMNB14/14** and **complete
-story4,827,562,920,NMNB36/37**. Only card77 times out in that story; the separate
-all-capture route reaches4,708,495,930,37/37. Both new Native3B/5B milestones
-remain unmet. Seed receipts46997/1805, full-entry history and `ysopwnab` are
+The requested Native thresholds are achieved: **Extra3,010,040,230,NMNB14/14**
+and **complete1→2→3→4A→5→FinalB5,025,195,380,NMNB37/37**. Both current bests
+capture every eligible spell, despite the capture-optional campaign goal.
+Original retail receipts46997/1805 and the exact `ysopwnab` name are preserved.
+Fresh original-entry execution matches all41 terminal words; natural original-
+writer replay agrees on score, zero misses/bombs, exact captures and name.
+This is Native execution agreement. Both separate human-reference retail gates
+remain unmet, so no Wine playback is launched.
+
+Selected bytes stay in `reports/local/target-3b5b-20261027/selected/`, alongside
+`provenance.json`; these are not new published replay binaries:
+
+| Local replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-native-nmnb-3010040230-seed46997.rpy` |30331 |`d5d95ec115afee3ef2c301b378af9385e77d9b2e89edae572641146e24b8aad5` |
+| `story-native-nmnb-4a-finalb-5025195380-seed1805.rpy` |55241 |`1d53cd6a624a3e0821f11951ec9c1fd24752c76894b76908eea8451a5ead7dbc` |
+
+Extra is entirely produced by the public implementation. First,
+`target-extra-firststage-human100-v1/` starts from the proper retail-seeded entry
+and executes5400 inputs with human bias100/drop-follow. Next,
+`target-extra-public-early-keine-v1/` retains those5400, restores human5 and uses
+reserve1/0 through17000, capturing all three Keine spells. Finally,
+`target-extra-public-early-full-tail-v1/` retains17000 and restores1.2/120 for the
+complete tail. All use H128/publication64/replan32, lead1/warm1/beam384/30s search,
+attack/survival focus10, priced/upper/hit-income/drop goals and cash4; timeout
+farming, bombs and parent bias remain off. No private parent prefix is inherited.
+Its full69957-input tape SHA-256 is
+`a4f81471ae49061b1e850acfaf6a97184e063d39f62f46d9662e2e2590c5a35b`.
+
+Story producer `target-story-captured77-cash-h256-p64-v2/` retains106321 inputs
+of the verified all-capture4.708B route (see its earlier provenance below), then
+uses parent100 revision2/H256/publication64/replan32/cash4, reserve1.5/240,
+capture-fire recovery, lead1/warm1/beam384/30s and ordinary human/farm focus5.
+The full146229-input tape SHA-256 is
+`0e783f185b5821232f9ddfa5911109d7fbfe11d566e3a7c06c45c014e4c3954a`.
+Each producer's `verification/{verified.json,identities.json}` binds the exact
+source/binary/receipt/prefix/DAT/argument and fresh/natural outputs. Original
+selected historical files retain their bytes. Normal Release Native/DAT CTest
+passes60/60 in1133.27s for the implementation; final documentation also passes.
+
+The preceding verified bests are Extra2,979,939,680,NMNB14/14 and complete
+story4,827,562,920,NMNB36/37. Only card77 times out in that story; the earlier
+all-capture route reaches4,708,495,930,37/37. Those earlier3B/5B attempts had not
+yet reached the requested milestones. Seed receipts46997/1805, full-entry history and `ysopwnab` are
 unchanged. No Wine playback is launched.
 
 The selected local directory below also contains these exact exports:

@@ -7,10 +7,11 @@ replays, document source-backed insights, then test Extra and the complete
 Lunatic route offline. Save tested progress directly on main. The preceding
 handoff batch is finished; its artifacts and failures retain their identities.
 
-Current verified Magic Team Native bests are **Extra 2,979,939,680, NMNB 14/14**,
-and **Lunatic 1→2→3→4A→5→Final B: 4,827,562,920, NMNB 36/37**. The preserved
-all-capture story is4,708,495,930,37/37. The owner's next Native
-milestones are strictly above **3,000,000,000 Extra** and **5,000,000,000 story**.
+Current verified Magic Team Native bests are **Extra 3,010,040,230, NMNB 14/14**,
+and **Lunatic 1→2→3→4A→5→Final B: 5,025,195,380, NMNB 37/37**. The owner's
+requested Native milestones, strictly above **3,000,000,000 Extra** and
+**5,000,000,000 story**, are achieved. The preserved capture-optional story
+is4,827,562,920,36/37.
 The historical human references remain3,021,639,920 and6,168,365,790; the new
 milestones do not relabel those records or qualify retail replay playback. The owner
 subsequently made the constraints independent CLI controls. The latest scope is
@@ -20,6 +21,10 @@ Optimize Native offline first; retail Wine replay validation waits for a
 complete no-miss result above its human reference under the declared goal.
 Online MPC remains paused. Stage4B is outside this route. Replay name is exactly
 `ysopwnab`.
+
+This requested Native batch is finished. Its experiments are recorded below;
+no owned solver, probe, replay checker or test driver remains
+running. Further scoring toward the human references is future work.
 
 ## Operational resume contract
 
@@ -32,7 +37,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **477/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **494/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -72,10 +77,10 @@ Current local entry points, relative to
 | Evidence / producer | Directory |
 | --- | --- |
 | Selected full-entry Extra parent | `extra-drop-target-h256-v1/`; full72133-input tape, original replay and fresh/natural verification |
-| Latest verified Extra | `target-extra-last205-flow-v1/`; full69277-input tape,63200-input early-income/drop-follow prefix; fresh/natural checks; bytes local |
+| Latest verified Extra | `target-extra-public-early-full-tail-v1/`; full69957-input tape,17000-input public-entry/Keine prefix; fresh/natural checks; bytes local |
 | Verified drop-follow Extra | `target-extra-drop-follow-v1/`; full69677-input tape,14026-input incumbent prefix, fresh/natural checks; bytes local |
-| Latest verified story | `target-story-parent-finalb-cash-h256-v2/`; full144885-input tape,105673-input parent-v1 prefix; only77 times out; bytes local |
-| Latest verified all-capture story | `target-story-parent-full-v2/`; full145197-input tape,14409-input incumbent prefix, fresh/natural checks; bytes local |
+| Latest verified story / all captures | `target-story-captured77-cash-h256-p64-v2/`; full146229-input tape,106321-input captured77 prefix; fresh/natural checks; bytes local |
+| Preserved timeout77 story | `target-story-parent-finalb-cash-h256-v2/`; full144885-input tape,105673-input parent-v1 prefix; only77 times out; bytes local |
 | Preserved timeout58 story | `oct27-story-58-prefix-safe-tail-h128-v3/`; full143157-input tape,59476-input timeout58 prefix; bytes local |
 | Preserved highest tracked Extra | `extra-newbest-cash-compare-v1/`; full72557-input tape,60879-input parent prefix, frozen prototype and exact verification |
 | Current public reproduction | `extra-main-cash-confirm-v2/`; same tape/terminal, final public source/binary hashes; `extra-main-cash-compare-v1/verification/` owns earlier public fresh/natural checks |
@@ -128,10 +133,11 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
-| **Current Native Extra** | **2,979,939,680 /14 of14** | Seed46997,63200-input early-income/drop-follow prefix, last205 flow continuation; new bytes local |
+| **Current Native Extra** | **3,010,040,230 /14 of14** | Seed46997, public first5400/17000-input schedules, H128/drop-follow/cash4; new bytes local |
 | Verified drop-follow Extra |2,825,597,670 /14 of14 | Seed46997,14026-input incumbent prefix, H128/focus10/drop-follow continuation; bytes local |
-| **Current Native Lunatic4A→FinalB** | **4,827,562,920 /36 of37** | Seed1805,105673-input parent-v1 prefix; revision2/H256/cash4 FinalB; only77 times out; bytes local |
-| **Current all-capture Native story** | **4,708,495,930 /37 of37** | Seed1805,14409-input incumbent prefix; revision2 parent100/H128; bytes local |
+| **Current Native Lunatic4A→FinalB / all captures** | **5,025,195,380 /37 of37** | Seed1805,106321-input captured77 prefix; revision2/H256/publication64/cash4; new bytes local |
+| Preserved capture-optional story |4,827,562,920 /36 of37 | Seed1805,105673-input parent-v1 prefix; only77 times out; bytes local |
+| Preserved all-capture Native story |4,708,495,930 /37 of37 | Seed1805,14409-input incumbent prefix; revision2 parent100/H128; bytes local |
 | Preserved capture-optional story |4,444,083,080 /36 of37 | Seed1805, isolated58-timeout prefix59476; only58 times out; bytes local |
 | Preserved all-capture Native story |4,403,879,050 /37 of37 | Seed1805, original captured58 prefix58764; bytes local |
 | Preserved Native Extra |2,620,568,090 /14 of14 | Captured retail seed46997, actual drop-target prefix and bounded Native cash comparison; selected replay |
@@ -292,7 +298,52 @@ frame5000. This motivates task467's public human100/drop-follow entry probe:
 captures all three Keine spells and stops safely; task474 restores1.2/120 for
 its full tail. No private parent prefix is used in that new pipeline.
 Tasks469/475 retain106321 inputs of the verified captured77 route and compare
-H512 orH256/cash4 FinalB continuations. These three outcomes are pending.
+H512 orH256/cash4 FinalB continuations; they complete4,853,126,790/4,949,006,620,
+both37/37 in428.876/409.501s. Task480's H128/cash4 completes4,963,533,440,37/37,
+465.645s/471299+4 updates,1605 rejected deaths,3835 economic attempts/362 adoptions.
+Tasks478/481/488/489 pass exact fresh/natural checks for the latter two.
+
+### Verified requested milestones and final batch
+
+Extra task474 completes **3,010,040,230,0 misses,0 bombs,14/14** in69957 inputs,
+570.605s,617719+17 branch/proposal updates,2761 rejected future deaths and zero
+rollout timeouts/resource aborts. Terminal1045 points/115784 orbs/PIV878920.
+Tasks482/485 verify original-entry exact41-word terminal and natural replay.
+Its three entry/Keine/tail schedules use only the current public implementation,
+with original retail seed46997; no private parent prefix is inherited. Both the
+earlier5400/17000-input producers and all rejected tails remain charged. The
+whole-route gain changes later RNG/geometry and is not attributed to price alone.
+
+Story task487 retains the same106321 captured77 inputs, with parent100 revision2,
+H256/publication64/replan32, cash4, reserve1.5/240, lead1/warm1/beam384/30s.
+It completes **5,025,195,380,0 misses,0 bombs,37/37** in146229 inputs/858.548s,
+944456+3 updates,1521 rejected future deaths and zero rollout timeouts/resource
+aborts. It pays3820 economic attempts/422 adoptions. FinalB collects446 points/
+57419 orbs, terminal PIV1071150. Tasks492/493 verify exact fresh terminal and
+natural original-writer score/captures/name. This controlled cadence profile
+beats the H256/publication128/replan64 route by76,188,760 while costing about
+twice its wall time; it does not establish that more computation always wins.
+
+The already-running final comparisons are complete, all NMNB37/37:
+H128/replan16 task486 reaches4,880,553,840 in882.258s (974697+2 updates);
+reserve1.2/120 task490 reaches4,983,028,240 in484.527s (487297+3);
+cash from Stage5 task491 reaches4,886,136,840 in738.055s (810911+4).
+None replaces the5.025B tape. The source/gauge probes479/484 safely finish their
+declared partial budgets: human100 gives9743 Stage1 orbs/61 points; stronger
+farm-focus100 gives8073 orbs/61 points and only964 orbs on card13. Task483
+continues the human100 prefix to4,683,444,860,37/37 in570.717s, below the selected
+route. A better first stage is not an additive estimate of later route profit.
+Alan's source-row windows on cards10/13 retain fire and spend over75% focused;
+`Player.cpp` resets the shooting gauge ramp on form changes and sustained
+no-fire. Future charge/aim experiments must measure actual gauge, HP and capture
+outcomes. Stronger focus alone did not recover that human income.
+
+Replay identities and complete input hashes are in
+[Validation](VALIDATION.md#october27-verified-native-progress). All new bytes stay
+under ignored `reports/local/target-3b5b-20261027/selected/`. The normal Release
+Native/DAT suite remains60/60 in1133.27s; task494 checks final documentation.
+No owned experiment queue remains and no Wine playback is launched: both
+scores are still below their separate dated human-reference retail gates.
 
 ## October27 Native continuation
 
@@ -1210,7 +1261,8 @@ continuation feasibility, not a live handoff or permission to rewind the owner.
 
 ## Unresolved problems and proposed next work
 
-The handoff itself authorized no new work; the owner has now resumed exploration.
+The owner resumed exploration and the requested Native3B/5B thresholds are now
+achieved. The completed batch leaves no owned driver running.
 Current trials require No Miss and No Bomb, allow missing captures, and accept
 only higher complete score. Restore all captures explicitly when requested.
 Keep independent options for later ablations; the owner has not requested an
@@ -1218,13 +1270,13 @@ ablation matrix now. The following are proposals, not verified gains.
 
 | Current problem / evidence | Next bounded investigation | Acceptance |
 | --- | --- | --- |
-| Native3B/5B milestones and both human-score gates remain unmet | Combine measured early Extra income with drop-follow; test adaptive parent/child form control from the verified story prefix | Higher complete No Miss/No Bomb score under the declared capture goal, exact fresh/natural verification; retail gate remains the human reference |
+| Native3B/5B milestones achieved; human-reference retail gates remain unmet | On a later continuation, retain the selected3.010B/5.025B inputs while testing source production, pickup price and ordinary-spell charge/aim timing | Higher complete No Miss/No Bomb score under the declared capture goal, exact fresh/natural verification; retail gate remains the human reference |
 | Endpoint cash can prefer locally profitable inputs with worse full score | Value real pending capture rewards, source bonus cap/decay and remaining actual point opportunities. Fixed600*PIV fails both episodes; do not treat an assumed future item count as guaranteed | Whole-terminal gain with all extra rollout/retry costs charged |
 | More Native horizon can fail before reaching a known-safe existing tail | Freshly certify the literal incumbent suffix at a checkpoint, then compare economic alternatives. After edits, re-execute that suffix in the new branch; never assume unchanged RNG or safety | Retain a certified incumbent; incomplete/failed futures remain proposals only |
 | Familiar-chain value is nonlinear; broad focus loses score | Read current parent/child/chain state and projectile/form timing. Preserve source hit income and human pickup price; test selective mother targeting or maturation only with declared assumptions | Better actual collected income and complete score; distinguish live chain length from linkedChildCount |
 | Selected full-entry parent uses private repair/focus code | Port only measured useful behavior through typed interfaces if needed. Current public optional drop/cash goals are already integrated; five parent repair adoptions are not proof a larger framework is needed | Focused contract plus full-duration Native case and normal CTest; no old-object/new-header ABI mixing |
-| Parent2.603B still leaves26 spawned points and trails ASL's1081 points | Trace production and pickup timing on the current tape; static55,681,290 price headroom is not a guaranteed trajectory gain. Avoid returning to superseded925-point assumptions | Actual point income and complete score improve without sacrificing capture/orb economics |
-| FinalB parent/child audit locates208 missing points in the4.444B tape | Preserve attached children while targeting mothers; replan movement and retain human pickup prices; combine with the stronger captured77 prefix | Beat4,827,562,920 from the original retail-seed entry; do not certify masked old movement that dies |
+| Current Extra collects1045 points versus ASL's1081; the old2.979B tape's price gap is37,599,710 | Trace actual production/price on the selected3.010B tape; do not transfer another trajectory's same-item ceiling as guaranteed gain | Actual point income and complete score improve without sacrificing capture/orb economics |
+| FinalB now collects446 points and57419 orbs; earlier PIV still trails Alan | Preserve measured parent rewards and human price while testing earlier profitable income. Stronger farm focus alone fails Stage1 | Beat5,025,195,380 from original retail-seed entry with every extra retry/selection cost charged |
 
 ### Resume here
 
