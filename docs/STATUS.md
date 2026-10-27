@@ -72,7 +72,56 @@ failure remains charged. Stock-row-gated chain probes512/513 also retain the
 full parent/child death ledgers for Alan and the5.025B tape; boss and stage
 income need separate investigation before changing the current stage-only
 chain prior. Artifacts are under the existing local campaign directory with
-`global-*` names. Extra's revision2 full tail, task511, is still in progress.
+`global-*` names. Extra's revision2 full tail, task511, completes2,962,533,740,
+NMNB14/14,505.090s,1062 points/105563 orbs/PIV827820. It is unselected.
+Task525's literal8400-input192 prefix with no-charge193/194 instead times out193
+and earns only330 interval orbs on194; that partial tape is not extended.
+
+The separate boss-nonspell chain proposal passes focused2/2 at515 and normal
+Release Native/DAT60/60 in1228.78s at518. However, first-stage probes516/517
+produce8456/7597 orbs, both4/4, and full continuation520 reaches only
+4,729,898,760,NMNB36/37 (74 timeout),604.264s. That unselected implementation
+is removed after testing; its exact patch, source and frozen binaries stay local.
+Public code remains `de87af9`, whose normal suite is task504. The experimental
+boss flag is not part of the public CLI.
+
+Stock-row-gated current source replay521/522 shows a spatial issue: Alan's
+Stage1 cards10/13 have median player Y123.30/134.25, while the existing stream
+grid covers Y208..400. A local Y16..400 grid at528/529 finishes safe first stages
+with9201/9646 orbs,4/4. Starting stream approach during Probe at531/532 gives
+11796/11025 orbs,3/4 (10/6 timeout respectively). The separate focused-Probe
+reserve1/0 fragment524 gives12394 orbs,3/4 (13 timeout). These are declared
+partial experiments, not complete scores. Factor0.5 is rejected before gameplay
+at523; setup failures507/526 remain charged. No spatial/probe variant is selected.
+
+### Stage2 cancellation production deficit
+
+Alan enters Stage2's first spell17 with19611 time orbs; the selected5.025B route
+has4951. Direct spawn probes540/541 reproduce complete stock rows exactly and
+flush their CSV before the checker's terminal `_exit`. Earlier534/535 retain a
+truncated final diagnostic buffer and support their complete earlier-stage log
+prefix only. The Stage2 road requests19332 ordinary orbs in Alan's tape versus
+4641 in ours; only58/0 requests respectively hit an occupied allocation cursor.
+This is a production deficit, rather than enough allocation loss to explain it.
+
+Caller probes547/548 also preserve exact complete stock rows. Their frozen
+symbol table resolves return addresses relative to a probe function, removing
+ASLR without feeding addresses into gameplay. Before spell17, road requests
+from `BulletManager::OnUpdate` are **16371 human versus2439 Native**; parent
+detach requests are2302/1110, and shot-hit requests437/832. Caller attribution
+is a diagnostic, with the usual tail-call qualification. Source
+`BulletManager.cpp` creates these time items on cancel-region hits;
+`Enemy::DetachEnemyChain(1)` creates circles around the root and live children.
+Parent/child kill timing is therefore the next bounded hypothesis. These counts
+do not establish which delayed kill will remain safe or profitable.
+
+The matched period2 form-pulse experiment537/538 retains the same14529-input
+first stage, human100, no charging and no economic comparison. It reduces
+spell17 entry orbs5234→4662, so it is unselected. Hit-owner probes544/545 leave
+780/283 requests unmapped over the complete respective tapes; they are not a
+complete actor-attribution oracle. Compile failure542 remains charged. Current
+source/caller evidence and frozen inputs remain local under
+`reports/local/global-score-20261027/` and the campaign's `global-*` outputs.
 
 ## Operational resume contract
 
@@ -85,7 +134,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **514/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **551/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
