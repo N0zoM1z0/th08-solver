@@ -512,24 +512,24 @@ certifies a complete combined route. Full Native continuations decide selection.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|991|`vps-scarlet-luna-roadprice-v4-clock-stage3-h128-cash0`|running/unresolved|—|—/37|—|
-|992|`vps-scarlet-luna-roadprice-v4-clock-stage3-h128-cash4`|running/unresolved|—|—/37|—|
-|993|`vps-scarlet-luna-roadprice-v4-clock-stage3-h256-cash0`|running/unresolved|—|—/37|—|
-|994|`vps-scarlet-luna-roadprice-v4-clock-stage3-h256-cash4`|running/unresolved|—|—/37|—|
-|995|`vps-scarlet-luna-roadprice-v4-clock-stage5-h128-cash0`|running/unresolved|—|—/37|—|
-|996|`vps-scarlet-luna-roadprice-v4-clock-stage5-h128-cash4`|running/unresolved|—|—/37|—|
-|997|`vps-scarlet-luna-roadprice-v4-clock-stage5-h256-cash0`|running/unresolved|—|—/37|—|
-|998|`vps-scarlet-luna-roadprice-v4-clock-stage5-h256-cash4`|running/unresolved|—|—/37|—|
-|999|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent100-human5-collect5`|running/unresolved|—|—/37|—|
-|1000|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human5-collect5`|running/unresolved|—|—/37|—|
-|1001|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human20-collect20`|running/unresolved|—|—/37|—|
-|1002|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human100-collect20`|running/unresolved|—|—/37|—|
-|1003|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent100-human5-collect5`|running/unresolved|—|—/37|—|
-|1004|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human5-collect5`|running/unresolved|—|—/37|—|
-|1005|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human20-collect20`|running/unresolved|—|—/37|—|
-|1006|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human100-collect20`|running/unresolved|—|—/37|—|
-|1007|`vps-scarlet-luna-roadprice-v4-restore-stage3-after17-29`|running/unresolved|—|—/37|—|
-|1008|`vps-scarlet-luna-roadprice-v4-restore-stage3-after10capture`|running/unresolved|—|—/37|—|
+|991|`vps-scarlet-luna-roadprice-v4-clock-stage3-h128-cash0`|stage_boundary|2076450810|20/26|0|
+|992|`vps-scarlet-luna-roadprice-v4-clock-stage3-h128-cash4`|stage_boundary|2097137990|20/26|0|
+|993|`vps-scarlet-luna-roadprice-v4-clock-stage3-h256-cash0`|stage_boundary|2035643690|19/26|0|
+|994|`vps-scarlet-luna-roadprice-v4-clock-stage3-h256-cash4`|stage_boundary|2048841760|19/26|0|
+|995|`vps-scarlet-luna-roadprice-v4-clock-stage5-h128-cash0`|stage_boundary|3016245660|24/37|0|
+|996|`vps-scarlet-luna-roadprice-v4-clock-stage5-h128-cash4`|stage_boundary|3000301080|24/37|0|
+|997|`vps-scarlet-luna-roadprice-v4-clock-stage5-h256-cash0`|stage_boundary|3004396090|24/37|0|
+|998|`vps-scarlet-luna-roadprice-v4-clock-stage5-h256-cash4`|stage_boundary|3048229440|24/37|0|
+|999|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent100-human5-collect5`|road_boundary|3555546940|24/37|0|
+|1000|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human5-collect5`|road_boundary|3339518730|24/37|0|
+|1001|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human20-collect20`|road_boundary|3339904860|24/37|0|
+|1002|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human100-collect20`|road_boundary|3466567470|24/37|0|
+|1003|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent100-human5-collect5`|road_boundary|3730404430|24/37|0|
+|1004|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human5-collect5`|road_boundary|3438163910|24/37|0|
+|1005|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human20-collect20`|road_boundary|3518296720|24/37|0|
+|1006|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human100-collect20`|road_boundary|3477904730|24/37|0|
+|1007|`vps-scarlet-luna-roadprice-v4-restore-stage3-after17-29`|phase_boundary|868274900|12/15|0|
+|1008|`vps-scarlet-luna-roadprice-v4-restore-stage3-after10capture`|phase_boundary|752043360|13/15|0|
 
 The completed earlier full combinations are informative negative results:
 931 after29 gives5,406,920,820,35/37;932 after36 gives5,726,454,870,36/37;
@@ -566,6 +566,76 @@ remain coupled. No rejected phase gets a new replay or production-policy change.
 |978|`vps-scarlet-luna-card6-r900-shoot-human-capture-bottom-flow-phase-v5`|phase_boundary|captured|139|4196060|9635|
 |979|`vps-scarlet-luna-card6-r900-shoot-focused-capture-bottom-flow-phase-v5`|phase_boundary|captured|134|4425550|9577|
 
+
+## Verified5.922B continuation
+
+Task1011 sets the new verified overall record at **5,922,099,540,NMNB35/37**,
+10/77 timeouts. Fresh1023/natural1024 pass all41 terminal words, exact score,
+capture outcomes, zero-miss/bomb and name checks. Its62498-byte replay SHA-256 is
+361e65d156f2832070760e160ea18375e15f455e8d25cc8d74b462836fa0b10a;
+actions c84252613e66539e87472c74a5d3915dec8c277ffae9eee5f1dc24e28f38e036.
+The gain over5.821B is101,060,560;577,900,460 remains to6.5B. The producer executes
+158621 original-entry inputs in665.08s,662047 branch and2 proposal updates.
+Retain only this batch's highest verified record;1010/1012 are lower complete
+results, not additional selected replay exports.
+
+The lineage preserves877's first114642 actual inputs to raw7 entry, then public
+H256/publication128/replan64/cash4/parent100/human5/collection5 through the actual
+first151 input (task1003,119607 inputs). That checkpoint has360 point pickups
+and3,730,404,430 displayed cash versus the parent's348 and3,629,972,540. Public
+H128/publication64/replan32/cash4/reserve1.2+120 then completes the route. Original
+seed32796, gameplay world, RNG, actors and rewards are carried by reexecution.
+
+The parent0 pricing profiles fail the production tradeoff: fixed-human5/
+collection5 controls give316→204 points at H128 and360→212 at H256. The earlier
+rough loss range in1015's build reason is superseded by these exact counts.
+The source condition protects parent/child chains; merely disabling focus is
+not an effective replacement for the human's spatial/firing strategy.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1010|`vps-scarlet-luna-compose-v6-after-finalb360-reserve1p5-full`|complete|5859085050|35/37|0|
+|1011|`vps-scarlet-luna-compose-v6-after-finalb360-reserve1p2-full`|complete|5922099540|35/37|0|
+|1012|`vps-scarlet-luna-compose-v6-after-stage5clock270-full`|complete|5886376100|35/37|0|
+|1013|`vps-scarlet-luna-compose-v6-stage5clock270-finalb256-to151`|road_boundary|3718386420|24/37|0|
+|1014|`vps-scarlet-luna-compose-v6-stage5clock270-finalb256-collect20-to151`|road_boundary|3794199280|24/37|0|
+
+The stage5-clock270 component followed by H256/parent100/human20/collection20
+reaches151 with3,794,199,280 (task1014),164,226,740 above the old parent entry.
+Two complete tails1021/1022 compare reserve1.2/1.5. Their score is not inferred
+by adding local gains; they must complete and verify the entire route.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1021|`vps-scarlet-luna-stage5-finalb151-join-reserve1p2-full-v1`|running/unresolved|—|—/37|—|
+|1022|`vps-scarlet-luna-stage5-finalb151-join-reserve1p5-full-v1`|running/unresolved|—|—/37|—|
+
+
+## Expanded clock evidence and new adaptive proposals
+
+Extension1024→1088 is recorded at1014 before1025, with all memory, owner and
+CPU caps unchanged. Build1015 fails for a wrong source member name. An
+orchestration mistake attempts two missing-producer setups1016/1017 before
+checking that build receipt; neither starts Native, and both remain charged.
+Corrected1018 uses the actual typed mainEclContextStorage and builds in1.857s.
+Retries1019/1020 require a clean build/resource receipt before any probe setup.
+They reproduce both complete stock row streams, scores and all per-row fields.
+
+NPC keys now cover all4665 eligible raw2 observations and all4222 raw7 ones,
+alongside the earlier4A/5 coverage. Absolute-frame drift reaches1902 in raw2
+and−3184…+2560 in raw7. Boss-nonspell ECL time/IP keys are usually shared but
+repeat across pattern loops; adding the observed secondary clock does not make
+them unique. These ambiguous boss keys are not silently promoted to exact hints.
+
+The next bounded adapter set keeps unique NPC source clocks on raw2/3/5/7,
+retains the proven initial4500-frame Stage3 boss-nonspell recipe separately,
+and compares immutable human X with a50-percent blend toward the closest
+currently alive Native hit-income target. Y/fire/form timing remains from the
+reference. This tests sensitivity to different-seed familiar positions rather
+than assuming an absolute human X is always the same target. Native safety,
+physics, action-dependent RNG and independent recovery remain unchanged.
+Partial47 owners and complete-route owners are explicitly separate; a missing
+reference key falls back to ordinary guidance.
 
 ## Source accounting and operating record
 

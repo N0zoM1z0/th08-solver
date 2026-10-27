@@ -201,7 +201,7 @@ Magic milestone bytes remain unchanged;6B and the global gates remain unmet.
 
 The owner subsequently requested publication of all17 selected verified Scarlet
 and Magic improvements, followed by retention of new overall project records.
-Six later verified records bring this continuation's selected uploads to23.
+Seven later verified records bring this continuation's selected uploads to24.
 Their exact bytes are now grouped by shot and route in
 [the Native evidence index](../reports/native/README.md); the compact
 [progress table](../reports/native/replays/progress.tsv) binds tasks, actual
@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **5,821,038,980,35/37**,10/77 timeouts
-(930, fresh946/natural947). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **5,922,099,540,35/37**,10/77 timeouts
+(1011, fresh1023/natural1024). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
@@ -226,6 +226,12 @@ first142675 inputs through171 entry, then uses H128/cash4/reserve1.2+120.
 Its61631-byte replay SHA-256 is
 `9b3b6091efbe5414f4eaf27621a8df01cfebd0186dd2a181585b51e59f418c46`, actions
 `d00b24d6327d9c1ddbf0a9f85e4cb883f61637eab2e264075a595a46c963cc88`.
+That5.821B parent also remains byte-identical. The new5.922B route retains
+the first114642 inputs of5.784B to raw7 entry, H256/cash4/parent100/human5/
+collection5 through first151 at119607, then H128/cash4/reserve1.2+120. Its
+62498-byte replay SHA-256 is
+`361e65d156f2832070760e160ea18375e15f455e8d25cc8d74b462836fa0b10a`, actions
+`c84252613e66539e87472c74a5d3915dec8c277ffae9eee5f1dc24e28f38e036`.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.
@@ -1249,7 +1255,7 @@ a separate check, not a property established by the export target header.
 ## Resume Extra scoring on main
 
 The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative1024-task window, including the October27
+resource limits and the cumulative1088-task window, including the October27
 recorded64-task extension before use. The owner has resumed with
 No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
 a fresh output directory, rather than copying a historical Native-selected seed
