@@ -301,9 +301,40 @@ all-capture route reaches4,708,495,930,37/37. Those earlier3B/5B attempts had no
 yet reached the requested milestones. Seed receipts46997/1805, full-entry history and `ysopwnab` are
 unchanged. No Wine playback is launched.
 
+### Global-goal continuation: 5.551B story
+
+Task620 improves the complete Magic Team route to **5,550,599,270,NMNB36/37**;
+only47 times out. It retains the5.458B tape's first52561 inputs, executes the
+Stage4A human-pose guide at618 through60000, then restores the public
+H256/publication128/replan64/cash4/human5/upper-flow1 tail. Capture pacing is
+normal; no bombs are allowed. Source references are immutable XY/fire/form
+hints from Alan's bomb-free Stage4A gameplay1..6500, not source RNG, bullets,
+HP or actor state. The private guide owns a temporary current-snapshot baseline
+proposal every8 inputs (H24/beam384/anchor0.08/focus±10); independent recovery
+and complete Native futures remain the safety authority. Its exact source,
+reference/header hashes and current-ABI link inputs remain frozen locally.
+
+The actual148021-input route charges1019.43s wall,1105467+23 branch/proposal
+updates,4171 economic attempts/556 adoptions. Fresh634 and natural638 pass
+exact41-word terminal, score,36/37 outcome map, zero-miss/bomb and eight-byte
+name agreement. This is execution agreement, not independent physics or retail
+equivalence. The seed1805 receipt, DAT, Release environment and resource
+bounds remain those below. The6B/all-shot gates remain unmet.
+
+Local selected replay
+`reports/local/global-score-20261027/selected/story-native-nmnb-4a-finalb-5550599270-seed1805.rpy`
+is58519 bytes, SHA-256
+`7ef6066e5e4ec84e0a6e50f31c7f222935bd76b2c8e3c6f52c4b9234959d4eb2`.
+Its complete action tape hashes
+`8e0d2125b06263eb094326a4dea1f285340c94bc3fa37b54bff55254eec7f552`.
+The selected provenance JSON preserves the producer, prefix, receipt, source,
+binary, DAT, natural-row identities and verification results. Published milestone
+replays keep their original bytes. Public code remains `79882c6`, tested by
+normal59160/60 and complete real-data592; the pose adapters remain private.
+
 ### Global-goal continuation: 5.458B story
 
-The selected Native bests are now **Extra3,013,913,970,NMNB14/14** and
+At that checkpoint, selected Native bests are **Extra3,013,913,970,NMNB14/14** and
 **complete Magic Team4A→FinalB5,457,960,010,NMNB35/37**. The separate
 all-capture story is **5,107,553,670,NMNB37/37**. These use the original retail
 episodes Extra46997/story1805, proper non-practice entries, No Bomb and
