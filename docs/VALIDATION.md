@@ -201,7 +201,7 @@ Magic milestone bytes remain unchanged;6B and the global gates remain unmet.
 
 The owner subsequently requested publication of all17 selected verified Scarlet
 and Magic improvements, followed by retention of new overall project records.
-Five later verified records bring this continuation's selected uploads to22.
+Six later verified records bring this continuation's selected uploads to23.
 Their exact bytes are now grouped by shot and route in
 [the Native evidence index](../reports/native/README.md); the compact
 [progress table](../reports/native/replays/progress.tsv) binds tasks, actual
@@ -212,15 +212,20 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **5,784,708,380,35/37**,10/77 timeouts
-(877, fresh904/natural905). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **5,821,038,980,35/37**,10/77 timeouts
+(930, fresh946/natural947). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
-story retains the actual first51253 inputs of H256 task794 through47,
+The preceding5.784B story retains the actual first51253 inputs of H256 task794 through47,
 then uses H128/publication64/replan32/cash4/movement4. Its61373-byte replay
 has SHA-256 `37ea4e2f9b6ca020a470ab777f700e09aa5fe4d6acffeae3e714dbca4c67d488`,
 actions `407e157a43c9baff3d43b5c2cd2748465244b260182c56a2738604c9be17dcc4`.
+That5.784B parent remains unchanged. The new5.821B record retains its exact
+first142675 inputs through171 entry, then uses H128/cash4/reserve1.2+120.
+Its61631-byte replay SHA-256 is
+`9b3b6091efbe5414f4eaf27621a8df01cfebd0186dd2a181585b51e59f418c46`, actions
+`d00b24d6327d9c1ddbf0a9f85e4cb883f61637eab2e264075a595a46c963cc88`.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.

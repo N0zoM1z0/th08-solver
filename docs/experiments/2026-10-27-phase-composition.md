@@ -125,7 +125,7 @@ capture rewards stay in the reconstructed world. Each full owner has7200s wall,
 and PIV are selection heuristics only: different RNG/actors prevent safe merging
 or a mathematical dominance claim from those few fields.
 
-| Task | Variant | State | Full displayed score | Captures | Bombs |
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
 |876|`vps-scarlet-luna-compose-middle47-h128-full-v1`|complete|5635246270|36/37|0|
 |877|`vps-scarlet-luna-compose-baseline47-h128-full-v1`|complete|5784708380|35/37|0|
@@ -188,7 +188,7 @@ Eight full owners declare3600s wall, the existing30000ms search and2000ms econom
 admission window. They must complete the whole route; only a verified overall
 project record retains a new replay.
 
-| Task | Variant | State | Full displayed score | Captures | Bombs |
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
 |895|`vps-scarlet-luna-late171-h128-cash0-reserve1p2-full-v1`|complete|5610100560|36/37|0|
 |896|`vps-scarlet-luna-late171-h128-cash0-reserve1p5-full-v1`|complete|5604402380|36/37|0|
@@ -199,8 +199,8 @@ project record retains a new replay.
 |901|`vps-scarlet-luna-late171-h256-cash4-reserve1p2-full-v1`|complete|5642217210|36/37|0|
 |902|`vps-scarlet-luna-late171-h256-cash4-reserve1p5-full-v1`|complete|5619318240|36/37|0|
 
-The best completed171 tail is task897 at5,670,335,990,36/37; none beats the
-new overall record. Local171 gains do not automatically dominate earlier
+The best old-baseline171 tail is task897 at5,670,335,990,36/37; none beats the
+5.784B composition record. Local171 gains do not automatically dominate earlier
 worlds. Keep these results as evidence and do not retain their replay outputs.
 
 ## After17 composition
@@ -212,11 +212,131 @@ Tasks906/907 continue with public H128/H256-middle and stop at their own new47
 ends;908 continues the entire route. No old47 world or input segment is pasted
 into the new17 future. Each owner has7200s wall,30000ms search, checkpoints1024.
 
-| Task | Variant | State | Full displayed score | Captures | Bombs |
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|906|`vps-scarlet-luna-after17-h128-to47-v1`|running/unresolved|—|—/37|—|
-|907|`vps-scarlet-luna-after17-h256-middle-to47-v1`|running/unresolved|—|—/37|—|
+|906|`vps-scarlet-luna-after17-h128-to47-v1`|phase_boundary|865593330|12/15|0|
+|907|`vps-scarlet-luna-after17-h256-middle-to47-v1`|phase_boundary|921977820|11/15|0|
 |908|`vps-scarlet-luna-after17-h128-full-v1`|running/unresolved|—|—/37|—|
+
+## Four-phase form and firing matrix
+
+Build913 creates16 immutable phase adapters in200.851s; it peaks at351850496
+bytes tree RSS with minimum host available43842076672 bytes. Target25/29/36
+cells span Y16–208;116 uses112–272, all at32-pixel row spacing. Compare
+feedback versus continuous focused shooting and human versus focused capture,
+with a600-update source-time reserve. Physics, independent recovery, H256,
+search30000ms and wall1800s stay unchanged. Cash comparisons are0, movement4.
+Each target starts at its exact first-active owner input of the verified5.784B
+route:25=29505,29=30900,36=39972,116=109521. Read-only probe910 confirms that
+route's41 terminal words and all37 boundaries in7.305s. Its preceding setup909
+failed before Native launch when Git diff exceeded Node's1MiB output buffer;
+the allocation stays charged, with the private receipt buffer raised to32MiB.
+
+The human reference keeps focus2133/2137 updates on25,2111/2162 on29,
+2247/2247 on36 and2714/2895 on116. Median Y is164/121/172/202 source pixels.
+The full reference has1 miss/9 bombs and a different seed/world; these motivate
+proposals, not a clean counterfactual or guaranteed attainable NMNB component.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|914|`vps-scarlet-luna-card25-feedback-human-capture-flow-phase-v3`|phase_boundary|timeout|1308|0|31725|
+|915|`vps-scarlet-luna-card25-feedback-focused-capture-flow-phase-v3`|phase_boundary|timeout|1655|0|31725|
+|916|`vps-scarlet-luna-card25-shoot-human-capture-flow-phase-v3`|phase_boundary|timeout|1072|0|31725|
+|917|`vps-scarlet-luna-card25-shoot-focused-capture-flow-phase-v3`|phase_boundary|captured|1299|9479190|31662|
+|918|`vps-scarlet-luna-card29-feedback-human-capture-flow-phase-v3`|phase_boundary|timeout|2285|0|33180|
+|919|`vps-scarlet-luna-card29-feedback-focused-capture-flow-phase-v3`|phase_boundary|captured|3389|13556970|33103|
+|920|`vps-scarlet-luna-card29-shoot-human-capture-flow-phase-v3`|phase_boundary|captured|3020|12024590|33131|
+|921|`vps-scarlet-luna-card29-shoot-focused-capture-flow-phase-v3`|phase_boundary|captured|3408|14629670|32862|
+|922|`vps-scarlet-luna-card36-feedback-human-capture-flow-phase-v3`|phase_boundary|timeout|2390|0|42252|
+|923|`vps-scarlet-luna-card36-feedback-focused-capture-flow-phase-v3`|phase_boundary|timeout|2905|0|42252|
+|924|`vps-scarlet-luna-card36-shoot-human-capture-flow-phase-v3`|phase_boundary|captured|2318|16680890|42113|
+|925|`vps-scarlet-luna-card36-shoot-focused-capture-flow-phase-v3`|phase_boundary|captured|2764|18430430|41997|
+|926|`vps-scarlet-luna-card116-feedback-human-capture-flow-phase-v3`|phase_boundary|timeout|591|0|112581|
+|927|`vps-scarlet-luna-card116-feedback-focused-capture-flow-phase-v3`|phase_boundary|timeout|1337|0|112581|
+|928|`vps-scarlet-luna-card116-shoot-human-capture-flow-phase-v3`|phase_boundary|timeout|706|0|112581|
+|929|`vps-scarlet-luna-card116-shoot-focused-capture-flow-phase-v3`|phase_boundary|timeout|1924|0|112581|
+
+Task921 gets3408 orbs/capture versus baseline1084 and human3455; task925 gets
+2764/capture versus baseline731 and human2757. These match local orb production
+without proving a complete score. All116 variants time out and lose bonus;
+they are rejected. Only25's continuous focused capture closes successfully;
+its1299 orbs are a modest mixed tradeoff versus baseline513 and8.992M bonus.
+
+## Composing the changed worlds
+
+Seven owners930–936 test full tails, actual47 stops, and sequential29→36 or
+17→29. Task930 retains the new record's exact142675 inputs to171, then uses
+public H128/cash4/reserve1.2+120. Other H128 full tails retain tasks921/925;
+H256 alternatives stop only at their own observed47 end. Sequential935 uses
+the private36 controller after921's32862-input29 prefix;936 uses the private29
+controller after884's23911-input17 prefix. Intermediate road planning is
+H256/cash0 for the sequential private controllers, an explicitly combined
+profile rather than isolated attribution to the target spell.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|930|`vps-scarlet-luna-compose-v4-pb5784-late171-reserve1p2-full`|complete|5821038980|35/37|0|
+|931|`vps-scarlet-luna-compose-v4-after29-h128-full`|running/unresolved|—|—/37|—|
+|932|`vps-scarlet-luna-compose-v4-after36-h128-full`|running/unresolved|—|—/37|—|
+|933|`vps-scarlet-luna-compose-v4-after29-h256-to47`|phase_boundary|853064170|12/15|0|
+|934|`vps-scarlet-luna-compose-v4-after36-h256-to47`|phase_boundary|886757560|12/15|0|
+|935|`vps-scarlet-luna-compose-v4-after29-target36`|phase_boundary|609105780|9/15|0|
+|936|`vps-scarlet-luna-compose-v4-after17-target29`|phase_boundary|349403150|7/9|0|
+
+Task935 illustrates coupling:36 now yields1157 orbs/capture instead of2764 in
+its old incoming world. Task936 preserves17's2922 and obtains3365/capture on29;
+this is a promising partial combination. Task934's subsequent47 gets1127,
+far below the old world's6568. Neither local success nor the old47 strategy
+is assumed to transfer unchanged. Partial owners export no replay and cannot
+certify a full route; full owners need fresh/natural agreement before selection.
+
+Task930 sets the new verified overall record at **5,821,038,980,NMNB35/37**,
+10/77 timeouts. Fresh946/natural947 pass all checks, adding36,330,600 over877
+and leaving678,961,020 to6.5B. Its61631-byte replay SHA-256 is
+9b3b6091efbe5414f4eaf27621a8df01cfebd0186dd2a181585b51e59f418c46; actions
+d00b24d6327d9c1ddbf0a9f85e4cb883f61637eab2e264075a595a46c963cc88.
+Producer wall is240.885s for156277 original-entry inputs,218645 branch and1
+proposal updates; total costs also include its parent experiments and verification.
+The retained142675 inputs keep the earlier route exactly through171 entry.
+
+## Earlier10/13 candidates
+
+Build937 creates eight more immutable adapters in101.4s, with peak tree RSS
+352698368 and minimum host available43899183104 bytes. The human10/13 paths
+spend2074/2269 and2185/2301 updates above Y208, respectively; focus is2180/2269
+and1841/2301. These first-stage phases precede the reference's bombs/death.
+Tasks938–945 test the same upper flow with600/900 source-time reserves,
+feedback/continuous shooting and focused capture, using literal11396/13817
+inputs from original32796. The hypothesis is additional early orbs/PIV or
+recovering10's capture; complete Native source outcomes decide each phase.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|938|`vps-scarlet-luna-card10-r600-feedback-focused-capture-early-flow-phase-v4`|phase_boundary|timeout|3549|0|13676|
+|939|`vps-scarlet-luna-card10-r600-shoot-focused-capture-early-flow-phase-v4`|phase_boundary|captured|3298|9915390|13124|
+|940|`vps-scarlet-luna-card10-r900-feedback-focused-capture-early-flow-phase-v4`|phase_boundary|timeout|2628|0|13676|
+|941|`vps-scarlet-luna-card10-r900-shoot-focused-capture-early-flow-phase-v4`|phase_boundary|captured|2851|9310970|13267|
+|942|`vps-scarlet-luna-card13-r600-feedback-focused-capture-early-flow-phase-v4`|phase_boundary|timeout|4467|0|16217|
+|943|`vps-scarlet-luna-card13-r600-shoot-focused-capture-early-flow-phase-v4`|phase_boundary|timeout|4618|0|16217|
+|944|`vps-scarlet-luna-card13-r900-feedback-focused-capture-early-flow-phase-v4`|phase_boundary|timeout|4047|0|16217|
+|945|`vps-scarlet-luna-card13-r900-shoot-focused-capture-early-flow-phase-v4`|phase_boundary|timeout|4299|0|16217|
+
+Task939 captures10 for9,915,390 bonus and3298 orbs versus the old timeout
+and2933 orbs. Task941 also captures it, with2851 orbs. Every13 variant times
+out despite4047–4618 orbs; these need full score tradeoff evidence before use.
+The existing3765-orb/10M-bonus13 component remains the comparison.
+
+Admission of the early batch reduces composition-v4's quota20→12 and allocates
+8 to this batch, alongside8/4 for the two existing units. Total declared quota
+stays32 cores. There are fewer than32 owned remote drivers; per-tree4GiB and
+aggregate96GiB guards and all search/wall budgets stay fixed. Concurrent timings
+must not be presented as an isolated algorithm speed comparison.
+
+Road accounting also identifies a separate deficit. Before the first Stage4A
+spell, Native has161 point pickups versus human187; Stage5 has182 versus209.
+Whole-stage totals are336/381 and242/269. Spell intervals alone do not explain
+these deficits. Human Stage4A includes an earlier death/bombs; attainable NoBomb
+road production must be measured rather than inferred from the human count.
 
 ## Source accounting and operating record
 
