@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
-> **Native NMNB scores: Extra 2,624,965,020 (14/14); Lunatic story 4,444,083,080 (36/37).**
+> **Native NMNB scores: Extra 2,650,283,240 (14/14); Lunatic story 4,444,083,080 (36/37).**
 > Preserved progress: [Extra 2.620B replay](reports/native/replays/extra-native-nmnb-2620568090-seed46997.rpy) · [Story 4.311B replay](reports/native/replays/story-native-nmnb-4a-finalb-4311260760-seed1805.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
@@ -19,9 +19,9 @@ and form control. Bomb permission and capture requirements are independent
 | --- | ---: | ---: | ---: |
 | Online Lunatic 4A → Final B | 2,189,965,070 | Alan: 6,168,365,790 | 33/37 |
 | Online Extra | 1,166,969,620 | ASL: 3,021,639,920 | 14/14 |
-| **Native Extra** | **2,624,965,020** | ASL: 3,021,639,920 | **14/14** |
+| **Native Extra** | **2,650,283,240** | ASL: 3,021,639,920 | **14/14** |
 | **Native Lunatic 4A → Final B** | **4,444,083,080** | Alan: 6,168,365,790 | **36/37** |
-| Preserved all-capture Native story | 4,311,260,760 | Alan: 6,168,365,790 | 37/37 |
+| All-capture Native story | 4,403,879,050 | Alan: 6,168,365,790 | 37/37 |
 
 The latest Native results have fresh execution and natural replay agreement;
 their player name is `ysopwnab`. The story deliberately times out card58 under

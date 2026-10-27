@@ -1,15 +1,15 @@
 # Current handoff status
 
-Updated 2026-10-27. Public scoring controls: current main with the optional
-October27 timeout-farm proposal (previous controls `805b4e2`); selected replay milestone:
+Updated 2026-10-27. Public scoring controls: `d100e92`, including the optional
+October27 timeout-farm proposal; selected replay milestone:
 `6b01b24`. The owner resumed Native score attack on 2026-10-26: download and study top human
 replays, document source-backed insights, then test Extra and the complete
 Lunatic route offline. Save tested progress directly on main. The preceding
 handoff batch is finished; its artifacts and failures retain their identities.
 
-Current verified Magic Team Native bests are **Extra 2,624,965,020, NMNB 14/14**,
+Current verified Magic Team Native bests are **Extra 2,650,283,240, NMNB 14/14**,
 and **Lunatic 1→2→3→4A→5→Final B: 4,444,083,080, NMNB 36/37**. The preserved
-all-capture story remains4,311,260,760,37/37. The next score gates
+all-capture story improves to4,403,879,050,37/37. The next score gates
 remain strictly above 3,021,639,920 and 6,168,365,790 respectively. The owner
 subsequently made the constraints independent CLI controls. The latest scope is
 **No Miss, No Bomb, captures optional**; bomb experiments are paused. Preserve
@@ -30,7 +30,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **410/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **415/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -68,14 +68,17 @@ Current local entry points, relative to
 | Evidence / producer | Directory |
 | --- | --- |
 | Selected full-entry Extra parent | `extra-drop-target-h256-v1/`; full72133-input tape, original replay and fresh/natural verification |
-| Selected highest Extra | `extra-newbest-cash-compare-v1/`; full72557-input tape,60879-input parent prefix, frozen prototype and exact verification |
+| Latest verified Extra | `oct27-extra-strong-focus-h128-v4/`; full72461-input tape,60879-input incumbent prefix, fresh/natural checks; bytes local |
+| Latest verified capture-optional story | `oct27-story-58-prefix-safe-tail-h128-v3/`; full143157-input tape,59476-input timeout58 prefix; bytes local |
+| Latest verified all-capture story | `oct27-story-incumbent58-h128-control-v4/`; full142845-input tape,58764-input original prefix; bytes local |
+| Preserved highest tracked Extra | `extra-newbest-cash-compare-v1/`; full72557-input tape,60879-input parent prefix, frozen prototype and exact verification |
 | Current public reproduction | `extra-main-cash-confirm-v2/`; same tape/terminal, final public source/binary hashes; `extra-main-cash-compare-v1/verification/` owns earlier public fresh/natural checks |
-| Selected highest story | `story-retail-early-prefix-safe-tail-v3/`; full136061-input tape; original-entry early-graze prefix49753 plus conservative continuation; full verification |
+| Preserved highest tracked story | `story-retail-early-prefix-safe-tail-v3/`; full136061-input tape; original-entry early-graze prefix49753 plus conservative continuation; full verification |
 | Source-faithful private repair / pulse | `future-repair-v3/`, `suppressed-hit-pulse-v1/period2/`, `drop-target-v1/`; frozen C++/compile/link inputs, not portable old object files |
 | Economic prototype sources | `cash-compare-v1/` matches public32-update comparison; `cash-compare-pulse64-v2/` and `piv-potential-v3/` are non-winning variants |
 | Read-only diagnostics | `point-income-probe-v7/`, `pool-pressure-probe-v8/`, `pool-transition-probe-v9/`, `chain-probe-v1/`; exact stock-row gates, source/CSV identities |
 | Final batch, negative profiles | `extra-family-focus-{human,neutral}-margin-v1/`; source under `family-focus-v1/`; audited owner results, unselected and not freshly replay-promoted |
-| Current full test suite | `drop-target-cash-main-validation-v3/{ctest.log,exit.json,resources.txt}`:59/59 in1191.44s. Earlier deliberately interrupted suites stay recorded |
+| Current full test suite | `oct27-timeout-farm-normal-v1/{stdout.log,exit.json,resources.txt}`:60/60 in1050.11s. Earlier deliberately interrupted suites stay recorded |
 
 For every run, read `manifest.json`, `frozen-bin/`, `exit.json`,
 `run/{result.json,score-audit.json,plan.actions,native.rpy}` when present, and
@@ -119,8 +122,9 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 
 | Evidence | Score / captures | Scope |
 | --- | ---: | --- |
-| **Current Native Extra** | **2,624,965,020 /14 of14** | Seed46997,60879-input incumbent prefix, H256/focus10 late continuation; new bytes local |
+| **Current Native Extra** | **2,650,283,240 /14 of14** | Seed46997,60879-input incumbent prefix, H128/focus10 late continuation; new bytes local |
 | **Current Native Lunatic4A→FinalB** | **4,444,083,080 /36 of37** | Seed1805, isolated58-timeout prefix59476 and H128 capture continuation; only58 times out; new bytes local |
+| **Current all-capture Native story** | **4,403,879,050 /37 of37** | Seed1805, original captured58 prefix58764, same H128 tail; new bytes local |
 | Preserved Native Extra |2,620,568,090 /14 of14 | Captured retail seed46997, actual drop-target prefix and bounded Native cash comparison; selected replay |
 | Selected full-entry retail-seeded Extra |2,603,278,620 /14 of 14 | Seed46997, source drop-target/hit-window profile; selected parent replay |
 | Earlier Native Extra benchmark |2,589,417,330 /14 of 14 | Historical seed10025, complete from entry,500ms offline search; original bytes preserved |
@@ -215,8 +219,25 @@ reference gates remain unmet; no Wine playback is started.
 Task398 passes the normal Release Native/DAT suite60/60 in1050.11s. Tasks407/408
 are separately charged follow-ups: an H128 story tail from the original captured58
 prefix58764, and an H128 Extra late-tail profile, to measure controller/prefix
-alternatives without crediting only the winning targets. Their outcomes remain
-pending. No Wine solving is running.
+alternatives without crediting only the winning targets. Both complete NMNB:
+
+| Follow-up | Score / captures | Solve seconds / branch+proposal updates / rejected deaths |
+| --- | ---: | ---: |
+| Story captured58-prefix H128,407 |4,403,879,050 /37 of37 |340.457 /354561+18 /396 |
+| Extra H128 focus10 late tail,408 |2,650,283,240 /14 of14 |104.441 /124279+2 /562 |
+
+Both have zero bombs and zero rollout timeouts. The all-capture story improves
+92,618,290 over the old4.311B snapshot; the timeout58-prefix version finishes
+40,204,030 above that phase-aligned H128 alternative. This conditional full-route
+comparison includes changed RNG, geometry, items and later controller inputs;
+it is not a universal per-card valuation or permission to transplant timed tails.
+The final Extra improves29,715,150 over the old2.620B, with unchanged1015 collected
+points but93708 orbs/PIV768540. The H256 intermediate remains local and unchanged.
+Tasks411–414 freshly/naturally verify both follow-ups with exact terminal,
+score, no-miss/no-bomb, name and complete capture-outcome agreement.
+All published historical replay bytes remain unchanged; new files stay local.
+The complete batch has finished; no owned solver, test or queue remains running.
+Neither human score gate is met, so Wine playback remains unlaunched.
 
 ## Human replay study, 2026-10-26
 

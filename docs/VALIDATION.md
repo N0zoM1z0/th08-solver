@@ -218,8 +218,9 @@ the external replay remains local.
 ## October27 verified Native progress
 
 The current No Miss/No Bomb campaign allows missing captures. Extra improves
-to2,624,965,020,14/14; the complete1→2→3→4A→5→FinalB story improves to
-4,444,083,080,36/37, with only ordinary card58 timing out. Both keep the original
+to2,650,283,240,14/14; the complete1→2→3→4A→5→FinalB story improves to
+4,444,083,080,36/37, with only ordinary card58 timing out. Its all-capture
+alternative reaches4,403,879,050,37/37. All keep the original
 retail seed receipts (46997/1805), entry/history and eight-byte `ysopwnab` name.
 Both remain below their human-reference targets; no Wine replay is launched.
 
@@ -229,13 +230,19 @@ original producer/verification directories under the existing local campaign:
 
 | Local replay | Bytes | SHA-256 |
 | --- | ---: | --- |
-| `extra-native-nmnb-2624965020-seed46997.rpy` |28892 |`9791826a7e91dcd9e9cf9f652b11a86e127345034352704242ea10988201825c` |
+| `extra-native-nmnb-2650283240-seed46997.rpy` |29062 |`335711a86dc773d74e8a85e836fede70adcb0c92b7341c32bf93632154f261dd` |
 | `story-native-nmnb-4a-finalb-4444083080-seed1805.rpy` |51805 |`0a6f1cc3b36cd0dcfcd748d16b0815866c3042a686dca9783b90d8000b910386` |
+| `story-native-nmnb-4a-finalb-4403879050-seed1805.rpy` |51392 |`00a2e80784e1c5fd67928e4b676bfd4786b9ffb0b5832480a90bb93e9c44c0ad` |
+| Earlier `extra-native-nmnb-2624965020-seed46997.rpy` |28892 |`9791826a7e91dcd9e9cf9f652b11a86e127345034352704242ea10988201825c` |
 
-Extra producer `oct27-extra-strong-focus-tail-v3/` retains60879 inputs from the
+The earlier H256 Extra producer `oct27-extra-strong-focus-tail-v3/` retains60879 inputs from the
 verified2.620B tape, then uses H256/publication128/interval64, bias10, reserve1.2/
 120 and four bounded cash comparisons. Its complete72597-input tape hashes to
 `75bed4fc7161615078b4be763b9248b439ad3c2201b83964b840703348901f5e`.
+The final `oct27-extra-strong-focus-h128-v4/` uses the same original prefix and
+bias/reserve/comparison controls, H128/publication64/interval32. Its complete
+72461-input tape hashes to
+`0f4f88e449c6453b4e665e0781803c7849d3b36fe7e69d4c6e1f26ff4aa70bd4`.
 
 Story producer `oct27-story-58-prefix-safe-tail-h128-v3/` reconstructs59476 inputs
 from `oct27-story-selective58-timeout-v2/`, which itself retains56276 inputs of
@@ -243,8 +250,14 @@ the old4.311B incumbent. The failed later parent remains charged and unused.
 The continuation disables timeout farming, with H128/publication64/interval32,
 reserve1.5/240 and capture-fire recovery. Its complete143157-input tape hashes to
 `c2fe3b2def69a87c23891e7227818ed19ed7772090be3decefe77ac3777c38f6`.
+The all-capture `oct27-story-incumbent58-h128-control-v4/` instead retains58764
+inputs of the original captured58 incumbent (its source end plus200), with the
+same H128 tail configuration. Its complete142845-input tape hashes to
+`7c288d5fec1b1c187a47688cdc872eb5825ceb1b988ad6ce646b4de5cb594a43`.
+It is a separately charged whole-route counterfactual, not a free score estimate
+or a general claim about the value of one spell.
 
-`verification/{verified.json,identities.json}` in both producer directories
+`verification/{verified.json,identities.json}` in all four producer directories
 records fresh original-entry exact41-word terminal agreement and natural
 original-writer score, no-miss/no-bomb, exact spell outcomes and name agreement.
 The local guarded `reports/local/score-continue-20261027/verify-no-bomb.cjs`
