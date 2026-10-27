@@ -35,7 +35,7 @@ complete Lunatic route. These October27 [all-shot records](https://maribelhearn.
 are both solo Youmu; the table above preserves the earlier Magic Team references.
 All shots may now be explored, with the owner's preferred **Scarlet Team
 (Sakuya/Remilia)** taking priority. Its verified Native results are
-**Extra2,888,408,190 (14/14)** and **complete Lunatic5,011,063,470 (35/37)**,
+**Extra2,939,109,600 (14/14)** and **complete Lunatic5,317,717,330 (35/37)**,
 both No Miss/No Bomb, at their own original retail seeds9098/32796.
 The higher Native records in the table remain Magic Team results.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;

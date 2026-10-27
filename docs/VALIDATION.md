@@ -156,6 +156,49 @@ the complete action tape hashes
 above. Earlier local/published selected bytes retain their identities. The
 global Extra gate remains unmet.
 
+The next Extra profile716 changes only that post19000 verification horizon
+from256 to128, retaining publication64/replan32 and the same seed/prefix/other
+controls. It completes **2,939,109,600,NMNB14/14**,71965 inputs,560.362s wall,
+659170+21 branch/proposal updates,5043 economic attempts/565 adoptions.
+Fresh718/natural719 pass the same complete agreement checks. Its local selected
+`extra-scarlet-native-nmnb-2939109600-seed9098.rpy` is30727 bytes, SHA-256
+`f104c41a7cd0ffacd4eb23c63c21ed1116ff5a1310a3d6ca64a301a96eb52c3b`;
+actions hash `220b05bb0c19657b4224cda9ea2d7557e89fc04311be84dc2fef84e317e82872`.
+The preceding prefix/guide production costs remain separately charged.
+
+Story722 completes **5,317,717,330,NMNB35/37**,155037 inputs;10/74 time out.
+Its prefix lineage is baseline669 through8205, relative first-stage spell poses
+698 through15785, Levea's4096 bomb-free Stage2 input proposals at705, public
+Native adaptation through28000, and public H256/publication128/replan64/cash4/
+human5/upper-flow1/charge1. The3600s wall budget was declared before711.
+Host-memory-aborted711 certifies no result; its committed141312-input tape is
+only a proposal. New722 reexecutes the exact committed bytes from original
+entry32796 with the same frozen binary, then validates its complete Native tail.
+Fresh729/natural731 pass all41 terminal words, score, exact35/37 outcomes,
+zero-miss/bomb and name. These remain execution checks, without a retail claim.
+
+Original711 costs1321.190s before abort; clean722 costs145.944s process wall,
+of which145.789s is reported planning/simulation wall including prefix execution.
+Both owners and all earlier source/guide/transfer trials remain charged. The
+retry's147391+1 branch/proposal updates and646 economic attempts/80 adoptions
+are not totals for the aborted search, whose branch counters were not saved.
+The local selected
+`story-scarlet-native-nmnb-4a-finalb-5317717330-seed32796.rpy` is59101 bytes,
+SHA-256 `adcf5fcf8d14d1aebff616ff9e5cd770cb4224f29bcd1b6ceffcdc186677a123`;
+actions hash `2d6ba5e401cbc5020e9642fda7ee1918fd64466029db2acd6e3386ec89e473b0`.
+
+Separate private36-spell profile723 completes5,262,569,250,NMNB32/37 after the
+same kind of original-entry recovery from aborted712's142336 inputs. Only
+10/29/47/77/171 time out. Fresh727/natural728 pass all agreement checks.
+Its local selected
+`story-scarlet-native-nmnb-4a-finalb-5262569250-seed32796.rpy` is58030 bytes,
+SHA-256
+`75cc6fee62e3f4733c186d9b528dca54acc5d7cb252d84d6a016da6ff557711f`;
+actions hash `84be0dfc805a8ecf038944fba4aea0db5f66e78bec6e98ae0eae43996041ec93`.
+All selected provenance files bind the producer/manifest, original receipt,
+DAT, prefix, binary, natural rows, controls and environment above. Published
+Magic milestone bytes remain unchanged;6B and the global gates remain unmet.
+
 New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
 bytes. The original `ReplayData::playerName[8]` is followed by reserved and
 practice-mode bytes; longer strings are rejected instead of overwriting mode.

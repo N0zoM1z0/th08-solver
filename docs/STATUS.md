@@ -39,6 +39,13 @@ separate; new Scarlet entries require new original retail seed receipts.
 
 ### Scarlet priority, new retail receipts and4GiB resources
 
+Current verified Scarlet bests are **Extra2,939,109,600,NMNB14/14**, task716,
+and **complete Lunatic5,317,717,330,NMNB35/37**, task722 (10/74 time out).
+Fresh718/729 and natural719/731 pass exact41-word terminal, score, outcomes,
+zero-miss/bomb and name checks. They remain separate from the higher Magic
+records and the6B/all-shot targets. Selected bytes stay local;
+[Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns hashes.
+
 The owner now permits every shot and prefers Scarlet Team. Same-shot references
 are ASL Extra **3,000,284,220** (13 March2012) and Levea Lunatic **6,755,587,090**
 (13 July2025), from the [record table](https://maribelhearn.com/wr#IN). Stock
@@ -165,12 +172,50 @@ build707 supplies the separate road-pose comparison708. At28000 it is safe,
 19631, close to the human20858, and17/21 are captured. It uses the same first
 stage and ordinary spells, with only nonspell XY/fire/form proposals through
 the reference's7000th Stage2 gameplay input. Its complete public tail713 and
-the separate public711/36-spell-pose712 profiles are pending, with explicitly increased3600s wall
-budgets instead of baseline1800. They are combined profiles, not isolated
+the separate public711/36-spell-pose712 profiles use explicitly increased3600s
+wall budgets instead of baseline1800. They are combined profiles, not isolated
 attribution of a fragment gain. All artifacts and the reference index stay local.
 The cumulative window is extended704→768
 before use under the owner's standing extension authorization; four drivers,
 4GiB process/tree and host12/8GiB thresholds stay unchanged.
+
+Host MemAvailable later falls below8GiB, aborting711/712/713 and the older
+private Keine owner721. All remain charged and certify no result. The three
+story tapes preserve141312/142336/130048 committed inputs. New722/723/724 copy
+only their recorded committed bytes, freshly execute those literal prefixes
+from original entry32796 with the same frozen binaries, then plan new Native
+tails. This does not certify any prefix on behalf of an aborted owner.
+
+These retries complete **5,317,717,330 (35/37)**, **5,262,569,250 (32/37)** and
+**5,163,431,160 (35/37)**, all NMNB. Fresh/natural729/731 and727/728 verify the
+first two. The strongest early Stage2 orb profile is not the strongest terminal
+score:724 ends Stage2 with28168 orbs but later earns less than722's22598-orb
+Stage2 world. Original aborted711 costs1321.190s plus145.944s for clean722;
+the latter's145.789s reported simulation/planning wall is not the full solve
+cost. Pre-abort branch counters are unavailable; retry costs and earlier guide/
+prefix production remain separately charged. Third-stage entry orbs are still
+well below the human15282, motivating the bounded road-pose trials732/733.
+
+Extra716 changes only694's post19000 verification horizon256→128 and improves
+to **2,939,109,600,NMNB14/14**,71965 inputs,560.362s,659170+21 branch/proposal
+updates and5043 economic attempts/565 adoptions. It has949 points/118349 orbs,
+PIV891750, versus694's990/105182/PIV825910. A larger horizon did not improve
+this complete score; reduced point production and increased orb production
+must be evaluated together. No default budget or tie order is changed.
+
+Matched first5400 audit715 gives baseline234 points/5406 orbs/132,055,490 cash;
+pickup-form bias100 at704 gives254/5214/147,664,800. ASL's literal first5400
+input proposal717 dies at3371 and certifies no prefix. Fresh720 instead executes
+its first3200 at original9098, then uses the direct pose adapter and independent
+Native recovery: safe5400,260 points/10979 orbs/195,974,840,0 bombs/0 captures.
+The human same-frame comparison is262/11401/198,455,220. The replay source's
+world/RNG are never copied. Failed transfer and shortening costs stay charged.
+
+Private build725 combines the exact same Probe2 policy hash with the tested
+public persistence CLI, truthfully retaining revision2. After resource-aborted
+721, retry726 freshly executes720's5400 inputs and safely reaches19000 with
+634 points/26103 orbs,4 captures,0 bombs. Its complete public H128 tail734 is
+pending. These are partial tradeoffs, not arithmetic additions to a score.
 
 The final old Magic combination640 completes5,341,512,260,NMNB33/37 and is
 unselected. Stage5 pickup-priority650 enters104 with199 points/11018 orbs,
@@ -413,7 +458,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **714/768 allocated task IDs** at publication checks. The October27 continuation records successive64-task extensions640→704→768 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **735/768 allocated task IDs** at publication checks. The October27 continuation records successive64-task extensions640→704→768 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |
