@@ -1177,7 +1177,7 @@ Native must generate its own safe trajectories and actual rewards.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1163|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell128`|running/unresolved|—|—/37|—|
+|1163|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell128`|stage_boundary|3147436100|23/37|0|
 |1164|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell256`|stage_boundary|3030280460|23/37|0|
 |1165|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell128`|stage_boundary|2987632270|22/37|0|
 |1166|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell256`|stage_boundary|2947854110|22/37|0|
@@ -1264,8 +1264,8 @@ by adding a local gain. Neither partial keeps a replay.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1185|`vps-scarlet-luna-after77parent1179-dynamic-to-stage5-v21`|running/unresolved|—|—/37|—|
-|1186|`vps-scarlet-luna-after77parent1180-dynamic-to-stage5-v21`|running/unresolved|—|—/37|—|
+|1185|`vps-scarlet-luna-after77parent1179-dynamic-to-stage5-v21`|stage_boundary|3408138620|24/37|0|
+|1186|`vps-scarlet-luna-after77parent1180-dynamic-to-stage5-v21`|stage_boundary|3405901940|25/37|0|
 
 
 Actual74 ends with+9800 gauge;160 updates later77 starts−10000. Build1187
@@ -1296,8 +1296,8 @@ tail. None of this is a full-route score projection.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1194|`vps-scarlet-luna-bridge5parent1149-public-finalb151-v25-bias5`|running/unresolved|—|—/37|—|
-|1195|`vps-scarlet-luna-bridge5parent1149-public-finalb151-v25-bias20`|running/unresolved|—|—/37|—|
+|1194|`vps-scarlet-luna-bridge5parent1149-public-finalb151-v25-bias5`|road_boundary|4068063660|24/37|0|
+|1195|`vps-scarlet-luna-bridge5parent1149-public-finalb151-v25-bias20`|road_boundary|4012686190|24/37|0|
 
 
 The scoped source-clock boss poses are not automatically better than the
@@ -1307,14 +1307,99 @@ Raw4A spell2561164 reaches3,030,280,460/PIV995630. Retain these negative results
 lookup coverage did not establish reward quality. Raw4A spell1281163 is
 reported in the batch table without inferring a favorable completion.
 
-Build1193 tests real116 farming from the107827-input checkpoint. Human116 gets
-5813 orbs versus1141's1952; its median Y201.59,1634/2895 rows above Y208 and
-2714 focused rows suggest a different grazing position. Both enter−10000, so
-cold entry alone is not the explanation. Human rows are from the previously
-stock-row-gated replay, not transplanted state. Actual Native rollouts test
+Build1193 tests real116 farming from the107827-input checkpoint. The source audit gives human116
+5813 orbs versus1141's1952. The initial proposal rationale also used a human
+position/form window indexed with audit calculations as replay-row ordinals.
+That window is **retracted**:1211 demonstrates that these coordinates are not
+interchangeable. Whole-row agreement verifies observer preservation, not this
+unsupported window mapping.1212 and two follow-up probes instead observe the
+actual active spell and both clocks directly. Native results and original
+hypothesis/cost receipts remain preserved, without retroactive relabeling. Actual Native rollouts test
 feedback600 and shooting600/900 with source option anchors, HP, damage and RNG.
 The postdeadline low-HP observations in earlier work remain non-captures; no
 physics rule is changed to rescue them.
+
+## Verified6.440B spell77 composition
+
+Task1207 verifies **6,439,636,250,NMNB36/37**, only10 timeout. Fresh1219 and
+natural1220 pass all eight checks, including all41 terminal words. The gain
+over1172 is148,543,060;60,363,750 remains to6.5B. The64955-byte replay SHA-256 is
+770bb0b3e502b18a1bb9b8927e9f0072019b3b2c8123eb9dbaa58ae2d156f57e; actions
+c13d4b088a8d881151cb5717e7d4bf8b229f90956c3481a3b07ce908219ae3c7.
+
+Retain the actual1141 first82452 inputs through77 entry. Targeted shooting/
+focused600 (1180) captures3827 orbs,24,207,000 bonus and ends at86009 inputs.
+1186 recomputes the actual remaining4A settlement and Stage5:3,405,901,940/
+PIV1092360 at114770. Public H256/cash4/movement4/parent100/human5/collection5
+reaches first151 (1204) at119649 inputs,4,220,644,870/PIV1119940 and348 points.
+Public H128/publication64/replan32/reserve1.2+120 completes the entire route.
+The owner records159597 inputs,688088 branch/5 proposal
+updates and672.44s wall; the remote process receipt is672.605s.
+All earlier phase, prefix, probe, failed and selection costs stay charged.
+
+A useful beam counterexample appears here.1186 has lower entry cash **and** PIV
+than feedback77's1185 (3,408,138,620/PIV1102620), yet later wins at first151 by
+83,056,220 and at full route by78,171,170 (1209=6,361,465,080). Cash/PIV cannot
+summarize different carried RNG, actors, items and timing. Keep a bounded
+strategy-diverse beam, never merge those worlds or assert score dominance from
+those two scalars. Every final candidate is reexecuted from original32796.
+
+The softer parent prior50 trades324→344 first151 points in that feedback world
+but loses16,090,520 local cash; its1210 full tail gets6,363,218,970. Prior25
+gets324 points and4,097,014,240, below both. The shoot-world reserve1.5 control
+1208 completes6,369,125,440. The quiet25→29 world completes6,322,180,980/6,266,901,530
+with reserve1.2/1.5 (1201/1202). Corrected valid H64/publication64/replan32
+retry1200 completes6,099,961,650; unsupported32-publication attempts stay charged.
+Only verified new overall-record replay files are retained. Twelve settled
+below6.291B remote replay outputs were hashed and pruned (761719 bytes), while
+all actions/metadata and the28 then-selected historical replay bytes remain.
+
+## Measured clock correction and phase171 form/position evidence
+
+The source audit uses calculation counts; a producer audit cannot index a
+natural replay row directly. For the verified6.291B route, natural starts are
+0/19/38/57/76/95 calculations later than the producer at stage0/1/2/3/5/7.
+Native171 begins at producer calculation143176, owner input143181 and natural
+calculation/row143271. The incorrect natural-row143176 gauge was+6915; the
+actual entry gauge is−9112. No score, input or gameplay rule changes here.
+Human replay row and calculation clocks happen to align in these observations;
+that does not establish a general interface contract. The old inclusive human116
+window also included one terminal row:2895 rows/median201.59 becomes2894/
+201.654297; above-Y208 count1634 becomes1633. Original rationale receipts stay
+preserved and these corrected card-tagged measurements own the current facts.
+
+Build1212 and probes1213/1214 observe actual active card77/116/167/171 at every
+stock row, recording both clocks, XY, gauge, input and real option lifecycle/
+anchors. Both entire stock-row streams, complete scores and every observed
+row field agree with the unmodified checker.1211 separately reproduces all41
+terminal words and all37 spell audits of6.291B before selecting its171 prefix.
+
+| Actual spell | Human rows / focused / median Y / orbs | Native6.291B rows / focused / median Y / orbs |
+| --- | --- | --- |
+|77|3862 /3802 /286.89 /3949|2424 /279 /386.33 /212|
+|116|2894 /2714 /201.65 /5813|2802 /64 /388 /1952|
+|167|1079 /1021 /165.10 /378|3914 /3018 /338.75 /5113|
+|171|5406 /5313 /432 /16862|5141 /2367 /293.35 /10620|
+
+171 fire counts are3482 human versus3365 Native, so duration/fire alone does
+not explain the orb gap. [Mode-sensitive options](../../third_party/th08/src/Player.cpp#L2284)
+retain their active target while focused and approach the player while
+unfocused; lifecycle changes and real anchors therefore matter for both damage
+and graze. No target or gauge is injected. Build1215 compares lower368–432
+feedback/shooting and400–432 feedback with600 focused-capture reserve, H256/
+cash0/movement4, from the same143181-input original world. Feedback368 captures
+16423 orbs (1216), shooting368 captures10317 (1217), feedback400 captures18045
+(1218). The two feedback geometries are matched controls; the ordinary H128/
+cash4 record has different planning controls and is not a pure geometry ablation.
+
+The stronger400-band gains1622 orbs and15,019,640 local cash over368 in43 fewer
+active inputs. Its5177/5191 focused inputs contrast with the baseline2367/5141.
+This remains a partial171 result. Read-only1221 reproduces all41 words/all37
+spell audits for the new6.440B world and finds its own171 entry at145927 inputs,
+gauge−10000.1222/1223 reapply the two feedback strategies at that exact new
+checkpoint; a full tail and fresh/natural checks still own any final record.
+The1216→1280 budget extension was recorded at1210 before1217, without resetting
+the ledger or changing any owner, CPU, RSS, address-space or host-memory limit.
 
 ## Source accounting and operating record
 

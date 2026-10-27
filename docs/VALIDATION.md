@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **6,291,093,190,36/37**,only10 timeout
-(1172, fresh1191/natural1192). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **6,439,636,250,36/37**,only10 timeout
+(1207, fresh1219/natural1220). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
@@ -273,7 +273,7 @@ The frozen public tail producer hash is
 private NPC/profile lineage. Actual work is160589 owner inputs,675421 branch/
 1 proposal update,1234 searches and666.584s concurrent wall, with all prefix,
 prior component and failed/lower trial costs retained in the campaign ledger.
-New6.291B task1172 uses the exact117737-input prefix of1161: focused17/25/29
+Preceding6.291B task1172 uses the exact117737-input prefix of1161: focused17/25/29
 through1133, actual complete Stage3/4A/5 recomputation1141, then public H256/
 parent100/human5/collection5/cash4 to first151. Its entry receipts are
 3,357,599,860/PIV1059960 at FinalB and4,087,330,040/PIV1086510 at first151.
@@ -282,6 +282,15 @@ Public H128/publication64/replan32/cash4/movement4/reserve1.2+120 completes
 checks. Its63563-byte replay SHA-256 is
 `47f0e80219e70944b18d6c27b5718f49410b7cbe47418fffd4e0799c656d78dc`; actions
 `cb30a7a1937ed45670f36c27506ab111df48d8796420423a3dd39aef9ceed1c9`.
+New6.440B task1207 retains1204's119649 actual inputs: the same early17/25/29
+composition through1141, targeted77 shoot/focused600 (1180,3827 orbs/capture),
+actual Stage4A settlement and Stage5 recomputation1186, then public H256 to
+first151. Those actual entries are3,405,901,940/PIV1092360 at114770 inputs
+and4,220,644,870/PIV1119940 at119649. Public H128/cash4/movement4/reserve1.2+120
+finishes6,439,636,250,NMNB36/37,only10 timeout; fresh1219/natural1220 pass all
+eight gates. Its64955-byte replay SHA-256 is
+`770bb0b3e502b18a1bb9b8927e9f0072019b3b2c8123eb9dbaa58ae2d156f57e`; actions
+`c13d4b088a8d881151cb5717e7d4bf8b229f90956c3481a3b07ce908219ae3c7`.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.
@@ -1306,7 +1315,7 @@ a separate check, not a property established by the export target header.
 ## Resume Extra scoring on main
 
 The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative1216-task window, including the October27
+resource limits and the cumulative1280-task window, including the October27
 recorded64-task extension before use. The owner has resumed with
 No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
 a fresh output directory, rather than copying a historical Native-selected seed
