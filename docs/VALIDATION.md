@@ -199,6 +199,48 @@ All selected provenance files bind the producer/manifest, original receipt,
 DAT, prefix, binary, natural rows, controls and environment above. Published
 Magic milestone bytes remain unchanged;6B and the global gates remain unmet.
 
+The current Scarlet bests extend those lineages without changing the public
+runtime physics or the original9098/32796 receipts:
+
+| Local selected replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-scarlet-native-nmnb-2969055340-seed9098.rpy` |28059 |`d8dc7835480d11d47cbf5e8e5aafbfe51b966a3f5f778e689ebb6bfc4b80d2d7` |
+| `extra-scarlet-native-nmnb-2979717840-seed9098.rpy` |27959 |`1b4994b28fd6899ae76dc7114cfc53add97cc765143f83197d10fca192555897` |
+| `story-scarlet-native-nmnb-4a-finalb-5383092450-seed32796.rpy` |59253 |`91801eb38523d453dcc5ba90add7cd867ceebb38309672cef2eac680476eaaf3` |
+
+Extra734 uses720's first5400 inputs (a freshly executed shorter3200-input human
+proposal followed by Native pose guidance/recovery), Probe2 at726 through19000,
+then public H128/publication64/replan32/cash4. It completes2,969,055,340,NMNB14/14;
+fresh741/natural742 pass. Its66925-input action tape hashes
+`e84d0cd530a02883c160c4aea6e0c46c5c582cbc48aeea1e679dec25a92a4ee5`.
+The failed full human input transfer717 and resource-aborted721 certify no
+prefix and remain charged; new owners always reexecute from original entry.
+
+Extra744 keeps734's first60958 inputs, then uses the private Extra205-only
+movement cash comparison described in Status. It completes **2,979,717,840,
+NMNB14/14**; fresh747/natural749 pass all41 words, exact score/outcomes,
+zero misses/bombs and name. The66925-input action tape hashes
+`d7d168ff516a6c9a4ec389818a425b44ac698e2916d20a01806449b1a340f91a`.
+The tail charges105.505s,108352+1 branch/proposal updates,493 fire/form attempts/
+65 adoptions and620 movement attempts/46 adoptions. This cost is additional to
+734's499.38s and earlier prefix/guide/abort/build/selection costs; it is not a
+105-second whole-route solve. The private comparison changes proposals only,
+keeps the original shared economic/total budgets and does not claim independent
+physics equivalence. It is not yet a public CLI feature.
+
+Story737 keeps724's35209 first-two-stage inputs, uses the same-shot Stage3 road
+pose guide/adaptation733 through45000, then public H256/publication128/replan64/
+cash4/human5/upper-flow1/charge1. It completes **5,383,092,450,NMNB35/37**;
+10/74 time out. Fresh748/natural750 pass all complete agreement checks.
+Its154837 inputs cost1214.64s,1446574+15 branch/proposal updates and5163 economic
+attempts/690 adoptions, plus all earlier prefix, aborted713 and recovery724
+costs. Actions hash
+`a9023eb9790aa13069701504170e618a39b0be8fc7dc246c001a752b368c66da`.
+All selected files/provenance remain under the local directory above. The
+higher overall Native records remain Magic3.014B/5.551B; global gates and6B
+remain unmet. Public code stays at1edc70d, normal69360/60; later progress changes
+only maintained prose, with the documentation CTest repeated before publication.
+
 New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
 bytes. The original `ReplayData::playerName[8]` is followed by reserved and
 practice-mode bytes; longer strings are rejected instead of overwriting mode.

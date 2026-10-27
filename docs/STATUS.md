@@ -39,9 +39,9 @@ separate; new Scarlet entries require new original retail seed receipts.
 
 ### Scarlet priority, new retail receipts and4GiB resources
 
-Current verified Scarlet bests are **Extra2,939,109,600,NMNB14/14**, task716,
-and **complete Lunatic5,317,717,330,NMNB35/37**, task722 (10/74 time out).
-Fresh718/729 and natural719/731 pass exact41-word terminal, score, outcomes,
+Current verified Scarlet bests are **Extra2,979,717,840,NMNB14/14**, task744,
+and **complete Lunatic5,383,092,450,NMNB35/37**, task737 (10/74 time out).
+Fresh747/748 and natural749/750 pass exact41-word terminal, score, outcomes,
 zero-miss/bomb and name checks. They remain separate from the higher Magic
 records and the6B/all-shot targets. Selected bytes stay local;
 [Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns hashes.
@@ -214,8 +214,44 @@ world/RNG are never copied. Failed transfer and shortening costs stay charged.
 Private build725 combines the exact same Probe2 policy hash with the tested
 public persistence CLI, truthfully retaining revision2. After resource-aborted
 721, retry726 freshly executes720's5400 inputs and safely reaches19000 with
-634 points/26103 orbs,4 captures,0 bombs. Its complete public H128 tail734 is
-pending. These are partial tradeoffs, not arithmetic additions to a score.
+634 points/26103 orbs,4 captures,0 bombs. Its complete public H128 tail734
+reaches **2,969,055,340,NMNB14/14**,66925 inputs,499.38s,597048+13 branch/
+proposal updates and4603 economic attempts/483 adoptions; fresh741/natural742
+pass. It has1039 points/110327 orbs/PIV851640. The separate Keine spell-pose
+variant739 has624 points/25086 orbs and only2 captures at19000; it is unselected.
+
+The same-shot Stage3 road guide732/733 raises36 entry orbs to12367/13206,
+versus baseline5443 and human15282, both safe45000-input fragments. Complete
+public tails736/737 finish **5,331,386,740,36/37** and **5,383,092,450,35/37**,
+both NMNB; only the higher score is promoted after fresh748/natural750. Its
+lineage retains708's Stage2 road pose,724's exact35209-input first-two-stage
+prefix,733's Stage3 guide/adaptation through45000, then public H256/cash4/
+upper-flow1/charge1. It costs1214.64s,1446574+15 branch/proposal updates and
+5163 economic attempts/690 adoptions. Earlier prefix/recovery costs stay charged.
+
+Private motion prototype740 compares four16-input cardinal pulses only during
+Extra205, preserving the certified lead and each input's fire/form bits. All
+attempts execute complete action-dependent Native futures. It shares the
+existing2000ms economic slice and total30000ms search budget with fire/form
+comparisons; strict cash improvement adopts, stable ties keep the incumbent.
+Task744 keeps734's first60958 inputs and reaches **2,979,717,840,NMNB14/14**,
+with620 movement attempts/46 adoptions. Its66925 inputs cost105.505s plus
+734's499.38s and all earlier production/selection costs. Fresh747/natural749
+pass. The prototype remains local: its positive complete result motivates an
+opt-in generic CLI implementation with a focused contract test and normal suite
+before public code promotion. No public motion control exists yet.
+
+Stock-row-gated point probe743 shows734 collects **all1039 spawned points**:
+1040 requests, one outside-boundary rejection at X=-224.54776,1015 extreme-human
+pickups,950,533,960 point income and26,067,400 same-item price headroom. The
+human1071-point gap now consists of2 first-road and30 second-road production
+points, not pickup loss. Do not infer a new collection-gate defect from this tape.
+Root probes745/746 also match complete stock rows. One right root at X320
+escapes with68 HP and12 point/power drops unawarded; the human kills it after
+the left root and before center. This accounts for12 of the30 road points.
+The chain-only probe omits childless unparented actors, so18 remain unexplained.
+The human's bomb is at gameplay18416; the evidence does not attribute all30
+points to it. Exact ledgers and the coverage limit remain local.
 
 The final old Magic combination640 completes5,341,512,260,NMNB33/37 and is
 unselected. Stage5 pickup-priority650 enters104 with199 points/11018 orbs,
@@ -458,7 +494,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **735/768 allocated task IDs** at publication checks. The October27 continuation records successive64-task extensions640→704→768 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **751/768 allocated task IDs** at publication checks. The October27 continuation records successive64-task extensions640→704→768 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |
