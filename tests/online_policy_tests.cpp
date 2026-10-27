@@ -457,6 +457,34 @@ void score_attack_pacing_contract() {
         unprofitable.observe(empty);
     check(unprofitable.wants_fire(), "zero realized income prolonged an ordinary attack");
 }
+void upper_stream_goal_contract() {
+    auto config = on::with_style("score-flow");
+    config.horizon = 24;
+    auto o = scene();
+    o.x = 192;
+    o.y = 336;
+    o.spell_active = true;
+    o.scoring.available = o.scoring.has_boss = o.scoring.can_switch_forms = true;
+    o.scoring.survival_spell = true;
+    o.graze_half = {0, 0, 0};
+    // The stream is beyond the local movement horizon. Only the macro goal
+    // can guide an approach now; local graze rewards cannot already touch it.
+    // Its X falls between grid columns, supplying a graze cell without making
+    // that cell's stationary body overlap these synthetic ordinary bullets.
+    for (int i = 0; i < 16; ++i) {
+        auto b = bullet(i, 192, 80, 0, 0);
+        b.full_width = b.full_height = 4;
+        o.bullets.push_back(b);
+    }
+    const auto original = on::Policy(config).decide(o).action;
+    config.scoring_upper_flow = true;
+    check(!(original & 16) && (on::Policy(config).decide(o).action & 16),
+          "upper stream goals did not approach a cluster outside the historical grid");
+    check(!on::with_style("baseline", config).scoring_upper_flow,
+          "ordinary recovery inherited the optional upper stream goal");
+    config.scoring_survival_flow = false;
+    rejects([&] { on::Policy invalid(config); }, "upper grid lacked a flow or pacing owner");
+}
 void point_price_goal_contract() {
     auto base = on::with_style("score-harvest");
     base.horizon = 24;
@@ -2313,6 +2341,7 @@ int main(int argc, char **argv) {
         hit_income_goal_contract();
         drop_target_goal_contract();
         parent_chain_form_contract();
+        upper_stream_goal_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

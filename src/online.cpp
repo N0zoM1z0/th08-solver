@@ -27,6 +27,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_collection = configuration.scoring_aim = false;
     configuration.scoring_survival_focus = false;
     configuration.scoring_survival_flow = false;
+    configuration.scoring_upper_flow = false;
     configuration.scoring_attack_pacing = false;
     configuration.scoring_farm_to_timeout = false;
     configuration.scoring_farm_charge_fire = false;
@@ -371,6 +372,8 @@ struct Policy::Impl {
             throw std::runtime_error("timeout_farming_requires_attack_pacing");
         if (opt.scoring_farm_charge_fire && !opt.scoring_attack_pacing)
             throw std::runtime_error("farm_charging_requires_attack_pacing");
+        if (opt.scoring_upper_flow && !opt.scoring_survival_flow && !opt.scoring_attack_pacing)
+            throw std::runtime_error("upper_flow_requires_flow_or_attack_pacing");
         if (opt.scoring_drop_follow && !opt.scoring_drop_target)
             throw std::runtime_error("drop_follow_requires_drop_target");
         if (opt.parent_chain_focus_bias > 0 && !opt.scoring_drop_target)
@@ -602,12 +605,20 @@ struct Policy::Impl {
             return;
         macro_spell = o.spell;
         macro_due = o.update + 64;
-        constexpr int nx = 10, ny = 7, cells = nx * ny;
-        std::array<int, cells> contacts{}, danger{};
+        // Upper goals can require passing around a live boss. The same body
+        // exclusion below and complete Native rollouts still decide that path;
+        // a populated cell is not a collision or reward certificate. Fixed
+        // storage covers both profiles without changing the default row order,
+        // active-cell count, arithmetic or strict-improvement tie sequence.
+        constexpr int nx = 10, maximum_rows = 13, maximum_cells = nx * maximum_rows;
+        const int ny = opt.scoring_upper_flow ? maximum_rows : 7;
+        const int top = opt.scoring_upper_flow ? 16 : 208;
+        const int cells = nx * ny;
+        std::array<int, maximum_cells> contacts{}, danger{};
         for (const auto &b : o.bullets) {
             if (b.state != 1 || b.collision_disabled || b.grazed || b.vx * b.vx + b.vy * b.vy > 9)
                 continue;
-            std::array<bool, cells> seen{}, hit{};
+            std::array<bool, maximum_cells> seen{}, hit{};
             const float ex = b.full_width / 2 + kGrazeExpansion + o.graze_half.x;
             const float ey = b.full_height / 2 + kGrazeExpansion + o.graze_half.y;
             const float hx = o.movement.half.x + b.full_width / 2 + 1.5f;
@@ -618,14 +629,14 @@ struct Policy::Impl {
                 const float bx = b.x + b.vx * dt, by = b.y + b.vy * dt;
                 const int x0 = std::max(0, int(std::ceil((bx - ex - 48) / 32)));
                 const int x1 = std::min(nx - 1, int(std::floor((bx + ex - 48) / 32)));
-                const int y0 = std::max(0, int(std::ceil((by - ey - 208) / 32)));
-                const int y1 = std::min(ny - 1, int(std::floor((by + ey - 208) / 32)));
+                const int y0 = std::max(0, int(std::ceil((by - ey - top) / 32)));
+                const int y1 = std::min(ny - 1, int(std::floor((by + ey - top) / 32)));
                 for (int y = y0; y <= y1; ++y)
                     for (int x = x0; x <= x1; ++x) {
                         const int cell = y * nx + x;
                         seen[cell] = true;
                         hit[cell] = hit[cell] || (std::abs(48 + x * 32 - bx) < hx &&
-                                                  std::abs(208 + y * 32 - by) < hy);
+                                                  std::abs(top + y * 32 - by) < hy);
                     }
             }
             for (int i = 0; i < cells; ++i) {
@@ -636,7 +647,7 @@ struct Policy::Impl {
         float best = -1e30f;
         for (int y = 0; y < ny; ++y)
             for (int x = 0; x < nx; ++x) {
-                const float px = 48 + x * 32, py = 208 + y * 32;
+                const float px = 48 + x * 32, py = top + y * 32;
                 if (px < o.movement.minx || px > o.movement.maxx || py < o.movement.miny ||
                     py > o.movement.maxy)
                     continue;

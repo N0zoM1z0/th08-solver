@@ -204,6 +204,10 @@ struct Configuration {
     bool scoring_collection = false, scoring_aim = false;
     bool scoring_survival_focus = false;
     bool scoring_survival_flow = false;
+    // Opt-in stationary stream goals at Y=16..400 instead of208..400 pixels.
+    // Requires flow or attack pacing. This expands proposal coverage only;
+    // Native still owns enemy bodies, grazing, collision and actual profit.
+    bool scoring_upper_flow = false;
     bool scoring_attack_pacing = false;
     // Experimental: keep a measured profitable farm past its capture reserve.
     // Native callers must opt out of the all-capture goal separately.

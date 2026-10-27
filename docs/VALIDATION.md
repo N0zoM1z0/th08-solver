@@ -186,6 +186,13 @@ reserve and bounded wait. The report records `farm_charge_fire` and
 whether the preparation helped. [Planner](PLANNER.md#stream-proposals-and-attack-pacing)
 owns the fire-intent priority and sample boundary.
 
+Native `--upper-flow 1` requires `--attack-pacing 1` or `--survival-flow 1`.
+It expands stream proposal targets from Y208..400 to Y16..400, defaults off,
+and records `upper_flow`, `flow_grid_revision` and `flow_grid_min_y`. No early
+damage-Probe approach is added. Native still owns boss bodies, collision and
+realized income. [Planner](PLANNER.md#stream-proposals-and-attack-pacing) owns
+the active-cell order, target cadence and unchanged default behavior.
+
 The default-off `--drop-follow 1 --drop-target 1` experiment proposes a position
 below current drop-bearing stage actors after their reduction window ends.
 Reports record `drop_follow` and its revision. It retains the same NMNB/capture
@@ -294,11 +301,75 @@ all-capture route reaches4,708,495,930,37/37. Those earlier3B/5B attempts had no
 yet reached the requested milestones. Seed receipts46997/1805, full-entry history and `ysopwnab` are
 unchanged. No Wine playback is launched.
 
+### Global-goal continuation: 5.458B story
+
+The selected Native bests are now **Extra3,013,913,970,NMNB14/14** and
+**complete Magic Team4A→FinalB5,457,960,010,NMNB35/37**. The separate
+all-capture story is **5,107,553,670,NMNB37/37**. These use the original retail
+episodes Extra46997/story1805, proper non-practice entries, No Bomb and
+`ysopwnab`. Story47/74 time out in the highest-score route. The owner-selected
+published3.010B/5.025B milestone bytes remain intact; these newer exports stay
+under ignored `reports/local/global-score-20261027/selected/`.
+
+| Selected local replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-native-nmnb-3013913970-seed46997.rpy` |30326 |`0015f7c7b132f4febd114d9ff0737c4852726c306422fd011f1708bdccf72b2b` |
+| `story-native-nmnb-4a-finalb-5457960010-seed1805.rpy` |56800 |`387269153db836f15728d8699694da138f6a73093e3d629a8ee3596854ee8994` |
+| `story-native-nmnb-4a-finalb-5107553670-seed1805.rpy` |53961 |`2c192a7c6289f89310eacb0a8d6cb263ca450e2de1fb093528d6001b853a7cd7` |
+
+Task597 keeps63908 literal inputs of the published Extra lineage and enables
+only `--upper-flow 1` for the terminal205 tail: H128/publication64/replan32,
+cash4, reserve1.2/120, focus10, preserve-fire recovery. Its complete69957-input
+tape hashes `62598246791f1ab6ca1aef0d80dc666d9105f8816e04f1168b39e4ad15c217e2`.
+Wall time is74.4912s,64363+2 branch/proposal updates,498 economic attempts/54
+adoptions. Fresh603 and natural606 pass all terminal, score,14/14 outcomes,
+zero-miss/bomb and eight-byte name checks.
+
+Task595 retains49286 literal inputs from the Stage3 human-road/upper47 scene.
+Its lineage is task503's14529 first-stage inputs, task567's first32721 inputs,
+3500 bomb-free Alan Stage3 gameplay inputs executed at our own seed in578,
+Native adaptation through580, and585's complete upper Sample47 timeout. Failed
+4096-input transfer576 certifies no prefix;578 freshly executes the shorter
+proposal from original entry. Task592's public `--upper-flow 1` reproduces the
+complete585 tape and41-word terminal exactly. The585 standalone binary/source
+correction is retained explicitly in `source-provenance-correction.json` and
+`frozen-bin/online_native_at_link.cpp`, alongside the untouched original manifest.
+No reference RNG or world state is transplanted; no old object is relinked
+against the changed policy header.
+
+After that prefix,595 uses public H256/publication128/replan64/cash4/human5,
+upper-flow1, charge-fire0, normal capture pacing and reserve1.5/240. Its
+146853-input tape hashes
+`d59f144c7943dff00f98b134d5e4defde7cf30a65a032d03eef170105097cfea`.
+It charges978.846s wall,1248015+23 branch/proposal updates,4611 economic
+attempts/621 adoptions,2241 rejected future deaths, and zero search timeouts,
+budget overruns or resource aborts. Fresh600/natural602 agree exactly, including
+the35/37 capture map. It is a complete combined profile; partial gains are not
+added to terminal scores.
+
+All-capture task575 uses the successful Stage2 human-road4096-input proposal
+and Native adaptation through26000, followed by H256/publication256/replan128,
+cash4/human5, original grid and reserve1.5/240. It completes143109 inputs in
+689.318s,750113+13 branch/proposal updates,2752 economic attempts/404 adoptions.
+Fresh588/natural589 pass. Its tape hashes
+`c00240006d7450faf4da2db01738e4d313364c1e625746e1bce0fbaf17a7baca`.
+
+Selected provenance JSONs retain the full controls, exact producer/prefix,
+binary, receipt, DAT and natural-row hashes. Environment remains Release
+GCC12.2.0, C++17, `-ffp-contract=off`, no fast-math, AMD EPYC7B12 and
+Linux6.1.0-54-cloud-amd64 x86_64. Reported Native timing excludes file I/O;
+the complete wall cost is also charged. Each owner obeys the same2GiB limits
+and host memory guards. Fresh execution and source natural replay establish
+execution agreement, not an independent physics oracle or retail equivalence.
+Neither the6B milestone nor either all-shot human reference is reached; no
+retail replay playback is qualified. Focused590 passes2/2; normal Release
+Native/DAT591 passes60/60 in1092.11s;592 covers the complete real-data47 scene.
+
 ### Global-goal continuation: 5.163B story
 
 Task568 improves the complete Magic Team4A→FinalB route to **5,162,703,270,
 0 misses,0 bombs,35/37 captures**. Only32/77 time out; all37 eligible cards are
-encountered. The37/37 best remains5,025,195,380. Original retail seed1805,
+encountered. At that point the37/37 best is5,025,195,380. Original retail seed1805,
 entry receipt SHA-256
 `88516cae49c9c04a2ebc0857f88eb81b3d0ed7277ff4c4c95a1a8b39d55ae133`
 and `ysopwnab` remain unchanged. Both6B and the7,053,332,460 all-shot reference

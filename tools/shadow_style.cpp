@@ -266,6 +266,7 @@ int run(int argc, char **argv) {
             "[--publish-horizon 64|128|256|512|1024|2048] [--held-recovery 0|1] "
             "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
             "[--survival-flow 0|1] [--attack-pacing 0|1] [--farm-to-timeout 0|1] "
+            "[--upper-flow 0|1] "
             "[--farm-charge-fire 0|1] "
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--lead-updates 1..32] "
@@ -304,6 +305,7 @@ int run(int argc, char **argv) {
     bool boss_collection_override = false, precollect_override = false;
     bool survival_bias_override = false;
     bool survival_flow_override = false;
+    bool upper_flow_override = false;
     bool pacing_override = false, attack_bias_override = false, recovery_override = false;
     bool timeout_farm_override = false;
     bool charge_fire_override = false;
@@ -380,6 +382,9 @@ int run(int argc, char **argv) {
         } else if (key == "--farm-to-timeout" && !timeout_farm_override) {
             profile.scoring_farm_to_timeout = number(argv[i + 1], 1);
             timeout_farm_override = true;
+        } else if (key == "--upper-flow" && !upper_flow_override) {
+            profile.scoring_upper_flow = number(argv[i + 1], 1);
+            upper_flow_override = true;
         } else if (key == "--farm-charge-fire" && !charge_fire_override) {
             profile.scoring_farm_charge_fire = number(argv[i + 1], 1);
             charge_fire_override = true;
@@ -714,6 +719,12 @@ int run(int argc, char **argv) {
            << ",\"survival_focus_bias\":" << profile.survival_focus_bias
            << ",\"survival_flow\":" << (profile.scoring_survival_flow ? "true" : "false")
            << ",\"flow_goal_revision\":" << (profile.scoring_survival_flow ? 1 : 0)
+           << ",\"upper_flow\":" << (profile.scoring_upper_flow ? "true" : "false")
+           << ",\"flow_grid_revision\":"
+           << ((profile.scoring_survival_flow || profile.scoring_attack_pacing)
+                   ? (profile.scoring_upper_flow ? 2 : 1)
+                   : 0)
+           << ",\"flow_grid_min_y\":" << (profile.scoring_upper_flow ? 16 : 208)
            << ",\"attack_pacing\":" << (profile.scoring_attack_pacing ? "true" : "false")
            << ",\"attack_pacing_revision\":" << (profile.scoring_attack_pacing ? 2 : 0)
            << ",\"farm_to_timeout\":" << (profile.scoring_farm_to_timeout ? "true" : "false")

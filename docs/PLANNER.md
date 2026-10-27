@@ -260,6 +260,20 @@ contract catches the omission and checks goal direction. The source-survival-onl
 profile still has complete-duration failures in Status.
 The default controller remains unchanged.
 
+Native `--upper-flow 1` extends only the stream proposal grid to130 targets,
+x48..336/y16..400 at the same32-pixel spacing. It defaults off and requires
+survival flow or attack pacing; ordinary recovery clears this setting through
+`with_style`. Bullet filtering, contact/danger arithmetic, body exclusions,
+64-update target cadence and strict-improvement tie order are unchanged. The
+default profile still visits exactly the original70 cells in the original
+order. The upper profile changes possible movement, rather than granting safe
+passage around a live boss. Every actual input still needs a complete Native
+future. Reports record `upper_flow`, `flow_grid_revision` (0 unused,1 original,
+2 upper) and `flow_grid_min_y`. A synthetic cluster beyond the local movement
+horizon tests the new approach direction; the complete real-data47 scene and
+whole-route evidence are recorded in Status and Validation. Earlier approach
+during the damage Probe is a separate rejected experiment, not this control.
+
 The separate opt-in `--attack-pacing 1` uses current source HP-to-callback,
 remaining updates, damage-reduction state, extreme-youkai state, collected orbs,
 orb value and bonus decay. After60 mature observations it estimates DPS from a
