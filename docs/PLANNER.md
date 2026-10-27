@@ -116,6 +116,22 @@ Every replacement still requires a complete Native horizon or the real terminal;
 when no certificate remains, retries keep at most the original8-update spacing.
 Longer budgets are search opportunities, not evidence of better score or safety.
 
+Offline `--spell-horizon H` optionally assigns active spells a different search
+schedule: verification H, publication H/2 and replanning H/4 owned inputs. H is
+a power of two64..2048; zero/default preserves the existing schedule and queue
+lifetime. The ordinary horizon/publication/replan controls then govern roads and
+boss nonspells. Select the profile from the actual owned spell-active state,
+never a forecast's future phase. On an enabled context change, discard only
+unexecuted packets, nominal continuation and receipt history, then search from
+the current receipt. Carried gameplay state/RNG and warmed policy memory remain
+owned by the same session. Enabling the control restarts planning at context
+changes even when both numerical horizons match. Lead, proposal horizon and
+explicit nominal warm length must fit both profiles. Reports retain effective
+schedules, actual context-change counts, discarded future-input counts and
+controlled owner-input counts, excluding the literal prefix. Extra search and
+reconstruction costs remain charged; this changes neither live Wine controls
+nor the whole-route acceptance gate.
+
 `--prefix-actions FILE --prefix-updates N` executes the firstN inputs literally
 from the declared original entry, observing every actual update in both policy
 histories. Fresh planning then continues the same world, RNG, carried projectiles,

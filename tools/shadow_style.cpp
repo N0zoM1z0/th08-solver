@@ -105,6 +105,11 @@ class ExecutedInputCheckpoint {
         return io_ns_;
     }
 };
+// Durations are owned Native inputs, including control-only stage handoffs.
+// This is a search/publication schedule; it never owns or resets gameplay state.
+struct SearchProfile {
+    unsigned horizon, publication, replan;
+};
 struct SearchOptions {
     unsigned horizon = 64, publication = 64, budget_ms = 110;
     bool held_recovery = false, baseline_recovery = false;
@@ -397,7 +402,7 @@ int run(int argc, char **argv) {
             "[--publish-horizon 64|128|256|512|1024|2048] [--held-recovery 0|1] "
             "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
             "[--survival-flow 0|1] [--attack-pacing 0|1] [--farm-to-timeout 0|1] "
-            "[--upper-flow 0|1] "
+            "[--upper-flow 0|1] [--spell-horizon 0|64|128|256|512|1024|2048] "
             "[--farm-charge-fire 0|1] "
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--lead-updates 1..32] "
@@ -430,6 +435,8 @@ int run(int argc, char **argv) {
     config.input_profile = h::InputProfile::SampledGameplay;
     auto profile = o::with_style(style);
     unsigned horizon = 64, publication = 64;
+    unsigned spell_horizon = 0;
+    bool spell_horizon_override = false;
     bool held_recovery = false;
     bool collection_override = false, aim_override = false, horizon_override = false;
     bool form_override = false;
@@ -558,6 +565,11 @@ int run(int argc, char **argv) {
             if (!replan_updates)
                 throw std::runtime_error("empty_native_replan_interval");
             interval_override = true;
+        } else if (key == "--spell-horizon" && !spell_horizon_override) {
+            spell_horizon = number(argv[i + 1], 2048);
+            if (spell_horizon && (spell_horizon < 64 || (spell_horizon & (spell_horizon - 1))))
+                throw std::runtime_error("unsupported_native_spell_verification_horizon");
+            spell_horizon_override = true;
         } else if (key == "--policy-horizon" && !policy_horizon_override) {
             policy_horizon = number(argv[i + 1], 200);
             if (policy_horizon < 2)
@@ -667,6 +679,17 @@ int run(int argc, char **argv) {
     if (profile.scoring_farm_to_timeout &&
         (!profile.scoring_attack_pacing || require_captures || verify_captures))
         throw std::runtime_error("timeout_farming_requires_optional_captures_and_pacing");
+    const SearchProfile road_profile{horizon, publication, replan_updates};
+    // Zero leaves the original schedule and queue lifetime exactly intact.
+    // An enabled spell profile owns its H/2 publication and H/4 retry cadence;
+    // explicit road controls do not silently become spell controls.
+    const SearchProfile spell_profile{spell_horizon ? spell_horizon : horizon,
+                                      spell_horizon ? spell_horizon / 2 : publication,
+                                      spell_horizon ? spell_horizon / 4 : replan_updates};
+    if (spell_horizon && (lead_updates >= spell_profile.publication ||
+                          policy_horizon + lead_updates - 1 > spell_profile.horizon ||
+                          (nominal_warm_updates && nominal_warm_updates > spell_profile.horizon)))
+        throw std::runtime_error("native_spell_profile_exceeds_declared_scope");
     const bool has_prefix_file = !prefix_path.empty();
     if (has_prefix_file != prefix_count_override)
         throw std::runtime_error("native_prefix_requires_actions_and_update_count");
@@ -720,28 +743,57 @@ int run(int argc, char **argv) {
     int last_horizontal = 0, last_vertical = 0;
     std::uint64_t owner_native_ns = 0, owner_io_ns = 0;
     std::string outcome = "budget";
+    bool profile_initialized = false, previous_spell_origin = false;
+    std::uint64_t profile_switches = 0, discarded_pending_inputs = 0;
+    std::uint64_t spell_owner_inputs = 0, road_owner_inputs = 0;
     for (unsigned update = 0; update < maximum_updates; ++update) {
         if (Clock::now() - begin >= std::chrono::seconds(seconds))
             break;
+        const bool spell_origin = session.state().spell_active;
+        const auto &selected = spell_horizon && spell_origin ? spell_profile : road_profile;
+        const unsigned effective_horizon = selected.horizon;
+        const unsigned effective_publication = selected.publication;
+        const unsigned effective_replan = selected.replan;
+        bool force_profile_search = false;
+        if (update >= prefix_updates) {
+            if (spell_horizon && (!profile_initialized || previous_spell_origin != spell_origin)) {
+                if (profile_initialized) {
+                    ++profile_switches;
+                    discarded_pending_inputs += queue.size();
+                    // Offline future packets have not been executed. Restart
+                    // planning at the exact current receipt when its search
+                    // profile changes. Preserve Native actors, RNG, bullets,
+                    // lifecycle and policy observer memory without modification.
+                    queue = s::ActionBuffer(actual, allow_bombs);
+                    previous = {};
+                    nominal = {};
+                    history.clear();
+                }
+                profile_initialized = true;
+                previous_spell_origin = spell_origin;
+                force_profile_search = true;
+            }
+        }
         // Offline execution may consume a larger verified block. With no
         // certificate available, retain the original at-most-eight-update
         // retry spacing rather than blindly holding through the long interval.
-        const auto interval = queue.next() ? replan_updates : std::min(8u, replan_updates);
-        if (update >= prefix_updates && actual.sequence - last_search >= interval &&
-            queue.size() <= publication - replan_updates) {
+        const auto interval = queue.next() ? effective_replan : std::min(8u, effective_replan);
+        if (update >= prefix_updates &&
+            (force_profile_search || (actual.sequence - last_search >= interval &&
+                                      queue.size() <= effective_publication - effective_replan))) {
             last_search = actual.sequence;
             const SearchOptions options{
-                horizon,       publication,          budget_ms,
-                held_recovery, baseline_recovery,    recovery_fire == "capture",
-                lead_updates,  nominal_warm_updates, economic_proposals,
-                allow_bombs,   economic_movement};
+                effective_horizon, effective_publication, budget_ms,
+                held_recovery,     baseline_recovery,     recovery_fire == "capture",
+                lead_updates,      nominal_warm_updates,  economic_proposals,
+                allow_bombs,       economic_movement};
             auto p = search(session, policy, safety, queue, previous, nominal,
                             {config.story, -1, verify_captures, allow_bombs}, options, work);
             if (p.certifies()) {
-                if (!queue.replace(p, {}, publication))
+                if (!queue.replace(p, {}, effective_publication))
                     throw std::runtime_error("native_style_certificate_rejected");
                 previous = std::move(p);
-            } else if (horizon > publication && previous.certifies() &&
+            } else if (effective_horizon > effective_publication && previous.certifies() &&
                        queue.size() >= lead_updates &&
                        actual.sequence >= previous.origin.sequence) {
                 const auto consumed = actual.sequence - previous.origin.sequence;
@@ -750,7 +802,7 @@ int run(int argc, char **argv) {
                     const auto pending = queue.size();
                     // Reuse only an earlier complete certificate. The failed
                     // extension contributes no prefix, even if it ran safely.
-                    if (queue.extend(previous, executed, publication)) {
+                    if (queue.extend(previous, executed, effective_publication)) {
                         ++retained_windows;
                         retained_inputs += queue.size() - pending;
                     }
@@ -782,9 +834,9 @@ int run(int argc, char **argv) {
         const bool certified = queue.next() != nullptr;
         if (!queue.confirm(actual) && certified)
             throw std::runtime_error("native_style_certificate_execution_mismatch");
-        if (horizon > publication) {
+        if (effective_horizon > effective_publication) {
             history.push_back(actual);
-            if (history.size() > horizon)
+            if (history.size() > effective_horizon)
                 history.pop_front();
         }
         moving += bool(input & 0xf0);
@@ -801,6 +853,10 @@ int run(int argc, char **argv) {
             last_vertical = vertical;
         }
         actions.push_back(input);
+        // Count actual owned inputs after receipt agreement, excluding the
+        // literal prefix. Planning attempts and discarded futures are separate.
+        if (update >= prefix_updates)
+            (spell_origin ? spell_owner_inputs : road_owner_inputs)++;
         h::score_audit_observe();
         // Store the actual consumed input after receipt agreement, including
         // any later-declared failing input. A flushed count is not a certificate.
@@ -931,6 +987,18 @@ int run(int argc, char **argv) {
            << ",\"economic_adoptions\":" << work.economic_adoptions
            << ",\"economic_movement\":" << economic_movement
            << ",\"economic_movement_revision\":" << (economic_movement ? 1 : 0)
+           << ",\"spell_profile_revision\":" << (spell_horizon ? 1 : 0)
+           << ",\"road_verify_horizon\":" << road_profile.horizon
+           << ",\"road_publication\":" << road_profile.publication
+           << ",\"road_replan\":" << road_profile.replan
+           << ",\"spell_horizon_requested\":" << spell_horizon
+           << ",\"spell_verify_horizon\":" << spell_profile.horizon
+           << ",\"spell_publication\":" << spell_profile.publication
+           << ",\"spell_replan\":" << spell_profile.replan
+           << ",\"profile_switches\":" << profile_switches
+           << ",\"discarded_pending_inputs\":" << discarded_pending_inputs
+           << ",\"spell_owner_inputs\":" << spell_owner_inputs
+           << ",\"road_owner_inputs\":" << road_owner_inputs
            << ",\"motion_economic_attempts\":" << work.motion_economic_attempts
            << ",\"motion_economic_adoptions\":" << work.motion_economic_adoptions
            << ",\"held_recovery\":" << (held_recovery ? "true" : "false")

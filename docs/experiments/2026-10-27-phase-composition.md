@@ -927,10 +927,10 @@ added to either verified record.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1099|`vps-scarlet-luna-new4a5-parent1094-reserve1p2-full-v5`|running/unresolved|—|—/37|—|
-|1100|`vps-scarlet-luna-new4a5-parent1094-reserve1p5-full-v5`|running/unresolved|—|—/37|—|
-|1101|`vps-scarlet-luna-new4a5-parent1095-reserve1p2-full-v5`|running/unresolved|—|—/37|—|
-|1102|`vps-scarlet-luna-new4a5-parent1095-reserve1p5-full-v5`|running/unresolved|—|—/37|—|
+|1099|`vps-scarlet-luna-new4a5-parent1094-reserve1p2-full-v5`|complete|5997057550|36/37|0|
+|1100|`vps-scarlet-luna-new4a5-parent1094-reserve1p5-full-v5`|complete|5922143730|36/37|0|
+|1101|`vps-scarlet-luna-new4a5-parent1095-reserve1p2-full-v5`|complete|6003848080|36/37|0|
+|1102|`vps-scarlet-luna-new4a5-parent1095-reserve1p5-full-v5`|complete|5983266810|36/37|0|
 
 
 After17's new incoming world,25's feedback/focused and shoot/focused variants
@@ -938,6 +938,137 @@ After17's new incoming world,25's feedback/focused and shoot/focused variants
 still trail the human2730 and need a new29 continuation and complete-route
 checks. No partial or below-record replay is selected. Documentation1096 passes;
 public C++ runtime is unchanged at this record publication, with normal83160/60.
+
+## Verified6.130B recombination
+
+Task1114 is freshly verified at **6,130,475,890,NMNB34/37**,10/54/74 timeouts.
+Fresh1125/natural1126 pass all eight completion,41-word terminal, exact score,
+no-miss/bomb, capture-outcome and name gates. It adds110,762,090 over1047,
+leaving369,524,110 to6.5B. Its65335-byte replay SHA-256 is
+fc730a9ffee86a45f2dfba8951dbd26d82927dd04c9b583419b5fb81b64662d9; actions
+a84a6f2eff8d090dc1998df6deb1191d5e4aa9dc439058cf806f7635c4346740.
+
+Retain1047's actual116226 inputs through the first five stages. At FinalB entry
+that world has3,161,704,460/PIV1028490. Public H256/parent100/human5/collection5/
+cash4 then reaches first151 (1107,121103 inputs). Its **owner** cash is
+3,945,539,370 versus1047's3,844,297,550 at its first151 owner receipt121222;
+the inner audit has a slightly earlier value and is not substituted for this
+comparison. There are352 versus308 Stage7 points at entry, and441 versus398
+at final clear. Earlier450-point routes demonstrate a different incoming world,
+not a promised nine further pickups in this one. Public H128/publication64/
+replan32/cash4/movement4/reserve1.2+120 completes the actual route.
+
+The public frozen tail ELF remains
+23c0ad8d01f9cf09b055b71911f5ad2859a31ffe9ebefcba37e2b2a0a99f9a4f.
+Producer work is160589 actual inputs,675421 branch/1 proposal update,1234
+searches,3798 economic attempts/360 adoptions,3536 movement attempts/235
+adoptions,666.584s concurrent wall. All earlier private NPC/profile construction,
+prefix, trial and transfer/verification costs stay charged. The other three
+full tails are lower; none gets another selected replay.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1114|`vps-scarlet-luna-pb6019-publictail-parent1107-reserve1p2-full-v6`|complete|6130475890|34/37|0|
+|1115|`vps-scarlet-luna-pb6019-publictail-parent1107-reserve1p5-full-v6`|complete|6091743200|34/37|0|
+|1116|`vps-scarlet-luna-pb6019-publictail-parent1108-reserve1p2-full-v6`|complete|6073076350|34/37|0|
+|1117|`vps-scarlet-luna-pb6019-publictail-parent1108-reserve1p5-full-v6`|complete|6035960190|34/37|0|
+
+
+Earlier four-stage recombinations1099–1102 all complete36/37, best1101 at
+6,003,848,080, below the then6.019B overall record. They are useful capture/
+world-coupling evidence, but the owner requested only overall-record replay
+retention. No separate shot/capture-category replay is selected.
+
+## General CLI implementation and verification
+
+The default-off **public** offline `--spell-horizon` option now implements the
+measured scheduling mechanism; human-reference/NPC adapters remain private.
+A small typed SearchProfile owns verification/publication/replan durations in
+Native owner inputs. H is64..2048, powers of two; an enabled active-spell profile
+uses H/H2/H4, while ordinary controls own roads/nonspells. Zero leaves existing
+queue lifetimes and schedules unchanged. Actual spell-active transitions clear
+only unexecuted packets, previous nominal continuation and receipt history,
+then search at the current receipt. The same Native session and warmed policy/
+safety observers retain the real actors, RNG, bullets, gauge and rewards.
+Explicit lead, proposal horizon and nominal warm length must fit **both**
+profiles before any Native initialization. Partial owners cannot export replays.
+
+Build1104 passes in9.465s. Real-data focused1105 passes in167.245s: malformed,
+duplicate and incompatible controls fail; omitted/zero controls generate the
+same complete short action tape and41 words; an enabled profile crosses a real
+spell boundary and its new tape freshly reexecutes to all41 words under NMNB.
+That fixture observes one switch/34 discarded unexecuted inputs,30 controlled
+nonspell and162 controlled spell inputs. The partial remains budget/ineligible
+and exports no replay. Full normal1109 passes **60/60 in874.14s**, two CTests,
+peak tree RSS1107468288/minimum host available49070538752 bytes. No public build
+is relinked during either test. The tested CLI SHA-256 is
+`eb8edbf5129a846246cba32efbcdcdbe6ea89fa3f11f64dcb077ab295ab8c928`.
+All search, discarded-input and reconstruction costs remain visible; no live
+Wine scheduling or Native gameplay kernel changes are introduced.
+
+Read-only probe1106 costs10.706s and maps all37 current6.019B boundaries with
+all41 terminal words unchanged. Its actual stage entries are15786/35210/56066/
+87098/116226 for raw1/2/3/5/7. These receipts qualify the new input prefixes;
+audit calculation clocks are not silently used as owner coordinates.
+
+## Capture form and carried gauge across17→25→29
+
+Build1110 compares human600, focused600 and focused900 capture on17 from the
+same current-record22250-input world. The1111 human control reproduces884's
+**entire action tape and41-word terminal**, not merely its orb count. It gets
+2922 orbs/capture and exits at−10000 gauge. Focused600 (1112) captures4795 orbs,
+13,680,560 bonus and exits+10000 after23744 inputs; focused900 (1113) captures
+3175/13,222,980 and exits+10000 at23472. All enter at−9520. This is a genuine
+matched configuration experiment, with source damage and option anchors intact;
+a high local orb count is still not a combined-route score.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1111|`vps-scarlet-luna-phase17-gauge-v7-r600-humancapture`|phase_boundary|—|—|—|23911|
+|1112|`vps-scarlet-luna-phase17-gauge-v7-r600-focusedcapture`|phase_boundary|—|—|—|23744|
+|1113|`vps-scarlet-luna-phase17-gauge-v7-r900-focusedcapture`|phase_boundary|—|—|—|23472|
+
+
+Build1118 reuses the original915/917 proposal/online objects and adds signed
+entry/exit-gauge telemetry to two CLI objects,14.069s, unchanged Native kernel.
+Recompute25 after the human control and both new17 worlds. Ordinary21/road
+control spends much of the incoming gauge:25 enters−4402 after1111 versus
+−3662/−3669 after1112/1113. The+10000 at17 exit did **not** remain+10000 at25.
+The mechanism is therefore tested along the whole chain instead of assumed.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1119|`vps-scarlet-luna-after17-1111-phase25-gauge-v8-feedback`|phase_boundary|captured|750|7412260|31794|
+|1120|`vps-scarlet-luna-after17-1111-phase25-gauge-v8-shoot`|phase_boundary|captured|534|8184730|31412|
+|1121|`vps-scarlet-luna-after17-1112-phase25-gauge-v8-feedback`|phase_boundary|captured|1437|12855990|31126|
+|1122|`vps-scarlet-luna-after17-1112-phase25-gauge-v8-shoot`|phase_boundary|captured|1770|14935990|30671|
+|1123|`vps-scarlet-luna-after17-1113-phase25-gauge-v8-feedback`|phase_boundary|timeout|1292|0|31136|
+|1124|`vps-scarlet-luna-after17-1113-phase25-gauge-v8-shoot`|phase_boundary|captured|1209|14719660|30514|
+
+
+The shoot/focused25 case1122 after1112 captures1770 orbs, exits+10000 and banks
+332,083,340 at30671 inputs, versus matched-control534/+588/327,197,250 at31412.
+Feedback1121 captures1437 and exits+10000, another real incoming world.1123
+is a timeout and remains charged. The next6 components recompute feedback/
+shooting29 from control1120 and candidates1121/1122, using original919/921
+proposal objects plus the same read-only gauge schema. Build1127 costs11.246s;
+these are actual partial29 runs with no replay or full-score qualification.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1128|`vps-scarlet-luna-after25-1120-phase29-gauge-v9-feedback`|running/unresolved|—|—|—|—|
+|1129|`vps-scarlet-luna-after25-1120-phase29-gauge-v9-shoot`|running/unresolved|—|—|—|—|
+|1130|`vps-scarlet-luna-after25-1121-phase29-gauge-v9-feedback`|running/unresolved|—|—|—|—|
+|1131|`vps-scarlet-luna-after25-1121-phase29-gauge-v9-shoot`|running/unresolved|—|—|—|—|
+|1132|`vps-scarlet-luna-after25-1122-phase29-gauge-v9-feedback`|running/unresolved|—|—|—|—|
+|1133|`vps-scarlet-luna-after25-1122-phase29-gauge-v9-shoot`|running/unresolved|—|—|—|—|
+
+
+Documentation attempt1134 followed a failed private template generation
+(unescaped Markdown backticks). Its basic documentation check passed against
+the old output and is not accepted for the new prose. The escaping is fixed,
+all maintained outputs regenerated, and the documentation check rerun before
+publication; no Native code or gameplay result is changed by that repair.
 
 ## Source accounting and operating record
 

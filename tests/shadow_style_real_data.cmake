@@ -25,6 +25,11 @@ if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_prefix_requires")
   message(FATAL_ERROR "Unpaired checkpoint controls were accepted: ${rejected} ${error}")
 endif()
 foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-proposals;5"
+                          "--spell-horizon;4" "--spell-horizon;96"
+                          "--spell-horizon;64;--lead-updates;32"
+                          "--spell-horizon;128;--spell-horizon;128"
+                          "--verify-horizon;256;--spell-horizon;64;--policy-horizon;128"
+                          "--verify-horizon;256;--spell-horizon;64;--nominal-warm-updates;80"
                           "--economic-movement;5"
                           "--economic-movement;1;--economic-movement;1"
                           "--farm-to-timeout;1"
@@ -100,6 +105,88 @@ if(NOT partial_inputs STREQUAL expected_partial_inputs OR
    EXISTS "${WORK}/partial-checkpoint/native.rpy")
   message(FATAL_ERROR "A partial input checkpoint certified a replay or changed its executed inputs: ${partial_report} ${partial_metadata}")
 endif()
+# Cross the first real spell boundary from the complete fixture's actual world.
+# Compare omitted/zero controls byte-for-byte; an enabled shorter profile must
+# preserve the prefix and replay its newly planned suffix to the same 41 words.
+# These owners deliberately stop early: changing profiles cannot certify a run
+# or export a replay merely because its checked futures were safe.
+file(READ "${WORK}/score-audit.json" profile_source_audit)
+string(REGEX MATCH "\"card\":2,[^}]*\"start_update\":([0-9]+)" profile_spell "${profile_source_audit}")
+if(NOT profile_spell OR CMAKE_MATCH_1 LESS 32)
+  message(FATAL_ERROR "Complete source fixture has no usable first-spell boundary")
+endif()
+math(EXPR profile_prefix "${CMAKE_MATCH_1} - 32")
+math(EXPR profile_limit "${profile_prefix} + 192")
+foreach(profile_mode IN ITEMS default disabled active)
+  set(profile_options)
+  if(profile_mode STREQUAL "disabled")
+    set(profile_options --spell-horizon 0)
+  elseif(profile_mode STREQUAL "active")
+    set(profile_options --spell-horizon 64)
+  endif()
+  set(profile_run "${WORK}/profile-${profile_mode}")
+  execute_process(COMMAND "${SOLVER}" "${DAT}" "${profile_run}" 0 3 1 23035 score ${profile_limit} 0 180
+    --prefix-actions "${WORK}/plan.actions" --prefix-updates ${profile_prefix}
+    --verify-horizon 128 --publish-horizon 64 --lead-updates 1 --replan-updates 32
+    --nominal-warm-updates 1 --search-budget-ms 2000 --held-recovery 1 --baseline-recovery 1
+    --allow-bombs 0 --require-all-captures 0 ${profile_options}
+    RESULT_VARIABLE profile_result OUTPUT_VARIABLE profile_stdout ERROR_VARIABLE profile_stderr TIMEOUT 60)
+  if(NOT profile_result STREQUAL "2")
+    message(FATAL_ERROR "Profile owner changed partial-run failure meaning: ${profile_mode} ${profile_result} ${profile_stdout} ${profile_stderr}")
+  endif()
+  file(READ "${profile_run}/result.json" profile_report)
+  file(STRINGS "${profile_run}/plan.actions" profile_inputs)
+  list(SUBLIST profile_inputs 0 ${profile_prefix} profile_actual_prefix)
+  list(SUBLIST prefix_inputs 0 ${profile_prefix} profile_expected_prefix)
+  if(NOT profile_actual_prefix STREQUAL profile_expected_prefix OR
+     NOT profile_report MATCHES "\"outcome\":\"budget\"" OR
+     NOT profile_report MATCHES "\"updates\":${profile_limit}," OR
+     NOT profile_report MATCHES "\"no_miss\":true," OR
+     NOT profile_report MATCHES "\"bombs_used\":0," OR
+     NOT profile_report MATCHES "\"replay_exported\":false" OR
+     EXISTS "${profile_run}/native.rpy")
+    message(FATAL_ERROR "Profile owner altered its prefix, escaped NMNB or certified an incomplete run: ${profile_report}")
+  endif()
+  string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" profile_projection "${profile_report}")
+  set(profile_projection "${CMAKE_MATCH_1}")
+  if(profile_mode STREQUAL "default")
+    file(SHA256 "${profile_run}/plan.actions" profile_default_hash)
+    set(profile_default_projection "${profile_projection}")
+  elseif(profile_mode STREQUAL "disabled")
+    file(SHA256 "${profile_run}/plan.actions" profile_disabled_hash)
+    if(NOT profile_disabled_hash STREQUAL profile_default_hash OR
+       NOT profile_projection STREQUAL profile_default_projection OR
+       NOT profile_report MATCHES "\"profile_switches\":0," OR
+       NOT profile_report MATCHES "\"discarded_pending_inputs\":0,")
+      message(FATAL_ERROR "Zero spell horizon changed the default input tape or terminal: ${profile_report}")
+    endif()
+  else()
+    foreach(pair IN ITEMS "road_verify_horizon:128" "road_publication:64" "road_replan:32"
+                          "spell_verify_horizon:64" "spell_publication:32" "spell_replan:16")
+      string(REPLACE ":" ";" parts "${pair}")
+      list(GET parts 0 key)
+      list(GET parts 1 value)
+      if(NOT profile_report MATCHES "\"${key}\":${value},")
+        message(FATAL_ERROR "Profile effective schedule missing ${pair}: ${profile_report}")
+      endif()
+    endforeach()
+    if(NOT profile_report MATCHES "\"profile_switches\":[1-9][0-9]*," OR
+       NOT profile_report MATCHES "\"road_owner_inputs\":[1-9][0-9]*," OR
+       NOT profile_report MATCHES "\"spell_owner_inputs\":[1-9][0-9]*,")
+      message(FATAL_ERROR "Profile fixture did not cross a real spell boundary: ${profile_report}")
+    endif()
+    execute_process(COMMAND "${FOLLOWER}" --dat "${DAT}" --actions "${profile_run}/plan.actions"
+      --output "${profile_run}/fresh.json" --stage 1 --difficulty 3 --shot 1 --seed 23035
+      --story 0 --input-profile sampled-gameplay --frames ${profile_limit}
+      RESULT_VARIABLE profile_fresh_result OUTPUT_VARIABLE profile_fresh_stdout ERROR_VARIABLE profile_fresh_stderr TIMEOUT 60)
+    file(READ "${profile_run}/fresh.json" profile_fresh)
+    string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" profile_fresh_projection "${profile_fresh}")
+    if(NOT profile_fresh_result STREQUAL "0" OR profile_projection STREQUAL "" OR
+       NOT profile_projection STREQUAL CMAKE_MATCH_1)
+      message(FATAL_ERROR "Profile change failed fresh exact Native execution: ${profile_fresh_result} ${profile_fresh_stdout} ${profile_fresh_stderr} ${profile_fresh}")
+    endif()
+  endif()
+endforeach()
 # Exercise the opt-in comparison inside a real active spell, independently of
 # fire/form proposals. The original complete fixture owns this literal prefix;
 # the new owner must execute it unchanged and may certify only its new futures.

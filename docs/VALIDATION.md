@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **6,019,713,800,34/37**,10/54/74 timeouts
-(1047, fresh1097/natural1098). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **6,130,475,890,34/37**,10/54/74 timeouts
+(1114, fresh1125/natural1126). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
@@ -241,7 +241,7 @@ inputs in652.006s,656346 branch and2 proposal updates. Its61846-byte replay
 SHA-256 is `221de1fc5c181ebb104a49dba503908b4d64fa0543f3a60b132a2a951366ad06`, actions
 `165c213753871e73d416e07f2f348bb2f3e61765de96fdce188677f02411f4f6`. Fresh1051/natural1052
 pass all checks;35/37 captures retain10/77 timeouts,0 misses and0 bombs.
-New6.020B task1047 is a different composition from the same original episode:
+Preceding6.020B task1047 is a different composition from the same original episode:
 retain877's first35210 inputs to raw2 entry, then private NPC-clock guidance
 on raw2/3/5/7 with immutable human X (zero Native-target blend), preserving the
 proven initial4500-frame Stage3 boss-nonspell recipe. Nonspells/roads use
@@ -259,6 +259,20 @@ The actual private producer SHA-256 is
 bec5b40 over the unchanged source kernel and pinned GCC12/libc/loader closure.
 Both source hashes and the original receipt are bound by the progress/journal
 metadata; the NPC demonstration is proposal guidance, not transplanted state.
+New6.130B task1114 retains1047's actual first116226 inputs through the first
+five stages, banking3,161,704,460/PIV1028490 at FinalB entry. Task1107 reapplies
+public H256/publication128/replan64/parent100/human5/collection5/cash4 to first151
+at121103 inputs, banking3,945,539,370. Public H128/publication64/replan32/cash4/
+movement4/reserve1.2+120 then completes6,130,475,890,NMNB34/37 (10/54/74 timeout).
+Fresh1125/natural1126 pass all eight gates;441 FinalB points versus398 in1047
+are actually collected. Its65335-byte replay SHA-256 is
+`fc730a9ffee86a45f2dfba8951dbd26d82927dd04c9b583419b5fb81b64662d9`, actions
+`a84a6f2eff8d090dc1998df6deb1191d5e4aa9dc439058cf806f7635c4346740`.
+The frozen public tail producer hash is
+`23c0ad8d01f9cf09b055b71911f5ad2859a31ffe9ebefcba37e2b2a0a99f9a4f`; its prefix retains the earlier
+private NPC/profile lineage. Actual work is160589 owner inputs,675421 branch/
+1 proposal update,1234 searches and666.584s concurrent wall, with all prefix,
+prior component and failed/lower trial costs retained in the campaign ledger.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.
@@ -354,6 +368,7 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | Control | Default | Accepted Native range |
 | --- | ---: | --- |
 | `--verify-horizon` |64 | Powers of two64..2048 |
+| `--spell-horizon` |0 | Optional active-spell verification H64..2048, publication H/2, replan H/4; zero preserves the original schedule |
 | `--publish-horizon` |64 | Powers of two64..2048, at most verification |
 | `--search-budget-ms` |110 |1..60000 per search |
 | `--lead-updates` |8 |1..32, below publication |
