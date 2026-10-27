@@ -3,7 +3,7 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
-> **Native NMNB scores: Extra 2,891,728,530 (14/14); Lunatic story 4,469,021,890 (37/37).**
+> **Native NMNB scores: Extra 2,979,939,680 (14/14); Lunatic story 4,827,562,920 (36/37).**
 > Preserved progress: [Extra 2.620B replay](reports/native/replays/extra-native-nmnb-2620568090-seed46997.rpy) · [Story 4.311B replay](reports/native/replays/story-native-nmnb-4a-finalb-4311260760-seed1805.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
@@ -19,13 +19,13 @@ and form control. Bomb permission and capture requirements are independent
 | --- | ---: | ---: | ---: |
 | Online Lunatic 4A → Final B | 2,189,965,070 | Alan: 6,168,365,790 | 33/37 |
 | Online Extra | 1,166,969,620 | ASL: 3,021,639,920 | 14/14 |
-| **Native Extra** | **2,891,728,530** | ASL: 3,021,639,920 | **14/14** |
-| **Native Lunatic 4A → Final B** | **4,469,021,890** | Alan: 6,168,365,790 | **37/37** |
-| Preserved capture-optional Native story | 4,444,083,080 | Alan: 6,168,365,790 | 36/37 |
+| **Native Extra** | **2,979,939,680** | ASL: 3,021,639,920 | **14/14** |
+| **Native Lunatic 4A → Final B** | **4,827,562,920** | Alan: 6,168,365,790 | **36/37** |
+| All-capture Native story | 4,708,495,930 | Alan: 6,168,365,790 | 37/37 |
 
 The latest Native results have fresh execution and natural replay agreement;
-their player name is `ysopwnab`. Both latest bests capture all eligible spells;
-the preserved capture-optional story times out card58. New replay bytes stay local; their exact identities
+their player name is `ysopwnab`. The highest story times out card77; its
+all-capture alternative remains separate. New replay bytes stay local; their exact identities
 are in [Validation](docs/VALIDATION.md#october27-verified-native-progress).
 The next Native milestones are Extra above3B and complete Lunatic above5B;
 the dated human references remain separate targets.

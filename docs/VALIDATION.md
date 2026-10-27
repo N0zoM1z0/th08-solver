@@ -186,6 +186,19 @@ complete terminal score and per-stage item production/price together; a higher
 kill count alone cannot select a replay. [Planner](PLANNER.md#price-aware-positioning)
 owns coordinates, ranking, priority and snapshot lifetime.
 
+Native `--parent-chain-bias 100 --drop-target 1` names the first adaptive parent
+experiment. Zero restores the historical proposal. Positive values exclude
+attached-child lanes and prefer focused shots at a root with a current chain,
+temporarily superseding its human/hit-income goal; actual item trips still win.
+Revision2 waits until fewer than24 root-reduction updates remain and yields
+form to any full pending pickup batch, including when bullet density delays
+the collection movement gate. The snapshot copies only the signed update count.
+Reports include `parent_chain_focus_bias` and `parent_chain_revision`. The value
+is a soft preference cost, not a forced form or a safety certificate. Keep the
+original seed, literal prefix and all Native rollout costs; evaluate complete
+score, exact capture outcomes and source point production. The root cue is
+snapshot-only and predicts no guaranteed child reward.
+
 Refiner `--family bomb --allow-bombs 1` compares human/focused X windows against
 the complete incumbent terminal. Use `--window 1` for a one-update pulse and
 `--first-update N` to begin trials at a declared owner-input index (default64).
@@ -225,8 +238,50 @@ the external replay remains local.
 
 ## October27 verified Native progress
 
-The latest source-guided continuations reach **Extra2,891,728,530,NMNB14/14**
-and **complete story4,469,021,890,NMNB37/37**. Neither reaches the
+Current verified bests are **Extra2,979,939,680,NMNB14/14** and **complete
+story4,827,562,920,NMNB36/37**. Only card77 times out in that story; the separate
+all-capture route reaches4,708,495,930,37/37. Both new Native3B/5B milestones
+remain unmet. Seed receipts46997/1805, full-entry history and `ysopwnab` are
+unchanged. No Wine playback is launched.
+
+The selected local directory below also contains these exact exports:
+
+| Local replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-native-nmnb-2979939680-seed46997.rpy` |29446 |`5f279c472bea6e148ce151a292aca59735ef6d478a899e39606ec857544bfe6c` |
+| `extra-native-nmnb-2978088160-seed46997.rpy` |29453 |`2b060437ede1cd9f81da33d97331faa0703ab6dc99744751f381807207f24f68` |
+| `story-native-nmnb-4a-finalb-4827562920-seed1805.rpy` |54042 |`cd86d2785d0f9c08ada25d3c774ff1d8af6213eb8eff531b787f8e413c13cde3` |
+| `story-native-nmnb-4a-finalb-4708495930-seed1805.rpy` |52909 |`ff591f56d44dc2853bb9e4989948f72df0d3151b65b8e74f8f2c1410a8056c70` |
+
+`target-extra-early-income-follow-tail-v1/` retains16187 inputs (card194 end+200)
+of the measured193-farm2.891B tape, then uses H128/publication64/replan32,
+focus10/reserve1.2/120/drop-follow/cash4. `target-extra-last205-flow-v1/` retains
+63200 of its inputs and enables survival flow for the final205 continuation.
+The full69277-input tapes hash to
+`51051ff465852e48e77ed23499bdbb4cbba104193afc63204b2ea474cf462afa` and
+`41abb2efdf0ebe998b18da3d1bc960f3c79a13cdeed8b6e3f68ca590c5f91e58`.
+The inherited early prefix keeps its earlier private pulse/repair provenance;
+this does not claim a new public full-entry parent.
+
+`target-story-parent-full-v1/` retains14409 inputs of the4.469B tape and uses
+the first parent100 proposal. `target-story-parent-finalb-cash-h256-v2/`
+retains its first105673 inputs, including the ordinary Last Spell77 timeout,
+then uses revision2 parent100/H256/publication128/replan64/cash4. The new gates
+preserve root reduction income and pending-item human form. Its full144885-input
+tape hashes to `727d41b17ec8839e39402e233dd836664f290b482a06c9f9e5605e9526d920a1`.
+The all-capture `target-story-parent-full-v2/` instead retains14409 original
+inputs and applies revision2/H128/publication64/replan32 without cash comparisons;
+its full145197-input tape hashes to
+`f4533b8ac8a50dd07a89c839a6002f7e7b48d690aa6e740da6ccc9989d969dfb`.
+Both use reserve1.5/240 and capture-fire recovery. Each selected export has fresh
+original-entry exact41-word terminal and natural original-writer
+score/NMNB/exact spell outcomes/name agreement. These remain execution checks,
+not an independent physics or retail oracle. Revision2 passes normal Release
+Native/DAT CTest60/60 in1133.27s; the obsolete revision1 test owner is explicitly
+interrupted and charged, not reported as passed. New artifacts remain local.
+
+Earlier source-guided continuations reach Extra2,891,728,530,NMNB14/14
+and complete story4,469,021,890,NMNB37/37. Neither reaches the
 owner's new3B/5B milestone or its historical human reference. Seed receipts,
 entry/history and `ysopwnab` are unchanged; no Wine replay is launched.
 
@@ -733,7 +788,7 @@ documentation-only cleanup requires the documentation CTest. These helper/receip
 copy; a clone contains the selected replays and maintained provenance, not the
 ignored local producers and action tapes.
 
-The following records the public2.620B suffix profile using the current highest
+The following records the public2.620B suffix profile using its preserved
 full input tape. It is a reproduction example, not a reason to rerun a settled
 case. Clone the spec to a unique name and record why any new controls/prefix
 change when designing a new experiment. These Node scripts are local campaign
@@ -799,9 +854,10 @@ That strict checker requires fresh verification output and checks original-entry
 eight-byte name. Optional-capture outputs instead compare their exact capture
 count/outcomes; do not run the strict helper unchanged or interpret a missing
 capture as a verifier failure under the relaxed goal. The current local
-`reports/local/human-score-research-20261026/run-guarded.cjs` binds entry receipts,
-source/binary/argument identities and memory limits for parameterized trials;
-`no-bomb-optional-captures-v1.json` records the latest two profiles. Preserve exact
+`reports/local/target-3b5b-20261027/run-guarded.cjs` binds entry receipts,
+source/binary/argument identities and memory limits for parameterized trials.
+The current source/parent/cash profiles and explicit pending owners are listed
+in Status; historical specs keep their original goal identities. Preserve exact
 selected original-writer bytes. A lower/partial/
 resource-aborted run remains charged and local. Do not edit NaN slowdown metadata
 into a fabricated measured percentage. Current frozen success/negative profiles

@@ -32,6 +32,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_hit_income = false;
     configuration.scoring_drop_target = false;
     configuration.scoring_drop_follow = false;
+    configuration.parent_chain_focus_bias = 0;
     configuration.scoring_boss_collection = false;
     configuration.scoring_precollect = false;
     configuration.scoring_priced_collection = configuration.scoring_upper_stage = false;
@@ -319,6 +320,7 @@ struct Policy::Impl {
     std::uint64_t last_observed = UINT64_MAX;
     std::uint64_t last_decided = UINT64_MAX;
     bool collecting = false;
+    bool parent_chain_focus = false;
     float proposal_focus_bias = 0;
     float collection_x = 192;
     bool preparing_collection = false;
@@ -336,10 +338,11 @@ struct Policy::Impl {
         : opt(configuration), proposal_style(configuration.style), risk(std::move(tables)),
           value_model(std::move(value)) {
         const auto &w = opt.style;
-        for (float cost : {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost,
-                           w.move_cost, w.focused_move_cost, w.reversal_cost, w.edge_cost,
-                           w.graze_reward, opt.survival_focus_bias, opt.attack_focus_bias,
-                           opt.collection_focus_bias, opt.economic_human_bias})
+        for (float cost :
+             {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost, w.move_cost,
+              w.focused_move_cost, w.reversal_cost, w.edge_cost, w.graze_reward,
+              opt.survival_focus_bias, opt.attack_focus_bias, opt.collection_focus_bias,
+              opt.economic_human_bias, opt.parent_chain_focus_bias})
             if (!std::isfinite(cost) || cost < 0 || cost > 10000)
                 throw std::runtime_error("invalid_online_style_cost");
         for (float coordinate : {w.anchor_x, w.anchor_y, w.anchor_x_min, w.anchor_x_max})
@@ -361,6 +364,8 @@ struct Policy::Impl {
             throw std::runtime_error("timeout_farming_requires_attack_pacing");
         if (opt.scoring_drop_follow && !opt.scoring_drop_target)
             throw std::runtime_error("drop_follow_requires_drop_target");
+        if (opt.parent_chain_focus_bias > 0 && !opt.scoring_drop_target)
+            throw std::runtime_error("parent_chain_requires_drop_target");
         if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
             (value_model.loaded &&
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
@@ -784,6 +789,24 @@ struct Policy::Impl {
                 impending && collecting && observation.y > collection_goal_y(observation);
         }
         proposal_focus_bias = opt.focus_bias;
+        // Source youkai alignment makes attached familiars non-hittable, so a
+        // root can die with more of its chain intact. This default-off prior
+        // trades human shot-hit income for that opportunity; it guarantees
+        // neither a kill nor the future chain reward. Recompute it every update
+        // so a removed root, boss transition or pickup trip immediately releases
+        // both form and aim back to their ordinary owners.
+        // Retain human hit-income guidance while the selected root still has
+        // at least24 reduction updates, matching the Native income window.
+        // A full pending pickup batch also yields form even when bullet density
+        // delays the collection trip: source auto-attraction can collect those
+        // items before that movement gate opens, fixing their actual price.
+        const auto &score = observation.scoring;
+        parent_chain_focus =
+            opt.parent_chain_focus_bias > 0 && score.can_switch_forms && !collecting &&
+            !score.has_boss && score.has_drop_target && score.drop_target_has_children &&
+            score.drop_target_reduction_updates < 24 && score.pickups.size() < collection_batch;
+        if (parent_chain_focus)
+            proposal_focus_bias += opt.parent_chain_focus_bias;
         if (collecting && observation.scoring.can_switch_forms)
             proposal_focus_bias -= opt.collection_focus_bias;
         const bool survival_focus =
@@ -801,7 +824,8 @@ struct Policy::Impl {
                       observation.scoring.survival_spell && observation.scoring.has_boss &&
                       observation.spell_active;
         update_attack_pacing(observation);
-        if (!flow_active && !survival_focus && observation.scoring.can_switch_forms)
+        if (!flow_active && !survival_focus && !parent_chain_focus &&
+            observation.scoring.can_switch_forms)
             proposal_focus_bias -= opt.economic_human_bias;
         if (flow_active) {
             update_flow_goal(observation);
@@ -2010,7 +2034,10 @@ struct Policy::Impl {
                     std::max(collection_goal_y(observation), observation.scoring.drop_target_y),
                     sp.miny, sp.maxy);
         }
-        if (opt.scoring_hit_income && !observation.scoring.has_boss) {
+        // The parent proposal owns aim together with form: aiming at a separate
+        // familiar's reduction window in youkai form cannot realize its human
+        // shot-hit income. Pickup/graze goals below still supersede this lane.
+        if (opt.scoring_hit_income && !observation.scoring.has_boss && !parent_chain_focus) {
             float best = 0;
             for (const auto &target : observation.scoring.income_targets) {
                 const auto y = target.y + 64;
@@ -2079,6 +2106,9 @@ bool Policy::needs_hit_income_memory() const {
 }
 bool Policy::needs_drop_follow_memory() const {
     return impl_->opt.scoring_drop_follow;
+}
+bool Policy::needs_parent_chain_memory() const {
+    return impl_->opt.parent_chain_focus_bias > 0;
 }
 bool Policy::supports_value_proposals() const {
     return impl_->supports_value_proposals();

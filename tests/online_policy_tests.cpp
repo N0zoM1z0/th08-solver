@@ -563,6 +563,65 @@ void drop_target_goal_contract() {
     following.scoring_drop_target = false;
     rejects([&] { on::Policy policy(following); }, "vertical following lacked a target owner");
 }
+void parent_chain_form_contract() {
+    auto config = on::with_style("score-harvest");
+    config.horizon = 24;
+    config.scoring_drop_target = config.scoring_hit_income = true;
+    config.economic_human_bias = config.collection_focus_bias = 5;
+    auto o = scene();
+    o.x = 192;
+    o.y = 400;
+    o.scoring.available = o.scoring.auto_collect_eligible = o.scoring.can_switch_forms = true;
+    o.scoring.has_drop_target = o.scoring.drop_target_has_children = true;
+    // Align the root with the ordinary anchor. A soft form prior need not beat
+    // the positional advantage of faster unfocused travel to a distant target.
+    o.scoring.drop_target_x = 192;
+    o.scoring.income_targets = {{64, 176, 100}};
+    const auto ordinary = on::Policy(config).decide(o).action;
+    check((ordinary & 64) && !(ordinary & 4),
+          "default parent metadata displaced human hit-income guidance");
+
+    config.parent_chain_focus_bias = 5;
+    on::Policy policy(config);
+    check(policy.needs_parent_chain_memory(), "positive parent prior omitted source memory");
+    auto action = policy.decide(o).action;
+    check(!(action & 64) && (action & 4),
+          "parent proposal did not own both root aim and focused form");
+
+    ++o.update;
+    o.scoring.drop_target_reduction_updates = 120;
+    action = policy.decide(o).action;
+    check((action & 64) && !(action & 4), "parent form displaced an active reduction window");
+    ++o.update;
+    o.scoring.drop_target_reduction_updates = 0;
+    check(policy.decide(o).action & 4, "expired reduction did not release the parent prior");
+
+    // One owner history crosses collection and lifecycle transitions. An old
+    // root must not retain focused form after a pickup trip or its removal.
+    ++o.update;
+    o.scoring.pickups.assign(4, {320, 120, on::PickupKind::Point});
+    for (int i = 0; i < 64; ++i)
+        o.bullets.push_back(bullet(i, 32, 32, 0, 0));
+    action = policy.decide(o).action;
+    check((action & 64) && !(action & 4),
+          "pending items retained parent form before the collection movement gate opened");
+    ++o.update;
+    o.bullets.clear();
+    action = policy.decide(o).action;
+    check((action & 128) && !(action & 4), "parent prior displaced human pickup form");
+    ++o.update;
+    o.scoring.pickups.clear();
+    o.scoring.has_drop_target = false;
+    action = policy.decide(o).action;
+    check((action & 64) && !(action & 4), "removed root retained parent aim or form");
+    ++o.update;
+    o.scoring.has_drop_target = o.scoring.has_boss = true;
+    check(!(policy.decide(o).action & 4), "stage parent form survived boss registration");
+    check(!on::with_style("baseline", config).parent_chain_focus_bias,
+          "baseline recovery inherited the parent form goal");
+    config.scoring_drop_target = false;
+    rejects([&] { on::Policy invalid(config); }, "parent form goal lacked a target owner");
+}
 void committed_prefix_contract() {
     auto o = scene();
     o.x = o.y = 100;
@@ -2211,6 +2270,7 @@ int main(int argc, char **argv) {
         point_price_goal_contract();
         hit_income_goal_contract();
         drop_target_goal_contract();
+        parent_chain_form_contract();
         check(argc == 2 || argc == 3, "test needs scratch and optional saved-model directories");
         risk_rows(argv[1]);
         if (argc == 3)

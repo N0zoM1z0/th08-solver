@@ -92,7 +92,10 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
     score.has_drop_target = false;
     score.drop_target_x = 192;
     score.drop_target_y = 400;
+    score.drop_target_has_children = false;
+    score.drop_target_reduction_updates = 0;
     const bool follow_drops = policy.needs_drop_follow_memory();
+    const bool preserve_chains = policy.needs_parent_chain_memory();
     double best_drop_priority = 0;
     double weighted_drop_x = 0;
     const bool full_power = g_GameManager.GetPower() >= 128;
@@ -116,8 +119,11 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
             const float shooting_y = enemy.worldPosition.y + shooting_clearance;
             const bool reachable =
                 follow_drops ? shooting_y <= o.movement.maxy : enemy.worldPosition.y < o.y;
-            if (count && enemy.worldPosition.y >= 0 && reachable &&
-                enemy.worldPosition.x >= o.movement.minx &&
+            // Independently killing an attached child clears its drop counters
+            // before DropItems. In the optional parent mode, keep such actors
+            // in impending totals but never choose them as shooting lanes.
+            if (count && (!preserve_chains || !enemy.parentEnemy) && enemy.worldPosition.y >= 0 &&
+                reachable && enemy.worldPosition.x >= o.movement.minx &&
                 enemy.worldPosition.x <= o.movement.maxx) {
                 // These pixel scales make travel a dimensionless ranking
                 // penalty, not a movement-time estimate. Keep the historical
@@ -132,6 +138,11 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
                     score.has_drop_target = true;
                     score.drop_target_x = enemy.worldPosition.x;
                     score.drop_target_y = shooting_y;
+                    // Link presence is only a current source-lifecycle cue.
+                    // Do not dereference/copy attachment pointers or substitute
+                    // linkedChildCount for a promised live-chain payout.
+                    score.drop_target_has_children = enemy.nextInAttachmentChain != nullptr;
+                    score.drop_target_reduction_updates = enemy.damageReductionTimer.current;
                 }
             }
         }

@@ -141,6 +141,13 @@ struct ScoreMemory {
     // guaranteed kills. Native rollouts still decide damage, safety and drops.
     bool has_drop_target = false;
     float drop_target_x = 192, drop_target_y = 400;
+    // Current root has an attachment link. This is a form/aim cue only; no
+    // child pointer, chain size or future reward is retained by the policy.
+    bool drop_target_has_children = false;
+    // Signed source timer frames left in the selected root's reduction window;
+    // nonpositive means expired. The fixed-rate Native profile consumes one
+    // per gameplay update. Used only by the optional chain prior.
+    int drop_target_reduction_updates = 0;
     std::vector<ScorePickup> pickups;
     std::vector<IncomeTarget> income_targets;
 };
@@ -206,6 +213,11 @@ struct Configuration {
     // Requires drop_target. Allow its stage-only lane proposal to move downward
     // after an enemy's reduction window ends; pickup/hit-income goals still win.
     bool scoring_drop_follow = false;
+    // Zero disables the parent-chain proposal. Positive values require
+    // drop_target, exclude attached children from its lane candidates and
+    // prefer focused shots at a current root while no pickup trip owns form.
+    // The bias uses the same per-update cost units as the other form priors.
+    float parent_chain_focus_bias = 0;
     float attack_focus_bias = 5;
     float attack_reserve_factor = 1.5f;
     unsigned attack_reserve_updates = 240;
@@ -317,6 +329,7 @@ class Policy {
     bool needs_scoring_memory() const;
     bool needs_hit_income_memory() const;
     bool needs_drop_follow_memory() const;
+    bool needs_parent_chain_memory() const;
     // Learned branch features have a fixed24-update schema. Native guidance
     // can use ordinary single-action decisions for other policy horizons.
     bool supports_value_proposals() const;

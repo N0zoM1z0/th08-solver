@@ -347,6 +347,34 @@ Native execution owns collision, actual shot hits, item production and prices;
 descending to shoot may reduce collection prices. Historical profiles keep the
 original horizontal-only selection when the new control is off.
 
+Native `--parent-chain-bias VALUE` defaults to0 (off), accepts0..10000 and
+requires `--drop-target 1` when positive. The adapter then excludes attached
+children from shooting-lane candidates; it preserves their ordinary impending
+drop totals for precollection. The selected root supplies only a Boolean current
+attachment-link cue. No pointer crosses the adapter, no chain is traversed and
+neither linkedChildCount nor an assumed child payout enters the ranking.
+Revision2 also copies the selected root's signed remaining reduction updates.
+With the chain cue, fewer than24 reduction updates, switchable forms and no
+boss/pickup trip or full four-item pending batch, the policy adds the configured
+focused-form bias and suspends the ordinary human bias and competing hit-income
+lane. It aims at the root in youkai form so familiars can survive to the source
+parent reward. Reduction windows retain human hit-income guidance. Pending
+batches yield form even when bullet density delays collection movement, because
+source auto-attraction can already collect and price their items.
+Pickup trips immediately restore ordinary form/aim;
+root removal and boss registration clear the prior on the next observation.
+The bias uses existing per-update preference-cost units and is soft: movement,
+hazards and verification can select another form. This can lose human shot-hit
+income, kill timing or pickup value; complete Native execution decides profit.
+
+Source stage-clear scoring is separate from point pickup pricing. Before
+difficulty/configuration multipliers, `Gui::UpdateStageElements` adds5000 raw score per
+stage point,100 per time orb and50 per graze, plus its stage/life/bomb/night
+terms. Raw score units display as10 points. PIV does not directly multiply that
+clear sum. Actual price ceilings, later point income, capture bonuses and final
+clear rewards therefore need separate accounting; an orb-to-PIV conversion is
+not a promise of a fixed final-score gain.
+
 Native `--economic-proposals 0..4` defaults to0. After a complete safe forecast,
 it retains that incumbent and tries up to the requested number of32-update
 fire/focus alternatives, preserving the immutable lead and incumbent movement
