@@ -3,8 +3,8 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
-> **Native NMNB scores: Extra 3,072,999,650 (Scarlet, 14/14); Lunatic story 5,550,599,270 (Magic, 36/37).**
-> Selected progress: [Extra 3.010B replay](reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy) · [Story 5.025B replay](reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy) · [Videos and replays](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
+> **Native NMNB scores: Extra 3,087,585,240 (Scarlet, 14/14); Lunatic story 5,621,456,240 (Scarlet, 36/37).**
+> Selected progress: [Extra 3.088B replay](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3087585240-seed9098.rpy) · [Story 5.621B replay](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-5621456240-seed32796.rpy) · [All replays and provenance](reports/native/README.md) · [Videos](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
@@ -24,9 +24,9 @@ and form control. Bomb permission and capture requirements are independent
 | Native story, all captures | 5,107,553,670 | Alan: 6,168,365,790 | 37/37 |
 
 The latest Native results have fresh execution and natural replay agreement;
-their player name is `ysopwnab`. The current story best times out47; the
-all-capture best retains37/37. The owner-selected3.010B/5.025B replays are
-published; newer progress bytes stay local. Their exact identities are in
+their player name is `ysopwnab`. The Magic story best times out47; the
+all-capture best retains37/37. The owner-selected progress replays, including the
+newer Scarlet and Magic improvements, are published by shot and route. Their exact identities are in
 [Validation](docs/VALIDATION.md#october27-verified-native-progress).
 The requested Native milestones, Extra above3B and complete Lunatic above5B,
 are achieved. The owner now targets the highest human scores across all12 shots:
@@ -35,9 +35,9 @@ complete Lunatic route. These October27 [all-shot records](https://maribelhearn.
 are both solo Youmu; the table above preserves the earlier Magic Team references.
 All shots may now be explored, with the owner's preferred **Scarlet Team
 (Sakuya/Remilia)** taking priority. Its verified Native results are
-**Extra3,072,999,650 (14/14)** and **complete Lunatic5,544,203,730 (35/37)**,
+**Extra3,087,585,240 (14/14)** and **complete Lunatic5,621,456,240 (36/37)**,
 both No Miss/No Bomb, at their own original retail seeds9098/32796.
-Scarlet now owns our highest Extra result; Magic retains the higher story score.
+Scarlet now owns both overall Native records; its story times out only10.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;
 ASL's replay uses one bomb. [Status](docs/STATUS.md) owns the
 results, failed trials, costs, unresolved problems and proposed next steps.
@@ -56,6 +56,7 @@ also needs SDL2/image/ttf, Fontconfig and your own ignored `th08.dat`.
 
 | Document | Purpose |
 | --- | --- |
+| [Experiment journal](docs/experiments/README.md) | Per-task hypotheses, parameters, provenance, costs, failures and decisions |
 | [Status / handoff](docs/STATUS.md#operational-resume-contract) | Current state, experiment rules, resource limits and resumption plan |
 | [Planner](docs/PLANNER.md) | Policy mechanisms, Native safety and online protocol |
 | [Validation](docs/VALIDATION.md) | Reproduction, selected replay provenance and tests |

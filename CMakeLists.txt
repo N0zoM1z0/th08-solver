@@ -317,7 +317,7 @@ if(BUILD_TESTING)
       -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
       -DROLLOUT=$<TARGET_FILE:th08_shadow_rollout_test>
       -DPRODUCER=$<TARGET_FILE:th08_headless>
-      -DSTORY_ACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online-story-4a-v1--s0.actions
+      -DSTORY_ACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online/online-story-4a-v1--s0.actions
       -DDAT=${TH08_HEADLESS_DAT}
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-follow-regression
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_follow_real_data.cmake)
@@ -388,8 +388,8 @@ if(BUILD_TESTING)
       -DCHECKER=$<TARGET_FILE:th08_replay_check>
       -DTARGETER=$<TARGET_FILE:th08_replay_target>
       -DDAT=${TH08_HEADLESS_DAT}
-      -DACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/practice-v1--stage1-d3-s0.actions
-      -DLEGACY_REPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/practice-v1--stage1-d3-s0.rpy
+      -DACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/archive/replays/practice-v1--stage1-d3-s0.actions
+      -DLEGACY_REPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/archive/replays/practice-v1--stage1-d3-s0.rpy
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/replay-export-regression
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/replay_export_real_data.cmake)
     set_tests_properties(headless_replay_export_contract PROPERTIES TIMEOUT 120)

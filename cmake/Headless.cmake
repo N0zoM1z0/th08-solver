@@ -131,7 +131,7 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
   add_test(NAME headless_score_audit COMMAND ${CMAKE_COMMAND}
     -DCHECKER=$<TARGET_FILE:th08_replay_check>
     -DDAT=${TH08_HEADLESS_DAT}
-    -DREPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy
+    -DREPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy
     -DWORK=${CMAKE_CURRENT_BINARY_DIR}/score-audit-regression
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_audit_real_data.cmake)
   set_tests_properties(headless_score_audit PROPERTIES TIMEOUT 75)
@@ -223,7 +223,7 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
   set_tests_properties(headless_shadow_capture_goal PROPERTIES TIMEOUT 45)
   add_test(NAME headless_shadow_capture_handoff COMMAND th08_shadow_capture_goal_test
     "${TH08_HEADLESS_DAT}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy")
+    "${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy")
   set_tests_properties(headless_shadow_capture_handoff PROPERTIES TIMEOUT 45)
 endif()
 add_executable(th08_online tools/online.cpp)

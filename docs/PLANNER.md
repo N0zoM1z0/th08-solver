@@ -1325,12 +1325,12 @@ unit with 8-GiB high/16-GiB hard memory bounds; the serial successor uses 96 tas
 two cores and 6-GiB high/8-GiB hard bounds. Both retain low weights and zero swap.
 These are task-specific limits, not changes to shared user limits. Check process limits as well
 as memory before launch: each fork checkpoint holder consumes a process. The
-[resource revision](../reports/native/planner_route_protocol.json) retains the
+[resource revision](../reports/native/archive/planner_route_protocol.json) retains the
 initial oversubscribed launch instead of concealing its fork failures.
 
 ## Acceptance and experiments
 
-The [full-run matrix](../reports/native/planner_route_matrix.json) enumerates 108
+The [full-run matrix](../reports/native/archive/planner_route_matrix.json) enumerates 108
 valid combinations. Stage 4 follows the source's character partition; it is not an
 independent cross-product axis. Final A/B selection is a recorded dialogue
 controller outside beam search, with original preexisting-clear history recorded
@@ -1338,7 +1338,7 @@ as replay `clearState` 2. Rollouts store their actual commands and commits consu
 those same commands. Prefix reconstruction and fresh action verification never
 replace inputs. Full Extra starts with `--story 1 --stage extra --difficulty 4`.
 
-The [route protocol](../reports/native/planner_route_protocol.json) freezes two
+The [route protocol](../reports/native/archive/planner_route_protocol.json) freezes two
 generic profiles, per-episode budgets and a single eligible budget-prefix
 continuation. Run the second profile only if the first has no verified completion;
 retain all original failures and costs. The owner switched to random evaluation
@@ -1394,7 +1394,7 @@ all four training seeds passed, with checkpoint60/keep12/180-second budgets; bot
 holdouts then completed and freshly replayed without tuning. This evaluates that
 checkpoint/profile, not a continuous story or all-seed robustness.
 
-The subsequent [story-seed protocol](../reports/native/planner_seed_protocol.json)
+The subsequent [story-seed protocol](../reports/native/archive/planner_seed_protocol.json)
 draws eight uint16 seeds once from OS entropy before inspecting outcomes. Training
 seeds 4455/12525/30504/31338 support diagnosis; 24196/35540/1763/2138 are reserved
 for the frozen candidate's holdout evaluation. Both existing seed-zero story
@@ -1423,12 +1423,12 @@ and RL remain future work. Successful and failed episodes stay distinct.
 
 Measured execution acceleration is tracked in
 [issue #4](https://github.com/N0zoM1z0/th08-solver/issues/4). Its
-[frozen workloads](../reports/native/runtime_perf_protocol.json) use complete
+[frozen workloads](../reports/native/archive/runtime_perf_protocol.json) use complete
 archived stories and an incomplete prefix, with paired Release timings and
 unchanged replay/collision/terminal checks. Runtime and search costs remain separate;
 headless execution already removes display/audio initialization and frame waiting.
 
-The [execution audit](../reports/native/runtime_perf_summary.json) adopts the
+The [execution audit](../reports/native/archive/runtime_perf_summary.json) adopts the
 callback-local empty cancel-region proof described in [Architecture](ARCHITECTURE.md).
 On the frozen three-story workload, native update medians fall from 11.27–11.39
 seconds to 7.84–8.03 seconds: 1.42–1.45x baseline throughput, with no discarded samples.

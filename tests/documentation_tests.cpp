@@ -117,7 +117,8 @@ int main(int argc, char **argv) try {
     const std::string core_tests = argv[2];
     check_self(root);
     std::vector<fs::path> documents = {root / "README.md", root / "AGENTS.md",
-                                       root / "reports/native/README.md"};
+                                       root / "reports/native/README.md",
+                                       root / "reports/native/archive/README.md"};
     for (const auto &entry : fs::recursive_directory_iterator(root / "docs"))
         if (entry.is_regular_file() && entry.path().extension() == ".md")
             documents.push_back(entry.path());
@@ -130,20 +131,21 @@ int main(int argc, char **argv) try {
         }
     require(failures == 0, "maintained documentation links/headings failed");
     const auto status = read(root / "docs/STATUS.md");
-    const auto summary = root / "reports/native/summary.json";
+    const auto summary = root / "reports/native/archive/summary.json";
     const auto solutions = count(summary, "offline_full_spell_solutions_verified");
     contains(status, "| Indexed original spell IDs | " + count(summary, "unique_spell_ids") + " |",
              "STATUS.md");
     contains(status, "| Indexed spell-start occurrences | " + count(summary, "spell_sites") + " |",
              "STATUS.md");
     contains(status, "| Complete offline spell solutions | " + solutions + " |", "STATUS.md");
-    require(solutions ==
-                count(root / "reports/native/motion_summary.json", "complete_spell_solutions"),
+    require(solutions == count(root / "reports/native/archive/motion_summary.json",
+                               "complete_spell_solutions"),
             "audit and particle reports disagree on complete spell solutions");
     require(
-        count(root / "reports/native/first_spell_summary.json", "acceptance_gates_passed") == "0" &&
-            count(root / "reports/native/first_spell_summary.json", "complete_spell_solutions") ==
-                "0",
+        count(root / "reports/native/archive/first_spell_summary.json",
+              "acceptance_gates_passed") == "0" &&
+            count(root / "reports/native/archive/first_spell_summary.json",
+                  "complete_spell_solutions") == "0",
         "first entry-prefix evidence changed; review its completion contract and documentation");
     contains(read(root / "README.md"),
              "Legacy subset complete offline spell solutions: " + solutions + ".", "README.md");

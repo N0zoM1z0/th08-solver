@@ -199,6 +199,31 @@ All selected provenance files bind the producer/manifest, original receipt,
 DAT, prefix, binary, natural rows, controls and environment above. Published
 Magic milestone bytes remain unchanged;6B and the global gates remain unmet.
 
+The owner subsequently requested publication of all17 selected verified Scarlet
+and Magic improvements, followed by retention of new overall project records.
+Four later verified records bring this continuation's selected uploads to21.
+Their exact bytes are now grouped by shot and route in
+[the Native evidence index](../reports/native/README.md); the compact
+[progress table](../reports/native/replays/progress.tsv) binds tasks, actual
+misses/bombs, capture outcomes, seed receipts, replay/action hashes and source.
+Historical272 payloads are relocated unchanged under the paths recorded in
+[the relocation table](../reports/native/archive/relocations.tsv). Old recorded
+paths in frozen reports remain historical provenance. Earlier local-only labels
+below predate this publication request; raw reports, tapes and videos stay local.
+
+Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
+fresh832/natural833) and complete story **5,621,456,240,36/37**, only10 timeout
+(799, fresh845/natural846). Both are NMNB, use the original9098/32796 receipts,
+and pass all41 terminal words plus natural score/outcomes/name checks. Exact
+bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
+progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
+story keeps45000 and uses H128/publication64/replan32/cash4/movement4. These are
+whole Native continuations, not retail equivalence or isolated speed evidence.
+The [experiment journal](experiments/2026-10-27-vps.md) owns complete costs,
+matched-profile comparisons, resource guards, negative results and future work.
+Normal831 passes60/60 after resource-aborted803; no gameplay binary is relinked
+during either test owner. The all-shot replay gates and first6B remain unmet.
+
 The current Scarlet bests extend those lineages without changing the public
 runtime physics or the original9098/32796 receipts:
 
@@ -522,8 +547,8 @@ directories remain the full execution evidence:
 
 | Published replay | Bytes | SHA-256 |
 | --- | ---: | --- |
-| [Extra3.010B](../reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy) |30331 |`d5d95ec115afee3ef2c301b378af9385e77d9b2e89edae572641146e24b8aad5` |
-| [Complete story5.025B](../reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy) |55241 |`1d53cd6a624a3e0821f11951ec9c1fd24752c76894b76908eea8451a5ead7dbc` |
+| [Extra3.010B](../reports/native/replays/magic/extra/extra-native-nmnb-3010040230-seed46997.rpy) |30331 |`d5d95ec115afee3ef2c301b378af9385e77d9b2e89edae572641146e24b8aad5` |
+| [Complete story5.025B](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy) |55241 |`1d53cd6a624a3e0821f11951ec9c1fd24752c76894b76908eea8451a5ead7dbc` |
 
 Extra is entirely produced by the public implementation. First,
 `target-extra-firststage-human100-v1/` starts from the proper retail-seeded entry
@@ -827,7 +852,7 @@ zero death/bomb-input rows, matching score and all eligible captures.
 
 | Field | Extra | Lunatic4A→FinalB |
 | --- | --- | --- |
-| Replay | [Extra2,589,417,330](../reports/native/replays/extra-native-nmnb-2589417330-seed10025.rpy) | [Story3,890,487,560](../reports/native/replays/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy) |
+| Replay | [Extra2,589,417,330](../reports/native/replays/magic/extra/extra-native-nmnb-2589417330-seed10025.rpy) | [Story3,890,487,560](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy) |
 | Displayed / stored score |2,589,417,330 /258941733 |3,890,487,560 /389048756 |
 | Captures |14/14 |37/37 |
 | Initial stage / difficulty / shot / seed |8 /4 /1 /10025 |0 /3 /1 /40755 |
@@ -861,12 +886,12 @@ below the human score target, so retail Wine playback waits. Reproduce natural v
 ```sh
 mkdir -p reports/local/native-progress-check
 build-extra-live/th08_replay_check game_data_donottrack/th08.dat \
-  reports/native/replays/extra-native-nmnb-2589417330-seed10025.rpy \
+  reports/native/replays/magic/extra/extra-native-nmnb-2589417330-seed10025.rpy \
   reports/local/native-progress-check/extra.rows \
   --score-audit reports/local/native-progress-check/extra-audit.json \
   --require-all-captures
 build-extra-live/th08_replay_check game_data_donottrack/th08.dat \
-  reports/native/replays/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy \
+  reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy \
   reports/local/native-progress-check/story.rows \
   --score-audit reports/local/native-progress-check/story-audit.json \
   --require-all-captures
@@ -881,7 +906,7 @@ This Native-first progress passes the normal Release Native/DAT suite56/56
 in970.10s, core36/36 in8.37s and focused writer/name/capture checks2/2 in39.85s.
 
 The selected source-survival follow-up is
-[Story3,903,603,650](../reports/native/replays/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy),
+[Story3,903,603,650](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy),
 36213 bytes, SHA-256
 `1d4d1338a6af34049ee1a9d0ad51d65f9d61d6b672b3f24894d8387574d2186e`.
 It retains the same complete story entry, seed40755, prior-Final-A history,
@@ -903,7 +928,7 @@ under `reports/local/native-score-offline-20261026/story-survival-prior-v2/`.
 The earlier selected story replay remains unchanged.
 
 The selected offline continuation is
-[Story4,126,102,910](../reports/native/replays/story-native-nmnb-4a-finalb-4126102910-seed40755.rpy),
+[Story4,126,102,910](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-4126102910-seed40755.rpy),
 42372 bytes, SHA-256
 `00d9207984e33c17d9090ba22e7a9b0dc4872540aaf662e625403ce2c35ef930`.
 It is NMNB,37/37, with the same original entry/seed40755/prior-Final-A history
@@ -941,7 +966,7 @@ charging. The initial focused pair passes2/2 in48.19s; the final documentation
 check passes after the selected story and measured negative trials are recorded.
 
 The selected retail-seeded full-entry story is
-[Story4,160,457,200](../reports/native/replays/story-native-nmnb-4a-finalb-4160457200-seed1805.rpy),
+[Story4,160,457,200](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-4160457200-seed1805.rpy),
 41117 bytes, SHA-256
 `76d8860c334abffac0fdf8eb42b34ee34e86771f837f8383d0fd35e0660b0768`.
 It is Magic Team Lunatic4A→FinalB, NMNB,37/37, with `ysopwnab`, raw stage0,
@@ -979,7 +1004,7 @@ The earlier selected replay bytes remain unchanged. Retail playback waits for
 the owner's human-score target; the seed-acquisition run is separate evidence.
 
 The selected next story continuation is
-[Story4,311,260,760](../reports/native/replays/story-native-nmnb-4a-finalb-4311260760-seed1805.rpy),
+[Story4,311,260,760](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-4311260760-seed1805.rpy),
 47437 bytes, SHA-256
 `a20f0dac5c00ea61d6eee673e554bf5ac5cabda2fe8c5c73d48178e2255d8c04`.
 It retains the original retail seed1805, Magic Team Lunatic entry/history,
@@ -1006,7 +1031,7 @@ name all agree. Complete local producer/check receipts are in
 `reports/local/retail-score-offline-20261026/story-retail-early-prefix-safe-tail-v3/`.
 
 The selected real-seed Extra progress is
-[Extra2,504,560,470](../reports/native/replays/extra-native-nmnb-2504560470-seed46997.rpy),
+[Extra2,504,560,470](../reports/native/replays/magic/extra/extra-native-nmnb-2504560470-seed46997.rpy),
 28886 bytes, SHA-256
 `e2a98fdde8ae9071ffb282890ddb2bb6d01f858e759cebbaa153fafe4d74ecab`.
 It uses the original retail seed46997, raw stage8/difficulty4/shot1/story=true,
@@ -1037,7 +1062,7 @@ The frozen public runtime's full Release Native/DAT suite passes59/59 in1078.17s
 the maintained-document check is rerun after these selected results are added.
 
 The earlier selected Extra continuation is
-[Extra2,508,068,110](../reports/native/replays/extra-native-nmnb-2508068110-seed46997.rpy),
+[Extra2,508,068,110](../reports/native/replays/magic/extra/extra-native-nmnb-2508068110-seed46997.rpy),
 29318 bytes, SHA-256
 `e826b1c49b513937098e768ce7d60d544649de6d0d28cd7c6d62275358c95455`.
 It retains the same original retail Extra entry/seed46997 and the verified
@@ -1069,9 +1094,9 @@ totals, limits and the proposed scoring experiments. New replays/reports/tapes
 outside the explicitly selected files remain ignored.
 
 The selected current Extra files are the full-entry
-[2,603,278,620 parent](../reports/native/replays/extra-native-nmnb-2603278620-seed46997.rpy)
+[2,603,278,620 parent](../reports/native/replays/magic/extra/extra-native-nmnb-2603278620-seed46997.rpy)
 and its
-[2,620,568,090 continuation](../reports/native/replays/extra-native-nmnb-2620568090-seed46997.rpy).
+[2,620,568,090 continuation](../reports/native/replays/magic/extra/extra-native-nmnb-2620568090-seed46997.rpy).
 Both retain original retail seed46997, proper Extra8/4/1/story=true/priorFinalA=false
 and player `ysopwnab`. Fresh41-word terminal and natural NMNB14/14 agreement pass.
 
@@ -1142,7 +1167,7 @@ reproduces the selected exact input tape and terminal at131.492s.
 
 ## Selected Extra score replay
 
-The owner-selected [historical v15 Extra replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
+The owner-selected [historical v15 Extra replay](../reports/native/replays/magic/extra/extra-native-nmnb-2564311730-seed19732.rpy)
 is an unchanged original-writer export of the frozen v15 Native prototype:
 
 | Field | Value |
@@ -1197,7 +1222,7 @@ Reproduce the tracked replay from a Release headless build and owned DAT:
 ```sh
 mkdir -p reports/local/extra-replay-check
 build-headless/th08_replay_check game_data_donottrack/th08.dat \
-  reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy \
+  reports/native/replays/magic/extra/extra-native-nmnb-2564311730-seed19732.rpy \
   reports/local/extra-replay-check/extra.rows \
   --score-audit reports/local/extra-replay-check/audit.json \
   --require-all-captures > reports/local/extra-replay-check/result.json
@@ -1212,7 +1237,7 @@ a separate check, not a property established by the export target header.
 ## Resume Extra scoring on main
 
 The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative832-task window, including the October27
+resource limits and the cumulative896-task window, including the October27
 recorded64-task extension before use. The owner has resumed with
 No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
 a fresh output directory, rather than copying a historical Native-selected seed
@@ -1397,7 +1422,7 @@ Wine examples remain historical, with online MPC paused.
 These are preserved online/media results with their own profiles. They do not
 become the producer of the selected2.564-billion Native replay above.
 
-The owner-requested [recorded Stage 4A replay](../reports/native/replays/shadow-recording-v2--stage4a-d3-s1-seed34235.rpy)
+The owner-requested [recorded Stage 4A replay](../reports/native/replays/online/shadow-recording-v2--stage4a-d3-s1-seed34235.rpy)
 corresponds to the actual split-capture Lunatic Marisa/Alice practice, real seed34235.
 The original Native replay writer consumes a fresh execution of all 43597 actual
 sampled input/control receipts; each receipt agrees with the Wine journal before
@@ -1416,7 +1441,7 @@ seconds, with SHA-256 `003be7ce892e8e1f366eb89cc9454d78175198eae585d25b43c0eeeeb
 Its complete decode passes; capture frame timing is retained apart from four
 duplicate-timestamp drops required for the encoded delivery.
 Copy the replay into an unused `replay/th8_XX.rpy` slot in an owned game copy.
-The [standalone Final B replay](../reports/native/replays/shadow-recording-v3--finalb-d3-s1-seed29085.rpy)
+The [standalone Final B replay](../reports/native/replays/online/shadow-recording-v3--finalb-d3-s1-seed29085.rpy)
 corresponds to real seed29085, Lunatic shot1, the `fbb7758` client and V2 dialogue
 advancement. Fresh following and export agree on all 30333 actual receipts,
 zero miss/bomb, zero drift/player error and raw live score93642342. The 8845-byte
@@ -1433,7 +1458,7 @@ The MP4 is 523.983 seconds/672570952 bytes, with its capture video stream copied
 and audio aligned by trimming 10816 samples at 48 kHz. Its complete decode passes.
 The 20-second spell158 Kaguya preview starts at movie second198, remains 640x480,
 and is 6748573 bytes, SHA-256 `b8eb00563589ff2fceec2d6377e4acaa8b95d14ba94d62bcb5bd90081eacc4ac`.
-The [full 4A-to-Final-B replay](../reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy)
+The [full 4A-to-Final-B replay](../reports/native/replays/online/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy)
 corresponds to the actual complete Lunatic shot1 story, real seed40755, identical
 `fbb7758` client, prior-Final-A-clear and dialogue advancement recorded in V2.
 Fresh following and export agree on all 121533 actual receipts, 121528 calculations
@@ -1499,7 +1524,7 @@ Score auditing preserves the existing replay-check stdout/row interface:
 
 ```sh
 build-issue1/th08_replay_check game_data_donottrack/th08.dat \
-  reports/native/replays/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy \
+  reports/native/replays/online/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy \
   reports/local/story.rows --score-audit reports/local/story-score.json \
   --require-all-captures
 ```
@@ -2151,7 +2176,7 @@ establish native execution agreement, not an independent physics/retail oracle.
 Source, model, process receipts, timings and all failures normally stay local;
 publish sanitized conclusions and maintained code/prose. The owner's explicit
 request for the two successful complete 4A story captures is a narrow exception:
-their [publication audit](../reports/native/online_story_4a_validation.json) retains
+their [publication audit](../reports/native/archive/online_story_4a_validation.json) retains
 sanitized provenance, timings and native verification receipts. It does not add
 retail playback or enforced-deadline evidence at its publication date. The later
 manual retail audit in [Status](STATUS.md) covers these exact two original files;
@@ -2194,7 +2219,7 @@ requires natural successful captures with every expected row/fingerprint.
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/final-b --stage 1 --story 1 --difficulty 1 --shot 1 --seed 0 --final-route b --rollout 64 --beam 384 --diversity-cell 16 --checkpoint 120 --keep 64 --frames 350000 --seconds 3000
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/extra --stage extra --story 1 --difficulty 4 --shot 11 --seed 0 --frames 350000 --seconds 3000 --diversity-cell 16
 ./build-headless/th08_hazard_probe --dat game_data_donottrack/th08.dat --stage 4b --spell 92 --difficulty 3 --seed 0 --event-update 393 --leads 393,360,320,280,240,200,160 --output reports/local/spell92-probe.json
-./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --replay-dir reports/native/replays --output reports/native/planner_current_summary.json
+./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --replay-dir reports/native/replays --output reports/native/archive/planner_current_summary.json
 ```
 
 `reference/` above is a placeholder for supplied pinned corpus files, not a runtime
@@ -2260,7 +2285,7 @@ every restored raw SHA before removing its uncompressed copy; use
 `gzip -dc capture.rows.gz > capture.rows` before a raw-row comparison. Later
 successful captures retain raw SHA/size and native replay receipts, while their
 reconstructible raw rows are removed. Replay/action files and failed diagnostic
-captures remain available. The [route environment audit](../reports/native/planner_route_environment.json)
+captures remain available. The [route environment audit](../reports/native/archive/planner_route_environment.json)
 records retained evidence, cleanup receipts and bounded shared-host resources.
 
 For new batches, pass repeatable `--group NAME` arguments; each named directory must
@@ -2274,7 +2299,7 @@ role `failed_search_prefix`. These tapes are execution-unverified prefixes, not
 successful demonstrations or all rejected internal rollouts. Existing artifact
 names are idempotent only for identical bytes; conflicts fail without overwriting.
 
-For full-run baseline batches, add `--matrix reports/native/planner_route_matrix.json`.
+For full-run baseline batches, add `--matrix reports/native/archive/planner_route_matrix.json`.
 The report checks the complete generated catalog, each attempt's checkpoint and
 every successful native/replay stage path before archiving, and requires validation
 process receipts in this mode. Its `coverage` object
@@ -2306,7 +2331,7 @@ The current full-run ledger uses all four portfolio groups:
 ./build-headless/th08_planner_report \
   --root reports/local/route-matrix-v2/results \
   --fidelity reports/local/route-matrix-v1/results/fidelity-v1/summary.json \
-  --matrix reports/native/planner_route_matrix.json \
+  --matrix reports/native/archive/planner_route_matrix.json \
   --group matrix0-v2-c16 --group matrix0-v2-resume-c16 \
   --group matrix0-v2-c32 --group matrix0-v2-resume-c32 \
   --replay-dir reports/local/route-matrix-v2/archive/replays \
@@ -2328,9 +2353,9 @@ The first random diagnosis ledger uses its frozen 12-pair sample:
   --output reports/local/seed-generalization-v2/diagnosis-summary.json
 ```
 
-The [execution protocol](../reports/native/runtime_perf_protocol.json) fixes three
+The [execution protocol](../reports/native/archive/runtime_perf_protocol.json) fixes three
 complete archived tapes, an incomplete prefix and three alternating paired repeats.
-The [audit](../reports/native/runtime_perf_summary.json) records every timing sample,
+The [audit](../reports/native/archive/runtime_perf_summary.json) records every timing sample,
 raw receipt hash and normalized execution contract. Its baseline is native source
 `0215b7f`; the default cache candidate is `2b30ad1`, both GCC 13.3 Release with the
 same floating-point flags. An independent IPO build uses the baseline source and
@@ -2341,7 +2366,7 @@ Build each source snapshot into its own measurement directory. For example, the
 seed-4455 full-tape workload on the current build is:
 
 ```sh
-./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/perf-seed4455 --stage 1 --story 1 --difficulty 3 --seed 4455 --verify reports/native/replays/training-resume-c16--s4455.actions
+./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/perf-seed4455 --stage 1 --story 1 --difficulty 3 --seed 4455 --verify reports/native/archive/replays/training-resume-c16--s4455.actions
 ```
 
 Use fresh output directories for each repeat and check process exits as well as the
@@ -2419,7 +2444,7 @@ legacy repair row identity, idempotence, malformed input and refused output over
 Preserve archived originals. To produce a separately named copy:
 
 ```sh
-./build-headless/th08_replay_target reports/native/replays/story-v2--r64-b384-c16.rpy reports/local/story-retail-1.00d.rpy
+./build-headless/th08_replay_target reports/native/archive/replays/story-v2--r64-b384-c16.rpy reports/local/story-retail-1.00d.rpy
 ```
 
 This C++ tool accepts only a validated zero-identity or already-targeted 1.00d stream.
@@ -2427,14 +2452,14 @@ It changes the two decoded identity fields at `[0x124,0x12c)`, rebuilds compress
 and the enclosing checksum, and refuses an existing output. All other decoded bytes,
 stage offsets and trailing user data persist; already-targeted files copy byte for
 byte. It reports hashes and never claims gameplay validation. The
-[repair receipt](../reports/native/planner_story_retail_target.json) binds the original
+[repair receipt](../reports/native/archive/planner_story_retail_target.json) binds the original
 to the separately saved
-[retail-targeted copy](../reports/native/replays/story-v2--r64-b384-c16-retail-1.00d.rpy).
+[retail-targeted copy](../reports/native/archive/replays/story-v2--r64-b384-c16-retail-1.00d.rpy).
 Both produce the same 232069 native calculation rows, SHA256
 `ad7d90ea5d36904d75498c621f18d7be88ca4f42554eb9100ddd306a3eb1c3b5`.
 Original archived replay hashes and the campaign ledger remain unchanged.
 
-The separately recorded [retail audit](../reports/native/retail_story_validation.json)
+The separately recorded [retail audit](../reports/native/archive/retail_story_validation.json)
 plays this exact repaired file from Stage 1 through Final A in retail 1.00d under
 Debian Wine 8.0. It observes the final stage-clear sequence, cumulative deaths/bombs
 both zero, internal score `167865093` (display `1678650930`), and natural return to
@@ -2967,7 +2992,7 @@ cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" \
   -DSPELL203_DIR="$PWD/build-headless/headless-regression/id203-repair" \
   -DEXTRA_DIR="$PWD/reports/local/extra-episode2" \
   -DWORK="$PWD/reports/local/completion-verification" \
-  -DOUTPUT="$PWD/reports/native/headless_current_summary.json" \
+  -DOUTPUT="$PWD/reports/native/archive/headless_current_summary.json" \
   -P tests/headless_completion.cmake
 ```
 

@@ -39,12 +39,39 @@ separate; new Scarlet entries require new original retail seed receipts.
 
 ### Scarlet priority, new retail receipts and4GiB resources
 
-Current verified Scarlet bests are **Extra3,072,999,650,NMNB14/14**, task769,
-and **complete Lunatic5,544,203,730,NMNB35/37**, task768 (10/74 time out).
-Fresh772/773 and natural774/775 pass exact41-word terminal, score, outcomes,
-zero-miss/bomb and name checks. Scarlet now owns the highest Native Extra;
-Magic retains the higher story score. The6B/all-shot targets remain unmet. Selected bytes stay local;
+Current verified Scarlet bests are **Extra3,087,585,240,NMNB14/14**, task786,
+and **complete Lunatic5,621,456,240,NMNB36/37**, task799 (only10 times out).
+Fresh832/845 and natural833/846 pass exact41-word terminal, score, outcomes,
+zero-miss/bomb and name checks. Scarlet now owns both overall Native records.
+The6B/all-shot targets remain unmet. Selected replays are now published;
 [Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns hashes.
+
+The owner's later October27 request publishes all17 selected verified improvements
+and organizes `reports/native/`: current replays under `replays/{magic,scarlet}/`
+by `extra`/`lunatic`, original online recordings under `replays/online/`, and
+historical component/planner/runtime evidence under `archive/`. Its272 payloads
+retain exact SHA-256 values in `archive/relocations.tsv`; frozen JSON and tapes
+are not rewritten. [The evidence index](../reports/native/README.md) and
+`replays/progress.tsv` bind published scores, constraints, tasks and hashes.
+Earlier prose describing those17 selections as local-only records the state
+before this explicit publication request. Four subsequent verified overall
+records are also published; future retention requires an overall project record,
+as the owner later requested. Other experiment artifacts stay local.
+
+The owner also requests a detailed experiment journal. Its
+[index](experiments/README.md) links the original cumulative lifecycle ledger,
+per-task parameters/results/costs/provenance and the
+[VPS batch analysis](experiments/2026-10-27-vps.md). It preserves failures,
+setup errors, retries, actual bomb/capture outcomes and missing historical
+measurements. Local normal803 was resource-aborted below8GiB at1032.186s;
+retry831 passes60/60 in731.053s with two independent CTests, unchanged binaries,
+peak tree RSS1108312064 and minimum host available18922889216 bytes.
+The four later record exports pass local checks829/830,832/833,843/844 and
+845/846. Current gaps are90,875,590 Extra,378,543,760 to6B story and
+1,431,876,220 to the global story reference. Full profiles and costs belong to
+the journal; concurrent timings are not isolated CPU comparisons. The private
+point-price ranking batch835–842 is an unpromoted proposal experiment, with no
+runtime/kernel changes or terminal-score claim before completion.
 
 The owner now permits every shot and prefers Scarlet Team. Same-shot references
 are ASL Extra **3,000,284,220** (13 March2012) and Levea Lunatic **6,755,587,090**
@@ -530,9 +557,9 @@ Later sections preserve chronological/component evidence, not a second active pl
 | Requirement | Active contract |
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
-| Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **762/832 allocated task IDs** at the next extension checkpoint. The October27 continuation records successive64-task extensions640→704→768→832 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
-| Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
+| Concurrency | Local: at most4 owned solver/test/probe drivers including verification; build with `--parallel 2`. The owner's later VPS request separately authorizes up to32 remote Native owners, CPU quota32 cores, low priority. Fork children belong to their owner; do not add extra uncounted test drivers |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **847/896 allocated task IDs** including the publication documentation check. Successive64-task extensions640→704→768→832→896 were recorded before use; the latest extension was recorded at819. Reserve remote IDs centrally before dispatch. Failed setup, rejected/partial/resource-aborted attempts and verification remain charged; never reset or reuse IDs |
+| Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. The later explicit VPS authorization raises remote concurrency only |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |
 | Objective | Proper entry, No Miss, No Bomb, higher complete terminal score. Current trials use `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual bombs (must be zero) and capture outcomes. Restore `--require-all-captures 1 --verify-captures 1` for all captures |
@@ -550,6 +577,29 @@ capture checker `reports/local/score-continue-20261027/verify-no-bomb.cjs`. Use 
 guarded driver and fresh output names; do not use the older interrupted queue.
 The driver verifies the seed receipt, freezes producer sources/binary/controls,
 appends a task, applies `prlimit` and watches only its owned process group.
+The October27 VPS continuation uses an isolated `/home/yann/th08-native-compute/`
+snapshot, preserving the old remote checkout. Initial limits are32 owners,4GiB
+AS/tree each,96GiB aggregate owned RSS,128GiB hard service memory, no service
+swap, and host128GiB admission/96GiB abort reserves. Local limits above stay
+unchanged. SSH inherits CPU0 from `system.slice`; the existing owned user manager
+legitimately permits CPUs32–95, verified with a transient read-only capacity unit.
+Use that manager with CPU quota32 cores and low CPU/I/O weights. The first remote
+snapshot transports tested commit `bc75a3e`, unchanged local ELF binaries and
+their exact loader/library closure; complete original-input41-word terminal and
+natural row-byte canaries must pass before remote scoring. Local original seed
+receipts remain authoritative. Transfer candidates back for fresh local checks;
+Wine remains local and behind the all-shot score gate. Remote search costs and
+aborts use the same cumulative ledger. These are parallel independent complete
+Native futures, with no shared mutable world or substituted RNG.
+All four canaries782–785 pass: complete Extra/story41-word terminal equality,
+complete natural row-byte equality, exact score/capture outcomes, zero misses/
+bombs and name. Remote aggregate peak RSS is396120064 bytes; minimum observed
+host MemAvailable is507149475840 bytes. Tasks786–801 now run the first16-case
+complete-route portfolio, eight Extra and eight story profiles, with declared
+7200s owner walls, checkpoints1024 and unchanged30000ms search budgets. They
+vary horizon, charging/upper flow, capture reserve and economic comparisons;
+no unfinished candidate is a score result. The private dispatcher, bundle and
+preallocated manifests stay under `reports/local/vps-native-20261027/`.
 Do not terminate other agents' processes on this shared host. The ledger has
 legacy repeated lifecycle rows: allocate the next ID from the maximum first
 column, not TSV line count. The untracked owner file `image.png` predates this
@@ -576,9 +626,9 @@ Current local entry points, relative to
 | Latest verified story / all captures | `global-story-human-stage2-prefix-public-cash-full-v1/`;5,107,553,670,37/37; full143109-input tape,26000-input adapted human-road prefix; fresh/natural checks; bytes local |
 | Preserved timeout77 story | `target-story-parent-finalb-cash-h256-v2/`; full144885-input tape,105673-input parent-v1 prefix; only77 times out; bytes local |
 | Preserved timeout58 story | `oct27-story-58-prefix-safe-tail-h128-v3/`; full143157-input tape,59476-input timeout58 prefix; bytes local |
-| Published highest Extra | `reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy`;30331 bytes; public pipeline and exact identity in Validation |
+| Published highest Extra | `reports/native/replays/magic/extra/extra-native-nmnb-3010040230-seed46997.rpy`;30331 bytes; public pipeline and exact identity in Validation |
 | Current public reproduction | `extra-main-cash-confirm-v2/`; same tape/terminal, final public source/binary hashes; `extra-main-cash-compare-v1/verification/` owns earlier public fresh/natural checks |
-| Published all-capture story | `reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy`;55241 bytes; captured77 prefix and exact identity in Validation |
+| Published all-capture story | `reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy`;55241 bytes; captured77 prefix and exact identity in Validation |
 | Highest capture-optional story | `global-story-stage4a-human-pose-public-full-v1/`;5,550,599,270,36/37; Stage4A human-pose road60000-input prefix; exact fresh/natural verification; selected bytes remain local |
 | Source-faithful private repair / pulse | `future-repair-v3/`, `suppressed-hit-pulse-v1/period2/`, `drop-target-v1/`; frozen C++/compile/link inputs, not portable old object files |
 | Economic prototype sources | `cash-compare-v1/` matches public32-update comparison; `cash-compare-pulse64-v2/` and `piv-potential-v3/` are non-winning variants |
@@ -653,7 +703,7 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 | Actual online Extra PB | 1,166,969,620 /14 of 14 | wine-35, real seed 19732, frozen H64 client |
 | Actual online Lunatic 4A→FinalB | 2,189,965,070 /33 of 37 | Recorded story, real seed 40755; missing captures remain known |
 
-The [selected v15 replay](../reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy)
+The [selected v15 replay](../reports/native/replays/magic/extra/extra-native-nmnb-2564311730-seed19732.rpy)
 is 26949 bytes, SHA-256
 `2bf469a6cbe59732f53b2a7b2ef208d3b450fc272e4c9c172eff244502b0c2d4`.
 It records the frozen v15 prototype, not a promise that current-main searches

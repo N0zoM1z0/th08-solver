@@ -104,7 +104,7 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   exact identities/provenance in maintained documentation. This does not authorize
   committing videos, action tapes or new experiment reports
 - The October 26 handoff also authorizes the selected highest-scoring Native Extra
-  replay `reports/native/replays/extra-native-nmnb-2564311730-seed19732.rpy`.
+  replay `reports/native/replays/magic/extra/extra-native-nmnb-2564311730-seed19732.rpy`.
   Preserve its exact bytes and provenance; other new experiment artifacts stay local
 - The Native-first continuation also authorizes the selected complete progress
   replays `extra-native-nmnb-2589417330-seed10025.rpy` and
@@ -147,8 +147,8 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. The October26
   continuation authorizes cumulative budget extensions while bounding memory;
-  the active window is832 total campaign tasks, without resetting the ledger.
-  The October27 continuation records successive64-task extensions from640,704 and768
+  the active window is896 total campaign tasks, without resetting the ledger.
+  The October27 continuation records successive64-task extensions from640,704,768 and832
   before use, under that standing authorization.
   Record further extensions before using them; this authorization does not raise
   the four-concurrent-driver limit, including solver, probe, replay-verification
@@ -160,6 +160,31 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   a4GiB summed-RSS limit per owned solver tree, and host-memory admission/abort
   guards. Preserve12GiB MemAvailable before admission; stop owned work below8GiB.
   Resource-aborted work remains charged and cannot certify a gameplay result
+- The owner's October27 VPS request authorizes Native-only parallel search on
+  `yann@185.189.44.160`, separately from the local four-driver cap. Use an isolated
+  compute directory and the owned user systemd manager; preserve the old remote
+  checkout and all unrelated workloads. The initial remote cap is32 Native owners,
+  CPU quota32 cores, low priority,4GiB address space/tree RSS per owner,96GiB
+  aggregate owned RSS guard and128GiB hard service memory limit with no service
+  swap. Require128GiB host MemAvailable to admit and abort owned work below96GiB.
+  Keep the same local campaign ledger; reserve remote task IDs before dispatch.
+  Bind source/binary/library/DAT/input/seed-receipt hashes, and pass complete
+  cross-host execution/row-byte canaries before scoring. Acquire seeds locally;
+  return selected outputs for local fresh verification and qualified Wine playback
+- The owner's continuing progress-replay publication authorization includes the
+  selected verified Scarlet3.073B Extra and5.544B complete story improvements and
+  their intermediate record replays. Organize published Native evidence while
+  preserving every historical replay byte and updating all affected references.
+  Raw tapes, experiment JSON and videos remain local
+- The owner's later October27 request authorizes detailed, maintained experiment
+  journals under `docs/experiments/`, including the cumulative lifecycle ledger,
+  per-task parameters/results/costs/provenance and source-backed batch conclusions.
+  Preserve failures, setup errors, retries and missing historical measurements.
+  For future work retain/publish a new `.rpy` only when it improves the project's
+  overall Extra or complete-Lunatic record and passes fresh verification. Record
+  other shot results and negative experiments in the journal; earlier explicitly
+  selected historical replay bytes remain preserved. Raw run JSON/actions/videos
+  still stay local
 - At an owner-requested session handoff, finish the already-running authorized
   batch, record its outcomes and leave no owned experiment queue/test driver
   running. A proposed next step or unused budget is not authorization to start
