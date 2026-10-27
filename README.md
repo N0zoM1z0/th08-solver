@@ -34,8 +34,10 @@ Extra above3,178,460,830 and Lunatic above7,053,332,460, first reaching6B on the
 complete Lunatic route. These October27 [all-shot records](https://maribelhearn.com/wr#IN)
 are both solo Youmu; the table above preserves the earlier Magic Team references.
 All shots may now be explored, with the owner's preferred **Scarlet Team
-(Sakuya/Remilia)** taking priority. The verified Native records above remain
-Magic Team results; each new shot gets its own original retail seed receipt.
+(Sakuya/Remilia)** taking priority. Its verified Native results are
+**Extra2,888,408,190 (14/14)** and **complete Lunatic5,011,063,470 (35/37)**,
+both No Miss/No Bomb, at their own original retail seeds9098/32796.
+The higher Native records in the table remain Magic Team results.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;
 ASL's replay uses one bomb. [Status](docs/STATUS.md) owns the
 results, failed trials, costs, unresolved problems and proposed next steps.

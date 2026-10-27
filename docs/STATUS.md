@@ -72,18 +72,111 @@ the diagnostic socket alias or preload override. Actual tree RSS peaks are
 136007680/139206656 bytes. The local `owner-resource-4g-approval.json` preserves
 the owner's exact authorization and limits; old measurements keep their bounds.
 
-Full public baselines667/669 begin the Extra/story episodes. Extra's declared
-human100/no-cash5400-update comparison668 is safe,0 bombs,0 captures,108 points/
-4758 orbs. Story's18000-update comparison670 completes Stage1 with21 points/
-5339 orbs,3/4 captures and76,861,730 cash. These poor production totals need
-source and matched human-route investigation. Pose adapter672 tests a declared
-Scarlet Extra fragment; it is not a selected complete score.
+Full public baselines667/669 complete **Extra2,872,562,940,NMNB14/14** and
+**story5,011,063,470,NMNB35/37** (74/77 time out). Extra uses H128/publication64/
+replan32/cash4/human5/original grid/reserve1.2+120; story uses H256/publication128/
+replan64/cash4/human5/upper-flow1/charge1/reserve1.5+240. Fresh678/682 and
+natural681/684 verify all41 terminal words, exact score/capture outcomes,
+zero misses/bombs and name. Their71005/152981 inputs cost709.695/1667.18s wall,
+883371+25/2081032+17 branch/proposal updates. Selected bytes remain local;
+[Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns hashes
+and complete entry provenance. Neither reaches the global gate or6B.
+
+Extra's5400-update human100/no-cash comparison668 has108 points/4758 orbs.
+Same-shot human pose adapter672 produces137/9341. Its inherited baseline
+`boss_follow=.25` blends the demonstrated X toward the largest enemy body;
+the explicit zero-blend variant676 instead produces221/10523. These are
+different proposal profiles, not a physics correction. Public tail679 dies on199;
+fresh original-entry retry688 uses its first35777 literal inputs as a proposal,
+then H256, and completes2,762,220,030,NMNB14/14,658.635s. It is unselected and
+does not certify the failed owner's prefix retrospectively. Focused-Probe
+variant689 reaches19000 inputs with585 points/33069 orbs,3/3 Keine captures,
+and no miss/bomb. Its public H256 continuation694 completes
+**2,888,408,190,NMNB14/14**,68005 inputs,1156.77s. Fresh709/natural710 agree on
+all41 terminal words, score, outcomes, zero misses/bombs and name. It is the
+new Scarlet Extra best, separate from Magic3.014B and the global target.
+[Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns exact
+local replay/action hashes; earlier selected bytes remain unchanged.
+
+Story's human100/no-cash comparison670 ends Stage1 with21 points/5339 orbs,
+3/4 captures. The direct human road-pose variant686 instead has57/7239,4/4,
+120,439,300 cash, versus baseline54/6042,4/4,109,418,260. Probe-focus690 gives
+52/5288,4/4 and is unselected. These fragments cannot establish a terminal gain.
+The source-inspired saved-option-anchor refresh677 gives Extra242 points/
+5623 orbs at5400 inputs, but matched story687 exactly equals baseline Stage1.
+Its full Extra owner680 is resource-aborted below8GiB host MemAvailable after
+515.057s and certifies no result. The mechanism is real; a profitable policy
+has not been demonstrated over a complete route.
+
+Stock-row-gated point probe683 reproduces the complete Extra baseline exactly:
+1014 requests,1013 spawned,991 collected. The single rejected point is at
+X=-108.269913, outside source `SpawnItem`'s [-64,448] boundary; no point-pool
+exhaustion occurs. All22 uncollected points are already lost before card195.
+Same-item price headroom is56,130,120, of which31,888,400 is before192.
+Stock-row-gated human probe703 finds1072 requests/1071 spawned/1071 collected,
+all1071 in extreme-human gauge, versus901 of baseline's991 pickups. The human
+earns1,051,918,220 from points with only1,606,140 same-item price headroom,
+versus baseline886,131,300 and56,130,120. Thus58 additional produced points,
+22 missed pickups and90 pickups without human doubling are distinct deficits.
+Pricing alone cannot
+close the306M global gap. Transition pickup timing and earlier orb production
+remain separate hypotheses; no collection gate is changed on this evidence.
+
+The default-off `--checkpoint-updates` now preserves executed input prefixes
+for process-termination recovery. Metadata explicitly denies a gameplay
+certificate; resource-aborted owners remain charged and cannot qualify results.
+Focused692 passes in144.62s. Controlled SIGTERM695 leaves19584 committed inputs
+and no result/replay; fresh696 reexecutes the exact committed bytes from original
+Scarlet entry9098, returns budget at19584 with0 deaths and no bomb permission.
+Normal693 passes **60/60 in1207.78s** with the shared build frozen. Complete
+affected-data694 has exact saved/final tape bytes,68005 inputs/274915 bytes,
+and83,431,757ns checkpoint I/O charged within1156.77s wall. Its fresh/natural
+verification passes709/710. No runtime physics or default search behavior changes.
+
+Spell-relative pose adapter698 retains the baseline's first8205 inputs, then
+uses only Levea's immutable same-shot XY/fire/form hints on the remaining
+Stage1 spells. Phase age is source limit minus actual remaining time, with an
+eight-update pose lead and release to ordinary guidance240 updates before the
+deadline. World/RNG/HP/gauge are never copied. It ends Stage1 with55 points/
+12755 orbs,130,212,230 cash,3/4 captures (10 timeout), no miss/bomb. Cash-free
+699 gives54/11346,118,868,720,also3/4; focused-Probe/no-cash700 instead gives
+55/6235,4/4 and no extreme-youkai graze on6/10/13. Form charging alone therefore
+does not explain the human's income. Native positions, duration and firing
+timing need joint evaluation. The698 first-stage improvement is partial,
+not an improvement to the verified complete story score.
+
+Private build701 expands only this case adapter to the reference's36 captured
+spell segments without bomb input/dying rows, excluding62. Source whole-run
+miss/bomb counts remain1/9; the hints transplant none of their cleared fields.
+The road controller and independent recovery remain ordinary, and actual
+Native futures decide safety/outcomes. Task702 reaches40000 inputs safely,
+0 bombs,8 captures. Stage2 ends with153 points/16247 orbs and398,358,680 cash,
+versus baseline152/15257/372,853,760;17 also times out. This small Stage2 orb
+gain leaves the road-production deficit unresolved.
+
+Task705 instead retains698's15785-input first stage, executes Levea's first4096
+Stage2 inputs as proposals at our original32796 entry, then publicly adapts to
+28000. It is safe,0 bombs,5 captures;17 entry orbs rise6089→14649, versus the
+human20858 before any Stage2 bomb input. Its first17/21 are captured. Native
+state/RNG are retained; this is not playback at the human seed. Setup failure706
+(wrong build-spec basename, no launched Native driver) stays charged; corrected
+build707 supplies the separate road-pose comparison708. At28000 it is safe,
+0 bombs,5 captures,146 Stage2 points/24133 orbs;17 entry improves further to
+19631, close to the human20858, and17/21 are captured. It uses the same first
+stage and ordinary spells, with only nonspell XY/fire/form proposals through
+the reference's7000th Stage2 gameplay input. Its complete public tail713 and
+the separate public711/36-spell-pose712 profiles are pending, with explicitly increased3600s wall
+budgets instead of baseline1800. They are combined profiles, not isolated
+attribution of a fragment gain. All artifacts and the reference index stay local.
+The cumulative window is extended704→768
+before use under the owner's standing extension authorization; four drivers,
+4GiB process/tree and host12/8GiB thresholds stay unchanged.
 
 The final old Magic combination640 completes5,341,512,260,NMNB33/37 and is
 unselected. Stage5 pickup-priority650 enters104 with199 points/11018 orbs,
 versus188/8871 in the5.551B route. Its full tail663 is resource-aborted below
 8GiB host MemAvailable and certifies no result. The verified Magic best remains
-5,550,599,270,36/37. No new Scarlet result or replay is yet promoted.
+5,550,599,270,36/37. The Scarlet baselines above are separate verified records.
 
 ### All-shot reference and gauge investigation
 
@@ -320,10 +413,10 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **673/704 allocated task IDs**. The October27 continuation records a64-task extension from640 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **714/768 allocated task IDs** at publication checks. The October27 continuation records successive64-task extensions640→704→768 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
-| Episode | Preserve Magic Extra46997/story1805; new Scarlet Extra uses first valid retail seed9098 at `retail-seed-episodes-20261027/scarlet-extra-entry-v6/`. Capture and validate the separate Scarlet story receipt before its Native search; never reroll after seeing score. Regression fixtures/historical seeds stay separate |
+| Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |
 | Objective | Proper entry, No Miss, No Bomb, higher complete terminal score. Current trials use `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual bombs (must be zero) and capture outcomes. Restore `--require-all-captures 1 --verify-captures 1` for all captures |
 | Checkpoint | Literal first N inputs from the same owned episode, executed from original entry. N counts Native owner updates, not spell seconds or replay-row line counts. Preserve RNG, bullets, actors, items, latch and observer history |
 | Acceptance | Inspect each `exit.json`, `run/result.json` and `run/score-audit.json`. A driver exit 0 is not a candidate success. Exit 5 may be valid below-target progress; abort/incomplete/failed rollouts never certify |

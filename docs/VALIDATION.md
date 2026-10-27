@@ -95,6 +95,67 @@ It follows a Wine initialization crash with exactly2GiB mapped at664. The
 search/rollout/proposal budgets and failure meanings remain explicit per case.
 Wine remains restricted to seed acquisition and qualified final replay viewing.
 
+### Scarlet Team verified Native baselines
+
+Tasks667/669 use the original Scarlet receipts above, fixed seeds9098/32796,
+SampledGameplay, No Miss/No Bomb, captures optional and `ysopwnab`. Both use
+the public Release solver with beam384,30s per search, cash4/parent100/human5.
+Extra uses H128/publication64/replan32, original stream grid, no gauge charging,
+reserve1.2/120 and preserve-fire recovery; story uses H256/publication128/
+replan64, upper grid, charging, reserve1.5/240 and capture-fire recovery.
+
+| Complete result | Extra | Lunatic1→2→3→4A→5→FinalB |
+| --- | ---: | ---: |
+| Displayed score |2,872,562,940 |5,011,063,470 |
+| Actual bombs / misses |0 /0 |0 /0 |
+| Captures |14/14 |35/37;74/77 time out |
+| Owner inputs |71005 |152981 |
+| Wall seconds |709.695 |1667.18 |
+| Branch + proposal updates |883371+25 |2081032+17 |
+| Economic attempts / adoptions |6721 /827 |7114 /1089 |
+| Fresh / natural verification tasks |678 /681 |682 /684 |
+
+Each pair checks all41 terminal words, score, exact capture map, zero
+misses/bombs and the eight-byte player name. Fresh execution/index agreement
+and natural source replay do not establish independent physics or retail
+equivalence. The all-shot score gates and6B milestone remain unmet.
+
+The selected files are local under
+`reports/local/global-score-20261027/selected/`; published Magic milestones stay
+unchanged. `extra-scarlet-2872562940-provenance.json` and
+`story-scarlet-5011063470-provenance.json` bind receipt, DAT, binary, controls,
+source, tape and natural-row identities, environment and limitations.
+
+| Local replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-scarlet-native-nmnb-2872562940-seed9098.rpy` |29901 |`13e2b8f806406b9bee3201d4865994db94a045e7ebc3ffa1c89b14e60c187faa` |
+| `story-scarlet-native-nmnb-4a-finalb-5011063470-seed32796.rpy` |56914 |`d6fcc33c6a75b28c6fc2a345fe8f31fcb3955947cecfee8ce3d332367f4dd0e0` |
+
+Their action hashes are respectively
+`6ac85ca19270572efa23b816499000c14d4e4403ffe5143f30a8ee29fe000c72` and
+`a82a0e5ece6c823f1565951ec5ac3860c6522c00ddd105ab22afcd5b5c6ce985`.
+Environment: Linux6.1.0-54-cloud-amd64, AMD EPYC7B12, GCC12.2.0, C++17 Release,
+`-ffp-contract=off`, no fast-math; each guarded owner has4GiB process/tree limits
+and host12/8GiB admission/abort thresholds. All I/O remains charged to wall time.
+
+The complete Extra continuation694 improves Scarlet to **2,888,408,190,NMNB14/14**.
+It keeps19000 literal inputs from689:676's direct same-shot human road pose
+through5400 followed by the private Probe-focus revision2 through Keine. The
+remaining public tail uses H256/publication64/replan32/cash4/human5, original
+grid, ordinary charging0 and reserve1.2/120. It is a combined profile at the
+same fixed9098 entry, without reference world/RNG transplantation.
+
+The68005-input route costs1156.77s wall,1255003+45 branch/proposal updates and
+4654 economic attempts/576 adoptions. Fresh709/natural710 pass exact41-word
+terminal, score,14/14 outcome map, zero-miss/bomb and name checks. Its local
+selected replay `extra-scarlet-native-nmnb-2888408190-seed9098.rpy` is28604 bytes,
+SHA-256 `fa430b2aa91f80e72e7910f63da12d934d5cad91cb4ef9fa22775ad6a3d4b95a`;
+the complete action tape hashes
+`dc5c68470762843b4c430289ad8d46941b672dd08094fa392f9b19757a089561`.
+`extra-scarlet-2888408190-provenance.json` binds the full lineage and environment
+above. Earlier local/published selected bytes retain their identities. The
+global Extra gate remains unmet.
+
 New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
 bytes. The original `ReplayData::playerName[8]` is followed by reserved and
 practice-mode bytes; longer strings are rejected instead of overwriting mode.
@@ -127,6 +188,7 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | `--verify-captures` |0 |0/1;1 requires the all-capture run goal |
 | `--drop-target` |0 |0/1, current source enemy target; no budget/physics change |
 | `--economic-proposals` |0 |0..4 extra full-Native horizon fire/focus comparisons, sharing total search budget |
+| `--checkpoint-updates` |0 |0 disables;64..400000 executed inputs between prefix saves |
 | Positional `WALL_SECONDS` |Explicit |1..7200 per owner attempt |
 
 For example, H512/publication256,5000ms, lead1/nominal1 and interval128 spends
@@ -146,6 +208,37 @@ invalid NMNB actions and an actual terminal beforeN are rejected. The output
 contains the full prefix plus regenerated continuation, with requested/executed
 prefix counts for auditing. All generated tapes/replays/reports stay local until
 a selected progress replay is authorized for publication.
+
+With `--checkpoint-updates N`, the owner appends only actually consumed inputs
+to `checkpoint.inputs.actions`, then flushes and replaces `checkpoint.json`
+everyN inputs and at an ordinary exit. Branch predictions never write this
+tape. The default writes neither file. Units are owner input updates, including
+prefix reconstruction, rather than natural replay row indices. No simulation
+state, RNG or search memory is serialized. Reports include the interval,
+committed update/byte counts and checkpoint I/O nanoseconds; the wall budget
+charges this I/O, while Native simulation timing excludes it.
+
+After a process kill, read the last metadata and copy exactly the first
+`saved_bytes` of the tape to a new file: trailing bytes may be uncommitted.
+Pass that file with `--prefix-actions` and its `saved_updates` with
+`--prefix-updates`, at the same original entry and fixed seed. The new owner
+must freshly execute the entire literal prefix and validate its own futures.
+The metadata states `gameplay_certificate:false`; persistence does not certify
+safety, a capture or a complete result, and does not rehabilitate a failed or
+resource-aborted owner. Flush/rename supports process-termination recovery;
+there is no fsync or machine-crash durability claim.
+
+Focused692 passes the complete real-DAT test in144.62s: final saved/final tape
+equality, default-off absence, and an exact1024-input budget-limited owner that
+exports no replay. Controlled SIGTERM695 preserves19584 inputs/80439 bytes,
+with no result or replay. Fresh696 reexecutes that committed prefix at the
+original Scarlet9098 entry and returns budget with19584 updates,0 deaths and
+No Bomb. These are partial-duration recovery checks, not scoring certificates.
+Normal693 passes **60/60 in1207.78s**. Complete affected-data Extra694 and its
+fresh709/natural710 checks pass; the saved tape exactly equals all68005 final
+inputs/274915 bytes. Its83,431,757ns checkpoint I/O remains charged within
+1156.77s wall. All new owners use the authorized4GiB process/tree bounds and
+unchanged host12/8GiB guards; the normal suite peaks at1004314624 bytes tree RSS.
 
 These checkpoint/compute controls pass the normal Release Native/DAT suite57/57
 in970.95s. The focused checkpoint regression passes1/1 in35.65s and verifies
@@ -997,7 +1090,7 @@ a separate check, not a property established by the export target header.
 ## Resume Extra scoring on main
 
 The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative704-task window, including the October27
+resource limits and the cumulative768-task window, including the October27
 recorded64-task extension before use. The owner has resumed with
 No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
 a fresh output directory, rather than copying a historical Native-selected seed

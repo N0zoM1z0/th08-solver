@@ -27,6 +27,84 @@ namespace o = th08::online;
 namespace h = th08::headless;
 namespace fs = std::filesystem;
 using Clock = std::chrono::steady_clock;
+// Parent-owner output only: branch proposals never append to this stream.
+// Fork children inherit its descriptor but do not access this object. The tape
+// is append-only, while the small metadata file is replaced after each flush.
+// A resource kill may leave extra trailing inputs beyond the committed byte
+// count. Neither file certifies safety, completion or a capture outcome: a
+// resumed candidate must reexecute its declared prefix from the original entry.
+class ExecutedInputCheckpoint {
+    unsigned interval_;
+    std::ofstream tape_;
+    std::uint64_t updates_ = 0, saved_updates_ = 0, saved_bytes_ = 0, io_ns_ = 0;
+
+    void flush() {
+        tape_.flush();
+        const auto bytes = tape_.tellp();
+        if (!tape_ || bytes == std::streampos(-1))
+            throw std::runtime_error("native_style_checkpoint_tape_failed");
+        std::ofstream metadata("checkpoint.json.tmp");
+        metadata << "{\"schema_version\":1,\"evidence\":\"executed-input-prefix-only\","
+                    "\"gameplay_certificate\":false,\"saved_updates\":"
+                 << updates_ << ",\"saved_bytes\":" << std::uint64_t(bytes)
+                 << ",\"interval_updates\":" << interval_
+                 << ",\"tape\":\"checkpoint.inputs.actions\","
+                    "\"resume\":\"reexecute-from-original-entry\"}\n";
+        metadata.close();
+        if (!metadata)
+            throw std::runtime_error("native_style_checkpoint_metadata_failed");
+        // The rename commits a count only after its entire input prefix has
+        // reached the file. This is process-termination recovery, without an
+        // fsync-based machine-crash durability claim.
+        fs::rename("checkpoint.json.tmp", "checkpoint.json");
+        saved_updates_ = updates_;
+        saved_bytes_ = std::uint64_t(bytes);
+    }
+
+  public:
+    explicit ExecutedInputCheckpoint(unsigned interval) : interval_(interval) {
+        if (interval_) {
+            const auto begin = Clock::now();
+            tape_.open("checkpoint.inputs.actions", std::ios::binary | std::ios::trunc);
+            if (!tape_)
+                throw std::runtime_error("native_style_checkpoint_open_failed");
+            io_ns_ +=
+                std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin).count();
+        }
+    }
+    void append(std::uint16_t input) {
+        if (!interval_)
+            return;
+        const auto begin = Clock::now();
+        tape_ << input << '\n';
+        ++updates_;
+        if (updates_ % interval_ == 0)
+            flush();
+        io_ns_ +=
+            std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin).count();
+    }
+    void finish() {
+        if (interval_) {
+            const auto begin = Clock::now();
+            if (updates_ != saved_updates_)
+                flush();
+            tape_.close();
+            if (!tape_)
+                throw std::runtime_error("native_style_checkpoint_close_failed");
+            io_ns_ +=
+                std::chrono::duration_cast<std::chrono::nanoseconds>(Clock::now() - begin).count();
+        }
+    }
+    std::uint64_t saved_updates() const {
+        return saved_updates_;
+    }
+    std::uint64_t saved_bytes() const {
+        return saved_bytes_;
+    }
+    std::uint64_t io_ns() const {
+        return io_ns_;
+    }
+};
 struct SearchOptions {
     unsigned horizon = 64, publication = 64, budget_ms = 110;
     bool held_recovery = false, baseline_recovery = false;
@@ -280,6 +358,7 @@ int run(int argc, char **argv) {
             "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture] "
             "[--replay-name NAME] [--allow-bombs 0|1] [--require-all-captures 0|1] "
             "[--target-score DISPLAYED] "
+            "[--checkpoint-updates 0|64..400000] "
             "[--prefix-actions FILE --prefix-updates UPDATES]");
     const auto dat = fs::absolute(argv[1]).string();
     const auto output = fs::absolute(argv[2]);
@@ -326,6 +405,8 @@ int run(int argc, char **argv) {
     fs::path prefix_path;
     unsigned prefix_updates = 0;
     bool prefix_count_override = false;
+    unsigned checkpoint_updates = 0;
+    bool checkpoint_override = false;
     unsigned budget_ms = 110;
     unsigned lead_updates = 8, nominal_warm_updates = 0;
     unsigned replan_updates = 8;
@@ -412,6 +493,11 @@ int run(int argc, char **argv) {
         } else if (key == "--nominal-warm-updates" && !warm_override) {
             nominal_warm_updates = number(argv[i + 1], 2048);
             warm_override = true;
+        } else if (key == "--checkpoint-updates" && !checkpoint_override) {
+            checkpoint_updates = number(argv[i + 1], 400000);
+            if (checkpoint_updates && checkpoint_updates < 64)
+                throw std::runtime_error("invalid_native_checkpoint_interval");
+            checkpoint_override = true;
         } else if (key == "--replan-updates" && !interval_override) {
             replan_updates = number(argv[i + 1], 2048);
             if (!replan_updates)
@@ -569,6 +655,7 @@ int run(int argc, char **argv) {
     const auto begin = Clock::now();
     Work work;
     std::vector<std::uint16_t> actions;
+    ExecutedInputCheckpoint checkpoint(checkpoint_updates);
     std::uint64_t last_search = 0, fallback = 0, moving = 0, focused = 0, changes = 0;
     std::uint64_t retained_windows = 0, retained_inputs = 0;
     std::uint64_t horizontal_reversals = 0, vertical_reversals = 0;
@@ -657,6 +744,9 @@ int run(int argc, char **argv) {
         }
         actions.push_back(input);
         h::score_audit_observe();
+        // Store the actual consumed input after receipt agreement, including
+        // any later-declared failing input. A flushed count is not a certificate.
+        checkpoint.append(input);
         if (state.player_state == 2 || state.deaths != 0 ||
             (!allow_bombs && actual.state[s::Field::BombsUsed])) {
             outcome = allow_bombs ? "no_miss_failure" : "nmnb_failure";
@@ -676,6 +766,7 @@ int run(int argc, char **argv) {
         if (baseline_recovery)
             safety.observe(observation);
     }
+    checkpoint.finish();
     const auto elapsed = std::chrono::duration<double>(Clock::now() - begin).count();
     std::ofstream tape("plan.actions");
     for (auto input : actions)
@@ -760,6 +851,10 @@ int run(int argc, char **argv) {
            << ",\"prefix_updates_requested\":" << prefix_updates << ",\"prefix_updates_executed\":"
            << std::min<std::size_t>(prefix_updates, actions.size())
            << ",\"prefix_inputs_available\":" << prefix.size()
+           << ",\"checkpoint_interval_updates\":" << checkpoint_updates
+           << ",\"checkpoint_saved_updates\":" << checkpoint.saved_updates()
+           << ",\"checkpoint_saved_bytes\":" << checkpoint.saved_bytes()
+           << ",\"checkpoint_io_ns\":" << checkpoint.io_ns()
            << ",\"score_raw\":" << h::score_audit().score_raw
            << ",\"score_displayed\":" << std::uint64_t(h::score_audit().score_raw) * 10
            << ",\"bombs_used\":" << h::score_audit().bombs_used << ",\"no_miss\":"

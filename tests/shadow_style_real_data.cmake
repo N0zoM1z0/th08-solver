@@ -27,6 +27,7 @@ endif()
 foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-proposals;5"
                           "--farm-to-timeout;1"
                           "--farm-charge-fire;1"
+                          "--checkpoint-updates;63"
                           "--upper-flow;1"
                           "--drop-follow;1"
                           "--parent-chain-bias;5"
@@ -41,6 +42,7 @@ foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-p
 endforeach()
 execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 70000 0 180
   --collect-items 1 --aim-boss 1 --drop-target 1 --economic-proposals 4 --require-all-captures 1 --target-score 1
+  --checkpoint-updates 128
   RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 200)
 if(NOT result STREQUAL "0")
   message(FATAL_ERROR "Complete style scene failed: ${result} ${stdout} ${stderr}")
@@ -64,6 +66,36 @@ endif()
 # an unchanged copied suffix.
 file(STRINGS "${WORK}/plan.actions" prefix_inputs)
 list(LENGTH prefix_inputs input_count)
+file(SHA256 "${WORK}/plan.actions" final_tape_hash)
+file(SHA256 "${WORK}/checkpoint.inputs.actions" checkpoint_tape_hash)
+file(SIZE "${WORK}/checkpoint.inputs.actions" checkpoint_bytes)
+file(READ "${WORK}/checkpoint.json" checkpoint_metadata)
+if(NOT final_tape_hash STREQUAL checkpoint_tape_hash OR
+   NOT checkpoint_metadata MATCHES "\"saved_updates\":${input_count}," OR
+   NOT checkpoint_metadata MATCHES "\"saved_bytes\":${checkpoint_bytes}," OR
+   NOT checkpoint_metadata MATCHES "\"gameplay_certificate\":false,")
+  message(FATAL_ERROR "Executed-input checkpoint changed the owner tape or claimed a certificate: ${checkpoint_metadata}")
+endif()
+# A deterministic budget-limited owner executes a known literal prefix. Saving
+# it must neither export a replay nor turn an incomplete duration into success.
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}/partial-checkpoint" 0 3 1 23035 score 1024 0 180
+  --prefix-actions "${WORK}/plan.actions" --prefix-updates 1024 --checkpoint-updates 128
+  RESULT_VARIABLE partial_result OUTPUT_VARIABLE partial_stdout ERROR_VARIABLE partial_stderr TIMEOUT 30)
+if(NOT partial_result STREQUAL "2")
+  message(FATAL_ERROR "Partial checkpoint changed the incomplete-owner exit: ${partial_result} ${partial_stdout} ${partial_stderr}")
+endif()
+file(READ "${WORK}/partial-checkpoint/result.json" partial_report)
+file(READ "${WORK}/partial-checkpoint/checkpoint.json" partial_metadata)
+file(STRINGS "${WORK}/partial-checkpoint/checkpoint.inputs.actions" partial_inputs)
+list(SUBLIST prefix_inputs 0 1024 expected_partial_inputs)
+if(NOT partial_inputs STREQUAL expected_partial_inputs OR
+   NOT partial_report MATCHES "\"outcome\":\"budget\"" OR
+   NOT partial_report MATCHES "\"replay_exported\":false" OR
+   NOT partial_metadata MATCHES "\"saved_updates\":1024," OR
+   NOT partial_metadata MATCHES "\"gameplay_certificate\":false," OR
+   EXISTS "${WORK}/partial-checkpoint/native.rpy")
+  message(FATAL_ERROR "A partial input checkpoint certified a replay or changed its executed inputs: ${partial_report} ${partial_metadata}")
+endif()
 math(EXPR checkpoint "${input_count} - 64")
 execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}/resumed" 0 3 1 23035 score 70000 0 180
   --collect-items 1 --aim-boss 1 --require-all-captures 1 --target-score 1
@@ -76,6 +108,10 @@ if(NOT result STREQUAL "0")
   message(FATAL_ERROR "Owned Native checkpoint continuation failed: ${result} ${stdout} ${stderr}")
 endif()
 file(READ "${WORK}/resumed/result.json" original)
+if(EXISTS "${WORK}/resumed/checkpoint.inputs.actions" OR
+   EXISTS "${WORK}/resumed/checkpoint.json")
+  message(FATAL_ERROR "Default-off checkpointing wrote files without an explicit interval")
+endif()
 if(NOT original MATCHES "\"prefix_updates_requested\":${checkpoint}," OR
    NOT original MATCHES "\"prefix_updates_executed\":${checkpoint}," OR
    NOT original MATCHES "\"lead\":1," OR NOT original MATCHES "\"horizon\":512," OR

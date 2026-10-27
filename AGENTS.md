@@ -147,8 +147,9 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. The October26
   continuation authorizes cumulative budget extensions while bounding memory;
-  the active window is704 total campaign tasks, without resetting the ledger.
-  The October27 continuation records a64-task extension from640 before use.
+  the active window is768 total campaign tasks, without resetting the ledger.
+  The October27 continuation records successive64-task extensions from640 and704
+  before use, under that standing authorization.
   Record further extensions before using them; this authorization does not raise
   the four-concurrent-driver limit, including solver, probe, replay-verification
   and test owners. Native rollout fork children belong to their single owner;
