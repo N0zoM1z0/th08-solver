@@ -216,7 +216,7 @@ into the new17 future. Each owner has7200s wall,30000ms search, checkpoints1024.
 | --- | --- | --- | ---: | ---: | ---: |
 |906|`vps-scarlet-luna-after17-h128-to47-v1`|phase_boundary|865593330|12/15|0|
 |907|`vps-scarlet-luna-after17-h256-middle-to47-v1`|phase_boundary|921977820|11/15|0|
-|908|`vps-scarlet-luna-after17-h128-full-v1`|running/unresolved|—|—/37|—|
+|908|`vps-scarlet-luna-after17-h128-full-v1`|complete|5638674300|36/37|0|
 
 ## Four-phase form and firing matrix
 
@@ -276,8 +276,8 @@ profile rather than isolated attribution to the target spell.
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
 |930|`vps-scarlet-luna-compose-v4-pb5784-late171-reserve1p2-full`|complete|5821038980|35/37|0|
-|931|`vps-scarlet-luna-compose-v4-after29-h128-full`|running/unresolved|—|—/37|—|
-|932|`vps-scarlet-luna-compose-v4-after36-h128-full`|running/unresolved|—|—/37|—|
+|931|`vps-scarlet-luna-compose-v4-after29-h128-full`|complete|5406920820|35/37|0|
+|932|`vps-scarlet-luna-compose-v4-after36-h128-full`|complete|5726454870|36/37|0|
 |933|`vps-scarlet-luna-compose-v4-after29-h256-to47`|phase_boundary|853064170|12/15|0|
 |934|`vps-scarlet-luna-compose-v4-after36-h256-to47`|phase_boundary|886757560|12/15|0|
 |935|`vps-scarlet-luna-compose-v4-after29-target36`|phase_boundary|609105780|9/15|0|
@@ -338,6 +338,235 @@ Whole-stage totals are336/381 and242/269. Spell intervals alone do not explain
 these deficits. Human Stage4A includes an earlier death/bombs; attainable NoBomb
 road production must be measured rather than inferred from the human count.
 
+## Stage4A road transfer and complete tails
+
+Build949 creates a same-shot road proposal adapter in7.072s. It reads only
+Levea's immutable first6500 raw-stage3 gameplay samples, rejecting99 bomb-input
+or dying rows; when an eight-update lookahead enters an excluded row, use the
+current valid pose. Valid later rows still follow the human's earlier field
+clears/death. No Native state, power, gauge or RNG is copied. The ordinary
+independent recovery remains intact. Every8 inputs the temporary H24/beam384
+movement policy uses direct XY, boss_follow0, anchor0.08 and focus prior±10;
+this recomputation and its absent retained motion history are charged.
+
+Tasks954–957 retain the literal first54610 original inputs at actual raw3 entry
+from probe910, then vary H128/256 and cash0/4. They stop only at actual first58,
+with road_boundary, no route certificate and no replay. Observed entry points
+are184/176/182/183 versus the parent's161 and human187; entry orbs are
+7981/6144/7889/8081. All four are NMNB. Owner ends are62151/61100/62013/61785;
+source clocks and enemy scheduling differ between variants, so these are full
+road-policy outcomes, not isolated collection-price effects.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|950|`vps-scarlet-luna-v5-after17-29-h128-full`|complete|5570462700|36/37|0|
+|951|`vps-scarlet-luna-v5-after17-29-h256-to47`|phase_boundary|856092530|12/15|0|
+|952|`vps-scarlet-luna-v5-after10capture-h128-full`|complete|5213714340|37/37|0|
+|953|`vps-scarlet-luna-v5-after10capture-h256-to47`|phase_boundary|725058240|13/15|0|
+|954|`vps-scarlet-luna-v5-stage4a-road-h128-cash0`|road_boundary|1394492650|14/21|0|
+|955|`vps-scarlet-luna-v5-stage4a-road-h128-cash4`|road_boundary|1362119310|14/21|0|
+|956|`vps-scarlet-luna-v5-stage4a-road-h256-cash0`|road_boundary|1393603980|14/21|0|
+|957|`vps-scarlet-luna-v5-stage4a-road-h256-cash4`|road_boundary|1383205570|14/21|0|
+
+The two selected road components954/957 feed public H128 complete tails958/959.
+They must verify the entire combined route; point counts are selection evidence
+only. This batch starts after after17-v1 has finished, reusing its8-core quota
+without exceeding32 total. Original seed32796 and carried source state persist.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|958|`vps-scarlet-luna-stage4a-road954-h128-full-v1`|complete|5727132730|35/37|0|
+|959|`vps-scarlet-luna-stage4a-road957-h128-full-v1`|complete|5634347200|35/37|0|
+
+After17's standalone full route908 completes5,638,674,300,36/37; the middle47
+combination912 completes5,689,073,810,35/37. Neither beats5.821B. Task951's
+17+29 H256-to47 component retains2922/3365 on17/29 and5931 on47, yet its
+PIV608280 is below the old47 component's639320. Earlier local gains do not
+imply a better later checkpoint. Its hypothetical final value is not certified.
+
+## HP telemetry and the source lifecycle boundary
+
+Private build960 fails before Native launch due to a wrong header filename;
+961 fails for missing explicit source namespace qualification. Corrected962
+builds in1.725s. These allocations and costs remain charged. Read-only C++
+probes963/964 execute the baseline through owner112455 and the rejected116
+variant929 through112581. Both reproduce all41 expected checkpoint words and
+their respective capture/timeout outcomes; no physics or gameplay state changes.
+
+The rejected variant's reported lastHP2 occurs during60 post-deadline updates,
+with remaining−1 through−60 and accepts_damage=false. Its last sampled live
+state has HP2055 at remaining29. The captured baseline also has a60-update
+life1/estimatedHP2 postlude, after real damage has reached life0. Thus the scalar
+lastHP is not evidence of a near capture. The source
+[phase-death branch](../../third_party/th08/src/EnemyManagerUpdate.cpp) explicitly
+resets life1 and clears DAMAGEABLE; the timeout trace establishes its own
+DAT-controlled postlude behavior. Keep the audit lifecycle outcome authoritative.
+Future diagnostics must distinguish live damageable HP from postlude state.
+There is no demonstrated Native physics bug or runtime correction here.
+
+A retention sweep after verification hashes and deletes13 below-record remote
+replays (789596 bytes). Their actions, source/parameter/exit/resource metadata
+and compact retention receipts remain. All23 published selections and272
+historical payloads retain exact bytes; future replays still require a verified
+new overall project record.
+
+The960→1024 cumulative extension is recorded at957 before961, under the owner's
+standing extension authorization. Local four drivers and4GiB process/tree,
+remote32 owners/32 CPU cores/96GiB guard, host reserves and hard service bounds
+are unchanged. The ledger does not reset. A later Stage5 reference-header setup
+fails its copied6501 length assertion before any compiler/Native starts (965);
+966 corrects the11501-row scope. Setup failures are not gameplay failures.
+
+## Point income explains the same-shot score gap
+
+Probes987/988 reuse the existing read-only point-accounting binary. Each entire
+100-byte-row stream is SHA-identical to its uninstrumented complete stock-source
+playback, with exact scores5,821,038,980 and6,755,587,090. This is real-data
+source-based observation, not a synthetic pricing model or retail validation.
+The total gap is934,548,110; realized point income differs902,215,610. All other
+score combined differs32,332,500. This changes the next search priority toward
+point production, PIV and collection price rather than indiscriminate farming.
+
+| Raw stage | Native points / extreme human | Human points / extreme human | Native point cash | Height loss | Human-doubling loss |
+| --- | ---: | ---: | ---: | ---: | ---: |
+|0|55/17|61/55|20128280|2270590|11788450|
+|1|173/173|173/173|138410040|4591440|0|
+|2|313/294|327/310|323200880|22528040|10562880|
+|3|336/319|381/376|420291170|53598860|11774490|
+|5|242/219|269/269|403108430|20130120|20487770|
+|7|438/361|450/450|763696400|63516700|77899780|
+
+Native collects1557 points,1383 in extreme-human gauge, for2,068,835,200 cash;
+the human collects1661,1633 extreme-human, for2,971,050,810. Holding each Native
+pickup's observed PIV fixed, its maximum height plus human-doubling price sums
+to2,367,984,320: a299,149,120 difference. Of this,166,635,750 is height loss at
+the observed gauge and132,513,370 is missing human doubling. These same-pickup
+ceilings omit the cost of attaining a different pose/gauge and are not guaranteed
+additional score. PIV, future production, pickup time and the resulting world
+all change under a new strategy. The human's own corresponding loss is33,461,550.
+
+Before151 specifically,348 Native points earn588,576,940, with39,882,400 height
+loss and77,899,780 missing doubling. All77 nonhuman FinalB pickups occur in this
+road; the75 later nonspell pickups add23,634,300 height loss and no form loss.
+The [policy's parent-chain condition](../../src/online.cpp) deliberately excludes
+the economic human prior while preserving a root with children. Small pending
+batches can auto-collect before the collection gate opens. Isolate parent0 and
+stronger human/collection priors on this late road instead of changing the whole
+run blindly. Native safety and complete-route checks remain mandatory.
+
+## Source-clock alignment and observer coverage
+
+The [timeline wait implementation](../../third_party/th08/src/EnemyTimeline.cpp)
+subtracts one timer update at WAIT_FOR_BOSS_DEFEAT, cancelling the final increment
+while a boss remains active. Absolute gameplay frames continue. This means that
+changing a previous kill time can misalign later absolute-frame human pose hints.
+The first read-only observers980–983 preserve the full human stock rows/score
+and the Native41 terminal words, but Session-step sampling is sparse in replay
+mode: one outer step can perform several calculations (early samples4,9,14,19).
+Its roughly20-percent source-key coverage is not the full event coverage.
+Two dialogue/control handoff samples also expose next-stage Session identity
+alongside the previous world's frame/pose; they are outside the NPC-map scope.
+
+Build984 installs a typed, non-owning read-only observer immediately after each
+successful stock row write in a private checker copy. Caller ownership spans the
+session and output stream; installation is cleared before output closes. The
+production gameplay kernels are unchanged. Probes985/986 reproduce every byte
+of the complete human and selected-Native stock row streams and both advertised
+scores. Every observed stage/frame/input/XY joins its exact stock row. All14410
+eligible old Native-actions observations have the same source timeline vectors
+as the corresponding source-replay observations.
+
+Keys use raw stage, timeline0 timer and DAT-relative instruction offset, not an
+ASLR pointer. Only unique human NPC keys without active boss, GUI boss, dialogue,
+bomb input or dying player enter the immutable table. Coverage of the baseline
+is6896/6927 eligible4A observations and7483/7483 Stage5 observations. Matching
+frames drift by−1139…+1264 in4A and0…+1228 in5. Lookup reads each actual Native
+future's current script cursor; a missing key gives ordinary guidance, and no
+human gameplay world/RNG is copied. Pose/fire leads remain8/1 source updates;
+invalid lookahead falls back to the current valid human sample.
+
+## Whole-stage policies and late pricing portfolio
+
+Build989 supplies two scoped whole-stage NPC adapters and a first151 CLI stop
+for otherwise public policies,19.351s,peak329011200 bytes. Build990 restores the
+already-proven4500-frame initial Stage3 road policy using the current CLI and
+actual47-end stop,6.55s. The17+29 combination951 actually improves Stage2 orbs
+28168→29323, but its generic Stage3 loses the existing road orb production: at the matched
+47-end boundary both have289 points, with orbs26940→19575. Before36 both have
+143 points, with orbs13206→6097. The earlier313/31275 comparison was a full-stage
+value against a partial47 checkpoint and is withdrawn. Its21/25 intervals also fall from
+2580/513 to697/29 under the changed profile/world. Retain actual policies and
+replan them in the new world; copying only a prefix then discarding downstream
+components does not establish their intended combination.
+
+The18-owner portfolio991–1008 declares32 total CPU-quota cores, all original32796,
+4GiB per process/tree,96GiB aggregate guard and the existing host/hard-service
+reserves. There are no overlapping old Native owners when admitted. Cases test
+whole4A/5 timeline-aligned NPC hints at H128/256 and cash0/4; FinalB parent100/0,
+human5/20/100 and collection5/20 profiles at both horizons; and two restored
+Stage3-road continuations after17+29 or captured10. Every owner has7200s wall,
+30000ms search and unchanged Native collision, RNG and recovery semantics.
+Whole-stage owners stop at the actual stage control handoff; price owners stop
+at first151; restored roads stop at actual47 end. None exports a replay or
+certifies a complete combined route. Full Native continuations decide selection.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|991|`vps-scarlet-luna-roadprice-v4-clock-stage3-h128-cash0`|running/unresolved|—|—/37|—|
+|992|`vps-scarlet-luna-roadprice-v4-clock-stage3-h128-cash4`|running/unresolved|—|—/37|—|
+|993|`vps-scarlet-luna-roadprice-v4-clock-stage3-h256-cash0`|running/unresolved|—|—/37|—|
+|994|`vps-scarlet-luna-roadprice-v4-clock-stage3-h256-cash4`|running/unresolved|—|—/37|—|
+|995|`vps-scarlet-luna-roadprice-v4-clock-stage5-h128-cash0`|running/unresolved|—|—/37|—|
+|996|`vps-scarlet-luna-roadprice-v4-clock-stage5-h128-cash4`|running/unresolved|—|—/37|—|
+|997|`vps-scarlet-luna-roadprice-v4-clock-stage5-h256-cash0`|running/unresolved|—|—/37|—|
+|998|`vps-scarlet-luna-roadprice-v4-clock-stage5-h256-cash4`|running/unresolved|—|—/37|—|
+|999|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent100-human5-collect5`|running/unresolved|—|—/37|—|
+|1000|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human5-collect5`|running/unresolved|—|—/37|—|
+|1001|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human20-collect20`|running/unresolved|—|—/37|—|
+|1002|`vps-scarlet-luna-roadprice-v4-finalb-h128-parent0-human100-collect20`|running/unresolved|—|—/37|—|
+|1003|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent100-human5-collect5`|running/unresolved|—|—/37|—|
+|1004|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human5-collect5`|running/unresolved|—|—/37|—|
+|1005|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human20-collect20`|running/unresolved|—|—/37|—|
+|1006|`vps-scarlet-luna-roadprice-v4-finalb-h256-parent0-human100-collect20`|running/unresolved|—|—/37|—|
+|1007|`vps-scarlet-luna-roadprice-v4-restore-stage3-after17-29`|running/unresolved|—|—/37|—|
+|1008|`vps-scarlet-luna-roadprice-v4-restore-stage3-after10capture`|running/unresolved|—|—/37|—|
+
+The completed earlier full combinations are informative negative results:
+931 after29 gives5,406,920,820,35/37;932 after36 gives5,726,454,870,36/37;
+950 after17+29 gives5,570,462,700,36/37;952 after captured10 gives
+5,213,714,340,37/37. The two first-road4A tails958/959 give5,727,132,730 and
+5,634,347,200, both35/37. All are NMNB but below the overall record. New
+all-capture observations remain producer results rather than a verified record;
+only a verified new overall score retains a replay under the owner's rule.
+
+## Additional rejected phase and road controls
+
+Stage5 absolute-clock guide966 builds in6.818s from11500 bomb-free/nondying
+reference samples. Its four first104 components967–970 produce179/149/189/167
+entry points versus182 baseline and209 human, all NMNB. The H256/cash0 case969
+banks2,532,276,810 at entry versus baseline2,470,319,980, yet its future remains
+unverified. Whole-stage key alignment is the next comparison, not an assumption
+that these partial gains transfer to the final score.
+
+Build971 (105.604s,peak352919552 bytes) tests eight legal bottom-latch6 proposals:
+one Y432 target row, unfocused/no-fire down approach, feedback/shooting, human/
+focused capture and600/900 reserves. All972–979 capture safely but yield only
+134–209 orbs versus1321 baseline. They are rejected. Matching the human's median
+Y alone does not reproduce its farm; forced movement and form/damage timing
+remain coupled. No rejected phase gets a new replay or production-policy change.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|972|`vps-scarlet-luna-card6-r600-feedback-human-capture-bottom-flow-phase-v5`|phase_boundary|captured|141|3851800|9714|
+|973|`vps-scarlet-luna-card6-r600-feedback-focused-capture-bottom-flow-phase-v5`|phase_boundary|captured|209|4357890|9730|
+|974|`vps-scarlet-luna-card6-r600-shoot-human-capture-bottom-flow-phase-v5`|phase_boundary|captured|141|3851800|9714|
+|975|`vps-scarlet-luna-card6-r600-shoot-focused-capture-bottom-flow-phase-v5`|phase_boundary|captured|135|3817200|9712|
+|976|`vps-scarlet-luna-card6-r900-feedback-human-capture-bottom-flow-phase-v5`|phase_boundary|captured|139|4196060|9635|
+|977|`vps-scarlet-luna-card6-r900-feedback-focused-capture-bottom-flow-phase-v5`|phase_boundary|captured|156|4758940|9550|
+|978|`vps-scarlet-luna-card6-r900-shoot-human-capture-bottom-flow-phase-v5`|phase_boundary|captured|139|4196060|9635|
+|979|`vps-scarlet-luna-card6-r900-shoot-focused-capture-bottom-flow-phase-v5`|phase_boundary|captured|134|4425550|9577|
+
+
 ## Source accounting and operating record
 
 [Point collection](../../third_party/th08/src/ItemManager.cpp) doubles a priced
@@ -362,7 +591,8 @@ in Extra yielded3,087,585,240/2,911,258,630/3,048,176,630/3,033,427,050. Zero
 reproduces the entire baseline action hash; the nonzero weights are unpromoted.
 The remaining story weight cases were cancelled;4096 had already failed NMNB.
 
-The832→896 extension was recorded at819;896→960 at879 before897. The central
+The832→896 extension was recorded at819;896→960 at879 before897;960→1024
+at957 before961. The central
 ledger never resets. Local limits remain four drivers,4GiB AS/tree, host12GiB
 admission/8GiB abort. Remote limits remain32 owners, total CPU quota32 cores,
 4GiB AS/tree,96GiB summed RSS guard,128GiB hard service/no swap and host128GiB
