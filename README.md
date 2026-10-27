@@ -3,8 +3,8 @@
 > [!NOTE]
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
-> **Native NMNB scores: Extra 3,087,585,240 (Scarlet, 14/14); Lunatic story 6,439,636,250 (Scarlet, 36/37).**
-> Selected progress: [Extra 3.088B replay](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3087585240-seed9098.rpy) · [Story 6.440B replay](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6439636250-seed32796.rpy) · [All replays and provenance](reports/native/README.md) · [Videos](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
+> **Native NMNB scores: Extra 3,087,585,240 (Scarlet, 14/14); Lunatic story 6,512,532,100 (Scarlet, 36/37).**
+> Selected progress: [Extra 3.088B replay](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3087585240-seed9098.rpy) · [Story 6.513B replay](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6512532100-seed32796.rpy) · [All replays and provenance](reports/native/README.md) · [Videos](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
@@ -30,12 +30,12 @@ newer Scarlet and Magic improvements, are published by shot and route. Their exa
 [Validation](docs/VALIDATION.md#october27-verified-native-progress).
 The requested Native milestones, Extra above3B and complete Lunatic above5B,
 are achieved. The owner now targets the highest human scores across all12 shots:
-Extra above3,178,460,830 and Lunatic above7,053,332,460, first reaching6.5B on the
-complete Lunatic route. These October27 [all-shot records](https://maribelhearn.com/wr#IN)
+Extra above3,178,460,830 and Lunatic above7,053,332,460. The first complete
+Lunatic6.5B milestone is achieved at6,512,532,100. These October27 [all-shot records](https://maribelhearn.com/wr#IN)
 are both solo Youmu; the table above preserves the earlier Magic Team references.
 All shots may now be explored, with the owner's preferred **Scarlet Team
 (Sakuya/Remilia)** taking priority. Its verified Native results are
-**Extra3,087,585,240 (14/14)** and **complete Lunatic6,439,636,250 (36/37)**,
+**Extra3,087,585,240 (14/14)** and **complete Lunatic6,512,532,100 (36/37)**,
 both No Miss/No Bomb, at their own original retail seeds9098/32796.
 Scarlet now owns both overall Native records; its story times out10.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;

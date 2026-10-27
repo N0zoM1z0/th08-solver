@@ -8,6 +8,10 @@ full-route checks. The fixed original retail seed is32796. The baseline is the
 verified5,621,456,240,36/37 route (only10 timeout). Earlier Extra records and
 all-shot reference identities remain separate.
 
+The complete6.5B milestone is achieved at **6,512,532,100,NMNB36/37**, task1225,
+verified by fresh1229/natural1230. The final section records the exact combined
+route, original32796 lineage, negative controls, costs and replay identities.
+
 ## Composition contract and exact coordinates
 
 A component is a policy plus its real incoming checkpoint, not an independently
@@ -1400,6 +1404,78 @@ gauge−10000.1222/1223 reapply the two feedback strategies at that exact new
 checkpoint; a full tail and fresh/natural checks still own any final record.
 The1216→1280 budget extension was recorded at1210 before1217, without resetting
 the ledger or changing any owner, CPU, RSS, address-space or host-memory limit.
+
+## Achieved6.5B: complete original-entry composition
+
+Task1225 verifies **6,512,532,100,NMNB36/37**, only10 timeout. Fresh1229 and
+natural1230 pass all eight checks, including all41 terminal words, full score,
+zero misses/bombs, exact capture outcomes and the ysopwnab name. It exceeds the
+requested6.5B by12,532,100 and adds72,895,850 over1207. The all-shot human story
+reference remains540,800,360 higher; no Wine retail playback gate is claimed.
+The64782-byte replay SHA-256 is
+2912bf684755afd10e4674fc327bb8e61902500b170f91f70a1c74e01a1417c4; actions
+0baaf83495597ee29da797afe18dfb193974cfae81ed4c287b68d75975c231cd.
+
+This is a complete reexecution from the original retail32796 entry. The
+composition retains focused17 (1112), shooting/focused25 (1122), shooting/
+focused29 (1133), actual stage recomputation1141, shooting/focused77 (1180),
+actual remaining4A/Stage5 recomputation1186, public first151 collector1204 and
+H128 tail1207. Read-only1221 maps that new world's171 entry to145927 inputs,
+gauge−10000, with all41 words and all37 spell audits reproduced. Two source
+phase strategies are then tested in this actual incoming world, not pasted
+from the older6.291B actions or added as score increments.
+
+The368–432 feedback band (1222) captures16788 orbs/30,000,000 bonus and banks
+5,043,889,560 at151302 actual inputs,5367 focused inputs out of5375 active.
+The400–432 feedback band (1223) captures16661/30,000,000 and banks5,040,714,020
+at151135,5204/5208 focused. The old actual171 owner end was4,983,890,050 at
+151224. Their rank reverses the earlier6.291B world's geometry ranking: policy
+strategies transfer, but their local values must be recomputed. Pending shots,
+items, bonus settlement, options, actors and RNG remain source-owned throughout.
+
+Each literal new171 prefix is completed with public H128/publication64/replan32/
+cash4/movement4. The368-band route finishes6,512,532,100; the400-band route
+finishes6,505,968,070. Both exceed the milestone and retain36/37; the highest
+verified route is selected with the lower task ID as the stable score tie-break.
+The final route has159669 owner inputs and438 FinalB points/70803 orbs/PIV1446380,
+versus438/63656/1410640 in1207. The final command reexecutes its prefix and plans the remaining suffix in
+148.938s report wall,
+149.107s process wall,128464 branch/1 proposal updates,
+262 searches and761/69 economic attempts/adoptions.
+This suffix timing is not the total cost of discovering the route: every earlier
+build, probe, partial, rejected combination, setup failure, retry and verification
+remains in the cumulative ledger/results TSV. I/O and Native costs stay separate.
+
+The final four-case batch costs148.554–152.612s per concurrent owner, peaks
+634552320 bytes summed owned RSS and retains at least419953369088 bytes host
+MemAvailable. All4GiB owner/32-owner/32-core/host guards remain unchanged.
+No Native resource abort or OOM occurs in this final batch. The earlier1158
+preparation formatter violation remains separately recorded and corrected.
+
+The reserve1.2/1.5 pairs are exact controls here:1225/1226 have identical full
+action SHA-256,41-word terminal and spell audits;1227/1228 do too. All five
+remaining Last Spells175/179/183/187/191 are survival spells. The HP/deadline
+reserve in [attack pacing](../../src/online.cpp#L673) does not change these
+measured suffixes. Both duplicated costs stay charged; future searches should
+avoid varying an inactive parameter at this terminal phase. No duplicate replay
+is retained merely for the second reserve label.
+
+The reference audit ends at PIV1445850 and1661 total stage point items, versus
+1446380 and1623 here. Matching the final PIV does not recover earlier pickup
+prices: the Native route reaches that value later. This comparison suggests
+earlier price/production work for a future continuation, not an additional
+experiment or a NoBomb counterfactual of the human replay.
+
+Retention cleanup hashes and removes9 further settled unselected replay files
+(584284 bytes), including the equal-score1226 duplicate. All30 selected replay
+identities and272 archived payloads retain exact bytes; every action tape and
+metadata/cleanup receipt stays local.
+
+The owned scoring batch has completed. Only publication, documentation checking
+and hash-preserving retention cleanup follow this milestone; no further scoring
+queue is started with the unused cumulative budget. Earlier selected replay
+bytes remain unchanged, and future replay retention again requires a verified
+improvement over6,512,532,100 (or the separate overall Extra record).
 
 ## Source accounting and operating record
 

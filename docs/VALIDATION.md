@@ -118,7 +118,7 @@ replan64, upper grid, charging, reserve1.5/240 and capture-fire recovery.
 Each pair checks all41 terminal words, score, exact capture map, zero
 misses/bombs and the eight-byte player name. Fresh execution/index agreement
 and natural source replay do not establish independent physics or retail
-equivalence. The all-shot score gates and6B milestone remain unmet.
+equivalence. At that baseline, the all-shot score gates and6B milestone remained unmet.
 
 The selected files are local under
 `reports/local/global-score-20261027/selected/`; published Magic milestones stay
@@ -197,11 +197,11 @@ SHA-256
 actions hash `84be0dfc805a8ecf038944fba4aea0db5f66e78bec6e98ae0eae43996041ec93`.
 All selected provenance files bind the producer/manifest, original receipt,
 DAT, prefix, binary, natural rows, controls and environment above. Published
-Magic milestone bytes remain unchanged;6B and the global gates remain unmet.
+Magic milestone bytes remain unchanged; at that checkpoint6B and the global gates were unmet.
 
 The owner subsequently requested publication of all17 selected verified Scarlet
 and Magic improvements, followed by retention of new overall project records.
-Seven later verified records bring this continuation's selected uploads to24.
+At that checkpoint seven later verified records brought the selected uploads to24.
 Their exact bytes are now grouped by shot and route in
 [the Native evidence index](../reports/native/README.md); the compact
 [progress table](../reports/native/replays/progress.tsv) binds tasks, actual
@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **6,439,636,250,36/37**,only10 timeout
-(1207, fresh1219/natural1220). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **6,512,532,100,36/37**,only10 timeout
+(1225, fresh1229/natural1230). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
@@ -282,7 +282,7 @@ Public H128/publication64/replan32/cash4/movement4/reserve1.2+120 completes
 checks. Its63563-byte replay SHA-256 is
 `47f0e80219e70944b18d6c27b5718f49410b7cbe47418fffd4e0799c656d78dc`; actions
 `cb30a7a1937ed45670f36c27506ab111df48d8796420423a3dd39aef9ceed1c9`.
-New6.440B task1207 retains1204's119649 actual inputs: the same early17/25/29
+Preceding6.440B task1207 retains1204's119649 actual inputs: the same early17/25/29
 composition through1141, targeted77 shoot/focused600 (1180,3827 orbs/capture),
 actual Stage4A settlement and Stage5 recomputation1186, then public H256 to
 first151. Those actual entries are3,405,901,940/PIV1092360 at114770 inputs
@@ -291,14 +291,22 @@ finishes6,439,636,250,NMNB36/37,only10 timeout; fresh1219/natural1220 pass all
 eight gates. Its64955-byte replay SHA-256 is
 `770bb0b3e502b18a1bb9b8927e9f0072019b3b2c8123eb9dbaa58ae2d156f57e`; actions
 `c13d4b088a8d881151cb5717e7d4bf8b229f90956c3481a3b07ce908219ae3c7`.
+New6.513B task1225 retains1222's exact151302 inputs. Its prefix is1207's
+actual145927 inputs through171 entry, followed by lower368–432 feedback/
+focused600 capture, H256/cash0/movement4, in that carried world.171 captures
+16788 orbs and30,000,000 bonus. Public H128/publication64/replan32/cash4/
+movement4 finishes6,512,532,100,NMNB36/37,only10 timeout. Fresh1229/natural1230
+pass all eight checks. Its64782-byte replay SHA-256 is
+`2912bf684755afd10e4674fc327bb8e61902500b170f91f70a1c74e01a1417c4`; actions
+`0baaf83495597ee29da797afe18dfb193974cfae81ed4c287b68d75975c231cd`.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.
 The [experiment journal](experiments/2026-10-27-vps.md) owns complete costs,
 matched-profile comparisons, resource guards, negative results and future work.
 Normal831 passes60/60 after resource-aborted803; no gameplay binary is relinked
-during either test owner. The all-shot replay gates and current6.5B milestone
-remain unmet. [Per-phase evidence](experiments/2026-10-27-phase-composition.md)
+during either test owner. The all-shot replay gates remain unmet; the complete6.5B milestone is now
+achieved by1225 and verified by1229/1230. [Per-phase evidence](experiments/2026-10-27-phase-composition.md)
 records the partial experiments and full-route combinations separately.
 
 The current Scarlet bests extend those lineages without changing the public
