@@ -1013,6 +1013,12 @@ audit calculation clocks are not silently used as owner coordinates.
 
 ## Capture form and carried gauge across17→25→29
 
+The original v7 CLI retains a stale phase_card=29 JSON label; its immutable
+configuration, manifest target17 and complete spell audit own the actual17
+experiment. Journal tables now select the manifest target before that stale
+label; original bytes remain unchanged. This reporting correction changes no
+executed input, result or replay.
+
 Build1110 compares human600, focused600 and focused900 capture on17 from the
 same current-record22250-input world. The1111 human control reproduces884's
 **entire action tape and41-word terminal**, not merely its orb count. It gets
@@ -1024,9 +1030,9 @@ a high local orb count is still not a combined-route score.
 
 | Task | Variant | State | Card result | Orbs | Bonus | Owner end |
 | --- | --- | --- | --- | ---: | ---: | ---: |
-|1111|`vps-scarlet-luna-phase17-gauge-v7-r600-humancapture`|phase_boundary|—|—|—|23911|
-|1112|`vps-scarlet-luna-phase17-gauge-v7-r600-focusedcapture`|phase_boundary|—|—|—|23744|
-|1113|`vps-scarlet-luna-phase17-gauge-v7-r900-focusedcapture`|phase_boundary|—|—|—|23472|
+|1111|`vps-scarlet-luna-phase17-gauge-v7-r600-humancapture`|phase_boundary|captured|2922|12434800|23911|
+|1112|`vps-scarlet-luna-phase17-gauge-v7-r600-focusedcapture`|phase_boundary|captured|4795|13680560|23744|
+|1113|`vps-scarlet-luna-phase17-gauge-v7-r900-focusedcapture`|phase_boundary|captured|3175|13222980|23472|
 
 
 Build1118 reuses the original915/917 proposal/online objects and adds signed
@@ -1056,12 +1062,12 @@ these are actual partial29 runs with no replay or full-score qualification.
 
 | Task | Variant | State | Card result | Orbs | Bonus | Owner end |
 | --- | --- | --- | --- | ---: | ---: | ---: |
-|1128|`vps-scarlet-luna-after25-1120-phase29-gauge-v9-feedback`|running/unresolved|—|—|—|—|
-|1129|`vps-scarlet-luna-after25-1120-phase29-gauge-v9-shoot`|running/unresolved|—|—|—|—|
-|1130|`vps-scarlet-luna-after25-1121-phase29-gauge-v9-feedback`|running/unresolved|—|—|—|—|
-|1131|`vps-scarlet-luna-after25-1121-phase29-gauge-v9-shoot`|running/unresolved|—|—|—|—|
-|1132|`vps-scarlet-luna-after25-1122-phase29-gauge-v9-feedback`|running/unresolved|—|—|—|—|
-|1133|`vps-scarlet-luna-after25-1122-phase29-gauge-v9-shoot`|running/unresolved|—|—|—|—|
+|1128|`vps-scarlet-luna-after25-1120-phase29-gauge-v9-feedback`|phase_boundary|timeout|2803|0|33772|
+|1129|`vps-scarlet-luna-after25-1120-phase29-gauge-v9-shoot`|phase_boundary|captured|3012|14653380|33318|
+|1130|`vps-scarlet-luna-after25-1121-phase29-gauge-v9-feedback`|phase_boundary|captured|2878|13377640|33422|
+|1131|`vps-scarlet-luna-after25-1121-phase29-gauge-v9-shoot`|phase_boundary|captured|2996|14880100|32744|
+|1132|`vps-scarlet-luna-after25-1122-phase29-gauge-v9-feedback`|phase_boundary|captured|3033|13113230|33028|
+|1133|`vps-scarlet-luna-after25-1122-phase29-gauge-v9-shoot`|phase_boundary|captured|3294|14225300|32779|
 
 
 Documentation attempt1134 followed a failed private template generation
@@ -1069,6 +1075,144 @@ Documentation attempt1134 followed a failed private template generation
 the old output and is not accepted for the new prose. The escaping is fixed,
 all maintained outputs regenerated, and the documentation check rerun before
 publication; no Native code or gameplay result is changed by that repair.
+
+## Source-clock alignment and gauge-preserving bridges
+
+Build1138 tests a source-backed25→29 bridge. When the suppression timer is
+zero, [time-orb pickup](../../third_party/th08/src/ItemManager.cpp#L637) adds111
+gauge while focused and subtracts111 while unfocused. Human6's early positive
+jumps include these pickups; attributing them entirely to graze was incomplete.
+All six v9 cases enter29 at−10000 despite positive25 exits. Four v11 cases
+hold focus only after actual25 closure until actual29 starts, with a
+branch-owned seen latch. All four enter29 at+10000. Quiet1143 after1121 captures
+3765 orbs and exits+10000, PIV524640; its362,476,460 cash is below1131's
+364,578,770.1145 times out. Preserving gauge changes the mechanism, not a
+promise of additive score. Ordinary fire, actual collision, damage and RNG stay
+source-owned. No partial replay is exported.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1142|`vps-scarlet-luna-bridge25parent1121-to29-v11-inherit-fire`|phase_boundary|captured|3233|13705970|33241|
+|1143|`vps-scarlet-luna-bridge25parent1121-to29-v11-quiet`|phase_boundary|captured|3765|14120660|33293|
+|1144|`vps-scarlet-luna-bridge25parent1122-to29-v11-inherit-fire`|phase_boundary|captured|3196|14964750|32526|
+|1145|`vps-scarlet-luna-bridge25parent1122-to29-v11-quiet`|phase_boundary|timeout|3155|0|33031|
+
+
+Build1137 reuses the exact6.019B NPC proposal object and adds only a stop at the
+actual Stage5→FinalB control handoff.1139–1141 recompute all subsequent stages
+from the new17/25/29 worlds, including intervening road and spells.1139 banks
+3,220,949,020 at113258 inputs;1141 banks3,357,599,860 at112770, with PIV1059960.
+The preceding record's actual FinalB entry was3,161,704,460/PIV1028490. These
+are partial checkpoints, not complete-route scores.1149 separately recomputes
+the quiet bridge1143 world.1159–1162 apply the public H256 collector through
+first151 to1139/1141, with human/collection bias5 or20, before a complete tail.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1139|`vps-scarlet-luna-early29parent1131-dynamic-to-stage5-v10`|stage_boundary|3220949020|24/37|0|
+|1140|`vps-scarlet-luna-early29parent1132-dynamic-to-stage5-v10`|stage_boundary|3337257630|23/37|0|
+|1141|`vps-scarlet-luna-early29parent1133-dynamic-to-stage5-v10`|stage_boundary|3357599860|25/37|0|
+
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1149|`vps-scarlet-luna-bridge29parent1143-dynamic-to-stage5-v12`|running/unresolved|—|—/37|—|
+
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1159|`vps-scarlet-luna-early5parent1139-public-finalb151-v16-bias5`|road_boundary|4002771520|24/37|0|
+|1160|`vps-scarlet-luna-early5parent1139-public-finalb151-v16-bias20`|road_boundary|3977412410|24/37|0|
+|1161|`vps-scarlet-luna-early5parent1141-public-finalb151-v16-bias5`|road_boundary|4087330040|25/37|0|
+|1162|`vps-scarlet-luna-early5parent1141-public-finalb151-v16-bias20`|road_boundary|4033903250|25/37|0|
+
+
+Read-only build1146 adds [source bossTimer](../../third_party/th08/src/EnemyManager.hpp#L284)
+alongside looping ECL sub/time/IP. It is reset at real callbacks, including
+[timeout handling](../../third_party/th08/src/EnemyManager.cpp#L634), so neither
+a global frame nor the timer alone is a unique identity. Human1147 and current
+record1148 reproduce **all stock row bytes, complete scores and every observed
+stage/frame/input/XY/gauge field**. No observer writes world, RNG or callbacks.
+For first-stage nonspell rows, stage/sub/bossTimer/DAT-relative IP provides3287
+unique shared keys out of3387 Native rows, versus1127 with the old ECL-time key.
+Raw stages1/2/3/5/7 have5036/4265/6554/6489/8543 unique shared rows out of
+5182/4386/6638/6706/9514. Ambiguous or missing human keys remain ordinary policy.
+These are lookup coverage measurements, not Native/retail physics equivalence.
+
+Build1150 fails before Native on a mistaken Player.positionCenter field;
+1151 uses the actual source Player.position and builds clean in14.914s.
+The bounded v13 experiment retains exactly7000 actual inputs from1114, an
+explicit checkpoint that is not relabeled a boss boundary. Only the1341 unique
+human keys in first-stage subroutines26/27/29 guide the pre6 movement; both
+on/off controls share the same relative spell6 pose/fire/form hints. H128/256
+are separate profiles.1155 changes6 entry to Y210.397/gauge−8230, reaches+9086
+at age40 and collects1984 orbs, versus the original1321. It times out, losing
+the capture bonus. Matched H256 clock-off1153 captures1411 with9,246,200 bonus;
+H1281152/1154 both time out. Better entry alone does not solve damage/capture.
+Build1156 and1167–1170 release human movement/form/fire hints600 or900 updates
+before the source deadline and return to the ordinary Native capture controller.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1152|`vps-scarlet-luna-boss-clock0-pre6-v13-h128`|phase_boundary|timeout|1497|0|10154|
+|1153|`vps-scarlet-luna-boss-clock0-pre6-v13-h256`|phase_boundary|captured|1411|9246200|10126|
+|1154|`vps-scarlet-luna-boss-clock1-pre6-v13-h128`|phase_boundary|timeout|1396|0|10121|
+|1155|`vps-scarlet-luna-boss-clock1-pre6-v13-h256`|phase_boundary|timeout|1984|0|10281|
+
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1167|`vps-scarlet-luna-boss-clock-pre6-v15-r600-h128`|phase_boundary|timeout|1059|0|10121|
+|1168|`vps-scarlet-luna-boss-clock-pre6-v15-r600-h256`|phase_boundary|captured|1683|8723020|9990|
+|1169|`vps-scarlet-luna-boss-clock-pre6-v15-r900-h128`|phase_boundary|captured|431|3989740|10106|
+|1170|`vps-scarlet-luna-boss-clock-pre6-v15-r900-h256`|phase_boundary|captured|994|6611780|10110|
+
+
+Build1157 adds unique source-clock nonspell hints only in4A or5, preserving
+existing NPC road hints and actual world/RNG. It costs31.605s and peaks461860864
+bytes under the guarded build.1163–1166 start at the current record's actual
+56066/87098 owner checkpoints and stop at FinalB entry. Source-human examples
+after a bomb/death are action/pose hints only, not a counterfactual NoBomb world;
+Native must generate its own safe trajectories and actual rewards.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1163|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell128`|running/unresolved|—|—/37|—|
+|1164|`vps-scarlet-luna-boss-clock-raw3-stage5-v14-spell256`|running/unresolved|—|—/37|—|
+|1165|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell128`|running/unresolved|—|—/37|—|
+|1166|`vps-scarlet-luna-boss-clock-raw5-stage5-v14-spell256`|running/unresolved|—|—/37|—|
+
+
+Preparation audit1158 records a resource-contract violation: a generated-table
+clang-format child was observed at4592320 KiB RSS, above4GiB, outside the build
+guard. It completed before the termination attempt; the initial aborted label
+is explicitly corrected in the cumulative ledger. It ran no Native simulation
+and supplies no gameplay evidence. The private preparation now disables
+formatting inside the immutable bulk array and runs formatting with4GiB address
+space. The subsequent build1157 is independently guarded and clean. Preserve
+this cost and correction instead of calling it an OOM or a Native failure.
+
+The1152→1216 extension was recorded at1141, before1153, without resetting the
+ledger or raising concurrency, RSS, address-space, host-memory or CPU limits.
+
+The earlier6 capture handoff succeeds for H256/reserve600 (1168):1683
+orbs,8,723,020 bonus and46,032,610 cash at9990 inputs. This is above the
+matched v13 H256 control44,000,930 but remains a local phase comparison.
+Reserve900 captures431/994 orbs with H128/256; H128/reserve600 still times out.
+No first-stage or full-route gain is inferred from these partials.
+
+The public first151 collector after1141 banks4,087,330,040 at117737 inputs
+with bias5 (1161); bias20 banks4,033,903,250 with slightly higher PIV1088100.
+After1139, bias5/20 bank4,002,771,520/3,977,412,410. Four full tails compare
+public H128 with reserve1.2 or1.5; these are the only full-score authorities.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1171|`vps-scarlet-luna-early151parent1159-reserve1p2-full-v17`|running/unresolved|—|—/37|—|
+|1172|`vps-scarlet-luna-early151parent1161-reserve1p2-full-v17`|running/unresolved|—|—/37|—|
+|1173|`vps-scarlet-luna-early151parent1161-reserve1p5-full-v17`|running/unresolved|—|—/37|—|
+|1174|`vps-scarlet-luna-early151parent1162-reserve1p2-full-v17`|running/unresolved|—|—/37|—|
+
 
 ## Source accounting and operating record
 

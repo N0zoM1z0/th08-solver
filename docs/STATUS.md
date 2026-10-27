@@ -599,6 +599,16 @@ stops its ASL reference at18348 and uses a declared segment-relative clock;
 later bomb-altered reference futures are not transplanted. Source/pose
 artifacts remain ignored under `reports/local/global-score-20261027/`.
 
+The next composition beam has recomputed the new17/25/29 world through Stage5:
+1141 reaches actual FinalB entry at3,357,599,860/PIV1059960, versus the current
+record’s3,161,704,460/PIV1028490. This is a partial checkpoint, not a route score.
+Source-clock first-stage hints improve6 entry and early gauge but time out;
+earlier capture handoffs and scoped4A/5 boss-clock hints are being measured.
+The [phase journal](experiments/2026-10-27-phase-composition.md) records all
+matched controls, incomplete components, stale-label corrections and the1158
+preparation formatter resource violation. Public Native code stays at the
+tested18e8450 state; no new source physics or Wine solving is introduced.
+
 ## Operational resume contract
 
 Read this section, [verified results](#verified-results),
@@ -610,7 +620,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | Local: at most4 owned solver/test/probe drivers including verification; build with `--parallel 2`. The owner's later VPS request separately authorizes up to32 remote Native owners, CPU quota32 cores, low priority. Fork children belong to their owner; do not add extra uncounted test drivers |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1136/1152 allocated task IDs**, including the publication documentation check. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152 were recorded before use; the latest was recorded at1081. Failures, cancellations and verification remain charged; never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1177/1216 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216 were recorded before use; the latest was recorded at1141. Failures, cancellations and verification remain charged; never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. The later explicit VPS authorization raises remote concurrency only |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |
