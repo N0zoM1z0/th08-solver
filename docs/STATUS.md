@@ -257,7 +257,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **633/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **638/704 allocated task IDs**. The October27 continuation records a64-task extension from640 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -1181,7 +1181,7 @@ first-safe acceptance alone does not use a longer compute budget to maximize cas
 All producer sources, CSVs, row hashes and incomplete-probe evidence stay in
 `reports/local/retail-score-offline-20261026/point-income-probe-v{6,7}/`.
 That checkpoint ends at **320/320**. The owner subsequently authorizes more
-offline work under bounded memory. The active window is now640 cumulative tasks,
+offline work under bounded memory. That continuation records640 cumulative tasks,
 with the original ledger retained and at most4 concurrent solvers. Further
 recorded budget extensions are authorized under the same memory conditions.
 Each solver process has a2GiB address-space limit; each owned process tree has
