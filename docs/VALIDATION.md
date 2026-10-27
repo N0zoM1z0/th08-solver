@@ -247,7 +247,7 @@ the external replay remains local.
 ## October27 verified Native progress
 
 The requested Native thresholds are achieved: **Extra3,010,040,230,NMNB14/14**
-and **complete1→2→3→4A→5→FinalB5,025,195,380,NMNB37/37**. Both current bests
+and **complete1→2→3→4A→5→FinalB5,025,195,380,NMNB37/37**. Both milestone exports
 capture every eligible spell, despite the capture-optional campaign goal.
 Original retail receipts46997/1805 and the exact `ysopwnab` name are preserved.
 Fresh original-entry execution matches all41 terminal words; natural original-
@@ -294,7 +294,53 @@ all-capture route reaches4,708,495,930,37/37. Those earlier3B/5B attempts had no
 yet reached the requested milestones. Seed receipts46997/1805, full-entry history and `ysopwnab` are
 unchanged. No Wine playback is launched.
 
-The selected local directory below also contains these exact exports:
+### Global-goal continuation: 5.163B story
+
+Task568 improves the complete Magic Team4A→FinalB route to **5,162,703,270,
+0 misses,0 bombs,35/37 captures**. Only32/77 time out; all37 eligible cards are
+encountered. The37/37 best remains5,025,195,380. Original retail seed1805,
+entry receipt SHA-256
+`88516cae49c9c04a2ebc0857f88eb81b3d0ed7277ff4c4c95a1a8b39d55ae133`
+and `ysopwnab` remain unchanged. Both6B and the7,053,332,460 all-shot reference
+are still above this score; no retail playback is qualified.
+
+This lineage uses public code throughout. Task503 supplies the first14529
+inputs: human100, charge-fire1, H128/publication64/replan32, no cash comparison.
+Task563 retains those inputs and uses human100/charge-fire0/H256/publication256/
+replan128/cash4 through26000. Task568 retains that literal26000-input tape,
+restores human5 and uses H256/publication128/replan64/cash4 for the complete tail.
+The economic edit window stays32 updates. Common controls include parent100
+revision2, drop-follow, reserve1.5/240, capture-fire recovery, lead1/warm1,
+beam384 and30s total search. The record does not inherit the human-button
+transfer experiments or private boss/age/window prototypes.
+
+Producer `global-story-public-earlycash-h5-p128-r64-full-v1/` is under the
+existing local campaign directory. It records142709 complete owner inputs,
+1329.203s wall time,1506421+21 branch/proposal updates,2395 rejected future
+deaths,5452 economic attempts/770 adoptions and zero timeouts/overruns/resource
+aborts. Measurements use Release GCC12.2.0, C++17, `-ffp-contract=off`, AMD
+EPYC7B12 and Linux6.1.0-54-cloud-amd64 x86_64. The report separates Native,
+guidance and file-I/O time; wall time is the charged owner cost.
+
+Tasks577/579 verify exact fresh41-word terminal agreement, complete natural
+original-writer replay, score, no misses/bombs, the exact35/37 outcome map and
+name. This remains execution agreement, rather than an independent physics
+oracle or retail equivalence. Public source is unchanged from the tested
+`de87af9` controls; normal Release Native/DAT task504 passes60/60 in1099.82s.
+
+The exact selected file stays local at
+`reports/local/global-score-20261027/selected/story-native-nmnb-4a-finalb-5162703270-seed1805.rpy`:
+
+| Local artifact | Bytes / SHA-256 |
+| --- | --- |
+| Replay |54682 / `70c3ddb6e933d9040cf1d82fbe5e598950e30119b2e143345ea3e2e6902846dc` |
+| Complete action tape |`6f3e6ec003e4bb155844d36128a557ef55b3c8e2dd3ec6f5c74bc5889c6285a3` |
+
+The selected provenance JSON and producer's `verification/` retain all binary,
+DAT, prefix, receipt and natural-row hashes. Earlier published bytes remain intact.
+
+The earlier `reports/local/target-3b5b-20261027/selected/` directory also
+contains these exact exports:
 
 | Local replay | Bytes | SHA-256 |
 | --- | ---: | --- |

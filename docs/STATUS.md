@@ -8,10 +8,11 @@ Lunatic route offline. Save tested progress directly on main. The preceding
 handoff batch is finished; its artifacts and failures retain their identities.
 
 Current verified Magic Team Native bests are **Extra 3,010,040,230, NMNB 14/14**,
-and **Lunatic 1→2→3→4A→5→Final B: 5,025,195,380, NMNB 37/37**. The owner's
-requested Native milestones, strictly above **3,000,000,000 Extra** and
-**5,000,000,000 story**, are achieved. The preserved capture-optional story
-is4,827,562,920,36/37.
+and **Lunatic 1→2→3→4A→5→Final B: 5,162,703,270, NMNB 35/37**, with32/77
+timeouts. The strongest all-capture story remains **5,025,195,380,37/37**.
+The owner's requested Native milestones, strictly above **3,000,000,000 Extra**
+and **5,000,000,000 story**, are achieved. Earlier36/37 capture-optional
+snapshots keep their identities.
 The historical human references remain3,021,639,920 and6,168,365,790; the new
 milestones do not relabel those records or qualify retail replay playback. The owner
 subsequently made the constraints independent CLI controls. The latest scope is
@@ -123,6 +124,51 @@ complete actor-attribution oracle. Compile failure542 remains charged. Current
 source/caller evidence and frozen inputs remain local under
 `reports/local/global-score-20261027/` and the campaign's `global-*` outputs.
 
+### Verified 5.163B continuation and human-road transfer
+
+Public task568 completes **5,162,703,270,NMNB35/37**,142709 inputs,1329.203s;
+only32/77 time out. Tasks577/579 pass fresh exact41-word terminal and natural
+score/no-miss/bomb/capture/name checks. Public source remains the tested
+`de87af9` implementation. [Validation](VALIDATION.md#global-goal-continuation-5163b-story)
+owns the exact local replay/action hashes, receipt, environment and lineage.
+The older published5.025B37/37 file retains its bytes and record category.
+
+The new lineage retains task503's14529 first-stage inputs, then task563's26000
+inputs before the H256/publication128/replan64/cash4/human5 complete tail.
+Task563's H256/publication256/replan128/cash4 profile raises spell17 entry orbs
+5234→8682. Matched64/96-update economic edit windows at564/565 instead give
+6446/5018 and remain private. The original32-update window wins this comparison.
+Task566's human100 full tail dies on70,0 bombs,18 captures,1,493,814,420 partial;
+task567's human5/publication256/replan128 tail completes4,950,358,610,NMNB36/37
+(77 timeout). Its stronger104641-input first-five-stage prefix is separately
+being tested with the previous fine FinalB schedule. These are combined profiles;
+no fragment gain is added arithmetically to a terminal score.
+
+Parent duty-cycle probes552/553 yield only4443/4172 spell17 entry orbs. Source
+root probes555/556 reproduce stock rows and show corresponding side mothers
+dying near phase age132 with4 children in Alan's tape versus70 with1 in ours.
+The current-root age100/140 implementation passes focused2/2 at557 but gives
+5297/5000 entry orbs and loses point production. It is removed; frozen patch,
+binary and attempts558–560 stay local. Extra's matching fragment has0 bombs,
+0 encountered captures,244 points/5729 orbs at5400 inputs. No new age flag is public.
+
+Human inputs are now tested as proposals at the original retail seed, without
+copying the reference RNG. Task572 copies5000 Stage2 gameplay inputs after our
+own14529-input first stage and dies at owner18887,0 bombs,4 captures. It certifies
+no prefix. Task574 freshly executes a shorter18625-input proposal from original
+entry, then adapts through Native: safe26000-input checkpoint,0 bombs,6 captures,
+11771 spell17 entry orbs and146 Stage2 points/15716 orbs at its declared end.
+For Stage3, task576's4096-input transfer dies at36487,0 bombs,9 captures;
+fresh task578 cuts to3500 reference inputs and safely reaches45000 with11
+captures and12564 spell36 entry orbs. Neither fragment is a terminal score.
+The35/37 record above uses the public-only lineage, separately from these transfers.
+
+Extra task569's public H256 entry reaches5400 with254 points/7004 orbs and
+175,098,250 cash. Task570's aggressive continuation times out192/194; strict
+capture continuation571 restores3/3 Keine but lowers end194 orbs to12862.
+Both have0 bombs and are unselected partial experiments. Preserve the original
+3.010B incumbent while evaluating complete alternatives.
+
 ## Operational resume contract
 
 Read this section, [verified results](#verified-results),
@@ -134,7 +180,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **551/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **582/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
@@ -181,7 +227,8 @@ Current local entry points, relative to
 | Preserved timeout58 story | `oct27-story-58-prefix-safe-tail-h128-v3/`; full143157-input tape,59476-input timeout58 prefix; bytes local |
 | Published highest Extra | `reports/native/replays/extra-native-nmnb-3010040230-seed46997.rpy`;30331 bytes; public pipeline and exact identity in Validation |
 | Current public reproduction | `extra-main-cash-confirm-v2/`; same tape/terminal, final public source/binary hashes; `extra-main-cash-compare-v1/verification/` owns earlier public fresh/natural checks |
-| Published highest story | `reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy`;55241 bytes; captured77 prefix and exact identity in Validation |
+| Published all-capture story | `reports/native/replays/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy`;55241 bytes; captured77 prefix and exact identity in Validation |
+| Highest capture-optional story | `global-story-public-earlycash-h5-p128-r64-full-v1/`;5,162,703,270,35/37; public14529/26000-input lineage, exact fresh/natural verification; selected bytes remain local |
 | Source-faithful private repair / pulse | `future-repair-v3/`, `suppressed-hit-pulse-v1/period2/`, `drop-target-v1/`; frozen C++/compile/link inputs, not portable old object files |
 | Economic prototype sources | `cash-compare-v1/` matches public32-update comparison; `cash-compare-pulse64-v2/` and `piv-potential-v3/` are non-winning variants |
 | Read-only diagnostics | `point-income-probe-v7/`, `pool-pressure-probe-v8/`, `pool-transition-probe-v9/`, `chain-probe-v1/`; exact stock-row gates, source/CSV identities |
@@ -233,6 +280,7 @@ Fresh replay checks execution agreement, not independent physics or retail equiv
 | **Current Native Extra** | **3,010,040,230 /14 of14** | Seed46997, public first5400/17000-input schedules, H128/drop-follow/cash4; owner-selected bytes published |
 | Verified drop-follow Extra |2,825,597,670 /14 of14 | Seed46997,14026-input incumbent prefix, H128/focus10/drop-follow continuation; bytes local |
 | **Current Native Lunatic4A→FinalB / all captures** | **5,025,195,380 /37 of37** | Seed1805,106321-input captured77 prefix; revision2/H256/publication64/cash4; owner-selected bytes published |
+| **Current Native Lunatic4A→FinalB / captures optional** | **5,162,703,270 /35 of37** | Seed1805, public14529/26000-input schedules; H256/publication128/replan64/cash4;32/77 timeout; exact fresh/natural agreement; bytes local |
 | Preserved capture-optional story |4,827,562,920 /36 of37 | Seed1805,105673-input parent-v1 prefix; only77 times out; bytes local |
 | Preserved all-capture Native story |4,708,495,930 /37 of37 | Seed1805,14409-input incumbent prefix; revision2 parent100/H128; bytes local |
 | Preserved capture-optional story |4,444,083,080 /36 of37 | Seed1805, isolated58-timeout prefix59476; only58 times out; bytes local |
@@ -1358,8 +1406,9 @@ continuation feasibility, not a live handoff or permission to rewind the owner.
 
 ## Unresolved problems and proposed next work
 
-The owner resumed exploration and the requested Native3B/5B thresholds are now
-achieved. The completed batch leaves no owned driver running.
+The owner resumed exploration and the requested Native3B/5B thresholds are
+achieved. Global-record goal work is active: first6B story, then the all-shot
+references3,178,460,830 Extra and7,053,332,460 Lunatic. Reuse the fixed episodes.
 Current trials require No Miss and No Bomb, allow missing captures, and accept
 only higher complete score. Restore all captures explicitly when requested.
 Keep independent options for later ablations; the owner has not requested an
@@ -1367,13 +1416,13 @@ ablation matrix now. The following are proposals, not verified gains.
 
 | Current problem / evidence | Next bounded investigation | Acceptance |
 | --- | --- | --- |
-| Native3B/5B milestones achieved; human-reference retail gates remain unmet | On a later continuation, retain the selected3.010B/5.025B inputs while testing source production, pickup price and ordinary-spell charge/aim timing | Higher complete No Miss/No Bomb score under the declared capture goal, exact fresh/natural verification; retail gate remains the human reference |
+| Native story now5.163B,35/37; all-shot human-reference retail gates remain unmet | Preserve selected3.010B/5.025B bytes and the verified local5.163B lineage; continue source/human cancellation timing and complete Native tails | First6B story, then strictly exceed both global references under the declared goal; exact fresh/natural verification before selection |
 | Endpoint cash can prefer locally profitable inputs with worse full score | Value real pending capture rewards, source bonus cap/decay and remaining actual point opportunities. Fixed600*PIV fails both episodes; do not treat an assumed future item count as guaranteed | Whole-terminal gain with all extra rollout/retry costs charged |
 | More Native horizon can fail before reaching a known-safe existing tail | Freshly certify the literal incumbent suffix at a checkpoint, then compare economic alternatives. After edits, re-execute that suffix in the new branch; never assume unchanged RNG or safety | Retain a certified incumbent; incomplete/failed futures remain proposals only |
 | Familiar-chain value is nonlinear; broad focus loses score | Read current parent/child/chain state and projectile/form timing. Preserve source hit income and human pickup price; test selective mother targeting or maturation only with declared assumptions | Better actual collected income and complete score; distinguish live chain length from linkedChildCount |
-| Selected full-entry parent uses private repair/focus code | Port only measured useful behavior through typed interfaces if needed. Current public optional drop/cash goals are already integrated; five parent repair adoptions are not proof a larger framework is needed | Focused contract plus full-duration Native case and normal CTest; no old-object/new-header ABI mixing |
-| Current Extra collects1045 points versus ASL's1081; the old2.979B tape's price gap is37,599,710 | Trace actual production/price on the selected3.010B tape; do not transfer another trajectory's same-item ceiling as guaranteed gain | Actual point income and complete score improve without sacrificing capture/orb economics |
-| FinalB now collects446 points and57419 orbs; earlier PIV still trails Alan | Preserve measured parent rewards and human price while testing earlier profitable income. Stronger farm focus alone fails Stage1 | Beat5,025,195,380 from original retail-seed entry with every extra retry/selection cost charged |
+| Both current highest lineages use public code; historical2.603B Extra uses private repair/focus code | Keep historical frozen objects separate and recompile every affected prototype after an interface change | No old-object/new-header ABI mixing or relabeling historical provenance |
+| Current Extra collects1045 points versus ASL's1081, with58,071,120 same-item price headroom | Trace actual production/price and chain cancellation on that tape; qualify full Keine/capture continuations after an entry gain | Higher complete score with actual bomb/capture outcomes; a better entry alone is not selection |
+| Earlier income can improve the first five stages while losing FinalB profit | Compare explicit full-entry continuations from the stronger carried prefix; preserve every source transition and charge all selection costs | Beat5,162,703,270 from original retail-seed entry, keeping the37/37 record separate |
 
 ### Resume here
 

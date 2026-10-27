@@ -378,6 +378,14 @@ The bias uses existing per-update preference-cost units and is soft: movement,
 hazards and verification can select another form. This can lose human shot-hit
 income, kill timing or pickup value; complete Native execution decides profit.
 
+Form also affects source instruction selection. `Enemy::UpdateYoukaiAlignment`
+writes the linked child's ECL mask override to32 for human or64 for youkai;
+`EclManager::RunEcl` combines it with the difficulty mask when accepting an
+instruction. A different waiting form can therefore change emitted patterns,
+as well as child hittability and gauge. Each Native candidate must execute its
+own actual program/RNG future. Current links or a death-age observation alone
+cannot predict the later bullet-cancellation reward.
+
 Source stage-clear scoring is separate from point pickup pricing. Before
 difficulty/configuration multipliers, `Gui::UpdateStageElements` adds5000 raw score per
 stage point,100 per time orb and50 per graze, plus its stage/life/bomb/night
