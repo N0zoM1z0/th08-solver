@@ -31,6 +31,7 @@ Configuration with_style(const std::string &name, Configuration configuration) {
     configuration.scoring_farm_to_timeout = false;
     configuration.scoring_hit_income = false;
     configuration.scoring_drop_target = false;
+    configuration.scoring_drop_follow = false;
     configuration.scoring_boss_collection = false;
     configuration.scoring_precollect = false;
     configuration.scoring_priced_collection = configuration.scoring_upper_stage = false;
@@ -358,6 +359,8 @@ struct Policy::Impl {
             throw std::runtime_error("invalid_online_capture_reserve");
         if (opt.scoring_farm_to_timeout && !opt.scoring_attack_pacing)
             throw std::runtime_error("timeout_farming_requires_attack_pacing");
+        if (opt.scoring_drop_follow && !opt.scoring_drop_target)
+            throw std::runtime_error("drop_follow_requires_drop_target");
         if (!std::isfinite(opt.value_weight) || opt.value_weight < 0 ||
             (value_model.loaded &&
              (opt.horizon != int(kValueHorizon) || opt.planner_lag || opt.tail_check ||
@@ -443,6 +446,8 @@ struct Policy::Impl {
                 throw std::runtime_error("invalid_online_pickup_box");
             if (opt.scoring_drop_target && o.scoring.has_drop_target)
                 finite(o.scoring.drop_target_x);
+            if (opt.scoring_drop_follow && o.scoring.has_drop_target)
+                finite(o.scoring.drop_target_y);
             if (opt.scoring_attack_pacing &&
                 (o.scoring.capture_hp < 0 || o.scoring.collected_orbs < 0 ||
                  o.scoring.orb_value < 0 || o.scoring.bonus_decay < 0))
@@ -1993,8 +1998,18 @@ struct Policy::Impl {
         // Choose a real enemy lane instead of the empty midpoint of a group.
         // Hit-income windows, existing pickup trips and graze goals take priority.
         if (opt.scoring_drop_target && !observation.scoring.has_boss &&
-            observation.scoring.has_drop_target)
+            observation.scoring.has_drop_target) {
             pref_x = std::clamp(observation.scoring.drop_target_x, sp.minx, sp.maxx);
+            // Larger Y moves below a surviving actor instead of continuing the
+            // upper-stage collection ascent. Do not climb beyond the ordinary
+            // collection goal for high actors. This only changes the proposal's
+            // preferred point: subsequent hit-income/pickup goals may replace
+            // it, and Native verification remains the safety authority.
+            if (opt.scoring_drop_follow)
+                pref_y = std::clamp(
+                    std::max(collection_goal_y(observation), observation.scoring.drop_target_y),
+                    sp.miny, sp.maxy);
+        }
         if (opt.scoring_hit_income && !observation.scoring.has_boss) {
             float best = 0;
             for (const auto &target : observation.scoring.income_targets) {
@@ -2061,6 +2076,9 @@ bool Policy::needs_scoring_memory() const {
 }
 bool Policy::needs_hit_income_memory() const {
     return impl_->opt.scoring_hit_income;
+}
+bool Policy::needs_drop_follow_memory() const {
+    return impl_->opt.scoring_drop_follow;
 }
 bool Policy::supports_value_proposals() const {
     return impl_->supports_value_proposals();

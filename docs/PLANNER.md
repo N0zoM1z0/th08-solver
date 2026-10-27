@@ -334,6 +334,19 @@ nor a successful kill. Native continuations decide safety and realized income.
 The selected Extra gain uses this goal together with the recorded focus-pulse
 and larger-search profile; its result does not isolate the goal's contribution.
 
+Native `--drop-follow 1` requires `--drop-target 1` and defaults off. It extends
+the same current-enemy proposal to actors below the player when an in-bounds
+shooting position64 pixels below the actor exists. Coordinates use playfield
+pixels, with Y increasing downward. Ranking becomes
+`count / (HP * (1 + abs(dx)/48 + abs(shooting_y-player_y)/64))` with stable pool
+order on ties. These distance scales are heuristic penalties, not flight times.
+The proposed Y is the lower of the collection goal and shooting position on
+screen; existing item trips, hit-income and graze goals still override it.
+Every observation recomputes the target without retaining an enemy pointer.
+Native execution owns collision, actual shot hits, item production and prices;
+descending to shoot may reduce collection prices. Historical profiles keep the
+original horizontal-only selection when the new control is off.
+
 Native `--economic-proposals 0..4` defaults to0. After a complete safe forecast,
 it retains that incumbent and tries up to the requested number of32-update
 fire/focus alternatives, preserving the immutable lead and incumbent movement

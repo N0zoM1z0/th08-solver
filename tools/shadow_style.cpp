@@ -273,7 +273,7 @@ int run(int argc, char **argv) {
             "[--priced-collection 0|1] "
             "[--upper-stage 0|1] [--collection-bias VALUE] [--human-bias VALUE] "
             "[--capture-factor VALUE] [--capture-padding UPDATES] [--hit-income 0|1] "
-            "[--drop-target 0|1] [--economic-proposals 0..4] "
+            "[--drop-target 0|1] [--drop-follow 0|1] [--economic-proposals 0..4] "
             "[--recovery-style baseline|expert|zen] [--recovery-fire preserve|capture] "
             "[--replay-name NAME] [--allow-bombs 0|1] [--require-all-captures 0|1] "
             "[--target-score DISPLAYED] "
@@ -309,6 +309,7 @@ int run(int argc, char **argv) {
     bool human_bias_override = false;
     bool reserve_factor_override = false, reserve_updates_override = false;
     bool hit_income_override = false, drop_target_override = false;
+    bool drop_follow_override = false;
     bool recovery_style_override = false, recovery_fire_override = false;
     std::string recovery_style = "baseline", recovery_fire = "preserve";
     std::string replay_name = "ysopwnab";
@@ -444,6 +445,9 @@ int run(int argc, char **argv) {
         } else if (key == "--drop-target" && !drop_target_override) {
             profile.scoring_drop_target = number(argv[i + 1], 1);
             drop_target_override = true;
+        } else if (key == "--drop-follow" && !drop_follow_override) {
+            profile.scoring_drop_follow = number(argv[i + 1], 1);
+            drop_follow_override = true;
         } else if (key == "--recovery-style" && !recovery_style_override) {
             recovery_style = argv[i + 1];
             if (recovery_style != "baseline" && recovery_style != "expert" &&
@@ -702,6 +706,8 @@ int run(int argc, char **argv) {
            << ",\"hit_income\":" << (profile.scoring_hit_income ? "true" : "false")
            << ",\"drop_target\":" << (profile.scoring_drop_target ? "true" : "false")
            << ",\"drop_target_revision\":" << (profile.scoring_drop_target ? 1 : 0)
+           << ",\"drop_follow\":" << (profile.scoring_drop_follow ? "true" : "false")
+           << ",\"drop_follow_revision\":" << (profile.scoring_drop_follow ? 1 : 0)
            << ",\"attack_focus_bias\":" << profile.attack_focus_bias
            << ",\"attack_reserve_factor\":" << profile.attack_reserve_factor
            << ",\"attack_reserve_updates\":" << profile.attack_reserve_updates

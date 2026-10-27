@@ -131,10 +131,16 @@ struct ScoreMemory {
     // not a promise about RNG scatter, a future kill or a realized pickup.
     std::uint64_t impending_points = 0;
     float impending_x = 192;
-    // One current damageable drop-bearing actor above the player, ranked by
-    // drop count / (HP * horizontal travel cost). No future death is assumed.
+    // Native refreshes this optional target from the current enemy pool on each
+    // observation; no actor pointer or target identity survives into Policy.
+    // Coordinates are playfield pixels (Y increases downward). X is the actor's
+    // lane; Y is a proposed position 64px below it for upward player shots.
+    // The default adapter only considers actors above the player. Vertical
+    // following also admits lower actors if that shooting position is in bounds.
+    // Drop count / (HP * travel penalty) ranks proposals, not expected cash or
+    // guaranteed kills. Native rollouts still decide damage, safety and drops.
     bool has_drop_target = false;
-    float drop_target_x = 192;
+    float drop_target_x = 192, drop_target_y = 400;
     std::vector<ScorePickup> pickups;
     std::vector<IncomeTarget> income_targets;
 };
@@ -197,6 +203,9 @@ struct Configuration {
     bool scoring_farm_to_timeout = false;
     bool scoring_hit_income = false;
     bool scoring_drop_target = false;
+    // Requires drop_target. Allow its stage-only lane proposal to move downward
+    // after an enemy's reduction window ends; pickup/hit-income goals still win.
+    bool scoring_drop_follow = false;
     float attack_focus_bias = 5;
     float attack_reserve_factor = 1.5f;
     unsigned attack_reserve_updates = 240;
@@ -307,6 +316,7 @@ class Policy {
     explicit Policy(Configuration configuration, RiskTables risk = {}, BranchValueModel value = {});
     bool needs_scoring_memory() const;
     bool needs_hit_income_memory() const;
+    bool needs_drop_follow_memory() const;
     // Learned branch features have a fixed24-update schema. Native guidance
     // can use ordinary single-action decisions for other policy horizons.
     bool supports_value_proposals() const;

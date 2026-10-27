@@ -11,6 +11,9 @@ No Miss, No Bomb, captures optional. Bomb experiments are paused. Preserve stric
 defaults and historical records, and record actual bomb use/captures for every
 trial. Require a complete no-miss score above the corresponding human reference
 under its declared constraints before Wine retail replay validation.
+The latest requested Native milestones are Extra above3,000,000,000 and the
+complete Lunatic route above5,000,000,000. Keep those targets distinct from the
+historical human references and the retail replay gate.
 Before each new scoring episode, launch the owned Wine retail game and capture
 its original RNG seed at the observer's pre-RegisterChain boundary. Record the
 entry configuration, checkpoint and seed provenance before Native exploration.

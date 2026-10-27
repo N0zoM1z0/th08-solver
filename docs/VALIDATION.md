@@ -178,6 +178,14 @@ of timeout or scoring profit. Reports record `farm_to_timeout` and its revision;
 the source audit owns actual timeout/capture outcomes. Historical benchmarks and
 their original controls keep their identities.
 
+The default-off `--drop-follow 1 --drop-target 1` experiment proposes a position
+below current drop-bearing stage actors after their reduction window ends.
+Reports record `drop_follow` and its revision. It retains the same NMNB/capture
+controls above and changes no source damage, collision or reward rule. Inspect
+complete terminal score and per-stage item production/price together; a higher
+kill count alone cannot select a replay. [Planner](PLANNER.md#price-aware-positioning)
+owns coordinates, ranking, priority and snapshot lifetime.
+
 Refiner `--family bomb --allow-bombs 1` compares human/focused X windows against
 the complete incumbent terminal. Use `--window 1` for a one-update pulse and
 `--first-update N` to begin trials at a declared owner-input index (default64).
@@ -217,7 +225,44 @@ the external replay remains local.
 
 ## October27 verified Native progress
 
-The current No Miss/No Bomb campaign allows missing captures. Extra improves
+The latest source-guided continuations reach **Extra2,891,728,530,NMNB14/14**
+and **complete story4,469,021,890,NMNB37/37**. Neither reaches the
+owner's new3B/5B milestone or its historical human reference. Seed receipts,
+entry/history and `ysopwnab` are unchanged; no Wine replay is launched.
+
+These selected local copies are under
+`reports/local/target-3b5b-20261027/selected/`, with exact producer/verification
+identities in `provenance.json`:
+
+| Local replay | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `extra-native-nmnb-2891728530-seed46997.rpy` |30719 |`c2d4d016e324b72d768f2ffca6db5d45e6cce16cd5ec2bbe9331e86caae7067b` |
+| `extra-native-nmnb-2825597670-seed46997.rpy` |29008 |`4365ce22a3749d76e49a47eb4a18319d712452a10a4d19bd1c16fe0296331dde` |
+| `story-native-nmnb-4a-finalb-4469021890-seed1805.rpy` |52502 |`6d58e47e4aa2c5a80071a686470d8f542c235f58256097302e28610557423b19` |
+
+Producers `target-{extra,story}-drop-follow-v1/` are under the existing local
+campaign directory. Extra retains14026 literal inputs of the2.650B tape and
+uses H128/publication64/replan32, beam384/30s search, lead1/warm1, focus/survival
+bias10, reserve1.2/120 and four economic alternatives. Story retains14409 inputs
+of the4.444B tape, with the same horizon/schedule/beam/budget, bias5, reserve1.5/
+240 and capture-fire recovery. Both enable drop-follow, retain the priced/upper/
+hit-income goals and disable timeout farming/bombs. Their full69677/144837-input
+tapes hash to `b566ce5274be7809d12bc93e2837505b0c9afc5f7394b744f42de59bde5579ac`
+and `0e2b94297b23e6d8da160267692e0328777dcd97e0e8889a4568d3fc4b0894da`.
+Fresh original-entry exact41-word terminal and natural original-writer
+score/NMNB/exact capture outcomes/name all agree. These are Native execution
+checks, not an independent physics or retail oracle. New bytes remain local.
+
+`target-extra-card193-income-v1/` retains9400 original2.650B inputs and enables
+timeout farming only until11900. `target-extra-card193-capture-tail-v1/` retains
+that explicit safe prefix, then restores ordinary capture pacing with the same
+H128/focus10/reserve1.2/120 profile and drop-follow disabled. It captures193/194
+late and completes2.891B with14/14. Its full71253-input tape SHA-256 is
+`5e8afbc5091100d801022f71d50b691ed545567c02d97e9c749241b1f0ae2783`.
+Both setup and complete-tail costs remain charged; fresh/natural checks pass.
+Normal Release Native/DAT CTest passes60/60 in1214.34s for these public controls.
+
+The preceding No Miss/No Bomb campaign allows missing captures. Extra improves
 to2,650,283,240,14/14; the complete1→2→3→4A→5→FinalB story improves to
 4,444,083,080,36/37, with only ordinary card58 timing out. Its all-capture
 alternative reaches4,403,879,050,37/37. All keep the original

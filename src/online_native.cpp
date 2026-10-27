@@ -91,6 +91,8 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
     score.impending_x = 192;
     score.has_drop_target = false;
     score.drop_target_x = 192;
+    score.drop_target_y = 400;
+    const bool follow_drops = policy.needs_drop_follow_memory();
     double best_drop_priority = 0;
     double weighted_drop_x = 0;
     const bool full_power = g_GameManager.GetPower() >= 128;
@@ -105,15 +107,31 @@ void capture_policy_memory(headless::Session &session, std::uint64_t update, Obs
                 (full_power ? std::uint64_t(std::max(0, enemy.powerOrPointItemDropCount)) : 0);
             score.impending_points += count;
             weighted_drop_x += double(enemy.worldPosition.x) * double(count);
-            if (count && enemy.worldPosition.y >= 0 && enemy.worldPosition.y < o.y &&
+            // Y increases downward. Once reduction ends, hit-income memory no
+            // longer owns this actor, but upward shots still need a position
+            // below it. Reuse that goal's 64px clearance without assuming a hit.
+            // An actor too low for this clearance supplies no follow proposal;
+            // clamping its Y would conceal that unsupported shooting geometry.
+            constexpr float shooting_clearance = 64;
+            const float shooting_y = enemy.worldPosition.y + shooting_clearance;
+            const bool reachable =
+                follow_drops ? shooting_y <= o.movement.maxy : enemy.worldPosition.y < o.y;
+            if (count && enemy.worldPosition.y >= 0 && reachable &&
                 enemy.worldPosition.x >= o.movement.minx &&
                 enemy.worldPosition.x <= o.movement.maxx) {
-                const double reach = 1 + std::abs(enemy.worldPosition.x - o.x) / 48.;
+                // These pixel scales make travel a dimensionless ranking
+                // penalty, not a movement-time estimate. Keep the historical
+                // horizontal-only ordering when follow_drops is disabled;
+                // strict improvement preserves enemy-pool order on ties.
+                const double reach =
+                    1 + std::abs(enemy.worldPosition.x - o.x) / 48. +
+                    (follow_drops ? std::abs(shooting_y - o.y) / shooting_clearance : 0.);
                 const double priority = double(count) / (std::max(1, enemy.life) * reach);
                 if (priority > best_drop_priority) {
                     best_drop_priority = priority;
                     score.has_drop_target = true;
                     score.drop_target_x = enemy.worldPosition.x;
+                    score.drop_target_y = shooting_y;
                 }
             }
         }

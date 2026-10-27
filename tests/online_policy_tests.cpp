@@ -533,6 +533,35 @@ void drop_target_goal_contract() {
           "drop target displaced a current source hit-income window");
     o.scoring.drop_target_x = std::numeric_limits<float>::quiet_NaN();
     rejects([&] { on::Policy(config).decide(o); }, "nonfinite drop target was accepted");
+
+    auto following = on::with_style("score-harvest");
+    following.horizon = 24;
+    following.scoring_drop_target = following.scoring_upper_stage = true;
+    following.scoring_priced_collection = true;
+    // Put the ordinary priced-collection goal at the current Y. With no
+    // hazards, moving downward can then only come from the follow proposal.
+    o = scene();
+    o.x = 192;
+    o.y = 126;
+    o.scoring.available = o.scoring.auto_collect_eligible = o.scoring.has_drop_target = true;
+    o.scoring.collection_line = 160;
+    o.scoring.pickup_reach_y = 32;
+    o.scoring.drop_target_x = 192;
+    o.scoring.drop_target_y = 228;
+    check(!(on::Policy(following).decide(o).action & 32),
+          "default drop target silently acquired a vertical preference");
+    following.scoring_drop_follow = true;
+    check(on::Policy(following).needs_drop_follow_memory() &&
+              (on::Policy(following).decide(o).action & 32),
+          "vertical drop following stayed above its current shooting target");
+    o.scoring.pickups.assign(4, {192, 120, on::PickupKind::Point});
+    check(!(on::Policy(following).decide(o).action & 32),
+          "vertical following displaced the existing pickup trip");
+    o.scoring.pickups.clear();
+    o.scoring.drop_target_y = std::numeric_limits<float>::quiet_NaN();
+    rejects([&] { on::Policy(following).decide(o); }, "nonfinite drop height was accepted");
+    following.scoring_drop_target = false;
+    rejects([&] { on::Policy policy(following); }, "vertical following lacked a target owner");
 }
 void committed_prefix_contract() {
     auto o = scene();
