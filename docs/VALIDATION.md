@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **5,922,099,540,35/37**,10/77 timeouts
-(1011, fresh1023/natural1024). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **5,961,138,320,35/37**,10/77 timeouts
+(1022, fresh1051/natural1052). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
@@ -232,6 +232,15 @@ collection5 through first151 at119607, then H128/cash4/reserve1.2+120. Its
 62498-byte replay SHA-256 is
 `361e65d156f2832070760e160ea18375e15f455e8d25cc8d74b462836fa0b10a`, actions
 `c84252613e66539e87472c74a5d3915dec8c277ffae9eee5f1dc24e28f38e036`.
+The5.922B record remains unchanged. New5.961B task1022 retains1014's actual
+118858 inputs:877 through Stage5 entry86090; source-clock NPC Stage5 H256/
+cash4/reserve1.5+240 to FinalB entry113978 (998); public H256/parent100/
+human20/collection20 to first151 (1014); then public H128/publication64/
+replan32/cash4/reserve1.5+240 through the complete route. It executes157301
+inputs in652.006s,656346 branch and2 proposal updates. Its61846-byte replay
+SHA-256 is `221de1fc5c181ebb104a49dba503908b4d64fa0543f3a60b132a2a951366ad06`, actions
+`165c213753871e73d416e07f2f348bb2f3e61765de96fdce188677f02411f4f6`. Fresh1051/natural1052
+pass all checks;35/37 captures retain10/77 timeouts,0 misses and0 bombs.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.

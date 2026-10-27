@@ -607,9 +607,36 @@ by adding local gains; they must complete and verify the entire route.
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1021|`vps-scarlet-luna-stage5-finalb151-join-reserve1p2-full-v1`|running/unresolved|—|—/37|—|
-|1022|`vps-scarlet-luna-stage5-finalb151-join-reserve1p5-full-v1`|running/unresolved|—|—/37|—|
+|1021|`vps-scarlet-luna-stage5-finalb151-join-reserve1p2-full-v1`|complete|5953171630|35/37|0|
+|1022|`vps-scarlet-luna-stage5-finalb151-join-reserve1p5-full-v1`|complete|5961138320|35/37|0|
 
+
+## Verified5.961B stage and FinalB composition
+
+Task1022 completes **5,961,138,320,NMNB35/37**,10/77 timeouts. Fresh1051 and
+natural1052 pass all41 terminal words and all eight completion/score/outcome/
+zero-miss/bomb/name gates. It adds39,038,780 over1011, leaving538,861,680 to6.5B.
+The61846-byte replay SHA-256 is
+221de1fc5c181ebb104a49dba503908b4d64fa0543f3a60b132a2a951366ad06; actions
+165c213753871e73d416e07f2f348bb2f3e61765de96fdce188677f02411f4f6.
+
+The literal118858-input prefix comes from1014:877's original86090 inputs to
+Stage5 entry, source-clock NPC Stage5 H256/cash4/reserve1.5+240 through actual
+FinalB entry113978 (998), then public H256/parent100/human20/collection20 through
+first151. Public H128/publication64/replan32/cash4/reserve1.5+240 completes the
+remaining tail. The producer costs652.006s for157301 owner inputs,656346 branch
+and2 proposal updates,3643 economic attempts/338 adoptions. This is a complete
+reexecution from original32796, without adding local scores or transplanting
+states. Lower1021 finishes5,953,171,630 and does not retain another replay.
+
+Read-only probe1043 separately measures the **preceding5.922B** record, with
+its entire stock row stream byte-identical. Its1569 points include1436
+extreme-human pickups. Actual point cash is2,165,150,280; same-pickup/current-PIV
+human/max-height pricing is2,395,030,700. The229,880,420 difference decomposes
+into138,723,130 height and91,157,290 gauge doubling loss. Point cash accounts
+for96,315,080 of101,060,560 gain over5.821B. These historical diagnostics are
+not silently relabelled as the new5.961B accounting or guaranteed attainable
+cash: changing form/position can change production, PIV, survival and timing.
 
 ## Expanded clock evidence and new adaptive proposals
 
@@ -636,6 +663,55 @@ than assuming an absolute human X is always the same target. Native safety,
 physics, action-dependent RNG and independent recovery remain unchanged.
 Partial47 owners and complete-route owners are explicitly separate; a missing
 reference key falls back to ordinary guidance.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1027|`vps-scarlet-luna-npc-v5-to47-income0-h128-cash0`|phase_boundary|919636650|12/15|0|
+|1028|`vps-scarlet-luna-npc-v5-to47-income0-h128-cash4`|phase_boundary|847211110|12/15|0|
+|1029|`vps-scarlet-luna-npc-v5-to47-income0-h256-cash0`|phase_boundary|895319050|12/15|0|
+|1030|`vps-scarlet-luna-npc-v5-to47-income0-h256-cash4`|phase_boundary|883943520|12/15|0|
+|1031|`vps-scarlet-luna-npc-v5-to47-income50-h128-cash0`|phase_boundary|819586430|12/15|0|
+|1032|`vps-scarlet-luna-npc-v5-to47-income50-h128-cash4`|phase_boundary|841311770|12/15|0|
+|1033|`vps-scarlet-luna-npc-v5-to47-income50-h256-cash0`|phase_boundary|824933500|12/15|0|
+|1034|`vps-scarlet-luna-npc-v5-to47-income50-h256-cash4`|phase_boundary|862610320|12/15|0|
+|1035|`vps-scarlet-luna-npc-v5-full-income0-h128-cash0`|running/unresolved|—|—/37|—|
+|1036|`vps-scarlet-luna-npc-v5-full-income0-h128-cash4`|running/unresolved|—|—/37|—|
+|1037|`vps-scarlet-luna-npc-v5-full-income0-h256-cash0`|nmnb_failure|1775136080|16/21|0|
+|1038|`vps-scarlet-luna-npc-v5-full-income0-h256-cash4`|running/unresolved|—|—/37|—|
+|1039|`vps-scarlet-luna-npc-v5-full-income50-h128-cash0`|running/unresolved|—|—/37|—|
+|1040|`vps-scarlet-luna-npc-v5-full-income50-h128-cash4`|running/unresolved|—|—/37|—|
+|1041|`vps-scarlet-luna-npc-v5-full-income50-h256-cash0`|running/unresolved|—|—/37|—|
+|1042|`vps-scarlet-luna-npc-v5-full-income50-h256-cash4`|running/unresolved|—|—/37|—|
+
+
+## Different road and spell search profiles
+
+Private build1044 adds an explicit spell-horizon CLI to three existing NPC
+adapters. Road/nonspell search remains H256/publication128/replan64; active
+spells optionally use H128/publication64/replan32. On an actual mode change,
+only unexecuted planner packets, previous nominal extension and planner history
+are discarded. The owned Native world, bullets, RNG, actors, rewards and policy
+observer memory continue unchanged. Additional searches/discarded queued inputs
+are measured, rather than hidden in a favorable timing claim. A zero spell
+horizon disables switching and clearing completely.
+
+Control1045 reproduces1030's exact50518-input action tape (SHA-256
+7f3d6360fd541c076678a89a57bc1f1b2562b1e261bfcc38f4915b503973b9db), all41
+terminal words,297978 branch updates and883,943,520 at47 end. It records zero
+switches/discards. Active partial1046 has seven switches and499 discarded
+pending inputs, ending47 at890,631,040. This local improvement is not a complete
+record. The four full variants require original-entry completion and verification.
+Neither private CLI nor human-guidance prototype is promoted into public runtime.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1045|`vps-scarlet-luna-dynamic-v1-to47-income0-spell0-cash4`|running/unresolved|—|—/37|—|
+|1046|`vps-scarlet-luna-dynamic-v1-to47-income0-spell128-cash4`|running/unresolved|—|—/37|—|
+|1047|`vps-scarlet-luna-dynamic-v1-full-income0-spell128-cash4`|running/unresolved|—|—/37|—|
+|1048|`vps-scarlet-luna-dynamic-v1-full-income50-spell128-cash4`|running/unresolved|—|—/37|—|
+|1049|`vps-scarlet-luna-dynamic-v1-full-income0-spell128-cash0`|running/unresolved|—|—/37|—|
+|1050|`vps-scarlet-luna-dynamic-v1-full-income50-spell128-cash0`|running/unresolved|—|—/37|—|
+
 
 ## Source accounting and operating record
 
