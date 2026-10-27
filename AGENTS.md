@@ -14,7 +14,7 @@ under its declared constraints before Wine retail replay validation.
 The owner resumed after the3B/5B Native milestones. The final comparison now
 uses the highest published human score across all12 team/solo shots: Extra
 above3,178,460,830 and Lunatic above7,053,332,460 in the October27 snapshot.
-First reach6,000,000,000 on the complete Lunatic route. Preserve historical
+First reach6,500,000,000 on the complete Lunatic route. Preserve historical
 same-shot references separately; use the all-shot reference for the new retail
 replay gate. The current Magic Team episodes remain valid fixed-seed candidates.
 The October27 owner permits all shots and prioritizes Scarlet Team
@@ -147,8 +147,8 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. The October26
   continuation authorizes cumulative budget extensions while bounding memory;
-  the active window is896 total campaign tasks, without resetting the ledger.
-  The October27 continuation records successive64-task extensions from640,704,768 and832
+  the active window is960 total campaign tasks, without resetting the ledger.
+  The October27 continuation records successive64-task extensions from640,704,768,832 and896
   before use, under that standing authorization.
   Record further extensions before using them; this authorization does not raise
   the four-concurrent-driver limit, including solver, probe, replay-verification
@@ -189,6 +189,12 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   batch, record its outcomes and leave no owned experiment queue/test driver
   running. A proposed next step or unused budget is not authorization to start
   another batch during cleanup
+- The owner's later October27 instruction resumes work after clearing the old
+  goal. The current Lunatic milestone is6,500,000,000 using stage/spell strategy
+  composition. Optimize individual phases at explicit original-entry checkpoints,
+  carry the actual gameplay world/RNG across the composition, and accept only
+  complete-route verification as a score result. Preserve the intervening
+  cancellation receipts and costs; new runs require fresh task IDs/output paths
 - The owner requested direct main progress commits, not feature branches/PRs.
   Fetch first, preserve others' work, never force an unrelated change, and publish
   only tested scope. Do not infer permission to continue beyond the latest request

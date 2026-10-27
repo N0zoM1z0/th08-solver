@@ -201,7 +201,7 @@ Magic milestone bytes remain unchanged;6B and the global gates remain unmet.
 
 The owner subsequently requested publication of all17 selected verified Scarlet
 and Magic improvements, followed by retention of new overall project records.
-Four later verified records bring this continuation's selected uploads to21.
+Five later verified records bring this continuation's selected uploads to22.
 Their exact bytes are now grouped by shot and route in
 [the Native evidence index](../reports/native/README.md); the compact
 [progress table](../reports/native/replays/progress.tsv) binds tasks, actual
@@ -212,17 +212,24 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **5,621,456,240,36/37**, only10 timeout
-(799, fresh845/natural846). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **5,784,708,380,35/37**,10/77 timeouts
+(877, fresh904/natural905). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
-story keeps45000 and uses H128/publication64/replan32/cash4/movement4. These are
+story retains the actual first51253 inputs of H256 task794 through47,
+then uses H128/publication64/replan32/cash4/movement4. Its61373-byte replay
+has SHA-256 `37ea4e2f9b6ca020a470ab777f700e09aa5fe4d6acffeae3e714dbca4c67d488`,
+actions `407e157a43c9baff3d43b5c2cd2748465244b260182c56a2738604c9be17dcc4`.
+The literal prefix preserves unsettled capture rewards and carried world/RNG;
+no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.
 The [experiment journal](experiments/2026-10-27-vps.md) owns complete costs,
 matched-profile comparisons, resource guards, negative results and future work.
 Normal831 passes60/60 after resource-aborted803; no gameplay binary is relinked
-during either test owner. The all-shot replay gates and first6B remain unmet.
+during either test owner. The all-shot replay gates and current6.5B milestone
+remain unmet. [Per-phase evidence](experiments/2026-10-27-phase-composition.md)
+records the partial experiments and full-route combinations separately.
 
 The current Scarlet bests extend those lineages without changing the public
 runtime physics or the original9098/32796 receipts:
@@ -1237,7 +1244,7 @@ a separate check, not a property established by the export target header.
 ## Resume Extra scoring on main
 
 The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative896-task window, including the October27
+resource limits and the cumulative960-task window, including the October27
 recorded64-task extension before use. The owner has resumed with
 No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
 a fresh output directory, rather than copying a historical Native-selected seed
