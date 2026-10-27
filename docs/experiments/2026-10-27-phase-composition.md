@@ -674,14 +674,14 @@ reference key falls back to ordinary guidance.
 |1032|`vps-scarlet-luna-npc-v5-to47-income50-h128-cash4`|phase_boundary|841311770|12/15|0|
 |1033|`vps-scarlet-luna-npc-v5-to47-income50-h256-cash0`|phase_boundary|824933500|12/15|0|
 |1034|`vps-scarlet-luna-npc-v5-to47-income50-h256-cash4`|phase_boundary|862610320|12/15|0|
-|1035|`vps-scarlet-luna-npc-v5-full-income0-h128-cash0`|running/unresolved|—|—/37|—|
-|1036|`vps-scarlet-luna-npc-v5-full-income0-h128-cash4`|running/unresolved|—|—/37|—|
+|1035|`vps-scarlet-luna-npc-v5-full-income0-h128-cash0`|complete|5700868160|36/37|0|
+|1036|`vps-scarlet-luna-npc-v5-full-income0-h128-cash4`|complete|5440931420|35/37|0|
 |1037|`vps-scarlet-luna-npc-v5-full-income0-h256-cash0`|nmnb_failure|1775136080|16/21|0|
-|1038|`vps-scarlet-luna-npc-v5-full-income0-h256-cash4`|running/unresolved|—|—/37|—|
-|1039|`vps-scarlet-luna-npc-v5-full-income50-h128-cash0`|running/unresolved|—|—/37|—|
-|1040|`vps-scarlet-luna-npc-v5-full-income50-h128-cash4`|running/unresolved|—|—/37|—|
-|1041|`vps-scarlet-luna-npc-v5-full-income50-h256-cash0`|running/unresolved|—|—/37|—|
-|1042|`vps-scarlet-luna-npc-v5-full-income50-h256-cash4`|running/unresolved|—|—/37|—|
+|1038|`vps-scarlet-luna-npc-v5-full-income0-h256-cash4`|complete|5587060080|34/37|0|
+|1039|`vps-scarlet-luna-npc-v5-full-income50-h128-cash0`|complete|5215040020|32/37|0|
+|1040|`vps-scarlet-luna-npc-v5-full-income50-h128-cash4`|complete|5510009920|35/37|0|
+|1041|`vps-scarlet-luna-npc-v5-full-income50-h256-cash0`|complete|5514057410|35/37|0|
+|1042|`vps-scarlet-luna-npc-v5-full-income50-h256-cash4`|complete|5748286080|34/37|0|
 
 
 ## Different road and spell search profiles
@@ -705,13 +705,239 @@ Neither private CLI nor human-guidance prototype is promoted into public runtime
 
 | Task | Variant | State | Observed displayed score | Captures | Bombs |
 | --- | --- | --- | ---: | ---: | ---: |
-|1045|`vps-scarlet-luna-dynamic-v1-to47-income0-spell0-cash4`|running/unresolved|—|—/37|—|
-|1046|`vps-scarlet-luna-dynamic-v1-to47-income0-spell128-cash4`|running/unresolved|—|—/37|—|
-|1047|`vps-scarlet-luna-dynamic-v1-full-income0-spell128-cash4`|running/unresolved|—|—/37|—|
-|1048|`vps-scarlet-luna-dynamic-v1-full-income50-spell128-cash4`|running/unresolved|—|—/37|—|
-|1049|`vps-scarlet-luna-dynamic-v1-full-income0-spell128-cash0`|running/unresolved|—|—/37|—|
-|1050|`vps-scarlet-luna-dynamic-v1-full-income50-spell128-cash0`|running/unresolved|—|—/37|—|
+|1045|`vps-scarlet-luna-dynamic-v1-to47-income0-spell0-cash4`|phase_boundary|883943520|12/15|0|
+|1046|`vps-scarlet-luna-dynamic-v1-to47-income0-spell128-cash4`|phase_boundary|890631040|12/15|0|
+|1047|`vps-scarlet-luna-dynamic-v1-full-income0-spell128-cash4`|complete|6019713800|34/37|0|
+|1048|`vps-scarlet-luna-dynamic-v1-full-income50-spell128-cash4`|complete|5990761290|34/37|0|
+|1049|`vps-scarlet-luna-dynamic-v1-full-income0-spell128-cash0`|complete|5486677300|35/37|0|
+|1050|`vps-scarlet-luna-dynamic-v1-full-income50-spell128-cash0`|complete|5419398640|33/37|0|
 
+
+## Read-only option anchors and phase entry trajectories
+
+Source [UpdateOrbitingOption](../../third_party/th08/src/Player.cpp) saves each
+Scarlet option target on focus entry. Later focused player movement does not
+move that anchor. A phase checkpoint therefore needs the real options, old
+shots and incoming bullets as well as the player's current XY and gauge.
+This is an observed source mechanism, not evidence of a runtime discrepancy.
+
+Build1054 adds a read-only typed stock-row observer over the first three stages,
+including nonspell preparation. The1055/1056 playbacks finish but their JSON
+streams are invalid: a byte-backed focus mode was emitted as a character.
+They certify no mechanism analysis. Build1057 adds an explicit integer cast;
+retries1058/1059 finish in8.499/8.121s. Both entire stock-row streams are SHA-
+identical to their original uninstrumented human/current5.961B playback, every
+observer row agrees on stage/frame/input/XY, and complete scores agree exactly.
+The human keeps its own replay header and1miss/9bomb limitations; none of its
+world, RNG or option state is transplanted into the original32796 episode.
+
+| Card | Human focused / observed updates | Native focused / observed updates | Human / Native extreme-youkai rows |
+| --- | ---: | ---: | ---: |
+|6|1350/1887|975/1894|1841/805|
+|17|1431/1797|128/1149|1673/0|
+|29|2111/2161|128/1743|2128/0|
+|36|2246/2246|32/1328|2246/0|
+
+These counts include only active rows with nonnegative remaining time, and are
+not graze-event counts. Human36 keeps one option-anchor group near Y308–324,
+while the player remains at Y171.67. Human6 enters at Y204.71/gauge−8000 and
+reaches+10000 by opening age41 while sampled boss HP stays1500. Native6 enters
+at Y391.66/gauge−10000 and is still−10000 at that age. Merely matching the median
+bottom row loses this earlier trajectory. Human47 has a preceding bomb and is
+not used as a clean NoBomb anchor or opening counterfactual.
+
+Build1077 costs50.967s for four immutable proposal adapters. Each retains the
+original7905 actual inputs, approaches X208/Y208 or240 before6, suppresses fire
+until near that pose, then focuses/shoots to finish the **real** nonspell. It
+retreats focused toward Y432 for96/160 opening updates before the previously
+tested bottom feedback farm and focused600-update capture. Actual source
+updates retain anchors, RNG, bullets, gauge and pending rewards. Native futures
+may reject these trajectories; the controller cannot inject an entry state.
+Telemetry records actual entry XY/gauge and option0 anchor, not just requested XY.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1078|`vps-scarlet-luna-entry6-v6-y208-opening96`|phase_boundary|captured|897|7903200|10073|
+|1079|`vps-scarlet-luna-entry6-v6-y208-opening160`|phase_boundary|captured|619|6750330|9895|
+|1080|`vps-scarlet-luna-entry6-v6-y240-opening96`|phase_boundary|captured|755|8249630|9774|
+|1081|`vps-scarlet-luna-entry6-v6-y240-opening160`|phase_boundary|captured|1603|10000000|9937|
+
+The best1081 gets1603 interval orbs/capture and10M bonus versus1321/8.209M in
+the old world. Its actual entry is Y238.879/gauge−9018. Total checkpoint orbs
+are5264 versus4965; this modest partial gain does not reproduce the human4069
+interval or certify a route. The other three get619–897 interval orbs and are
+rejected. No new partial replay is retained.
+
+## Reapplying early strategies to changed incoming worlds
+
+The two spell farms do not compose additively. In complete-through47 case1066,
+17 retains2922 versus440 baseline, and29 retains3365 versus1084. However21
+falls2580→697 and25 falls513→29. The Stage2 total therefore grows only
+28168→29372. The next two components recompute25's upper focused strategy after
+17's actual23911-input checkpoint; later29 will need another reexecution.
+
+| Task | Variant | State | Card result | Orbs | Bonus | Owner end |
+| --- | --- | --- | --- | ---: | ---: | ---: |
+|1092|`vps-scarlet-luna-after17-card25-v4-feedback-focusedcapture`|phase_boundary|captured|750|7412260|31794|
+|1093|`vps-scarlet-luna-after17-card25-v4-shoot-focusedcapture`|phase_boundary|captured|534|8184730|31412|
+
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1061|`vps-scarlet-luna-early-v2-after884-npc0-h128-cash0-to47`|phase_boundary|907525920|12/15|0|
+|1062|`vps-scarlet-luna-early-v2-after884-npc0-h128-cash4-to47`|phase_boundary|830734190|12/15|0|
+|1063|`vps-scarlet-luna-early-v2-after884-npc0-h256-cash0-to47`|phase_boundary|896886280|12/15|0|
+|1064|`vps-scarlet-luna-early-v2-after884-npc0-h256-cash4-to47`|phase_boundary|894124400|12/15|0|
+|1065|`vps-scarlet-luna-early-v2-after936-npc0-h128-cash0-to47`|phase_boundary|898752550|12/15|0|
+|1066|`vps-scarlet-luna-early-v2-after936-npc0-h128-cash4-to47`|phase_boundary|915501550|12/15|0|
+|1067|`vps-scarlet-luna-early-v2-after936-npc0-h256-cash0-to47`|phase_boundary|908040680|12/15|0|
+|1068|`vps-scarlet-luna-early-v2-after936-npc0-h256-cash4-to47`|phase_boundary|914044310|12/15|0|
+|1069|`vps-scarlet-luna-pb5961-late171-h128-cash0-reserve1p2-full-v2`|complete|5919232060|35/37|0|
+|1070|`vps-scarlet-luna-pb5961-late171-h128-cash0-reserve1p5-full-v2`|complete|5907383670|35/37|0|
+|1071|`vps-scarlet-luna-pb5961-late171-h128-cash4-reserve1p2-full-v2`|complete|5945610810|35/37|0|
+|1072|`vps-scarlet-luna-pb5961-late171-h128-cash4-reserve1p5-full-v2`|complete|5937660340|35/37|0|
+|1073|`vps-scarlet-luna-pb5961-late171-h256-cash0-reserve1p2-full-v2`|complete|5900930180|35/37|0|
+|1074|`vps-scarlet-luna-pb5961-late171-h256-cash0-reserve1p5-full-v2`|complete|5897876290|35/37|0|
+|1075|`vps-scarlet-luna-pb5961-late171-h256-cash4-reserve1p2-full-v2`|complete|5937621500|35/37|0|
+|1076|`vps-scarlet-luna-pb5961-late171-h256-cash4-reserve1p5-full-v2`|complete|5872020540|35/37|0|
+
+
+The highest new early47 cash component1066 banks915,501,550 with PIV645170 and
+281 Stage3 points. The unchanged record's **same owner boundary**51253 banks
+898,980,920 with PIV639320 and289 Stage3 points. The inner audit row had
+898,944,280 before the owner update settled; original1090/1091 reasons quoting
+that value are preserved with explicit ledger corrections. Projection point
+count517 is cumulative55+173+289, not the stage-only289 counter. New1027 banks
+919,636,650/PIV638880/295 Stage3 points. These are mixed tradeoffs, not complete
+scores or safe state-dominance claims. Two new owners reapply Stage4A's source-
+clock policy in each actual incoming world, preserving all pending rewards.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1090|`vps-scarlet-luna-early47parent1027-stage4a-clock-v3`|stage_boundary|2031140430|19/26|0|
+|1091|`vps-scarlet-luna-early47parent1066-stage4a-clock-v3`|stage_boundary|2036642900|20/26|0|
+
+
+All eight new late171 tails complete NMNB35/37 but remain below5.961B; best1071
+is5,945,610,810. Same-parameter restart1072 gives5,937,660,340: restarting the
+planner's unpublished queue is itself a strategy change, even with the same
+actual world and warmed observer. Gains between this batch's profiles should
+use that control, not be attributed solely to the reserve against the old
+uninterrupted tail. None gets a selected replay.
+
+## Whole-stage4A plus5 and FinalB recomposition
+
+Whole Stage4A992 has352 points/PIV880320/cash2,097,137,990 versus the record's
+336/874060/2,074,306,220. Earlier end-of-road point counters are not substituted
+for these whole-stage measurements. Reapply Stage5's unique-NPC source-clock
+policy from its literal85202 inputs, rather than pasting998's old Stage5 tape.
+Four H128/H256 × cash0/4 owners keep reserve1.5+240 and end at the actual stage
+transition, before any whole-route or replay claim.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1086|`vps-scarlet-luna-after4a992-stage5-v3-h128-cash0`|stage_boundary|2987130550|25/37|0|
+|1087|`vps-scarlet-luna-after4a992-stage5-v3-h128-cash4`|stage_boundary|2977322450|25/37|0|
+|1088|`vps-scarlet-luna-after4a992-stage5-v3-h256-cash0`|stage_boundary|3025210190|25/37|0|
+|1089|`vps-scarlet-luna-after4a992-stage5-v3-h256-cash4`|stage_boundary|3076237680|25/37|0|
+
+
+New1089 (H256/cash4) reaches FinalB with3,076,237,680 and PIV1003590 versus old
+998's3,048,229,440/PIV996320. It has268 versus270 Stage5 points. The gain is
+28,008,240 at this boundary; it cannot simply be added to the final score.
+Two first151 components reapply the public H256/parent100/cash4 profile with
+human/collection5 or20 to this **changed** world, before a complete H128 tail.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1094|`vps-scarlet-luna-after4a5-1089-finalb-v4-human5-collect5`|road_boundary|3787210050|25/37|0|
+|1095|`vps-scarlet-luna-after4a5-1089-finalb-v4-human20-collect20`|road_boundary|3816346560|25/37|0|
+
+
+Four additional FinalB profiles on the old998 world, human/collection50/50,
+100/100,200/100 and H512/20/20, all bank less than1014's3,794,199,280 at151.
+Larger preferences or a longer horizon do not establish better production or
+pricing. Retain these negative components without exporting new replays.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1082|`vps-scarlet-luna-stage5parent-finalb-v3-h256-human50-collect50-cash4`|road_boundary|3752095660|24/37|0|
+|1083|`vps-scarlet-luna-stage5parent-finalb-v3-h256-human100-collect100-cash4`|road_boundary|3678405470|24/37|0|
+|1084|`vps-scarlet-luna-stage5parent-finalb-v3-h256-human200-collect100-cash4`|road_boundary|3767150820|24/37|0|
+|1085|`vps-scarlet-luna-stage5parent-finalb-v3-h512-human20-collect20-cash4`|road_boundary|3740625100|24/37|0|
+
+
+The NPC-v5 full portfolio's best is5,748,286,080,34/37; one case fails NMNB.
+Dynamic-profile full owners also need full completion and beat neither this
+component failure nor the verified record merely by changing horizon. Zero-
+control1045 remains byte-identical to1030. Newly completed1047 supplies the
+verified full-route benefit described below; the public runtime remains unchanged.
+
+Extension1088→1152 is recorded at1081 before1089. Local4-driver/4GiB AS/tree and
+host12GiB admission/8GiB abort limits stay unchanged. As remote owners finish,
+recorded quota reallocations move NPC24→16→12→4 cores and early/late8→12;
+new services replace completed reservations. Aggregate active quota never
+exceeds32 cores or32 Native owners. Mid-run quota changes preserve all search,
+trial, wall and memory caps and preclude isolated wall-speed comparisons.
+The original resource receipts remain charged. Selected25 and historical272
+replay/evidence hashes are preserved; completed below-record replay outputs are
+removed only after hashing and retaining actions plus per-owner receipts.
+
+## Verified6.020B full route with road/spell horizons
+
+Task1047 is now verified at **6,019,713,800,NMNB34/37**. Timeouts are10/54/74;
+77 captures in this world. Fresh1097/natural1098 pass all eight completion,
+41-word terminal, exact score, capture-outcome, no-miss/bomb and name checks.
+The full gain over1022 is58,575,480, leaving480,286,200 to6.5B. Its65510-byte
+replay SHA-256 is
+b3cb064c97bc723377de95c6ce62f67c9e3ad128c0adeaa22666584c1f8c92a8; actions
+ea08d6fa3727fe1d9dc7e0d3b084c00ef5efec4732eb07293012e6745c03961f.
+
+This lineage retains877's exact35210 inputs through the first two stages,
+then uses NPC-v5 immutable source-clock proposals on raw2/3/5/7 (zero target-X
+blend) and its retained initial4500-frame Stage3 boss-nonspell recipe. Roads
+and nonspells use H256/publication128/replan64; active spells use H128/64/32.
+Cash4/movement4/reserve1.2+120 are unchanged. Native source updates preserve
+actors, carried projectiles, option anchors, RNG and rewards through56 actual
+profile changes;4153 **unexecuted** planner inputs are discarded. Policy memory
+is warmed by all actual prefix/owner inputs. No old full-route tail is pasted
+into this new world.
+
+Producer wall2027.77s covers160045 owner inputs,67992 controlled spell and56843
+controlled nonspell inputs after35210 prefix inputs. Costs include2251813
+branch/69 proposal updates and9556 economic attempts/1172 adoptions. The actual
+private ELF hash is 8c73940a26212b53a12ede6cc62a8a1b160f4edcfa0233363f57c9e3d4e8c955,
+compiled atbec5b40, reusing proposal object
+0e2b3f071985d9200f682290f33d00dfb0c60571e46d00f4ff26cbced800876e.
+The isolated VPS still executes the pinned local GCC12/libc/loader closure;
+local fresh/natural checks use separately frozen verification binaries. This
+execution agreement is not an independent physics oracle or Wine equivalence.
+
+The matched static NPC-v5 income0/H256/cash4 case1038 ends5,587,060,080,34/37;
+1047's complete result is higher, while1045's disabled-profile partial control
+reproduces1030 byte-for-byte. Concurrent wall times and recorded resource
+reallocations preclude an isolated speed claim. Lower dynamic1048 ends
+5,990,761,290,34/37 and retains no replay. The general horizon CLI is still a
+private prototype here; the reference-derived NPC guidance remains private.
+
+Fourth/fifth-stage recomposition1095 meanwhile banks3,816,346,560 at151 from
+literal118299 inputs;1094 banks3,787,210,050 at118219. Four complete public-H128
+tails compare reserve1.2/1.5 on each actual parent. Their local gains cannot be
+added to either verified record.
+
+| Task | Variant | State | Observed displayed score | Captures | Bombs |
+| --- | --- | --- | ---: | ---: | ---: |
+|1099|`vps-scarlet-luna-new4a5-parent1094-reserve1p2-full-v5`|running/unresolved|—|—/37|—|
+|1100|`vps-scarlet-luna-new4a5-parent1094-reserve1p5-full-v5`|running/unresolved|—|—/37|—|
+|1101|`vps-scarlet-luna-new4a5-parent1095-reserve1p2-full-v5`|running/unresolved|—|—/37|—|
+|1102|`vps-scarlet-luna-new4a5-parent1095-reserve1p5-full-v5`|running/unresolved|—|—/37|—|
+
+
+After17's new incoming world,25's feedback/focused and shoot/focused variants
+1092/1093 both capture, yielding750/534 orbs rather than the unadapted29. These
+still trail the human2730 and need a new29 continuation and complete-route
+checks. No partial or below-record replay is selected. Documentation1096 passes;
+public C++ runtime is unchanged at this record publication, with normal83160/60.
 
 ## Source accounting and operating record
 

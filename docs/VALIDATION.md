@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **5,961,138,320,35/37**,10/77 timeouts
-(1022, fresh1051/natural1052). Both are NMNB, use the original9098/32796 receipts,
+fresh832/natural833) and complete story **6,019,713,800,34/37**,10/54/74 timeouts
+(1047, fresh1097/natural1098). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
@@ -241,6 +241,24 @@ inputs in652.006s,656346 branch and2 proposal updates. Its61846-byte replay
 SHA-256 is `221de1fc5c181ebb104a49dba503908b4d64fa0543f3a60b132a2a951366ad06`, actions
 `165c213753871e73d416e07f2f348bb2f3e61765de96fdce188677f02411f4f6`. Fresh1051/natural1052
 pass all checks;35/37 captures retain10/77 timeouts,0 misses and0 bombs.
+New6.020B task1047 is a different composition from the same original episode:
+retain877's first35210 inputs to raw2 entry, then private NPC-clock guidance
+on raw2/3/5/7 with immutable human X (zero Native-target blend), preserving the
+proven initial4500-frame Stage3 boss-nonspell recipe. Nonspells/roads use
+H256/publication128/replan64, active spells H128/64/32, cash4/movement4 and
+reserve1.2+120. Actual context changes discard only pending planner queues and
+nominal/history, retaining the complete owned world and warmed observer memory.
+Task1047 records56 changes,4153 discarded future inputs,160045 actual inputs,
+2251813 branch/69 proposal updates and2027.77s concurrent wall. Fresh1097 and
+natural1098 pass all eight gates;10/54/74 time out, other34 captures succeed,
+and no miss or bomb occurs. Its65510-byte replay SHA-256 is
+`b3cb064c97bc723377de95c6ce62f67c9e3ad128c0adeaa22666584c1f8c92a8`, actions
+`ea08d6fa3727fe1d9dc7e0d3b084c00ef5efec4732eb07293012e6745c03961f`.
+The actual private producer SHA-256 is
+`8c73940a26212b53a12ede6cc62a8a1b160f4edcfa0233363f57c9e3d4e8c955`, compiled at
+bec5b40 over the unchanged source kernel and pinned GCC12/libc/loader closure.
+Both source hashes and the original receipt are bound by the progress/journal
+metadata; the NPC demonstration is proposal guidance, not transplanted state.
 The literal prefix preserves unsettled capture rewards and carried world/RNG;
 no component scores or states are combined arithmetically. These are
 whole Native continuations, not retail equivalence or isolated speed evidence.
@@ -1264,7 +1282,7 @@ a separate check, not a property established by the export target header.
 ## Resume Extra scoring on main
 
 The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative1088-task window, including the October27
+resource limits and the cumulative1152-task window, including the October27
 recorded64-task extension before use. The owner has resumed with
 No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
 a fresh output directory, rather than copying a historical Native-selected seed
