@@ -17,6 +17,10 @@ above3,178,460,830 and Lunatic above7,053,332,460 in the October27 snapshot.
 First reach6,000,000,000 on the complete Lunatic route. Preserve historical
 same-shot references separately; use the all-shot reference for the new retail
 replay gate. The current Magic Team episodes remain valid fixed-seed candidates.
+The October27 owner permits all shots and prioritizes Scarlet Team
+(Sakuya/Remilia, shot2). Its complete Lunatic route also uses4A-to-Final-B.
+Preserve Magic Team progress; capture new original retail seeds for each new
+shot/entry episode before Native scoring.
 Before each new scoring episode, launch the owned Wine retail game and capture
 its original RNG seed at the observer's pre-RegisterChain boundary. Record the
 entry configuration, checkpoint and seed provenance before Native exploration.
@@ -148,9 +152,11 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   Record further extensions before using them; this authorization does not raise
   the four-concurrent-driver limit, including solver, probe, replay-verification
   and test owners. Native rollout fork children belong to their single owner;
-  do not start four solvers plus an extra test driver. Use a2GiB per-process
+  do not start four solvers plus an extra test driver. The owner's latest
+  October27 authorization raises the entire phase's former2GiB limits to4GiB.
+  New owners use a4GiB per-process
   address-space limit,
-  a2GiB summed-RSS limit per owned solver tree, and host-memory admission/abort
+  a4GiB summed-RSS limit per owned solver tree, and host-memory admission/abort
   guards. Preserve12GiB MemAvailable before admission; stop owned work below8GiB.
   Resource-aborted work remains charged and cannot certify a gameplay result
 - At an owner-requested session handoff, finish the already-running authorized

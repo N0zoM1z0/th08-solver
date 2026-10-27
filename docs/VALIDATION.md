@@ -57,6 +57,44 @@ the raw runtime index, not the follower CLI's human stage label.
 | Original `start.txt` SHA-256 |`db65567c75aa3e3cbc2e85ef96914fea18ceae84106ce0919044dd67086f8126` |`80c1d2c1c72d3c8e41b8e861235bda537e0a05d2c416e2789b90ccaf7fa211b3` |
 | Seed receipt SHA-256 |`fcecb629fffb3a7973d37da14b73c6c61250db6e38a80e4995d4bee738a93c92` |`88516cae49c9c04a2ebc0857f88eb81b3d0ed7277ff4c4c95a1a8b39d55ae133` |
 
+### Scarlet Team retail episodes
+
+The October27 owner permits all shots and prioritizes Scarlet Team (shot2).
+Its source route is1→2→3→4A→5→FinalB. Both new entries use original retail
+pre-RegisterChain seeds, captured before any Native scoring candidate:
+
+| Entry | Extra | Complete Lunatic story |
+| --- | --- | --- |
+| Episode under `reports/local/retail-seed-episodes-20261027/` | `scarlet-extra-entry-v6` | `scarlet-story-4a-finalb-entry-v1` |
+| Owner task / fixed seed |665 /9098 |666 /32796 |
+| Raw stage / difficulty / shot |8 /4 /2 |0 /3 /2 |
+| Story / prior FinalA clear |true /false |true /true |
+| `start.txt` SHA-256 |`90face8749068b9bb67b2d9e220d20a8b7df1a6e9a328551a40ede14f76c560c` |`701f1280c82f234c2ac3bbda95367f9832f2979d3391ea86bf63cb4b8017e95d` |
+| Seed receipt SHA-256 |`44955955273c6e1ad3f5f2ddc74eef01776243d80f5dc098ef9db27bff247fb0` |`ab5faf14bc8578a873f012b2560803bc277139ba822879b4d4c677fb9e68f638` |
+| One228-byte frame SHA-256 |`a0d5f19e27732e59b50827bcf59eac938dc1acb022a2fae9bfd00ccf8953b7bf` |`af143e3c863545b79d9405c514b65ba6f188c42c8bfd9bcb13b1eb431a39850c` |
+
+Both keep the pinned retail/DAT/observer/launcher identities above, dialogue
+advance, spell=-1, successful launcher exit0 and clean resource guards. Their
+explicit32-bit Wine server hashes
+`2a91df0aa96cb5713390a16efa6c694ccee745d3eba5c22a01e31ddf5bb014dd`.
+The original acquisition flow uses neither the diagnostic socket alias nor
+preload override. Every failed startup and diagnostic remains local and charged;
+none supplies a substitute seed. `native-entry.json` binds its receipt hash;
+`scoring-episode.json` declares the objective before Native exploration.
+The Scarlet guarded launcher also requires a clean acquisition-owner exit and
+the exact one-frame identity before admitting a candidate. Seeds remain fixed
+for all subsequent profiles; Magic46997/1805 episodes retain their identities.
+
+The owner expands the **entire current phase** to4GiB per-process address space
+and4GiB owned-tree RSS before665, including Native solvers and Wine acquisition.
+Host12GiB admission/8GiB abort and the four-driver cap stay unchanged. Owners
+already launched retain their frozen original limits; old2GiB results are not
+relabelled. This is an explicit resource change, not a search-budget increase.
+It follows a Wine initialization crash with exactly2GiB mapped at664. The
+4GiB receipts record actual tree peaks of136007680/139206656 bytes. Native
+search/rollout/proposal budgets and failure meanings remain explicit per case.
+Wine remains restricted to seed acquisition and qualified final replay viewing.
+
 New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
 bytes. The original `ReplayData::playerName[8]` is followed by reserved and
 practice-mode bytes; longer strings are rejected instead of overwriting mode.

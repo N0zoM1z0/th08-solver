@@ -33,6 +33,9 @@ are achieved. The owner now targets the highest human scores across all12 shots:
 Extra above3,178,460,830 and Lunatic above7,053,332,460, first reaching6B on the
 complete Lunatic route. These October27 [all-shot records](https://maribelhearn.com/wr#IN)
 are both solo Youmu; the table above preserves the earlier Magic Team references.
+All shots may now be explored, with the owner's preferred **Scarlet Team
+(Sakuya/Remilia)** taking priority. The verified Native records above remain
+Magic Team results; each new shot gets its own original retail seed receipt.
 ¹ [Human score-attack records](https://maribelhearn.com/wr#IN), 2026-10-25 snapshot;
 ASL's replay uses one bomb. [Status](docs/STATUS.md) owns the
 results, failed trials, costs, unresolved problems and proposed next steps.

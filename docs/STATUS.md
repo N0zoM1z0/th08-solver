@@ -31,6 +31,59 @@ shots in the [October27 record table](https://maribelhearn.com/wr#IN):
 complete Lunatic route. Historical Magic Team references above keep their
 identities; the new all-shot references own the retail replay gate. Continue
 the fixed Magic Team episodes first, keeping NMNB and optional captures.
+The owner's later October27 clarification permits all shots and prioritizes
+**Scarlet Team (Sakuya/Remilia, shot2)**. Source `AdvanceToNextStage` and the
+complete reference playback both select4A, so the complete Scarlet route is
+also1→2→3→4A→5→FinalB. Existing Magic Team results and original receipts stay
+separate; new Scarlet entries require new original retail seed receipts.
+
+### Scarlet priority, new retail receipts and4GiB resources
+
+The owner now permits every shot and prefers Scarlet Team. Same-shot references
+are ASL Extra **3,000,284,220** (13 March2012) and Levea Lunatic **6,755,587,090**
+(13 July2025), from the [record table](https://maribelhearn.com/wr#IN). Stock
+source651/652 reproduce both exactly. Extra has0 misses/1 bomb/14 captures;
+Lunatic has1 miss/9 bombs/36 of37 captures (62 invalidated). The source death
+counter changes0→1 once at raw stage3 (4A) gameplay1674; dying begins1672.
+The100208 sampled death rows are not a miss count. The ignored
+`scarlet-human-replays.json` preserves URLs, bytes, hashes and playback evidence.
+These human references do not satisfy our NMNB constraint or replace the
+all-shot targets.
+
+New Scarlet episodes use first valid owned retail seeds: **Extra9098**, task665,
+`retail-seed-episodes-20261027/scarlet-extra-entry-v6/`; **complete story32796**,
+task666, `scarlet-story-4a-finalb-entry-v1/` in the same directory. Entries are
+raw8/4/2/story1/priorA0 and raw0/3/2/story1/priorA1. Both observer receipts are
+pre-RegisterChain, one228-byte row, launcher exit0 and clean resource guards,
+with pinned unmodified retail/DAT and original observer. No Native search or
+score preview precedes acquisition. `native-entry.json` binds the receipt hash;
+`scoring-episode.json` records the objective before Native search.
+[Validation](VALIDATION.md#scarlet-team-retail-episodes) owns exact receipt
+identities. Every comparison keeps its episode seed fixed.
+
+The owner raises the entire phase's process address-space and owned tree RSS
+limits from2GiB to **4GiB** before665. The four-driver cap and host12GiB
+admission/8GiB abort guards remain unchanged. Already-running663 retains its
+frozen2GiB limits. Failed acquisitions653/655/656/661/662 and diagnostics
+654/657–660/664 remain charged; none has a valid receipt. GDB664 records exactly
+2147483648 mapped bytes and a null call from Wine win32u. Under4GiB,665/666
+complete the original acquisition flow with a pinned32-bit server, without
+the diagnostic socket alias or preload override. Actual tree RSS peaks are
+136007680/139206656 bytes. The local `owner-resource-4g-approval.json` preserves
+the owner's exact authorization and limits; old measurements keep their bounds.
+
+Full public baselines667/669 begin the Extra/story episodes. Extra's declared
+human100/no-cash5400-update comparison668 is safe,0 bombs,0 captures,108 points/
+4758 orbs. Story's18000-update comparison670 completes Stage1 with21 points/
+5339 orbs,3/4 captures and76,861,730 cash. These poor production totals need
+source and matched human-route investigation. Pose adapter672 tests a declared
+Scarlet Extra fragment; it is not a selected complete score.
+
+The final old Magic combination640 completes5,341,512,260,NMNB33/37 and is
+unselected. Stage5 pickup-priority650 enters104 with199 points/11018 orbs,
+versus188/8871 in the5.551B route. Its full tail663 is resource-aborted below
+8GiB host MemAvailable and certifies no result. The verified Magic best remains
+5,550,599,270,36/37. No new Scarlet result or replay is yet promoted.
 
 ### All-shot reference and gauge investigation
 
@@ -267,10 +320,10 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **646/704 allocated task IDs**. The October27 continuation records a64-task extension from640 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **673/704 allocated task IDs**. The October27 continuation records a64-task extension from640 before use, under the owner's standing cumulative-extension authorization. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
-| Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
-| Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
+| Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
+| Episode | Preserve Magic Extra46997/story1805; new Scarlet Extra uses first valid retail seed9098 at `retail-seed-episodes-20261027/scarlet-extra-entry-v6/`. Capture and validate the separate Scarlet story receipt before its Native search; never reroll after seeing score. Regression fixtures/historical seeds stay separate |
 | Objective | Proper entry, No Miss, No Bomb, higher complete terminal score. Current trials use `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual bombs (must be zero) and capture outcomes. Restore `--require-all-captures 1 --verify-captures 1` for all captures |
 | Checkpoint | Literal first N inputs from the same owned episode, executed from original entry. N counts Native owner updates, not spell seconds or replay-row line counts. Preserve RNG, bullets, actors, items, latch and observer history |
 | Acceptance | Inspect each `exit.json`, `run/result.json` and `run/score-audit.json`. A driver exit 0 is not a candidate success. Exit 5 may be valid below-target progress; abort/incomplete/failed rollouts never certify |

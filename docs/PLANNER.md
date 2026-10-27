@@ -260,6 +260,18 @@ its Magic Team attack-pacing gate must not be treated as evidence of solo
 Youmu pacing support. A new-shot scoring test needs its own original retail
 seed receipt and an explicit capability contract first.
 
+Scarlet Team (shot2) has another source state boundary. Its four callbacks are
+`UpdateOrbitingOption`: initialization saves targets at player offsets
+(-30,-16),(-10,-32),(10,-32),(30,-16) pixels. Active options orbit8 pixels
+around those saved targets; that function does not move the targets with the
+player. `UpdateMovementAndOptions` recreates the team option states on focus
+entry. Moving the player while holding focus therefore does not itself move
+this anchored formation. Native futures preserve these states. A formation
+refresh proposal must use legal focus inputs and complete Native safety/score
+checks; directly rewriting target positions would change gameplay. The initial
+Scarlet production deficit motivates this hypothesis, rather than proving a
+scoring benefit from any proposed refresh interval.
+
 The experimental `score-flow` adds a source-survival-only stream goal, with a
 recorded5.01 focus prior. Every64 updates it ranks70 stationary targets on a
 32-pixel grid over x48..336/y208..400. Current ungrazed ordinary bullets with
