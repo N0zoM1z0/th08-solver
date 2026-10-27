@@ -244,6 +244,22 @@ Extending an attack must still improve a complete valid terminal score.
 
 ### Stream proposals and attack pacing
 
+The all-shot reference has an important source capability difference. In
+`Player::AddedCallback`, solo Youmu (shot10) uses gauge limits ±5000 and extreme
+thresholds ±3000, versus the Magic Team's ±10000/±8000.
+`Player::UpdateMovementAndOptions` still forces its actor to human after focus
+processing, while shooting shifts
+gauge according to focus. `AwardGraze` explicitly exempts shot10 from the
+solo-human exclusion: extreme-youkai boss graze can produce three ordinary-spell
+apex items even though the actor remains human. `Item::CollectTimeOrb` changes
+gauge by ±111 according to focus, unless its suppression timer is active.
+These are source rules, not a measured new-shot optimization result. They also
+mean character form and controllable gauge are separate capabilities. The
+current Native `can_switch_forms` correctly rejects solo character switching;
+its Magic Team attack-pacing gate must not be treated as evidence of solo
+Youmu pacing support. A new-shot scoring test needs its own original retail
+seed receipt and an explicit capability contract first.
+
 The experimental `score-flow` adds a source-survival-only stream goal, with a
 recorded5.01 focus prior. Every64 updates it ranks70 stationary targets on a
 32-pixel grid over x48..336/y208..400. Current ungrazed ordinary bullets with

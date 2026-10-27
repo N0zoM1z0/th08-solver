@@ -200,6 +200,52 @@ capture continuation571 restores3/3 Keine but lowers end194 orbs to12862.
 Both have0 bombs and are unselected partial experiments. Preserve the original
 3.010B incumbent while evaluating complete alternatives.
 
+### Human pose guidance and complete negative results
+
+Private pose guides use immutable reference XY plus fire/form hints, rather
+than transferring human RNG or gameplay state. Every8 proposed inputs they
+build a current-snapshot baseline movement proposal (local H24/beam384,
+anchor0.08, focus prior±10); ordinary recovery stays independent. This
+prototype deliberately claims no retained movement history in that temporary
+policy. Native checks actual emitted inputs against complete futures, and all
+guidance time belongs to the normal charged owner cost. The checked stage,
+difficulty, shot and gameplay-frame range are explicit per local adapter.
+
+Extra direct transfer593 dies at3367; fresh596 retains only3000 proposed
+inputs and adapts safely through5400,255 points/9023 orbs. Pose-guided601
+instead reaches5400 with262 points/9760 orbs,0 bombs and0 encountered captures.
+Declared18000-update continuations604/605 both time out193. Their complete
+retries616/617 finish **2,949,724,150,13/14** and **2,723,331,250,12/14**,
+respectively, both No Miss/No Bomb. They are unselected, not freshly promoted;
+the richer entry does not establish a higher complete score. Strict capture624
+instead reaches18000 safely with4/4 through195,712 points/24311 orbs, but only
+1833 interval orbs on193. A full score cannot be inferred from that fragment.
+
+Resource-aborted608/609/613 certify no gameplay result. Host MemAvailable
+briefly fell below8GiB despite each owned tree staying below137MB. All three
+owners stopped and remain charged. Repeats616–618 retain identical frozen
+binaries, controls and original episode seeds after readmission above12GiB.
+
+Stage4A pose guide618 retains the verified52561-input Stage3 boundary. It
+enters58 with187 points/8429 orbs versus the incumbent167/5571,0 bombs;
+its public full tail620 is pending. Stage2 guide619, after the upper10/13
+timeout first stage607, enters17 with14597 orbs versus8682 in the5.458B route.
+Transition621 safely completes Stage2 with159 points/22983 orbs; raw Stage3
+transfer625 dies at36557 and certifies no prefix. The separate Stage3 guide623
+with whole-stage timeout permission loses36/43/54 and is unselected. Normal
+capture628 retains36/39/43 and reaches the explicit47134-input47 boundary;
+629 tests only that complete47 scene. None is yet a new verified full story.
+First-stage pose627 collects59 points/10062 orbs,4/4,137,628,270 cash, below
+the existing61-point/9939-orb first-stage profile; it is unselected.
+
+Reference bomb location matters. ASL's one bomb occurs at Extra gameplay18349,
+in the road after194. Alan's three Stage3 bomb presses occur at gameplay
+15022/15409/15789, during47. Thus the human12758-orb47 interval is not a
+bomb-free comparison with our11086-orb scene. The new second-road prototype
+stops its ASL reference at18348 and uses a declared segment-relative clock;
+later bomb-altered reference futures are not transplanted. Source/pose
+artifacts remain ignored under `reports/local/global-score-20261027/`.
+
 ## Operational resume contract
 
 Read this section, [verified results](#verified-results),
@@ -211,7 +257,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | At most 4 owned solver/test/probe drivers, including replay verification. One driver may fork Native rollout children; do not start 4 solvers plus a fifth test driver. Build with `--parallel 2` |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **610/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **633/640 allocated task IDs**. Append before launch; failed setup, rejected/partial/resource-aborted attempts and verification remain charged. Never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. Spare CPU/RAM does not authorize higher concurrency |
 | Memory | 2 GiB address space per solver process, 2 GiB summed RSS per owned tree. Admit only at 12 GiB host MemAvailable; abort owned work below 8 GiB or above the tree limit. Resource aborts cannot certify |
 | Episode | Reuse the validated Extra46997 / story1805 receipts below. Capture a new original retail pre-RegisterChain seed before a new episode; never reroll after seeing score. Regression fixtures/historical seeds are separate |
