@@ -212,8 +212,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,179,193,860,14/14** (1314,
-fresh1329/natural1330) and complete story **6,512,532,100,36/37**,only10 timeout
-(1225, fresh1229/natural1230). Both are NMNB, use the original9098/32796 receipts,
+fresh1329/natural1330) and complete story **6,513,456,180,36/37**,only10 timeout
+(1381, fresh1403/natural1404). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
@@ -260,6 +260,17 @@ original EXE/DAT/observer/replay/seed-receipt identities and unchanged rows. The
 41-word cross-runtime equality. The exact17-field prefix matches18407 rows; the
 next latched-input difference remains documented. This is complete retail score/
 NMNB/capture validation, with all setup, observation and correction costs retained.
+New story1381 retains1225's exact151302 inputs through the closed171 boundary,
+then uses H128/publication64/replan32/cash4/movement3 over all five remaining
+survivals and full settlement. This increases the complete score by924080 to
+6513456180, NMNB36/37, only10 timeout. Baseline1382 with movement4 exactly
+reproduces1225; all30 ordinary/phase families complete safely below7B. Fresh1403
+and natural1404 pass all eight checks. Its64792-byte replay SHA-256 is
+`d0958e5b660de4bbee0bd95c8faa357e128693a8241898e474f2fd680f43ab22`; actions
+`e11243dfdad13b1a252fff1cea9f8e77b57c4b2a1364fa84e1abf39635e123c7`. This score is Native-only; the7B milestone
+and all-shot7053332460 retail gate remain above it. The earlier6.5B milestone
+replay and all33 prior selected identities remain unchanged.
+
 The preceding5.784B story retains the actual first51253 inputs of H256 task794 through47,
 then uses H128/publication64/replan32/cash4/movement4. Its61373-byte replay
 has SHA-256 `37ea4e2f9b6ca020a470ab777f700e09aa5fe4d6acffeae3e714dbca4c67d488`,

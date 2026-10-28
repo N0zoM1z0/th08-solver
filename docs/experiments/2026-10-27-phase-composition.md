@@ -2218,6 +2218,140 @@ misdecoded score/miss/bomb values are not exported as authoritative gameplay.
 The unchanged raw false report is hash-bound locally;1367 owns the corrected
 typed complete validation.
 
+### Full-story phase-CLI portability gates and the replay USER footer
+
+After publicbe72e11, local1369 and remote1370 reexecute the entire original32796
+1225 tape literally with the same f4ea1fa7… phase CLI. Score6512532100, complete
+159669 inputs, all41 terminal words, every action and the entire37-spell audit
+are identical to the original and to each other. Local wall24.432s, peak81518592
+bytes; remote18.052s, peak155959296. Different concurrent hosts/settings prevent
+an isolated CPU speedup interpretation. The new7B target causes valid goal-unmet
+exit5; it does not change the complete execution.
+
+An overstrict extra whole-RPY-byte check fails: only three wire bytes differ
+(one-based64572/64624/64625). Both first64562 stored bytes, including every
+compressed gameplay/header/FPS byte, have SHA-256
+`e6e8dd02ea45dbc17b99721c3f9a5fd5273de648ed935580c3e0f2ad6234114e`.
+Source ReplayManager.cpp29–37 defines USER.reserved plus padding[3]; SaveReplay
+880–890 initializes reserved and writes local export time into the separate
+USER text. The differing bytes are one padding byte and two timestamp digits,
+06:10:01 versus06:10:47. All other USER fields agree. No input replay, footer,
+historical replay byte or kernel is normalized/edited to make the check pass.
+
+1371 records this setup failure and an orchestration mistake: the failed local
+preparation was followed by an ungated scp/service start for a missing batch file.
+No config was transferred or Native batch manifest created. The worker reads
+that config before starting Native; no Native rollout starts. The collected
+service's raw journal is unavailable due user-journal permissions, so its wall/
+exit measurements remain unavailable. This is not a physics or score failure.
+The replacement preparation synchronously fails closed before any dependent
+transfer/start, uses a fresh1372/v2 path and keeps the original failure receipt.
+
+1372 verifies the entire15975600-byte natural replay stream against1230, SHA-256
+`26a8edeaf2bfaa096a9453864d1d46718dcf40b55ba5fb2a247052bb9f6ac52a`,
+score6512532100, NMNB36/37. It finishes7.784s, peak79720448 bytes, no abort.
+Thus full-world, audit, action, stored-replay and full-row gates pass before any
+new story scoring with the phase CLI; the known footer difference does not hide
+a changed gameplay field or seed.
+
+### V38:30 complete final-survival strategy families
+
+The predeclared portfolio retains1225's exact first151302 inputs, after171,
+and recomputes the remaining five survivals175/179/183/187/191 plus settlement.
+It compares18 ordinary H64/128/256, cash0/4 and movement0–4 schedules with12
+explicit phase strategies: all five at bands16–432,208–432,368–432,400–432 with
+feedback/continuous fire, plus only187 at16–432 or400–432. Phase cases use
+H128/cash0/movement3, zero reserve and focused ending; actual activation and
+fire/focus/gauge counters are exported. Source constraints remain No Miss,
+No Bomb, captures optional. No planner queue or world is pasted from a different
+branch. Source/binary/library/DAT/actual tape/receipt identities remain pinned.
+
+All30 complete NMNB36/37, with the original10 timeout; there is no resource
+abort. The owned systemd service uses30 owners/30-core quota, nice15 and all
+existing4GiB/tree,96GiB aggregate,128GiB hard/no-swap and128/96GiB host guards.
+Aggregate peak4658618368 bytes; minimum host available573667168256.
+Total owner wall2807.412s, maximum155.740s; these are concurrent costs, not
+an equal-budget algorithm or isolated scaling benchmark.
+
+| Task | Strategy family | Complete score | Wall seconds | Actual planned phase inputs |
+| --- | --- | ---: | ---: | ---: |
+|1373|ordinary-h128-cash0-move0|6483987670|57.577|0|
+|1374|ordinary-h128-cash0-move1|6488814090|70.011|0|
+|1375|ordinary-h128-cash0-move2|6498913810|86.903|0|
+|1376|ordinary-h128-cash0-move3|6502045630|101.034|0|
+|1377|ordinary-h128-cash0-move4|6496773890|112.323|0|
+|1378|ordinary-h128-cash4-move0|6482189190|107.955|0|
+|1379|ordinary-h128-cash4-move1|6500668760|119.094|0|
+|1380|ordinary-h128-cash4-move2|6507102950|135.195|0|
+|1381|ordinary-h128-cash4-move3|6513456180|145.633|0|
+|1382|ordinary-h128-cash4-move4|6512532100|155.740|0|
+|1383|ordinary-h64-cash0-move0|6476783180|41.123|0|
+|1384|ordinary-h64-cash0-move1|6480911710|48.801|0|
+|1385|ordinary-h64-cash0-move2|6487693050|58.291|0|
+|1386|ordinary-h64-cash0-move3|6491105470|65.660|0|
+|1387|ordinary-h256-cash0-move0|6478072450|54.347|0|
+|1388|ordinary-h256-cash0-move1|6462352000|66.109|0|
+|1389|ordinary-h256-cash0-move2|6477306580|78.240|0|
+|1390|ordinary-h256-cash0-move3|6488923970|89.357|0|
+|1391|all5-top16-feedback|6437449310|102.115|6840|
+|1392|all5-top16-shoot|6436053610|102.335|6840|
+|1393|all5-top208-feedback|6436546400|100.846|6840|
+|1394|all5-top208-shoot|6430611360|104.089|6840|
+|1395|all5-top368-feedback|6471519890|97.707|6840|
+|1396|all5-top368-shoot|6468100270|100.706|6840|
+|1397|all5-top400-feedback|6435518150|98.093|6840|
+|1398|all5-top400-shoot|6423194840|100.052|6840|
+|1399|only187-top16-feedback|6465706210|101.393|1200|
+|1400|only187-top16-shoot|6468771830|102.266|1200|
+|1401|only187-top400-feedback|6483531610|101.882|1200|
+|1402|only187-top400-shoot|6464188050|102.535|1200|
+
+Baseline1382 (H128/cash4/movement4) exactly reproduces1225. New overall best1381
+uses movement3 and scores6513456180, adding924080. It has no explicit phase
+plan; all12 phase geometry/fire families lose despite being exercised. This
+is a small full-route gain, not a late-only solution to7B. The actual last-five
+orbs change2306/2540/3502/6144/2748→2306/2483/3615/5962/2893. Individual spell
+gains are not additive policy values; all later worlds are recomputed.
+
+Fresh1403/natural1404 pass all eight checks: full41-word terminal, natural score/
+completion, all37 capture outcomes, zero misses/bombs and exact ysopwnab name.
+The selected64792-byte replay SHA-256 is
+`d0958e5b660de4bbee0bd95c8faa357e128693a8241898e474f2fd680f43ab22`; actions
+`e11243dfdad13b1a252fff1cea9f8e77b57c4b2a1364fa84e1abf39635e123c7`.
+It executes159669 inputs; report wall145.458s, process145.633s,119138 branch/2
+proposal updates,765 economic attempts/88 adoptions. Its original32796 receipt
+and every prior selected replay remain unchanged. The score is Native-only,
+486543820 below7B and539876280 below the all-shot human gate; no story Wine
+replay is qualified. Only this new overall PB is selected.
+
+All29 unselected V38 replay files and the1370 duplicate canary are pruned after
+hashing, totaling1934027 bytes, with all34 published producers explicitly
+protected. Two local64782-byte canary duplicates are also removed after their
+full-row/stored-byte proofs; full actions/results/failures remain local. The
+1408→1472 standing64-task extension is recorded after1404 before1409. It
+resets no ledger or resource limit and starts no extra experiment by itself.
+
+### Next source question: the first6 orb/gauge bootstrap
+
+The current route underperforms the same-shot human in early6/10/13/47 orbs:
+1321/2933/3765/3999 versus4069/4071/5639/11608. Human47 has a preceding bomb,
+so it is not a clean NoBomb opening counterfactual. Existing6 entry-pose1078–1081
+and boss-clock experiments are retained; they do not already solve the gap.
+
+Player.cpp943–967 permits a sustained-shot gauge ramp only after the focus
+transition reaches30, with a capped21 units/update. ItemManager.cpp636–642 adds
+111 per collected time orb with the source focus sign only when
+timeOrbGaugeChangeSuppressionTimer is zero. Human6's observed−8000→+10000
+within41 updates therefore is not explained by ordinary shot ramp alone. The
+carried orb pickup/suppression/option-state timing is a falsifiable source
+question before another precharge policy. Read-only whole-row-gated probes,
+not a forced gauge value or borrowed human RNG future, are the next measurement.
+
+Publication1405 passes documentation, all34 selected replay/all272 historical
+payload hashes and the byte-identical old33 progress-index rows. The guarded
+owner completes1.061s with no abort. New raw canary/probe/search artifacts remain
+local; only the fresh verified overall-record replay is published.
+
 ## Source accounting and operating record
 
 [Point collection](../../third_party/th08/src/ItemManager.cpp) doubles a priced

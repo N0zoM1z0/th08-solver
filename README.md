@@ -4,8 +4,8 @@
 > **Lunatic NMNB story clear: 1 → 2 → 3 → 4A → 5 → Final B (Kaguya).**
 > Marisa/Alice, played online in Wine with game audio. Extra also clears NMNB online.
 > **Extra 3,179,193,860: Scarlet NMNB14/14, original Wine replay verified.**
-> **Lunatic Native: 6,512,532,100, Scarlet NMNB36/37.**
-> Selected progress: [Extra 3.179B replay](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3179193860-seed9098.rpy) · [Story 6.513B replay](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6512532100-seed32796.rpy) · [All replays and provenance](reports/native/README.md) · [Videos](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
+> **Lunatic Native: 6,513,456,180, Scarlet NMNB36/37.**
+> Selected progress: [Extra 3.179B replay](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3179193860-seed9098.rpy) · [Story 6.513B replay](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6513456180-seed32796.rpy) · [All replays and provenance](reports/native/README.md) · [Videos](https://drive.google.com/drive/folders/11x9m65sysbsQZZYyHvNJS0-LQ3u2cOAu?usp=drive_link)
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
@@ -38,7 +38,7 @@ The next [composition experiment](https://github.com/N0zoM1z0/th08-solver/issues
 tests parallel, diverse checkpoint strategies on Extra first, then targets7B Lunatic.
 All shots may now be explored, with the owner's preferred **Scarlet Team
 (Sakuya/Remilia)** taking priority. Its verified Native results are
-**Extra3,179,193,860 (14/14)** and **complete Lunatic6,512,532,100 (36/37)**,
+**Extra3,179,193,860 (14/14)** and **complete Lunatic6,513,456,180 (36/37)**,
 both No Miss/No Bomb, at their own original retail seeds9098/32796.
 Scarlet now owns both overall Native records; its story times out10.
 Extra exceeds the all-shot reference by733,030. Its original Wine replay now
