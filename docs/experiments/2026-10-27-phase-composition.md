@@ -1909,6 +1909,315 @@ the two explicit nonaborted recovery cases cover all62 current tests on unchange
 binaries. This is not a claim of one fresh all62 run: the legacy repair search was
 reused with fresh Native execution, and every failed/interrupted owner stays charged.
 
+### Longer193 reserve compositions finish below the record
+
+Actual204 boundaries1325–1328 close NMNB with zero bombs. Their carried worlds
+are retained literally, then the known last205 H128/cash0/movement3 schedule is
+recomputed through the real204 settlement/point drops and complete terminal.
+
+| Through204 task |193 parent |204 boundary inputs |204 cash / PIV / points | Complete task / score | Captures |
+| --- | ---: | ---: | --- | --- | ---: |
+|1325|1281|62883|1918740700 /872130 /977|1333 /3001876340|13/14|
+|1326|1283|63002|2030555620 /879720 /989|1334 /3127136120|14/14|
+|1327|1284|65224|2017572170 /918220 /962|1335 /3128262080|13/14|
+|1328|1287|60577|1976542350 /856630 /996|1336 /3050310370|14/14|
+
+Every complete route remains no-miss/zero-bomb. Only193 times out in the13/14
+routes. Capturing10237 orbs in isolated193 does not beat the7183-orb parent that
+produces the overall record. The negative-gauge parent's higher boundary PIV is
+also not sufficient: it finishes3128262080. These are additional complete-route
+counterexamples to additive orb gains and scalar boundary rankings. All four
+families are completed despite weaker boundary cash; none is promoted as progress.
+The partial owners cost914.693/915.807/949.513/873.150s; complete tails cost
+66.004/65.156/65.949/66.906s in task order. No resource abort occurs. All Native
+queues are finished after this batch; there is no new dispatch during replay work.
+
+### Qualified retail replay setup and observation
+
+Public commit `f332a92` publishes the typed phase/archive tools, detailed reasons
+and three verified Extra improvements through3179193860. The owner then explicitly
+requests continued exploration and preservation of the reasons. Retail observation
+uses the first above-reference complete Native replay, with original9098 lineage,
+local fresh1329/natural1330 qualification and exact selected bytes. It does not
+start an online solver or shadow command producer.
+
+Read-only tool build1337 adds original retail Spellcard flags at0x4ea670, card
+number+8, captured bit9, as documented in the pinned source. It opens `/proc/PID/mem`
+read-only; no remote/gameplay memory is written. Seen-active/captured flags are
+polled during playback to retain actual collection observations. The existing
+observer's replay mode calls original input and requires render-timing mode,
+prior-final-A0 and advance-dialogue0; checkpoint environment is unset. It labels
+its callback journal as replay observation, not a common-start seed receipt.
+
+1338 initializes an isolated original Wine game/prefix with exact EXE
+`330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`, DAT9d7edf43…,
+and selected replay2dfaddbd…. It times out selecting the replay after80.431s;
+`frames.bin` is zero bytes. This is a menu setup failure and no retail gameplay
+verdict. The replay is enumerated successfully (one entry); the short key
+edge is consistent with transition input gating, a source-backed setup inference. `TitleScreen::OnUpdateReplayMenu`
+spends8 timer units enumerating and rejects selection until the subsequent state
+timer reaches10. The observed menu age14 is consistent with the early edge.
+The failed directory, logs, prefix and charges remain preserved.
+
+1339 retries in fresh directories with the known-working250ms key-down/400ms
+key-up interval and waits to menu age40. The replay starts from actual Extra8
+in its original normal playback option; no keys are sent during gameplay. The
+original replay itself handles skippable dialogue. A foreground owned32-bit
+wineserver keeps its memory in the guarded tree; all process AS/tree4GiB and
+host12GiB admission/8GiB abort rules remain. The replay's actual score, misses,
+bombs, source capture flags and complete callback rows are observed. This is not
+an FPS benchmark; menu/observation costs remain separate from Native solve time.
+The intended observer mode is later found unsupported in the old frozen DLL, as
+recorded below. Its read-only external state samples are partial observations,
+not callback-row evidence or a retail certificate.
+
+After selecting the record,38 finished unselected remote replay outputs totaling
+1144436 bytes are pruned with per-file hashes/retention receipts; all33 selected
+producer tasks are explicitly protected. A separate28669-byte local literal-canary
+duplicate is removed after its entire row-byte proof is retained. Actual action
+tapes, results, failures and costs remain local. No active output, selected replay,
+original receipt, public archive byte or unrelated remote workload is removed.
+
+### Retail observer provenance correction and declared observation budget
+
+At1339 the read-only reader reports no misses/bombs and five seen-active/captured
+cards192–196 before explicit stop. Normal playback averages26.616 replay frames
+per second at input21915 after823.373s, projecting2745.892s for73085 inputs. The
+original2000s observation wall is inadequate. Its1073.441s partial attempt is
+preserved, with peak owned RSS152928256 and no memory abort. The observation
+budget is explicitly replanned to7200s before a fresh original-entry1341 attempt;
+the replay, retail seed and gameplay inputs are unchanged. Renderer threads change
+from2 to4, matching the prior Wine51 setting; read-only polling changes10Hz→5Hz.
+These are declared observation costs/settings, not Native search or physics gains.
+
+Checking callback-row output then exposes an avoidable provenance error:
+the selected old Wine64 frozen observer DLL SHA-256
+`9647fef617cfef1611296cd4eb611c399db6e20aab439f027f91c07ead5bb24e`
+has neither replay-observation nor render-timing capability strings. The environment
+requests those current-source modes but cannot add them to an older binary. Both
+1339 and1341 retain zero-byte callback journals despite genuine original replay
+state samples. Prior descriptions of observer mode in these attempts identify the
+intended configuration, not an implemented capability of that frozen artifact.
+No full retail claim follows.1341 is stopped after68.516s, peak144494592 bytes,
+without memory abort; its original paths/logs and all costs remain. The small
+read-only binary-inspection script also initially attempts to decode the empty
+row buffer and throws; it is a tooling error, not a game outcome.
+
+Build1342 recompiles the existing tracked WineShadow launcher/observer using its
+C++17/O2/static/no-contraction MinGW flags, including the existing D3D8 ABI compile
+check. No observer/gameplay source is changed. It binds37 compiler-discovered
+source dependencies; source-bundle SHA-256
+`5bc5d96830710e1266725182faff8b9eb3c0e50f9373adb84c48806eefaa3b8d`,
+observer `0e468adb6f25c0c61158307cb4b8119a537f7abf55a7851a42011b726f5aa3ed`,
+launcher `22a13b86af20122471c3165af56375b501d82ba0fa5cf70b4ec6fc6333595d40`.
+The clean owner costs6.942s, peak239247360 bytes; the pre-existing upstream
+ZunTimer missing-return warning is retained. This is not a source or physics fix.
+
+Fresh1343 fails closed unless capability strings, the replay-only mode marker and
+at least one228-byte actual observer row are present. It passes this preflight at
+456 bytes and has no common-start receipt. Playback remains pending. Original
+retail EXE/DAT/replay bytes and No Miss/No Bomb requirements stay fixed; no online
+controller, gameplay/RNG/checkpoint writes or replay alteration is introduced.
+The1344→1408 standing64-task extension is recorded at1343 before1345; no ledger
+reset, memory relaxation, concurrency increase or automatic new dispatch follows.
+
+
+### Typed replay trace decoder and deterministic profile oracle
+
+The replay trace layout is the204-byte versioned Packet (40-byte header and41
+projection words), followed by24 timing bytes, totaling228. A source-interface
+audit finds that the private v4 wrapper assumes a64-byte header, shifting every
+field by six words. This is a result-decoder defect, not an observed gameplay
+divergence. The running original game/observer is not changed or restarted; its
+original raw rows and eventual wrapper error must remain preserved. A separate
+typed reanalysis is required before any complete retail certificate.
+
+The small public `bridge::decode_trace` extension decodes the Packet through its
+existing version/size/field interface, then reads the three trailing little-endian
+64-bit nanosecond values. Its regression uses distinct score/complete/digest
+values, checks packet/timing roundtrip and rejects truncated/version-mismatched
+records. It changes no trace bytes, observer, Native physics or planning defaults.
+Build1344 completes in27.692s, peak553689088 bytes. Private typed auditor1346
+builds cleanly in1.378s, peak95965184, and reads all rows/counters plus the passive
+command map. It is not a live controller.
+
+Snapshot1347 contains18703 rows, no misses/bombs and no published/accepted/planned/
+fallback commands. The first18407 rows match17 shared Native fields, including
+relative RNG draws (retail origin92). At18408 the first difference is latched
+input4096 versus4097. It is retained as an unaligned diagnostic, not silently
+filtered, resynchronized or called a full41-word physics proof. The original
+normal-mode replay must still finish and agree on score/outcomes.1347 accidentally
+uses the wrong CTest name and prints No tests found despite returning0; this is
+not a test pass. Explicit retry1348 uses `shadow_protocol_contract` and
+`--no-tests=error`, passing1/1 in0.04s (0.091s guarded owner).
+
+Normal1345 runs the full62-case suite. Its complete incumbent generation succeeds, but
+the later omitted/zero spell-profile input-hash oracle fails at151.97s: identical
+2s Native budgets and hard60ms proposal budgets allow0 versus1 proposal timeout
+in two independent owners, producing different safe tapes. All original fixture
+files, reports, tapes and the failing script are copied before retry. The
+replacement preserves exact comparison of omitted/zero CLI schedules and
+execution using the same literal source inputs with zero search/branch work.
+The active shorter profile still crosses the actual boundary, plans its suffix
+and must freshly match all41 terminal words. Existing complete, phase, movement,
+replay and failure assertions remain. Production budgets/tie rules are unchanged.
+Recovery1363 reruns the affected fixture and both dependent tests; all3 pass in
+246.77s CTest/247.303s guarded wall, peak151064576 bytes, minimum host available
+36993638400, no abort. Normal1345 later times out in its unrelated legacy case, as detailed below;
+this does not relabel its failed18 or skipped dependent19/20 as passes.
+
+### Within-spell205 strategy composition,12 completed trials
+
+Before dispatch, the hypothesis compares actual trajectories from V5 parents
+1308(H64/movement1),1313(H128/movement2),1316(H256/movement1), and record1314
+(H128/movement3). All first67117 inputs agree; complete parent tapes are SHA-bound.
+At actual spell age1280/2560/3840, retain respectively68397/69677/70957 inputs
+and recompute the full remaining route with H128/publication64/replan32, cash0,
+movement3, beam384/policy24. Restarting the planner queue is explicit; the three
+1314 self-restarts are controls. No old suffix, boundary cash/PIV approximation
+or merged gameplay/RNG world substitutes for a real original9098 continuation.
+
+Read-only preflight1349 initially rejects a complete lower-score parent because
+it treats CLI exit5 (target unmet) as execution failure. No candidate is launched;
+the missing original wall measurement stays unavailable. Retry1350 accepts0/5
+only with complete NMNB/nonaborted results, and removes escaped-newline ambiguity
+from the action-tape reader before reserving1351–1362 centrally. It costs3.230s,
+peak51929088 bytes. No task ID or original output is reused.
+
+All12 Native-only remote owners run in the owned systemd unit with12-core total
+quota, nice15 and the unchanged4GiB/tree,96GiB aggregate,128GiB hard/no-swap and
+128/96GiB host guards. The same canaried f4ea1fa7… ELF/source c01806c4… bundle,
+pinned loader/libraries, DAT9d7edf43… and original9098 receipt are verified.
+The new local decoder source is not substituted into those pinned Native files.
+All finish NMNB14/14, zero bombs, no resource abort.
+
+| Task | Parent |205 age | Complete score |205 orbs | Owner wall seconds |
+| --- | ---: | ---: | ---: | ---: | ---: |
+|1351|1308|1280|3168252980|5251|51.451|
+|1352|1308|2560|3166455120|5140|37.061|
+|1353|1308|3840|3160384840|4777|20.776|
+|1354|1313|1280|3163572220|4957|52.304|
+|1355|1313|2560|3160383320|4747|36.731|
+|1356|1313|3840|3168055000|5245|23.997|
+|1357|1316|1280|3158897420|4684|51.303|
+|1358|1316|2560|3160726820|4789|36.646|
+|1359|1316|3840|3155290860|4462|22.477|
+|1360|1314|1280|3164465480|5017|52.575|
+|1361|1314|2560|3169101220|5296|36.399|
+|1362|1314|3840|3176324740|5713|22.448|
+
+Total owned wall is444.168s, maximum52.575s; batch peak aggregate RSS
+1638158336 bytes, minimum remote host available592870518784 bytes. These
+concurrent elapsed measurements are not an isolated CPU speedup comparison.
+All16 V5 parent-selection costs, failed1310 and earlier ancestors remain charged.
+
+No combination beats3179193860.1351 improves its1308 parent by2960460, and1356
+improves1313 by2041740, but the best batch result is the1314 late self-restart
+3176324740,2869120 below the original record. Restarting earlier loses more in
+that family. This is evidence for some parent-local gains and for queue/trajectory
+continuity costs; it is no overall improvement or archive-versus-greedy win.
+No new replay is selected. All12 finished unselected replay files (365370 bytes)
+are pruned with per-file hashes and only with
+all33 published producers protected; exact inputs, metadata, failures and costs
+remain local. All Native queues finish after the batch.
+
+### Complete original retail Extra validation
+
+Original Wine playback1343 completes with launcher exit0, score3179193860,
+zero deaths/bombs and all14 source capture flags192–205 observed. The unchanged
+selected30431-byte replay2dfaddbd… is the same file qualified by fresh1329 and
+natural1330 at original9098. The72214-row actual callback journal has SHA-256
+`886150f649e998c5d18fbcf382c9d161a2a45a435e62390c589a9e59d6e9798d`.
+Its1940.510s guarded owner peaks at151150592 bytes, minimum host available
+10898419712, no resource abort. No online solver or gameplay/RNG/checkpoint
+writes occur. All33 published replay files retain their exact identities.
+
+As predicted before completion, the original private wrapper exits1 after its
+wrong64-byte-header parser reads unrelated words as score/bombs. That original
+false report and error remain unchanged. New typed terminal owner1367 passes
+in0.237s, with actual complete packet stream, exact score, all-row NMNB, passive
+command map, original retail/observer/DAT/replay/receipt hashes and all14 captured
+flags. The observer source is the clean1342 build; the C++ decoder is the tested
+1344/1348 interface. No game replay or row is edited to correct the report.
+The complete retail result exceeds the declared all-shot3178460830 reference
+by733030. This is an assisted offline-planned result; it is not a human-play or
+record-registry-submission claim. Story7B and the7053332460 gate remain unachieved.
+
+Callback count72214, normal replay input clock72581 at the last external sample,
+Native73085 inputs and natural73081 rows describe different boundaries/clocks.
+They are not interchangeable timing/progress certificates. The unaligned
+18408 latched-input difference remains in the diagnostic; full41-word Native/
+retail equality is not claimed. Actual complete score/NMNB/captures are verified.
+
+### Normal-suite timeout and complete legacy recovery
+
+Normal1345 ends after1200.174s, peak1103859712 bytes, minimum host available
+10874830848, without resource abort:58/62 pass, profile18 fails its nondeterministic
+oracle, dependent19/20 skip, and full legacy60 hits the1200s outer CTest timeout.
+The full legacy script includes two separate600s repair budgets plus complete
+scene execution; its ID203 search already completes in603956ms under its existing
+finish-current-candidate rule. Neither the timeout nor earlier completed child
+artifacts are relabeled as a whole-case pass.
+
+1364 preserves the entire original legacy workspace, verifies unchanged child
+`a26802f1706d61354db66cc8e0d3b45655f9de4729efd5f8a4b68677e05ef188`
+and repair `222b845ee3186d2bbcaa76b5e9af37cb1f061327d2835b1dac8c6c8e574c9b9e`,
+and the complete ID203 search summary
+`188d11cc6598fb8bbd9f6523bcf61680aafc1b5906f64cccee4370382334383b`.
+It explicitly raises only the aggregate CTest observation1200→1800s and
+reconfigures without relinking, costing3.643s. Native repair/frame/search budgets
+and failure checks remain unchanged. Full recovery1365 uses supported
+REPAIR_RESULT_DIR for that exact completed search as an input proposal, then
+freshly executes its selected tape and all remaining cases in the unchanged
+full script. It passes505.86s CTest/505.920s guarded wall, peak131190784 bytes,
+minimum host available11079254016, no abort.
+
+Normal1345's58 passes, affected recovery1363's3 and full legacy1365's1 cover all62
+current cases on unchanged binaries. This is not one fresh62/62 run: a complete
+old repair search is reused with fresh execution, and every original failure,
+timeout, skipped dependency and recovery cost remains charged. No test, source
+assertion or inconvenient game failure is deleted to obtain this coverage.
+
+### Current6.513B point-income audit before further7B planning
+
+Read-only1366 replays the current original32796 selected story through the
+existing point-price observer. The entire25-word natural-row SHA and score
+6512532100 agree with natural1230, and the audit retains NMNB36/37 with only10
+timeout. It costs14.684s, peak78561280 bytes, minimum host40880758784, no abort.
+The audit changes no action, seed or runtime outcome and exports no new replay.
+
+| Stage | Requested / collected | Extreme-human pickups | Actual point cash | Same-pickup human maximum | Height loss at actual gauge | Nonhuman doubling loss |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+|0|61 /55|17|20128280|34187320|2270590|11788450|
+|1|173 /173|154|130605090|144746880|4612110|9529680|
+|2|321 /321|321|384150640|394225000|10074360|0|
+|3|379 /376|367|511037240|593800760|76181390|6582130|
+|5|264 /260|260|497875000|520698240|22823240|0|
+|7|438 /438|433|944739480|992720880|42411940|5569460|
+
+The1623 pickups realize2488535730 cash; optimistic repricing of those same
+pickups at their observed PIV gives2680379080, a191843350 accounting envelope
+(158373630 height,33469720 doubling). It is295624550 short of the7B gap even
+if added mechanically. The biggest height components are4A76181390, FinalB
+42411940 and Stage522823240. This is not an attainable gain certificate:
+changing position/form affects safety, timing, gauge and future production.
+
+The independently retained same-shot human trace realizes2971050810 point cash,
+482515080 more than the current Native route. Replacing that cash mechanically
+would still stop at6995047180; actual replay worlds/PIV timings differ. This
+explains why height/form cleanup alone cannot settle7B. Further source-guided
+planning must increase earlier orb/PIV income or other real rewards and continue
+through the actual later world. FinalB already beats that human reference's orb
+counts on155/159/167 and four of the last five survivals, so copying those
+human timings wholesale is not the next acceptance test.
+
+Publication check1368 passes documentation1/1 in0.06s (1.099s guarded wall),
+format/diff checks, all33 selected replay hashes and all272 historical hashes.
+The per-task export marks1343 as `retail_complete_wrapper_decode_failed`; its
+misdecoded score/miss/bomb values are not exported as authoritative gameplay.
+The unchanged raw false report is hash-bound locally;1367 owns the corrected
+typed complete validation.
+
 ## Source accounting and operating record
 
 [Point collection](../../third_party/th08/src/ItemManager.cpp) doubles a priced

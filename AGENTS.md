@@ -147,9 +147,9 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. The October26
   continuation authorizes cumulative budget extensions while bounding memory;
-  the active window is1344 total campaign tasks, without resetting the ledger.
-  The October28 extension1280→1344 was recorded at1276 before1281; all failed
-  regression, canary, selection and composition costs remain charged.
+  the active window is1408 total campaign tasks, without resetting the ledger.
+  The October28 extension1280→1344 was recorded at1276 before1281, and1344→1408
+  at1343 before1345; all failed regression, canary, selection and composition costs remain charged.
   The October27 continuation records successive64-task extensions from640,704,768,832 and896
   before use, under that standing authorization.
   Record further extensions before using them; this authorization does not raise

@@ -280,10 +280,22 @@ int main() try {
     check(b::fallback(0x10f5, 4, false) == 0xf5 && b::fallback(0x45, 5, false) == 0x1045 &&
               b::fallback(0x45, 5, true) == 0x45,
           "declared fallback changed movement/focus or sampled a bomb");
+    receipt.state[s::Field::Score] = 317919386;
+    receipt.state[s::Field::StageComplete] = 1;
+    receipt.state[s::Field::ActorLow] = 0xffffffffu;
     const auto trace = b::trace(receipt, 0x123456789abcdef0ULL, 2, 3);
     check(!s::difference(receipt, s::decode(trace.data(), s::Bytes{}.size())) &&
               trace[s::Bytes{}.size()] == 0xf0 && trace[s::Bytes{}.size() + 7] == 0x12,
           "timed journal changed packet bytes or clock units");
+    const auto decoded_trace = b::decode_trace(trace.data(), trace.size());
+    check(!s::difference(receipt, decoded_trace.packet) &&
+              decoded_trace.elapsed_ns == 0x123456789abcdef0ULL && decoded_trace.calc_ns == 2 &&
+              decoded_trace.observer_ns == 3,
+          "trace decoder shifted gameplay fields into the timing trailer");
+    rejects([&] { b::decode_trace(trace.data(), trace.size() - 1); });
+    auto bad_trace = trace;
+    bad_trace[4] = 2;
+    rejects([&] { b::decode_trace(bad_trace.data(), bad_trace.size()); });
 #endif
     std::cout << "shadow protocol contracts passed\n";
     return 0;

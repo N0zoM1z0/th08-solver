@@ -145,4 +145,23 @@ inline Trace trace(const Packet &packet, std::uint64_t elapsed_ns, std::uint64_t
             result[offset++] = std::uint8_t(value >> (i * 8));
     return result;
 }
+struct TraceRecord {
+    Packet packet;
+    std::uint64_t elapsed_ns = 0, calc_ns = 0, observer_ns = 0;
+};
+inline TraceRecord decode_trace(const void *data, std::size_t size) {
+    if (size != trace_bytes)
+        throw std::runtime_error("incomplete_shadow_trace");
+    // A trace appends timing words AFTER the complete wire packet. Decode that
+    // packet through its versioned interface; treating the extra 24 bytes as a
+    // longer header shifts every gameplay field into an unrelated value.
+    TraceRecord result;
+    result.packet = decode(data, Bytes{}.size());
+    const auto *bytes = static_cast<const std::uint8_t *>(data);
+    std::size_t offset = Bytes{}.size();
+    for (auto *value : {&result.elapsed_ns, &result.calc_ns, &result.observer_ns})
+        for (unsigned i = 0; i < 8; ++i)
+            *value |= std::uint64_t(bytes[offset++]) << (i * 8);
+    return result;
+}
 } // namespace th08::shadow::bridge

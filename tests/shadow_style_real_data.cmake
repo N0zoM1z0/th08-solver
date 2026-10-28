@@ -115,8 +115,10 @@ if(NOT partial_inputs STREQUAL expected_partial_inputs OR
   message(FATAL_ERROR "A partial input checkpoint certified a replay or changed its executed inputs: ${partial_report} ${partial_metadata}")
 endif()
 # Cross the first real spell boundary from the complete fixture's actual world.
-# Compare omitted/zero controls byte-for-byte; an enabled shorter profile must
-# preserve the prefix and replay its newly planned suffix to the same 41 words.
+# Compare omitted/zero parsing and execution using literal inputs. Independent
+# wall-budgeted searches may time out differently on the same host, so their
+# action hashes are not a deterministic equivalence oracle. The enabled case
+# still plans across the boundary and freshly replays its suffix to all 41 words.
 # These owners deliberately stop early: changing profiles cannot certify a run
 # or export a replay merely because its checked futures were safe.
 file(READ "${WORK}/score-audit.json" profile_source_audit)
@@ -128,14 +130,16 @@ math(EXPR profile_prefix "${CMAKE_MATCH_1} - 32")
 math(EXPR profile_limit "${profile_prefix} + 192")
 foreach(profile_mode IN ITEMS default disabled active)
   set(profile_options)
+  set(profile_retained "${profile_limit}")
   if(profile_mode STREQUAL "disabled")
     set(profile_options --spell-horizon 0)
   elseif(profile_mode STREQUAL "active")
     set(profile_options --spell-horizon 64)
+    set(profile_retained "${profile_prefix}")
   endif()
   set(profile_run "${WORK}/profile-${profile_mode}")
   execute_process(COMMAND "${SOLVER}" "${DAT}" "${profile_run}" 0 3 1 23035 score ${profile_limit} 0 180
-    --prefix-actions "${WORK}/plan.actions" --prefix-updates ${profile_prefix}
+    --prefix-actions "${WORK}/plan.actions" --prefix-updates ${profile_retained}
     --verify-horizon 128 --publish-horizon 64 --lead-updates 1 --replan-updates 32
     --nominal-warm-updates 1 --search-budget-ms 2000 --held-recovery 1 --baseline-recovery 1
     --allow-bombs 0 --require-all-captures 0 ${profile_options}
@@ -145,8 +149,8 @@ foreach(profile_mode IN ITEMS default disabled active)
   endif()
   file(READ "${profile_run}/result.json" profile_report)
   file(STRINGS "${profile_run}/plan.actions" profile_inputs)
-  list(SUBLIST profile_inputs 0 ${profile_prefix} profile_actual_prefix)
-  list(SUBLIST prefix_inputs 0 ${profile_prefix} profile_expected_prefix)
+  list(SUBLIST profile_inputs 0 ${profile_retained} profile_actual_prefix)
+  list(SUBLIST prefix_inputs 0 ${profile_retained} profile_expected_prefix)
   if(NOT profile_actual_prefix STREQUAL profile_expected_prefix OR
      NOT profile_report MATCHES "\"outcome\":\"budget\"" OR
      NOT profile_report MATCHES "\"updates\":${profile_limit}," OR
@@ -158,6 +162,18 @@ foreach(profile_mode IN ITEMS default disabled active)
   endif()
   string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" profile_projection "${profile_report}")
   set(profile_projection "${CMAKE_MATCH_1}")
+  if(NOT profile_mode STREQUAL "active")
+    foreach(pair IN ITEMS "searches:0" "branch_updates:0" "profile_switches:0"
+                            "discarded_pending_inputs:0" "spell_horizon_requested:0"
+                            "spell_verify_horizon:128" "spell_publication:64" "spell_replan:32")
+      string(REPLACE ":" ";" parts "${pair}")
+      list(GET parts 0 key)
+      list(GET parts 1 value)
+      if(NOT profile_report MATCHES "\"${key}\":${value},")
+        message(FATAL_ERROR "Default/zero profile changed literal execution or schedule: ${pair}: ${profile_report}")
+      endif()
+    endforeach()
+  endif()
   if(profile_mode STREQUAL "default")
     file(SHA256 "${profile_run}/plan.actions" profile_default_hash)
     set(profile_default_projection "${profile_projection}")

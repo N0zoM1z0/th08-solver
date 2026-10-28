@@ -16,8 +16,9 @@ tapes, run JSON and videos stay under ignored `reports/local/`.
 All five have original-entry fresh Native terminal agreement and natural replay
 score, zero-miss/bomb, capture-outcome and name checks. These are Native execution
 checks. Extra exceeds the all-shot3,178,460,830 reference by733,030 and now
-qualifies for retail replay playback; that validation is pending. The story
-reference remains higher, and no retail equivalence is claimed here.
+also passes original Wine replay validation: exact3,179,193,860, NMNB14/14
+(1343/1367). The same selected replay bytes are preserved. The story reference
+remains higher; its score remains Native-only.
 
 | Location | Contents and provenance |
 | --- | --- |

@@ -14,7 +14,11 @@ published replay index.
 | [October27 VPS exploration](2026-10-27-vps.md) | Questions, source/human evidence, parallel-search design, complete canaries, declared variations, failures and resulting decisions |
 
 The TSV files use a header row. Tabs/newlines within values are escaped;
-structured entry, controls, argv, cost and edit fields use compact JSON values.
+structured entry, controls, argv, cost and edit fields use compact JSON values. The `retail_observation` field
+keeps actual observer/EXE/replay identities, partial capture/state observations,
+explicit stops and any terminal retail validation separate from Native results.
+`observation_replanned_no_certificate` preserves an explicitly stopped playback;
+its partial zero-miss state is not a complete-route result.
 An empty field means **unrecorded or unavailable**, never zero. The backfill
 preserves every old ledger note. `historical_ledger_only` explicitly marks an
 older task without an available structured owner receipt; it does not invent

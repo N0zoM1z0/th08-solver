@@ -63,7 +63,17 @@ and **complete Lunatic6,512,532,100,NMNB36/37**, task1225 (10 times out).
 Fresh1329/1229 and natural1330/1230 pass exact41-word terminal, score, outcomes,
 zero-miss/bomb and name checks. Scarlet now owns both overall Native records.
 The6.5B milestone is achieved. Extra exceeds its all-shot reference by733,030
-in Native and qualifies for retail replay validation; playback remains pending.
+in Native and now passes original Wine replay validation1343/1367 at exactly
+3,179,193,860, NMNB14/14, without an online controller.
+All final193-reserve compositions and12 further within-spell205 combinations
+finish below the record (latest best3,176,324,740); Native queues are finished. Original retail observer1343 completes72214 callback rows; typed terminal
+reanalysis1367 passes exact score, all-row NMNB, source completion, passive
+commands and all14 observed captures. The original wrapper's wrong-offset
+postprocessing failure remains preserved. Normal1345 has58/62 passing cases;
+corrected profile/dependent recovery1363 passes3/3 and full legacy recovery1365
+passes1/1 with unchanged Native binaries, an explicit1800s CTest observation
+timeout and a hash-bound reused ID203 search followed by fresh execution.
+Every original failure/timeout and reuse cost remains recorded.
 The story reference remains above our score. Selected replays are now published;
 [Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns hashes.
 
@@ -650,7 +660,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | Local: at most4 owned solver/test/probe drivers including verification; build with `--parallel 2`. The owner's later VPS request separately authorizes up to32 remote Native owners, CPU quota32 cores, low priority. Fork children belong to their owner; do not add extra uncounted test drivers |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1332/1344 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280→1344 were recorded before use; the latest was recorded at1276 before1281. Failures, cancellations and verification remain charged; never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1368/1408 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280→1344→1408 were recorded before use; the latest was recorded at1343 before1345. Failures, cancellations and verification remain charged; never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. The later explicit VPS authorization raises remote concurrency only |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |

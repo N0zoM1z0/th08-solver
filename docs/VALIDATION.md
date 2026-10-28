@@ -241,7 +241,25 @@ capture, NMNB,73085 inputs. Its30431-byte replay SHA-256 is
 `2dfaddbd0ea623f6838fc6b0dfc07a07d7660594b9e6bd9bbfeb2db4a8e625d8`, actions
 `d126950d5d97b972bde595b71c7d09fc98552a93c7da7fcab30f31ff5c08ed84`.
 Fresh1329/natural1330 pass all eight checks. It exceeds3,178,460,830 by733,030:
-the Extra retail-playback gate is now open, with actual Wine validation pending.
+its original Wine replay validation now passes (1343/1367). The original retail
+EXE `330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`
+plays the exact selected replay at normal playback from Extra entry. The observer
+returns original inputs, with no controller, checkpoint or RNG replacement.
+All72214 callback packets decode with valid version/size/sequence, zero deaths,
+zero bombs, source completion and passive command counters. Actual final score
+is3179193860; all14 seen-active/source-captured flags192–205 are observed.
+The callback journal SHA-256 is
+`886150f649e998c5d18fbcf382c9d161a2a45a435e62390c589a9e59d6e9798d`.
+
+The original1343 wrapper exits1 after a private64-byte-header decoding error,
+although the retail process exits0 and writes complete original rows. Its error
+is preserved. Independent typed reanalysis1367 passes using the protocol Packet
+header40 bytes,41 projection words and24 trailing timing bytes. It verifies the
+original EXE/DAT/observer/replay/seed-receipt identities and unchanged rows. The
+72214 observed callbacks are not73085 Native input receipts, nor a claim of full
+41-word cross-runtime equality. The exact17-field prefix matches18407 rows; the
+next latched-input difference remains documented. This is complete retail score/
+NMNB/capture validation, with all setup, observation and correction costs retained.
 The preceding5.784B story retains the actual first51253 inputs of H256 task794 through47,
 then uses H128/publication64/replan32/cash4/movement4. Its61373-byte replay
 has SHA-256 `37ea4e2f9b6ca020a470ab777f700e09aa5fe4d6acffeae3e714dbca4c67d488`,

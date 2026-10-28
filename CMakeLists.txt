@@ -385,9 +385,11 @@ if(BUILD_TESTING)
       -DWORK=${CMAKE_CURRENT_BINARY_DIR}/headless-regression
       -DCOMPARE_EXECUTABLE=${TH08_HEADLESS_COMPARE_EXECUTABLE}
       -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_real_data.cmake)
-    # Complete scenes plus the bounded ID203 search/replay run in this aggregate.
-    # This is only the aggregate test process timeout, not a solver/frame budget.
-    set_tests_properties(headless_real_data PROPERTIES TIMEOUT 1200)
+    # The aggregate includes two separate 600s repair budgets and complete-scene
+    # replays. The measured full script can exceed 1200s on the shared host even
+    # when each search completes. This changes only CTest's outer observation
+    # timeout; solver/frame/search budgets and failure checks remain unchanged.
+    set_tests_properties(headless_real_data PROPERTIES TIMEOUT 1800)
     add_test(NAME headless_planner_prefix COMMAND ${CMAKE_COMMAND}
       -DEXECUTABLE=$<TARGET_FILE:th08_plan>
       -DDAT=${TH08_HEADLESS_DAT}
