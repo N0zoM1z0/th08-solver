@@ -283,6 +283,69 @@ The three77 continuations1570–1572 reach Stage5 safely,0 bombs.1570 banks
 FinalB instead of adding their gains to the old complete score. Extra negative
 control1575 completes3161132620,NMNB14/14, below the current record.
 
+## HP/time diagnosis resolves116 timeout controls
+
+Probe1588 builds in2.769s;1589/1590 finish10.400/10.263s and reproduce all41
+words plus the entire producer audit, now with the actual partial-completion flag.
+They read existing scored state every16 updates without Policy::observe/decide
+or any world/RNG write. Baseline1522's116 starts3109HP; with586 updates left
+it is520HP. Feedback112/600 case1583 instead has2914HP at586 left and still
+1891HP at10, despite continuous focused fire in its last600 updates. Its earlier
+HP stalls around3k while farming away from the boss. Fixed600 is insufficient
+damage time in this carried world. Source online.cpp update_attack_pacing has
+a learned HP/DPS reserve, but the explicit phase plan intentionally overrides its
+farm/capture gate with its declared fixed reserve; a prior repair cannot change
+that contract.
+
+V55 reserves1592–1601 after recording1600→1664 at1591 before1601. All resource
+limits and ledger identity remain unchanged. It continues1570/1571 through the
+unchanged16fe FinalB first151 collector;1592 banks4189921460/PIV1128640 at119733
+inputs,1593 banks4161295900/PIV1150050 at121706, both NMNB partials. It tests
+116 reserves1200/1600/2000/2400 with human/youkai capture at the actual1522
+entry. All eight are NoMiss/Bomb0. Focused1200/1600/2000/2400 all capture,
+with3184/3423/2644/2024 orbs; human captures only at2400 (1133 orbs). This is
+a measured resolution of these controls, not a universally safe capture time.
+Retest after earlier phase changes. The earlier six timeouts remain charged.
+
+V56 reserves1602–1605: two actual first151 worlds × movement3/4, ordinary
+H128/cash4/reserve1.2+120 complete tails. They must finish before mapping the
+new actual171 boundary and transferring its farm; no old171 world is pasted.
+
+## Extra negative combinations expose point-pool capacity
+
+V52 Extra1573/1574/1575 all complete NMNB14/14 but score3037857280/3114283480/
+3161132620, below3203494130.1574 has higher PIV946220 versus1517's936150, yet
+collects990 points versus1035. The missing45 appear after202 before203. A
+phase gain alone therefore cannot certify an improvement, even with higher PIV.
+
+Read-only1606 maps1574's actual202 entry55547; all41 terminal words and the
+entire14-spell audit match.1607/1608 replay its original writer output through
+the existing point-request observer and unmodified stock checker; the entire
+25-word row streams match.1609's current3203 control matches its existing
+natural verification rows exactly. Both request1041 points, but the changed
+route spawns995/collects990 versus1040/1035. Its45 in-bounds requests at source
+clock57169 all fail; this is production rejection rather than later pickup loss.
+
+Build1610 adds current pool occupancy/nextIndex to this private read-only
+observer (2.546s).1611/1612 replay the same two inputs and again preserve every
+stock row byte. All45 failed requests see2096/2096 occupied slots; the selected
+record's corresponding batch sees1597→1642 and all45 succeed. Source
+[ItemManager::SpawnItem](../../third_party/th08/src/ItemManager.cpp) searches
+its fixed [2096-slot pool](../../third_party/th08/src/ItemManager.hpp) and returns
+a sentinel when full. Every request's X is101.74..223.13, so its separate
+out-of-bounds rejection does not explain this batch. No pool capacity, item
+order, world or RNG is changed. This is source-faithful Native replay evidence;
+its row check is not an independent retail physics oracle.
+
+V60 reserves1613–1624 to retime202 at actual1574 entry55547: six ordinary
+H64/128/256 × movement3/4, plus six explicit geometry/fire/capture profiles.
+Every complete suffix uses economic4, including phase candidates.10000-reserve
+controls disable farming and force human/youkai capture from entry. The goal is
+complete NMNB above3203494130 with restored point production, followed by
+fresh/natural verification; higher PIV or a locally better202 is insufficient.
+12 owners/12 cores plus4 V56 owners/4 cores stay below32; all memory/host guards
+remain unchanged. Native source physics and pool semantics remain untouched.
+
 ## Per-case outcome tables
 
 These tables join the immutable task packets to completed owner receipts.
@@ -417,8 +480,8 @@ The cumulative TSVs retain full parameters, hashes, branch/retry and guard costs
 |1570|`vps-scarlet-luna-stage5-composed-v52-parent1553`|stage_boundary|3447375020|24/26|0|489.967|
 |1571|`vps-scarlet-luna-stage5-composed-v52-parent1554`|stage_boundary|3421125760|23/26|0|531.273|
 |1572|`vps-scarlet-luna-stage5-composed-v52-parent1556`|stage_boundary|3419013010|23/26|0|506.339|
-|1573|`vps-scarlet-extra-full-composed-v52-parent1557`|running/unresolved|—|—|—|—|
-|1574|`vps-scarlet-extra-full-composed-v52-parent1559`|running/unresolved|—|—|—|—|
+|1573|`vps-scarlet-extra-full-composed-v52-parent1557`|complete|3037857280|14/14|0|748.766|
+|1574|`vps-scarlet-extra-full-composed-v52-parent1559`|complete|3114283480|14/14|0|751.473|
 |1575|`vps-scarlet-extra-full-composed-v52-parent1563`|complete|3161132620|14/14|0|304.77|
 
 ### Earlier orb opportunities
@@ -437,3 +500,44 @@ The cumulative TSVs retain full parameters, hashes, branch/retry and guard costs
 |1585|`vps-scarlet-luna1522-opportunity-v53-card116-feedback368-r600`|phase_boundary|3166776690|21/25|0|64.42|
 |1586|`vps-scarlet-luna1522-opportunity-v53-card116-shoot112-r600`|phase_boundary|3162494880|21/25|0|58.51|
 |1587|`vps-scarlet-luna1522-opportunity-v53-card116-shoot112-r900`|phase_boundary|3160700240|21/25|0|59.912|
+
+### FinalB and measured116 reserves
+
+| Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+|1592|`vps-scarlet-luna-v55-first151-parent1570`|road_boundary|4189921460|24/26|0|68.906|
+|1593|`vps-scarlet-luna-v55-first151-parent1571`|road_boundary|4161295900|23/26|0|64.848|
+|1594|`vps-scarlet-luna116-v55-r1200-human`|phase_boundary|3160079190|21/25|0|61.245|
+|1595|`vps-scarlet-luna116-v55-r1200-youkai`|phase_boundary|3176116410|22/25|0|61.353|
+|1596|`vps-scarlet-luna116-v55-r1600-human`|phase_boundary|3158776620|21/25|0|64.022|
+|1597|`vps-scarlet-luna116-v55-r1600-youkai`|phase_boundary|3172095250|22/25|0|61.281|
+|1598|`vps-scarlet-luna116-v55-r2000-human`|phase_boundary|3154151070|21/25|0|63.306|
+|1599|`vps-scarlet-luna116-v55-r2000-youkai`|phase_boundary|3171740680|22/25|0|63.133|
+|1600|`vps-scarlet-luna116-v55-r2400-human`|phase_boundary|3161632130|22/25|0|65.777|
+|1601|`vps-scarlet-luna116-v55-r2400-youkai`|phase_boundary|3167579590|22/25|0|54.957|
+
+### Complete Lunatic tails
+
+| Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+|1602|`vps-scarlet-luna-v56-full-parent1592-move3`|running/unresolved|—|—|—|—|
+|1603|`vps-scarlet-luna-v56-full-parent1592-move4`|running/unresolved|—|—|—|—|
+|1604|`vps-scarlet-luna-v56-full-parent1593-move3`|running/unresolved|—|—|—|—|
+|1605|`vps-scarlet-luna-v56-full-parent1593-move4`|running/unresolved|—|—|—|—|
+
+### Extra202 pool-aware timing portfolio
+
+| Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+|1613|`vps-scarlet-extra202-pool-v60-ordinary-h64-move3`|running/unresolved|—|—|—|—|
+|1614|`vps-scarlet-extra202-pool-v60-ordinary-h64-move4`|running/unresolved|—|—|—|—|
+|1615|`vps-scarlet-extra202-pool-v60-ordinary-h128-move3`|running/unresolved|—|—|—|—|
+|1616|`vps-scarlet-extra202-pool-v60-ordinary-h128-move4`|running/unresolved|—|—|—|—|
+|1617|`vps-scarlet-extra202-pool-v60-ordinary-h256-move3`|running/unresolved|—|—|—|—|
+|1618|`vps-scarlet-extra202-pool-v60-ordinary-h256-move4`|running/unresolved|—|—|—|—|
+|1619|`vps-scarlet-extra202-pool-v60-feedback16-r600-youkai`|running/unresolved|—|—|—|—|
+|1620|`vps-scarlet-extra202-pool-v60-feedback208-r600-youkai`|running/unresolved|—|—|—|—|
+|1621|`vps-scarlet-extra202-pool-v60-feedback368-r600-youkai`|running/unresolved|—|—|—|—|
+|1622|`vps-scarlet-extra202-pool-v60-shoot16-r600-youkai`|running/unresolved|—|—|—|—|
+|1623|`vps-scarlet-extra202-pool-v60-shoot16-r10000-human`|running/unresolved|—|—|—|—|
+|1624|`vps-scarlet-extra202-pool-v60-shoot16-r10000-youkai`|running/unresolved|—|—|—|—|
