@@ -6,6 +6,40 @@ No Miss/No Bomb and optional captures. The complete story starts at6,513,456,180
 A local phase improvement is selection evidence until an actual complete-route
 continuation, fresh terminal check and natural replay check pass.
 
+## Outcome and coverage audit
+
+The accepted final results are Extra **3,212,949,960,NMNB14/14** and unchanged
+complete Lunatic **6,513,456,180,NMNB36/37**. Three successive Extra improvements
+(1517,1539,1621) passed fresh/natural checks and retain exact selected bytes.
+All eight new complete Lunatic V56/V64 combinations remain below the old record.
+Local phase/orb/PIV gains are selection evidence, not additive route scores.
+
+The maintained result table contains every allocation1466–1642 (177 tasks),
+with no unresolved owner in this interval. Counts include fixed-input canaries;
+`complete` does not mean an independent new scoring record, and
+`process_complete` alone is not gameplay completion.
+
+| Recorded outcome | Tasks |
+| --- | ---: |
+| Complete Native reports, including canaries |54 |
+| Phase boundaries |74 |
+| Stage boundaries |5 |
+| Road boundaries |2 |
+| Completed build/probe/test processes |36 |
+| NMNB failures |4 |
+| Focused-test setup/fixture failure |1 |
+| Host-memory resource abort |1 |
+
+The four NMNB failures are1518,1523,1613,1617. Focused1525 fails an invalid
+synthetic fixture, repaired and verified at1526. Normal1529 is resource-aborted;
+unchanged-binary1545 covers the remaining normal cases. Preserve original costs.
+Earlier V48 cash0 tail confounding and the inherited cash0 reason text on actual
+cash4 argv remain documented below; neither raw packet is rewritten.
+
+The experiment index also identifies older missing evidence separately. This
+recent interval has complete terminal accounting; it does not retroactively fill
+unavailable pre-existing measurements or certify old rows without owner receipts.
+
 ## Budget and source boundaries
 
 The standing1472→1536 extension is recorded after1466 before1473, without

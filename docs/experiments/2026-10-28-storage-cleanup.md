@@ -1,4 +1,137 @@
-# October28 local storage cleanup
+# October28 local storage maintenance
+
+## Current retention and authority
+
+The owner's later instruction retains only compressed versions of earlier videos
+and permits deleting other video artifacts. This explicitly supersedes the
+first pass's exact-MKV/PCM recovery requirement. Current local recordings are
+**29 complete H.264 MP4 files**, totaling16382582293 bytes.28 include AAC;
+wine29 is the pre-existing seven-second silent recording and remains silent.
+No new video transcoding or audio removal from retained files occurred.
+
+The maintenance operator is the repository assistant, using
+`gensokyo-skills:sakuya-checkpointed-execution`. The explicit deletion authority
+is the owner's local cleanup and subsequent compressed-video-only instruction.
+Private plans, inventories, source identities, operation logs, guards and proofs
+are under `reports/local/storage-cleanup-20261028-v2/`. No new scoring task,
+retail gameplay, seed acquisition or remote-host cleanup starts in this pass.
+
+| Scope | Completed action | Recovery / unchanged evidence |
+| --- | --- | --- |
+| Video/media derivatives | Remove111 files: redundant previews/encodes, one zero-byte MP4, raw audio, earlier lossless media archives/descriptors and disposable pacing fixtures | Keep29 full compressed recordings; original raw MKV/PCM bytes are no longer exactly recoverable |
+| Inactive owned Wine scratch prefixes | Archive45 directories,27666527886 bytes, into a standalone221725288-byte tar.zst | Full materialized restore verifies44915 entries before unlink; preserve10 existing prefix environments, including valid seeds, current replay environment and two in-use historical prefixes |
+| Private compile intermediates | Archive656 reports/local .o files,98780186 bytes, into10265362 bytes | Full materialized restore verifies all object hashes before removal; source files, producer ELFs, libraries and current build directories are unchanged |
+| Replay/report provenance | Recheck all37 selected replay hashes and272 historical payload hashes | No replay, action tape, seed receipt, result, failure log or immutable source/binary manifest is removed |
+
+The removed media include12 redundant nonzero MP4 variants and one zero-byte
+stub. For wine31 and34, the existing full-duration compact encodes replace the
+larger local versions. wine30 retains its full audio/video recording; wine33
+retains the full practice recording rather than its20-second preview. The
+private `compressed-media-index.json` records every retained filename, exact
+hash, audio scope and removed variant. A preview/re-encode is not claimed to be
+byte- or frame-identical to the selected full recording. Retired adjacent restore
+descriptors are preserved centrally as audit metadata, not as working restore
+instructions. The README animation originals and unrelated user files remain local.
+
+## Ordered execution and gates
+
+1. Capture published-evidence hashes and explicit candidate inventories. Confirm
+   no solver/test/recording job is using candidates; exclude every prefix present
+   in a process's WINEPREFIX. The owner-authorized scope never includes unrelated
+   processes, the old remote checkout, preparations or original game assets.
+2. Probe all42 original MP4 paths. One is a pre-existing zero-byte stub; retain
+   its valid repaired counterpart. Select complete existing compressed encodes
+   with audio where the episode had audio; record full hashes before deletion.
+3. Before irreversible media removal, persist the exact deletion plan and the
+   owner's updated retention authority. Copy old restore descriptors centrally,
+   recheck retained/candidate identities, then unlink only listed media. Verify
+   retained hashes and published evidence after removal. No exact-media rollback
+   is claimed: the owner's accepted replacement is the compressed recording.
+4. Inventory inactive Wine trees without following symlinks. Interleave matching
+   relative paths in tar so duplicate DLL bytes compress together. The archive
+   uses explicit owned paths, one Zstandard thread and a128MiB long window; it is
+   self-contained and does not depend on a live prefix or a retained MP4.
+5. Materialize the entire Wine archive and compare file bytes, modes, owners,
+   mtimes and symlink targets with the inventory. Persist the matching tree and
+   archive hashes. Recheck original identities and live-prefix exclusion before
+   each directory unlink; stop on any mismatch. Remove restored verification
+   copies only after the retained archive/proof and unlink receipts exist.
+6. Independently archive and fully restore the private object intermediates,
+   compare every object hash, then remove only those listed .o files. These are
+   maintenance archives, not permission to relink incompatible historical ABIs.
+7. Recheck the selected replays, historical payloads, kept media/archives and
+   active seed environments. Record exact file-content accounting, owner exits
+   and documentation checks. No transition remains half-open on completion.
+
+An abort leaves untouched originals or already-verified archives with per-step
+receipts. Source changes, a new live consumer, failed restoration/hash, unknown
+state, resource guard or ineffective compression stop the affected operation.
+Neither a checksum nor an archive is described as protection against disk loss.
+Inode/ctime/hardlink identity is not restored; no new retail replay is certified.
+
+## Restore commands for retained non-media archives
+
+Run from the repository root. The old prefix archive expands only the archived
+relative scratch paths; current seed/replay environments were excluded. Restore
+only in a clean, inactive destination and verify the recorded hashes before use.
+
+```sh
+tar -I 'zstd -d --long=27' -xpf \
+  reports/local/storage-cleanup-20261028-v2/old-wine-prefixes.tar.zst
+
+tar -I zstd -xpf \
+  reports/local/storage-cleanup-20261028-v2/private-objects.tar.zst
+```
+
+Prefix archive SHA-256:
+`324b8480c05b4d1ea064e8409139d6f882f17dbd7630219aae702f203a616b41`.
+Its original/restored tree digest is
+`6b5d07426360868008ce614fef838f91da6159e9a1913a36007c2e4fe0bd227c`.
+Object archive SHA-256:
+`7cf9b778a584d21179805166d6e829b5061493db07f7691dd1d88cfdbe3e0ba4`.
+These exact compressed bytes are now recovery dependencies. Keep their inventories
+and proofs. Restore historical intermediates before a historical relink, and
+recompile all affected translation units when headers/libraries change.
+The MKV/VCDIFF and PCM commands in the historical section below are **retired**;
+their archives have been deleted under the later owner instruction.
+
+## Measurements, deviations and remaining scope
+
+| Owner | Guarded wall seconds | Peak owned RSS bytes | Minimum host MemAvailable bytes | Outcome |
+| --- | ---: | ---: | ---: | --- |
+| Wine-prefix archive/restore |583.560 |339034112 |29904691200 |45 full trees verified and archived |
+| Compressed-media retention |102.150 |51486720 |42477838336 |29 retained files and all published evidence unchanged |
+| Object archive/restore |8.125 |131674112 |43255906304 |656 restored object hashes agree |
+
+At most two maintenance owners overlap, within the four-local-owner ceiling.
+All retain4GiB process/tree and12GiB host admission/8GiB abort guards; no resource
+abort occurs. Operations use low priority; compression is single-threaded.
+These concurrent wall measurements are not isolated CPU benchmarks.
+
+Media removal accounts for7594281189 bytes, with40083
+bytes of retired descriptors retained as metadata. Wine-prefix archiving saves
+27444802598 bytes and object archiving saves88514824.
+The net retained-payload reduction is **35127558528 bytes (32.72GiB)**,
+before other small new inventories/logs/scripts. This is file-content accounting;
+unrelated filesystem free-space fluctuations are not counted as project savings.
+
+Two preflight failures are preserved. The first media scan stops at the existing
+zero-byte MP4 before deletion; a complete scan then identifies its repaired
+replacement. A scoped attempt to stop old qualified-replay v2 Wine helpers
+returns nonzero; that first helper did not persist stderr. No successful shutdown
+is inferred. Both v2/v3 in-use prefixes and their services are excluded and remain
+untouched by archive/removal. No game process or unrelated service is killed.
+
+Final maintenance audit1643 passes documentation CTest, all37 selected and272
+historical hashes, retained-media identities, both archive hashes and restoration
+proofs, all177 recent task closures and the byte-exact1642-row published results
+prefix. It costs2.830s guarded wall; no scoring case is started.
+
+The earlier pass below records the conditions and measurements at that time.
+Its34-replay/42-MP4 preservation counts are historical, not the current37 selected
+replays/29 retained recordings. Its former media recovery promises are superseded.
+
+## Earlier exact-media archive pass (historical)
 
 The owner requested cleanup of `reports/local/` while Native score exploration
 continues. The initial inventory records 68,712 regular files, 50,455,898,706
@@ -12,7 +145,7 @@ instruction. The checkpointed execution method is
 tool identities and per-file receipts live in
 `reports/local/storage-cleanup-20261028-v1/`.
 
-## State and scope
+### State and scope
 
 Keep every final MP4, selected replay, action tape, seed receipt, result, failure
 log and source/binary manifest. Keep the original README animation materials.
@@ -29,7 +162,7 @@ Abort on a changed source/base, symlink, insufficient available memory, failed
 child process, failed hash, missing evidence or unknown intermediate state.
 There is no deadline requiring a failed gate to be bypassed.
 
-## Ordered checkpoints and gates
+### Ordered checkpoints and gates
 
 1. Inventory files and confirm that recording/solver/test owners have finished.
    Record identities of all34 selected progress replays and272 historical
@@ -56,7 +189,7 @@ Each child operation has a bounded observation window; an overrun stops the
 current file without unlinking its source. The assistant observes progress
 throughout. No other storage policy is inferred from this cleanup.
 
-## Recovery and limits
+### Recovery and limits
 
 Encoding is reversible by deleting its temporary output. Unlinking a verified
 source is reversible by decoding its archive with the recorded base:
@@ -73,7 +206,7 @@ identity or filesystem metadata, and is not an independent backup against disk
 loss. **The retained MP4 is now a required archive dependency**: do not delete or
 rewrite it without first restoring the MKV or rebasing and verifying its archive.
 
-## Execution and final verification
+### Execution and final verification
 
 Completed on October28. All29 candidate MKVs were archived and their originals
 removed only after exact full restoration passed. All42 MP4 files retain their

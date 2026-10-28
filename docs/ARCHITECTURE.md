@@ -28,6 +28,8 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Native execution/tapes/reports | `tools/headless.cpp`; opt-in `cmake/Headless.cmake` |
 | Native fork planner, proposals and process checkpoints | `tools/plan.cpp`; `plan_contracts.hpp`, `plan_observation.hpp`, `plan_beam.hpp` |
 | Owned current-memory observations and online proposal history | `online.hpp`, `online.cpp`, `online_model.cpp`; the optional previous-plan cache belongs to each `Policy` and is rechecked against new observations |
+| Immutable stage/spell proposal strategies | `phase_strategy.hpp`, `phase_strategy.cpp`; parse actual stage/card selectors and pixel/update units. `Configuration::phase_capture_prior` shares only a capture-form preference with independent recovery; it neither adds scoring memory nor owns a gameplay world |
+| Bounded strategy archive and selection | `phase_archive.hpp`, `phase_archive.cpp`, `tools/phase_frontier.cpp`; compare declared completed-segment evidence and retain strategy diversity. Request/checkpoint deduplication is not world-state equivalence or a Native safety certificate |
 | Common-start shadow synchronization | `shadow_protocol.hpp`, `shadow_native.*`, `shadow_process.*`, `tools/shadow_follow.cpp`; fixed-width wire values and a single-threaded independently initialized follower process |
 | True-RNG branch verification and committed action frontier | `shadow_rollout.*`, `shadow_plan.hpp`; isolated native child futures and checked consecutive execution receipts |
 | Offline terminal-score refinement | `score_refine.*`, `tools/score_refine.cpp`; complete remaining-tape evaluation, identical capture/route goals and strict terminal-score selection |

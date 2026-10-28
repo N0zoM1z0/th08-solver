@@ -90,6 +90,16 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
 - The owner authorizes the selected animated README diagram in `docs/media/`.
   Keep its original `gifs/` bundle, MP4 and Python generator local; this does not
   introduce a Python implementation/dependency or authorize other video commits
+- The October28 maintenance instruction retains only compressed prior gameplay
+  recordings:29 full MP4s remain under `reports/local/`; raw media, redundant
+  encodes and earlier exact-media recovery archives are retired. Do not promise
+  restoration of those deleted MKV/PCM originals. The README animation originals
+  above remain excluded from this cleanup.45 inactive Wine scratch prefixes and
+  656 private object intermediates have separately verified self-contained
+  archives under `reports/local/storage-cleanup-20261028-v2/`; retain their
+  archives, inventories and restore proofs, and restore before using old paths.
+  Current seed/replay environments, two in-use old Wine prefixes, all selected
+  replays and experiment inputs/results/source/binary manifests remain preserved
 - Keep only the compact current document set linked by README. Update the document
   that owns the fact instead of adding another roadmap, diary or duplicate checklist
 - Keep current status, future work and historical/component evidence distinct.

@@ -467,7 +467,7 @@ Their action SHA-256 values are respectively
 769 follows763's second-road proposal and freshly reexecutes the committed33792
 inputs of resource-aborted764;768 freshly reexecutes126976 inputs of aborted759.
 Original aborts certify nothing and remain charged. Status owns full lineage,
-profiles and separate original/recovery costs. Scarlet3.073B now leads Native
+profiles and separate original/recovery costs. At this historical checkpoint, Scarlet3.073B led Native
 Extra; Magic5.551B still leads story. The6B and all-shot gates remain unmet.
 
 New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
@@ -871,7 +871,7 @@ Selected provenance JSONs retain the full controls, exact producer/prefix,
 binary, receipt, DAT and natural-row hashes. Environment remains Release
 GCC12.2.0, C++17, `-ffp-contract=off`, no fast-math, AMD EPYC7B12 and
 Linux6.1.0-54-cloud-amd64 x86_64. Reported Native timing excludes file I/O;
-the complete wall cost is also charged. Each owner obeys the same2GiB limits
+the complete wall cost is also charged. These historical owners obeyed the then-current2GiB limits
 and host memory guards. Fresh execution and source natural replay establish
 execution agreement, not an independent physics oracle or retail equivalence.
 Neither the6B milestone nor either all-shot human reference is reached; no
@@ -1440,109 +1440,47 @@ a separate check, not a property established by the export target header.
 
 ## Resume Extra scoring on main
 
-The current [operational contract](STATUS.md#operational-resume-contract) owns
-resource limits and the cumulative1280-task window, including the October27
-recorded64-task extension before use. The owner has resumed with
-No Miss/No Bomb and optional captures. Use the existing retail-seeded episode and
-a fresh output directory, rather than copying a historical Native-selected seed
-or launching online MPC.
+The [operational contract](STATUS.md#operational-resume-contract) owns the current
+cumulative campaign window, resource bounds and fixed original episodes.
+Current scoring is No Miss/No Bomb with optional captures, prioritizing Scarlet
+Extra9098 and complete Lunatic32796. Magic46997/1805 progress remains preserved.
+The current maintenance pass starts no scoring queue.
 
-The local guarded launcher at
-`reports/local/retail-score-offline-20261026/run-batch.cjs` reads the proper
-entry from its hash-bound seed receipt. It freezes binary/source/controls and
-charges one task per owner. `memory-guard.cjs` enforces process address space,
-summed owned RSS and host-memory admission/abort bounds. Count all other active
-owned drivers before launch: the script's one-to-four-case input is not a global
-concurrency lock. Only its own process groups may be terminated.
+The ignored local workspace launcher is
+`reports/local/global-score-20261027/run-scarlet-guarded.cjs`. It binds the
+original seed receipt, freezes source/binary/actual arguments, allocates a fresh
+ledger ID and applies the4GiB process/tree and host-memory guards. Count all
+other local owners: a one-to-four-case spec is not a global concurrency lock.
+The older `run-batch.cjs` and2.620B example belong to the fixed
+[historical command snapshot](https://github.com/N0zoM1z0/th08-solver/blob/5929ced/docs/VALIDATION.md#resume-extra-scoring-on-main).
+Do not use their old campaign cap or shot defaults for a new Scarlet trial.
 
-For a later code change, build Release with `--parallel 2`, stop all relinking
-before verification, and run the full suite through the local guarded helper
-with a fresh report basename:
+For newly authorized work, inspect the current frozen packet schema, declare
+entry/prefix, controls, wall/search/proposal budgets and acceptance first, then
+use a unique spec and output name. Never attach another shot/episode's inputs.
+The local orchestration files are not supplied by a fresh clone; production
+solver/build/tests remain C++17/CMake.
 
-```sh
-setsid --wait node reports/local/retail-score-offline-20261026/run-normal-ctest.cjs \
-  normal-release-next-001
-```
+After an owner exits, inspect `exit.json`, `run/result.json` and
+`run/score-audit.json`. A launcher can exit0 while a child fails. Native exit5
+can represent valid complete below-target progress; failed, incomplete or
+resource-aborted work cannot certify a result. The relaxed checker is
+`reports/local/score-continue-20261027/verify-no-bomb.cjs`; it requires fresh
+verification paths and compares exact terminal, score, zero misses/bombs,
+actual capture outcomes and the eight-byte name. Older strict all-capture
+checkers are for their original goal, not an optional-capture candidate.
 
-The parameterized implementation passes60/60, plus final focused reporter checks;
-documentation-only cleanup requires the documentation CTest. These helper/receipt/tape paths belong to this working
-copy; a clone contains the selected replays and maintained provenance, not the
-ignored local producers and action tapes.
+Only a verified new overall Extra or complete-Lunatic record retains a future
+replay. Preserve original writer bytes and all earlier selected replays; do not
+fabricate slowdown metadata. Rejected trials retain parameters, inputs, failures
+and costs in the experiment journal. Remote deployment additionally needs the
+source/binary/library/DAT/input/receipt bindings and cross-host canaries in Status.
 
-The following records the public2.620B suffix profile using its preserved
-full input tape. It is a reproduction example, not a reason to rerun a settled
-case. Clone the spec to a unique name and record why any new controls/prefix
-change when designing a new experiment. These Node scripts are local campaign
-orchestration; production solver/build/tests remain C++17/CMake.
-
-```sh
-cat > reports/local/retail-score-offline-20261026/next-spec.json <<'JSON'
-[
-  {
-    "name": "extra-next-suffix-001",
-    "kind": "extra",
-    "binary": "build-extra-live/th08_shadow_style",
-    "source_file": "tools/shadow_style.cpp",
-    "source_files": ["include/th08/online.hpp", "src/online.cpp", "src/online_native.cpp"],
-    "reason": "Reproduce the verified Extra suffix from its own original-entry prefix",
-    "controls": {
-        "--allow-bombs": 0,
-        "--require-all-captures": 0,
-        "--verify-captures": 0,
-        "--verify-horizon": 512,
-      "--publish-horizon": 256,
-      "--lead-updates": 1,
-      "--nominal-warm-updates": 1,
-      "--replan-updates": 128,
-      "--search-budget-ms": 30000,
-      "--policy-beam": 384,
-      "--hit-income": 1,
-      "--capture-factor": 1.2,
-      "--capture-padding": 120,
-      "--recovery-fire": "preserve",
-      "--economic-proposals": 4,
-      "--prefix-actions": "/home/yann/yann/touhou/th08-solver/reports/local/retail-score-offline-20261026/extra-main-cash-confirm-v2/run/plan.actions",
-      "--prefix-updates": 60879
-    }
-  }
-]
-JSON
-setsid --wait node reports/local/retail-score-offline-20261026/run-batch.cjs \
-  reports/local/retail-score-offline-20261026/next-spec.json
-```
-
-The driver adds the active NMNB/capture/name/score-target and declared collection/
-form defaults,400000 maximum updates and7200s owner wall budget; inspect its
-manifest's actual args. The selected full-entry parent additionally uses private
-focus-pulse/repair sources. A new public full-entry `--drop-target 1` experiment
-is a different profile, not a claim to regenerate that parent. For story use
-`kind: "story"` and its own seed1805/prefix; never attach Extra inputs or omit
-prior-Final-A history. The last FinalB cash/PIV trials are already negative.
-
-After completion, inspect each `exit.json` (including memory abort reason),
-`run/result.json` and capture audit. The launcher may exit0 while a child failed.
-A Native exit5 is below-target valid progress only if the complete result meets
-its declared bomb/capture constraints. The older guarded checker below targets
-strict NMNB/all-capture exports:
-
-```sh
-setsid --wait node reports/local/retail-score-offline-20261026/verify-runs.cjs \
-  extra-next-suffix-001
-```
-
-That strict checker requires fresh verification output and checks original-entry fresh exact
-41-word terminal agreement plus natural replay NMNB, score, all captures and the
-eight-byte name. Optional-capture outputs instead compare their exact capture
-count/outcomes; do not run the strict helper unchanged or interpret a missing
-capture as a verifier failure under the relaxed goal. The current local
-`reports/local/target-3b5b-20261027/run-guarded.cjs` binds entry receipts,
-source/binary/argument identities and memory limits for parameterized trials.
-The current source/parent/cash profiles and explicit pending owners are listed
-in Status; historical specs keep their original goal identities. Preserve exact
-selected original-writer bytes. A lower/partial/
-resource-aborted run remains charged and local. Do not edit NaN slowdown metadata
-into a fabricated measured percentage. Current frozen success/negative profiles
-and prototype/source locations are in [Status](STATUS.md#operational-resume-contract).
+For code changes, build Release with `--parallel 2` and stop relinking before
+verification. Run relevant real-DAT checks and normal CTest in a guarded owner.
+The latest unchanged-binary normal coverage is1529's59 cases plus1545's3-case
+recovery, all62 covered; the original host-memory abort remains charged.
+Documentation-only changes run the documentation CTest.
 
 ### Historical Native and online commands
 

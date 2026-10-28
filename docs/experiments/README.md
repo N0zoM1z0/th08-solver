@@ -13,7 +13,7 @@ published replay index.
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
 | [October27 VPS exploration](2026-10-27-vps.md) | Questions, source/human evidence, parallel-search design, complete canaries, declared variations, failures and resulting decisions |
-| [October28 storage cleanup](2026-10-28-storage-cleanup.md) | Exact-restore media archives, retained evidence, reclaimed bytes and recovery dependencies |
+| [October28 storage cleanup](2026-10-28-storage-cleanup.md) | Compressed recording retention, verified Wine/object archives, space accounting and historical restore limits |
 
 The TSV files use a header row. Tabs/newlines within values are escaped;
 structured entry, controls, argv, cost and edit fields use compact JSON values. The `retail_observation` field
@@ -27,6 +27,33 @@ older task without an available structured owner receipt; it does not invent
 measurements or convert that task into a success. `running_or_unresolved` needs
 a terminal owner receipt before its result can be accepted. A complete report
 from a resource-aborted owner still certifies nothing.
+
+## Coverage and historical evidence gaps
+
+At scoring snapshot1642, the result table has1642 distinct task rows. The latest
+177 allocations1466–1642 all have terminal outcomes; their
+[coverage audit](2026-10-28-stage-spell-search.md#outcome-and-coverage-audit)
+separates complete Native reports, partials, tests, failures and the memory abort.
+
+There are231 older `historical_ledger_only` rows and29 older
+`running_or_unresolved` rows whose exporter-selected owner exit receipt is
+missing. The latter label is historical uncertainty, **not a live queue**. Other
+artifacts or prose may record observations, including the separately validated
+seed receipts; they do not justify inventing the missing owner closure or costs.
+All existing fields and allocation notes remain preserved.
+
+| Historical group | Task IDs awaiting allocation-specific closure evidence |
+| --- | --- |
+| Reused output names / continuation attempts |176,177,193,194,211,212,213 |
+| Early Native scoring/pacing attempts |219,222,226,227,228,229 |
+| Read-only income/pool/chain probes |205,209,318,319,320,321,329,330,336,353,354 |
+| Earlier seed-acquisition owner receipts |262,263,264,265,266 |
+
+Do not rerun gameplay or reacquire seeds to fill this metadata, reuse IDs, or
+assign one reused-directory result to several owners. Any later backfill must
+identify the original allocation-specific receipt and retain the old uncertainty
+and correction provenance. Documentation/maintenance checks after1642 receive
+new ledger IDs; storage maintenance receipts have their own inventory and costs.
 
 For each new batch record the hypothesis and decisive acceptance test before
 launch, reserve IDs centrally, then reconcile each owner after exit. Include

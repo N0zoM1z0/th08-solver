@@ -2,7 +2,9 @@
 
 The active owner workflow is offline Native scoring for Extra and complete
 Lunatic4A→FinalB, exporting `ysopwnab` replays. Retail Wine playback follows a
-qualified NMNB/all-capture score; online MPC is paused. Historical live protocols
+qualified complete NMNB score above its all-shot reference under the declared
+capture goal; online MPC is paused. Current scoring permits missing captures.
+Historical live protocols
 below remain component evidence. [Status](STATUS.md) owns the current targets.
 
 Each new scoring episode first captures the real owned Wine retail seed at the
@@ -10,9 +12,10 @@ pre-RegisterChain boundary, records its entry/provenance, and keeps it fixed for
 offline Native candidates. Native does not select a replacement seed. Wine seed
 acquisition precedes planning; qualified retail replay validation follows it.
 
-The target is continuous No Miss No Bomb runs for all twelve team/solo shots,
-four standard difficulties and both final routes, plus Extra, with input tapes
-and real `.rpy` files. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
+The current target is Extra and complete Lunatic4A→FinalB, with all twelve
+team/solo shots available and Scarlet Team prioritized. The broader difficulty/
+route matrices below describe earlier generic coverage experiments, not a current
+scoring queue. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
 and provenance; [Architecture](ARCHITECTURE.md) maps ownership.
 
 ## Truth and proposals
@@ -146,7 +149,19 @@ stage and one-based card. Each entry defines a source-pixel row band, a reserve
 in gameplay updates, feedback/continuous fire and human/youkai capture form.
 It requires attack pacing. Only the proposal goal and fire/focus bits change;
 Native input sampling, damage, option lifecycles, gauge and RNG remain source
-owned. Ordinary safety recovery uses its independent policy without the plan.
+owned. Ordinary safety recovery uses its independent policy without the full plan.
+Optional `--phase-recovery-prior 1` shares only the immutable capture-form
+preference, selected by actual core stage/card identity. It needs neither scoring
+memory nor generic attack pacing in recovery; it does not inherit farm geometry,
+fire or reserve control. This is a soft proposal preference, not a form filter or
+a safety certificate. It requires a nonempty plan and enabled baseline recovery;
+the default0 preserves ordinary recovery. The full-plan constructor still
+requires pacing.
+
+The phase reserve is an explicit fixed gameplay-update threshold. It can
+override the generic HP/DPS pacer's farming decision; a configured600-update
+reserve does not guarantee enough damage time to capture. Recheck actual HP,
+position, carried shots and outcomes after an earlier component changes the world.
 Reports separate actual targeted inputs from newly planned inputs after the
 literal prefix, and record actual fire/focus use and signed entry/exit gauge.
 An absent plan and explicit `none` preserve the original path.
@@ -482,7 +497,8 @@ fire/focus alternatives, preserving the immutable lead and incumbent movement
 inputs. Each alternative re-executes the full Native horizon with its own RNG
 and policy continuation. Only strictly higher endpoint cash replaces the
 incumbent; ties and failed/incomplete futures retain it. These are horizon
-proposals: only a higher complete NMNB/all-capture score selects a progress file.
+proposals: only a higher complete score satisfying the declared miss/bomb/capture
+goal selects a progress file. Current score attack is NMNB with optional captures.
 Extra work shares the declared total search budget, with a2000ms soft comparison
 slice checked before each candidate. An in-flight candidate may consume the
 remaining total budget. Reports record attempted/adopted comparisons and include
@@ -1348,9 +1364,12 @@ weights, a hard memory limit and a lower high-water limit, with no additional sw
 check available memory before launch. CPU parallelism does not justify risking OOM
 or changing unrelated workloads. Keep machine addresses, usernames, private paths
 and raw logs out of public artifacts. Record technical profiles and sanitized results.
-The active Extra campaign permits at most four concurrent solver jobs and320
-cumulative campaign tasks; compilation uses two jobs. The handoff ledger is
-recorded in Status. Do not increase concurrency because the shared host is idle.
+Current scoring permits at most four local owned solver/test/probe drivers and
+separately32 remote Native owners sharing a32-core quota. Each owner has4GiB
+address-space and tree-RSS bounds; local/remote host reserves and aggregate limits
+are owned by the [operational contract](STATUS.md#operational-resume-contract).
+The cumulative campaign window is recorded there and in the ledger; do not reset
+it or infer new concurrency from idle capacity. Compilation uses two jobs.
 The following unit sizes are historical campaign profiles, not current launch
 instructions. The earlier offline campaign retained four simultaneous solver jobs, with320 tasks,
 four CPU cores and 12 GiB memory for the entire batch. The online baseline uses a
@@ -1358,8 +1377,8 @@ separate low-priority units with at most four independent controllers in total,
 96 tasks per unit,
 6 CPU cores, 6 GiB memory high-water and 8 GiB hard limit. Its historical six-job
 compile setting is superseded by the two-job limit above.
-When ablations overlap, reduce the older queue and reserve a solver slot before
-starting another. The combined task limits remain at most 320; holdout work is gated.
+In that historical campaign, overlapping ablations reserved a solver slot and
+shared a320-task cap; holdout work was gated. Those values are not current limits.
 Student-state teacher corrections use two planners at most, a 192-task/four-core
 unit with 8-GiB high/16-GiB hard memory bounds; the serial successor uses 96 tasks,
 two cores and 6-GiB high/8-GiB hard bounds. Both retain low weights and zero swap.
@@ -1369,6 +1388,11 @@ as memory before launch: each fork checkpoint holder consumes a process. The
 initial oversubscribed launch instead of concealing its fork failures.
 
 ## Acceptance and experiments
+
+Current score attack uses fixed original retail episodes and the complete-route
+gate in Status. The following matrices, entropy-seed protocols and holdout rules
+are historical coverage experiments. They do not authorize replacing a current
+scoring episode's captured seed or starting a new queue during maintenance.
 
 The [full-run matrix](../reports/native/archive/planner_route_matrix.json) enumerates 108
 valid combinations. Stage 4 follows the source's character partition; it is not an
