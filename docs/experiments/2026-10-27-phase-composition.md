@@ -1477,6 +1477,87 @@ queue is started with the unused cumulative budget. Earlier selected replay
 bytes remain unchanged, and future replay retention again requires a verified
 improvement over6,512,532,100 (or the separate overall Extra record).
 
+## October28 algorithm assessment: using VPS compute effectively
+
+The owner asks whether VPS compute helped and which algorithms fit it better.
+This is an evidence review and proposed design, not a new scoring episode or
+an implemented search result. The verified6,512,532,100 record and fixed32796
+entry remain unchanged; no Native scoring batch is launched by this review.
+
+The VPS has supplied useful candidate throughput: multiple original-world
+phase policies and full continuations were evaluated concurrently, and the
+retained lineage improves6.130B→6.291B→6.440B→6.513B. Source-guided strategy
+changes and compute changed together. There is no equal-budget local-versus-VPS
+experiment establishing a pure hardware speedup, much less a32-fold speedup.
+The last four-owner batch took148.554–152.612s per owner and contained only two
+unique full action tapes: reserve1.2/1.5 was inactive after171. This is direct
+evidence that smarter candidate generation and scheduling can avoid wasted work.
+
+The recommended first algorithm is distributed macro-policy search with a
+return-to-checkpoint archive. Its inspiration is the return-before-explore
+principle of [Go-Explore](https://arxiv.org/abs/2004.12919) and preservation of
+qualitatively different solutions in [MAP-Elites](https://arxiv.org/abs/1504.04909).
+These papers motivate a design; their reported gains are not TH08 measurements.
+Use the existing Native movement/safety planner inside each macro strategy.
+Search choices such as grazing band, form/fire schedule, capture handoff and
+planning horizon, rather than initially searching every individual input frame.
+No neural policy training or Python implementation is required for this design.
+
+Keep three responsibilities explicit:
+
+1. Archive actual phase-entry worlds and their original-entry input/provenance
+   histories. Start with a bounded4–8 strategy-diverse beam. Descriptors such as
+   form usage, grazing band, gauge and option placement guide search allocation;
+   they do not establish world equivalence. The1185/1186 rank reversal proves
+   that current cash/PIV dominance is insufficient to discard a different world.
+   Neither those scalars nor the41-word verification projection contain all
+   carried bullets, actors and lifecycle state. Do not merge their RNG/worlds.
+2. Expand those entries with independent parameter mutations in a bounded
+   process pool, initially16 workers and at most the authorized32 owners/32-core
+   total quota. A logical8-entry ×4-child expansion can be queued rather than
+   admitted all at once. Reevaluate each policy in its actual incoming world;
+   transfer strategies, never old-world suffixes or arithmetic score gains.
+3. Allocate longer continuations adaptively: complete spell, next stage, then
+   full route. [Hyperband](https://jmlr.org/papers/v18/16-558.html) motivates
+   staged resource allocation, but its guarantees do not transfer to our
+   non-monotone partial-score ranking. Reject Native failures; demote weak safe
+   candidates heuristically while preserving diversity/exploration slots. Give
+   surviving strategies several declared continuation policies before expensive
+   complete-route selection. Only complete Native execution plus fresh/natural
+   verification can establish a new result or authorize replay retention.
+
+Two implementation opportunities follow directly from current interfaces.
+[Rollout ownership](../../src/shadow_rollout.cpp#L120) already requires a
+single-threaded process and forks the owned Native world with isolated scratch
+files. Persistent per-entry workers could reexecute an original prefix once and
+fork for multiple candidates, sharing immutable pages through copy-on-write.
+This is not a portable serialized snapshot facility and is not implemented by
+this review. Measure prefix cost before investing; all child RSS remains charged
+to the owner's4GiB tree, with96GiB remote aggregate and existing host guards.
+Never replace true gameplay RNG or carry an action-independent future across
+candidate branches. Keep the captured episode seed fixed.
+
+The [economic comparison loops](../../tools/shadow_style.cpp#L165) currently
+try fire/form alternatives serially and then movement alternatives serially.
+Within each group the candidate forecasts can be investigated as independent
+process work from the same actual origin. Movement candidates depend on the
+selected fire/form incumbent, so the two groups are ordered. A parallel change
+must keep that dependency, stable tie order and explicit attempt counts; changed
+wall-time admission/budgets must be declared. Do not share global Native managers
+between threads or multiply outer32-way and inner parallelism without a single
+bounded scheduler. Prioritize the macro queue before this finer-grained change.
+
+The first acceptance experiment should compare the current batch dispatcher
+against this archive/diversity scheduler at the same original checkpoints,
+retail seed, proposal-generator seed, candidate controls and charged Native
+rollout budget. Compare both fixed CPU budget and fixed elapsed-time budget,
+including failed work, prefix replay, forks, guidance and I/O. Record unique
+candidates, completed safe phases, full-route best score, CPU-seconds, wall time
+and peak owned RSS; do not substitute short-horizon cash for terminal value.
+Then measure worker scaling at1/4/8/16/32 subject to admission guards. An improved
+scheduler must earn its complexity through higher verified score per budget or
+the same result at lower cost. No speedup or score improvement is claimed yet.
+
 ## Source accounting and operating record
 
 [Point collection](../../third_party/th08/src/ItemManager.cpp) doubles a priced
