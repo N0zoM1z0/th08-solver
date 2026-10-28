@@ -432,7 +432,9 @@ int run(int argc, char **argv) {
     config.shot = int(number(argv[5], 11));
     config.seed = std::uint16_t(number(argv[6], 65535));
     config.story = number(argv[9], 1);
-    config.prior_final_a_clear = config.story && config.stage != 8;
+    // Solo shots already have the original Final B choice. Their startup
+    // contract rejects the team-only synthetic prior-clear history selector.
+    config.prior_final_a_clear = config.story && config.stage != 8 && config.shot <= 3;
     config.input_profile = h::InputProfile::SampledGameplay;
     auto profile = o::with_style(style);
     unsigned horizon = 64, publication = 64;

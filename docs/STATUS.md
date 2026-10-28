@@ -3,9 +3,11 @@
 Updated October28,2026. Current work is offline Native score attack for **Extra**
 and **complete Lunatic1→2→3→4A→5→FinalB**, using stage/spell strategy composition
 and independent VPS searches. All shots are permitted; Scarlet Team has priority.
-The active goal is **7B complete Lunatic**, then the all-shot human reference.
-The6.5B milestone is achieved. All scoring batches through1642 have finished;
-this maintenance pass starts no new scoring episode or queue.
+The active targets are **4B Extra and7B complete Lunatic**, then the story
+all-shot human reference. The6.5B milestone is achieved. Scarlet remains the
+priority; solo Sakuya now has separately retail-seeded complete NMNB baselines.
+All scoring/test owners through1760 have finished, including publication audit;
+no owned experiment queue remains.
 
 ## Verified results
 
@@ -16,13 +18,13 @@ strict NMNB/all-capture defaults remain available in the CLI.
 
 | Route | Shot | Best Native score | Captures | Producer / fresh / natural |
 | --- | --- | ---: | ---: | --- |
-| Extra | Scarlet, Sakuya/Remilia | **3,212,949,960** |14/14 |1621 /1635 /1636 |
+| Extra | Scarlet, Sakuya/Remilia | **3,255,579,400** |14/14 |1740 /1756 /1757 |
 | Complete Lunatic | Scarlet, Sakuya/Remilia | **6,513,456,180** |36/37,10 timeout |1381 /1403 /1404 |
 | Extra | Magic, Marisa/Alice |3,013,913,970 |14/14 |597; identities in Validation |
 | Complete Lunatic | Magic, Marisa/Alice |5,550,599,270 |36/37,47 timeout |620; identities in Validation |
 | Complete Lunatic, all captures | Magic, Marisa/Alice |5,107,553,670 |37/37 |575; identities in Validation |
 
-All37 selected progress replay files, including superseded records, are published
+All38 selected progress replay files, including superseded records, are published
 under [shot/route directories](../reports/native/README.md). The
 [progress index](../reports/native/replays/progress.tsv) binds scores, constraints,
 producers, original receipts and exact replay/action hashes.
@@ -45,8 +47,8 @@ The dated **October27 all-shot references** are Extra3,178,460,830
 (Sakurei, solo Youmu, June21,2022) and Lunatic7,053,332,460
 (IwanaM, solo Youmu, July14,2026). Their dated source is retained in
 [Validation](VALIDATION.md#october27-verified-native-progress).
-Native Extra is34,489,130 above its reference. Complete Lunatic remains
-486,543,820 below7B and539,876,280 below its retail replay gate.
+Native Extra is77,118,570 above its reference and744,420,600 below4B.
+Complete Lunatic remains486,543,820 below7B and539,876,280 below its retail replay gate.
 
 Earlier same-shot comparisons remain distinct: Magic ASL Extra3,021,639,920
 (one bomb) and Alan Lunatic6,168,365,790; Scarlet ASL Extra3,000,284,220 and
@@ -62,7 +64,9 @@ source/human evidence, parameters, costs, failures, retries and decisions.
 The [campaign ledger](experiments/campaign-ledger.tsv) has every allocation;
 [per-task results](experiments/results.tsv) preserve measured outcomes and missing
 historical measurements. A missing value means unavailable, never zero.
-The177 tasks1466–1642 have terminal outcomes; none remains running or unresolved.
+The177 tasks1466–1642 retain their terminal outcomes. The subsequent source/
+human investigation, solo episodes and complete compositions are recorded in
+the same journal and cumulative ledger.
 The index separately lists231 older ledger-only records and29 missing owner
 closures; those historical uncertainties are not a live queue or new certificates.
 
@@ -73,11 +77,13 @@ closures; those historical uncertainties are not a live queue or new certificate
 | Extra192/197/202 composition | V48 cash0 tails are configuration-confounded controls. Correct cash4 produces1517 at3,194,638,140; actual205 retuning produces1539 at3,203,494,130 | Explicitly bind the whole suffix profile and retime every changed boundary |
 | Stage2 cash/PIV frontier and77 | V49/V51/V52 carry distinct real worlds;77 reaches8945 orbs/capture or9128/timeout, then recomputes Stage5 and FinalB | Partial gains are not added to the old route |
 |116 capture time | V53 fixed600 reserves time out. Read-only HP/pose probes explain insufficient damage time; V55 focused1200/1600 reserves capture with3184/3423 orbs | Retest the reserve after an earlier world changes; it is not a universal safety bound |
-| Extra point production | V57/V59 prove45 valid202 point requests fail in a full2096-slot pool. V60 retimes202, restores1035 collected points and verifies1621 at3,212,949,960 | Keep pool semantics unchanged; measure production as well as PIV and pickup price |
+| Extra point production and composition | V57/V59/V60 verify1621 at3.213B. New1654 road has646 early points;1665 loses45 at a full202 pool. V88 retimes its actual55417 entry;1740 restores1051 final points and verifies3,255,579,400 | Preserve distinct incoming worlds, retime actual boundaries and measure production as well as PIV |
+| Shot capabilities and human inputs | Source separates all12 families; Sakuya8 has no extreme-youkai graze-orb income. Newly seeded solo Extra/story verify2.183B/4.418B NMNB14/14 and37/37, below overall records | Keep human bomb/miss constraints separate; do not copy Scarlet farming unchanged |
+| Trajectory and guidance negatives | Larger story proposal horizons/beams, hard/soft charge phases and six complete203 upper geometries yield no further record | Retain costs and actual action traces; unproductive controller prototypes remain private |
 | Actual171 and final survivals | V56/V64 provide eight complete negative routes. New171 reaches17826 orbs/capture; best full continuation is6,477,728,280,35/37, below the record | The old6,513,456,180 remains the accepted story record |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V64 case and source-backed conclusion, including setup failures, resource
+V47–V90 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)
@@ -95,7 +101,7 @@ It is historical evidence, not another current launch plan.
 | Local memory |4GiB address space per process and4GiB summed RSS per owned tree; admit with at least12GiB host MemAvailable, abort below8GiB. Resource-aborted work remains charged and certifies nothing |
 | Remote owners | Native only; at most32 owners and32 total CPU cores under the owned user systemd manager, low CPU/I/O priority; preserve the old checkout and unrelated workloads |
 | Remote memory |4GiB AS/tree per owner,96GiB aggregate owned RSS guard,128GiB hard service limit, no service swap; host128GiB admission/96GiB abort reserves |
-| Campaign | One cumulative ledger at `reports/local/shadow-runtime-v1/tasks.tsv`; cap1664. Through1642 all scoring/test owners are closed;1643 is the passing documentation/retention maintenance audit. Record further64-task extensions before use; never reset, reuse IDs or omit aborted/retried work |
+| Campaign | One cumulative ledger at `reports/local/shadow-runtime-v1/tasks.tsv`; cap1792. Extensions1664→1728 and1728→1792 were recorded at1657 and1713 before use. Record further64-task extensions before use; never reset, reuse IDs or omit aborted/retried work |
 | Scope | No Miss, `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual bombs and captures. Restore both capture flags to1 for strict all-capture work |
 | Episodes | Fixed original retail seeds from the table below; new shot/entry episodes require a new original Wine pre-RegisterChain receipt before Native exploration. No Native-selected or hindsight-selected seed |
 | Checkpoints | Reexecute literal firstN owned inputs from that same original entry. N is owner updates, not spell age or replay row count. Carry RNG, bullets, actors, items, latch and observer histories |
@@ -106,9 +112,9 @@ It is historical evidence, not another current launch plan.
 | Evidence | Hash-bind source, ELF, loader/libraries, DAT, receipt, actual args and input prefix. Charge retries, target selection and cross-host canaries. Fresh replay is not independent retail equivalence |
 
 The current local launcher is
-`reports/local/global-score-20261027/run-scarlet-guarded.cjs`; its memory guard is
+`reports/local/global-score-20261027/run-scarlet-guarded-1792.cjs`; its memory guard is
 `reports/local/retail-score-offline-20261026/memory-guard.cjs` and its relaxed
-fresh/natural checker is `reports/local/score-continue-20261027/verify-no-bomb.cjs`.
+fresh/natural checker is `reports/local/score-continue-20261027/verify-no-bomb-1792.cjs`.
 These are ignored workspace tools, not files supplied by a fresh clone.
 Use fresh names and the maximum first ledger column, not line count: the ledger
 preserves repeated historical lifecycle notes. Older320/1280-task launchers and
@@ -128,6 +134,8 @@ relink old `.o` files across header/ABI changes.
 | --- | --- | ---: | --- |
 | Scarlet Extra | `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` |9098 |8 /4 /2 /false |
 | Scarlet complete Lunatic | `retail-seed-episodes-20261027/scarlet-story-4a-finalb-entry-v1/` |32796 |0 /3 /2 /true |
+| Solo Sakuya Extra | `retail-seed-episodes-20261028/sakuya-extra-entry-v1/` |53346 |8 /4 /8 /false |
+| Solo Sakuya complete Lunatic | `retail-seed-episodes-20261028/sakuya-story-4a-finalb-entry-v3/` |24238 |0 /3 /8 /false |
 | Magic Extra | `retail-seed-episodes-20261026/extra-entry-v4/` |46997 |8 /4 /1 /false |
 | Magic complete Lunatic | `retail-seed-episodes-20261026/story-4a-finalb-entry-v1/` |1805 |0 /3 /1 /true |
 
@@ -144,13 +152,13 @@ Paths below are local workspace evidence unless linked to published files.
 
 | Item | Location |
 | --- | --- |
-| Latest Extra producer | `reports/local/retail-score-offline-20261026/vps-scarlet-extra202-pool-v60-feedback368-r600-youkai/`; complete73597 inputs, verification and original remote receipts |
+| Latest Extra producer | `reports/local/retail-score-offline-20261026/vps-scarlet-extra202-restore-v88-ordinary-h128-move4/`; complete74021 inputs, verification and original remote receipts |
 | Latest story producer | `reports/local/retail-score-offline-20261026/vps-scarlet-luna-last5-v38-ordinary-h128-cash4-move3/`; complete159669 inputs, verification and prefix lineage |
 | Selected exact bytes | `reports/native/replays/{scarlet,magic}/{extra,lunatic}/` and `reports/native/replays/progress.tsv` |
 | Current private state | `reports/local/vps-native-20261027/continuation-state.json`; resumption metadata, not a gameplay snapshot |
 | Remote controls and outcomes | `reports/local/vps-native-20261027/deploy/`, `received/`, hypothesis packets and retention receipts |
-| Normal test coverage |1529 passes59 normal cases before a host-memory abort; unchanged-binary1545 passes remaining3 in879.78s, without reused repair search. All62 covered; not one uninterrupted run |
-| Affected CLI/runtime parity | Focused1526 and four sequential real-DAT1530 cases pass;17/25/29 and omitted-flag control match exact tapes, terminal words and audits |
+| Normal test coverage | Final minimal solo-history build1752 and uninterrupted62/62 normal1753 pass,933.58s; peak tree1104392192B, minimum host MemAvailable9839382528B, no resource abort. Earlier1697/1713 retain their fixture failure/retry |
+| Affected CLI/runtime parity | First-update solo story regression passes inside1753; fresh solo complete-route1715/1716 and1754/1755 pass. Earlier1530 still binds17/25/29 and omitted-flag parity |
 
 The public phase plan is an immutable proposal keyed by real stage/card.
 `--phase-recovery-prior` defaults off; when enabled it preserves only capture-form
@@ -186,8 +194,10 @@ records the actual audits.
   dominance does not prove the best complete continuation or world equivalence.
 - The latest Extra remains Native-only. Schedule final original Wine playback
   for the chosen qualified result; retain1314's existing retail proof separately.
-- New scoring is outside this maintenance request. Current batches are closed;
-  unused budget is not a queue or permission to start work during cleanup.
+- Extra4B remains unachieved. Same-pickup repricing of the earlier3.213B record
+  offers only an optimistic36.233M; earlier production and source-specific
+  trajectories are larger questions. New203 upper bands and charging prototypes
+  are measured negatives, not reasons to change physics or gauge rules.
 
 ## Documentation and local retention
 

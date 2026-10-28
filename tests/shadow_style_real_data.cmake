@@ -14,6 +14,27 @@ foreach(controls IN ITEMS "--publish-horizon;129" "--lead-updates;128"
     message(FATAL_ERROR "Unsafe live controls were not rejected before owner wait: ${rejected} ${error}")
   endif()
 endforeach()
+# Solo story entry must use its natural Final B availability, rather than the
+# team-only prior-Final-A checkpoint. Execute a literal first update so this
+# contract needs no scoring search, clock budget or new retail seed episode.
+file(REMOVE_RECURSE "${WORK}-solo-entry")
+file(WRITE "${WORK}-solo.actions" "0\n")
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}-solo-entry" 0 3 8 23035 score 1 1 10
+  --prefix-actions "${WORK}-solo.actions" --prefix-updates 1
+  --require-all-captures 1 --verify-captures 1
+  RESULT_VARIABLE solo_result OUTPUT_VARIABLE solo_stdout ERROR_VARIABLE solo_stderr TIMEOUT 30)
+if(NOT solo_result STREQUAL "2")
+  message(FATAL_ERROR "Solo story entry rejected its natural history: ${solo_result} ${solo_stdout} ${solo_stderr}")
+endif()
+file(READ "${WORK}-solo-entry/result.json" solo_report)
+if(NOT solo_report MATCHES "\"prior_final_a_clear\":false" OR
+   NOT solo_report MATCHES "\"prefix_updates_executed\":1," OR
+   NOT solo_report MATCHES "\"outcome\":\"budget\"" OR
+   NOT solo_report MATCHES "\"replay_exported\":false" OR
+   NOT solo_report MATCHES "\"allow_bombs\":false" OR
+   NOT solo_report MATCHES "\"require_all_captures\":true")
+  message(FATAL_ERROR "Solo first-update entry changed history/strict controls or certified a partial: ${solo_report}")
+endif()
 execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 1 0 1
   --replay-name ysopwnable RESULT_VARIABLE rejected ERROR_VARIABLE error TIMEOUT 3)
 if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_replay_name_requires")

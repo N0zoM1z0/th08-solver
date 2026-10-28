@@ -8,7 +8,7 @@ published replay index.
 
 | Record | Purpose |
 | --- | --- |
-| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.213B, actual-world route combinations,116 HP/deadline tests and the2096-slot point-production limit |
+| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.256B, source/human and shot-capability analysis, solo Sakuya baselines, actual-world compositions and point-production limits |
 | [Campaign lifecycle ledger](campaign-ledger.tsv) | All existing task allocations and original lifecycle notes, including repeated notes for the same ID. IDs are never reset or reused |
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
@@ -30,8 +30,10 @@ from a resource-aborted owner still certifies nothing.
 
 ## Coverage and historical evidence gaps
 
-At scoring snapshot1642, the result table has1642 distinct task rows. The latest
-177 allocations1466–1642 all have terminal outcomes; their
+The earlier snapshot1642 preserves177 terminal allocations1466–1642. The
+October28 continuation adds the source/human investigation and new overall
+Extra1740, with solo Sakuya baselines and all failed setup/controller attempts.
+The latest publication closure is recorded in the current journal; the earlier
 [coverage audit](2026-10-28-stage-spell-search.md#outcome-and-coverage-audit)
 separates complete Native reports, partials, tests, failures and the memory abort.
 
@@ -84,3 +86,9 @@ previously published choices for duplicated historical owners stay fixed, and
 new equally complete duplicates prefer the original VPS receipt. Reversing file
 traversal must leave both public TSVs byte-identical. Local imports must not hide
 retention evidence or silently change the recorded evidence directory.
+
+For continuation tasks1644 onward, the exporter exposes the DAT hash only when
+bound by the immutable worker bundle hash or an actual local DAT argument.
+It uses the private source overlay's declared base head when present, retaining
+exact source-file hashes separately. The original remote bundle base is not the
+source of every later planner overlay. Previously published rows stay unchanged.

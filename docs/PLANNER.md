@@ -46,7 +46,8 @@ goals, distinct from populating every Spell Practice entry in a persistent profi
 
 Current outcomes and historical failures belong in [Status](STATUS.md); this
 section describes the implemented mechanisms and their limits. Current Native
-experiments cover Extra and the complete Magic Team Lunatic4A→FinalB route.
+experiments cover Extra and complete Lunatic4A→FinalB across declared shots,
+with NMNB and optional captures; the original all-capture goal remains available.
 
 ### Capture-aware Native horizons
 
@@ -235,11 +236,26 @@ Several coupled mechanisms matter more than a distance-to-bullet reward:
 2 at moderate human gauge and1 otherwise. Compare actual award events and gauge,
 not just that counter. The opt-in read-only audit now counts total events and
 the two extreme-gauge subsets, including repeated laser contacts. Ordinary boss
-spell graze at extreme youkai can request three time orbs for a team; laser calls
-that suppress extra items request only one. Those pickups also affect spell
-bonus and future point value. `Spellcard::AddBonusProgress` clamps at its score
+spell graze at extreme youkai requests three time orbs for teams0..3 and solo
+Youmu10, two for solo youkai5/7/9/11, and none for solo humans4/6/8. Laser calls
+that suppress extra items request only the base one for eligible shots. Solo
+humans4/6/8 cannot reach extreme-youkai gauge; solo youkai cannot reach the
+extreme-human point doubling. Ghost Team3 reaches extreme human at−3000;
+solo Youmu10 reaches both extremes at±3000. Other teams use±8000. Character
+switching and gauge control are separate capabilities. Those pickups also affect
+spell bonus and future point value. `Spellcard::AddBonusProgress` clamps at its score
 limit, so faster capture need not maximize bonus when sustained orb income can
-replenish it. Full capture deadlines remain a hard evaluation requirement.
+replenish it. Full capture deadlines remain a hard evaluation requirement when
+that goal is enabled.
+
+Item requests are not guaranteed pickups. `ItemManager::SpawnItem` searches the
+2096-slot pool for ordinary points, but a time orb can fail immediately on the
+next occupied slot even if another slot is free. A full pool can also reject
+an entire boss point batch. This original behavior must remain unchanged;
+kill timing and collection can alter production as well as pickup price.
+Clear rewards have no direct PIV multiplier: PIV benefits subsequent point
+pickups. [Measured source/replay audits](experiments/2026-10-28-stage-spell-search.md#v66v89-source-and-human-replay-investigation)
+separate requests, realized items, collected items and optimistic repricing.
 
 Optimize these with complete native outcomes and explicit resource costs. Ordinary
 speed kills, controlled familiar cancellation, item collection and timed grazing

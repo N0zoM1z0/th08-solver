@@ -1,9 +1,9 @@
 # th08-solver
 
 > [!NOTE]
-> **Native score attack: Extra 3,212,949,960 · complete Lunatic 6,513,456,180.**
+> **Native score attack: Extra 3,255,579,400 · complete Lunatic 6,513,456,180.**
 > Scarlet Team, No Miss / No Bomb, with verified exported replays.
-> Next milestone: **7B complete Lunatic**, using stage/spell strategy composition and VPS search.
+> Targets: **4B Extra · 7B complete Lunatic**, using stage/spell strategy composition and VPS search.
 
 ![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
 
@@ -22,7 +22,7 @@ Each score links to its exact replay.
 
 | Route | Shot | Score | Captures |
 | --- | --- | ---: | ---: |
-| Extra | Scarlet — Sakuya/Remilia | **[3,212,949,960](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3212949960-seed9098.rpy)** |14/14 |
+| Extra | Scarlet — Sakuya/Remilia | **[3,255,579,400](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3255579400-seed9098.rpy)** |14/14 |
 | Extra | Magic — Marisa/Alice | [3,013,913,970](reports/native/replays/magic/extra/extra-native-nmnb-3013913970-seed46997.rpy) |14/14 |
 | Complete Lunatic | Scarlet — Sakuya/Remilia | **[6,513,456,180](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6513456180-seed32796.rpy)** |36/37 |
 | Complete Lunatic | Magic — Marisa/Alice | [5,550,599,270](reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-5550599270-seed1805.rpy) |36/37 |
@@ -36,8 +36,8 @@ input lineage, verification tasks and hashes, including earlier records.
 
 The October27 [all-shot human references](https://maribelhearn.com/wr#IN) are
 **3,178,460,830 Extra** and **7,053,332,460 Lunatic**, both solo Youmu.
-Native Extra is34,489,130 above its target; complete Lunatic is486,543,820 below
-the next7B milestone. Historical same-shot references remain in
+Native Extra is77,118,570 above its human reference; complete Lunatic is
+486,543,820 below the next7B milestone. Historical same-shot references remain in
 [Status](docs/STATUS.md). All shots may be explored; Scarlet has priority.
 
 ## Original Wine results
@@ -60,8 +60,8 @@ Online solving is paused; current planning runs offline in Native.
 ## Follow the exploration
 
 The [stage/spell search journal](docs/experiments/2026-10-28-stage-spell-search.md)
-records complete combinations, partial phase gains, failures and source-backed
-findings, including116 capture deadlines and Extra's2096-slot item pool.
+records source/human replay analysis, solo Sakuya trials, complete combinations
+and failures, including Extra's verified point-pool retiming improvement.
 The [experiment index](docs/experiments/README.md) links every task's parameters,
 actual bombs/captures, costs and provenance. Local phase scores become route
 records only after complete execution and fresh replay checks.

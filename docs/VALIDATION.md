@@ -7,13 +7,14 @@ Historical component commands below retain their named build/profile assumptions
 
 ## Native score-first workflow
 
-The owner selected Native exploration for proper Magic Team Extra and complete
-Lunatic4A→FinalB. The latest continuation requires No Miss and No Bomb, permits
-missing captures and retains independent CLI controls. Bomb experiments are
-paused. Require a complete
-displayed score strictly above3,021,639,920 or6,168,365,790 respectively before
-retail Wine replay validation. Historical NMNB/all-capture results retain their
-identities. Live Wine solving is paused. Native budgets are explicit offline
+The owner permits all shots, prioritizing Scarlet Team and solo Sakuya, for
+Extra and complete Lunatic4A→FinalB. Current scoring requires No Miss and No
+Bomb, permits missing captures and retains independent CLI controls. Bomb
+experiments are paused. The October27 all-shot retail gates are complete scores
+strictly above3,178,460,830 Extra or7,053,332,460 Lunatic under the declared
+constraints. Earlier Magic same-shot references3,021,639,920/6,168,365,790 and
+historical NMNB/all-capture results retain their identities. Live Wine solving
+is paused. Native budgets are explicit offline
 compute limits; they need not meet an online frame deadline.
 
 Before every new scoring episode, launch the owned Wine retail game and capture
@@ -32,7 +33,7 @@ Use the existing owned-process Wine launcher/observer with
 `TH08_SHADOW_UPDATES=1`, `TH08_SHADOW_OBSERVE_REPLAY=0` and no Native command
 producer. Declare `TH08_SHADOW_CHECKPOINT=8,4,1,-1,1` for Extra, or
 `0,3,1,-1,1` for the story; the checkpoint chooses the entry and never writes
-RNG. Set `TH08_SHADOW_PRIOR_FINAL_A_CLEAR=0` or `1` respectively and
+RNG. Set `TH08_SHADOW_PRIOR_FINAL_A_CLEAR=0` or `1` respectively for these team entries and
 `TH08_SHADOW_ADVANCE_DIALOGUE=1`. Use an owned game copy, dedicated Wine prefix
 and fresh output directory. After normal menu confirmation, the observer writes
 `start.txt` atomically before registration and exits after one observed update.
@@ -94,6 +95,32 @@ It follows a Wine initialization crash with exactly2GiB mapped at664. The
 4GiB receipts record actual tree peaks of136007680/139206656 bytes. Native
 search/rollout/proposal budgets and failure meanings remain explicit per case.
 Wine remains restricted to seed acquisition and qualified final replay viewing.
+
+### Solo Sakuya retail episodes
+
+The October28 owner requests solo Sakuya alongside Scarlet. Both shot8 entries
+were captured from original Wine before Native scoring; story solos naturally
+have FinalB available and require prior-Final-A=false.
+
+| Entry | Extra | Complete Lunatic4A→FinalB |
+| --- | --- | --- |
+| Episode under `reports/local/retail-seed-episodes-20261028/` |`sakuya-extra-entry-v1` |`sakuya-story-4a-finalb-entry-v3` |
+| Owner task / fixed seed |1659 /53346 |1676 /24238 |
+| Raw stage / difficulty / shot |8 /4 /8 |0 /3 /8 |
+| Story / prior FinalA clear |true /false |true /false |
+| `start.txt` SHA-256 |`1d26ba414d6a15d5df609661f8c19e8511c7afecff2dad875d7e700c8255d89c` |`cdfb44de8afa94e87435c67d91f2b3e2b14ac497f5531fe9d857e259a92b9492` |
+| Seed receipt SHA-256 |`c583381fa5e4c50dd9474ced1e586abdd6f9f3c18b3c2d3ec12174dcb5faf2ec` |`092e5c95fc986054633dc48b298cd64a6334f5f128b22e052b189614179f56b7` |
+| One228-byte frame SHA-256 |`edf85c9a188ff79175bbea56010bc7395c78d17314094988a2456e1d8c66d5b4` |`8cf6769fd1dde13a683ce6ec8cee840d52655bd0a14c5bc31b4555a2ff111057` |
+
+Failed1662/1675 startups yield no valid story receipt. The first valid24238
+receipt is fixed; later setup/CLI failures do not replace it. Hash-checked
+remote deployment keeps the two episode directories distinct.1674 Extra
+2,182,761,340 NMNB14/14 passes fresh1715/natural1716;1712 story4,417,570,020
+NMNB37/37 passes fresh1754/natural1755 with actual stages0/1/2/3/5/7. Both are
+below the project overall records. Their replay bytes are measured for temporary
+verification, then pruned; action/receipt/report/source provenance remains local.
+The [journal](experiments/2026-10-28-stage-spell-search.md#solo-sakuya-original-episodes-setup-failures-and-complete-routes)
+owns costs, failure receipts and human comparisons.
 
 ### Scarlet Team verified Native baselines
 
@@ -211,8 +238,8 @@ Historical272 payloads are relocated unchanged under the paths recorded in
 paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
-Latest overall records are Scarlet Extra **3,212,949,960,14/14** (1621,
-fresh1635/natural1636) and complete story **6,513,456,180,36/37**,only10 timeout
+Latest overall records are Scarlet Extra **3,255,579,400,14/14** (1740,
+fresh1756/natural1757) and complete story **6,513,456,180,36/37**,only10 timeout
 (1381, fresh1403/natural1404). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
@@ -303,6 +330,35 @@ It consumes73597 inputs; producer wall328.609s/owned328.776s,349492 branch/
 verification costs stay in the journal. Gain over1539 is9,455,830; margin above
 the declared all-shot reference34,489,130. This replay is Native-only; all36
 earlier selected replay bytes and272 historical payload hashes are unchanged.
+
+New Extra1740 completes **3,255,579,400,NMNB14/14**,74021 inputs, from original9098.
+Its prefix lineage is1621→1654→1665→1740: retain1621's first15966 inputs through
+closed194;1654 changes the road/195 to human-bias100/parent-chain0 and reaches
+646 points at24028;1665 restores ordinary cash4/movement4 through the actual202
+entry55417.1740 retains exactly those55417 inputs, then replans the full suffix
+with H128/publication64/replan32, cash4/movement4 and no explicit phase plan.
+The final1051 points are45 above1665 and16 above1621; PIV948690 is slightly
+below1621's949390. Read-only1758 agrees with all natural rows/full audit and
+observes45/45 point spawns at57325, occupancy1704→1749, instead of1665's45
+failures at2096/2096.1759 maps every new actual spell entry and agrees in all41
+terminal fields/full14 audit. This preserves gameplay pool semantics.
+
+Fresh1756/natural1757 pass all eight checks, including exact terminal, natural
+completion, score, capture outcomes, zero misses/bombs and name `ysopwnab`.
+The31206-byte replay SHA-256 is
+`4bde2a81e819fcb15d1da7cb83d6c71963bfc6e9cede4e2985dd8f88bb574bf1`;
+input SHA-256 `f08614a7634258b8a85f5663ab6b24717195b08d9b771bba38e313cf06c764c3`.
+Producer335.187s/owned335.339s,358360 branch/8 proposal updates,1761 economic
+attempts/232 adoptions; peak owned tree137601024B. It uses the frozen public
+phase V1 source overlay based onc4c798d, manifest
+`c01806c4b5372045a3adb6d0ec8b68fcf9412eb36fea994baaed647bf9e46eaf`,
+ELF `f4ea1fa71d1464cbd8c4066cac6f4f22af3ea61478befbd84582da5a05583e61`.
+The initial remote bundle'sbc75a3e identity is separate from that overlay.
+The progress index uses the overlay's source head; exact source hashes stay in
+the per-task journal. All37 earlier selected bytes and272 historical payloads
+are unchanged. Gain over1621 is42,629,440; margin above the declared all-shot
+reference77,118,570. This record remains Native-only; original Wine validation
+1343/1367 still belongs to1314.
 
 New story1381 retains1225's exact151302 inputs through the closed171 boundary,
 then uses H128/publication64/replan32/cash4/movement3 over all five remaining
@@ -516,6 +572,12 @@ It does not guarantee those positions or require every accepted input to follow
 the proposal; Native safety recovery remains independent. A phase boundary is
 an incomplete exit2, even if its local score improves. Resume its actual tape
 from the same original episode and require the complete route before promotion.
+
+Full story `th08_shadow_style` entries apply prior-Final-A history to team shots
+0..3 only. Solo shots already have the original Final B choice and use
+`prior_final_a_clear=false`; the start-record and Session contracts reject the
+team-history/solo combination. No new history flag is required. A new solo
+scoring episode still needs its own original retail seed receipt before search.
 
 `th08_phase_frontier INPUT_TSV WIDTH GENERATION OUTPUT_TSV` selects1..64 entries
 from at most4096 rows. The exact input header is

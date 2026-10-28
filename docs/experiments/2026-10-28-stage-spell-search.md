@@ -1,14 +1,15 @@
 # October28 resumed stage and spell search
 
 The owner resumes both Scarlet score attacks: complete Lunatic toward7B and
-Extra beyond the current3,179,193,860. Keep original retail episodes32796/9098,
+Extra toward4B. Current verified bests are **3,255,579,400 Extra** and
+**6,513,456,180 complete Lunatic**. Keep original retail episodes32796/9098,
 No Miss/No Bomb and optional captures. The complete story starts at6,513,456,180.
 A local phase improvement is selection evidence until an actual complete-route
 continuation, fresh terminal check and natural replay check pass.
 
 ## Outcome and coverage audit
 
-The accepted final results are Extra **3,212,949,960,NMNB14/14** and unchanged
+At the earlier1642 snapshot, accepted results were Extra **3,212,949,960,NMNB14/14** and unchanged
 complete Lunatic **6,513,456,180,NMNB36/37**. Three successive Extra improvements
 (1517,1539,1621) passed fresh/natural checks and retain exact selected bytes.
 All eight new complete Lunatic V56/V64 combinations remain below the old record.
@@ -681,3 +682,277 @@ The cumulative TSVs retain full parameters, hashes, branch/retry and guard costs
 |1638|`vps-scarlet-luna-v64-after171-parent1629-move4`|complete|6477728280|35/37|0|160.121|
 |1639|`vps-scarlet-luna-v64-after171-parent1632-move3`|complete|6465579620|34/37|0|148.434|
 |1640|`vps-scarlet-luna-v64-after171-parent1632-move4`|complete|6460804240|34/37|0|157.708|
+## V66–V89 source and human replay investigation
+
+The next owner request targets **4B Extra and7B complete Lunatic**, permits all
+shots and favors Scarlet/Sakuya. Extra remains original9098; Scarlet story stays
+32796. Every new candidate is NMNB with optional captures. The standing64-task
+extensions1664→1728 and1728→1792 were recorded at1657 before1658 and1713 before
+1714, respectively. The ledger is cumulative; CPU/memory limits are unchanged.
+
+### Human inputs and shot capabilities
+
+The [human score table](https://maribelhearn.com/wr#IN), checked October28,
+still gives the dated all-shot references in Status. Three additional original
+replays were downloaded and hash-bound before read-only Native observation:
+
+| Human input | Replay SHA-256 | Observed score / bombs / captures |
+| --- | --- | --- |
+| [ASL Sakuya Extra](https://maribelhearn.com/media/replays/th8_udExSk.rpy) |`b40f838667145e8437ef1c1e2491785bcdad273ff20c053e3950ed96b74012cb` |2,525,295,090 /1 /14of14 |
+| [YASU Sakuya Lunatic](https://maribelhearn.com/media/replays/th8_udLuSk.rpy) |`e7f288b9fcbeb9c0882a8180a5d86cd641560d60721d76730c3e00212400a64d` |4,780,013,310 /8 /32of37 |
+| [Sakurei Youmu Extra](https://maribelhearn.com/media/replays/th8_udExYo.rpy) |`50930a10dfaac426ade1efe4517b49e21adc89732abe232b69f17bd17407e799` |3,178,460,830 /1 /13of14 |
+
+Tasks1645–1647 preserve the actual headers and constraints. Sakuya story has
+nonzero death observations; Youmu has two death-observation rows. These are
+**rows observing death state, not numbers of misses**. The replay name `sogebu`
+and the table credit YASU are retained independently. No human score is assumed
+to be NMNB or an upper bound for a differently constrained run.
+
+[Player::AwardGraze](../../third_party/th08/src/Player.cpp) explains a material
+shot difference: ordinary active-spell boss graze at extreme-youkai gauge
+requests3 time orbs for teams and Youmu10,2 for solo youkai5/7/9/11, and0 for
+solo humans4/6/8. Suppressed laser graze has only the base request. Sakuya8's
+positive gauge cap is2000, below the8000 extreme threshold; no such graze
+produces extreme-youkai item income. Her human point doubling remains possible.
+Solo youkai have the converse limitation. Ghost Team3's extreme-human threshold
+is−3000; solo Youmu10 has both thresholds±3000, making gauge transitions a
+separate opportunity from actor switching. The current phase adapter's
+`can_switch_forms` gate does not implement a solo-Youmu gauge controller.
+These source facts cover all12 shot families; they do not rank their achievable
+NMNB scores or authorize borrowing a human replay's seed for new scoring.
+
+### Economy accounting before trajectory search
+
+[Item::CollectPoint](../../third_party/th08/src/ItemManager.cpp) prices by actual
+height/max-value state, rounds to10 and doubles at extreme-human gauge. Read-only
+repricing of the incumbent Extra's **same1035 pickups** gives1,059,358,150 actual
+point cash versus1,095,591,520 if all were perfect at their actual pickup PIV:
+an optimistic36,233,370, only4.6% of the787,050,040 gap to4B.1023 pickups already
+have extreme-human doubling. The twelve others occur around16906–19982, rather
+than at202. The same envelope is1,606,140 for human Scarlet and799,740 for human
+Sakuya Extra. This changes neither pickup times nor the underlying trajectories;
+it is an accounting envelope, not reachable extra score.
+
+Time-orb cash depends on cumulative point count; each orb also raises future
+PIV and contributes8000 spell-bonus progress subject to the source cap/decay.
+The clear formula in [Gui.cpp](../../third_party/th08/src/Gui.cpp) uses stage
+base, graze, points, orbs, final reserves and FinalB clock, with difficulty/life
+scaling and ten payments. It has **no direct PIV multiplier**. Earlier point and
+orb production can therefore help several later rewards, while late PIV alone
+need not order full scores. Incumbent story last-five orbs/bonuses/in-spell cash
+are17259/302096000/191799710; the best V64 continuation has15690/289744000/
+178784800. These measured components locate a loss; they do not add a local
+improvement to a different incoming world.
+
+Point/orb observers1648–1649/1660–1661 pass every stock row SHA and full source
+audit. Native Extra requests1041 points, allocates1040 and collects1035; human
+Scarlet requests1072, allocates1071 and collects1071. Both midboss segments
+request/allocate90. The later road requests286 versus315. The absence of pickup
+inside194's audit is delayed collection, not missing midboss production.
+
+Native time-orb requests131442 yield129878 allocations/collections.1559 fail
+on an occupied next slot;143 of those occur while another slot is free, at a
+minimum48 occupied slots. Human Scarlet has107051 requests,105665 allocations,
+1273 busy-slot failures and349 failures with free capacity. Remaining request
+failures are not busy-slot cases. This matches the original early return in
+`SpawnItem`; optimizing trajectories must preserve it. These losses alone do
+not explain a787M score gap.
+
+### Actual bullet emission and reachable strategy questions
+
+Read-only build1722 and probes1725–1728 count original allocation requests,
+successes and capacity rejects for the1536-bullet/256-laser pools. All four
+complete stock-row SHAs **and full audits** agree. Selected actual Extra counts:
+
+| Card | Native allocated bullets | Native ordinary extreme-youkai grazes | Native orbs | Human allocated bullets / ordinary extreme-youkai grazes |
+| --- | ---: | ---: | ---: | ---: |
+|192 |7412 |1602 |4821 |7556 /930 |
+|193 |13811 |3868 |11747 |13830 /2363 |
+|195 |1516 |73 |538 |940 /82 |
+|197 |1160 |457 |1353 |350 /0 |
+|198 |44172 |6075 |18528 |46447 /3727 |
+|199 |67825 |6962 |21319 |69639 /6983 |
+|202 |6704 |461 |1579 |8069 /236 |
+|203 |20282 |1273 |3822 |18374 /862 |
+|204 |6608 |2881 |11126 |6888 /3049 |
+
+The table's graze column uses unsuppressed events;199 additionally has71/34
+suppressed events.198 has368/395 capacity rejects. New bullet births are **not
+a reachable-graze upper bound**: carried/transformed bullets, rank, geometry,
+gauge, recovery and the actual kill time matter. Human inputs also include a
+bomb. These counts select a trajectory question rather than extrapolating score.
+
+For story, Native/human6 emits3886/4423 bullets with403/1381 extreme-youkai
+grazes;47 emits5232/5020 with964/3882. Human47 follows a bomb and is not a clean
+NMNB alternative. Native171 already has5480 extreme-youkai events and16788 orbs,
+against human5201/16862. Broadly increasing guidance is therefore less specific
+than studying the actual gauge/position and full reward trajectory.
+
+### Road worlds and proposal-budget counterexamples
+
+Tasks1650–1657 vary the actual post194 road from owner15966 to closed195, with
+explicit cash4 profiles. Controls include chain bias0/300, human collection100,
+precollect, drop-lane and H256. Closed195 points range564–646; the chain0 plus
+human100 world1654 has646 points versus gold630. Four complete tails1663–1666
+from1650/1652/1654/1657 score3,172,838,080 /3,182,343,630 /3,158,988,280 /
+3,156,040,650, all NMNB14/14 and below3,212,949,960. More early points do not
+prove a complete record. Per-task controls, wall costs and actual captures stay
+in the TSV; no tail profile is silently changed to cash0.
+
+Six same-gold-171 story tails1667–1672 vary policy horizon/beam:12/1536,
+24/1536,48/384,48/1536,96/384,24/4096, with unchanged Native verification and
+60ms proposal/30000ms search budgets. Five finish NMNB36/37; their scores are
+6,394,422,830 /6,498,460,370 /6,468,180,130 /6,451,908,190 /6,472,520,600.
+48/1536 hits its declared wall budget at5,527,480,280,35 captures and is partial.
+None beats6,513,456,180. Concurrent wall times are costs, not isolated speedups
+or equal-compute comparisons. Wider guidance alone does not supply the7B alpha.
+
+### Solo Sakuya: original episodes, setup failures and complete routes
+
+Wine acquisitions1659/1676 create Extra53346 and story24238, shot8, before any
+Native candidate in those episodes. Both use `prior_final_a_clear=false`.
+Failed story startups1662/1675 produce no valid receipt: the copied team-history
+flag is rejected for solo shots. Source `Gui.cpp` already exposes FinalB for
+solos. No seed is discarded after a score preview. Exact entry/receipt/frame
+identities are in [Validation](../VALIDATION.md#solo-sakuya-retail-episodes).
+
+Dispatch1677/1678 fails before spawning Native because the prepared remote
+story receipt key is empty; an incorrect copy overwrote the Extra key. Corrected
+deployment hashes both distinct directories and all five files. Already-running
+Extra owners had loaded the valid53346 entry/args; their manifests agree.
+1679/1680 then fail before Native on an unsupported CLI flag. Inspection finds
+the real CLI hard-coded team prior-clear history for every story shot. The
+public fix applies it only to shots0..3; solos use their natural entry, without
+a new flag. Every setup attempt remains charged, with unknown measurements blank.
+
+Extra1673 fails NMNB at1,497,454,350; H2561674 finishes2,182,761,340 NMNB14/14,
+996 points/49803 orbs/PIV549020. Fresh1715/natural1716 pass all eight gates.
+The human Sakuya input has1075 points/61071 orbs/PIV605360 and one bomb.
+Corrected story1712 finishes4,417,570,020 NMNB37/37, actual stages0/1/2/3/5/7,
+1475 points/122506 total orbs/PIV912540. Fresh1754/natural1755 pass all eight
+checks. Human Sakuya story has1594 points/141702 orbs/PIV1021740 with eight
+bombs and nonzero death observations. These are valid new-shot baselines, not
+project overall records or matched-constraint human comparisons. Their generated
+replay files are temporary verification material and are not published/retained.
+
+### Negative charging-controller experiments
+
+At the same195 entry22548, tasks1681–1688 test feedback bands16/208/368,
+reserve0/600, plus immediate human/youkai capture controls. Each pair of reserves
+produces identical actions: the cold−10000 gauge never reaches the farming state
+before damage finishes the attack. Orb totals406/601/341 and714/251 do not
+establish a new route. Sustained focused shooting charges through the source
+ramp after30 focus updates; movement/recovery interruptions and carried options
+can prevent the intended delay.
+
+The hard-edge prototype requests lateral movement away from the boss while cold.
+Build1689 fails a test field typo;1690/1691 build,1692/1694 fail an overly strict
+first-action expectation,1693/1695 retain diagnostic evidence.1696 passes focused
+checks after using an explicit proposal input. Full normal1697 passes59 cases;
+a new fixture incorrectly assumes captures default true, failing18 and blocking
+19/20. Explicit strict capture flags fix the test;1713 passes those three.
+These are preserved failures and costs, not silently replaced successful runs.
+
+Changed ELF V80 passes full local/remote all41/audit/input and natural-row gates
+1698–1703 before scoring. Eight hard-edge phase cases1704–1711 all close NMNB,
+but195 gains only409/172/194 orbs and story6 gains124/133. Independent recovery
+frequently changes focus; safe inputs are not evidence that charging succeeded.
+A private softer offset96/anchor0.5 prototype keeps horizontal choices soft,
+releases fire/focus during preposition, and restores ordinary flow on warmup.
+Build1714 fails a local include path; clean three-object1717 succeeds. Full
+cross-host canaries1718–1721/1723–1724 again pass all41/audits/whole row bytes.
+
+Six soft cases1732–1737 close NMNB:195 gains576/465 orbs in paired16/208 bands,
+with0 extreme-youkai grazes; story6 gains185/147.195 focuses only194/1678 or
+566/1581 inputs. Neither prototype produces a useful new component. Both remain
+private evidence; the public experimental enum/controller/test additions are
+withdrawn. The final public C++ change is the small solo-history CLI fix with
+its meaningful first-update real-DAT regression. Build1752 passes in38.371s.
+The frozen final build then runs the normal62-test suite at1753.
+
+### V88: retime the actual higher-point world and test203 geometry
+
+Full mapper1729 exactly reproduces1665's41 terminal fields and14-spell audit.
+Its actual202 starts at55417, not the old55547. Stock1730/observer1731 match
+every row and full audit: all45 valid point requests at57869 fail in the full
+2096-slot pool. This explains646 early points becoming1006 final points rather
+than1051. It does not establish a score gain from restoring them.
+
+Predeclared tasks1738–1745 retime that world's actual202 with eight ordinary/
+feedback/shoot variants.1738 already fails NMNB and cannot certify a prefix.
+Tasks1746–1751 test203 upper16/112 bands with7/14 rows and feedback/shoot in the
+incumbent's actual57219 world. Earlier lower-band203 negatives used a different
+incoming world. All14 candidates recompute the complete204/205 suffix with
+cash4 and explicit movement/horizons, fixed original9098 and wall3600s. The
+14-owner/14-core service runs under the unchanged4GiB/tree,96GiB aggregate,
+128GiB hard/no-swap and128/96GiB host guards. Outcomes and retention follow;
+no emission count, partial cash/PIV or phase closure is accepted as a route score.
+
+### V88 complete outcomes and selected record
+
+All14 owners have terminal receipts. Thirteen complete NMNB14/14;1738 fails
+NMNB and certifies no prefix. Six complete variants exceed the old3.213B,
+but only the highest overall result is selected for fresh verification and
+retention. Every attempt and local verification remains charged.
+
+| Task / strategy | Full score | Points / orbs / PIV | Owned seconds | Outcome |
+| --- | ---: | --- | ---: | --- |
+|1738 /ordinary-h64-move3 |2230858890 |1051 /125294 /926470 |156.668 |nmnb_failure;bombs0;13/14 |
+|1739 /ordinary-h128-move3 |3171017830 |1006 /130158 /950790 |312.63 |complete;bombs0;14/14 |
+|1740 /ordinary-h128-move4 |3255579400 |1051 /129738 /948690 |335.339 |complete;bombs0;14/14 |
+|1741 /ordinary-h256-move4 |3225989270 |1051 /128066 /940330 |350.863 |complete;bombs0;14/14 |
+|1742 /feedback16-r600-youkai |3251019340 |1051 /129463 /947320 |331.05 |complete;bombs0;14/14 |
+|1743 /feedback208-r600-youkai |3250007600 |1051 /129328 /946640 |323.537 |complete;bombs0;14/14 |
+|1744 /feedback368-r600-youkai |3246103670 |1051 /129351 /946760 |330.081 |complete;bombs0;14/14 |
+|1745 /shoot16-r600-youkai |3230356910 |1051 /128087 /940440 |331.931 |complete;bombs0;14/14 |
+|1746 /feedback16-rows7 |3198362360 |1035 /129190 /945950 |297.861 |complete;bombs0;14/14 |
+|1747 /feedback112-rows7 |3206870460 |1035 /129544 /947720 |290.864 |complete;bombs0;14/14 |
+|1748 /feedback16-rows14 |3204510840 |1035 /129351 /946760 |293.888 |complete;bombs0;14/14 |
+|1749 /shoot16-rows7 |3204882360 |1035 /129326 /946630 |292.425 |complete;bombs0;14/14 |
+|1750 /shoot112-rows7 |3184081500 |1035 /127827 /939140 |292.219 |complete;bombs0;14/14 |
+|1751 /shoot16-rows14 |3200243890 |1035 /129019 /945100 |293.133 |complete;bombs0;14/14 |
+
+Selected1740 reaches **3,255,579,400,NMNB14/14**, verified fresh1756/natural1757
+with all eight checks. Read-only1758 matches every natural row/full audit and
+observes45/45 point spawns at57325 with1704→1749 occupied slots. Actual-map1759
+matches all41 terminal words/full14 audit; new203/204/205 entries are57506/62422/
+68054. These are retained real-world coordinates for subsequent composition,
+not replacements for old checkpoint identities. Final points1051 versus1665
+1006 and old record1035 confirm the production recovery. Final PIV948690 is
+slightly below the old949390, yet full score gains42,629,440. Retiming also
+changes capture bonus and later trajectories, so that gain is not attributed
+solely to the45 point pickups. No203 upper-band candidate beats the old record.
+
+The selected replay/action hashes and full1621→1654→1665→1740 input lineage
+are in Validation and the appended progress row. All37 earlier selected replay
+bytes and272 historical payload hashes remain preserved. The new record is
+Native-only. Extra4B is still744,420,600 away; complete Lunatic remains
+6,513,456,180,486,543,820 below7B and539,876,280 below its all-shot retail gate.
+
+### Continuation closure and publication checks
+
+All116 allocations1644–1759 have terminal receipts:32 complete Native reports
+(including fixed-input canaries),30 phase boundaries,17 read-only audits/maps,
+21 completed build/test/acquisition processes,11 failed processes,2 dispatch
+setup failures before Native,2 NMNB failures and1 budget partial. A process
+completion is not automatically a gameplay completion. Earlier historical gaps
+and the exact1643-row published prefix remain unchanged.
+
+Final minimal build1752 passes; normal1753 passes **62/62** in933.58s with
+peak owned tree1104392192B, minimum host MemAvailable9839382528B and no resource
+abort. The first-update solo-history regression passes against actual DAT.
+Earlier prototype build/test errors and the split1697/1713 run remain charged.
+
+Scoped retention prunes11 local temporary exports(477777B) and27 remote exports
+(1077032B), preserving per-file hashes and every action/report/receipt/source
+manifest. Counts include duplicate copies and literal canaries, not38 distinct
+new gameplay runs. An initial metadata guard compares story canaries to the
+Extra maximum and stops; corrected route-specific guards reconstruct prior
+deletions from their persisted owner receipts. No Native task is launched by
+that metadata retry; its unmeasured setup wall cost remains unavailable.
+Only1740 is newly selected; all38 selected hashes and272 historical hashes
+are checked at publication1760. The exporter now exposes the DAT bound by an
+exact worker bundle identity and the private overlay base head for new rows;
+old published metadata stays byte-identical. Reversed traversal must agree.
+All scoring batches are closed, no owned queue/test driver remains after the
+publication check, and further unused budget is not started during cleanup.
