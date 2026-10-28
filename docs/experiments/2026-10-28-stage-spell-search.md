@@ -346,6 +346,92 @@ fresh/natural verification; higher PIV or a locally better202 is insufficient.
 12 owners/12 cores plus4 V56 owners/4 cores stay below32; all memory/host guards
 remain unchanged. Native source physics and pool semantics remain untouched.
 
+## Complete-tail outcomes and actual171 transfer
+
+All four V56 routes complete NMNB, but score6429367430/6414061100/6370786090/
+6343581090, below6513456180.1602/1603 have35/37 captures and438 FinalB points;
+1604/1605 have34/37 and422 points. The higher Stage5 PIV is not a complete
+record. Source component comparisons must include later point production,
+pricing, orb income and captures rather than a sum of local score differences.
+
+Read-only1626/1627 map1602/1604's own171 entries145419/146870. Both full41-word
+terminals and the entire37-spell audits agree. Their ordinary171 produces
+10222/9970 orbs, versus16788 in the gold route. V63 reserves1629–1634 for two
+actual worlds × lower600/lower900/middle600 feedback controls, H256/cash0/move4
+and the repaired legacy capture prior. Retest all five remaining survivals and
+full settlement after the selected closed phases; no old151302 world or summed
+score is used. All memory/CPU/host guards remain unchanged.
+
+The owner's README request adds a primary table of complete route × shot Native
+records with exact replay links, a separate original-Wine validation table and
+a direct current-experiment journal entrance.1628 verifies all four Native
+rows against the published shot/route maxima and all36 selected replay hashes,
+then passes documentation CTest. Magic37/37 history stays separate. This changes
+presentation and discoverability, not any score, replay byte or verification
+scope. Commitf606f7c publishes the layout; earlier score/provenance and public
+recovery-prior commits remain71fdc6b/fd2b619/90587c7.
+
+## Verified Extra3.213B from the pool-aware portfolio
+
+V60 completes ten NMNB14/14 routes and retains two actual safety failures.
+Ordinary H128/movement4 exactly reproduces1574's whole complete score3114283480
+and990 points; the explicit restart is therefore a useful matched control.
+H64/movement4 restores1035 points but reaches only3107120180. Other geometries
+trade orb income, pool capacity and future rewards; restoring points alone is
+insufficient. Lower-band feedback368/600 with economic4 (1621) completes
+3212949960,1035 points/PIV949390, fourteen captures and0 bombs.
+
+Fresh1635/natural1636 pass all eight checks. The30749-byte selected replay SHA is
+14a22350a607bf25c2471e74a17859e1b91d0fd362124ceaba9784631e8b88b7;
+actual73597-input tape SHAd923926e4d4558b7178f757d80e6b7636bc04c6151d0269233db7d659538e194.
+The full prefix is1517→1559→1574 through55547, then the new202 policy and
+ordinary cash4 suffix. It improves1574 by98666480 and prior project record1539
+by9455830, exceeding the declared all-shot reference by34489130 in Native.
+It is Native-only. All36 earlier selected replay bytes are preserved unchanged.
+
+All six V63 target171 controls close safely and capture. Best cash1629 has
+17826 orbs/PIV1354610 at150776 inputs; PIV-frontier1632 has16987/PIV1370070
+at151893. V64 reserves1637–1640 for these two actual prefixes × movement3/4
+through all five remaining survivals and full settlement. A partial gain is
+still not a complete score.
+
+After selection, scoped retention removes27 remote and1 local
+unselected below-record .rpy copies (993104B). All37 selected replay hashes
+are rechecked unchanged; raw inputs, audits, costs, receipts and active V64
+outputs remain. No historical selected replay, media dependency or unrelated
+workspace file is removed.
+
+## V64 full-route conclusion
+
+All four V64 routes finish NMNB.1637/1638 score6475130760/6477728280,35/37;
+1639/1640 score6465579620/6460804240,34/37. None exceeds6513456180, so none
+is a new story record or retained replay. The best new171 farm improves its
+own ordinary predecessor but does not settle the7B goal.
+
+A direct full-audit comparison locates the remaining loss. At closed171 the
+new cash frontier is558200 behind gold; at closed191 it is31513550 behind.
+The last-five incremental deficit is therefore30955350, followed by4214350
+less final settlement, giving the complete35727900 deficit. Both FinalB runs
+collect438 points; the new route ends at PIV1455300 versus1446720 and70857
+versus70872 FinalB orbs. Higher PIV alone still does not order complete scores.
+No difference appears in the tracked terminal lives or bomb-use counters. This narrows the
+next investigation to actual last-five trajectories and reward components, while
+earlier point-price/production deficits still matter to7B. It does not assert
+a causal breakdown beyond the observed source audit values.
+
+All authorized V47–V64 owners have terminal receipts. No owned local solver,
+probe/test driver or remote worker/Native process remains. Scoped V64 retention
+removes four additional below-record .rpy copies (263633B); all inputs, results,
+parameter packets, source identities, costs and all37 selected hashes remain.
+Final current bests are Extra3212949960 NMNB14/14 and complete Lunatic
+6513456180 NMNB36/37; the7B milestone remains unachieved. The cumulative
+window is1664 without resetting the ledger; unused budget does not launch work.
+
+Final1642 passes the four README maxima/capture/link checks, all37 selected
+replay hashes,272 historical payload hashes, exact old36-row progress prefix,
+new Extra all-eight gates, all four negative V64 outcomes and documentation
+CTest. Public C++ remains unchanged after the normal62-case coverage.
+
 ## Per-case outcome tables
 
 These tables join the immutable task packets to completed owner receipts.
@@ -520,24 +606,44 @@ The cumulative TSVs retain full parameters, hashes, branch/retry and guard costs
 
 | Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
 | --- | --- | --- | ---: | ---: | ---: | ---: |
-|1602|`vps-scarlet-luna-v56-full-parent1592-move3`|running/unresolved|—|—|—|—|
-|1603|`vps-scarlet-luna-v56-full-parent1592-move4`|running/unresolved|—|—|—|—|
-|1604|`vps-scarlet-luna-v56-full-parent1593-move3`|running/unresolved|—|—|—|—|
-|1605|`vps-scarlet-luna-v56-full-parent1593-move4`|running/unresolved|—|—|—|—|
+|1602|`vps-scarlet-luna-v56-full-parent1592-move3`|complete|6429367430|35/37|0|637.532|
+|1603|`vps-scarlet-luna-v56-full-parent1592-move4`|complete|6414061100|35/37|0|694.023|
+|1604|`vps-scarlet-luna-v56-full-parent1593-move3`|complete|6370786090|34/37|0|636.416|
+|1605|`vps-scarlet-luna-v56-full-parent1593-move4`|complete|6343581090|34/37|0|690.829|
 
 ### Extra202 pool-aware timing portfolio
 
 | Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
 | --- | --- | --- | ---: | ---: | ---: | ---: |
-|1613|`vps-scarlet-extra202-pool-v60-ordinary-h64-move3`|running/unresolved|—|—|—|—|
-|1614|`vps-scarlet-extra202-pool-v60-ordinary-h64-move4`|running/unresolved|—|—|—|—|
-|1615|`vps-scarlet-extra202-pool-v60-ordinary-h128-move3`|running/unresolved|—|—|—|—|
-|1616|`vps-scarlet-extra202-pool-v60-ordinary-h128-move4`|running/unresolved|—|—|—|—|
-|1617|`vps-scarlet-extra202-pool-v60-ordinary-h256-move3`|running/unresolved|—|—|—|—|
-|1618|`vps-scarlet-extra202-pool-v60-ordinary-h256-move4`|running/unresolved|—|—|—|—|
-|1619|`vps-scarlet-extra202-pool-v60-feedback16-r600-youkai`|running/unresolved|—|—|—|—|
-|1620|`vps-scarlet-extra202-pool-v60-feedback208-r600-youkai`|running/unresolved|—|—|—|—|
-|1621|`vps-scarlet-extra202-pool-v60-feedback368-r600-youkai`|running/unresolved|—|—|—|—|
-|1622|`vps-scarlet-extra202-pool-v60-shoot16-r600-youkai`|running/unresolved|—|—|—|—|
-|1623|`vps-scarlet-extra202-pool-v60-shoot16-r10000-human`|running/unresolved|—|—|—|—|
-|1624|`vps-scarlet-extra202-pool-v60-shoot16-r10000-youkai`|running/unresolved|—|—|—|—|
+|1613|`vps-scarlet-extra202-pool-v60-ordinary-h64-move3`|nmnb_failure|2231854530|13/13|0|157.344|
+|1614|`vps-scarlet-extra202-pool-v60-ordinary-h64-move4`|complete|3107120180|14/14|0|190.379|
+|1615|`vps-scarlet-extra202-pool-v60-ordinary-h128-move3`|complete|3108572850|14/14|0|306.369|
+|1616|`vps-scarlet-extra202-pool-v60-ordinary-h128-move4`|complete|3114283480|14/14|0|330.37|
+|1617|`vps-scarlet-extra202-pool-v60-ordinary-h256-move3`|nmnb_failure|1816387980|10/10|0|18.994|
+|1618|`vps-scarlet-extra202-pool-v60-ordinary-h256-move4`|complete|3116098400|14/14|0|337.303|
+|1619|`vps-scarlet-extra202-pool-v60-feedback16-r600-youkai`|complete|3203006830|14/14|0|349.427|
+|1620|`vps-scarlet-extra202-pool-v60-feedback208-r600-youkai`|complete|3199850310|14/14|0|337.052|
+|1621|`vps-scarlet-extra202-pool-v60-feedback368-r600-youkai`|complete|3212949960|14/14|0|328.776|
+|1622|`vps-scarlet-extra202-pool-v60-shoot16-r600-youkai`|complete|3154717290|14/14|0|342.528|
+|1623|`vps-scarlet-extra202-pool-v60-shoot16-r10000-human`|complete|3204341570|14/14|0|335.353|
+|1624|`vps-scarlet-extra202-pool-v60-shoot16-r10000-youkai`|complete|3184925560|14/14|0|332.673|
+
+### Actual171 transfer after complete tails
+
+| Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+|1629|`vps-scarlet-luna-v63-171-parent1602-top368-r600`|phase_boundary|5042194560|30/32|0|70.017|
+|1630|`vps-scarlet-luna-v63-171-parent1602-top368-r900`|phase_boundary|5025882970|30/32|0|67.833|
+|1631|`vps-scarlet-luna-v63-171-parent1602-top208-r600`|phase_boundary|5038083430|30/32|0|68.69|
+|1632|`vps-scarlet-luna-v63-171-parent1604-top368-r600`|phase_boundary|4996405210|29/32|0|65.502|
+|1633|`vps-scarlet-luna-v63-171-parent1604-top368-r900`|phase_boundary|4995566650|29/32|0|64.262|
+|1634|`vps-scarlet-luna-v63-171-parent1604-top208-r600`|phase_boundary|4975181330|29/32|0|74.159|
+
+### Full settlement after the new171 farm
+
+| Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+|1637|`vps-scarlet-luna-v64-after171-parent1629-move3`|complete|6475130760|35/37|0|147.622|
+|1638|`vps-scarlet-luna-v64-after171-parent1629-move4`|complete|6477728280|35/37|0|160.121|
+|1639|`vps-scarlet-luna-v64-after171-parent1632-move3`|complete|6465579620|34/37|0|148.434|
+|1640|`vps-scarlet-luna-v64-after171-parent1632-move4`|complete|6460804240|34/37|0|157.708|

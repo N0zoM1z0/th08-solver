@@ -211,8 +211,8 @@ Historical272 payloads are relocated unchanged under the paths recorded in
 paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
-Latest overall records are Scarlet Extra **3,203,494,130,14/14** (1539,
-fresh1547/natural1548) and complete story **6,513,456,180,36/37**,only10 timeout
+Latest overall records are Scarlet Extra **3,212,949,960,14/14** (1621,
+fresh1635/natural1636) and complete story **6,513,456,180,36/37**,only10 timeout
 (1381, fresh1403/natural1404). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
@@ -287,6 +287,22 @@ attempts. It adds8,855,990 over1517 and25,033,300 over the declared human
 reference. The twelve-case search and both verification costs remain charged.
 All35 earlier selected replay bytes and272 historical payloads remain unchanged.
 This newest Extra is Native-only; original retail validation1343/1367 is for1314.
+
+New Extra1621 completes **3,212,949,960,NMNB14/14** at original9098. It retains
+1574's actual55547 inputs:1517's lower192 record feeds1559's lower197 component,
+whose complete cash4 continuation reaches the changed202 world. At202 it uses
+feedback rows368/400/432, reserve600, youkai capture, H128/publication64/replan32,
+economic4/movement4 throughout the remaining full suffix. The route restores
+1035 points and ends at PIV949390. Source read-only1611/1612 bind the earlier
+45-point failure to a full2096-item pool; the selected variant restores production.
+Fresh1635/natural1636 pass all eight checks. Its30749-byte replay SHA-256 is
+`14a22350a607bf25c2471e74a17859e1b91d0fd362124ceaba9784631e8b88b7`;
+actual input SHA-256 `d923926e4d4558b7178f757d80e6b7636bc04c6151d0269233db7d659538e194`.
+It consumes73597 inputs; producer wall328.609s/owned328.776s,349492 branch/
+8 proposal updates,1710 economic attempts/204 adoptions. Discovery, failures and
+verification costs stay in the journal. Gain over1539 is9,455,830; margin above
+the declared all-shot reference34,489,130. This replay is Native-only; all36
+earlier selected replay bytes and272 historical payload hashes are unchanged.
 
 New story1381 retains1225's exact151302 inputs through the closed171 boundary,
 then uses H128/publication64/replan32/cash4/movement3 over all five remaining

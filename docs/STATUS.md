@@ -34,18 +34,21 @@ The [phase journal](experiments/2026-10-27-phase-composition.md) records every
 outcome, failed preparation, cost and the next controlled comparison.
 
 The owner's resumed stage/spell search verifies a new Extra record:
-**3,203,494,130,NMNB14/14**, producer1539, fresh1547/natural1548 all eight checks.
-The earlier1517 record3,194,638,140 and its exact bytes remain selected.
-It retains the lower-band192 component1474's actual8940 inputs, then ordinary
-H128/economic4/movement4. The first cash0 full continuations are preserved as
+**3,212,949,960,NMNB14/14**, producer1621, fresh1635/natural1636 all eight checks.
+The earlier1517/1539 records and their exact bytes remain selected.
+It retains1574's actual55547 inputs through the changed197 world, then retimes
+202 with lower-band feedback600, economic4 and movement4. This restores45
+point items previously rejected by the full2096-slot pool and improves complete
+score by9,455,830 over1539. The first cash0 full continuations are preserved as
 configuration-confounded negative controls. The new replay is Native-only;
 the earlier3,179,193,860 retail verification keeps its exact identity.
 Lunatic17/25/29 now reproduce legacy complete input/41-word/audit results after
 restoring the capture-form recovery prior. The missing Stage2 human-pose road
 component is also restored: new1512 banks386,849,040 with8/8 observed captures;
 1513 retains PIV533710, versus525070 in the old component. Their real worlds
-continue through Stage5 before later spell recomputation and complete-route
-checks. The full story record stays6,513,456,180;7B is still pending.
+continue through Stage5, FinalB and actual171 recomputation. All eight complete
+V56/V64 combinations are below the record; the final best is6,477,728,280,35/37.
+The full story record stays6,513,456,180;7B is still pending.
 The [resumed search journal](experiments/2026-10-28-stage-spell-search.md) owns
 all new parameters, costs, negative outcomes and in-flight owners. The cumulative
 cap is1664, recorded before use; all resource limits and original seeds persist.
@@ -54,8 +57,9 @@ Further source-backed continuation confirms a fixed116 capture reserve was
 too short, and longer measured reserves now capture. Extra combinations expose
 a separate production loss: all45 point requests at202 fail in a full2096-slot
 pool; the record has room for all45. Read-only probes preserve exact stock rows.
-New complete-tail portfolios test actual carried worlds and202 kill timing;
-the full records remain unchanged pending their verification.
+The202 kill-timing portfolio produces the verified Extra improvement above.
+The new Lunatic171 combinations also finish below the existing record. All
+current queues are finished; their negative complete routes remain documented.
 
 The default-off `--phase-recovery-prior` control preserves only the declared
 capture-form preference in independent recovery. Focused1526 and all four
@@ -109,12 +113,12 @@ separate; new Scarlet entries require new original retail seed receipts.
 
 ### Scarlet priority, new retail receipts and4GiB resources
 
-Current verified Scarlet bests are **Extra3,203,494,130,NMNB14/14**, task1539,
+Current verified Scarlet bests are **Extra3,212,949,960,NMNB14/14**, task1621,
 and **complete Lunatic6,513,456,180,NMNB36/37**, task1381 (10 times out).
-Fresh1547/1403 and natural1548/1404 pass exact41-word terminal, score, outcomes,
+Fresh1635/1403 and natural1636/1404 pass exact41-word terminal, score, outcomes,
 zero-miss/bomb and name checks. Scarlet now owns both overall Native records.
 The6.5B milestone is achieved. New Extra exceeds its all-shot reference by
-25,033,300 in Native. The earlier replay passes original Wine1343/1367 at exactly
+34,489,130 in Native. The earlier replay passes original Wine1343/1367 at exactly
 3,179,193,860, NMNB14/14, without an online controller.
 All final193-reserve compositions and12 further within-spell205 combinations
 finish below the record (latest best3,176,324,740); Native queues are finished. Original retail observer1343 completes72214 callback rows; typed terminal
@@ -136,7 +140,7 @@ retain exact SHA-256 values in `archive/relocations.tsv`; frozen JSON and tapes
 are not rewritten. [The evidence index](../reports/native/README.md) and
 `replays/progress.tsv` bind published scores, constraints, tasks and hashes.
 Earlier prose describing those17 selections as local-only records the state
-before this explicit publication request. Nineteen subsequent verified overall
+before this explicit publication request. Twenty subsequent verified overall
 records are also published; future retention requires an overall project record,
 as the owner later requested. Other experiment artifacts stay local.
 
@@ -149,7 +153,7 @@ measurements. Local normal803 was resource-aborted below8GiB at1032.186s;
 retry831 passes60/60 in731.053s with two independent CTests, unchanged binaries,
 peak tree RSS1108312064 and minimum host available18922889216 bytes.
 The four later record exports pass local checks829/830,832/833,843/844 and
-845/846. Extra Native exceeds its reference by25,033,300; the story gap remains539,876,280.
+845/846. Extra Native exceeds its reference by34,489,130; the story gap remains539,876,280.
 The story exceeds6.5B by13,456,180 and remains486,543,820 below7B. The5.784B record retains task794's
 first51253 actual inputs through47, then uses H128/publication64/replan32/cash4/
 movement4. Task930 retains its first142675 actual inputs to171, then switches
@@ -711,7 +715,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | Local: at most4 owned solver/test/probe drivers including verification; build with `--parallel 2`. The owner's later VPS request separately authorizes up to32 remote Native owners, CPU quota32 cores, low priority. Fork children belong to their owner; do not add extra uncounted test drivers |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1624/1664 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280→1344→1408→1472→1536→1600→1664 were recorded before use; the latest was recorded after1591 before1601. Failures, cancellations and verification remain charged; never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1642/1664 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280→1344→1408→1472→1536→1600→1664 were recorded before use; the latest was recorded after1591 before1601. Failures, cancellations and verification remain charged; never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. The later explicit VPS authorization raises remote concurrency only |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |

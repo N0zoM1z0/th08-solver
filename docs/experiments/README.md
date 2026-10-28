@@ -8,7 +8,7 @@ published replay index.
 
 | Record | Purpose |
 | --- | --- |
-| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.203B, actual-world route combinations,116 HP/deadline tests and the2096-slot point-production limit |
+| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.213B, actual-world route combinations,116 HP/deadline tests and the2096-slot point-production limit |
 | [Campaign lifecycle ledger](campaign-ledger.tsv) | All existing task allocations and original lifecycle notes, including repeated notes for the same ID. IDs are never reset or reused |
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
