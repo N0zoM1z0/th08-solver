@@ -13,6 +13,7 @@ published replay index.
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
 | [October27 VPS exploration](2026-10-27-vps.md) | Questions, source/human evidence, parallel-search design, complete canaries, declared variations, failures and resulting decisions |
 | [October28 storage cleanup](2026-10-28-storage-cleanup.md) | Exact-restore media archives, retained evidence, reclaimed bytes and recovery dependencies |
+| [October28 resumed stage/spell search](2026-10-28-stage-spell-search.md) | Exact recovery-component parity, restored road policies, Extra3.195B record and actual-world continuations |
 
 The TSV files use a header row. Tabs/newlines within values are escaped;
 structured entry, controls, argv, cost and edit fields use compact JSON values. The `retail_observation` field

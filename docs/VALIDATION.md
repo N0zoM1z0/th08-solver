@@ -211,8 +211,8 @@ Historical272 payloads are relocated unchanged under the paths recorded in
 paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
-Latest overall records are Scarlet Extra **3,179,193,860,14/14** (1314,
-fresh1329/natural1330) and complete story **6,513,456,180,36/37**,only10 timeout
+Latest overall records are Scarlet Extra **3,203,494,130,14/14** (1539,
+fresh1547/natural1548) and complete story **6,513,456,180,36/37**,only10 timeout
 (1381, fresh1403/natural1404). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
@@ -260,6 +260,34 @@ original EXE/DAT/observer/replay/seed-receipt identities and unchanged rows. The
 41-word cross-runtime equality. The exact17-field prefix matches18407 rows; the
 next latched-input difference remains documented. This is complete retail score/
 NMNB/capture validation, with all setup, observation and correction costs retained.
+
+New Extra1517 completes **3,194,638,140,NMNB14/14** at the unchanged original
+retail9098 entry. It retains1474's actual8940 inputs: original1314 through5607,
+then192 feedback in rows368/400/432 with600-update focused-capture reserve.
+The complete suffix uses H128/publication64/replan32/economic4/movement4.
+Fresh1527 and natural1528 pass all eight execution/index checks. Its29867-byte
+replay SHA-256 is
+`afc185c455e68d88dc340010906147e77543d32bfb6e8cbef9fb5c2900ae8463`; actual inputs
+`e0cbf27290aa628ecee8eb4878a0c03237e71c3d604c64b6d5c4cd67c737cca1`. Native input count is71237;
+producer wall1104.89s (owned wall1105.043s),1127590 branch/19 proposal updates,
+5935 economic attempts/663 adoptions. This does not include discovery, negative
+cash0 continuations or verification costs, all retained in the experiment ledger.
+The gain is15,444,280 over1314 and16,177,310 above the declared all-shot reference.
+The new replay is Native-only; earlier1314's retail validation remains separate.
+All34 earlier selected replay bytes and272 historical payloads remain unchanged.
+
+New Extra1539 retains1517's actual65269 inputs through the true205 entry,
+then uses H128/publication64/replan32/economic0/movement4 for the remaining
+spell and full settlement. It completes **3,203,494,130,NMNB14/14**,71237 inputs,
+with fresh1547/natural1548 all eight checks passing. Its29709-byte replay SHA-256
+is `da824d3da204cfc504d60ed31d6edf2f836adc13203e70d39615f6a0f89932ff`;
+actual input SHA-256 `d4a859bc8caba79ca8f74eebc9699a0e673fa226b0622dd098a33864a3435980`.
+Producer wall75.5334s/owned75.687s,71905 branch/2 proposal updates,0 economic
+attempts. It adds8,855,990 over1517 and25,033,300 over the declared human
+reference. The twelve-case search and both verification costs remain charged.
+All35 earlier selected replay bytes and272 historical payloads remain unchanged.
+This newest Extra is Native-only; original retail validation1343/1367 is for1314.
+
 New story1381 retains1225's exact151302 inputs through the closed171 boundary,
 then uses H128/publication64/replan32/cash4/movement3 over all five remaining
 survivals and full settlement. This increases the complete score by924080 to
