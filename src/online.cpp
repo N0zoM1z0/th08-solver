@@ -865,6 +865,15 @@ struct Policy::Impl {
                       observation.scoring.survival_spell && observation.scoring.has_boss &&
                       observation.spell_active;
         update_attack_pacing(observation);
+        // Recovery can deliberately omit scoring memory. A capture-form prior
+        // still has a valid core stage/spell selector; do not enable unrelated
+        // pacing or invent HP/gauge/timer values to select it. This is a search
+        // preference, not a form filter or a substitute for Native rollout.
+        if (opt.phase_capture_prior && observation.spell_active) {
+            if (const auto *prior =
+                    opt.phase_capture_prior->find(observation.stage, observation.spell))
+                proposal_focus_bias = prior->capture == phase::Capture::Youkai ? 10.f : -10.f;
+        }
         if (const auto *strategy = active_phase(observation)) {
             flow_active = observation.scoring.spell_remaining > int(strategy->reserve);
             proposal_focus_bias =
@@ -2146,6 +2155,8 @@ bool Policy::wants_fire() const {
     return impl_->wants_fire();
 }
 bool Policy::needs_scoring_memory() const {
+    // phase_capture_prior uses core identity only. Including it here would
+    // silently turn baseline recovery into a different scoring controller.
     return impl_->opt.scoring_collection || impl_->opt.scoring_aim ||
            impl_->opt.scoring_survival_focus || impl_->opt.scoring_survival_flow ||
            impl_->opt.scoring_attack_pacing || impl_->opt.scoring_hit_income ||

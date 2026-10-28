@@ -478,6 +478,7 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | `--verify-horizon` |64 | Powers of two64..2048 |
 | `--spell-horizon` |0 | Optional active-spell verification H64..2048, publication H/2, replan H/4; zero preserves the original schedule |
 | `--phase-plan` |none | Up to32 comma-separated `stage:card:top:rows:reserve:feedback\|shoot:human\|youkai` entries; requires attack pacing; stage0..8, card1..256, rows1..14 at32px spacing, band inside Y0..432, reserve0..10000 gameplay updates |
+| `--phase-recovery-prior` |0 |0/1;1 requires a nonempty phase plan and baseline recovery; uses its capture-form prior in recovery without adding scoring memory or generic pacing |
 | `--stop-after-card` |0 |0 disables;1..256 stops after the actual closed card audit, returns incomplete exit2 and never exports a replay |
 | `--publish-horizon` |64 | Powers of two64..2048, at most verification |
 | `--search-budget-ms` |110 |1..60000 per search |

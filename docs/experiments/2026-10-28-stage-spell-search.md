@@ -227,6 +227,62 @@ current carried worlds, not old boundary times.20 remote owners/20-core quota
 remain below32, with unchanged4GiB/96GiB/128GiB/host-reserve guards. Each phase
 is a partial selection; complete recomputation is still required.
 
+## V51 frontier and V52 downstream recomputation
+
+All20 V51 components close safely with0 bombs. New77's208-row feedback600
+(1554) captures with8945 orbs, versus4243/timeout in1522; fast shooting208
+(1553) captures7144, and lower-band feedback1556 times out with9128. These
+are three distinct carried worlds. V52 reserves1570–1572 to recompute each
+through Stage5 using the existing hash-bound DD35 NPC producer.
+
+New Extra197 has a cash/PIV tradeoff:1557/1560/1561 produce identical139-orb
+quick captures with961483160 cash; lower-band1559 produces1353 orbs with
+958025210. The current1517 component has422 orbs/953079250. V52 selects1557
+and1559 for complete cash4 continuations1573/1574. New202 controls all remain
+below current2234 orbs;1563's best new cash1811745430/1465 orbs is deliberately
+continued as negative control1575. No partial is retained as a replay record.
+
+## Source-backed remaining headroom and V53
+
+The existing read-only1366 current6.512B point audit measures191843350 of
+optimistic same-pickup height/human-doubling repricing. Even this unattainable
+mechanical envelope is295624550 short of7B, so price cleanup alone cannot
+certify the goal. Source-faithful human988/current1381 audits instead identify
+early orb opportunities:47 is11608 versus3999,116 is5813 versus2332. Human47
+has a preceding bomb, so it is diagnostic evidence, not a legal NMNB future.
+
+V53 reserves1576–1587 before dispatch: six each47/116 geometries/fire/reserves
+at their actual1522 entry coordinates, H256, repaired capture-form prior and
+cash0/movement4. Four old H128116 variants timed out; those negative outcomes
+remain preserved. New H256/actual-world/recovery conditions are explicit, not a
+claim that old failures vanish.12 new owners plus6 V52 owners use18 cores,
+below32. All host-memory, AS/tree and aggregate guards remain unchanged.
+
+## Public recovery-prior validation complete
+
+Normal1545 recovery passes60–62,3/3 in879.78s CTest/879.824s guarded wall.
+Peak owned RSS1004015616B, minimum host39495888896B, no resource abort.
+Together with1529's prior59 passes this covers all62 normal cases on unchanged
+binaries. It is not one uninterrupted62/62 run; the original host-memory abort
+and1033.985s cost remain charged. Unlike the earlier1365 recovery,1545 reruns
+the ordinary fresh legacy searches without a reused repair result. Focused1526
+and four real-DAT1530 parity cases also pass. The default-off public
+--phase-recovery-prior control is ready to publish with its focused regression.
+
+V53 closes all12 phases safely,0 bombs.47 feedback16/600 captures6747 orbs;
+feedback208/600 times out with7953. All six116 controls still time out, best
+2907 orbs. Extending horizon/restoring capture prior does not establish a116
+capture fix. Probe1588 builds a read-only current-score sampler, and1589/1590
+compare actual1522's captured116 with1583's timeout using exact whole-audit/
+41-word gates before reading HP, damageability, pose and shooting.
+
+The three77 continuations1570–1572 reach Stage5 safely,0 bombs.1570 banks
+3447375020/PIV1101010,24 observed captures;1571 banks3421125760/PIV1123520,23;
+1572 banks3419013010/PIV1112390,23. Gold1381's same boundary is
+3405901940/PIV1092360. Cash and PIV frontiers differ; continue1570/1571 through
+FinalB instead of adding their gains to the old complete score. Extra negative
+control1575 completes3161132620,NMNB14/14, below the current record.
+
 ## Per-case outcome tables
 
 These tables join the immutable task packets to completed owner receipts.
@@ -333,23 +389,51 @@ The cumulative TSVs retain full parameters, hashes, branch/retry and guard costs
 
 | Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
 | --- | --- | --- | ---: | ---: | ---: | ---: |
-|1549|`vps-scarlet-luna1522-phase-v51-card77-shoot16-r600`|running/unresolved|—|—|—|—|
-|1550|`vps-scarlet-luna1522-phase-v51-card77-feedback16-r600`|running/unresolved|—|—|—|—|
-|1551|`vps-scarlet-luna1522-phase-v51-card77-shoot16-r900`|running/unresolved|—|—|—|—|
-|1552|`vps-scarlet-luna1522-phase-v51-card77-feedback16-r900`|running/unresolved|—|—|—|—|
-|1553|`vps-scarlet-luna1522-phase-v51-card77-shoot208-r600`|running/unresolved|—|—|—|—|
-|1554|`vps-scarlet-luna1522-phase-v51-card77-feedback208-r600`|running/unresolved|—|—|—|—|
-|1555|`vps-scarlet-luna1522-phase-v51-card77-shoot16-r1200`|running/unresolved|—|—|—|—|
-|1556|`vps-scarlet-luna1522-phase-v51-card77-feedback368-r600`|running/unresolved|—|—|—|—|
-|1557|`vps-scarlet-extra3194-phase-v51-card197-feedback16-r600`|running/unresolved|—|—|—|—|
-|1558|`vps-scarlet-extra3194-phase-v51-card197-feedback208-r600`|running/unresolved|—|—|—|—|
-|1559|`vps-scarlet-extra3194-phase-v51-card197-feedback368-r600`|running/unresolved|—|—|—|—|
-|1560|`vps-scarlet-extra3194-phase-v51-card197-shoot16-r600`|running/unresolved|—|—|—|—|
-|1561|`vps-scarlet-extra3194-phase-v51-card197-shoot16-r900`|running/unresolved|—|—|—|—|
-|1562|`vps-scarlet-extra3194-phase-v51-card197-feedback208-r900`|running/unresolved|—|—|—|—|
-|1563|`vps-scarlet-extra3194-phase-v51-card202-feedback16-r600`|running/unresolved|—|—|—|—|
-|1564|`vps-scarlet-extra3194-phase-v51-card202-feedback208-r600`|running/unresolved|—|—|—|—|
-|1565|`vps-scarlet-extra3194-phase-v51-card202-feedback368-r600`|running/unresolved|—|—|—|—|
-|1566|`vps-scarlet-extra3194-phase-v51-card202-shoot16-r600`|running/unresolved|—|—|—|—|
-|1567|`vps-scarlet-extra3194-phase-v51-card202-shoot16-r900`|running/unresolved|—|—|—|—|
-|1568|`vps-scarlet-extra3194-phase-v51-card202-feedback208-r900`|running/unresolved|—|—|—|—|
+|1549|`vps-scarlet-luna1522-phase-v51-card77-shoot16-r600`|phase_boundary|2194222110|19/21|0|57.644|
+|1550|`vps-scarlet-luna1522-phase-v51-card77-feedback16-r600`|phase_boundary|2189737870|19/21|0|57.768|
+|1551|`vps-scarlet-luna1522-phase-v51-card77-shoot16-r900`|phase_boundary|2185748720|19/21|0|52.852|
+|1552|`vps-scarlet-luna1522-phase-v51-card77-feedback16-r900`|phase_boundary|2183287620|19/21|0|56.048|
+|1553|`vps-scarlet-luna1522-phase-v51-card77-shoot208-r600`|phase_boundary|2198829950|19/21|0|50.16|
+|1554|`vps-scarlet-luna1522-phase-v51-card77-feedback208-r600`|phase_boundary|2208985200|19/21|0|56.887|
+|1555|`vps-scarlet-luna1522-phase-v51-card77-shoot16-r1200`|phase_boundary|2189876790|18/21|0|59.737|
+|1556|`vps-scarlet-luna1522-phase-v51-card77-feedback368-r600`|phase_boundary|2205872860|18/21|0|62.314|
+|1557|`vps-scarlet-extra3194-phase-v51-card197-feedback16-r600`|phase_boundary|961483160|6/6|0|26.849|
+|1558|`vps-scarlet-extra3194-phase-v51-card197-feedback208-r600`|phase_boundary|957730700|6/6|0|51.067|
+|1559|`vps-scarlet-extra3194-phase-v51-card197-feedback368-r600`|phase_boundary|958025210|6/6|0|52.267|
+|1560|`vps-scarlet-extra3194-phase-v51-card197-shoot16-r600`|phase_boundary|961483160|6/6|0|26.828|
+|1561|`vps-scarlet-extra3194-phase-v51-card197-shoot16-r900`|phase_boundary|961483160|6/6|0|26.753|
+|1562|`vps-scarlet-extra3194-phase-v51-card197-feedback208-r900`|phase_boundary|956995140|6/6|0|47.123|
+|1563|`vps-scarlet-extra3194-phase-v51-card202-feedback16-r600`|phase_boundary|1811745430|11/11|0|42.998|
+|1564|`vps-scarlet-extra3194-phase-v51-card202-feedback208-r600`|phase_boundary|1810054720|11/11|0|30.174|
+|1565|`vps-scarlet-extra3194-phase-v51-card202-feedback368-r600`|phase_boundary|1801976180|11/11|0|23.676|
+|1566|`vps-scarlet-extra3194-phase-v51-card202-shoot16-r600`|phase_boundary|1807158460|11/11|0|35.065|
+|1567|`vps-scarlet-extra3194-phase-v51-card202-shoot16-r900`|phase_boundary|1807158460|11/11|0|35.202|
+|1568|`vps-scarlet-extra3194-phase-v51-card202-feedback208-r900`|phase_boundary|1810054720|11/11|0|29.943|
+
+### Complete downstream recomputation
+
+| Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+|1570|`vps-scarlet-luna-stage5-composed-v52-parent1553`|stage_boundary|3447375020|24/26|0|489.967|
+|1571|`vps-scarlet-luna-stage5-composed-v52-parent1554`|stage_boundary|3421125760|23/26|0|531.273|
+|1572|`vps-scarlet-luna-stage5-composed-v52-parent1556`|stage_boundary|3419013010|23/26|0|506.339|
+|1573|`vps-scarlet-extra-full-composed-v52-parent1557`|running/unresolved|—|—|—|—|
+|1574|`vps-scarlet-extra-full-composed-v52-parent1559`|running/unresolved|—|—|—|—|
+|1575|`vps-scarlet-extra-full-composed-v52-parent1563`|complete|3161132620|14/14|0|304.77|
+
+### Earlier orb opportunities
+
+| Task | Case | State | Actual score | Captures / observed | Bombs | Seconds |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+|1576|`vps-scarlet-luna1522-opportunity-v53-card47-feedback16-r600`|phase_boundary|995984860|12/13|0|32.677|
+|1577|`vps-scarlet-luna1522-opportunity-v53-card47-feedback112-r600`|phase_boundary|990841060|12/13|0|30.916|
+|1578|`vps-scarlet-luna1522-opportunity-v53-card47-feedback208-r600`|phase_boundary|996916900|11/13|0|30.736|
+|1579|`vps-scarlet-luna1522-opportunity-v53-card47-feedback368-r600`|phase_boundary|990334470|11/13|0|35.147|
+|1580|`vps-scarlet-luna1522-opportunity-v53-card47-shoot112-r600`|phase_boundary|987401820|12/13|0|16.029|
+|1581|`vps-scarlet-luna1522-opportunity-v53-card47-shoot112-r900`|phase_boundary|987401820|12/13|0|16.052|
+|1582|`vps-scarlet-luna1522-opportunity-v53-card116-feedback16-r600`|phase_boundary|3153122990|21/25|0|56.279|
+|1583|`vps-scarlet-luna1522-opportunity-v53-card116-feedback112-r600`|phase_boundary|3168678510|21/25|0|60.632|
+|1584|`vps-scarlet-luna1522-opportunity-v53-card116-feedback208-r600`|phase_boundary|3167438870|21/25|0|60.644|
+|1585|`vps-scarlet-luna1522-opportunity-v53-card116-feedback368-r600`|phase_boundary|3166776690|21/25|0|64.42|
+|1586|`vps-scarlet-luna1522-opportunity-v53-card116-shoot112-r600`|phase_boundary|3162494880|21/25|0|58.51|
+|1587|`vps-scarlet-luna1522-opportunity-v53-card116-shoot112-r900`|phase_boundary|3160700240|21/25|0|59.912|

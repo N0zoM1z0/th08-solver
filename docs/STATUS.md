@@ -50,6 +50,13 @@ The [resumed search journal](experiments/2026-10-28-stage-spell-search.md) owns
 all new parameters, costs, negative outcomes and in-flight owners. The cumulative
 cap is1600, recorded before use; all resource limits and original seeds persist.
 
+The default-off `--phase-recovery-prior` control preserves only the declared
+capture-form preference in independent recovery. Focused1526 and all four
+real-DAT parity cases1530 pass. Normal1529 passes59 cases before a host-memory
+abort; unchanged-binary recovery1545 passes the remaining3 in879.78s, covering
+all62 without reusing legacy repair results. The abort and all costs remain
+recorded; this is not one uninterrupted suite.
+
 The new phase-plan/archive implementation is covered by normal1277 (60/62)
 and nonaborted recovery1331 (2/2), using unchanged binaries and an explicitly
 hash-bound reused legacy repair search with fresh execution. Earlier failures
@@ -697,7 +704,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | Local: at most4 owned solver/test/probe drivers including verification; build with `--parallel 2`. The owner's later VPS request separately authorizes up to32 remote Native owners, CPU quota32 cores, low priority. Fork children belong to their owner; do not add extra uncounted test drivers |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1569/1600 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280→1344→1408→1472→1536→1600 were recorded before use; the latest was recorded after1531 before1537. Failures, cancellations and verification remain charged; never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1590/1600 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280→1344→1408→1472→1536→1600 were recorded before use; the latest was recorded after1531 before1537. Failures, cancellations and verification remain charged; never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. The later explicit VPS authorization raises remote concurrency only |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |

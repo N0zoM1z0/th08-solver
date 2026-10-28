@@ -404,6 +404,7 @@ int run(int argc, char **argv) {
             "[--survival-flow 0|1] [--attack-pacing 0|1] [--farm-to-timeout 0|1] "
             "[--upper-flow 0|1] [--spell-horizon 0|64|128|256|512|1024|2048] "
             "[--farm-charge-fire 0|1] [--phase-plan none|ROWS] [--stop-after-card 0..256] "
+            "[--phase-recovery-prior 0|1] "
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--lead-updates 1..32] "
             "[--nominal-warm-updates 0|UPDATES] [--replan-updates UPDATES] "
@@ -476,6 +477,7 @@ int run(int argc, char **argv) {
     bool verify_captures = false, verify_captures_override = false;
     std::string phase_text;
     bool phase_override = false, stop_override = false;
+    bool phase_recovery_prior = false, phase_recovery_override = false;
     unsigned stop_card = 0;
     unsigned economic_proposals = 0;
     bool economic_override = false;
@@ -488,6 +490,9 @@ int run(int argc, char **argv) {
             profile.phase_plan =
                 std::make_shared<const th08::phase::Plan>(th08::phase::parse(phase_text));
             phase_override = true;
+        } else if (key == "--phase-recovery-prior" && !phase_recovery_override) {
+            phase_recovery_prior = number(argv[i + 1], 1);
+            phase_recovery_override = true;
         } else if (key == "--stop-after-card" && !stop_override) {
             stop_card = number(argv[i + 1], 256);
             stop_override = true;
@@ -685,6 +690,9 @@ int run(int argc, char **argv) {
         throw std::runtime_error("native_warm_prefix_must_cover_lead_within_horizon");
     if (!baseline_recovery && (recovery_style_override || recovery_fire_override))
         throw std::runtime_error("recovery_controls_require_enabled_recovery");
+    if (phase_recovery_prior &&
+        (!baseline_recovery || !profile.phase_plan || profile.phase_plan->entries().empty()))
+        throw std::runtime_error("phase_recovery_prior_requires_phase_plan_and_recovery");
     if (policy_horizon + lead_updates - 1 > horizon || (verify_captures && !require_captures))
         throw std::runtime_error("native_policy_or_capture_goal_exceeds_declared_scope");
     if (profile.scoring_farm_to_timeout &&
@@ -726,9 +734,12 @@ int run(int argc, char **argv) {
     profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
     o::Policy policy(profile);
     auto recovery_profile = o::with_style(recovery_style, profile);
-    // Recovery retains its ordinary movement/form proposal. The scored phase
-    // schedule is advisory and cannot remove this independently checked escape.
+    // Recovery keeps its own movement/fire controller and never inherits the
+    // full farm schedule. The optional capture prior reproduces the legacy
+    // focused escape using core identity, without adding scoring memory or
+    // changing recovery's pacing. Native still checks every escape candidate.
     recovery_profile.phase_plan.reset();
+    recovery_profile.phase_capture_prior = phase_recovery_prior ? profile.phase_plan : nullptr;
     o::Policy safety(recovery_profile);
     fs::create_directories(output.parent_path());
     if (!fs::create_directory(output))
@@ -961,7 +972,8 @@ int run(int argc, char **argv) {
             throw std::runtime_error("native_style_writer_failed");
     }
     std::ofstream report("result.json");
-    report << "{\"stop_after_card\":" << stop_card << ",\"phase_strategies\":[";
+    report << "{\"phase_recovery_prior\":" << (phase_recovery_prior ? "true" : "false")
+           << ",\"stop_after_card\":" << stop_card << ",\"phase_strategies\":[";
     if (profile.phase_plan) {
         const auto &entries = profile.phase_plan->entries();
         for (std::size_t i = 0; i < entries.size(); ++i) {

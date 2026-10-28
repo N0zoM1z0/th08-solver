@@ -204,6 +204,12 @@ struct Configuration {
     // Immutable optional schedules shared by forecast branches. Null preserves
     // the old proposal path and observer history; Native remains the executor.
     std::shared_ptr<const phase::Plan> phase_plan;
+    // Optional capture-form prior for an independent recovery policy. Unlike
+    // phase_plan, this reads only actual stage/spell identity, so baseline
+    // recovery needs no scoring memory, timer or generic attack pacing. The
+    // shared immutable plan outlives forecast branches; geometry/fire/reserve
+    // entries are ignored here. Null preserves the original recovery proposal.
+    std::shared_ptr<const phase::Plan> phase_capture_prior;
     StyleWeights style;
     bool scoring_collection = false, scoring_aim = false;
     bool scoring_survival_focus = false;

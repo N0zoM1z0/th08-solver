@@ -50,6 +50,45 @@ int main() try {
     o.spell_active = false;
     check(policy.phase_input(o, 1) == 1, "no schedule outside actual spell");
     check(parse("none").entries().empty(), "explicit default");
+    // The legacy escape's capture-form prior must work with unavailable
+    // scoring memory. It must not enable the full farm controller or leak to
+    // another stage/card; that distinction caused real17/29 migration failures.
+    auto recovery = th08::online::with_style("baseline");
+    recovery.horizon = 24;
+    recovery.phase_capture_prior =
+        std::make_shared<const Plan>(parse("1:17:16:7:600:shoot:youkai,1:25:16:7:600:shoot:human"));
+    th08::online::Observation escape;
+    escape.x = 192;
+    escape.y = 400;
+    // Benign synthetic playfield: pixels and pixels/update, no hazards. A
+    // zero-initialized Movement has no valid area and is not an observation.
+    escape.movement = {{4, 2}, {3, 1.5f}, 1, 1, 1, 16, 16, 368, 432, {2, 2}};
+    escape.stage = 1;
+    escape.spell = 16;
+    escape.spell_active = true;
+    auto action = [&](const th08::online::Configuration &c) {
+        th08::online::Policy p(c);
+        check(!p.needs_scoring_memory(), "capture prior added scoring memory");
+        p.observe(escape);
+        check(p.phase_input(escape, 65) == 65, "capture prior became a form filter");
+        return p.decide(escape).action;
+    };
+    check(!escape.scoring.available && !recovery.scoring_attack_pacing && (action(recovery) & 4),
+          "capture prior requires unavailable scoring state");
+    auto ordinary = recovery;
+    ordinary.phase_capture_prior.reset();
+    escape.stage = 0;
+    check(action(recovery) == action(ordinary), "capture prior escaped stage selector");
+    escape.stage = 1;
+    escape.spell_active = false;
+    check(action(recovery) == action(ordinary), "capture prior escaped spell lifecycle");
+    escape.spell_active = true;
+    escape.spell = 24;
+    recovery.focus_bias = 10;
+    check(!(action(recovery) & 4), "human capture prior ignored");
+    auto invalid_recovery = ordinary;
+    invalid_recovery.phase_plan = recovery.phase_capture_prior;
+    rejects([&] { th08::online::Policy p(invalid_recovery); });
     auto make = [](const char *id, const char *family, std::uint64_t score, char world) {
         return Candidate{
             id,   "extra203", family, std::string(64, 'a'), std::string(64, world), score,

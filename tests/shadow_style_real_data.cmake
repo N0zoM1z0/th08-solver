@@ -28,6 +28,8 @@ foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-p
                           "--phase-plan;8:0:208:7:600:feedback:youkai"
                           "--phase-plan;0:2:208:7:600:feedback:youkai"
                           "--stop-after-card;257"
+                          "--phase-recovery-prior;1"
+                          "--phase-recovery-prior;2"
                           "--stop-after-card;2;--stop-after-card;2"
                           "--spell-horizon;4" "--spell-horizon;96"
                           "--spell-horizon;64;--lead-updates;32"
