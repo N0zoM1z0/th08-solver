@@ -1558,6 +1558,357 @@ Then measure worker scaling at1/4/8/16/32 subject to admission guards. An improv
 scheduler must earn its complexity through higher verified score per budget or
 the same result at lower cost. No speedup or score improvement is claimed yet.
 
+## October28 Extra-first checkpoint archive experiment
+
+The owner requested [issue12](https://github.com/N0zoM1z0/th08-solver/issues/12)
+for parallel checkpoint archives and composable phase strategies, then steered
+its first experiment to Extra. The next complete Lunatic milestone is7B;
+6.5B remains achieved. All-shot retail gates remain Extra3,178,460,830 and
+story7,053,332,460. Both original Scarlet episodes9098/32796 remain fixed;
+No Miss/No Bomb and optional captures are unchanged. No live/Wine solving resumes.
+
+### Boundary reconstruction and cross-host gates
+
+Read-only1234 reexecutes the selected6.512B story. Its entire41-word terminal,
+all37 spell audits and37 closed boundaries agree. Extra probe build1235 and
+execution1236 likewise reproduce the selected3,087,585,240 Extra, all41 words,
+all14 audits and14 boundaries. Actual card193 begins at owner7723 and ends9036;
+203 begins52631 and ends57251. Source audit and owner coordinates happen to
+agree here; this does not undo the earlier story-clock correction.
+
+The current Extra193 collects922 time orbs. The separately stock-verified
+Scarlet human replay collects7014 there. That reference has its own retail
+seed and one bomb across its full run; it is strategic evidence, not a same-seed
+NMNB oracle. Card203/205 in the current record collect3542/4982. The short late
+survival segments are convenient algorithm tests, while early193 has more
+observed headroom and can change the PIV of later point pickups.
+
+Build1238 adds a typed immutable phase proposal plan, actual-card stopping and
+C++ archive selection to the working implementation; build1241 adds strict TSV
+failure coverage. This implementation remains under validation at this journal
+snapshot. No Native collision, damage, gauge, option or RNG kernel is patched.
+A phase plan changes only proposal goals/fire/focus. Independent safety recovery
+may reject it. Prefix execution observes the actual inputs; no pointer-rich world
+is serialized or restored from a41-word projection.
+
+The frozen experimental CLI ELF is
+`f4ea1fa71d1464cbd8c4066cac6f4f22af3ea61478befbd84582da5a05583e61`;
+its source manifest is
+`c01806c4b5372045a3adb6d0ec8b68fcf9412eb36fea994baaed647bf9e46eaf`,
+based on public `c4c798d` plus the recorded source files. Changing the online
+configuration layout required a complete rebuild; old private object files were
+not mixed with the new headers. Remote worker4 additionally verifies every
+file in that per-binary source manifest. Original pinned loader/library/DAT
+identities remain unchanged, separately from the new source overlay.
+
+Local1242/1243 and remote1244/1245 execute the entire existing Extra tape and a
+128-input planned card203 continuation. Each pair agrees on41 words, every spell
+audit, phase counters, score and outcome. The complete original tape still scores
+3,087,585,240. Local1246 and remote1249 naturally execute the new literal-canary
+replays; all6,889,700 row bytes agree, SHA-256
+`50e6683f0739db4fc1a5ae0f46027065e425b2bf17ba936f8d9db9bb105e5755`.
+Entire literal/planned input hashes also agree. These are cross-host execution
+and format gates using the same physics, not independent retail equivalence.
+
+### First16 phase candidates and archive selection
+
+Tasks1250–1265 run on the VPS with16 owners/quota16 cores,4GiB AS/tree,
+96GiB aggregate guard and128GiB service hard/no swap; the existing32-owner/32-core
+ceiling and host128GiB admission/96GiB abort guards remain. The batch takes at
+most69.896s per owner and827.704 cumulative owner-wall seconds,759579 branch
+updates, peak aggregate RSS2176757760 bytes and minimum host available
+420966866944 bytes. Timing includes each original-entry prefix reconstruction;
+it is not a1-vs16 scaling comparison or a claim of16-fold speedup.
+
+Each actual prefix is held literal. All candidates use cash0/movement4,
+30000ms search and1800s owner budgets. H128 means publication64/replan32;
+H256 means128/64. Card193 bands are feedback208–400, feedback16–400 and
+continuous208–400, with600 gameplay updates reserved for focused capture.
+Card203 bands are feedback208–432, feedback368–432 and continuous368–432,
+reserve0. Ordinary no-plan restarts at the same checkpoint provide controls.
+All16 use zero bombs. Every boundary below remains a partial route.
+
+| Task | Card / family | H | Actual phase outcome | Time orbs | Boundary cash |
+| --- | --- | ---: | --- | ---: | ---: |
+|1250|193 feedback208|128|timeout, no miss|11752|286821460|
+|1251|193 feedback208|256|capture, no miss|8504|284392370|
+|1252|193 feedback16|128|timeout, no miss|11017|285067780|
+|1253|193 feedback16|256|capture, no miss|4702|274819970|
+|1254|193 continuous208|128|capture, no miss|3786|274191830|
+|1255|193 continuous208|256|capture, no miss|2942|268594400|
+|1256|193 ordinary restart|128|capture, no miss|7183|291824600|
+|1257|193 ordinary restart|256|timeout, no miss|5974|281747170|
+|1258|203 feedback208|128|capture, no miss|3147|1893345190|
+|1259|203 feedback208|256|miss, open audit|unsettled|1882997270|
+|1260|203 feedback368|128|capture, no miss|3306|1894672220|
+|1261|203 feedback368|256|miss, open audit|unsettled|1880559500|
+|1262|203 continuous368|128|capture, no miss|3129|1893304870|
+|1263|203 continuous368|256|capture, no miss|1155|1882810170|
+|1264|203 ordinary restart|128|capture, no miss|3531|1895737990|
+|1265|203 ordinary restart|256|capture, no miss|3584|1896069030|
+
+The193 feedback strategy's11752 orbs exceeds the old922, but even the ordinary
+restart gets7183. A restart and changed cash proposal count are material causes;
+attribute only the matched within-profile differences to the new strategy.
+The late lower band is not a universal improvement:203's ordinary H256 control
+wins this boundary, while two targeted H256 attempts fail NMNB. Their open audits
+have no settled orb count; zero-initialized end fields are not negative pickup
+measurements. All failures and spent computation remain in the ledger.
+
+Selection1267 runs the C++ frontier independently at each named boundary, width4,
+generation0. It retains one best-cash representative per family before admitting
+a second. Exact request/checkpoint hashes bind episode, receipt, binary/source,
+DAT, actual input tape, audit and controls. They do not quantize worlds by
+cash/PIV or merge different futures. Selected193 parents are1252/1250/1256/1254;
+203 representatives are1258/1260/1265/1262. Failed1259/1261 are excluded.
+This first iteration implements parallel phase evaluation and diversity retention;
+an adaptive racing allocator and an equal-budget archive-vs-single-parent test
+remain future work. No algorithmic or hardware speedup is claimed.
+
+Tasks1268–1275 continue the four actual193 worlds with ordinary203 or the best
+explicit lower-band203 proposal from1260. They restore the known public H128,
+cash4/movement4 full-tail profile, keep original9098 and retain the actual parent
+inputs (11323/11323/11259/8836 respectively). The203 proposal is recomputed in
+each incoming world. No203 action suffix or partial score is pasted across
+parents. Complete scores and verification remain pending at this snapshot.
+
+Source economics explains the early-phase hypothesis, not its outcome:
+[stage-clear accounting](../../third_party/th08/src/Gui.cpp) uses settled orb,
+graze and point counts, difficulty/life factors and ten score additions.
+[AddScore](../../third_party/th08/src/GameManager.cpp) divides its argument by10;
+these repeated calls must not be counted as another tenfold displayed reward.
+With Extra's2x factor and no life-count penalty, the isolated clear orb term is
+2000 displayed points per extra settled orb. Early orbs can additionally affect
+later priced pickups; capture bonus loss, gauge/geometry and all subsequent
+production remain coupled. Only complete execution measures the net result.
+
+### Validation failures and charged retries
+
+1237 is a setup failure before compiler/Native startup: a Node `map(path.resolve)`
+callback accidentally received array index/array arguments; an explicit callback
+corrected it. A later local test-edit generator initially interpolated CMake
+variables as JS; it changed no source before its error and was corrected before
+test1239. A read-only VPS service listing initially lacked the user-bus variables;
+repeating with the owned user manager fixed observation, without touching other
+services. These are setup/observation errors, not gameplay findings.
+
+Focused1239 passes the strategy/archive unit but the preexisting110ms complete
+style fixture fails NMNB at9973 inputs,982 future timeouts/85 fallback inputs.
+Old frozen ELF control1240 completes11241 inputs with4 captures, but also has
+1278 timeouts/40 fallbacks. That control does not reproduce the failure and does
+not by itself exclude a regression. Explicit2000ms controls1247/1248 both exhaust
+the unchanged180s wall budget at4361/4449 inputs; their entire common4361-input
+prefix is byte-identical. Full literal canaries independently reproduce the
+selected Extra terminal. Production defaults are not changed to improve a score.
+
+Normal1266 explicitly uses H128/publication64/replan32, lead1/nominal1,
+2000ms search and held/baseline recovery for the complete fixture. It exhausts
+its old180s correctness wall at5865 inputs and is interrupted after778.705s;
+passing unrelated tests are not a full-suite pass. Configure1276 explicitly raises
+that fixture's owner/script/CTest budgets to600/660/900s without changing the
+production110ms default or Native physics. Normal1277 reruns the entire62-test
+suite. Its complete style fixture and new phase/profile contracts pass in372.46s; the remaining normal suite is pending here. No failed test is removed or reclassified
+as success. Per-task receipts retain all elapsed time, memory and failure costs.
+
+At1276, the standing64-task extension1280→1344 is recorded before1281. The ledger
+never resets; local four-driver and all host/process/tree/remote memory limits
+are unchanged. This reserve covers full compositions, verification and further
+source-guided attempts under the owner's continuing Extra-first/7B request.
+
+Documentation1278/1279 expose stale core-test count declarations in STATUS/VALIDATION; both are corrected from36 to38, preserving historical timings. Retry1280 passes. The new explicit phase fixture executes2100 planned inputs, closes at the actual card2 boundary without replay export, preserves literal prefixes and passes exact fresh execution.
+
+### Complete Extra outcomes and selected3.165B progress
+
+All eight first compositions finish NMNB, with zero bombs. These are complete
+original9098 executions; each lower203 proposal is recomputed in its own world.
+
+| Task | Actual193 parent |203 proposal | Complete score | Captures | Final points / PIV |
+| --- | ---: | --- | ---: | ---: | --- |
+|1268|1252|ordinary|3024828310|13/14|1013 /904580|
+|1269|1252|lower368|3013723650|13/14|1013 /902110|
+|1270|1250|ordinary|2971847080|13/14|965 /929940|
+|1271|1250|lower368|2933544980|13/14|965 /916860|
+|1272|1256|ordinary|3164667710|14/14|1033 /927870|
+|1273|1256|lower368|3142354890|14/14|1033 /918500|
+|1274|1254|ordinary|3101728910|14/14|1024 /916520|
+|1275|1254|lower368|3102325380|14/14|1024 /916660|
+
+Only193 times out in the13/14 routes. The largest local orb result1250 loses
+192820630 complete points to the ordinary-restart parent1256, despite its higher
+final PIV. Even the locally profitable phase's added orb income does not survive
+unchanged across the later route. Here the highest local-cash parent also wins
+complete score: diversity supplies negative evidence, not a demonstrated win over
+greedy selection. Lower203 loses on three parents and adds only596470 on1254.
+The direct comparison is confounded by the declared193 cash0 checkpoint restart
+and restored cash4 suffix; it is not a pure runtime/algorithm speedup.
+
+Selected1272 improves the old overall Extra record by77082470, leaving13793120
+to the all-shot reference. It retains786's actual first7723 inputs, then1256's
+recomputed prefix through11259, then plans the actual remaining Extra. It executes
+73085 inputs,1115543 branch/24 proposal updates,5874 economic attempts/632 adoptions;
+owner wall1090.666s includes prefix reconstruction (reported internal1090.51s).
+The other seven owner walls are1030.450/1032.639/1037.412/1032.726/1073.035/
+1084.097/1075.196s in task order excluding1272. All earlier setup/probe/selection
+and portfolio costs remain additional. The full batch's peak aggregate RSS is
+1092681728 bytes, minimum host available255034454016 bytes, with no resource abort.
+
+Fresh1290 and natural1291 pass all eight execution/name/outcome checks. The new
+30568-byte selected replay is `extra-scarlet-native-nmnb-3164667710-seed9098.rpy`,
+SHA-256 `3a985a99ef9d0e08ed405be65b3dfe4ab995cfe383775d02105225b781cffb33`;
+actions `205903a24c890347dd813ad774efcaf1b9d6b486ee6e38b76a325d622a28c108`.
+Its31st progress-index entry preserves the original receipt and pinned runtime
+base; the experimental proposal ELF/source overlay remains separately identified
+above. All30 preceding selected bytes and272 archive payloads remain unchanged.
+The above-reference retail gate remains closed; no Wine playback is claimed.
+Verifier1289 first rejects a stale1280 cap before Native launch, despite extension
+1276; that setup failure is charged, its created directory preserved under a new
+name, and the helper is corrected to1344 before fresh1290/natural1291.
+
+### Source-guided reserve and late-survival followups
+
+Eight more193 attempts1281–1288 retain786's exact7723 inputs and H128/cash0/move4.
+They test whether a longer declared capture reserve can recover the bonus without
+surrendering all orb farming. These remain partial results, all NMNB/zero bombs.
+
+| Task | Band top | Reserve / capture form |193 result | Orbs | Boundary cash / exit gauge |
+| --- | ---: | --- | --- | ---: | --- |
+|1281|208|0 /youkai|timeout|12381|288700950 /10000|
+|1282|208|300 /youkai|timeout|12058|287700430 /10000|
+|1283|208|900 /youkai|capture|10237|288891310 /10000|
+|1284|208|900 /human|timeout|9695|281600200 /−10000|
+|1285|208|1200 /youkai|capture|9235|286157880 /10000|
+|1286|208|1200 /human|timeout|8660|278574970 /−10000|
+|1287|16|900 /youkai|capture|9905|288199740 /10000|
+|1288|16|1200 /youkai|capture|8809|285181240 /10000|
+
+900 focused updates capture10237 orbs, versus600's11752/timeout. More reserve is
+not monotonically better;1200 gets fewer orbs and a later actual kill than900
+at top208. Human capture proposals time out here and leave the opposite gauge.
+No HP, option target, gauge or RNG is injected to obtain those outcomes.
+
+The verified1272's actual last205 begins67117, closes72097 and earns5006 orbs.
+Tasks1294–1306 retain those67117 inputs and test ten bands/fire variants, plus
+ordinary cash0 H128/H256 and cash4 H128 restart controls, through the complete
+terminal. Bands end at432, tops16/208/304/368/400, feedback/continuous fire,
+reserve0. All use the same frozen CLI, original9098, declared30s search/1800s
+owner budgets and actual carried world. Results remain pending at this snapshot.
+
+A further source observation matters to future value proposals:
+[CollectTimeOrb](../../third_party/th08/src/ItemManager.cpp) in ordinary mode
+prices an orb from `10 * floor(total_point_items / 2)`, floored at100, with a
+10000 cap branch once stage points reach2000; the other mode pays100. Thus point
+count affects future orb cash as well as immediate point pickup value. Conditional
+ordinary-mode prices at1033 versus965 points are5160 versus4820 displayed points,
+before the separate clear term. This is another reason cash/PIV alone cannot
+prove dominance of the11752-orb parent. Actual mode, future production, capture
+bonus and collection timing must still be executed; this formula is not a fitted
+full-score predictor or an assumed guaranteed number of future orbs.
+
+Normal1277 finishes60/62 in885.82s. The two failures are the existing bomb fixture
+(after the regenerated incumbent,29 future timeouts/26 fallback inputs at4775)
+and the legacy ID203 repair's600s search budget. The legacy child/repair ELFs
+have unchanged October26 timestamps, hashes `a26802f1706d61354db66cc8e0d3b45655f9de4729efd5f8a4b68677e05ef188`/
+`222b845ee3186d2bbcaa76b5e9af37cb1f061327d2835b1dac8c6c8e574c9b9e`;
+new phase code did not rebuild them. Original raw failed fixtures are preserved
+before retry. Configure1292 gives only the bomb correctness fixture the same
+explicit H128/2000ms recovery profile and600/660/900s owner/script/CTest budgets;
+bomb score experiments remain paused. Retry1293 passes that complete bomb,
+capture-loss, fresh/natural and negative-constraint contract in29.45s. It also
+reruns the independent legacy case serially with its original600s search budget;
+that result is pending here. The already-passed setup tape/audit/result are
+hash-bound rather than rerun; no passing test or failed search is relabeled.
+
+### Last205 search results and the first all-shot-reference pass
+
+All13 geometry/control continuations1294–1306 complete NMNB14/14. The ordinary
+H128/cash0/movement4 restart1304 wins at3170906200,5404 orbs,76.281s owner wall;
+ordinary cash4 H128 gets3166605050,5138 orbs,109.180s. Every targeted geometry
+scores lower: feedback/continuous at top16 give3158718700/3162326000; top208
+3150488400/3147087680; top3043153304500/3153253120; top3683159887020/3149619160;
+top4003152744280/3152141320. Ordinary cash0 H256 gets3152026200. All actual bombs
+remain zero. Lower geometry alone is again not an Extra improvement.
+
+Fresh1323/natural1324 verify1304. Its30475-byte replay SHA-256 is
+`ddb95beb00e8765824acda39018183f7c8391b4e2c67af98ce57ba741611ec12`, actions
+`f13a8b4fa780fe301caf07f4686e610c4022c53375cc531cdb66af0c1f33faf3`.
+This selected32nd progress record raises the complete score6238490 while preserving
+1272's actual67117-input last205 entry; its body prefix and seed remain unchanged.
+
+The next16 continuations1307–1322 keep that same actual entry. They compare
+H64/128/256 and0..3 cash-ranked movement alternatives, plus policy horizon48 and
+beam768/1536. H64 uses the supported publication64/replan32, not the previously
+rejected publication32. Proposal budget60ms, search30000ms, owner1800s and all
+additional work remain explicit. Actual results:
+
+| Task | H / movement / beam / policy horizon | Outcome | Complete score | Owner seconds |
+| --- | --- | --- | ---: | ---: |
+|1307|64 /0 /384 /24|NMNB14/14|3154315980|23.197|
+|1308|64 /1 /384 /24|NMNB14/14|3165292520|29.784|
+|1309|64 /2 /384 /24|NMNB14/14|3154035100|36.051|
+|1310|64 /3 /384 /24|miss, incomplete|not a score result|27.546|
+|1311|128 /0 /384 /24|NMNB14/14|3153343000|33.871|
+|1312|128 /1 /384 /24|NMNB14/14|3160088800|43.688|
+|1313|128 /2 /384 /24|NMNB14/14|3166013260|56.408|
+|1314|128 /3 /384 /24|NMNB14/14|3179193860|66.279|
+|1315|256 /0 /384 /24|NMNB14/14|3147016180|31.636|
+|1316|256 /1 /384 /24|NMNB14/14|3159249800|44.233|
+|1317|256 /2 /384 /24|NMNB14/14|3143321060|52.329|
+|1318|256 /3 /384 /24|NMNB14/14|3156571980|63.150|
+|1319|128 /0 /768 /48|NMNB14/14|3152475700|440.808|
+|1320|128 /4 /768 /48|NMNB14/14|3165300120|771.938|
+|1321|128 /0 /1536 /48|NMNB14/14|3133808320|682.977|
+|1322|128 /4 /1536 /48|NMNB14/14|3144460700|1210.060|
+
+All16 use zero bombs, including the failed owner. Larger beam/horizon combinations
+are slower and worse here; the unchanged60ms proposal limit is part of their
+configuration, not evidence that an arbitrarily deep planner was fully searched.
+1314 admits up/down/left extra cash comparisons, omitting the fourth rightward
+pulse. Ordinary policy rightward movement remains legal. This reduces local greedy
+movement comparisons and increases205 orbs5404→5890, complete score by8287660.
+It does not establish that disabling rightward movement globally is useful.
+
+1314 is the first complete Native result above the all-shot Extra reference:
+3179193860−3178460830=733030, NMNB14/14,73085 inputs. Fresh1329/natural1330 pass
+all eight checks. Its30431-byte selected replay SHA-256 is
+`2dfaddbd0ea623f6838fc6b0dfc07a07d7660594b9e6bd9bbfeb2db4a8e625d8`, actions
+`d126950d5d97b972bde595b71c7d09fc98552a93c7da7fcab30f31ff5c08ed84`.
+The33rd progress entry preserves every earlier selected byte. Native passing
+this threshold qualifies retail replay playback; it is not retail equivalence.
+The official [record registry](https://maribelhearn.com/wr?hl=en-us#IN) search
+result retrieved October28, crawled the preceding day, still lists Sakurei's
+3178460830 Extra and IwanaM's7053332460 Lunatic. A direct page open timed out;
+the declared October27 benchmark identities are unchanged.
+
+Four further actual193 worlds1325–1328 continue1281/1283/1284/1287 through the
+actual204 close with the known H128/cash4/movement4 policy. They will require
+actual complete205 continuations; their partial scores are not selected records.
+This tests the longer focused-capture reserve and opposite-gauge entry before
+choosing the final qualified retail replay. They remain pending at this snapshot.
+
+### Completed validation recovery
+
+The serial1293 owner is resource-aborted after636.656s when host available falls
+to8303906816 bytes, below8GiB. It is not an OOM or gameplay verdict and cannot
+certify the full test. Its already-finished ID203 child search had completed91
+candidates in371.949s,5492 frames; this is preserved only as an input proposal for
+fresh recovery, with all original costs charged. The first two failing fixture
+raw directories were saved before retry; initial1239's shared build fixture was
+overwritten by subsequent CTest setup, so its raw tape is unavailable. Its guard
+receipt/stdout and explicitly recorded failure measurements remain; missing raw
+history is not reconstructed or relabeled as a retained original artifact.
+
+Recovery1331 reruns both complete test scripts in a new directory and owner.
+It uses existing `REPAIR_RESULT_DIR` support for the exact complete child artifact,
+requires unchanged child/repair hashes, then freshly executes its selected inputs
+and all remaining source cases. It does not accept the aborted owner as a gameplay
+certificate. Original-entry setup tape/audit/result hashes stay bound to the
+already-passed1277 fixture. Both tests pass: bomb31.75s, full real-data595.40s,
+627.16s CTest (627.204s guarded wall), peak RSS149471232 bytes, minimum host
+available10841767936, no abort. Thus the normal1277's60 passing current cases and
+the two explicit nonaborted recovery cases cover all62 current tests on unchanged
+binaries. This is not a claim of one fresh all62 run: the legacy repair search was
+reused with fresh Native execution, and every failed/interrupted owner stays charged.
+
 ## Source accounting and operating record
 
 [Point collection](../../third_party/th08/src/ItemManager.cpp) doubles a priced

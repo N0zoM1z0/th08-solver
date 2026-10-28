@@ -141,6 +141,30 @@ offline edit/replan/complete-score loop without requiring a serialized checkpoin
 or reusing one future across different actions. Final full-entry fresh execution
 and natural replay checks still apply.
 
+Offline `--phase-plan` supplies immutable proposal strategies keyed by actual
+stage and one-based card. Each entry defines a source-pixel row band, a reserve
+in gameplay updates, feedback/continuous fire and human/youkai capture form.
+It requires attack pacing. Only the proposal goal and fire/focus bits change;
+Native input sampling, damage, option lifecycles, gauge and RNG remain source
+owned. Ordinary safety recovery uses its independent policy without the plan.
+Reports separate actual targeted inputs from newly planned inputs after the
+literal prefix, and record actual fire/focus use and signed entry/exit gauge.
+An absent plan and explicit `none` preserve the original path.
+
+`--stop-after-card` stops after the actual audit closes that card. Its
+`phase_boundary` outcome is incomplete for route acceptance and never exports
+a replay. Resume by reexecuting its exact actions from the same original entry;
+do not splice another world's suffix or treat the41-word projection as a snapshot.
+
+`th08_phase_frontier` selects a bounded archive from completed NMNB segments.
+It retains one representative per declared strategy family before admitting a
+second, rotating admission across generations when capacity is smaller than the
+number of families. It deduplicates only identical request/checkpoint identities;
+score/PIV dominance never establishes world equivalence. The campaign owner must
+hash-bind the episode, source/binary/DAT/receipt, exact actions and controls.
+The selector validates evidence structure, but cannot certify a world or restore
+Native pointers. Phase selection and replayed prefixes cost additional work.
+
 ### Source economics and capture boundaries
 
 The restored [Spellcard.cpp](../third_party/th08/src/Spellcard.cpp) distinguishes

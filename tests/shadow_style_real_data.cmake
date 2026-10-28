@@ -25,6 +25,10 @@ if(NOT rejected STREQUAL "1" OR NOT error MATCHES "native_prefix_requires")
   message(FATAL_ERROR "Unpaired checkpoint controls were accepted: ${rejected} ${error}")
 endif()
 foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-proposals;5"
+                          "--phase-plan;8:0:208:7:600:feedback:youkai"
+                          "--phase-plan;0:2:208:7:600:feedback:youkai"
+                          "--stop-after-card;257"
+                          "--stop-after-card;2;--stop-after-card;2"
                           "--spell-horizon;4" "--spell-horizon;96"
                           "--spell-horizon;64;--lead-updates;32"
                           "--spell-horizon;128;--spell-horizon;128"
@@ -47,10 +51,15 @@ foreach(controls IN ITEMS "--lead-updates;0" "--verify-horizon;96" "--economic-p
     message(FATAL_ERROR "Invalid offline prefix/search schedule was accepted: ${controls} ${error}")
   endif()
 endforeach()
-execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 70000 0 180
+# This fixture verifies complete execution, not the 110ms default's performance.
+# Use the declared offline recovery profile so host scheduling does not turn a
+# timed-out proposal into a missing incumbent for all dependent regressions.
+execute_process(COMMAND "${SOLVER}" "${DAT}" "${WORK}" 0 3 1 23035 score 70000 0 600
   --collect-items 1 --aim-boss 1 --drop-target 1 --economic-proposals 4 --require-all-captures 1 --target-score 1
+  --verify-horizon 128 --publish-horizon 64 --lead-updates 1 --replan-updates 32
+  --nominal-warm-updates 1 --search-budget-ms 2000 --held-recovery 1 --baseline-recovery 1
   --checkpoint-updates 128
-  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 200)
+  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 660)
 if(NOT result STREQUAL "0")
   message(FATAL_ERROR "Complete style scene failed: ${result} ${stdout} ${stderr}")
 endif()
@@ -184,6 +193,74 @@ foreach(profile_mode IN ITEMS default disabled active)
     if(NOT profile_fresh_result STREQUAL "0" OR profile_projection STREQUAL "" OR
        NOT profile_projection STREQUAL CMAKE_MATCH_1)
       message(FATAL_ERROR "Profile change failed fresh exact Native execution: ${profile_fresh_result} ${profile_fresh_stdout} ${profile_fresh_stderr} ${profile_fresh}")
+    endif()
+  endif()
+endforeach()
+# A phase checkpoint is an executed boundary, never a complete replay. The
+# omitted/empty plan must preserve literal inputs, while an active proposal must
+# regenerate the world after the same original prefix and pass a fresh execution.
+string(REGEX MATCH "\"card\":2,[^}]*\"end_update\":([0-9]+)" phase_end "${profile_source_audit}")
+if(NOT phase_end)
+  message(FATAL_ERROR "Missing first-spell end for phase checkpoint regression")
+endif()
+set(phase_literal_end "${CMAKE_MATCH_1}")
+math(EXPR phase_limit "${phase_literal_end} + 5000")
+foreach(phase_mode IN ITEMS default empty active)
+  set(phase_options)
+  set(phase_prefix "${phase_literal_end}")
+  if(phase_mode STREQUAL "empty")
+    set(phase_options --phase-plan none)
+  elseif(phase_mode STREQUAL "active")
+    set(phase_options --phase-plan 0:2:208:7:600:feedback:youkai)
+    set(phase_prefix "${profile_prefix}")
+  endif()
+  set(phase_run "${WORK}/phase-${phase_mode}")
+  execute_process(COMMAND "${SOLVER}" "${DAT}" "${phase_run}" 0 3 1 23035 score ${phase_limit} 0 180
+    --prefix-actions "${WORK}/plan.actions" --prefix-updates ${phase_prefix}
+    --verify-horizon 128 --publish-horizon 64 --lead-updates 1 --replan-updates 32
+    --nominal-warm-updates 1 --search-budget-ms 2000 --held-recovery 1 --baseline-recovery 1
+    --attack-pacing 1 --allow-bombs 0 --require-all-captures 0 --stop-after-card 2 ${phase_options}
+    RESULT_VARIABLE phase_result OUTPUT_VARIABLE phase_stdout ERROR_VARIABLE phase_stderr TIMEOUT 90)
+  file(READ "${phase_run}/result.json" phase_report)
+  file(STRINGS "${phase_run}/plan.actions" phase_inputs)
+  list(LENGTH phase_inputs phase_count)
+  list(SUBLIST phase_inputs 0 ${phase_prefix} phase_actual_prefix)
+  list(SUBLIST prefix_inputs 0 ${phase_prefix} phase_expected_prefix)
+  if(NOT phase_result STREQUAL "2" OR NOT phase_actual_prefix STREQUAL phase_expected_prefix OR
+     NOT phase_report MATCHES "\"outcome\":\"phase_boundary\"" OR
+     NOT phase_report MATCHES "\"no_miss\":true," OR
+     NOT phase_report MATCHES "\"bombs_used\":0," OR
+     NOT phase_report MATCHES "\"objective_met\":false," OR
+     NOT phase_report MATCHES "\"replay_exported\":false" OR EXISTS "${phase_run}/native.rpy")
+    message(FATAL_ERROR "Phase checkpoint changed prefix/constraints or certified a replay: ${phase_result} ${phase_stdout} ${phase_stderr} ${phase_report}")
+  endif()
+  if(phase_mode STREQUAL "default")
+    file(SHA256 "${phase_run}/plan.actions" phase_default_hash)
+    string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" phase_default_projection "${phase_report}")
+    set(phase_default_projection "${CMAKE_MATCH_1}")
+  elseif(phase_mode STREQUAL "empty")
+    file(SHA256 "${phase_run}/plan.actions" phase_empty_hash)
+    string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" phase_empty_projection "${phase_report}")
+    if(NOT phase_empty_hash STREQUAL phase_default_hash OR
+       phase_default_projection STREQUAL "" OR NOT phase_default_projection STREQUAL CMAKE_MATCH_1)
+      message(FATAL_ERROR "Explicit empty phase plan changed the default execution")
+    endif()
+  else()
+    if(NOT phase_report MATCHES "\"planned_inputs\":[1-9][0-9]*," OR
+       NOT phase_report MATCHES "\"actual_inputs\":[1-9][0-9]*,")
+      message(FATAL_ERROR "Targeted phase proposal was not exercised: ${phase_report}")
+    endif()
+    execute_process(COMMAND "${FOLLOWER}" --dat "${DAT}" --actions "${phase_run}/plan.actions"
+      --output "${phase_run}/fresh.json" --stage 1 --difficulty 3 --shot 1 --seed 23035
+      --story 0 --input-profile sampled-gameplay --frames ${phase_count}
+      RESULT_VARIABLE phase_fresh_result OUTPUT_VARIABLE phase_fresh_stdout ERROR_VARIABLE phase_fresh_stderr TIMEOUT 60)
+    file(READ "${phase_run}/fresh.json" phase_fresh)
+    string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" phase_projection "${phase_report}")
+    set(phase_projection "${CMAKE_MATCH_1}")
+    string(REGEX MATCH "\"terminal_projection\":(\\[[^]]+\\])" phase_fresh_projection "${phase_fresh}")
+    if(NOT phase_fresh_result STREQUAL "0" OR phase_projection STREQUAL "" OR
+       NOT phase_projection STREQUAL CMAKE_MATCH_1)
+      message(FATAL_ERROR "Phase boundary failed fresh exact execution: ${phase_fresh_result} ${phase_fresh_stdout} ${phase_fresh_stderr} ${phase_fresh}")
     endif()
   endif()
 endforeach()

@@ -1,13 +1,22 @@
 # Current handoff status
 
-The owner's latest October27 instruction resumes Native exploration after the
-old goal was cleared and its remote services stopped. The requested complete
-Lunatic6.5B milestone is **achieved:6,512,532,100**, using stage/spell strategy composition.
+The owner's latest October28 steering tests parallel checkpoint archives and
+diverse stage/spell strategies on **Extra first**, then targets **7B complete
+Lunatic**, tracked in [issue12](https://github.com/N0zoM1z0/th08-solver/issues/12).
+The preceding complete Lunatic6.5B milestone is **achieved:6,512,532,100**, using stage/spell strategy composition.
 Optimize phases at explicit checkpoints of the fixed original32796 episode,
 preserve the carried gameplay world/RNG and verify the complete combined route.
+Extra uses its existing original9098 episode; retain No Miss/No Bomb with optional
+captures. Partial phase gains remain selection evidence until complete verification.
+The all-shot retail gates remain3,178,460,830/7,053,332,460;7B is a Native milestone.
 The [experiment journal](experiments/2026-10-27-vps.md) preserves the intervening
 completed/failed/cancelled tasks; resume with new IDs rather than restarting
 cancelled owners. The new verified6,512,532,100 composition record is detailed below.
+
+The new phase-plan/archive implementation is covered by normal1277 (60/62)
+and nonaborted recovery1331 (2/2), using unchanged binaries and an explicitly
+hash-bound reused legacy repair search with fresh execution. Earlier failures
+and the host-memory abort remain charged in the phase journal.
 
 Updated 2026-10-28. Public scoring controls include the optional timeout-farm,
 drop-follow, revision2 parent-chain, bounded gauge preparation, upper stream
@@ -49,11 +58,13 @@ separate; new Scarlet entries require new original retail seed receipts.
 
 ### Scarlet priority, new retail receipts and4GiB resources
 
-Current verified Scarlet bests are **Extra3,087,585,240,NMNB14/14**, task786,
+Current verified Scarlet bests are **Extra3,179,193,860,NMNB14/14**, task1314,
 and **complete Lunatic6,512,532,100,NMNB36/37**, task1225 (10 times out).
-Fresh832/1229 and natural833/1230 pass exact41-word terminal, score, outcomes,
+Fresh1329/1229 and natural1330/1230 pass exact41-word terminal, score, outcomes,
 zero-miss/bomb and name checks. Scarlet now owns both overall Native records.
-The6.5B milestone is achieved; both all-shot human references remain above our scores. Selected replays are now published;
+The6.5B milestone is achieved. Extra exceeds its all-shot reference by733,030
+in Native and qualifies for retail replay validation; playback remains pending.
+The story reference remains above our score. Selected replays are now published;
 [Validation](VALIDATION.md#scarlet-team-verified-native-baselines) owns hashes.
 
 The owner's later October27 request publishes all17 selected verified improvements
@@ -64,7 +75,7 @@ retain exact SHA-256 values in `archive/relocations.tsv`; frozen JSON and tapes
 are not rewritten. [The evidence index](../reports/native/README.md) and
 `replays/progress.tsv` bind published scores, constraints, tasks and hashes.
 Earlier prose describing those17 selections as local-only records the state
-before this explicit publication request. Thirteen subsequent verified overall
+before this explicit publication request. Sixteen subsequent verified overall
 records are also published; future retention requires an overall project record,
 as the owner later requested. Other experiment artifacts stay local.
 
@@ -77,7 +88,7 @@ measurements. Local normal803 was resource-aborted below8GiB at1032.186s;
 retry831 passes60/60 in731.053s with two independent CTests, unchanged binaries,
 peak tree RSS1108312064 and minimum host available18922889216 bytes.
 The four later record exports pass local checks829/830,832/833,843/844 and
-845/846. Current gaps are90,875,590 Extra and540,800,360 to the global story reference.
+845/846. Extra exceeds its reference by733,030; the story gap remains540,800,360.
 The story exceeds6.5B by12,532,100. The5.784B record retains task794's
 first51253 actual inputs through47, then uses H128/publication64/replan32/cash4/
 movement4. Task930 retains its first142675 actual inputs to171, then switches
@@ -639,7 +650,7 @@ Later sections preserve chronological/component evidence, not a second active pl
 | --- | --- |
 | Workspace / publication | `/home/yann/yann/touhou/th08-solver`, direct `main`; fetch first and preserve others' work. English `gpt-6.1-sol-max: ...` commits and push tested progress |
 | Concurrency | Local: at most4 owned solver/test/probe drivers including verification; build with `--parallel 2`. The owner's later VPS request separately authorizes up to32 remote Native owners, CPU quota32 cores, low priority. Fork children belong to their owner; do not add extra uncounted test drivers |
-| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1233/1280 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280 were recorded before use; the latest was recorded at1210. Failures, cancellations and verification remain charged; never reset or reuse IDs |
+| Campaign ledger | `reports/local/shadow-runtime-v1/tasks.tsv`, **1332/1344 allocated task IDs**, including build/setup failures and verification. Successive64-task extensions640→704→768→832→896→960→1024→1088→1152→1216→1280→1344 were recorded before use; the latest was recorded at1276 before1281. Failures, cancellations and verification remain charged; never reset or reuse IDs |
 | Extensions | Further cumulative windows are owner-authorized under the same memory bounds; record an extension before using it. The later explicit VPS authorization raises remote concurrency only |
 | Memory | The owner raises the entire phase to **4 GiB address space per process and 4 GiB summed RSS per owned tree** on October27, effective for new owners from665. Already-running663 retains its frozen2GiB limits. Admit only at12GiB host MemAvailable; abort below8GiB or above the tree limit. Concurrency remains4; resource aborts cannot certify |
 | Episode | Preserve Magic Extra46997/story1805. Scarlet Extra9098/story32796 are the first valid owned retail seeds in `retail-seed-episodes-20261027/scarlet-extra-entry-v6/` and `scarlet-story-4a-finalb-entry-v1/`, captured before Native search. Never reroll after seeing score. Regression fixtures/historical seeds stay separate |
@@ -651,8 +662,8 @@ Later sections preserve chronological/component evidence, not a second active pl
 | Verification | Release timing; Native CPU excludes I/O. Relevant tests plus normal CTest before code publication. Freeze binaries during CTest; never relink concurrently. Documentation-only cleanup reruns the documentation test |
 | Artifacts | New JSON/CSV/actions/replays stay in ignored `reports/local/`; publish only explicitly selected progress replays with exact provenance. Preparations, raw DAT/EXE/assets, original GIF bundle/generator and videos stay local |
 
-The active local launcher is
-`reports/local/global-score-20261027/run-guarded.cjs`, using
+The active Scarlet local launcher is
+`reports/local/global-score-20261027/run-scarlet-guarded.cjs`, using
 `reports/local/retail-score-offline-20261026/memory-guard.cjs` and the optional-
 capture checker `reports/local/score-continue-20261027/verify-no-bomb.cjs`. Use the current
 guarded driver and fresh output names; do not use the older interrupted queue.
@@ -1896,7 +1907,9 @@ references3,178,460,830 Extra and7,053,332,460 Lunatic. Reuse the fixed episodes
 Current trials require No Miss and No Bomb, allow missing captures, and accept
 only higher complete score. Restore all captures explicitly when requested.
 Keep independent options for later ablations; the owner has not requested an
-ablation matrix now. The following are proposals, not verified gains.
+ablation matrix now. The following are historical proposals from before the
+Scarlet6.512B result, not the active targets or verified gains; current work is
+near the top.
 
 | Current problem / evidence | Next bounded investigation | Acceptance |
 | --- | --- | --- |
@@ -1928,8 +1941,8 @@ or active episode. Preserve useful history without using it as the next command.
 
 ## Validation and preserved historical work
 
-Current public scoring code passes **59/59 in1191.44s**; see the current local
-test inventory above and [Validation](VALIDATION.md#selected-native-progress-replays).
+An earlier public scoring checkpoint passes **59/59 in1191.44s**; see the current
+local test inventory above and [Validation](VALIDATION.md#selected-native-progress-replays).
 The remaining paragraphs retain earlier component checkpoints, not the current
 test count or active campaign limits.
 
@@ -1956,7 +1969,7 @@ unchanged; no new reports, tapes, videos or experiment replays are published.
 
 At `667597f`, Release Native/DAT CTest passes 56/56 in 889.37 s and core 36/36
 in 8.47 s. The 56-test local configuration includes two private retained-trace
-regressions; the then-normal DAT build had54. There are 36 core CTests without private
+regressions; the then-normal DAT build had54. There are 38 core CTests without private
 data, plus two optional pinned-source checks. Fresh handoff verification is
 recorded in [Validation](VALIDATION.md#selected-extra-score-replay).
 The October26 cleanup reruns both suites: **56/56 in933.85s**, **36/36 in8.49s**,

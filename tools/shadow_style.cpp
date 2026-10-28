@@ -403,7 +403,7 @@ int run(int argc, char **argv) {
             "[--boss-collect 0|1] [--precollect 0|1] [--survival-bias VALUE] "
             "[--survival-flow 0|1] [--attack-pacing 0|1] [--farm-to-timeout 0|1] "
             "[--upper-flow 0|1] [--spell-horizon 0|64|128|256|512|1024|2048] "
-            "[--farm-charge-fire 0|1] "
+            "[--farm-charge-fire 0|1] [--phase-plan none|ROWS] [--stop-after-card 0..256] "
             "[--attack-focus-bias VALUE] [--baseline-recovery 0|1] "
             "[--search-budget-ms VALUE] [--lead-updates 1..32] "
             "[--nominal-warm-updates 0|UPDATES] [--replan-updates UPDATES] "
@@ -474,13 +474,24 @@ int run(int argc, char **argv) {
     unsigned policy_horizon = 24, policy_beam = 192;
     bool policy_horizon_override = false, policy_beam_override = false;
     bool verify_captures = false, verify_captures_override = false;
+    std::string phase_text;
+    bool phase_override = false, stop_override = false;
+    unsigned stop_card = 0;
     unsigned economic_proposals = 0;
     bool economic_override = false;
     unsigned economic_movement = 0;
     bool movement_override = false;
     for (int i = 11; i < argc; i += 2) {
         const std::string key = argv[i];
-        if (key == "--collect-items" && !collection_override) {
+        if (key == "--phase-plan" && !phase_override) {
+            phase_text = argv[i + 1];
+            profile.phase_plan =
+                std::make_shared<const th08::phase::Plan>(th08::phase::parse(phase_text));
+            phase_override = true;
+        } else if (key == "--stop-after-card" && !stop_override) {
+            stop_card = number(argv[i + 1], 256);
+            stop_override = true;
+        } else if (key == "--collect-items" && !collection_override) {
             profile.scoring_collection = number(argv[i + 1], 1);
             collection_override = true;
         } else if (key == "--aim-boss" && !aim_override) {
@@ -714,7 +725,11 @@ int run(int argc, char **argv) {
     profile.spawn_guard = 16;
     profile.reach_filter = profile.hard_phantoms = profile.motion_envelope = true;
     o::Policy policy(profile);
-    o::Policy safety(o::with_style(recovery_style, profile));
+    auto recovery_profile = o::with_style(recovery_style, profile);
+    // Recovery retains its ordinary movement/form proposal. The scored phase
+    // schedule is advisory and cannot remove this independently checked escape.
+    recovery_profile.phase_plan.reset();
+    o::Policy safety(recovery_profile);
     fs::create_directories(output.parent_path());
     if (!fs::create_directory(output))
         throw std::runtime_error("native_style_output_already_exists");
@@ -743,6 +758,12 @@ int run(int argc, char **argv) {
     int last_horizontal = 0, last_vertical = 0;
     std::uint64_t owner_native_ns = 0, owner_io_ns = 0;
     std::string outcome = "budget";
+    struct PhaseWork {
+        std::uint64_t actual_inputs = 0, planned_inputs = 0, fire_inputs = 0, focus_inputs = 0;
+        int entry_gauge = 0, exit_gauge = 0;
+    };
+    std::vector<PhaseWork> phase_work(profile.phase_plan ? profile.phase_plan->entries().size()
+                                                         : 0);
     bool profile_initialized = false, previous_spell_origin = false;
     std::uint64_t profile_switches = 0, discarded_pending_inputs = 0;
     std::uint64_t spell_owner_inputs = 0, road_owner_inputs = 0;
@@ -821,6 +842,25 @@ int run(int argc, char **argv) {
             if (session.state().dialogue_present)
                 input = s::dialogue_input(input, actual.sequence + 1);
         }
+        // Count only actually executed owner inputs. Prefix inputs are retained
+        // observations, not decisions made by this new strategy schedule.
+        int phase_index = -1;
+        if (profile.phase_plan && session.state().spell_active) {
+            const auto &entries = profile.phase_plan->entries();
+            for (std::size_t i = 0; i < entries.size(); ++i)
+                if (entries[i].stage == session.state().stage &&
+                    entries[i].card == session.state().spell + 1)
+                    phase_index = int(i);
+            if (phase_index >= 0) {
+                auto &m = phase_work[std::size_t(phase_index)];
+                if (!m.actual_inputs)
+                    m.entry_gauge = static_cast<std::int32_t>(actual.state[s::Field::Gauge]);
+                ++m.actual_inputs;
+                m.planned_inputs += update >= prefix_updates;
+                m.fire_inputs += bool(input & 1u);
+                m.focus_inputs += bool(input & 4u);
+            }
+        }
         const int stage_before = int(actual.state[s::Field::Stage]);
         const auto step_begin = Clock::now();
         const auto io_before = session.file_io_time_ns();
@@ -858,6 +898,9 @@ int run(int argc, char **argv) {
         if (update >= prefix_updates)
             (spell_origin ? spell_owner_inputs : road_owner_inputs)++;
         h::score_audit_observe();
+        if (phase_index >= 0)
+            phase_work[std::size_t(phase_index)].exit_gauge =
+                static_cast<std::int32_t>(actual.state[s::Field::Gauge]);
         // Store the actual consumed input after receipt agreement, including
         // any later-declared failing input. A flushed count is not a certificate.
         checkpoint.append(input);
@@ -869,6 +912,18 @@ int run(int argc, char **argv) {
         if (verify_captures && s::capture_goal_failed(config.story, stage_before, state)) {
             outcome = "capture_failure";
             break;
+        }
+        if (stop_card) {
+            const auto &spells = h::score_audit().spells;
+            const auto stop = std::find_if(spells.begin(), spells.end(), [&](const auto &r) {
+                return r.spell + 1 == int(stop_card) && r.outcome != h::SpellAuditOutcome::Open;
+            });
+            if (stop != spells.end()) {
+                outcome = update + 1 < prefix_updates ? "prefix_terminal_before_requested_boundary"
+                          : stop->outcome == h::SpellAuditOutcome::Abandoned ? "phase_abandoned"
+                                                                             : "phase_boundary";
+                break;
+            }
         }
         if (s::stage_terminal(config.story, state)) {
             outcome = update + 1 < prefix_updates ? "prefix_terminal_before_requested_boundary"
@@ -906,7 +961,27 @@ int run(int argc, char **argv) {
             throw std::runtime_error("native_style_writer_failed");
     }
     std::ofstream report("result.json");
-    report << "{\"schema_version\":1,\"evidence\":\"synchronous-native-style-experiment\","
+    report << "{\"stop_after_card\":" << stop_card << ",\"phase_strategies\":[";
+    if (profile.phase_plan) {
+        const auto &entries = profile.phase_plan->entries();
+        for (std::size_t i = 0; i < entries.size(); ++i) {
+            const auto &p = entries[i];
+            const auto &m = phase_work[i];
+            report << (i ? "," : "") << "{\"stage\":" << p.stage << ",\"card\":" << p.card
+                   << ",\"top\":" << p.top << ",\"rows\":" << p.rows << ",\"reserve\":" << p.reserve
+                   << ",\"continuous_fire\":"
+                   << (p.fire == th08::phase::Fire::Continuous ? "true" : "false")
+                   << ",\"focused_capture\":"
+                   << (p.capture == th08::phase::Capture::Youkai ? "true" : "false")
+                   << ",\"actual_inputs\":" << m.actual_inputs
+                   << ",\"planned_inputs\":" << m.planned_inputs
+                   << ",\"fire_inputs\":" << m.fire_inputs << ",\"focus_inputs\":" << m.focus_inputs
+                   << ",\"entry_gauge\":" << m.entry_gauge << ",\"exit_gauge\":" << m.exit_gauge
+                   << "}";
+        }
+    }
+    report << "],";
+    report << "\"schema_version\":1,\"evidence\":\"synchronous-native-style-experiment\","
               "\"online_fps_evidence\":false,\"style_revision\":1,\"style\":\""
            << style << "\",\"outcome\":\"" << outcome << "\",\"stage\":" << config.stage
            << ",\"replay_name\":\"" << replay_name << '"'

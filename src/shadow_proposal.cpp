@@ -219,6 +219,7 @@ Prediction predict_with_policy(headless::Session &session, online::Policy &polic
             auto input = pending_[position_++];
             if (goal_)
                 input = std::uint16_t((input & ~1u) | (goal_->wants_fire() ? 1u : 0u));
+            input = policy_.phase_input(observation_, input);
             return std::uint16_t((input & ~0x1000) |
                                  ((dialogue_ && ((sequence_ + 1) & 1)) ? 0x1000 : 0));
         }

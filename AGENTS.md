@@ -147,7 +147,9 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
   `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
 - The owner requires low process concurrency on the shared host. The October26
   continuation authorizes cumulative budget extensions while bounding memory;
-  the active window is1280 total campaign tasks, without resetting the ledger.
+  the active window is1344 total campaign tasks, without resetting the ledger.
+  The October28 extension1280→1344 was recorded at1276 before1281; all failed
+  regression, canary, selection and composition costs remain charged.
   The October27 continuation records successive64-task extensions from640,704,768,832 and896
   before use, under that standing authorization.
   Record further extensions before using them; this authorization does not raise
@@ -198,3 +200,9 @@ owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
 - The owner requested direct main progress commits, not feature branches/PRs.
   Fetch first, preserve others' work, never force an unrelated change, and publish
   only tested scope. Do not infer permission to continue beyond the latest request
+- The October28 continuation raises the next complete Lunatic milestone to7B
+  after the verified6.512B result and explicitly requests issue12 for parallel
+  checkpoint archives, strategy diversity and stage/spell composition. The latest
+  steering tests that method on Extra first, using the existing original9098
+  episode. Preserve NMNB/optional captures, full-route acceptance and the all-shot
+  retail gates;7B alone is below the7,053,332,460 story gate.

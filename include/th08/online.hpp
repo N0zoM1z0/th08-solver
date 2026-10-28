@@ -1,6 +1,7 @@
 #pragma once
 #include "th08/bullet_motion.hpp"
 #include "th08/online_value.hpp"
+#include "th08/phase_strategy.hpp"
 
 #include <array>
 #include <cstdint>
@@ -200,6 +201,9 @@ struct StyleWeights {
     float graze_reward = 0;
 };
 struct Configuration {
+    // Immutable optional schedules shared by forecast branches. Null preserves
+    // the old proposal path and observer history; Native remains the executor.
+    std::shared_ptr<const phase::Plan> phase_plan;
     StyleWeights style;
     bool scoring_collection = false, scoring_aim = false;
     bool scoring_survival_focus = false;
@@ -344,6 +348,7 @@ class Policy {
     // Fire intent after the latest observation, including collection preparation
     // and attack pacing. Movement recovery may preserve this owned goal.
     bool wants_fire() const;
+    std::uint16_t phase_input(const Observation &, std::uint16_t proposed) const;
     ~Policy();
     Policy(const Policy &) = delete;
     Policy &operator=(const Policy &) = delete;

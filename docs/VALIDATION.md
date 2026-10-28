@@ -211,12 +211,37 @@ Historical272 payloads are relocated unchanged under the paths recorded in
 paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
-Latest overall records are Scarlet Extra **3,087,585,240,14/14** (786,
-fresh832/natural833) and complete story **6,512,532,100,36/37**,only10 timeout
+Latest overall records are Scarlet Extra **3,179,193,860,14/14** (1314,
+fresh1329/natural1330) and complete story **6,512,532,100,36/37**,only10 timeout
 (1225, fresh1229/natural1230). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
-progress table. Extra keeps19000 prior inputs and public H128/cash4/movement4;
+progress table. Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
+The new3.165B retains786 through actual193 entry7723, uses H128/cash0/movement4
+to actual193 end11259 (1256,7183 orbs/capture), then H128/cash4/movement4
+through the full Extra. It executes73085 inputs; all14 cards capture. Its30568-byte
+replay SHA-256 is `3a985a99ef9d0e08ed405be65b3dfe4ab995cfe383775d02105225b781cffb33`,
+actions `205903a24c890347dd813ad774efcaf1b9d6b486ee6e38b76a325d622a28c108`.
+The frozen experimental CLI/source overlay is documented in the
+[phase journal](experiments/2026-10-27-phase-composition.md#october28-extra-first-checkpoint-archive-experiment);
+the progress table preserves the pinned Native runtime base revision. The original
+Extra9098 receipt and all earlier selected replay bytes are unchanged. The13,793,120
+gap at that snapshot still prevents retail Wine playback.
+The subsequent3.171B retains1272's first67117 actual inputs at last205 entry, then
+H128/publication64/replan32/cash0/movement4. This increases205 orbs5006→5404
+and complete score by6238490, keeping73085 total inputs and14/14. Its30475-byte
+replay SHA-256 is `ddb95beb00e8765824acda39018183f7c8391b4e2c67af98ce57ba741611ec12`,
+actions `f13a8b4fa780fe301caf07f4686e610c4022c53375cc531cdb66af0c1f33faf3`.
+Fresh1323/natural1324 pass all eight gates. The remaining7554630 gap keeps the
+all-shot retail gate closed at that snapshot. Both selected progress files retain exact bytes.
+The subsequent3.179B uses the same67117-input parent1272 prefix with H128/cash0,
+three extra cash-ranked movement pulses (up/down/left, with ordinary rightward
+policy movement still allowed), beam384/policy24. Card205 yields5890 orbs; all14
+capture, NMNB,73085 inputs. Its30431-byte replay SHA-256 is
+`2dfaddbd0ea623f6838fc6b0dfc07a07d7660594b9e6bd9bbfeb2db4a8e625d8`, actions
+`d126950d5d97b972bde595b71c7d09fc98552a93c7da7fcab30f31ff5c08ed84`.
+Fresh1329/natural1330 pass all eight checks. It exceeds3,178,460,830 by733,030:
+the Extra retail-playback gate is now open, with actual Wine validation pending.
 The preceding5.784B story retains the actual first51253 inputs of H256 task794 through47,
 then uses H128/publication64/replan32/cash4/movement4. Its61373-byte replay
 has SHA-256 `37ea4e2f9b6ca020a470ab777f700e09aa5fe4d6acffeae3e714dbca4c67d488`,
@@ -395,6 +420,8 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | --- | ---: | --- |
 | `--verify-horizon` |64 | Powers of two64..2048 |
 | `--spell-horizon` |0 | Optional active-spell verification H64..2048, publication H/2, replan H/4; zero preserves the original schedule |
+| `--phase-plan` |none | Up to32 comma-separated `stage:card:top:rows:reserve:feedback\|shoot:human\|youkai` entries; requires attack pacing; stage0..8, card1..256, rows1..14 at32px spacing, band inside Y0..432, reserve0..10000 gameplay updates |
+| `--stop-after-card` |0 |0 disables;1..256 stops after the actual closed card audit, returns incomplete exit2 and never exports a replay |
 | `--publish-horizon` |64 | Powers of two64..2048, at most verification |
 | `--search-budget-ms` |110 |1..60000 per search |
 | `--lead-updates` |8 |1..32, below publication |
@@ -408,6 +435,23 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 | `--economic-movement` |0 |0..4 active-spell movement comparisons; independent of fire/focus comparisons |
 | `--checkpoint-updates` |0 |0 disables;64..400000 executed inputs between prefix saves |
 | Positional `WALL_SECONDS` |Explicit |1..7200 per owner attempt |
+
+For example, `--attack-pacing 1 --phase-plan 8:203:368:3:0:feedback:youkai
+--stop-after-card 203` proposes three rows Y368/400/432 during actual card203.
+It does not guarantee those positions or require every accepted input to follow
+the proposal; Native safety recovery remains independent. A phase boundary is
+an incomplete exit2, even if its local score improves. Resume its actual tape
+from the same original episode and require the complete route before promotion.
+
+`th08_phase_frontier INPUT_TSV WIDTH GENERATION OUTPUT_TSV` selects1..64 entries
+from at most4096 rows. The exact input header is
+`id\tboundary\tfamily\trequest\tcheckpoint\tscore\tcompleted\tno_miss\tbombs`
+with literal tabs. Identity hashes are64 lowercase hex characters. `completed`
+and `no_miss` are0/1; completion refers to the declared segment, not the route.
+The campaign owner supplies hash-bound provenance and actual Native outcomes.
+The output lists `id`, `checkpoint`, `score` for selected worlds; malformed or
+conflicting evidence fails before opening the output. Family diversity is a
+search allocation rule, never a gameplay certificate or claimed score bound.
 
 For example, H512/publication256,5000ms, lead1/nominal1 and interval128 spends
 more computation on freshly guided future actions. All proposed actions still
@@ -1696,7 +1740,7 @@ Fresh `th08_shadow_follow` accepts `--input-profile sampled-gameplay` and
 accepts a final optional proposal-preference argument after its existing horizon
 profile and records its name/revision. Baseline remains unchanged by default.
 
-Core CTest cases: 36
+Core CTest cases: 38
 
 Normal core tests require no game assets or reconstruction. Optional source comparisons
 add two CTests (38 total). Native builds add process, semantic, hazard-probe and

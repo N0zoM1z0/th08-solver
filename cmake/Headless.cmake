@@ -175,7 +175,9 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
     -DDAT=${TH08_HEADLESS_DAT}
     -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_style_real_data.cmake)
-  set_tests_properties(headless_shadow_style PROPERTIES TIMEOUT 330)
+  # Complete offline fixture plus phase/profile continuations; this is a
+  # correctness budget, independent of the production 110ms search default.
+  set_tests_properties(headless_shadow_style PROPERTIES TIMEOUT 900)
   set_tests_properties(headless_shadow_style PROPERTIES FIXTURES_SETUP native_score_incumbent)
   add_test(NAME headless_score_refine COMMAND ${CMAKE_COMMAND}
     -DREFINER=$<TARGET_FILE:th08_score_refine>
@@ -196,7 +198,7 @@ if(BUILD_TESTING AND TH08_HEADLESS_DAT)
     -DINCUMBENT=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
     -DWORK=${CMAKE_CURRENT_BINARY_DIR}/bomb-scoring-regression
     -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/bomb_scoring_real_data.cmake)
-  set_tests_properties(headless_bomb_scoring PROPERTIES TIMEOUT 180
+  set_tests_properties(headless_bomb_scoring PROPERTIES TIMEOUT 900
     FIXTURES_REQUIRED native_score_incumbent)
 endif()
 set_source_files_properties(src/shadow_recorded.cpp PROPERTIES

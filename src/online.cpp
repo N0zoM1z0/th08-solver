@@ -345,6 +345,8 @@ struct Policy::Impl {
     explicit Impl(Configuration configuration, RiskTables tables, BranchValueModel value)
         : opt(configuration), proposal_style(configuration.style), risk(std::move(tables)),
           value_model(std::move(value)) {
+        if (opt.phase_plan && !opt.phase_plan->entries().empty() && !opt.scoring_attack_pacing)
+            throw std::runtime_error("phase_plan_requires_attack_pacing");
         const auto &w = opt.style;
         for (float cost :
              {w.margin_early, w.margin_late, w.anchor_weight, w.change_cost, w.move_cost,
@@ -597,6 +599,12 @@ struct Policy::Impl {
     float flow_x = 192, flow_y = 360, flow_contacts = 0;
     std::uint64_t macro_due = 0;
     int macro_spell = -1;
+    const phase::Strategy *active_phase(const Observation &o) const {
+        return opt.phase_plan && o.spell_active && o.scoring.available &&
+                       o.scoring.can_switch_forms && o.scoring.has_boss
+                   ? opt.phase_plan->find(o.stage, o.spell)
+                   : nullptr;
+    }
     void update_flow_goal(const Observation &o) {
         // Rank ordinary-bullet streams using a bounded linear hypothesis.
         // The cached stationary targets reduce chatter/work; neither their
@@ -610,9 +618,11 @@ struct Policy::Impl {
         // a populated cell is not a collision or reward certificate. Fixed
         // storage covers both profiles without changing the default row order,
         // active-cell count, arithmetic or strict-improvement tie sequence.
-        constexpr int nx = 10, maximum_rows = 13, maximum_cells = nx * maximum_rows;
-        const int ny = opt.scoring_upper_flow ? maximum_rows : 7;
-        const int top = opt.scoring_upper_flow ? 16 : 208;
+        constexpr int nx = 10, maximum_rows = 14, maximum_cells = nx * maximum_rows;
+        const auto *strategy = active_phase(o);
+        const bool farming = strategy && o.scoring.spell_remaining > int(strategy->reserve);
+        const int ny = farming ? strategy->rows : (opt.scoring_upper_flow ? 13 : 7);
+        const int top = farming ? strategy->top : (opt.scoring_upper_flow ? 16 : 208);
         const int cells = nx * ny;
         std::array<int, maximum_cells> contacts{}, danger{};
         for (const auto &b : o.bullets) {
@@ -855,6 +865,12 @@ struct Policy::Impl {
                       observation.scoring.survival_spell && observation.scoring.has_boss &&
                       observation.spell_active;
         update_attack_pacing(observation);
+        if (const auto *strategy = active_phase(observation)) {
+            flow_active = observation.scoring.spell_remaining > int(strategy->reserve);
+            proposal_focus_bias =
+                flow_active ? (observation.y > strategy->bottom() ? -10.f : 10.f)
+                            : (strategy->capture == phase::Capture::Youkai ? 10.f : -10.f);
+        }
         if (!flow_active && !survival_focus && !parent_chain_focus &&
             observation.scoring.can_switch_forms)
             proposal_focus_bias -= opt.economic_human_bias;
@@ -2118,6 +2134,11 @@ struct Policy::Impl {
 Policy::Policy(Configuration configuration, RiskTables risk, BranchValueModel value)
     : impl_(new Impl(configuration, std::move(risk), std::move(value))) {}
 Policy::~Policy() = default;
+std::uint16_t Policy::phase_input(const Observation &o, std::uint16_t input) const {
+    if (const auto *s = impl_->active_phase(o))
+        return phase::propose(*s, o.scoring.spell_remaining, o.y, o.scoring.extreme_youkai, input);
+    return input;
+}
 void Policy::observe(const Observation &observation) {
     impl_->observe(observation);
 }
