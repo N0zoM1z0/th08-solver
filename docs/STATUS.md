@@ -21,6 +21,18 @@ measurements, the corrected audio setup failure and exact restore commands.
 Retained MP4 bytes are dependencies of their MKV archives; adjacent private
 `.restore.json` files identify them. Native experiment inputs/results stay local.
 
+Latest exploration1406–1464 attributes the human first6 gauge bootstrap to151
+focused orb pickups, tests17 legal prelude/control variants and carries the six
+unique safe worlds through Stage1. Subsequent Stage2 combinations remain below
+the current record's corresponding component. Same-checkpoint17 experiments
+show that nominal phase settings alone do not reproduce the legacy strategy:
+recovery policy and pacing also matter. The private recovery prototype passes
+full local/remote execution and15,975,600 exact replay-row bytes, then improves
+the local17 capture/orbs but still fails exact legacy parity. It is unpromoted;
+the complete score remains6,513,456,180, NMNB36/37. All batches are finished.
+The [phase journal](experiments/2026-10-27-phase-composition.md) records every
+outcome, failed preparation, cost and the next controlled comparison.
+
 The new phase-plan/archive implementation is covered by normal1277 (60/62)
 and nonaborted recovery1331 (2/2), using unchanged binaries and an explicitly
 hash-bound reused legacy repair search with fresh execution. Earlier failures

@@ -50,3 +50,9 @@ explicit public columns; it does not regenerate or rewrite historical reports.
 Before publishing, reconcile in-flight rows, check TSV identities against their
 receipts and run the documentation CTest. The public journal remains readable
 without that local orchestration helper or proprietary game data.
+
+Receipt selection is deterministic: terminal/result completeness comes first;
+previously published choices for duplicated historical owners stay fixed, and
+new equally complete duplicates prefer the original VPS receipt. Reversing file
+traversal must leave both public TSVs byte-identical. Local imports must not hide
+retention evidence or silently change the recorded evidence directory.

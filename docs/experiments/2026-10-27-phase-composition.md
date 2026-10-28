@@ -2352,6 +2352,283 @@ payload hashes and the byte-identical old33 progress-index rows. The guarded
 owner completes1.061s with no abort. New raw canary/probe/search artifacts remain
 local; only the fresh verified overall-record replay is published.
 
+### Read-only first6 bootstrap attribution and prelude experiments
+
+Build1406 adds a private read-only gauge/orb trace. Native1407 (12.325s) and
+human1408 (11.235s) preserve every original25-word row and final score, but
+the auxiliary CSV loses its final stdio buffer because the replay child uses
+`_exit`. Its intact first6 prefix remains diagnostic; it is not a complete
+telemetry certificate. Build1409 (2.824s) explicitly flushes each auxiliary
+record. Replays1410/1411 (13.297s/13.932s) then preserve all stock rows and
+complete all23-column telemetry rows. Every Stage1 clock, gauge, orb count and
+player X/Y matches its original execution. No gameplay state or RNG is written.
+
+The measured distinction is specific: during active6 ages0–40, the human
+collects151 unsuppressed focused time orbs, producing exactly151×111=16,761
+gauge units. It enters at−8000, reaches8761 at age40 and10000 at age41. The
+Native route collects one unfocused orb while clamped at−10000, focuses only
+at age35 and is still at679 at age120. Both openings use zero bombs. This
+accounts for the early gauge jump through the actual
+[time-orb source](../../third_party/th08/src/ItemManager.cpp), rather than
+assuming a faster ordinary shooting ramp. The human's different carried world
+is research evidence, not an injectable Native checkpoint.
+
+V41 tasks1412–1428 test15 legal prelude macros plus literal/replanning controls.
+Keep task1381's original32796 entry and actual input tape. In the last32/64/128/
+256/512 requested input slots before baseline6 entry8205, set focus; optionally
+force shooting or release shooting. Requested movement/Ctrl bits stay unchanged,
+but focus speed and fire DPS can change the actual incoming world and entry
+time. No gauge, pose or RNG value is substituted. All use H128/publication64/
+replan32, cash4/movement4 and a common `0:6:208:8:600:feedback:youkai` plan;
+search30000ms, proposal60ms and owner wall600s. Stop at actual closed6.
+
+| Tasks | Prelude | Actual6 outcome | Orbs | Exit gauge | Partial score |
+| --- | --- | --- | ---: | ---: | ---: |
+|1412|Literal original through10099|capture|1321|4950|44,145,540|
+|1413|No-edit replan from8205|capture|2947|4223|45,018,630|
+|1414/1415|Focus / focus+shoot32|timeout|2555|9941|42,335,380|
+|1416|Focus+quiet32|capture|2574|10000|47,529,340|
+|1417/1418|Focus / focus+shoot64|timeout|3124|10000|43,060,020|
+|1419|Focus+quiet64|capture|2454|8312|47,015,090|
+|1420–1422|Three128-input macros|death before6|—|—|37,562,330|
+|1423–1425|Three256-input macros|death before6|—|—|37,543,370–37,548,350|
+|1426–1428|Three512-input macros|death before6|—|—|37,446,590–37,446,970|
+
+Literal1412 reproduces the source-coordinate closed6 checkpoint at10099 in all41
+words. The other safe ends are10124/10120/9859/10076 as recorded in results.tsv.
+Eight attempts close safely; nine fail their actual literal preludes (8145 for
+128/256 and7752 for512). All actual bomb counts are zero. Every failed attempt
+remains charged. Summed owner wall is248.748s under17 concurrent owners/17-core
+quota; it is not a serial CPU measurement. These are partial results, export no
+replays and certify no complete-route improvement.
+
+Archive1429 correctly rejects a caller conflict:1415 and1418 assigned different
+family labels to exactly the same requests and full executed action/world
+identities as1414 and1417. The original table/failure remain intact. Caller-only
+canonicalization preserves score/outcome equality and records the two aliases;
+1430 passes in0.015s without weakening the public conflicting-result contract.
+Width4/generation0 selects1413,1417,1416,1412: one per control/focus/quiet family
+before a repeated family. Score/PIV/gauge are selection heuristics, never a
+proof that two unobserved worlds can be merged.
+
+V42 reserves1431–1440 before dispatch: ordinarily continue all six unique safe
+worlds to closed13, and separately continue those four frontier worlds with
+`0:13:208:8:600:feedback:youkai`. Reexecuted actual prefixes carry all original
+state/RNG; no old post6 future is pasted. Exact duplicate worlds need no repeated
+continuation charge. A local preparation initially rejected partial producer
+exit2 as if it required complete exit0; it allocated no IDs and launched no
+Native process. The caller was corrected only after checking the existing
+`phase_boundary`/exit2 contract and all outcome/NoMiss/bomb/action-count gates.
+All10 real owners use600s wall and10-core total quota with unchanged resource
+guards. Their completed outcomes and costs must be reconciled before a full
+route or replay is selected.
+
+
+### V42: complete Stage1 endings before Stage2 composition
+
+All10 original-entry continuations reach actual closed13 under No Miss/No Bomb.
+These are partial phase boundaries, not complete-route results or retained
+replays. The signed gauge below decodes the stock32-bit projection explicitly.
+
+| Task | Actual parent | Policy on13 | Partial score | PIV | Captures | Exit gauge | Owner end | Wall seconds |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+|1431|1412|ordinary|81232770|354470|3/4|-10000|16205|126.778|
+|1432|1413|ordinary|85273410|371180|3/4|-3366|16151|127.204|
+|1433|1414|ordinary|81058300|363230|3/4|10000|15737|120.988|
+|1434|1416|ordinary|86791190|365040|3/4|-10000|15844|124.435|
+|1435|1417|ordinary|55518360|362890|1/4|5244|16273|130.201|
+|1436|1419|ordinary|94335070|362320|4/4|-231|16199|128.427|
+|1437|1413|youkai13|86441940|372990|3/4|10000|16151|126.409|
+|1438|1417|youkai13|56496390|367610|1/4|5227|16273|127.707|
+|1439|1416|youkai13|88718680|369580|3/4|10000|15844|123.226|
+|1440|1412|youkai13|84266190|363140|3/4|10000|16205|128.738|
+
+Summed concurrent owner wall is1264.113s; quota is10 cores. A higher local6 orb
+count is insufficient: parent1417 produces only1/4 captures and about56M at13.
+Task1436 instead captures all4 spells and banks94,335,070, versus the current
+record’s source-observed76,840,560/PIV361480 at its own closed13 coordinate15531.
+Task1437 banks86,441,940 with PIV372990 and3/4; these two worlds demonstrate
+why both cash/capture and longer-term PIV diversity belong in the portfolio.
+Literal-control continuation1431 also differs from the old optimized post6
+future: its newly planned13 times out. No unchanged-prelude control is falsely
+labelled a reproduction of the original future.
+
+V43 reserves1441–1450: four changed worlds1436/1437/1439/1433 and the original
+1381 first15531 inputs each compare ordinary H256 with the public compound
+plan `1:17:16:7:600:feedback:youkai,1:25:16:7:600:shoot:youkai,1:29:16:7:600:shoot:youkai`.
+The17/25/29 proposals follow prior source-supported policies, but are
+recomputed in every actual world. Common cash4/movement4, publication128/
+replan64, search30000ms/proposal60ms, wall900s and stop-after29 remain explicit.
+Matched original-world controls distinguish strategy transfer from the new
+Stage1 lineage. No old future tape or component cash is transplanted.
+
+### V43: Stage2 transfer is safe but below the original component
+
+All10 owners close actual29 No Miss/No Bomb. Summed concurrent owner wall is2668.551s,
+with10-core total quota, peak summed owned RSS1,206,136,832 bytes and minimum
+host MemAvailable591,989,923,840 bytes. No resource abort occurs. The table is
+partial cash/PIV at each world’s actual29 end; no replay is exported.
+
+| Task | Stage1 parent | Stage2 policy | Partial score | PIV | Captures | Actual29 end |
+| --- | ---: | --- | ---: | ---: | ---: | ---: |
+|1441|1436|ordinary|334365340|443660|7/8|34749|
+|1442|1436|phase172529|327709960|464680|7/8|33666|
+|1443|1437|ordinary|309553880|455950|6/8|34411|
+|1444|1437|phase172529|330178150|488300|7/8|33820|
+|1445|1439|ordinary|280026650|444400|5/8|34066|
+|1446|1439|phase172529|341190710|477450|7/8|33442|
+|1447|1433|ordinary|310404620|462520|5/8|34255|
+|1448|1433|phase172529|299153810|460790|6/8|34079|
+|1449|1381|ordinary|283253110|442680|5/8|34240|
+|1450|1381|phase172529|310408850|464700|6/8|33532|
+
+The strongest new partial is1446 at341,190,710/PIV477450; highest PIV is1444
+at488300. The existing record’s actual closed29 is365,330,080/PIV525070 at
+32779 inputs. No V43 case beats that comparison. These observations guide
+approximate portfolio pruning; they do not establish mathematical dominance
+from score/PIV alone. We do not pay for full tails merely by treating a local
+Stage1 gain as an additive full-route gain.
+
+Source inspection exposes a recipe discrepancy before another transfer batch:
+legacy1112’s `phase_config.hpp` has `always_fire=true`, whereas V43 used
+`feedback` for17. It also used cash4 instead of the legacy target-phase cash0
+and factor1.2+120 instead of1.5+240. The compound plan was a new measured
+policy, not a byte-equivalent migration of1112. Keep these negative results
+and their original hypothesis; correct the interpretation rather than rewriting
+the attempted controls.
+
+Matched V44 tasks1452/1453 retain the original record’s actual first22250 inputs
+and compare public17 shoot/feedback,16–208/reserve600/youkai capture, H256/
+publication128/replan64, cash0/movement4 and factor1.5+240. The declared target
+is legacy1112:23744 inputs,280,105,530 cash,4795 target orbs, PIV485910.
+Full41 terminal, actual input bytes and the entire spell audit must be compared
+before claiming a portable recipe. Both attempts remain partial even if the
+legacy result reproduces exactly.
+
+### V44: nominal phase parameters do not establish migration parity
+
+The first22250 actual inputs of1381 and legacy1112 are byte-identical, SHA-256
+37d93a7342b7671c7dc5ea7e847a620222dae6f58f06c95dc47388516cf64ae1.
+All five frozen legacy source files match their recorded hashes, including the
+continuous-fire config. Its old scalar report field `phase_card=29` is a stale
+hard-coded reporting literal: the compiled config, actual audit tags and input
+lineage identify17. Preserve the original report; never use that literal as
+the source-world selector. The corresponding audit is17/capture4795 orbs.
+
+| Task | Public17 fire | Outcome | Partial cash | Orbs | Owner end |
+| --- | --- | --- | ---: | ---: | ---: |
+|1452|shoot|timeout|273948740|3538|24050|
+|1453|feedback|captured|276222570|2487|23719|
+
+Both new runs are NMNB. Neither matches the old full41 terminal, actual input
+bytes or complete audit. Shoot first diverges at zero-based input22571, after
+321 newly planned inputs; feedback at22315. Neither reports a proposal timeout
+or budget overrun. Changing the fire label alone does not solve portability.
+
+The concrete source seam is [recovery construction](../../tools/shadow_style.cpp):
+the public tool clears `recovery_profile.phase_plan`, preserving an ordinary
+independently checked escape. The legacy hard-coded adapter applied its phase
+to recovery guidance too. Legacy1112 records one safety adoption; public shoot
+records four. First differing inputs69/65 differ by the focus bit. These are
+evidence for a recovery-policy hypothesis, not proof of its cause. A composable
+strategy identity must bind the complete proposal/recovery graph and warmed
+policy memory, alongside phase geometry/fire and the actual incoming world.
+
+V45 is an ignored diagnostic copy of the public tool, preserving Native/static
+library hashes and removing only the recovery-plan reset. Build1454 fails
+(0.809s) because relocating the translation unit lost its quoted tools helper
+include path; the private flag parser was also corrected. Fresh build1455
+passes7.539s. Canary1456 fails before creating a Native session (0.094s):
+`phase_plan_requires_attack_pacing`. Baseline styling disables pacing, exposing
+a required typed-policy constructor contract. No failed canary permits scoring.
+
+V46 explicitly retains the phase and enables pacing in that private recovery
+profile. This is a two-part diagnostic, not a claimed exact legacy replica or
+a public default change. Build1457 passes7.506s. Local full-entry canary1458
+passes all159669 actual inputs, all41 terminal words, all37 spell audits, exact
+6,513,456,180 score and NMNB36/37 in22.244s. Exit5 is the declared unmet7B
+objective, not failed execution. No policy branch is searched in this literal
+canary. Remote execution1459 and whole-row1460 canaries are required before a
+V46 scoring experiment. No unique Native state, RNG, collision or rollout
+certification behavior is replaced.
+
+### V46 host gates and recovery-aware proposal experiments
+
+Remote canary1459 repeats the entire local1458 actual-input/41-word/37-audit
+result in18.048s. Row canary1460 completes7.989s: all15,975,600 natural replay
+bytes have SHA-256f1a825202f211b008fde264223c36d39bdaf50585a8861408d7968ee3f39077f,
+exactly the local1404 result, with matching full audit and no resource abort.
+The diagnostic ELF is0a968f0ba2f2d86a39579068e04818d41342b723a6967011b72466495baa778a;
+all unchanged Native/static library, loader, DAT, seed-receipt and source-overlay
+identities are bound before scoring. These execution/index gates remain distinct
+from an independent physics oracle or Wine retail equivalence.
+
+Preparation of the four-case scoring packet initially looked for optional
+`name` in a compact summary rather than its source task packet. It failed on
+a missing prefix before any authoritative ID reservation or transfer; no Native
+started. The corrected caller takes the exact task name from the task packet
+and still checks the full input SHA. Wall cost of this local rejected preparation
+was not separately measured. Its failure note is preserved.
+
+Tasks1461–1464 reserve the matched original17 and three actual Stage1 worlds
+(original1381, cash/capture1436 and PIV1437) with continuous-fire17/25/29,
+16–208 geometry, reserve600, youkai capture, H256/publication128/replan64,
+cash0/movement4 and factor1.5+240. Wall900s, search30000ms/proposal60ms and
+four-owner/four-core quota are explicit. The Stage2 trials are valid exploratory
+proposals independently of whether1461 establishes exact legacy parity; no
+result is assumed before its actual rollout. They export no new replay.
+
+All four V46 scoring attempts close their target under NMNB. Summed concurrent
+owner wall is402.478s, peak summed RSS482,582,528 bytes and minimum host
+MemAvailable604,795,817,984 bytes, with no resource abort.
+
+| Task | Parent / target | Partial cash | PIV | Captures | Actual end | Wall seconds |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+|1461|1381 /17|278819250|485180|4/5|23571|18.767|
+|1462|1381 /29|307894050|446350|7/8|32639|123.613|
+|1463|1436 /29|328328530|447890|8/8|33861|132.953|
+|1464|1437 /29|322190320|459890|7/8|33661|127.145|
+
+1461 captures4648 target orbs versus public-shoot1452’s3538/timeout and
+legacy1112’s4795/capture. Exact legacy parity still fails for all41 words,
+actions and full audit. The first differing input is22572, one input later
+than the ordinary-recovery shoot comparison, not proof of an equivalent policy.
+The prototype explicitly adds pacing to its recovery profile, which can also
+change untargeted attacks. New21 yields787/749/539 orbs in1462/1463/1464;
+these incoming worlds also differ, so this is not an isolated pacing ablation.
+Next isolate phase-aware recovery without enabling unrelated generic pacing,
+and test the complete proposal graph at the same incoming checkpoint before
+calling the strategy portable or adding a public option.
+
+1463 preserves8/8 captures through29, but328,328,530/PIV447890 is below the
+existing record’s365,330,080/PIV525070 at its own29 end. Other new Stage2
+combinations also fall below it. Their tapes and metadata remain available;
+there is no new overall record and no qualified new replay to retain. The two
+fresh equal-score full-canary replay exports are hashed then pruned (64,792
+bytes each), while the selected1381 replay keeps SHA-256d0958e5b660de4bbee0bd95c8faa357e128693a8241898e474f2fd680f43ab22.
+All V41–V46 queues have finished; no owned test/solver queue remains active.
+
+### Stable journal receipt identity after storage maintenance
+
+Filesystem traversal exposed nondeterministic selection between complete
+original VPS receipts and their local import copies. Five rows initially
+changed evidence directory/DAT metadata and one lost its retention annotation,
+without any changed Native result. Export now uses stable traversal, prioritizes
+terminal/result completeness, preserves17 previously published duplicate-owner
+choices, and prefers the original remote receipt for new equal-completeness
+duplicates. Existing raw reports are not rewritten. Reversed traversal must
+produce byte-identical public TSVs; the complete old1405-task journal prefix
+keeps its exact row bytes. This is a documentation-provenance fix, not a score
+or policy improvement. The owner’s [storage cleanup](2026-10-28-storage-cleanup.md)
+separately records16.85GiB reclaimed through exact-restorable media archives.
+
+Publication check1465 passes6.184s, peak owned RSS596,766,720 bytes and minimum
+host MemAvailable44,887,162,880 bytes, without abort. Forward/reversed traversal
+exports are byte-identical, the old1405-task journal prefix is byte-exact, all34
+selected replay/all272 historical hashes pass and documentation CTest passes.
+Public C++ is unchanged: the existing1345+1363+1365 checks cover all62 normal
+cases, with their original failures/reused-search limits already recorded.
+Private recovery diagnostics remain ignored, unpromoted proposal experiments.
 ## Source accounting and operating record
 
 [Point collection](../../third_party/th08/src/ItemManager.cpp) doubles a priced
