@@ -12,6 +12,7 @@ published replay index.
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
 | [October27 VPS exploration](2026-10-27-vps.md) | Questions, source/human evidence, parallel-search design, complete canaries, declared variations, failures and resulting decisions |
+| [October28 storage cleanup](2026-10-28-storage-cleanup.md) | Exact-restore media archives, retained evidence, reclaimed bytes and recovery dependencies |
 
 The TSV files use a header row. Tabs/newlines within values are escaped;
 structured entry, controls, argv, cost and edit fields use compact JSON values. The `retail_observation` field

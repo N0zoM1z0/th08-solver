@@ -13,6 +13,14 @@ The [experiment journal](experiments/2026-10-27-vps.md) preserves the intervenin
 completed/failed/cancelled tasks; resume with new IDs rather than restarting
 cancelled owners. The new verified6,513,456,180 continuation is detailed below.
 
+The owner's October28 local-storage cleanup is complete:29 old raw MKVs and
+seven WAVs have verified lossless archives, reclaiming16.85GiB of media storage.
+All42 final MP4s,34 selected replay hashes and272 historical payload hashes are
+preserved. The [cleanup journal](experiments/2026-10-28-storage-cleanup.md) owns
+measurements, the corrected audio setup failure and exact restore commands.
+Retained MP4 bytes are dependencies of their MKV archives; adjacent private
+`.restore.json` files identify them. Native experiment inputs/results stay local.
+
 The new phase-plan/archive implementation is covered by normal1277 (60/62)
 and nonaborted recovery1331 (2/2), using unchanged binaries and an explicitly
 hash-bound reused legacy repair search with fresh execution. Earlier failures
