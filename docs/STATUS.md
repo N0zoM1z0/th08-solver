@@ -1,9 +1,9 @@
 # Current handoff status
 
-Updated October29,2026. Current work is offline Native score attack for **Extra**
+Updated October29,2026. Project scope is offline Native score attack for **Extra**
 and **complete Lunatic1→2→3→4A→5→FinalB**, using stage/spell strategy composition
 and bounded local searches. All shots are permitted; Scarlet Team has priority.
-The active targets are **4B Extra and7B complete Lunatic**, then the story
+The score targets remain **4B Extra and7B complete Lunatic**, then the story
 all-shot human reference. The6.5B milestone is achieved. Scarlet remains the
 priority; solo Sakuya now has separately retail-seeded complete NMNB baselines.
 Guided Native-orb proposals now use different successful scene profiles. Extra2047
@@ -18,8 +18,11 @@ A private47 movement profile now retains upper proposals during capture.
 Switching back after300 capture inputs yields9656 orbs/capture, versus8149
 before; full retention yields11319/timeout. Their complete6.534B/6.554B NMNB
 futures remain lower. Whole-row/audit replay checks,16 prefix edges and actual
-Native maps pass. Next: retarget fragile74 capture in these real worlds, and
-study13's damaged-prefix fire pause using existing human/Native HP traces.
+Native maps pass. Six74 scenes now yield one captured3255-orb outcome with489
+remaining, but its complete continuation is untested. Five others time out.
+The owner cleared the persistent goal and requested a batch handoff: the six
+scenes are finished and the local scoring queue is closed. Further scoring needs
+renewed owner instruction;4B/7B remains unmet.
 The owner now requests **local-only work** after a VPS SSH identity change.
 Nineteen earlier remote terminal receipts remain unavailable; their state is
 explicitly unresolved and they certify no new score. Remote closure/retention
@@ -111,10 +114,11 @@ closures; those historical uncertainties are not a live queue or new certificate
 | Focused151/155 transfer and archives |2119–2148: six phase outcomes become six complete NMNB futures, best6.579B/37of37;24 exact prefix edges and six full-audit/41-word maps pass. Same-entry151 local ordering reverses downstream | Retain distinct worlds; retest47's old6747-orb strategy at current50124 and investigate13's unused duration without adding partial income |
 | Actual47 form/fire and capture movement |2150–2167:8149-orb capture and9532-orb timeout become full6.436B/6.495B, both34/37. Full replay rows/audits,12 prefix edges and two Native maps pass;74 and167 introduce later capture losses | Separate fire timing from the phase movement profile, which expires at reserve. Preserve actual option anchors and callback-adjusted HP; human47 had a preceding bomb |
 | Capture movement and intraspell composition |2169–2195: compile0/literal/actual-default gates pass; upper-profile300 then ordinary capture yields9656 orbs, while full retention yields11319/timeout. Full6.534B/6.554B are lower; all16 prefixes, whole replay rows/audits and two Native maps agree | Keep actual-world archives; retarget74, which times out in all four changed47 futures, and test13 fire pauses without transplanting human state |
+| Actual74 capture and requested handoff |2197/2198 fail CLI validation before Native; fresh2199–2204 uniformly disable the optional prior. One of six NMNB scenes captures74 with489 remaining/3255 orbs; all six exact prefixes are retained | No complete future or new record; preserve the pending reward and actual incoming world. The owner requests handoff after this batch |
 | Checkpoint units and interruption | Audit calculation counters differ from owner input counts. V104 corrects3–5-update labels without changing raw trials. SSH identity changes leave missing remote closures unverified | Use measured owner phase maps; preserve failed setup/unknown receipts and local-only steering |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V242 case and source-backed conclusion, including setup failures, resource
+V47–V247 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)
@@ -232,6 +236,9 @@ ending434 FinalB points/75471 orbs/PIV1472880 at6,653,194,550.
 
 ## Unresolved problems and proposed next work
 
+No scoring queue is active. These are handoff proposals requiring renewed owner
+instruction; the cleared persistent goal does not authorize automatic resumption.
+
 - 7B complete Lunatic and the7,053,332,460 all-shot gate remain unachieved.
 - Current171 retargeting converts the new77 world into a complete record.
   Continue studying earlier point/orb production and source-specific trajectories,
@@ -241,10 +248,10 @@ ending434 FinalB points/75471 orbs/PIV1472880 at6,653,194,550.
   Earlier1962 now has two full NMNB37/37 futures, both below the record. Its
   151/155/171 close early or collect fewer orbs, so study actual capture timing
   and early road production with the true incoming actors, items and gauge.
-- Retarget74 at actual80269/79065 in the new2188/2189 worlds; both preserve
-  capture of167 but lose74. New47 income needs a complete profitable suffix.
-  For13, actual13817 and reused HP/anchor traces support testing a damaged
-  input prefix followed by a bounded fire pause; no such scoring trial has run.
+- If resumed,2201's captured74 world closes at82780 and needs a newly recomputed
+  77/Stage5/FinalB suffix. The same policy times out on2189; neither scalar
+  income nor the pending award proves a complete gain. For13, actual13817 and
+  reused HP/anchor traces support a damaged-prefix fire pause; no trial has run.
 - Preserve failures and explicit counterexamples: local score, PIV or orb
   dominance does not prove the best complete continuation or world equivalence.
 - The latest Extra remains Native-only. Schedule final original Wine playback

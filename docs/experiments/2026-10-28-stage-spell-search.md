@@ -3313,3 +3313,92 @@ literal corrections, whole replay rows/audits, two Native maps, old2168 prefixes
 51 selected/272 historical hashes and reverse export pass. Including this audit,
 28 allocations close through2196. No owned scoring/probe/test driver remains;
 cleanup starts no further scoring. The4B/7B goal remains active and unmet.
+
+## October29 owner handoff: actual74 capture portfolio
+
+Work resumes after6074939 with original32796 and the complete, mapped2188/2189
+worlds. The previous turn is concrete progress: a new captured47 component and
+verified complete counterexamples change the next action to74. Cold74 entries
+are80269/79065 from maps2194/2195, not audit-derived estimates. V243's hypothesis
+is now tested as a bounded six-scene portfolio. No seed, public C++, physics,
+model or resource ceiling changes. Captures remain optional and bombs forbidden.
+
+### V244 setup failure and fresh V245 recovery
+
+2197/2198 inherit phase-recovery-prior1 while the ordinary control has no phase
+plan. The frozen V120 CLI rejects both with
+`phase_recovery_prior_requires_phase_plan_and_recovery` before constructing the
+Native runtime. There is no result or gameplay certificate. Raw manifests,
+stdout and exits remain unchanged; the supplemental failure receipt binds them.
+Their0.157/0.018s costs remain charged. The queue's later missing-result error is
+an orchestration consequence, not a Native gameplay failure.
+
+V245 uses fresh paths and IDs, with phase-recovery-prior0 uniformly across all
+six cases. This optional form preference is explicitly disabled rather than
+retained only for the treatment. Other controls remain H128/publication64/
+replan32, policy24/beam384, cash0/movement4, recovery-fire preserve,900s wall.
+The ordinary V120 cash0 control is a named new profile, not an exact NPC cash4
+suffix reproduction. Both treatment plans use top16/7 rows, continuous shooting,
+reserve1200, then either youkai or human capture form. Plan geometry/fire/form
+are coupled profile changes versus ordinary; only the paired capture-form
+choice differs between the two treatment plans. Native rollouts decide safety
+and actual form/fire use.
+
+| Task | Complete parent / cold entry | Profile |74 outcome / remaining | Collected orbs | Pending SCB / time orbs | Closed owner inputs | Immediate cash | Wall seconds |
+| --- | --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+|2199 |2188 /80269 |ordinary |timeout /−60 |3526 |0 /0 |83329 |2170443880 |57.230 |
+|2200 |2189 /79065 |ordinary |timeout /−60 |3300 |0 /0 |82125 |2162485720 |57.685 |
+|2201 |2188 /80269 |continuous youkai |captured /489 |3255 |21381650 /216 |82780 |2138983230 |39.571 |
+|2202 |2189 /79065 |continuous youkai |timeout /−60 |2055 |0 /0 |82125 |2123624460 |46.362 |
+|2203 |2188 /80269 |continuous, human reserve |timeout /−60 |1662 |0 /0 |83329 |2126115220 |36.668 |
+|2204 |2189 /79065 |continuous, human reserve |timeout /−60 |552 |0 /0 |82125 |2115880860 |35.377 |
+
+All six closed74 scenes are NoMiss/Bomb0 and retain their exact original-entry
+parent prefixes.2201 repairs capture only in the2188 incoming world; it is not a
+portable reserve or greater-DPS guarantee. Its orb income and immediate cash
+are lower than the ordinary control. The pending award is carried state, not
+an amount added to an old route. No new complete74→77→Stage5→FinalB continuation
+is run, so none of these partial outcomes changes a complete-route record.
+
+### V246 existing-row comparison and owner-requested closure
+
+Existing human Levea74 captures with739 remaining/3685 orbs/24,611,730 bonus.
+It has no Bomb input in the active window or preceding600 inputs; the complete
+human route still has1miss/9bombs, so this is not an NMNB incoming-world oracle.
+In the first1200 active inputs it fires592/600 per600-input bin, with206/600
+focused inputs. The two Native NPC worlds fire600 each in their first600 but
+focus only16/0; later fire is intermittent. Their full74s time out with5619/
+5214 orbs; the incumbent captures late with6818. These per-subject audit clocks
+are used only to read their own natural rows, never as owner checkpoint counts.
+Human capture timing motivates the continuous-fire experiment; it does not
+isolate an anchor or damage mechanism. No new human playback or Native probe
+is launched for this metadata comparison.
+
+The owner clears the persistent goal and requests completion of the current
+batch, organization and handoff. The already-started finite V245 queue finishes;
+its source limits the batch to six owners. No further scoring, complete future,
+13 test, episode, seed acquisition or remote connection starts. The owner
+receipt and continuation state preserve this scope; proposed future work is not
+launch authorization.4B/7B remains unachieved, with verified Extra3,308,826,050
+and complete Lunatic6,653,194,550 unchanged.
+
+2197–2204 are eight allocations: two pre-Native setup failures and six safe
+partial scenes. Summed wall is273.068s, including0.175s failed setup; peak tree
+RSS129785856 bytes and minimum host available239203950592 bytes. No resource
+abort occurs. Static analysis/preparation/correction/orchestration is not
+separately metered and is not assigned zero cost. Every plan, audit, input hash,
+source/ELF/seed binding and failure remains local; there are no new `.rpy` files.
+Earlier51 selected replays and272 historical payloads remain unchanged.
+
+The handoff acceptance checks all six prefix edges and pre74 spell receipts,
+actual outcomes/resources, explicit CLI-failure classification, old2196 TSV
+prefixes, deterministic export and documentation CTest. Public C++/models are
+unchanged; normal62/62 task1753 remains applicable. Only that maintenance owner
+runs after the finite scene queue has exited; no further scoring is scheduled.
+
+Handoff247 passes in6.565s, peak tree RSS749465600 bytes. Documentation CTest,
+all six exact prefixes/19 prior spell receipts each, both preserved setup failures,
+old2196 TSV prefixes, reverse export,51 selected/272 historical hashes and resource
+contracts pass. Nine allocations close through2205 including maintenance. No
+owned local solver/probe/test service remains. The persistent goal is cleared by
+the owner, not marked achieved; no new scoring is started during cleanup.

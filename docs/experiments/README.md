@@ -125,3 +125,9 @@ complete futures are lower. Four stale literal-composition fields have explicit
 ledger/supplemental corrections; raw manifests remain unchanged. New rows expose
 the private profile flag alongside existing search metadata. No public C++ or
 model change is claimed.
+
+The final74 handoff retains two pre-Native CLI setup failures and six fresh-ID
+NMNB scene outcomes. One captures74, with a pending award and lower local orb
+income; no complete continuation is claimed. The owner clears the persistent
+goal and requests current-batch closure. Further scoring is unstarted and needs
+renewed instruction; all six input histories remain available for that handoff.
