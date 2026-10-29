@@ -6,9 +6,9 @@ and bounded local searches. All shots are permitted; Scarlet Team has priority.
 The active targets are **4B Extra and7B complete Lunatic**, then the story
 all-shot human reference. The6.5B milestone is achieved. Scarlet remains the
 priority; solo Sakuya now has separately retail-seeded complete NMNB baselines.
-The latest local batch raises Extra through captured195 composition and a
-cheaper205 proposal beam. Experiments1899–1928 have finished; publication
-audit1929 checks the two new verified records and complete negative trials.
+The latest local batch raises complete Lunatic through per-spell beam
+composition:187 uses64, then191 uses384. Experiments1930–1953 have finished;
+publication audit1954 checks the two verified improvements and complete negatives.
 The owner now requests **local-only work** after a VPS SSH identity change.
 Nineteen earlier remote terminal receipts remain unavailable; their state is
 explicitly unresolved and they certify no new score. Remote closure/retention
@@ -24,12 +24,12 @@ strict NMNB/all-capture defaults remain available in the CLI.
 | Route | Shot | Best Native score | Captures | Producer / fresh / natural |
 | --- | --- | ---: | ---: | --- |
 | Extra | Scarlet, Sakuya/Remilia | **3,296,376,500** |14/14 |1917 /1919 /1920 |
-| Complete Lunatic | Scarlet, Sakuya/Remilia | **6,618,962,600** |36/37,10 timeout |1847 /1855 /1856 |
+| Complete Lunatic | Scarlet, Sakuya/Remilia | **6,626,897,920** |36/37,10 timeout |1938 /1939 /1940 |
 | Extra | Magic, Marisa/Alice |3,013,913,970 |14/14 |597; identities in Validation |
 | Complete Lunatic | Magic, Marisa/Alice |5,550,599,270 |36/37,47 timeout |620; identities in Validation |
 | Complete Lunatic, all captures | Magic, Marisa/Alice |5,107,553,670 |37/37 |575; identities in Validation |
 
-All42 selected progress replay files, including superseded records, are published
+All44 selected progress replay files, including superseded records, are published
 under [shot/route directories](../reports/native/README.md). The
 [progress index](../reports/native/replays/progress.tsv) binds scores, constraints,
 producers, original receipts and exact replay/action hashes.
@@ -53,7 +53,7 @@ The dated **October27 all-shot references** are Extra3,178,460,830
 (IwanaM, solo Youmu, July14,2026). Their dated source is retained in
 [Validation](VALIDATION.md#october27-verified-native-progress).
 Native Extra is117,915,670 above its reference and703,623,500 below4B.
-Complete Lunatic remains381,037,400 below7B and434,369,860 below its retail replay gate.
+Complete Lunatic remains373,102,080 below7B and426,434,540 below its retail replay gate.
 
 Earlier same-shot comparisons remain distinct: Magic ASL Extra3,021,639,920
 (one bomb) and Alan Lunatic6,168,365,790; Scarlet ASL Extra3,000,284,220 and
@@ -91,10 +91,12 @@ closures; those historical uncertainties are not a live queue or new certificate
 | Captured195 and205 composition |1901’s actual no-fire/capture world produces complete1903 at3.282B. Retarget its actual205 entry with cash0/beam128;1917 verifies3,296,376,500. The matched beam384 case is lower and slower in this scene | Preserve distinct orb/bonus worlds; use the cheaper beam only where the complete result supports it |
 | Selective longer175 view | Uniform H256/512 are negative. Retain only H256’s175, then restore H128:1913 reaches6,615,055,070, still3,907,530 below the record | A better local component can recover most of a bad whole-tail profile without setting a route record |
 | New202 point-pool diagnosis |1916’s higher-PIV world loses45 points. Stock/observer rows and full audits agree; all45 requests encounter2096/2096 occupancy. Human retiming restores1051 final points but ends3,246,938,610 | Correct the measured mechanism, then compare full income; recovering points alone does not guarantee a record |
+| Per-spell smaller beams and broader worlds |1931 preserves the first155473 inputs, improves187 with beam64, then1938 restores beam384 at actual191 entry156833 and verifies6,626,897,920. Earlier-FinalB beam128/64 compositions finish6,555,553,350/6,491,775,810 | Transfer scene-specific policies while recomputing each actual world; a cheap whole-stage profile is not automatically a better route |
+| Extra198 frontier |1935/1936 gain895/376198 orbs plus higher awards; complete compositions1946/1947 finish3,280,306,170/3,254,041,190 with1051 points | Local orb/SCB gains do not bound the changed later trajectory |
 | Checkpoint units and interruption | Audit calculation counters differ from owner input counts. V104 corrects3–5-update labels without changing raw trials. SSH identity changes leave missing remote closures unverified | Use measured owner phase maps; preserve failed setup/unknown receipts and local-only steering |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V156 case and source-backed conclusion, including setup failures, resource
+V47–V168 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)
@@ -165,7 +167,7 @@ Paths below are local workspace evidence unless linked to published files.
 | Item | Location |
 | --- | --- |
 | Latest Extra producer | `reports/local/retail-score-offline-20261026/local-extra3282-last205-v149-cash0-move4-beam128/`; complete76677 inputs, fresh1919/natural1920 and actual owner map1921 |
-| Latest story producer | `reports/local/retail-score-offline-20261026/local-low-luna-last5-v110-parent1838/`; complete159445 inputs, verification and prefix lineage |
+| Latest story producer | `reports/local/retail-score-offline-20261026/local-luna191-v161-beam384-cash4-move3/`; complete159445 inputs, fresh1939/natural1940, actual map1941 |
 | Selected exact bytes | `reports/native/replays/{scarlet,magic}/{extra,lunatic}/` and `reports/native/replays/progress.tsv` |
 | Current private state | `reports/local/vps-native-20261027/continuation-state.json`; resumption metadata, not a gameplay snapshot |
 | Remote controls and outcomes | `reports/local/vps-native-20261027/deploy/`, `received/`, hypothesis packets and retention receipts |
@@ -200,15 +202,17 @@ Earlier1830 gains97,383,060 over1381. It collects434 FinalB points
 versus438 before, yet ends with74431 FinalB orbs/PIV1467680 versus70872/1446720.
 The richer171 and recomputed final survivals produce the verified total; these
 scalars are observations, not interchangeable worlds or an additive score model.
-Current1847 gains105,506,420 over1381, with434 FinalB points,73650 orbs and
-PIV1463770; the later full-score improvement does not require more final orbs.
+Earlier1847 gains105,506,420 over1381, with434 FinalB points,73650 orbs and
+PIV1463770; that improvement does not require more final orbs.
+Current1938 gains113,441,740 over1381, ending434 FinalB points/74073 orbs/
+PIV1465890. It preserves the original entry and the actual187/191 worlds.
 
 ## Unresolved problems and proposed next work
 
 - 7B complete Lunatic and the7,053,332,460 all-shot gate remain unachieved.
 - Current171 retargeting converts the new77 world into a complete record.
   Continue studying earlier point/orb production and source-specific trajectories,
-  using the current1857 story owner map and1921 Extra map for changed boundaries.
+  using the current1941 story owner map and1921 Extra map for changed boundaries.
 - Preserve failures and explicit counterexamples: local score, PIV or orb
   dominance does not prove the best complete continuation or world equivalence.
 - The latest Extra remains Native-only. Schedule final original Wine playback

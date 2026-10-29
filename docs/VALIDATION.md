@@ -239,8 +239,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,296,376,500,14/14** (1917,
-fresh1919/natural1920) and complete story **6,618,962,600,36/37**,only10 timeout
-(1847, fresh1855/natural1856). Both are NMNB, use the original9098/32796 receipts,
+fresh1919/natural1920) and complete story **6,626,897,920,36/37**,only10 timeout
+(1938, fresh1939/natural1940). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table.
@@ -275,6 +275,25 @@ The selected31882-byte replay SHA-256 is
 actions SHA-256 is `f4d2afd15befb9db92cc85db38f9fd8fc083148cd865c2208fea4f1f8292cfeb`.
 The42 selected files include the verified1903 intermediate and all earlier bytes.
 Both new records remain Native-only.
+
+Story1931 preserves1847’s first155473 owner inputs to actual187 entry, then
+uses F4 H128/cash4/movement3 with beam64 through187,191 and settlement. Its
+6,622,525,640 NMNB36/37 improvement passes fresh1932/natural1933 and map1934’s
+all41 terminal/full37-card audit. The selected65076-byte replay SHA-256 is
+`3f11b6e261a2fe42f8cfcbac20561b2b1b79fc0f502a2d1dbb21ade58b3d0ca6`;
+actions SHA-256 is `41da7d1f3de5e8ea78e95e33e00560a41fb9af2b12c889ae602efe314e65fbb2`.
+Story1938 retains1931’s actual156833 inputs to191 entry and restores beam384
+only there, keeping H128/cash4/movement3. Both input prefix and191 entry’s entire
+41-word projection match. It completes6,626,897,920,159445 inputs,NMNB36/37,
+only10 timeout,434 FinalB points/74073 orbs/PIV1465890. Fresh1939/natural1940
+pass all8 checks; map1941 agrees on all41 terminal words and the full37-card
+audit. Its65153-byte replay SHA-256 is
+`055af6f2a4e5e30accddb4cc422910a3a89b8b9595e1b4da178282ce39602b78`;
+actions SHA-256 is `f12ab4367d478cf87e427a583cc3cfdce83b136e86b7658ad94d37e55c002699`.
+The original32796 receipt and all earlier42 selected bytes remain unchanged.
+These two new selected Native records use frozen F4/c4c798d and do not inherit
+retail validation. The source/guidance/scoring world boundaries and negative
+complete combinations are recorded in the maintained stage/spell journal.
 
 Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
 The new3.165B retains786 through actual193 entry7723, uses H128/cash0/movement4

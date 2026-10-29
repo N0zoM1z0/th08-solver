@@ -1875,3 +1875,170 @@ search/branch/I/O costs and provenance are retained
 in the TSV. These timings share a host and are not isolated CPU benchmarks.
 The local queue is closed after publication; no remote contact or remote closure
 is claimed.4B Extra and7B complete story remain unachieved.
+
+## October29 continuation: per-scene beams and broader FinalB worlds
+
+The owner resumes scoring after publication1929. Original Scarlet Extra9098
+and complete-story32796 remain fixed. The current local profile stays at two
+Native owners and two total CPU cores,4GiB AS/tree RSS, service6GiB high/10GiB
+hard/no swap and host12/8GiB admission/abort. No remote connection is attempted.
+The existing cumulative cap1984 is used without resetting allocation history.
+Public C++/models and the frozen F4 Native/controller binary are unchanged.
+
+### V157: smaller beam on actual187–191
+
+1930/1931 retain1847’s exact155473 owner inputs to actual187 entry, preserving
+all35 earlier visited cards. F4 H128/cash4/movement3, publication64/replan32,
+policy-horizon24 and all budgets remain fixed; only beam384→128/64 changes.
+Native decides safety and every action-dependent future.
+
+| Task / beam | Full displayed score |187 /191 orbs |187 /191 displayed award | Wall seconds |
+| --- | ---: | --- | --- | ---: |
+|1930 /128 |6,619,318,440 |6225 /2799 |82,800,000 /54,568,000 |46.118 |
+|1931 /64 |**6,622,525,640** |6546 /2633 |85,368,000 /53,128,000 |40.293 |
+
+Both complete NMNB36/37, only10 timeout,159445 owner inputs; no resource abort.
+Against1847,1931 gains435187 orbs but loses259191 orbs. Fresh1932/natural1933
+pass all8 checks; map1934 matches all41 terminal words and the full37-card audit.
+The selected65076-byte replay is
+[story-scarlet-native-nmnb-4a-finalb-6622525640-seed32796.rpy](../../reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6622525640-seed32796.rpy),
+SHA-256 `3f11b6e261a2fe42f8cfcbac20561b2b1b79fc0f502a2d1dbb21ade58b3d0ca6`;
+actions SHA-256 `41da7d1f3de5e8ea78e95e33e00560a41fb9af2b12c889ae602efe314e65fbb2`.
+It improves the prior complete record by3,563,040.
+
+### V159:198 in the selected Extra world
+
+1935/1936 preserve1917’s exact36443 inputs to198 entry and use F4 H128/cash4/
+movement4 with beam128/64, stopping at captured198. The initial label “previous7
+phases” is corrected by appended lifecycle notes:192–197 are the six fixed
+earlier spells;198 is the seventh changed spell. Original argv, inputs and
+receipts remain unchanged. This is a prose-label correction with no rerun.
+
+| Task / beam | Actual owner end | Phase inputs | Orbs | Ordinary extreme-youkai events | Remaining | Pending displayed award | Wall seconds |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Prior1917 /384 |41750 |5307 |17642 |5701 |93 |40,350,910 |not isolated |
+|1935 /128 |41701 |5258 |18537 |6046 |142 |43,203,030 |86.329 |
+|1936 /64 |41644 |5201 |18018 |5870 |199 |43,519,490 |74.497 |
+
+Both new components close captured NMNB7/7 visited, zero bombs, no guard abort.
+They gain895/376 orbs while ending49/106 inputs earlier. Their pending awards
+also increase. They remain different real worlds: the later199–204 and final205
+strategy must be recomputed, including every drop request and delayed130-update
+award. Local gains are not added to1917’s old future.
+
+### V161: keep187’s new world and restore a different191 beam
+
+Map1934 identifies actual191 entry156833.1937/1938 replay1931’s exact prefix to
+that point, including the6546-orb187 and its actual settled award. They change
+only191/settlement beam64→128/384; F4 H128/cash4/movement3 remains fixed.
+
+| Task / beam | Full displayed score |191 orbs / displayed award | Wall seconds |
+| --- | ---: | --- | ---: |
+|1937 /128 |6,623,436,320 |2673 /53,280,000 |40.582 |
+|1938 /384 |**6,626,897,920** |2854 /55,008,000 |54.660 |
+
+Both complete NMNB36/37, only10 timeout,159445 owner inputs.1938 keeps187’s
+beam64 improvement and recovers221191 orbs over1931. Fresh1939/natural1940 pass
+all8 checks; map1941 matches all41 terminal words and the full37-card audit.
+FinalB ends434 points/74073 orbs/PIV1465890. The complete score improves1931
+by4,372,280 and1847 by7,935,320. Smaller beams have different results by scene;
+this experiment does not establish a universal width or an execution-identical
+optimization. The current CLI uses16-pixel spatial-diversity cells during
+proposal selection; Native worlds themselves are never merged.
+
+Selected65153-byte
+[story-scarlet-native-nmnb-4a-finalb-6626897920-seed32796.rpy](../../reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6626897920-seed32796.rpy)
+has SHA-256 `055af6f2a4e5e30accddb4cc422910a3a89b8b9595e1b4da178282ce39602b78`;
+actions SHA-256 `f12ab4367d478cf87e427a583cc3cfdce83b136e86b7658ad94d37e55c002699`.
+Both new selected improvements remain Native-only; the earlier42 selected
+replay bytes and original32796 receipt remain unchanged.
+
+### V162: broader FinalB worlds through171
+
+1942/1943 replay1931’s first119304 owner inputs to actual151 entry; the first
+26 visited cards are fixed. F4 H128/cash4/movement4 uses beam128/64 across
+151/155/159/163/167 and the existing171 plan
+`7:171:208:7:0:feedback:youkai`. This is the frozen F4 controller, matching
+1838’s source and plan, not a substitution of the private fast-flow binary.
+Both close171 safely, NMNB31/32 visited, only10 timeout, zero bombs.
+
+| Task / beam | Actual owner171 end | Closed displayed cash |151 /155 /159 /163 /167 /171 orbs | Wall seconds |
+| --- | ---: | ---: | --- | ---: |
+|1942 /128 |148370 |5,063,619,400 |2998 /2862 /4469 /4895 /3650 /14545 |296.582 |
+|1943 /64 |147484 |5,017,929,930 |1332 /1957 /4937 /4729 /3883 /13694 |235.541 |
+
+Both are below the incumbent’s corresponding closed171 world, with earlier
+captures and lower income on several attacks.151 alone improves to2998 orbs
+in1942, but the combined early-stage profile loses elsewhere. These different
+worlds are retained through complete continuations rather than treated as
+globally dominated by their local cash or orb totals. All continuation lengths
+use actual tape line counts; audit calculation endpoints are five updates lower
+in this story and are not used as owner coordinates.
+
+### V163/V168: complete Extra198 compositions
+
+1944/1945 replay the safe captured198 ends41701/41644, restore F4 H128/cash4/
+movement4/beam384, and recompute199–204. Both close204 NMNB13/13, zero bombs:
+
+| Task / parent | Actual owner204 end | Closed displayed cash |204 orbs / pending award | Wall seconds |
+| --- | ---: | ---: | --- | ---: |
+|1944 /1935 |71140 |2,160,962,430 |11501 /42,097,350 |457.791 |
+|1945 /1936 |69305 |2,145,952,770 |11176 /40,816,770 |427.503 |
+
+1946/1947 then switch at those exact204 closures to F4 H128/cash0/movement4/
+beam128 through the actual post204 pickups,205 and settlement. This scope
+includes the204 transition; it does not assert an entry-only205 switch or
+reuse1917’s old205 inputs in a changed world.
+
+| Task / parent | Complete displayed score | Points / orbs / PIV |205 orbs / award | Owner inputs | Wall seconds |
+| --- | ---: | --- | --- | ---: | ---: |
+|1946 /1944 |3,280,306,170 |1051 /132975 /964880 |4638 /47,056,000 |77349 |38.724 |
+|1947 /1945 |3,254,041,190 |1051 /130653 /953270 |4365 /44,920,000 |75517 |39.519 |
+
+Both are complete NMNB14/14, no resource abort. They preserve1051 points but
+remain16,070,330 /42,335,310 below1917.198’s local895/376-orb gains do not
+survive as an overall gain: later trajectories and income change. No specific
+causal price/bonus decomposition is inferred from the scalar totals.
+
+### V167/V168: complete the new FinalB worlds with scene-specific tails
+
+1948/1949 replay1942/1943’s actual171 ends, then use F4 H128/cash4/movement3/
+beam384 through the pending award and175/179/183.1950/1951 switch at each
+actual183 closure to beam64 through post183 and187.1952/1953 switch at the
+actual187 closure to beam384 through post187,191 and full settlement. The
+transitions themselves are recomputed; these boundaries intentionally differ
+from1931/1938’s entry-only switches. All other game state is carried.
+
+| Task / parent | Boundary | Actual owner end | Displayed cash or final score | Captures / bombs | Wall seconds |
+| --- | --- | ---: | ---: | --- | ---: |
+|1948 /1942 |183 closed |152609 |5,386,404,450 |34/35 /0 |67.215 |
+|1949 /1943 |183 closed |151721 |5,326,295,640 |34/35 /0 |69.166 |
+|1950 /1948 |187 closed |153969 |5,534,438,330 |35/36 /0 |34.704 |
+|1951 /1949 |187 closed |153081 |5,474,594,450 |35/36 /0 |34.446 |
+|1952 /1950 |**complete** |156741 |6,555,553,350 |36/37 /0 |44.133 |
+|1953 /1951 |**complete** |155853 |6,491,775,810 |36/37 /0 |42.028 |
+
+Every boundary is No Miss and every completed story is NMNB, only10 timeout.
+1952/1953 end434 FinalB points,68044/65092 orbs and PIV1435740/1420980, below
+1938’s complete record. The later scene policies do not recover the earlier
+worlds’ income losses. These are complete negative experiments, not local
+projections accepted as route scores.
+
+After1942/1943 finished, manual orchestration left an approximately28-minute
+idle gap before1944/1945. That gap is not hidden inside per-owner compute times.
+The subsequent finite V168 queue automatically runs four declared pairs in one
+two-core service, at most two Native owners. It checks each real boundary owner
+for clean exit2, No Miss, zero bombs and no resource abort before composing the
+next segment; failed or incomplete cases cannot certify a prefix. A stop file is
+checked between pairs. The queue ends after eight declared owners and does not
+use spare budget to start further experiments.
+
+Scoring stops at1953. The24 allocations1930–1953 contain8 complete NMNB scoring
+futures,10 closed safe phase segments and6 fresh/read-only owners.1954 is the
+publication/documentation audit. Earlier42 selected progress files and272
+historical payloads remain byte-identical;44 selected files now include1931
+and1938. The6 unselected new RPY exports,320814 bytes, are hash-bound and pruned; raw inputs, results,
+source and resource receipts remain ignored/local. Public C++/models are
+unchanged, so normal62/62 task1753 remains applicable; new record all8/full-map
+checks and documentation CTest are the current added verification. No retail
+equivalence is inferred, and7B/4B remain unachieved.
