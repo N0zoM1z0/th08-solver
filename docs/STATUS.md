@@ -6,10 +6,13 @@ and bounded local searches. All shots are permitted; Scarlet Team has priority.
 The active targets are **4B Extra and7B complete Lunatic**, then the story
 all-shot human reference. The6.5B milestone is achieved. Scarlet remains the
 priority; solo Sakuya now has separately retail-seeded complete NMNB baselines.
-The current complete record retains per-spell beam composition:187 uses64,
-then191 uses384. The latest1955–1978 batch tests actual no-fire6 and carries two
-changed early worlds through complete routes;6.265B/6.457B are below the record.
-Publication audit1979 closes this negative batch and its source-backed findings.
+Private Native-reward-ranked motion proposals now improve both complete records.
+2019/2020 preserve the actual205/175 entry prefixes, then recompute and settle
+the whole suffix. Fresh2021–2024 and actual-world maps2025/2026 pass.2035 then composes
+H256 on203 with H128 on205;2030 retunes191 to beam128. Fresh2036–2039
+and maps2040/2041 verify both further improvements. Earlier
+cold6 and richer first-stage compositions remain measured negatives; most of
+the first Boss's human orb deficit already predates its appearance.
 The owner now requests **local-only work** after a VPS SSH identity change.
 Nineteen earlier remote terminal receipts remain unavailable; their state is
 explicitly unresolved and they certify no new score. Remote closure/retention
@@ -24,13 +27,13 @@ strict NMNB/all-capture defaults remain available in the CLI.
 
 | Route | Shot | Best Native score | Captures | Producer / fresh / natural |
 | --- | --- | ---: | ---: | --- |
-| Extra | Scarlet, Sakuya/Remilia | **3,296,376,500** |14/14 |1917 /1919 /1920 |
-| Complete Lunatic | Scarlet, Sakuya/Remilia | **6,626,897,920** |36/37,10 timeout |1938 /1939 /1940 |
+| Extra | Scarlet, Sakuya/Remilia | **3,306,483,020** |14/14 |2035 /2036 /2037 |
+| Complete Lunatic | Scarlet, Sakuya/Remilia | **6,635,012,890** |36/37,10 timeout |2030 /2038 /2039 |
 | Extra | Magic, Marisa/Alice |3,013,913,970 |14/14 |597; identities in Validation |
 | Complete Lunatic | Magic, Marisa/Alice |5,550,599,270 |36/37,47 timeout |620; identities in Validation |
 | Complete Lunatic, all captures | Magic, Marisa/Alice |5,107,553,670 |37/37 |575; identities in Validation |
 
-All44 selected progress replay files, including superseded records, are published
+All48 selected progress replay files, including superseded records, are published
 under [shot/route directories](../reports/native/README.md). The
 [progress index](../reports/native/replays/progress.tsv) binds scores, constraints,
 producers, original receipts and exact replay/action hashes.
@@ -53,8 +56,8 @@ The dated **October27 all-shot references** are Extra3,178,460,830
 (Sakurei, solo Youmu, June21,2022) and Lunatic7,053,332,460
 (IwanaM, solo Youmu, July14,2026). Their dated source is retained in
 [Validation](VALIDATION.md#october27-verified-native-progress).
-Native Extra is117,915,670 above its reference and703,623,500 below4B.
-Complete Lunatic remains373,102,080 below7B and426,434,540 below its retail replay gate.
+Native Extra is128,022,190 above its reference and693,516,980 below4B.
+Complete Lunatic remains364,987,110 below7B and418,319,570 below its retail replay gate.
 
 Earlier same-shot comparisons remain distinct: Magic ASL Extra3,021,639,920
 (one bomb) and Alan Lunatic6,168,365,790; Scarlet ASL Extra3,000,284,220 and
@@ -95,10 +98,12 @@ closures; those historical uncertainties are not a live queue or new certificate
 | Per-spell smaller beams and broader worlds |1931 preserves the first155473 inputs, improves187 with beam64, then1938 restores beam384 at actual191 entry156833 and verifies6,626,897,920. Earlier-FinalB beam128/64 compositions finish6,555,553,350/6,491,775,810 | Transfer scene-specific policies while recomputing each actual world; a cheap whole-stage profile is not automatically a better route |
 | Extra198 frontier |1935/1936 gain895/376198 orbs plus higher awards; complete compositions1946/1947 finish3,280,306,170/3,254,041,190 with1051 points | Local orb/SCB gains do not bound the changed later trajectory |
 | Actual cold6 and complete early worlds |1955/1956 realize2565-orb timeout and1622-orb capture with actual fire bits checked. Restored Stage2/5 guides and retimed77 lead to full1977/1978 at6,264,693,320/6,456,972,200 NMNB | Preserve the26/26 Stage5 control1962; changed77 reserve600 times out in one world, and local income does not certify a score |
+| First-stage human income attribution |1980–2005: Boss-clock guide is negative;1185 of the1705-orb first2 deficit predates the Boss. Freshly recovered human2700 world keeps2080 orbs/26 points at2, but its new Stage5 continuations remain below the incumbent | Measure road shooting, power, point production and pickup together; do not attribute the whole gap to nonspell timing |
+| Realized Native survival income |2010–2026: literal and actual-replanning default-off canaries agree in all inputs/41 words/audits. Portfolio32 improves205 and the final five survivals to verified3.305B/6.635B | Rank only Native-certified alternatives, record extra costs, and accept only complete fresh-verified records; the private prototype changes no physics or public defaults |
 | Checkpoint units and interruption | Audit calculation counters differ from owner input counts. V104 corrects3–5-update labels without changing raw trials. SSH identity changes leave missing remote closures unverified | Use measured owner phase maps; preserve failed setup/unknown receipts and local-only steering |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V182 case and source-backed conclusion, including setup failures, resource
+V47–V200 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)
@@ -116,7 +121,7 @@ It is historical evidence, not another current launch plan.
 | Local memory |Service MemoryHigh6GiB/MemoryMax10GiB/no swap;4GiB address space per process and4GiB summed RSS per owned tree; admit with at least12GiB host MemAvailable, abort below8GiB. Resource-aborted work remains charged and certifies nothing |
 | Remote owners | Currently paused by owner local-only steering; do not reconnect or replace host keys without verified identity. Standing contract: Native only; at most32 owners and32 total CPU cores under the owned user systemd manager, low CPU/I/O priority; preserve the old checkout and unrelated workloads |
 | Remote memory |4GiB AS/tree per owner,96GiB aggregate owned RSS guard,128GiB hard service limit, no service swap; host128GiB admission/96GiB abort reserves |
-| Campaign | One cumulative ledger at `reports/local/shadow-runtime-v1/tasks.tsv`; cap1984. Extension1920→1984 is recorded at1918 before1921;1856→1920 at1851 before use. Extensions1664→1728,1728→1792 and1792→1856 were recorded at1657,1713 and1783 before use. Record further64-task extensions before use; never reset, reuse IDs or omit aborted/retried work |
+| Campaign | One cumulative ledger at `reports/local/shadow-runtime-v1/tasks.tsv`; cap2048. Extension1984→2048 is recorded at1979 before1980;1920→1984 at1918 before1921;1856→1920 at1851 before use. Extensions1664→1728,1728→1792 and1792→1856 were recorded at1657,1713 and1783 before use. Record further64-task extensions before use; never reset, reuse IDs or omit aborted/retried work |
 | Scope | No Miss, `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual bombs and captures. Restore both capture flags to1 for strict all-capture work |
 | Episodes | Fixed original retail seeds from the table below; new shot/entry episodes require a new original Wine pre-RegisterChain receipt before Native exploration. No Native-selected or hindsight-selected seed |
 | Checkpoints | Reexecute literal firstN owned inputs from that same original entry. N is owner updates, not spell age or replay row count. Carry RNG, bullets, actors, items, latch and observer histories |
@@ -127,10 +132,10 @@ It is historical evidence, not another current launch plan.
 | Evidence | Hash-bind source, ELF, loader/libraries, DAT, receipt, actual args and input prefix. Charge retries, target selection and cross-host canaries. Fresh replay is not independent retail equivalence |
 
 The current local launcher is
-`reports/local/global-score-20261027/run-local-two-v153.cjs`, which calls
-`run-scarlet-guarded-1984.cjs`; its memory guard is
+`reports/local/global-score-20261027/run-local-two-v184.cjs`, which calls
+`run-scarlet-guarded-2048.cjs`; its memory guard is
 `reports/local/retail-score-offline-20261026/memory-guard.cjs` and its relaxed
-fresh/natural checker is `reports/local/score-continue-20261027/verify-no-bomb-1984.cjs`.
+fresh/natural checker is `reports/local/score-continue-20261027/verify-no-bomb-2048.cjs`.
 These are ignored workspace tools, not files supplied by a fresh clone.
 Use fresh names and the maximum first ledger column, not line count: the ledger
 preserves repeated historical lifecycle notes. Older320/1280-task launchers and
@@ -206,15 +211,26 @@ The richer171 and recomputed final survivals produce the verified total; these
 scalars are observations, not interchangeable worlds or an additive score model.
 Earlier1847 gains105,506,420 over1381, with434 FinalB points,73650 orbs and
 PIV1463770; that improvement does not require more final orbs.
-Current1938 gains113,441,740 over1381, ending434 FinalB points/74073 orbs/
-PIV1465890. It preserves the original entry and the actual187/191 worlds.
+Earlier1938 gains113,441,740 over1381, ending434 FinalB points/74073 orbs/
+PIV1465890. 2020 retains its first151389 inputs, ends434/74464/1467840,
+and improves the complete route by7,636,230.175–187 gain657 orbs while191
+loses345; local survival totals still require complete settlement. Latest2030
+retains2020 through191, uses beam128 there, and ends434/74496/1468000 at
+6,635,012,890.
 
 ## Unresolved problems and proposed next work
 
 - 7B complete Lunatic and the7,053,332,460 all-shot gate remain unachieved.
 - Current171 retargeting converts the new77 world into a complete record.
   Continue studying earlier point/orb production and source-specific trajectories,
-  using the current1941 story owner map and1921 Extra map for changed boundaries.
+  using current2041 story and2040 Extra owner maps for changed boundaries.
+- Native-orb ranking improves both routes, with explicit extra search costs.
+  H128203 wins locally but its full future loses to H256203. Preserve both
+  actual-world frontiers;191 beam128 adds478,740. A fixed-tail Native candidate
+  experiment could measure guidance cost before expanding the portfolio.
+  Most of the first2 human deficit is on the road; Boss-clock hints and a
+  parent-focus-off road trial do not solve it. Earlier richer2/6 worlds remain
+  partial or complete negatives, with their actual points and capture losses.
 - Preserve failures and explicit counterexamples: local score, PIV or orb
   dominance does not prove the best complete continuation or world equivalence.
 - The latest Extra remains Native-only. Schedule final original Wine playback
@@ -251,11 +267,3 @@ These are the separate legacy subset catalog counts, not Native scoring coverage
 There are 38 core CTests without private data, plus optional pinned-source checks.
 The current local DAT/retained configuration has62 cases. Old57/59/60-case suites
 remain historical measurements in Validation and the experiment journal.
-The latest cold6 compositions remain below the record. Prioritize measured
-Stage1 nonspell production and entry pickups: the NMNB human first stage has
-2515 orbs before2 versus810 at the same26 points, and the generic hit-income
-lane excludes Boss presence. The earlier151-pickup6 bootstrap is historical,
-not a new gain. Measure actual child counts, source reward requests and focused
-collection before changing the sub16 policy; retain original32796 and full-route
-acceptance. [The current journal](experiments/2026-10-28-stage-spell-search.md#v181-source-backed-priority-with-the-old-bootstrap-kept-historical)
-separates these hypotheses from the completed negatives and unstarted prototypes.

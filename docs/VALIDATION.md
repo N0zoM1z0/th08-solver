@@ -238,9 +238,9 @@ Historical272 payloads are relocated unchanged under the paths recorded in
 paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
-Latest overall records are Scarlet Extra **3,296,376,500,14/14** (1917,
-fresh1919/natural1920) and complete story **6,626,897,920,36/37**,only10 timeout
-(1938, fresh1939/natural1940). Both are NMNB, use the original9098/32796 receipts,
+Latest overall records are Scarlet Extra **3,306,483,020,14/14** (2035,
+fresh2036/natural2037) and complete story **6,635,012,890,36/37**,only10 timeout
+(2030, fresh2038/natural2039). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table.
@@ -294,6 +294,56 @@ The original32796 receipt and all earlier42 selected bytes remain unchanged.
 These two new selected Native records use frozen F4/c4c798d and do not inherit
 retail validation. The source/guidance/scoring world boundaries and negative
 complete combinations are recorded in the maintained stage/spell journal.
+
+Extra2019 retains1917's exact first70710 inputs to actual205 entry; story2020
+retains1938's first151389 inputs to175. Each retained prefix and its entire
+entry41-word projection match. A private proposal-only Native-orb portfolio
+compares up to32 certified8/32-update motion prefixes in survivals, ranks actual
+orbs/score/signed gauge with stable ties, and carries each actual world through
+complete settlement. It changes no Native physics, public defaults or models.
+The source base is78db84b, private source manifest
+`64450f6876ba39cfe7d55230f999f5fe0b8148197d60dbce861fef7396d87ac3`,
+and producer ELF SHA-256
+`81d6f3fce71d7d9fe55ad41d05162b10b580959cf8aeffec76feec0c97579b7b`.
+Full literal and actual-replanning default-off gates2011–2018 precede scoring;
+the journal separates their scopes and additional search costs.
+
+2019 completes76677 inputs,1051 points/135056 orbs/PIV975280. Its31842-byte
+replay SHA-256 is
+`dfc334fbaec827a4f01c67667fab764cf24722d7a4629510619316ea32f11d66`;
+actions SHA-256 is `2f28be2e2b119e310f35990b1dba95445ef0a3be35eaf4e4a3ec5ff3c7e4c193`.
+2020 completes159445 inputs,434 FinalB points/74464 orbs/PIV1467840. Its
+65112-byte replay SHA-256 is
+`0bfa3f8eb0c0e28eaad7942dacc044a3b7d003dd1ce3a487f10c44134d7f9cdf`;
+actions SHA-256 is `dd37f71cc9a6b0b88f888c5c66f147fc1b63c57953b110919b4bbef4cda5e741`.
+Fresh2021/2023 and natural2022/2024 pass all8 checks; maps2025/2026 agree in
+all41 terminal words and full14/37-card audits. The46 selected files preserve
+every earlier byte. Both new records remain Native-only; the7B target and
+7,053,332,460 story retail gate remain unmet.
+
+Extra2035 composes the actual2019→2029→2033→2035 worlds: retain60316 inputs
+to203, use Native32 H256/beam384/cash4/movement4 through64936, restore F4
+H128/beam384/cash4/movement4 through closed204 at70512, then use Native32
+H128/beam128/cash0/movement4 through settlement. Every literal parent prefix
+matches exactly. The actual205 entry moves to70754; its6221 collected orbs
+include post-award pickups and produce a59,608,000 pending award. The complete
+route executes76725 inputs,1051 points/135231 orbs/PIV976160. Fresh2036 and
+natural2037 pass all8 checks; map2040 matches all41 terminal words and the full
+14-card audit, including the original203 entry's full41 words. Its31989-byte
+replay SHA-256 is
+`1d9f30f99e30e46280b32cf935349eff9e2c37ca9dfaecbb5cf873ecd39d57e1`;
+actions SHA-256 is `154a06758c8febfd69fd5a44db6ed63d1e1ca002aacbd4d8af4b6c6fd1780208`.
+
+Story2030 retains2020's first156833 inputs and actual191 entry, then uses
+Native32 H128/beam128/cash4/movement3. It completes159445 inputs,NMNB36/37,
+only10 timeout,434 FinalB points/74496 orbs/PIV1468000. Fresh2038/natural2039
+pass all8 checks; map2041 matches all41 terminal words, the full37-card audit
+and the parent's191 entry projection. Its65090-byte replay SHA-256 is
+`15e42676444b7791d8f774f46a4ec4336bce61bbd305d0c5c8163342e7cf446c`;
+actions SHA-256 is `5de72314fa67a5c849b2fc07e3b1074bd54a4dc47dc5d72d022a4404b3962241`.
+Both use the same78db84b/private64450f68 source and81d6f3fc ELF above. The48
+selected files include2019/2020 intermediates and all earlier exact bytes.
+Original receipts remain9098/32796, and both latest scores remain Native-only.
 
 Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
 The new3.165B retains786 through actual193 entry7723, uses H128/cash0/movement4

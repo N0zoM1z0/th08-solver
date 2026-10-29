@@ -2218,3 +2218,259 @@ documentation audit. Public C++/models are unchanged, so normal62/62 task1753
 remains applicable; documentation CTest and ledger/retention checks cover this
 publication. Both finite queues are closed and leave no scoring driver queued.
 The4B/7B goal remains active and unmet; publication cleanup starts no new batch.
+
+## October29 continuation: early-income attribution and actual Native reward ranking
+
+The owner continues the4B Extra/7B complete-story goal locally. The original
+9098 Extra and32796 Scarlet story episodes remain fixed; no seed is acquired,
+selected or replaced. All scoring trials declare NoMiss/Bomb0 with captures
+optional. Extension1984→2048 is recorded at1979 before1980. The V184 local
+launcher and2048 guard retain two owners/two cores, AS/tree RSS4GiB, service
+6GiB high/10GiB hard/no swap and host12GiB admission/8GiB abort guards.
+Private C++17 prototypes keep exact source/build/library manifests locally;
+public C++, Native physics and models remain unchanged.
+
+### V185/V186: test the first Boss, then locate the earlier deficit
+
+V185 adds a private proposal-only human Boss-clock guide for raw Stage0
+nonspells15/16/18. It has1038 unique source-clock keys, derived from the
+previously stock-row-gated Scarlet human replay; natural rows SHA-256
+`ff3bc8db7c454b25ad9725d71a8b2b9d7b7d7df34b1a863f955efd8d65b35ddf`.
+The human gameplay RNG/world
+is never substituted.1980 builds current-ABI variants0/1;1981/1982 reproduce
+the entire incumbent1938 input tape,41 terminal words and full37-card audit.
+1983 public versus1984 private-off replan from the same first2900 inputs with
+H256/publication128/replan64, beam384/cash0/movement4. They are exact in all
+inputs,41 terminal words and audit: closed2 at4855,14,577,410,NoMiss/Bomb0.
+1985 enables the hints and safely closes2 at4805,15,023,790. Its actual2 entry
+has838 orbs/26 points versus the off control's880/26. The higher phase cash is
+not evidence of higher pre-spell orb production or a complete score gain.
+
+1986 builds a read-only sampler of actual input/latch, gauge, field time items,
+Boss HP/reduction/source clock, child/link counts and immutable hint coverage.
+1987–1989 reproduce the incumbent/off/on41 terminal words and full audits;
+1995 and1996 also gate the later human2700 and recovered legacy worlds.
+The sampler consumes no gameplay RNG and makes no policy/world update.
+The enabled guide covers606/606 observed source16 keys. Expected fire is565
+rows, actual next-input fire599, and fire/form match572/606. Thus most hints
+match;34 extra firing rows show partial bypass of the intended no-fire tail.
+The initial local interpretation overstating that bypass is retained alongside
+an explicit correction. Soft proposal availability is not proof of acceptance.
+
+The larger attribution changes the next priority. In the human trace, orbs are
+already1995 before source16 at2995; Native has810. Human2 begins at3885 with
+2515/26 points, Native at3618 with810/26. Therefore1185 of the1705-orb entry
+shortfall predates the Boss; the human gains another520 during the nonspell.
+At frame1000 human power/orbs are8/480 versus Native16/58; at2000,40/1261
+versus40/417; at2900,55/1995 versus76/808. Both original entries use power0,
+lives2 and bombs3. Different shooting, collection and power trajectories are
+measured, rather than explained by a different entry configuration.
+
+Native incumbent source16 lasts623 observations, retains810 orbs throughout,
+and observes at most four children; off/on guides last662/606, ending880/838,
+again at most four children. Human HP pauses near1545 late in the nonspell;
+Native kills earlier. These observations neither prove all missing income is
+Boss-derived nor justify assuming an unobserved eight-child chain. The source
+`DetachEnemyChain` reward formula and no-Boss guards in `Policy::Impl::choose`
+remain hypotheses to test through actual production/collection. The previously
+known151-pickup human6 bootstrap is not relabeled a new discovery.
+
+### V187–V190: richer early proposals still need the downstream world
+
+1990/1991 take the human's first2500/2700 actions as proposals executed in the
+original32796 Native world, then restore public H256/cash0/movement4 through
+closed2. Both are NMNB. Their actual2 entries have1679 orbs/24 points and2072/22:
+more orbs than the baseline, but two/four fewer points.1992 removes road parent
+focus bias and sets human bias20; it yields only816 orbs/9 points at2 and is
+negative. Removing one proposal guard does not reproduce the human economy.
+
+Historical779's first4734 inputs are freshly executed by1994 to a safe closed2
+boundary, with one captured card among Stage1's four eligible cards.1996's
+read-only full-audit/41-word gate locates actual2 entry3595,2080 orbs/26 points.
+The old779 budget failure is not used as a certificate.1998/1999 reexecute
+exactly3595 inputs and use explicit public focused feedback reserves900/1200,
+H128/beam384/cash0/movement4. Public cold feedback fires; these are not V120
+true-no-fire trials. They capture2 with1300/1053 phase orbs, pending awards
+9,194,740/8,724,670 and376/367 remaining updates.
+
+2000/2001 restore F4 H128/cash4/movement4 through13;2002/2003 restore V49's
+Stage2 road and17/25/29 components;2004/2005 use the frozen NPC/dynamic-spell
+road through Stage5. Both remain NMNB. The900 world captures6 with3014 orbs,
+42 updates remaining and8,865,060 pending award, but times out13. The1200
+world times out6 and13. At Stage5 they finish3,167,886,950 and3,368,743,570,
+23/26 captures each, below the incumbent's3,433,629,060 boundary. These are
+partial worlds, not complete Lunatic scores. Their actual tapes remain local;
+no speculative downstream cash is added and no new77 reserve is inferred.
+
+| Task | Boundary | Owner inputs | Displayed cash | Captured | Wall seconds |
+| --- | --- | ---: | ---: | ---: | ---: |
+|1990 |closed2 |4789 |19263210 |1 |17.526 |
+|1991 |closed2 |4840 |18544300 |1 |17.835 |
+|1992 |closed2 |5369 |9599740 |1 |23.865 |
+|1994 |closed2, fresh legacy literal |4734 |21435620 |1 |0.532 |
+|1998 |closed2, reserve900 |5319 |22722050 |1 |14.801 |
+|1999 |closed2, reserve1200 |5328 |22472960 |1 |16.758 |
+|2000 |closed13 |15958 |89353680 |3 |143.443 |
+|2001 |closed13 |15817 |81718070 |2 |142.905 |
+|2002 |closed29 |33063 |348448210 |7 |149.881 |
+|2003 |closed29 |33396 |360825490 |6 |151.214 |
+|2004 |Stage5 boundary |115738 |3167886950 |23 |1141.150 |
+|2005 |Stage5 boundary |117458 |3368743570 |23 |1168.709 |
+
+Extra1993/1997 compare private fast8/8 and frozen F4 with the same first60316
+incumbent inputs, explicit203 full14-row shoot/top16/reserve0, H128/beam384/
+cash0/movement4. Both safely capture203 at64936. Fast1993 collects2983 orbs
+and a33,864,000 award, below the incumbent3661/39,288,000.2006/2007 restore
+ordinary F4 through204;2008/2009 restore H128/cash0/movement4/beam128 through
+205 and settlement. They complete3,269,210,520/3,279,293,450, NMNB14/14,1051
+points each, below3,296,376,500. Full routes, not local203 cash, reject them.
+
+### V192/V193: rank certified motion by realized Native income
+
+The existing planner normally accepts its first certified nominal/fresh path,
+then optionally compares a few cash movement pulses. The private V192 proposal
+experiment retains that path and compares up to32 additional motion prefixes
+only in Extra203/205 and FinalB175/179/183/187/191. Directions cover eight
+neighbors, durations8/32, and either baseline fire/form or focused fire.
+Each alternative retains the immutable lead and runs its own actual Native
+world. Rank actual end orbs, then score, then signed gauge, with stable
+incumbent ties. Failed/incomplete trajectories cannot rank. The total search
+budget stays30000ms and the shared economic-admission window2000ms; additional
+attempt/update/failure/adoption/native/guidance/I/O costs are explicit. This is
+a short-horizon search objective, not a full-score guarantee or physics change.
+
+The reward hypothesis follows actual source-backed audit income: incumbent203
+has3661 pickups/39.288M award;205 has5475/53.8M. The first four FinalB survivals
+match33M+8000 times their collected orbs.191 and the new205 can contain pickups
+after the award is frozen; their whole-phase pickup totals are not exact SCB
+multipliers. V191 was an Extra-only preparation superseded before build/run.
+
+2010 performs a clean Release C++17 build.2011/2012 reproduce the entire1917
+Extra tape and2013/2014 the entire1938 story, with identical41 terminal words,
+full audits and inputs for portfolio0/32. Literal tests bypass proposal search.
+2015/2016 therefore also compare unmodified public versus portfolio0 while
+actually replanning205: both reproduce3,296,376,500 exactly.2017/2018 replan
+175 through settlement and match each other exactly at6,599,335,190. This
+uniform beam384 control loses27,562,730 versus the incumbent's187/191 beam
+composition; beating that lower control alone would not qualify a record.
+
+2019/2020 enable portfolio32 in those same actual complete-route replans:
+
+| Task / route | Complete score | NMNB captures | Extra Native attempts / adopted / failed | Additional Native updates | Branch Native / guidance seconds | Wall seconds |
+| --- | ---: | --- | --- | ---: | --- | ---: |
+|2019 /Extra |**3,304,500,070** |14/14 |4681 /116 /2313 |338481 |34.977 /153.221 |235.340 |
+|2020 /story |**6,634,534,150** |36/37, only10 timeout |5577 /123 /3544 |287231 |49.535 /290.400 |404.077 |
+
+These beat the actual overall incumbents by8,123,570/7,636,230. Extra preserves
+exactly70710 inputs from1917, then improves205 from5475 to5952 collected orbs;
+its pending award is57,568,000 and final totals1051 points/135056 orbs/PIV975280.
+Story preserves exactly151389 inputs from1938, then changes all five final
+survivals.175/179/183/187 gain210/127/101/219 orbs, while191 loses345. Its final
+FinalB totals are434 points/74464 orbs/PIV1467840. Route lengths remain76677/
+159445. Costs in the new Native-orb counters are subsets of total branch costs,
+not extra independent charges. Higher candidate count is not a speed claim.
+
+Fresh2021/natural2022 and fresh2023/natural2024 pass all eight acceptance checks:
+complete execution, exact41 terminal words, capture outcomes/coverage, natural
+completion, score, NMNB and exact `ysopwnab` name. Read-only maps2025/2026 match
+all41 terminal words and the full14/37-card audits. Actual Extra203/205 entries
+remain60316/70710; story175/187/191 entries remain151389/155473/156833.
+The exact two qualified new record replays are selected; historical bytes and
+original seed receipts remain unchanged. Their hashes/source manifests are in
+[Validation](../VALIDATION.md#scarlet-team-verified-native-baselines) and the
+[progress index](../../reports/native/replays/progress.tsv). New scores remain
+Native-only. The4B/7B targets and story all-shot retail gate remain unmet.
+
+### V196/V199: transfer the reward objective, preserving a composition failure
+
+2027/2029 retain exactly60316 inputs from qualified2019 and enable the same
+Native32 portfolio on203, now H128/publication64/replan32 versus H256/128/64,
+beam384/cash4/movement4, no explicit phase geometry. Both capture203 safely at
+64936. H128 collects4102 orbs/42,816,000 pending award; H256 collects3808/
+40,464,000, versus incumbent3661/39,288,000. H128 attempts4077 alternatives and
+adopts107; H256 attempts694 and adopts36. The same2000ms shared admission
+budget admits fewer expensive long-horizon alternatives. This comparison is
+not an isolated candidate-count or throughput benchmark.
+
+2028/2030 retain2020's actual first156833 inputs to191 and finish the complete
+story with F4 beam384 versus Native32 beam128, H128/cash4/movement3.2028 ends
+6,633,878,510,36/37 NMNB, below2020;2030 ends6,635,012,890,36/37 NMNB, a478,740
+candidate improvement pending fresh verification. Their191 pickup totals are
+2503/2530 and pending awards51,840,000/52,480,000.2030 records2001 extra Native
+attempts and64 adoptions. These apply policies to the new actual world, rather
+than splicing old future inputs into it.
+
+The V196 controller then fails before launching204: its `Array.map(parent)`
+passes index1 as the function's optional `full` boolean and rejects the valid
+second phase-boundary parent. Both pairs and all four original exits/results
+remain preserved. No failed gameplay prefix or budget-ending result is used.
+The recovery uses a new one-argument callback and explicit lambdas. Charged
+selection/recovery2031 independently revalidates both safe203 parents and the
+frozen Native32 ELF before any new continuation; it passes in0.046s. This
+records the orchestration failure rather than silently replaying/reusing IDs.
+
+2032/2033 restore F4 H128/beam384/cash4/movement4 from each actual64936-input
+parent through closed204.2034/2035 then restore Native32 H128/beam128/cash0/
+movement4 through205 and full settlement. The latter suffix includes its actual
+transition and pickup state; the old70710 entry is not assumed for changed
+worlds. V199 is a finite recovery queue, not a rerun of the first four trials.
+
+| Task | Policy / boundary | Owner inputs | Displayed cash or full score | Captures | Wall seconds |
+| --- | --- | ---: | ---: | ---: | ---: |
+|2027 |Native32 H128, closed203 |64936 |2042506370 |12 |256.217 |
+|2028 |F4 beam384, full story |159445 |6633878510 |36 |36.504 |
+|2029 |Native32 H256, closed203 |64936 |2040882850 |12 |189.783 |
+|2030 |Native32 beam128, full story |159445 |**6635012890** |36 |100.588 |
+|2031 |composition recovery preflight |— |— |— |0.046 |
+|2032 |H128 parent, closed204 |70557 |2161183320 |13 |78.268 |
+|2033 |H256 parent, closed204 |70512 |2159992290 |13 |76.320 |
+|2034 |H128 parent, full Extra |76773 |3303860490 |14 |254.863 |
+|2035 |H256 parent, full Extra |76725 |**3306483020** |14 |250.004 |
+
+All gameplay cases are NMNB.2034's6048 phase205 orbs/58,384,000 pending award
+end1051 points/134950 orbs/PIV974750.2035 instead collects6221/59,608,000 and
+ends1051/135231/976160. Its actual205 entry is70754, rather than the old70710.
+The locally higher-orb H128203 future is639,580 below2019; the H256203 future
+improves2019 by1,982,950. Keeping distinct actual-world archives matters even
+when a short component appears dominated in local income.
+
+Fresh2036/natural2037 for2035 and fresh2038/natural2039 for2030 pass all8 checks.
+Read-only maps2040/2041 agree in all41 terminal words and full audits. The
+retained original-entry prefixes match throughout the2035 parent chain and
+2030's191 entry.2030 ends434 FinalB points/74496 orbs/PIV1468000, improving2020
+by478,740. Both qualify as further overall records, preserving the previously
+selected2019/2020 intermediates. Exact identities are in Validation and the
+progress index. The new total improvements over the session's original records
+are10,106,520 Extra and8,114,970 story.4B/7B and the story retail gate remain unmet.
+
+### Closure, costs and limitations
+
+1980–2041 are62 terminal allocations:21 phase boundaries, two Stage5 boundaries,
+18 complete Native runs and21 build/probe/fresh/natural/recovery owners. All
+gameplay boundaries and complete runs are NoMiss/Bomb0; capture outcomes,
+including timeouts, remain in the TSV. Summed process wall cost is5862.976s,
+peak tree RSS309542912 bytes and minimum host available185596899328 bytes.
+No resource abort occurs. These shared-two-core measurements include canaries,
+negative futures and the charged composition recovery; Native, guidance and I/O
+costs remain separate. The failed V196 controller's7min26.456s service interval
+and9min43.627s CPU include its already charged four owners, so they are not
+added again as Native cost. Its error and original source are preserved.
+Static analysis/preparation and unmetered orchestration intervals are not
+invented as zero-cost measurements. V198 selection separately records its
+measured metadata-selection nanoseconds.
+
+Four qualified new overall replay files are retained. Fourteen duplicate or
+unselected new exports,679162 bytes, are hash-bound then pruned; all required
+raw inputs, results, source/build/library manifests and phase archives stay
+local. All earlier44 selected files and272 historical payloads remain unchanged.
+The private reward-ranking prototype is not promoted to public C++; its literal
+and actual-replanning gates are recorded separately from scoring and fresh
+checks. Public C++/models are unchanged, so normal62/62 task1753 remains
+applicable. Publication2042 passes documentation CTest in0.02s, all48 selected
+hashes, old1979 prefixes,272 historical payloads and reverse-order export, then
+fails its live-unit count: the exited failed V196 unit is still listed. Its
+MainPID0/failed status is independently observed. The6.425s/680497152-byte
+audit exit and error remain charged. Fresh audit2043 filters actual running/
+activating/deactivating units and checks resource guards, lineage and closure.
+No owned experiment queue remains; cleanup starts no further scoring batch.
+The active4B/7B goal is not marked complete by this publication.
