@@ -2757,3 +2757,201 @@ and the3 new all8-qualified records. All owned scoring queues close before
 maintenance; no further scoring batch starts during cleanup. No remote contact
 or new Wine playback occurs, and19 older remote closures remain unresolved.
 The4B/7B goal remains active and unmet.
+## October29 continuation: focused151 and delayed155 in distinct worlds
+
+The4B/7B goal remains active. V219–V222 reuse the original32796 Scarlet episode,
+with NoMiss/Bomb0 and captures optional. The2176 cumulative cap, two-owner/two-core
+local service and all AS/tree/host memory guards remain unchanged. No remote
+connection, new seed, public C++/model change or Wine playback occurs. These
+experiments reuse the previously source-bound V120/F4/fine144 binaries; they do
+not rebuild or silently alter those mechanisms.
+
+### Source and human evidence before selecting a phase strategy
+
+The suppressed-extra-item graze counter needs its caller semantics.
+[`Player::CheckGrazeCollision`](../../third_party/th08/src/Player.cpp#L410)
+passes0 to `AwardGraze`, whereas
+[`CalcLaserHitbox`](../../third_party/th08/src/Player.cpp#L486) passes1.
+With a Boss and extreme-youkai gauge, an ordinary team spell graze can request
+three time items; the suppressed path requests one. An initial local explanation
+calling this an ordinary-bullet quota was wrong and was explicitly corrected.
+The human155 window contains no Bomb input but has75 suppressed and23 ordinary
+extreme-youkai events. Suppression is not evidence of a bomb or item-pool cap.
+Input-row counts alone also cannot substitute for actual bomb-use accounting.
+
+[`Spellcard::EndSpell`](../../third_party/th08/src/Spellcard.cpp#L1008)
+first performs scored bullet/enemy cancellation, then records the captured bonus
+and pending time reward. The reward lifecycle continues for130 updates.
+[`CollectTimeOrb`](../../third_party/th08/src/ItemManager.cpp#L600) adds8000 to
+bonus progress in displayed bonus units, subject to the cap and continuing decay.
+[`AddScore`](../../third_party/th08/src/GameManager.cpp#L198) divides displayed
+caller amounts by10 for stored score; this is not an80000-point bonus increment.
+The audit's end-of-card field-time count is item inventory after these end
+callbacks, not remaining bullet count or proof of the items' source. Ordinary
+cancellation defaults to point stars. Neither that inventory nor an uncollected
+pending award is added to a claimed phase cash gain.
+
+The same previously stock-row-gated Scarlet human story trace has a complete
+NMNB first stage:196,524,230/61 points/21873 orbs, versus incumbent2113's
+130,212,230/55/12755. The66,312,000 cash and9118-orb gaps identify early
+production/collection as useful questions, not an NMNB upper bound. Its full
+story has a Stage4A miss and bomb use; its different seed/world is never imported.
+For first-stage2/6/10/13, human phase pickups are895/4069/4071/5639 versus Native
+1065/1321/2933/3765. Human10 captures at remaining−48; Native10 times out at−60.
+Native13 captures with686 remaining versus human100. These are measured timing
+and collection differences, not evidence that delaying every kill is profitable.
+The earlier1185-orb pre-Boss attribution and151-pickup bootstrap remain historical
+findings rather than new discoveries.
+
+The whole-stage balance reinforces that priority. At Stage5 exit, Native2113
+has3,433,629,060 versus human3,825,571,550, a391,942,490 deficit. Its FinalB
+increment is3,219,565,490 versus2,930,015,540, recovering289,549,950. Stage1/2/3
+Native orbs are12755/33391/36052 versus21873/37662/46219; Native4A already has
+50628 versus39567 and FinalB75471 versus53125. The human's earlier bombs/miss
+and different world confound a matched constraint comparison. These balances
+locate production/collection questions; human early cash is never added to a
+Native suffix to claim a route score.
+
+Card47 is a more specific next question in the current world:3999 Native pickups
+and964 ordinary extreme-youkai events versus human11608/3882. The actual2117
+map locates its entry at50124; Native focuses834 of2154 inputs and captures with
+246 remaining/16,041,460 bonus. Human47 focuses throughout its own2385-update
+natural replay window, has no Bomb input or new death there, and captures with15
+remaining/20,000,000. Sampled Native rows alternate upper/extreme-youkai farming
+with bottom/extreme-human firing, whereas the human stays near the upper field.
+Initial approximate row sampling is superseded by alignment to each natural
+audit's update counter, checked against row word0: Native begins50160 and human
+52883. Neither is the producer's actual50124-input checkpoint. Natural latched
+input observations and owner action counts remain distinct. Earlier
+[47 frontiers](2026-10-27-phase-composition.md#spatial-phase-controller)
+already include4106-orb feedback and capped-bonus2999-orb shooting outcomes in a
+different world, using human capture. The new question is actual focused intent
+and capture form in the current entry, not the first exploration of47 or a
+claimed future7609-orb gain. V53 also already has focused-capture evidence:
+1576 uses actual49543, H256, upper16/7/feedback600 and collects6747, capturing at
+remaining0 with17,291,640 bonus. Its838 fire/2278 focus inputs include public
+cold feedback, which fires before extreme gauge. Prepared V226 transfers that
+strategy to current50124 with V120 true-no-fire, H128 and reserves600/900;
+these differences are explicit. Old1580's focused shooting kills in1020 updates
+with3661 orbs. The initially prepared continuous-fire comparison is therefore
+replaced before launch by feedback600. No new47 scoring trial has run in this batch.
+
+Solo Sakuya retains a separate source opportunity and cost: the human-shot hit
+accumulator threshold is27 versus40 for teams, and the linked-familiar reward
+formula can request40 per child versus the team's26 at their respective chain
+thresholds. This does not restore extreme-youkai graze income to a solo human,
+prove a new score or authorize substituting shot/world state.
+
+### V219–V221: inspect actual inputs and preserve six safe outcomes
+
+The higher1962 Stage5 world is mapped by2048. Its151 entry is120383 inputs,
+gauge−9216;155 is125103. The record2113 world is mapped by2117, with151 entry
+119304/gauge−5992. All41 words/full audits and original prefix identities were
+already checked at those actual owner coordinates.
+
+In the1962 world, the old151 controller focuses only32 of1543 inputs and has
+zero ordinary extreme-youkai graze events. Continuous focused fire is a concrete
+alternative. V120 uses cash0/movement4/H128/beam384, top16/full14 rows and prior1;
+its true-no-fire feedback preserves fire/form intent until the declared capture
+reserve. This differs from public cold feedback, which fires. Cold V120155 uses
+reserves1500/1800;151 compares continuous focused fire with feedback1600. The
+same151 choices are repeated at the record's different actual entry, without
+merging their worlds.
+
+| Task | Actual parent / phase | Inputs in phase | Collected orbs | Remaining | Pending bonus | Field orbs | Closed input count |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+|2119 |2046 first125103 /155, feedback1500 |3226 |2526 |374 |22651000 |136 |128329 |
+|2120 |2046 first125103 /155, feedback1800 |2816 |2179 |784 |24002370 |185 |127919 |
+|2121 |2044 first120383 /151, focused shoot |1716 |3402 |684 |29974030 |905 |122099 |
+|2122 |2044 first120383 /151, feedback1600 |1631 |2729 |769 |26109940 |1116 |122014 |
+|2123 |2113 first119304 /151, focused shoot |1573 |2523 |827 |28421870 |1766 |120877 |
+|2124 |2113 first119304 /151, feedback1600 |2105 |1993 |295 |17882540 |984 |121409 |
+
+All six are safe captured phase boundaries, exit2, Bomb0; captures are28/28 for
+the155 cases,27/27 for2121/2122 and26/27 for2123/2124 because their fixed prefix
+includes10's timeout. Process wall is54.803/51.028/32.666/30.319/29.034/32.395s.
+The original1962-world151/155 pickups were1726/1007; the record-world151 has2779.
+Thus focused shoot improves151's same-world collected income only in the1962
+entry. It improves captured bonus in both entries. Local orb or bonus ordering
+still cannot select a complete route. Exact manifests, actions, audits, resource
+measurements and source-hash-backed analysis remain local.
+
+### V222: complete each retained actual world before comparison
+
+The bounded queue retains all six safe outcomes in three pairs. Each prefix is
+reexecuted from the original entry; F4 H128/cash4/movement4/beam384 recomputes
+through171 with its208/7/reserve0 focused-feedback component. Fine144 then uses
+H128/cash4/movement3/beam384 through187; only191 changes to beam64 before full
+settlement. Every changed boundary comes from its actual closed output count,
+not an old route clock. Actors, RNG, items and delayed capture rewards carry
+through the actual Native world. The queue preserves all18 continuation costs
+and both incoming-world families; no partial score, scalar sum or old input
+suffix is substituted for the complete comparison.
+
+### V224/V225: actual-world archives and complete comparison
+
+All six complete futures remain NMNB. The two record-entry151 futures retain
+only10's timeout; the four1962-world futures capture37/37. The best is
+**6,579,464,290**, still73,730,260 below overall2113. No new replay qualifies,
+so fresh/natural all8 qualification is not run for these lower candidates.
+The two original records remain Extra3,308,826,050/story6,653,194,550.
+
+| Phase parent | Through171 /187 /complete tasks | Complete displayed score | Captures | FinalB orbs / points | Summed continuation wall seconds |
+| --- | --- | ---: | ---: | ---: | ---: |
+|2121 |2125 /2127 /2129 |6539325210 |37/37 |71641 /435 |942.770 |
+|2122 |2126 /2128 /2130 |6579464290 |37/37 |72317 /438 |931.854 |
+|2123 |2131 /2133 /2135 |6548056340 |36/37 |67520 /434 |966.807 |
+|2124 |2132 /2134 /2136 |6514122000 |36/37 |68293 /434 |953.496 |
+|2119 |2137 /2139 /2141 |6554988770 |37/37 |72559 /438 |881.185 |
+|2120 |2138 /2140 /2142 |6531798630 |37/37 |69734 /438 |882.375 |
+
+The151 same-entry ordering reverses downstream:2121 collects3402 phase orbs
+versus2122's2729, yet their full scores are6,539,325,210 and6,579,464,290.
+At171 the latter is37,617,020 ahead, ending40,139,080 ahead. It improves the
+earlier unmodified1962-world complete6,510,239,280, while remaining below the
+overall record. Higher151/155 local income and a higher captured-card count
+do not establish a transferable whole-route advantage.
+
+Six read-only V54 maps2143–2148 match all41 terminal words and full37-card
+audits. Their entire input hashes are bound to their actual producer tapes.
+Classification also verifies24 exact input-prefix edges, including the six
+initial phase substitutions. The unchanged sampler matches original1588's
+source and2117's ELF; its old source base71fdc6b and original dirty-build
+manifest/diff hashes are preserved separately from the current publication head.
+These are input-reexecution archives, not full-world serialized snapshots or
+independent retail physics evidence. Their distinct cold boundaries are:
+
+| Complete producer | Map task | Actual171 entry | Actual191 entry |
+| --- | --- | ---: | ---: |
+|2129 |2143 |146783 |156449 |
+|2130 |2144 |146199 |156497 |
+|2135 |2145 |144761 |154417 |
+|2136 |2146 |145844 |155473 |
+|2141 |2147 |145846 |156705 |
+|2142 |2148 |146035 |156105 |
+
+2119–2148 are30 terminal allocations:18 safe phase boundaries, six complete
+Native score futures and six read-only full-route maps. Summed process wall is
+5822.700s, peak owned-tree RSS158916608 bytes and minimum host
+available187016593408 bytes; no resource abort occurs. Classification, including
+the24 prefix comparisons, costs918275924ns. Source investigation and other
+preparation/orchestration intervals were not separately metered; missing costs
+are not invented as zero. Native/guidance/I/O and failed-branch costs remain
+in the task rows. These shared-two-core measurements are not isolated speed
+benchmarks.
+
+No new overall replay is retained. Six lower exports,386750 bytes, are
+hash-bound then pruned; actions, results, source/binary/library/seed bindings and
+all six actual-world archives remain local. All51 selected files and272
+historical payloads retain their exact bytes. Public C++/models are unchanged,
+so normal62/62 task1753 remains applicable; publication225 runs documentation
+CTest and the receipt, prefix, retention, resource and reverse-export checks.
+No new scoring queue starts during publication maintenance. V226's two actual47
+feedback600/900 strategies remain prepared and unstarted for a subsequent
+scoring batch, with no task IDs reserved. The4B/7B goal stays active and unmet.
+
+Publication225 passes in7.008s, peak tree RSS682754048 bytes. Documentation CTest,
+all30 owner closures, old2118 TSV prefixes, all51 selected/272 historical hashes,
+24 prefix edges, six whole-audit maps and reversed-export equality pass. Including
+this audit, the batch uses31 allocations through2149. No scoring driver remains
+running, and no further Native batch starts during cleanup.
