@@ -14,8 +14,10 @@ verify the complete records. Fixed tails, short scouts, moving then dwelling,
 and two full37-capture continuations of the higher1962 Stage5 world are lower.
 Focused151/155 strategies now have six further complete futures and separate
 actual-world archives. Their best6,579,464,290 captures37/37 but remains below
-the overall record. Current47 form switching and early-stage13 capture timing
-are concrete next questions; the prepared47 pair has not run.
+the overall record. Actual47 focused feedback now collects8149 orbs/capture or
+9532/timeout, but full6.436B/6.495B futures are lower. Read-only replay/anchor
+traces and Native maps pass. The next question is retaining the phase movement
+profile during capture; its current reserve switch drops the upper grid.
 The owner now requests **local-only work** after a VPS SSH identity change.
 Nineteen earlier remote terminal receipts remain unavailable; their state is
 explicitly unresolved and they certify no new score. Remote closure/retention
@@ -105,10 +107,11 @@ closures; those historical uncertainties are not a live queue or new certificate
 | Realized Native survival income |2010–2026: literal and actual-replanning default-off canaries agree in all inputs/41 words/audits. Portfolio32 improves205 and the final five survivals to verified3.305B/6.635B | Rank only Native-certified alternatives, record extra costs, and accept only complete fresh-verified records; the private prototype changes no physics or public defaults |
 | New scene profiles and full controls |2044–2117: Extra205 beam64 verifies3.309B; fine pulses then191 beam64 verify6.653B. Four fixed-tail, four scout, two dwell and two full37-capture early-world futures are lower | Keep successful per-scene profiles; record extra costs and preserve the actual incoming world |
 | Focused151/155 transfer and archives |2119–2148: six phase outcomes become six complete NMNB futures, best6.579B/37of37;24 exact prefix edges and six full-audit/41-word maps pass. Same-entry151 local ordering reverses downstream | Retain distinct worlds; retest47's old6747-orb strategy at current50124 and investigate13's unused duration without adding partial income |
+| Actual47 form/fire and capture movement |2150–2167:8149-orb capture and9532-orb timeout become full6.436B/6.495B, both34/37. Full replay rows/audits,12 prefix edges and two Native maps pass;74 and167 introduce later capture losses | Separate fire timing from the phase movement profile, which expires at reserve. Preserve actual option anchors and callback-adjusted HP; human47 had a preceding bomb |
 | Checkpoint units and interruption | Audit calculation counters differ from owner input counts. V104 corrects3–5-update labels without changing raw trials. SSH identity changes leave missing remote closures unverified | Use measured owner phase maps; preserve failed setup/unknown receipts and local-only steering |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V224 case and source-backed conclusion, including setup failures, resource
+V47–V230 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)

@@ -2955,3 +2955,168 @@ all30 owner closures, old2118 TSV prefixes, all51 selected/272 historical hashes
 24 prefix edges, six whole-audit maps and reversed-export equality pass. Including
 this audit, the batch uses31 allocations through2149. No scoring driver remains
 running, and no further Native batch starts during cleanup.
+## October29 continuation: transfer the focused47 strategy
+
+The preceding V225 turn is evidence-producing progress: six full negative
+compositions and their actual-world archives identify47 as a more useful early
+phase question. The4B Extra/7B complete-story objective remains unchanged and
+active. The2176 cumulative cap is not reset. V226/V227 reuse the original32796
+Scarlet episode and2113's first50124 actual owner inputs, checked against2117's
+map and the immutable parent action hash. No new seed or Wine launch is needed
+for further offline candidates in this same episode. The two-owner/two-core
+local service and AS/tree/host memory contract remain fixed.
+
+### V226: realized focused intent improves47's collected income
+
+The source/human comparison and old1576 frontier are recorded above. This pair
+uses the already tested V120 true-no-fire ELF, cash0/movement4/H128/beam384,
+upper16/7, prior1 and preserved recovery fire/form intent. Capture remains
+focused. Reserves600/900 test the capture-time frontier; the old public cold
+feedback's early firing is not silently treated as V120 no-fire. The original
+stage/shot/seed and first50124 inputs stay fixed.
+
+| Task | Reserve | Outcome | Collected47 orbs | Ordinary extreme-youkai events | Remaining | Pending bonus | Actual fire / focus inputs | Closed input count | Wall seconds |
+| --- | ---: | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+|2150 |600 |timeout |9532 |3004 |0 |0 |602 /2271 |52524 |38.820 |
+|2151 |900 |captured |8149 |2542 |139 |18228110 |763 /2132 |52385 |36.007 |
+
+Both are safe phase boundaries, exit2, NoMiss/Bomb0. Their visited capture
+counts are11/13 and12/13: the former retains10/47 timeouts, the latter only10.
+The current-record47 comparison is3999 orbs,964 ordinary extreme-youkai events,
+834 focused inputs out of2154 and16,041,460 captured bonus. The new combined
+phase profile keeps focused farming after the upper approach; both new outcomes
+have129 unfocused inputs. Actual emitted inputs substantiate the form/fire
+change rather than merely the requested CLI. This does not isolate geometry,
+fire timing and economic-proposal changes as a single-variable experiment.
+
+The600 outcome has more collected time and higher immediate cash1,018,901,210
+versus1,015,478,270, but loses47's captured bonus. The900 outcome still carries
+18,228,110 and100 pending time orbs. Neither that award nor the875 field orbs
+is added to a claimed route gain. It is carried through the actual Native
+130-update settlement. The600 world is valid under optional captures and is
+retained rather than rejected by an accidental all-capture gate.
+
+### V227: recompute both complete futures
+
+The bounded continuation first restores the source-bound NPC Stage3 remainder,
+4A and Stage5 component, with roadH256/spellH128, cash4/movement4. Its stop is
+the actual stage5-to7 handoff, not a complete-route score. The frozen FinalB
+price collector then locates actual151; F4 H128/beam384/cash4/movement4 continues
+through171 with208/7/reserve0 feedback. Fine144 H128/beam384/cash4/movement3 runs
+through187, then beam64 finishes191 and settlement. The five pairs allocate ten
+new owners. They reexecute each actual closed input count from the same original
+entry, carrying RNG, actors, bullets, items and capture lifecycle state. Both
+captured and timed-out safe phase worlds are accepted as components. Only a
+complete NMNB route above the overall record, followed by fresh/natural all8,
+can select a new replay.
+
+The human47 natural window motivates a narrower timing question: fire counts
+in successive300-update bins are75/300/300/300/68/3/0/27, the last bin having285
+updates. V226 instead defers fire to its capture reserve. The100-byte row has no
+HP field. Recovering already-gated observer1058 supplies the missing historical
+HP/anchor trace without rerunning the human replay or building another observer.
+An initially prepared V54 selector change is marked superseded and unbuilt;
+V228 will reuse the unchanged corrected1057 observer ELF and compare each new
+full replay's entire stock-row stream against the unchanged natural checker.
+The probes wait for V227 to close and add no third driver or public behavior.
+
+The earlier journal already warns that human47 has a preceding bomb. The actual
+Bomb input is33 updates before its52883 natural-audit opening; no Bomb input in
+the active window does not make its incoming world a clean NMNB anchor/DPS
+counterfactual.1058 reports raw life4300 initially and2394 on the last active
+row. Raw life is not necessarily damage-to-zero: source `HandleLifeCallback`
+uses positive thresholds, and the existing Native `capture_hp` correctly uses
+life minus the maximum next callback threshold plus1. This does not identify a
+physics or policy bug. Option targets stabilize separately from focused player
+motion; new observations must distinguish actual anchors, raw life and effective
+capture HP before interpreting the timing difference. Historical1058's entire
+stock stream remains hash-identical to its uninstrumented human reference.
+
+### V227 complete outcomes and V228/V229 fidelity
+
+Both full futures are NMNB34/37, below overall6,653,194,550. Their different
+missed-capture sets remain explicit; optional captures never make a missing
+bonus disappear. The route600 gains12,032,400 at Stage5 versus the incumbent's
+3,433,629,060, but its FinalB outcome is lower. The route900 later times out167.
+The new47 income is not a whole-route improvement.
+
+| Boundary |600-world task / score |900-world task / score |
+| --- | ---: | ---: |
+|stage5 |2152 /3445661460 |2153 /3381037180 |
+|road151 |2154 /4213282330 |2155 /4182941560 |
+|171 |2156 /4999781220 |2157 /4924179870 |
+|187 |2158 /5462566020 |2159 /5399473790 |
+|full |2160 /6494552620 |2161 /6435933160 |
+
+2160 ends158685 inputs with10/47/74 timeouts;2161 ends157933 with10/74/167
+timeouts. No new replay qualifies; the prior51 selections remain unchanged.
+No fresh/natural all8 qualification is charged for these lower candidates.
+
+Read-only2162/2163 use the frozen2116 natural checker;2164/2165 reuse corrected
+observer1057 without rebuilding C++. Each entire100-byte stock-row stream is
+hash-identical, full observer/natural audits match, and producer audits match
+after removing only native/replay calculation-clock and stage-observation counts.
+Both capture outcomes and physical scoring fields remain in that comparison.
+This permits the new HP/anchor interpretation; it is instrumentation fidelity,
+not an independent retail physics oracle. Human1058 is reused from its already
+recorded1-miss/9-bomb trace, not rerun or imported as a scoring world.
+
+The Native600 world first loses raw HP at47 age1805 and ends at2655 without
+capture. Native900 first loses HP at1507 and ends2397/captured. Both begin4300;
+the human first drop is290 and last active raw HP2394. The current Native
+controller already uses effective HP to the next callback; these raw values
+must not be interpreted as damage-to-zero. Both new option target centers
+stabilize near(145.094,176.322), while the human later stabilizes near
+(195.677,162.822) in its different, bomb-preceded world. No anchor is injected.
+
+The more actionable Native difference is the capture movement transition. In
+900, age1500 is nearY51.47, but age1800 isY386.23 and age2100Y389.76.600 also
+retreats after its later fire switch. Source V120 `online.cpp`626 uses
+remaining>reserve for the phase grid, speed filter and sample stride;895 turns
+off phase flow at that same boundary. Thus capture changes both fire timing and
+the movement proposal profile. A next default-off prototype should compare
+retaining that explicit phase movement profile through capture, with the coupled
+geometry/speed/sampling changes named. Independent recovery may still escape
+the grid: actual inputs/positions and full Native safety must decide the result.
+This is a proposal-strategy question, not a physics fix or a proven score gain.
+
+2166/2167 reexecute both entire Native tapes, matching all41 terminal words and
+full37-card audits. Their archives retain actual47/74/77/151/155/171/175/191
+entries, rather than natural replay counters:
+
+| Producer | Map | Actual74 entry | Actual167 entry from full archive | Actual171 entry | Actual191 entry |
+| --- | --- | ---: | ---: | ---: | ---: |
+|2160 |2166 |80383 |141928 |145838 |156073 |
+|2161 |2167 |79767 |141558 |145838 |155321 |
+
+Twelve exact parent-prefix edges pass. The two complete parents also share the
+first51623 actual inputs,1499 after47 entry, and first differ as84/85
+(no-fire/fire). This is a reusable exact-history checkpoint in the same original
+32796 episode, not merging by HP/XY or a serialized-world claim. Changed futures
+need new complete rollouts.
+
+2150–2167 are18 terminal allocations: six safe phase boundaries, two Stage5
+boundaries, two first151 road boundaries, two complete futures and six read-only
+replay/map owners. Summed process wall is3817.682s, peak tree RSS
+158965760 bytes and minimum host available183648473088 bytes. No resource
+abort occurs. Classification/prefix comparison costs336814555ns. Static source
+investigation and other preparation/orchestration were not separately metered;
+unrecorded costs remain unavailable. Native/guidance/I/O and failed-branch costs
+remain explicit in the task TSV. Shared-two-core wall is not an isolated speed
+benchmark.
+
+Two below-record exports,129279 bytes, are hash-bound then pruned after all
+read-only checks; actions, reports, rows, traces and source/binary/seed bindings
+remain local. All51 selected replay files and272 historical payloads retain
+their exact bytes. Publication231 checks the old2149 TSV prefixes, deterministic
+reverse export, all closures/resources,12 input edges, whole-row/full-audit
+observer agreement, actual-world maps and documentation CTest. Public C++/models
+remain unchanged, so normal62/62 task1753 remains applicable. No additional
+scoring queue starts during publication maintenance. Extra3,308,826,050 and
+story6,653,194,550 remain the records; the4B/7B goal stays active and unmet.
+
+Publication231 passes in7.463s, peak tree RSS774008832 bytes. Documentation CTest,
+all18 prior owner closures,12 prefix edges, two full Native maps, complete replay
+row/audit observer checks, old2149 TSV prefixes,51 selected/272 historical hashes
+and reverse export pass. Including the audit,19 allocations close through2168;
+no owned scoring/probe/test driver remains and no new scoring starts in cleanup.
