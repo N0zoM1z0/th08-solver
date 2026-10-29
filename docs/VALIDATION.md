@@ -238,12 +238,45 @@ Historical272 payloads are relocated unchanged under the paths recorded in
 paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
-Latest overall records are Scarlet Extra **3,255,579,400,14/14** (1740,
-fresh1756/natural1757) and complete story **6,618,962,600,36/37**,only10 timeout
+Latest overall records are Scarlet Extra **3,296,376,500,14/14** (1917,
+fresh1919/natural1920) and complete story **6,618,962,600,36/37**,only10 timeout
 (1847, fresh1855/natural1856). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
-progress table. Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
+progress table.
+
+Extra1903 extends1740’s original9098 lineage: retain exactly22600 owner inputs
+to actual195 entry;1901 uses private V120 unified no-fire feedback, top16/14
+rows, reserve1500/youkai, H128/cash0/movement4 through actual195 end25372.
+1903 reexecutes that full prefix, restores frozen F4 H128/cash4/movement4, and
+recomputes196–205 plus settlement. It completes76677 inputs,1051 points,133714
+orbs and PIV968570, improving1740 by26,552,640. The captured195 has1214 orbs
+versus494, with a9,710,380 lower capture award; this is a complete-world result,
+not an addition of phase cash. Actual input checks count674 Fire/2694 Focus
+over2772 phase inputs. Fresh1905/natural1906 pass all8 checks; read-only map1907
+matches all41 terminal words and the full14-card audit. Its32216-byte replay SHA-256
+is `9f2ce7feb6f59d10fa374147c2935f8f624b16363dad64ce48e0ef6e3f104b67`;
+actions SHA-256 is `5f330a9e9801dae6483bb5ae896524ab21cefdb73080472abf3fb4c4adb356f8`.
+The phase binary is `89fc636ef68a1345acc0c01516abdd0fe56ba3617c55417fd8a2d4bb8f44ba87`
+(source base91f61a1, manifest42e9ab3e); the full producer remains F4/c4c798d.
+The original receipt, earlier40 selected files and all272 historical payloads
+remain unchanged. This new record is Native-only. Its actual197/202/205 owner
+entries are32925/57829/70710; earlier gold coordinates do not describe this world.
+
+Extra1917 extends1903 by preserving its first70710 actual owner inputs to205
+entry; the new map1921 matches that entry’s entire41-word projection. It uses
+frozen F4 H128/cash0/movement4, beam128 through205 and settlement. The matched
+beam384 trial1918 finishes3,289,399,130 NMNB14/14;1917 finishes3,296,376,500
+NMNB14/14,1051 points/134579 orbs/PIV972900. It executes76677 inputs, improving
+1903 by14,244,460 and the prior1740 overall record by40,797,100. Fresh1919/natural1920
+pass all8 checks;1921 matches all41 terminal words and the full14-card audit.
+The selected31882-byte replay SHA-256 is
+`d38c3544978a1fb92e51fdad1bc21a325f71db91ff8f408605b8efea34b1914f`;
+actions SHA-256 is `f4d2afd15befb9db92cc85db38f9fd8fc083148cd865c2208fea4f1f8292cfeb`.
+The42 selected files include the verified1903 intermediate and all earlier bytes.
+Both new records remain Native-only.
+
+Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
 The new3.165B retains786 through actual193 entry7723, uses H128/cash0/movement4
 to actual193 end11259 (1256,7183 orbs/capture), then H128/cash4/movement4
 through the full Extra. It executes73085 inputs; all14 cards capture. Its30568-byte

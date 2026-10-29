@@ -1607,3 +1607,271 @@ Scoped retention hashes and removes12 unselected temporary replay exports
 remain local. The prior40 selected replay bytes and historical payloads are
 preserved. No source pool limits, unknown opcodes, clocks or gameplay RNG are
 changed to improve an experiment.
+
+## October29 continuation: source-priced scenes and captured195 composition
+
+The owner resumes local scene/spell score attack. Existing original Scarlet
+Extra9098 and story32796 episodes remain fixed; no new seed is selected. All
+new Native owners use the two-owner/two-core profile,4GiB AS/tree RSS, host12GiB
+admission/8GiB abort, service6GiB high/10GiB hard/no swap. Public C++ and models
+remain unchanged. Private V120 has its previously passed focused, full literal
+and natural-row gates1868–1872; cash0 is explicit when testing its no-fire intent.
+
+### Scene selection and reward units
+
+The prior1740 audit has Extra195/197/202 remaining2172/2035/2291 frames at
+capture, with494/129/2024 phase orbs. These are underused-duration questions,
+not score upper bounds. New worlds require every later attack, item request and
+settlement to be recomputed. Prior human47 emits much higher ordinary graze
+income, but follows a bomb; it is a geometry lead rather than a NMNB alternative.
+
+[Player::AwardGraze](../../third_party/th08/src/Player.cpp) prices the contacts
+differently: an eligible extreme-youkai Scarlet ordinary spell contact requests
+three time orbs; CalcLaserHitbox passes suppressExtraItems=1 and requests only
+the base one. Story1847 card155 has2135 extreme-youkai events but only496
+unsuppressed events,3267 collected orbs and152 field orbs at closure. Multiplying
+2135 by3 would misdiagnose lost income or pool saturation. The existing
+[flow lookup](../../src/online.cpp) already ranks ordinary bullets, not lasers;
+this finding does not establish a controller bug.
+
+Historical private point-potential835–838 also already tests displayed cash
+plus future-point equivalents0/256/1024/4096 times PIV. All four complete Extra
+NMNB14/14:3,087,585,240 /2,911,258,630 /3,048,176,630 /3,033,427,050. Nonzero
+weights do not beat that zero control. Those are earlier worlds, not a bound
+on new components. Story839–841 are owner-cancelled and842 fails NMNB; they
+do not supply complete-story negative results. This batch reuses that evidence
+instead of rebuilding the same heuristic.
+
+### V136: realized fire treatments on the final five survivals
+
+Tasks1899/1900 retain1847’s exact151389 owner inputs to actual175 entry, after
+171’s point drops and130-update award have settled.175 enters gauge−10000;
+the record’s later179/183/187/191 enter9985. The private full14-row/top16 plans
+use reserve0, H128/cash0/movement3, survival/attack focus biases5, upper-flow0
+and charge-fire0. They differ only in feedback(no-fire) versus shoot.
+Actual phase Fire counts are2/1/1/1/241 versus1200/1200/1200/1200/2040; both
+complete NMNB36/37, with only10 timeout. Their full scores6,534,459,400 and
+6,529,285,720 remain below6,618,962,600.
+
+| Card | Record1847 orbs |1899 no-fire orbs |1900 shoot orbs |
+| --- | ---: | ---: | ---: |
+|175 |2103 |1702 |1793 |
+|179 |2481 |2192 |2248 |
+|183 |3547 |3230 |3237 |
+|187 |6111 |2940 |2623 |
+|191 |2892 |2622 |2448 |
+
+The realized treatment is different, unlike the earlier cash4 confounds. Both
+new geometries lose especially187 density. Survival removes early-HP-kill cost;
+it does not make a uniform fire rule or explicit faster flow profitable.
+
+### V137/V138: captured195 frontier and full-world improvement
+
+Both phase owners replay1740’s exact first22600 inputs to actual195 entry,
+gauge−10000. V120 full14/top16 feedback uses H128/cash0/movement4 and a declared
+youkai capture reserve. Actual tape counts independently match reported Fire
+and Focus counts; the first22600 inputs match gold byte for byte.
+
+| Task | Reserve | Phase inputs / Fire / Focus | Orbs | Capture remaining | Pending displayed award | Closed displayed cash |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+|1901 |1500 |2772 /674 /2694 |1214 |828 |23,548,300 |769,318,920 |
+|1902 |1800 |2456 /658 /2378 |956 |1144 |25,363,680 |768,185,590 |
+
+Both close captured, NMNB4/4 visited, zero bombs. Their actual owner ends are
+25372/25056. A phase stop is incomplete and exports no scoring replay.1902 has
+682,050 more cash plus pending award, while1901 has more orbs; neither world is
+discarded as scalar-equivalent or added to a historical suffix.
+
+The next two owners restore frozen F4 H128/cash4/movement4 and replay each whole
+parent prefix from the original9098 entry, preserving actors, RNG, carried
+bullets/options/items and the newly pending award. Both recompute196–205 and
+full settlement, with wall2400s/search30000ms, publication64/replan32, beam384.
+
+| Task / parent | Full displayed score | Captures / bombs | Points / orbs / PIV | Owner inputs | Wall seconds |
+| --- | ---: | --- | --- | ---: | ---: |
+|1903 /1901 |**3,282,132,040** |14/14 /0 |1051 /133714 /968570 |76677 |814.209 |
+|1904 /1902 |3,217,785,310 |14/14 /0 |1051 /128550 /942750 |75333 |810.441 |
+
+Both are complete No Miss; neither resource guard aborts. Peak owned RSS is
+136507392/136749056 bytes, minimum host MemAvailable189809508352 bytes. Concurrent
+wall times include file I/O and are not isolated simulation-speed comparisons.
+The TSV retains all branch/proposal/Native/I/O counters.
+
+1903 improves the overall record by26,552,640.195 gains720 orbs but loses
+9,710,380 of capture award; the complete route gains3976 orbs, preserving all1051
+points. Later trajectories also change, including198/204. This is measured
+complete-world income, not proof that195’s local orb delta alone caused the gain.
+The full futures differ by64,346,730 despite1902’s higher cash-plus-pending-award
+phase endpoint. This directly supports retaining distinct checkpoint worlds.
+
+Fresh1905/natural1906 pass all8 checks; read-only actual-owner map1907 matches
+all41 terminal words and the full14-card audit. The selected32216-byte replay is
+[extra-scarlet-native-nmnb-3282132040-seed9098.rpy](../../reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3282132040-seed9098.rpy).
+Replay SHA-256 is
+`9f2ce7feb6f59d10fa374147c2935f8f624b16363dad64ce48e0ef6e3f104b67`;
+actions SHA-256 is
+`5f330a9e9801dae6483bb5ae896524ab21cefdb73080472abf3fb4c4adb356f8`.
+The original receipt, all earlier40 selected files and272 historical payloads
+remain unchanged. This is Native-only; the qualified original Wine record stays
+3,179,193,860. New actual197/202/205 entries are32925/57829/70710.
+
+### V139/V147: selectively composing the longer175 view
+
+The delayed130-update payout motivates a declared view-length intervention,
+not a reward correction.1908/1909 hold original32796 and the exact1847 owner151389
+prefix, F4/cash4/movement3, beam384/publication64/replan32, no phase plan and
+wall900s/search30000ms fixed. Only verify horizon changes128→256/512. Both
+complete NMNB36/37, only10 timeout.
+
+| Task / horizon | Full displayed score | Branch updates | Wall seconds |175 /179 /183 /187 /191 orbs |
+| --- | ---: | ---: | ---: | --- |
+|1908 /256 |6,583,569,110 |224046 |210.653 |2209 /1985 /3025 /5682 /2230 |
+|1909 /512 |6,589,527,120 |422903 |397.718 |2011 /2468 /3588 /5298 /2190 |
+
+Longer whole-tail views do not beat1847.1908 does improve175 from2103 to2209
+orbs and49,824,000 to50,672,000 bonus. Read-only1912 maps1908’s actual175 end
+at152589, all41 terminal words and the entire37-card audit matching its producer.
+The next pair retains exactly that real prefix and pending award, restores
+H128/cash4, and recomputes179/183/187/191 and settlement with movement3/4.
+
+| Task / movement | Full displayed score | Captures / bombs | Branch updates | Wall seconds |
+| --- | ---: | --- | ---: | ---: |
+|1913 /3 |6,615,055,070 |36/37 /0 |98717 |108.546 |
+|1914 /4 |6,612,249,240 |36/37 /0 |110808 |119.689 |
+
+Both are complete No Miss, only10 timeout; no guard aborts.1913 recovers
+31,485,960 against the uniform H256 future but remains3,907,530 below1847.
+Its187 has5862 orbs versus6111, and191 has2834 versus2892. The175 component
+is genuinely preserved, yet its106-orb improvement does not automatically
+improve the complete route. No new story replay is selected.
+
+### V144:197 in the new195 world
+
+Map1907 identifies the new197 entry32925, gauge−9578.1910/1911 replay1903’s
+exact incoming prefix, use V120 top16/full14 feedback with H128/cash0/movement4,
+then reserve1200/1600 focused capture time. Both close NMNB6/6 visited, zero
+bombs and actual captured197.
+
+| Task / reserve | Actual inputs / Fire / Focus | Orbs | Remaining | Pending displayed award | Actual owner end | Wall seconds |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+|1910 /1200 |3268 /750 /3267 |851 |452 |16,923,120 |36193 |36.639 |
+|1911 /1600 |2898 /780 /2897 |662 |822 |19,588,920 |35823 |31.705 |
+
+The incoming1903 phase has487 orbs and1794 remaining. Both alternatives gain
+orbs but lose capture award. They remain distinct real worlds, and their local
+values are not accepted as full-route score results or a proof of improvement.
+
+### V148/V149: full197 futures and a cheaper205 proposal beam
+
+1915/1916 retain both captured197 parent tapes, actual36193/35823 inputs, and
+restore the identical F4 H128/cash4/movement4/beam384 full198–205 continuation.
+No local SCB, hypothetical drop cash or old future is added.
+
+| Task / parent | Full displayed score | Captures / bombs | Points / orbs / PIV | Owner inputs | Wall seconds |
+| --- | ---: | --- | --- | ---: | ---: |
+|1915 /1910 |3,277,725,710 |14/14 /0 |1051 /133404 /967020 |77925 |656.636 |
+|1916 /1911 |3,210,901,760 |14/14 /0 |1006 /135142 /975710 |77109 |662.888 |
+
+Both are complete No Miss and no resource abort.1915 remains4,406,330 below1903.
+1916 has more final orbs and PIV yet45 fewer points; the audit first shows that
+gap between202 closure and203 entry. Its1983 field orbs at202 closure suggest
+a specific pool question, not a cause established from totals alone.
+
+1903’s measured branch Native time is106255685119ns, guidance626934917155ns,
+branch file I/O0. This motivates a separate bounded proposal-beam comparison,
+not a physics shortcut.1917/1918 retain exactly1903’s70710 inputs at actual205
+entry, hold F4 H128/cash0/movement4/policy-horizon24 and all budgets fixed, and
+change only beam128/384. Both complete NMNB14/14 and76677 inputs.
+
+| Task / beam | Full displayed score |205 orbs / extreme-youkai events / award | Branch updates | Branch Native / guidance seconds | Wall seconds |
+| --- | ---: | --- | ---: | --- | ---: |
+|1917 /128 |**3,296,376,500** |5475 /1823 /53,800,000 |70261 |5.109 /23.456 |41.055 |
+|1918 /384 |3,289,399,130 |5058 /1684 /50,464,000 |71300 |5.305 /42.540 |60.546 |
+
+Both branch file-I/O counters are0; observed timing shares the same two-core
+service and is not an isolated CPU benchmark. The smaller beam gains6,977,370
+in this matched205 comparison and reduces guidance cost. Its action tape differs;
+this is a better complete result, not an execution-identical optimization or a
+universal beam choice. Both new trials also use cash0, unlike1903’s carried
+cash4 future; the entire14,244,460 gain over1903 is not attributed solely to beam.
+
+Fresh1919/natural1920 pass all8 gates.1921 reexecutes the original
+input tape in a fresh process and matches all41 terminal words, the full14-card audit, and1903’s
+entire41-word205 entry. Selected
+[extra-scarlet-native-nmnb-3296376500-seed9098.rpy](../../reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3296376500-seed9098.rpy)
+is31882 bytes, replay SHA-256
+`d38c3544978a1fb92e51fdad1bc21a325f71db91ff8f408605b8efea34b1914f`,
+actions SHA-256
+`f4d2afd15befb9db92cc85db38f9fd8fc083148cd865c2208fea4f1f8292cfeb`.
+Final1051 points/134579 orbs/PIV972900 improve1740 by40,797,100. Original9098
+and all earlier selected bytes, including1903’s verified intermediate, remain
+unchanged;42 selected files are retained at this snapshot. The producer is
+frozen F4/c4c798d with the same Native library; private195 source remains in its
+explicit prefix lineage. This is Native-only.
+
+### V154/V155:45 missing points traced to actual202 pool exhaustion
+
+At allocation1918, standing cumulative64-task authorization records1920→1984
+before1921. The ledger is not reset; all earlier failures, interruptions, retries
+and19 unresolved remote receipts remain. CPU2, owners2, AS/tree4GiB, service
+6GiB high/10GiB hard/no swap and host12/8GiB guards are unchanged. No remote
+contact occurs.
+
+Stock1922 and read-only point observer1923 replay1916’s unselected input. Every
+7,710,500 natural-row byte and the full natural audit agree. Map1924 matches
+its producer’s all41 terminal words and full14-card audit. Actual202 starts
+57966, ends60514;203 begins60694. At clock60513 there are45 point requests,
+each at occupancy2096/capacity2096, and no point spawn in that interval. This
+establishes actual exhaustion for this world. The headerless CSV totals1057
+requests,1011 spawns,1006 collections; skipping its first request would undercount.
+Earlier timed-out199 omitted requests instead; the mechanisms remain distinct.
+
+Two202-only owners replay this exact57966-input prefix from original9098.1925
+uses F4 ordinary H64/cash4/movement4.1926 uses qualified V120 H128/cash0/movement4,
+shoot/human reserve10000 and phase-recovery-prior1. The latter is a distinct
+proposal/recovery family, not a single-variable ablation. No pool size, RNG or
+physics is changed. Both close captured, NMNB11/11 visited, zero bombs.
+
+| Task / proposal | Actual owner end | Phase inputs / Fire / Focus | Orbs / field orbs | Remaining | Pending displayed award | Wall seconds |
+| --- | ---: | --- | --- | ---: | ---: | ---: |
+|1925 /ordinary H64 |60491 |2525 /not separately reported |2182 /2045 |1675 |36,940,430 |22.483 |
+|1926 /immediate human |59451 |1485 /1485 /112 |834 /1539 |2715 |37,326,170 |20.659 |
+
+The human request is realized as1485 Fire and112 Focus inputs; it exits gauge
+−5981. These metrics describe actual proposals and safety recovery, not a hard
+form guarantee. The next two owners must carry the real pending awards and
+items through full203–205 before collection or score improvement is accepted.
+
+### V156: complete202 retiming outcomes and closure
+
+1927/1928 replay actual202 ends60491/59451 and restore identical F4 H128/cash4/
+movement4/beam384, no phase prior, through203–205 and settlement. Pending rewards,
+actual items and the gameplay world are carried by full original-entry replay.
+Both complete No Miss, zero bombs,14/14 captures and no resource abort.
+
+| Task / parent | Full displayed score | Points / orbs / PIV | Owner inputs | Wall seconds |
+| --- | ---: | --- | ---: | ---: |
+|1927 /1925 |3,184,214,200 |1006 /133286 /966430 |77165 |245.557 |
+|1928 /1926 |3,246,938,610 |1051 /131392 /956960 |76061 |244.452 |
+
+The short-view branch still has961 points at203 entry and1006 final. The human
+branch reaches1006 at203 entry and restores1051 final points. It improves the
+source1916 full score by36,036,850 but loses3750 total orbs and remains49,437,890
+below1917. Thus the pool diagnosis leads to a real point recovery, not a new
+overall record. No hypothetical pickup price or pending award is grafted onto
+the previous future. Both unselected RPY exports are pruned after recording
+identities; input tapes, source, results and observer proofs remain local.
+
+This continuation stops scoring after1928. Its30 allocations1899–1928 include
+14 complete NMNB scoring futures,6 captured phase boundaries and10 clean
+verification/read-only owners. Publication audit1929 checks the immutable old
+1898-row journal prefix, all42 selected replay hashes and272 historical payloads,
+reverse-order exporter equality, original retail scope, resource receipts and
+documentation CTest. Public C++/models are unchanged; normal62/62 task1753 and
+private V120 focused/literal/natural gates1868–1872 remain the applicable checks.
+The12 unselected temporary RPY exports,584138 bytes, are hash-bound and pruned;
+both new record files and all earlier bytes remain. All new actual bombs/captures,
+search/branch/I/O costs and provenance are retained
+in the TSV. These timings share a host and are not isolated CPU benchmarks.
+The local queue is closed after publication; no remote contact or remote closure
+is claimed.4B Extra and7B complete story remain unachieved.
