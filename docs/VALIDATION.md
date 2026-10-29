@@ -239,8 +239,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,255,579,400,14/14** (1740,
-fresh1756/natural1757) and complete story **6,513,456,180,36/37**,only10 timeout
-(1381, fresh1403/natural1404). Both are NMNB, use the original9098/32796 receipts,
+fresh1756/natural1757) and complete story **6,610,839,240,36/37**,only10 timeout
+(1830, fresh1834/natural1835). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
@@ -360,7 +360,50 @@ are unchanged. Gain over1621 is42,629,440; margin above the declared all-shot
 reference77,118,570. This record remains Native-only; original Wine validation
 1343/1367 still belongs to1314.
 
-New story1381 retains1225's exact151302 inputs through the closed171 boundary,
+New story1830 completes **6,610,839,240,NMNB36/37**, only10 timeout,159445 owned
+inputs, original32796. Its complete input lineage is
+1381→1806→1808→1811→1813→1827→1830:
+
+- 1806 retains the first82449 gold inputs, three before the actual77 entry82452,
+  then uses lower368/400/432 feedback, reserve600, H256/cash0/movement4.
+  It captures5990 orbs and closes77 at86217 inputs.
+- 1808 carries that actual world through Stage5 with the frozen NPC bridge,
+  H256 roads/H128 spells/cash4/movement4, reaching114338 inputs.
+- 1811 recomputes the FinalB prelude with the frozen first151 price producer,
+  reaching119304 inputs at **open151**, not a closed spell.
+- 1813 recomputes full FinalB with H128/cash4/movement4. It finishes6,490,883,540,
+  below the old record, and supplies the actual world for the next experiment.
+- 1827 retains its first146244 **owned inputs**, not audit calculation146239,
+  then retargets171 to rows208..400, reserve600, feedback/youkai capture,
+  H128/cash4/movement4. It captures17501 orbs and closes at151073 inputs.
+- 1830 retains exactly those151073 inputs and recomputes all five survivals and
+  settlement with H128/publication64/replan32/cash4/movement3.
+
+Fresh1834/natural1835 pass all eight gates: complete fresh execution, exact41-word
+terminal, natural replay completion, score, capture outcomes, zero misses/bombs
+and name `ysopwnab`. Read-only1836 maps every actual owner entry/end and matches
+the full37-card audit and terminal. A higher phase cash or PIV is never added
+to an old future. The65180-byte selected replay SHA-256 is
+`0a22df0c2a179ee28780c23598f11b9112a7bb7bf4d1976417d5de998439adce`;
+actions `591ea61f9f7c0df90629501eed65385773685ec6c2be80a61dd4f9103327ceeb`.
+Gain over1381 is97,383,060;7B remains389,160,760 away and the all-shot retail
+gate remains442,493,220 away. This score is Native-only.
+
+The selected tail uses the unchanged frozen F4 ELF/source overlay documented
+above. Stage5 bridge ELF is
+`dd35c186bfb03d0a43b98a3f09e6a7416169a7b4d47300c27fa1b834d6561415`,
+source manifest `adc95b6614f9820b099a8f954a947adde2f860b665c2423d5fc824ed03b30066`;
+prelude ELF `16fe5f86c90d48cb8942e96eb1d0810bf6067d8d0f788426f5db3a99c1a728ad`,
+source manifest `1de3dc57dae25a9776324c25e9663eb969a9acec5a2999f5e860d68e0797352d`.
+All source files are hash-checked before reuse; no archived objects are relinked.
+Final producer131.207s/owned131.439s,121141 branch/1 proposal updates,
+770 economic attempts/80 adoptions, peak owned tree158040064B. All discovery,
+failed full routes, selection and verification costs remain in the cumulative
+journal. The raw local manifests retain workspace head91f61a1; exact frozen
+ELF identity resolves the actual phase overlay basec4c798d in the progress index.
+All38 earlier selected bytes and272 historical payloads remain unchanged.
+
+Earlier story1381 retains1225's exact151302 inputs through the closed171 boundary,
 then uses H128/publication64/replan32/cash4/movement3 over all five remaining
 survivals and full settlement. This increases the complete score by924080 to
 6513456180, NMNB36/37, only10 timeout. Baseline1382 with movement4 exactly
@@ -621,6 +664,13 @@ invalid NMNB actions and an actual terminal beforeN are rejected. The output
 contains the full prefix plus regenerated continuation, with requested/executed
 prefix counts for auditing. All generated tapes/replays/reports stay local until
 a selected progress replay is authorized for publication.
+
+`N` counts **executed owner inputs**. Spell-audit `start_update`/`end_update`
+count source calculations; modeled transition inputs can make them differ.
+Use the read-only phase map's `owner_updates` for a spell entry or end, and the
+producer's actual consumed count for a declared checkpoint. An audit timestamp
+is not an interchangeable input offset. V104 preserves the original3-input
+pre-entry trials and records their corrected labels in the journal.
 
 With `--checkpoint-updates N`, the owner appends only actually consumed inputs
 to `checkpoint.inputs.actions`, then flushes and replaces `checkpoint.json`

@@ -956,3 +956,272 @@ exact worker bundle identity and the private overlay base head for new rows;
 old published metadata stays byte-identical. Reversed traversal must agree.
 All scoring batches are closed, no owned queue/test driver remains after the
 publication check, and further unused budget is not started during cleanup.
+## October29 continuation after3.256B
+
+The owner resumes score attack toward4B Extra and7B complete Lunatic. Keep
+Scarlet original9098/32796, NMNB and optional captures. No new seed episode or
+Wine solving is introduced. The cumulative cap1792→1856 is recorded after1783
+before1784, under the standing64-task extension authority. All memory, host
+reserve and owner/CPU limits remain unchanged; the ledger is never reset.
+
+### V91 full suffixes and the corrected H64 setup
+
+Tasks1761–1772 start from1740's actual198/199 entries34723/40853. Five feedback
+geometries per card use top16/112/208/368 or the full14-row band.198 reserves1200
+updates;199 reserves900.198 also has a continuous-fire control, and199 has an
+ordinary H256 control. Every candidate recomputes its entire remaining route,
+with cash4/movement4, proposal60ms/search30000ms and wall3600s. Bullet emission
+is selection evidence, not a reachable-graze upper bound.
+
+Tasks1773–1776 retune actual205 entry68054.1773 fails CLI validation before
+Native: publication32 is below the existing64 minimum. Preserve its0.072s and
+original argv. Fresh1781 changes only publication32→64, retains H64/replan16/
+cash0/movement0 and fails NMNB at2,283,542,650.1774 H128/cash0/move3 finishes
+3,252,415,760;1775 H256/cash4/move4 finishes3,251,847,130;1776 full-band feedback
+finishes3,228,987,140. All three are NMNB14/14, below the incumbent. Failed and
+incomplete runs certify no prefix or full score.
+
+Four Lunatic58 partials1777–1780 use the gold62528-input pre-entry checkpoint, H256/cash4/
+movement3, reserve1200 and bands16/112/208/368. They capture4808/6364/6204/7819
+orbs and end at1,576,496,940 /1,581,520,360 /1,580,017,360 /1,587,578,460.
+The old component has10040 orbs and1,599,288,840. These four are not selected
+for full composition under this batch's bounded search; that is a selection
+choice, not proof that their different worlds are globally dominated.
+
+### V93 source observation and V94/V95 faster-stream proposals
+
+Clean read-only observer1782 and full original-entry execution1783 inspect
+current Native198/199 every16 updates. All41 terminal words and the complete
+14-spell audit match1740. `update_flow_goal` in
+[online.cpp](../../src/online.cpp) excludes bullets faster than3px/update before
+ranking its linear stationary targets. The observed populations are:
+
+| Card | Samples | Eligible bullet-observations | Speed≤3 | Speed>3 | Extreme-youkai sample fraction |
+| --- | ---: | ---: | ---: | ---: | ---: |
+|198 |282 |303209 |303209 |0 |77.30% |
+|199 |252 |178355 |34883 |143472 |76.19% |
+
+These count repeated live, collision-enabled, ungrazed slots across samples,
+not unique births or guaranteed reachable grazes.199 excludes80.44% of those
+sampled candidates;198 excludes none. Focus sample fractions are87.59%/76.59%.
+This motivates an isolated proposal experiment rather than changing Native
+physics or assuming every excluded bullet can be collected.
+
+Private build1784 compiles three fresh C++17 objects. Only an explicit active
+phase's farming lookup raises the speed cap3→8 and refines sample stride16→8;
+its192-update linear hypothesis, cell ranking/tie order, source simulation,
+RNG, collision and budgets remain unchanged. No-plan and nonfarm lookups retain
+3/16. These are two coupled proposal changes, not an isolated causal ablation.
+The public C++ tree remains unchanged.
+
+The frozen ELF SHA-256 is
+`3886123c4c9f3579e24c348fbabffd5f20d9225cc25eda8cf32838b1e77fe255`;
+source manifest `1bb0e16ae8c895277bb0017c2b791ee5afca067b2742f41a8e47023419c318af`,
+based on91f61a1. Native static library remains
+`cb618d78f944937ab9cff6022886452f9134f615a2e8a9f917db6dbf7cd503e0`.
+Before scoring, remote1785/1786 and local1787/1788 execute the entire Extra/story
+inputs. Extra declares an explicit199 plan during literal replay to exercise
+the new read-only target lookup; story supplies the default/no-plan control.
+Remote1789/1790 compare every natural row. Both routes pass local/remote all41,
+full audits, all input bytes, whole natural rows and clean owner exits. Extra
+rows are7401700B/SHA256
+`56bcd4260e58a32a3a4a11af4099e4394bb06a1d98c80990078fc0ac71c28ee8`;
+story rows15975600B/SHA256
+`f1a825202f211b008fde264223c36d39bdaf50585a8861408d7968ee3f39077f`.
+This is Native execution/index parity, not independent retail equivalence.
+
+Only after those gates,1791–1798 dispatch eight complete199 suffixes on the
+actual40853 world. Five pair V91's reserve900 geometries; three explore
+reserve300/1500. They retain H128/cash4/movement4 and the original9098 seed.
+Full-route score, actual safety/captures and total search costs decide acceptance.
+
+### Remote identity interruption and fresh local continuation
+
+During subsequent dispatch the endpoint's SSH host identity changes. Strict
+verification rejects the presented ED25519 fingerprint
+`SHA256:sAkVrCX9VP5KTr8R5lPOwDvmO+vioQaYu2AX+V5qpkY`; connection refusal is
+also observed. No known_hosts entry is changed and no identity check is bypassed.
+Owner control-plane confirmation is requested. Existing unrelated SSH state is
+left untouched. Returned Native receipts retain their original authority.
+
+The V96 four77 reservations1799–1802 never reach `systemd-run`: the local
+preparation remains in its blocked SCP transfer, and only those owned transfer
+children are terminated. Preserve all four IDs as setup failures before Native;
+setup wall costs were not measured. V91/V95 were already dispatched. Missing
+original terminal receipts remain explicitly unresolved; a changed host key is
+not evidence of a gameplay failure, memory abort or successful completion.
+Later direct SSH observations of below-record completions1767/1769/1770 are
+kept separately from their unavailable original result/audit files. They cannot
+qualify a new replay. No old result or task ID is silently replaced.
+
+Fresh local1803/1804 compare the frozen original3/16 ELF with private8/8 at the
+same199 top208/reserve900 entry, using identical H128/cash4/move4 and budgets.
+They provide a same-host comparison after remote access becomes untrusted.
+Local1805/1806 instead test gold77 top208/368 with cash0, H256 and reserve600,
+from the gold82449-input pre-entry checkpoint. Old V19 starts82452 and old V51 uses83851; no world equivalence is assumed.
+The later unit correction below identifies82449 as three inputs before entry. All four local drivers use the unchanged4GiB
+AS/tree,12GiB admission/8GiB abort guards; no fifth driver is added.
+
+77 top208 ends at2,199,467,090 with6819 orbs, timeout and19 captures so far;
+top368 ends at2,199,218,230 with5990 orbs, capture and20 captures. Both exceed
+the old closed77 cash2,187,551,150 and3827 orbs, but remain partial. They retain
+different actual states.1807/1808 carry each complete input prefix through the
+known frozen NPC Stage5 producer, with H256 roads/H128 spells/cash4/move4.
+Its ELF `dd35c186bfb03d0a43b98a3f09e6a7416169a7b4d47300c27fa1b834d6561415`
+and all source-bundle files are checked against the preserved V49 manifest;
+1521 already verifies the gold114770-input bridge in all41 words/full audit.
+No archived object is reused. New stage boundaries and FinalB must be recomputed
+before either partial can become a complete score.
+
+### V104 checkpoint-unit correction
+
+The full owner maps1820/1821 match every41-word terminal and complete audit of
+their V101 producers. They also expose an orchestration unit error: audit
+`start_update` counts source calculations, whereas `--prefix-updates` counts
+executed inputs, including modeled transition updates. V91 takes62528 owner
+inputs, three before the real58 entry62531; V96/V97 take82449 inputs, three
+before the real77 entry82452. Those remain valid declared reproducible original-
+entry checkpoints and their complete Native results remain valid. Their new
+phase-entry worlds must not be described as literal copies of gold's entry.
+
+Raw args, original hypotheses and costs are unchanged; repeated ledger notes
+record the correction. Future171 retargeting uses the measured **146244 owned
+inputs**, not audit146239, in the top368 world. A41-word projection/audit alone
+is not a checkpoint; the actual input prefix still reconstructs the whole world.
+
+### V97/V99 matched full results and V100/V101 composition
+
+The same-host199 comparison completes NMNB14/14 in both cases. Old3/16 yields
+3,104,123,300,1051 points/114954 orbs/PIV874770; private8/8 yields3,155,233,260,
+1051 points/121397 orbs/PIV906990. The combined private proposal changes improve
+this declared family by51,109,960, but neither beats3,255,579,400.199 itself
+collects10152→11948 orbs with3464→4052 ordinary extreme-youkai events; its
+remaining time changes1828→1701. Later worlds also change, so the full gain
+is not assigned solely to those1796 local orbs. Branch work566490→611611,
+economic attempts2869→3113 and owned wall520.446→558.831s remain charged.
+No compute speedup or single-parameter causal effect is claimed.
+
+Fresh1809/1810 instead increase Native verification to512, publication256,
+replan128, retaining policy24/beam384/proposal60/search30000/cash4/move4 and no
+phase plan. Wall1800 is declared in advance. Both fail NMNB, at1,815,997,020
+and1,782,963,280. Deeper failed futures do not certify a prefix or score.
+
+The two actual77 worlds carry through Stage5 and their recomputed FinalB roads:
+
+|77 world | Stage5 owner boundary / cash | Open151 owner boundary / cash | Full V101 score / captures |
+| --- | --- | --- | --- |
+|208 timeout |116442 /3,440,366,940 |121500 /4,196,790,420 |6,377,143,220 /35of37 |
+|368 captured |114338 /3,433,629,060 |119304 /4,246,357,890 |6,490,883,540 /36of37 |
+
+First151 producer16fe stops at the **open151 road boundary**, not a closed151
+capture. Its literal prefix, source/binary hashes and actual Native state carry
+into each full FinalB calculation. Both complete NMNB, but neither initially
+beats6,513,456,180. The higher local77 or Stage5 cash is not added to the old
+route. The source paths are frozen, hash-checked and use preserved ELF files;
+no retired private object archive is used or silently relinked.
+
+### V102/V103 above-boss charging experiment
+
+Private build1815 tests another explicit-phase preparation. A policy-owned
+stage/card latch targets Y16 until actual extreme-youkai activation; it climbs
+without fire and focuses/shoots at Y≤48, then restores the ordinary phase band.
+Native still executes carried shots, damage, gauge, sampling and collision.
+Cold graze/anchor weights remain baseline in this prototype. No new public flag,
+physics override or controller is promoted.
+
+ELF `211daa30c142e289f2825693ff75c8e3cfac8c78355ceb62ab87b75f2a67df00`,
+source manifest `b136608751099ba61577433807b7a6080c734214b2f564c978cdd64ef12cb007`.
+Local1816/1817 full execution and1818/1819 complete natural replay rows match
+current Extra/story in all41 words, entire audits, input bytes and whole rows.
+These are local-only gates after the owner's local-only steering; no new
+cross-host claim is made. Native library remains unchanged.
+
+| Task | Target / recovery prior | Orbs / extreme-youkai events | Focus inputs / actual phase inputs | Closed outcome |
+| --- | --- | --- | --- | --- |
+|1822 |Extra195 /0 |607 /0 |192 /1223 |captured, exit gauge−10000 |
+|1823 |Extra195 /1 |26 /0 |1008 /1194 |captured, exit gauge6547 |
+|1824 |Lunatic6 /0 |307 /0 |444 /1602 |captured, exit gauge3183 |
+|1825 |Lunatic6 /1 |2070 /664 |1705 /1920 |timeout, exit gauge10000 |
+
+All four close NMNB. Extra never achieves the intended warm farm; recovery and
+carried-shot damage still matter. The one6 timeout has more orbs than its1321
+capture control but loses capture bonus and changes its future. No complete
+composition is evaluated for it, so it is not a score gain or retained replay.
+These mixed/negative experiments remain local evidence for later investigation.
+
+### V105/V106: recover171 on the actual new world
+
+The V101 top368 world reaches closed171 cash5,049,196,490, above the old
+5,042,752,760, but collects only9823 orbs versus16788. The actual full owner map
+1821 gives entry146244, not calculation146239. Four new phase cases keep that
+exact Native world and test reserve600, H128/cash4/movement4:
+
+| Task / family | Closed owner inputs | Orbs | Remaining updates | Closed cash |
+| --- | ---: | ---: | ---: | ---: |
+|1826 old top16 |150332 |13527 |1312 |5,082,574,720 |
+|1827 old top208 |151073 |17501 |571 |5,123,295,190 |
+|1828 old top368 |150318 |12623 |1326 |5,075,119,660 |
+|1829 private faster top368 |149900 |12716 |1744 |5,078,778,600 |
+
+All capture171 NMNB. A four-owner continuation retains the top208 cash/orb
+frontier with movement3/4, plus top16 and private lower368 geometry families
+with movement3. The uncontinued old lower368 remains archived; that bounded
+selection is not proof of scalar-world dominance. Every tail reexecutes its
+actual complete input prefix, then recomputes all five survivals and settlement.
+
+| Task / parent / movement | Complete displayed score | Actual constraints | Owned seconds |
+| --- | ---: | --- | ---: |
+|1830 /1827 /3 |**6,610,839,240** |NMNB36/37,10 timeout |131.439 |
+|1831 /1827 /4 |6,599,149,060 |NMNB36/37,10 timeout |140.679 |
+|1832 /1826 /3 |6,556,142,400 |NMNB36/37,10 timeout |132.180 |
+|1833 /1829 /3 |6,539,933,290 |NMNB36/37,10 timeout |130.474 |
+
+Only the highest complete result1830 is selected. Fresh1834 and natural1835
+pass all eight checks; read-only1836 matches all41 words and the full37-card
+source audit, preserving every actual owner entry/end. Actual stages are
+0/1/2/3/5/7. The source/input/replay hashes and exact
+1381→1806→1808→1811→1813→1827→1830 prefix chain are in Validation and the
+appended progress row. Earlier38 selected replay bytes remain unchanged.
+
+The new complete story gains97,383,060. FinalB has434 points/74431 orbs/
+PIV1467680 versus the old438/70872/1446720. More local points are therefore not
+necessary for this particular full gain; these scalars still do not establish
+world equivalence or a reachable score bound. Current bests are Extra
+3,255,579,400 and story6,610,839,240. Extra4B remains744,420,600 away;7B remains
+389,160,760 away and the all-shot story gate442,493,220 away. The new story is
+Native-only and does not qualify for Wine playback yet.
+
+### October29 publication closure
+
+All76 allocations1761–1836 stay in the cumulative ledger. Original terminal
+receipts are available for57, including the four blocked dispatches;19 remote
+original terminal receipts remain unresolved after the identity interruption.
+Those19 are1761/1763/1764/1765/1766/1767/1769/1770/1771/1772/1781 and1791–1798.
+Successful SSH observations before the interruption report some failures or
+below-record completions, but do not replace unavailable original JSON/audits.
+The owner's reply is local-only; no further VPS connection or identity bypass
+is attempted. Remote queue termination and cleanup are not claimed.
+
+Known accounting comprises17 complete Native reports(including literal
+canaries),14 phase boundaries,2 stage boundaries,2 road boundaries,4 NMNB
+failures,1 CLI process failure,4 pre-Native transfer setup failures,4 read-only
+source audits/maps,4 read-only natural-replay audits and5 completed build/fresh
+verification processes. Every actual local solver/probe owner is closed before
+publication. An unavailable measurement remains blank; it is never zero.
+
+Scoped local retention removes13 unselected temporary replay copies(672822B),
+with exact hashes and per-owner receipts, while preserving all action tapes,
+results, seed/source identities and the selected1830 bytes. Remote retention
+is pending verified access. All39 selected replay hashes,272 historical payload
+hashes, the exact old38-row progress prefix and old1760-row results prefix are
+checked at publication. New metadata resolves an exact frozen-F4 ELF's source
+base through its verified source manifest; the raw workspace-head receipt is
+unchanged. Reversed traversal must reproduce both TSVs exactly.
+
+Public C++ and its62/62 normal suite from1753 remain unchanged. New private
+proposal builds have explicit local/full cross-host canary scopes above; the
+selected replay has complete fresh/natural verification. The final maintenance
+runs documentation CTest and checks local closure. Private prototypes, failed
+runs, raw reports and tapes stay local. No additional scoring batch is started
+during this publication closure;4B Extra,7B story and the story retail gate
+remain future targets.

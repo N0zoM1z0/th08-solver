@@ -8,7 +8,7 @@ published replay index.
 
 | Record | Purpose |
 | --- | --- |
-| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.256B, source/human and shot-capability analysis, solo Sakuya baselines, actual-world compositions and point-production limits |
+| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.256B/story6.611B, source/replay analysis, actual-world compositions, checkpoint-unit correction and local-only continuation |
 | [Campaign lifecycle ledger](campaign-ledger.tsv) | All existing task allocations and original lifecycle notes, including repeated notes for the same ID. IDs are never reset or reused |
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
@@ -92,3 +92,16 @@ bound by the immutable worker bundle hash or an actual local DAT argument.
 It uses the private source overlay's declared base head when present, retaining
 exact source-file hashes separately. The original remote bundle base is not the
 source of every later planner overlay. Previously published rows stay unchanged.
+
+The October29 remote identity interruption is represented explicitly.
+`unresolved_remote_identity_change` has no available original terminal receipt
+and certifies no gameplay result; it is not a claim of a live or stopped queue.
+Provisional metadata preserves requested parameters separately from unavailable
+actual argv/source/runtime measurements. Four blocked V96 dispatches are setup
+failures before Native, with unknown transfer wall cost. Owner steering resumes
+local work only; no host-key check is bypassed.
+
+For new local frozen-F4 runs, the exporter verifies the exact ELF/source manifest
+and exposes its actual overlay basec4c798d separately from the raw manifest's
+workspace head91f61a1. Audit calculation timestamps and owner input coordinates
+also remain separate; V104 preserves raw trials and adds correction notes.
