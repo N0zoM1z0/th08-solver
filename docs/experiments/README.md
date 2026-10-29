@@ -8,7 +8,7 @@ published replay index.
 
 | Record | Purpose |
 | --- | --- |
-| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.256B/story6.611B, source/replay analysis, actual-world compositions, checkpoint-unit correction and local-only continuation |
+| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.256B/story6.619B, source/replay analysis, actual-world compositions, checkpoint-unit correction and local-only continuation |
 | [Campaign lifecycle ledger](campaign-ledger.tsv) | All existing task allocations and original lifecycle notes, including repeated notes for the same ID. IDs are never reset or reused |
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
@@ -105,3 +105,9 @@ For new local frozen-F4 runs, the exporter verifies the exact ELF/source manifes
 and exposes its actual overlay basec4c798d separately from the raw manifest's
 workspace head91f61a1. Audit calculation timestamps and owner input coordinates
 also remain separate; V104 preserves raw trials and adds correction notes.
+
+The local two-owner/two-core continuation records a host restart explicitly as
+`host_restart_interrupted_no_certificate`: missing final gameplay and resource
+measurements stay empty. Fresh-ID retries do not replace those charged tasks.
+Post-reboot whole replay rows/audit are compared before publication; private
+fast8/stride8 ELF binding exposes source base91f61a1 for new local rows.

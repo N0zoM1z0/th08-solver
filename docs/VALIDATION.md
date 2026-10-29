@@ -239,8 +239,8 @@ paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
 Latest overall records are Scarlet Extra **3,255,579,400,14/14** (1740,
-fresh1756/natural1757) and complete story **6,610,839,240,36/37**,only10 timeout
-(1830, fresh1834/natural1835). Both are NMNB, use the original9098/32796 receipts,
+fresh1756/natural1757) and complete story **6,618,962,600,36/37**,only10 timeout
+(1847, fresh1855/natural1856). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table. Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
@@ -402,6 +402,33 @@ failed full routes, selection and verification costs remain in the cumulative
 journal. The raw local manifests retain workspace head91f61a1; exact frozen
 ELF identity resolves the actual phase overlay basec4c798d in the progress index.
 All38 earlier selected bytes and272 historical payloads remain unchanged.
+
+New story1847 completes **6,618,962,600,NMNB36/37**, only10 timeout,159445
+owned inputs at original32796. Its effective input chain is
+1381→1806→1808→1811→1813→1838→1847.1838 reads1830's first146244 owned inputs;
+those equal1813's prefix and stop at the actual171 entry, before the old1827
+component contributes any input. It retargets171 to top208/7 rows/reserve0,
+feedback/youkai, H128/cash4/movement4, captures17504 orbs and closes151073.
+1847 reexecutes exactly those151073 inputs, then recomputes all five survivals
+and full settlement with H128/publication64/replan32/cash4/movement3.
+
+Fresh1855/natural1856 pass all eight checks. Read-only1857 matches all41
+terminal words and the complete37-card audit, recording every actual owner
+entry/end. The65179-byte selected replay SHA-256 is
+`8426f5ce8f6c8d0eaf32745e04d51ad1cefa04e25c7de47d51cf12f4c46ffb9b`;
+actions `f7dae510a286ffee6a3ee5d6880c57e5ff41096b561f157f35ea1952386e3be5`.
+Producer126.343s/owned126.532s,118243 branch/1 proposal updates,758 economic
+attempts/89 adoptions, peak owned tree156561408B. Search uses the tighter
+two-owner/two-core local service; the unchanged F4 source/ELF binding above
+applies. Phase-cash leader1842's full1846 loses; all negative futures, duplicate
+input trial1839, interrupted Extra1848/1849 and new-ID retries stay charged.
+
+Gain over1830 is8,123,360;7B remains381,037,400 away and the all-shot retail
+gate434,369,860 away. This score is Native-only. After the host reboot,
+old1830 replay canary1854 reproduces every natural row byte and the full
+audit of pre-reboot1835 before publication. This checks Native execution
+consistency across the environment change, not independent retail equivalence.
+All39 earlier selected replay bytes and272 historical payloads stay unchanged.
 
 Earlier story1381 retains1225's exact151302 inputs through the closed171 boundary,
 then uses H128/publication64/replan32/cash4/movement3 over all five remaining

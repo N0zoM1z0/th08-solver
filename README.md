@@ -1,7 +1,7 @@
 # th08-solver
 
 > [!NOTE]
-> **Native score attack: Extra 3,255,579,400 · complete Lunatic 6,610,839,240.**
+> **Native score attack: Extra 3,255,579,400 · complete Lunatic 6,618,962,600.**
 > Scarlet Team, No Miss / No Bomb, with verified exported replays.
 > Targets: **4B Extra · 7B complete Lunatic**, using stage/spell strategy composition. Current search is local-only.
 
@@ -24,7 +24,7 @@ Each score links to its exact replay.
 | --- | --- | ---: | ---: |
 | Extra | Scarlet — Sakuya/Remilia | **[3,255,579,400](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3255579400-seed9098.rpy)** |14/14 |
 | Extra | Magic — Marisa/Alice | [3,013,913,970](reports/native/replays/magic/extra/extra-native-nmnb-3013913970-seed46997.rpy) |14/14 |
-| Complete Lunatic | Scarlet — Sakuya/Remilia | **[6,610,839,240](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6610839240-seed32796.rpy)** |36/37 |
+| Complete Lunatic | Scarlet — Sakuya/Remilia | **[6,618,962,600](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6618962600-seed32796.rpy)** |36/37 |
 | Complete Lunatic | Magic — Marisa/Alice | [5,550,599,270](reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-5550599270-seed1805.rpy) |36/37 |
 
 These have original-entry fresh execution and natural replay agreement, with
@@ -37,7 +37,7 @@ input lineage, verification tasks and hashes, including earlier records.
 The October27 [all-shot human references](https://maribelhearn.com/wr#IN) are
 **3,178,460,830 Extra** and **7,053,332,460 Lunatic**, both solo Youmu.
 Native Extra is77,118,570 above its human reference; complete Lunatic is
-389,160,760 below the next7B milestone. Historical same-shot references remain in
+381,037,400 below the next7B milestone. Historical same-shot references remain in
 [Status](docs/STATUS.md). All shots may be explored; Scarlet has priority.
 
 ## Original Wine results

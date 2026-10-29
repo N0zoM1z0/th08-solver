@@ -1225,3 +1225,161 @@ runs documentation CTest and checks local closure. Private prototypes, failed
 runs, raw reports and tapes stay local. No additional scoring batch is started
 during this publication closure;4B Extra,7B story and the story retail gate
 remain future targets.
+
+## October29 local continuation with two CPU cores
+
+The owner continues locally and asks to control shared-host resources. V108–V113
+use one owned user systemd service at a time, at most two Native owners, a **two
+CPU core aggregate quota**, CPU/IO weights10, MemoryHigh6GiB, MemoryMax10GiB,
+MemorySwapMax0 and TasksMax128. The service validates its live cgroup limits
+before launching Native and writes a resource receipt alongside each spec.
+Per-process4GiB address space, per-owner-tree4GiB RSS and host12GiB admission/
+8GiB abort guards remain. No remote connection is attempted; the earlier19
+missing remote terminal receipts remain unresolved. These tighter local limits
+do not increase the standing four-driver ceiling.
+
+The original Scarlet32796/9098 episodes remain fixed. Scoring is NMNB with
+optional captures; successful phases and complete trials below all use zero
+bombs. F4 proposal/runtime/source identities are unchanged. No public C++ or
+Native physics change is introduced. Wall times below include the actual
+concurrent, CPU-limited environment, not an isolated CPU benchmark.
+
+### V108: retune the actual171 world, preserving alternatives
+
+Six phase-only tasks retain exactly1830's first146244 owner inputs. They use
+H128/publication64/replan32/policy24/beam384, proposal60ms/search30000ms,
+cash4/movement4 and a900s wall limit, then stop only after171 closes. Geometry
+rows are32 pixels apart; fire is feedback and capture form is youkai.
+
+| Task | Top / rows / reserve | Closed owner inputs | Collected orbs | Remaining | Closed displayed cash | Owned seconds |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+|1838 |208 /7 /0 |151073 |17504 |571 |5,120,567,530 |85.232 |
+|1839 |208 /7 /300 |151073 |17504 |571 |5,120,567,530 |86.699 |
+|1840 |208 /7 /900 |151204 |17436 |440 |5,118,292,710 |88.058 |
+|1841 |144 /9 /600 |150266 |14493 |1378 |5,092,483,350 |72.315 |
+|1842 |176 /8 /600 |151595 |18522 |49 |5,129,243,010 |124.669 |
+|1843 |240 /6 /600 |150500 |13336 |1144 |5,085,962,960 |109.219 |
+
+All six close NMNB and capture171, with31/32 encountered story cards captured
+so far (only10 timed out). These are phase boundaries, not complete scores.
+1838 and1839 have **identical complete input bytes**. Both capture with571
+updates remaining, before either0/300 forced-capture reserve applies; the
+[`propose` reserve condition](../../src/phase_strategy.cpp) explains this duplicate.
+Charge both trials, but count only one executed strategy. The cash/orb leader1842
+and the distinct reserve0 world1838 are selected for complete futures; unselected
+worlds remain archived without claiming global scalar dominance.
+
+### V109–V112: complete futures reverse the phase ranking
+
+The source audit marks175/179/183/187/191 as survival spells. V109 tests an
+explicit lower flow band and reserve0 on all five, from1830's actual closed171
+owner151073. V110 instead carries both selected V108 worlds and restores the
+ordinary upper-flow suffix. All use H128/cash4/movement3, full five survivals
+and settlement, and a900s wall limit. V112 tests adjacent171 geometries from
+owner146244 and then the complete suffix. Its movement3 applies at171 as well;
+comparison with V108 movement4 is not an isolated geometry ablation.
+
+| Task | Complete family / actual parent | Displayed score | Actual constraints | Owned seconds |
+| --- | --- | ---: | --- | ---: |
+|1844 |1830, five top208/7/reserve0 plans |6,548,653,420 |NMNB36/37 |140.692 |
+|1845 |1830, five top368/3/reserve0 plans |6,559,088,340 |NMNB36/37 |141.083 |
+|1846 |1842 first151595, ordinary suffix |6,605,716,800 |NMNB36/37 |128.460 |
+|1847 |1838 first151073, ordinary suffix |**6,618,962,600** |NMNB36/37 |126.532 |
+|1850 |171 top192/7/reserve0, full future |6,577,068,540 |NMNB36/37 |153.496 |
+|1851 |171 top224/7/reserve0, full future |6,544,899,130 |NMNB36/37 |152.742 |
+
+Only10 times out in all six complete reports. Higher171 cash/orbs do not order
+these actual worlds:18522-orb1842 loses to17504-orb1838 after composition. The
+selected1847 gains8,123,360 over1830 even though its FinalB totals73650 orbs and
+PIV1463770 are below74431/1467680. At the actual175 start, cash is19,523,040
+higher; this later shrinks to the final gain. This locates a transition/future
+policy effect, without attributing it to a specific pickup or claiming a score
+upper bound. Keep actual states and verify full routes rather than substituting
+one world's cash/PIV into another future.
+
+### Host interruption and new-ID Extra retries
+
+The first Extra pair1848/1849 uses original9098 and1740's actual198/199 entries
+34723/40853: F4 top368/3/reserve1200 at198, and private fast8/stride8 full14-row
+top16/reserve300 at199. H128/cash4/movement4, proposal60ms/search30000ms,
+wall1800s and full remaining route are declared before launch. Private fast
+proposal source/ELF identities and its earlier complete canaries remain those
+of V94; it changes target proposals, not Native physics.
+
+The owned service starts02:05:41UTC, is stopped02:09:58UTC, and the host then
+has a new boot identity. No original owner exit or final result is available.
+The last saved input counts are48128/56320; these are resumable tapes, not
+no-miss certificates. Preserve both costs and add explicit
+`host_restart_interrupted_no_certificate` lifecycle records. The available
+journal does not establish an OOM cause or per-task wall/peak-memory costs;
+those measurements stay unavailable. No missing result is assigned a score,
+zero bombs or captures.
+
+The pre-reboot host has16 CPUs/about62GiB RAM; the post-reboot environment has
+32 threads, Xeon2.80GHz and270467694592B RAM, boot identity separately recorded.
+Both retain the same two-core/two-owner service limits.1850/1851 execute after
+the reboot; earlier measured durations are not used as a cross-machine speedup
+claim. A complete old-record replay row/audit canary is required before this
+publication accepts execution consistency in the changed environment.
+
+Fresh1852/1853 repeat the two interrupted Extra specifications with new names,
+original9098, unchanged controls and full literal prefixes. The cumulative cap
+1856→1920 is recorded at1851 before use under the standing64-task extension
+permission; the ledger is never reset and all interruptions/retries remain
+charged. Private fast ELF binding resolves its actual91f61a1 source base rather
+than the current workspace head; old raw manifests remain unchanged.
+
+The completed199 retry1853 exposes an early-capture failure mode. It begins at
+human gauge-10000, fires1016 of2029 strategy inputs, and captures with2171 of4200
+updates remaining. The record's corresponding199 captures with156 remaining.
+Collected199 orbs are9864 versus20385; full Extra ends1051 points in both cases,
+but119518 versus129738 orbs and PIV897590 versus948690. This complete trial
+therefore loses116,871,930 despite preserving final point count. Remaining2171
+never reaches the300 forced-capture reserve. A shorter reserve cannot by itself
+prevent earlier damage while feedback charges the form: `propose` also fires
+when not extreme. Future proposals should test entry-form/charge/damage timing
+jointly with geometry. This comparison changes several proposal controls and
+is not an isolated fast-stream speed ablation or a reachable score bound.
+
+1852 completes3,146,746,550, No Miss,
+0 bombs,14/14 captures,70221 owner inputs,
+owned504.686s. It does not improve the overall Extra record.
+
+1853 completes3,138,707,470, No Miss,
+0 bombs,14/14 captures,72349 owner inputs,
+owned434.075s. It does not improve the overall Extra record.
+
+### V114/V115 verification and selected progress
+
+Post-reboot canary1854 executes the complete selected1830 replay. Every
+natural row byte and the entire audit agree with pre-reboot1835; its actual
+ELF, loader/libraries and DAT hashes are recorded. Fresh1855/natural1856
+then verify1847 in all eight gates. Read-only1857 matches all41 terminal
+words and the full37-card audit, with actual owner entries/ends retained.
+The effective input chain is1381→1806→1808→1811→1813→1838→1847; the parent
+file1830 is retained only through146244, before the old1827 component's inputs.
+Exact source/replay/action identities are in Validation and the appended
+progress row. Only1847 is selected, preserving the earlier39 replay bytes.
+
+New complete score6,618,962,600 gains8,123,360. Extra remains3,255,579,400.
+The4B/7B targets remain744,420,600/381,037,400 away, and the story all-shot
+retail gate434,369,860 away. No new Wine playback or online solving occurs.
+
+### Local publication closure
+
+All20 allocations1838–1857 have terminal or explicit host-interruption receipts:
+six NMNB phase boundaries, eight complete NMNB reports, two interrupted owners
+without gameplay certificates, three replay/fresh checks and one read-only
+owner map. Only1847 improves an overall record. Scoped local retention removes
+7 unselected temporary replays(384373B), preserving their exact hashes,
+all actions/results and the selected1847 bytes. Earlier39 selected replay bytes
+and272 historical payloads remain unchanged. No remote cleanup/closure is
+claimed; those19 terminal receipts remain unavailable.
+
+Publication audit1858 checks the old1837-row TSV prefix, exact old39 replay
+index prefix, current route maxima, all selected/historical hashes, reversed
+exporter traversal, two-owner/two-core resource receipts and documentation
+CTest. Public C++ and the normal62/62 suite1753 are unchanged; no relink occurs.
+The two host-interrupted rows retain blank score, constraints and per-task
+resource measurements. All local owners finish before publication; no further
+scoring batch is started during this closure.
