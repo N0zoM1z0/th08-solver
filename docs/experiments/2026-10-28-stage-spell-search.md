@@ -2042,3 +2042,179 @@ source and resource receipts remain ignored/local. Public C++/models are
 unchanged, so normal62/62 task1753 remains applicable; new record all8/full-map
 checks and documentation CTest are the current added verification. No retail
 equivalence is inferred, and7B/4B remain unachieved.
+
+## October29 continuation: actual cold6 control and complete early-world compositions
+
+The owner keeps the active4B Extra/7B complete-Lunatic goal. This continuation
+uses original Scarlet story32796, with NMNB/optional captures and no new seed.
+The existing Extra9098 record is unchanged; no Extra scoring owner runs in this
+batch. The local limit remains two owners/two total cores,4GiB AS/tree RSS,
+service6GiB high/10GiB hard/no swap and host12/8GiB admission/abort. No remote
+contact is attempted. Public C++/models and all reused controller ELFs are
+unchanged. The cumulative cap1984 is not reset or extended.
+
+### V176: realize the cold6 no-fire treatment
+
+1955/1956 retain1938's exact first8205 owner inputs to actual6 entry. Private
+V120 uses H128/publication64/replan32, policy24/beam384, cash0/movement4,
+full14-row top16 geometry, feedback/no-fire, focused capture reserves900/1200
+and explicit capture-form recovery prior1. Story survival/attack focus biases
+are5; upper-flow, farm-charge-fire and survival-flow are0. Search30000ms,
+proposal60ms and wall900s are declared. All three bomb/capture flags are0.
+The source remains91f61a1 plus the exact V120 overlay, not public feedback
+semantics; the frozen89fc636e ELF and42e9ab3e source manifest are unchanged.
+
+| Task / reserve | Phase inputs / fire / focus |6 orbs | Outcome / remaining | Pending displayed award | Owner end |
+| --- | --- | ---: | --- | ---: | ---: |
+|1955 /900 |1920 /902 /1913 |2565 |timeout /0 |0 |10125 |
+|1956 /1200 |1661 /943 /1660 |1622 |captured /259 |9,892,770 |9866 |
+
+Both close No Miss/Bomb0. Actual tape bits match the reported counters and
+the entire retained8205-input prefix is exact. The prior component has1321
+orbs/capture with26 remaining. This proves a realized treatment, not a complete
+score gain. The two variants share a−10000 entry gauge and end at10000.
+
+### V177/V178: carry both actual worlds through Stage5
+
+1957/1958 restore F4 H128/cash4/movement4/beam384 through actual closed13.
+1959/1960 then use the known V49 Stage2 human source-clock/pose road component,
+H256/publication128/replan64, and the17/25/29 shoot/top16/rows7/reserve600 plans
+through actual closed29. Its internal road4/0 and phase0/4 economic schedules
+are preserved.1961/1962 use the exact dd35 NPC road/dynamic-spell producer
+through Stage5, with road H256 and spell H128. These adapters supply proposals;
+Native owns all actual shots, actors, items, gauge and action-dependent RNG.
+Every continuation reexecutes its actual parent's input count.
+
+The900 world ends Stage1 at118,085,100/13604 orbs/51 points; the1200 world
+ends145,236,420/11881 orbs/56 points. The incumbent is130,212,230/12755/55.
+At Stage5 boundary1961 is3,269,560,490 with22/26 closed spells captured;1962
+is3,441,126,580 with26/26,7,497,520 above the incumbent's corresponding boundary.
+Neither partial certifies a full score or a complete all-capture route.
+
+### V180: retime77 and complete the declared compositions
+
+Read-only1963/1964 reproduce each actual Stage5 parent's41 terminal words and
+full audit. Both producer and probe correctly mark these routes incomplete.
+Actual77 entries are83395/83350 owner inputs, not the old82452.1965/1966
+retain those exact prefixes and use F4 H256/cash0/movement4/beam384 with
+3:77:368:3:600:feedback:youkai.1955's lineage captures3954 orbs with772 remaining
+and pending23,035,290;1956's lineage reaches6128 orbs but times out, with no
+capture award. Its unmodified1962 parent captured77 with3963 orbs/303 remaining
+and pending23,693,280. The prior600-update reserve is not portable to every
+incoming world. Captures remain optional, so both real futures are completed.
+
+1967/1968 restore the NPC producer through the new Stage5 boundary.1969/1970
+use the exact16fe FinalB collector to actual151 entry; its original source base
+isbc75a3e plus the frozen V55 private packet, not the current Git publication
+head.1971/1972 use F4 H128/cash4/movement4/beam384 across151–171, including the
+existing7:171:208:7:0:feedback:youkai plan.1973/1974 restore movement3/beam384
+through183;1975/1976 use beam64 through187;1977/1978 restore beam384 through
+191 and full settlement. Pending130-update awards and transition pickups are
+carried. These switches occur at actual closed boundaries. The171 plan is
+active inside a controller spanning151–171, rather than asserting the old
+entry-only171 cold restart. This is a declared policy composition, not an
+isolated one-variable estimate of6's effect or execution equality to1938.
+
+| Task | Outcome | Owner inputs | Displayed cash or full score | Captured | Wall seconds |
+| --- | --- | ---: | ---: | ---: | ---: |
+|1955 |phase_boundary |10125 |42025610 |1 |26.586 |
+|1956 |phase_boundary |9866 |44489830 |2 |25.295 |
+|1957 |phase_boundary |15839 |74225250 |2 |94.378 |
+|1958 |phase_boundary |15776 |94501350 |4 |98.256 |
+|1959 |phase_boundary |33087 |343017490 |6 |142.099 |
+|1960 |phase_boundary |32198 |375498950 |8 |139.112 |
+|1961 |stage_boundary |116266 |3269560490 |22 |1124.455 |
+|1962 |stage_boundary |115298 |3441126580 |26 |1133.148 |
+|1963 |process_complete |— |— |— |4.311 |
+|1964 |process_complete |— |— |— |4.211 |
+|1965 |phase_boundary |86523 |2128865170 |18 |44.667 |
+|1966 |phase_boundary |87250 |2202814970 |20 |59.454 |
+|1967 |stage_boundary |116130 |3354884120 |23 |472.584 |
+|1968 |stage_boundary |115802 |3390843620 |25 |442.062 |
+|1969 |road_boundary |121011 |3998059660 |23 |92.622 |
+|1970 |road_boundary |120510 |4164754380 |25 |90.047 |
+|1971 |phase_boundary |150876 |4791873880 |29 |457.885 |
+|1972 |phase_boundary |148998 |4974603230 |31 |432.650 |
+|1973 |phase_boundary |155113 |5097250030 |32 |68.503 |
+|1974 |phase_boundary |153233 |5297070430 |34 |65.985 |
+|1975 |phase_boundary |156473 |5244993250 |33 |31.285 |
+|1976 |phase_boundary |154593 |5440369190 |35 |29.338 |
+|1977 |complete |159245 |6264693320 |34 |40.266 |
+|1978 |complete |157365 |6456972200 |36 |41.932 |
+
+Both full stories are NMNB, with all stages0/1/2/3/5/7.1977 ends6,264,693,320,
+34/37 captures;6/13/32 time out.1978 ends6,456,972,200,36/37; only77 times out.
+FinalB totals are414 points/68182 orbs/PIV1425030 and438/67691/1440230.
+They are362,204,600 and169,925,720 below6,626,897,920. No new overall record or
+retail claim is made. The better pre77-control1962 remains a partial archived
+world; it has not been completed with these FinalB policies.
+
+### V181: source-backed priority, with the old bootstrap kept historical
+
+The151-pickup human6 bootstrap is already recorded in1406–1465. Re-examining
+its original stock-row-gated trace does not make it a new discovery. The human
+reference's Stage1 has16235 rows, zero Bomb inputs and zero cumulative death
+count; all four cards capture. It is therefore a same-shot NMNB first-stage
+lead, although its different RNG seed is never adopted for scoring. Before2
+the human has2515 orbs versus Native810, at the same26 points; before6 the
+figures are6434 versus3644, at the same49 points.
+
+Human6 enters at−8000, not positive extreme, at approximately(197.28,204.71).
+After40 sampled updates it has collected151 orbs and reaches8761: the16761
+gauge delta matches151×111. Native1938 enters−10000 at(135.52,391.66); after40
+it has collected one orb and remains−10000, and at64 it has collected87 and
+is still below extreme-youkai activation. Sample counts use the natural
+trace's1-based audit calculation clock, not owner input coordinates.
+[Item::CollectTimeOrb](../../third_party/th08/src/ItemManager.cpp) supplies the
+focus-dependent±111 update when suppression is absent. These scalar deltas do
+not prove item origin or exclude cancelling gauge updates. Distinguishing
+carried field items from new production requires a source spawn/collect probe.
+
+[Policy::Impl::choose](../../src/online.cpp) sets boss aim before its hit-income
+lane, and the latter explicitly requires no Boss. That guard is a concrete
+proposal limitation, not proof of the missing orb source. The human source
+boss-clock archive identifies the first nonspell as raw0 sub16, with890
+observations at2995–3884; its2 begins3885 versus Native3618. Existing V13
+pre6 guidance covers26/27/29, not15/16/18 before2. A bounded sub16 familiar/
+boss-clock proposal and actual production/kill-timing measurement is the next
+focused test.
+
+[Enemy::DetachEnemyChain](../../third_party/th08/src/EnemyManager.cpp) makes
+chain timing relevant: for teams, each awarded detached child requests26 orbs
+at chain count at least8, otherwise2j+10, plus the separate linked-child
+autocollect loop. This source formula motivates measuring actual child counts;
+no theoretical burst is added to a score. The proposed sequence is human
+familiar-hit income, parent-chain settlement and focused pickup into the spell,
+with each physical transition measured in the original32796 world.
+
+Historical1155/1168 reach gauge9086 at6 age40, but their raw tapes are not local;
+the exact retained5a8 ELF/private sources can reconstruct a fresh trial before
+any checkpoint reuse.1416's local safe tape shares1938's first7000 inputs,
+but long literal focus holds in V41 failed and are not repeated as certificates.
+A prepared V182 reconstruction has not run. A separate V179 changes only an
+explicit farming phase's stationary danger proxy3→1; it remains unbuilt,
+untested and unpromoted. It certifies no gameplay or performance result.
+
+### Closure, costs and retained evidence
+
+The two finite queues execute two then eight declared pairs in one local
+two-core service each. They validate clean NoMiss/Bomb0 boundaries and check a
+stop file between pairs; no failed prefix is certified.1955–1978 are24 closed
+allocations:20 safe phase/stage/road boundaries, two read-only owners and two
+complete negative scoring futures. Their summed process wall cost is5161.131s;
+Native, guidance and file-I/O counters remain separate in each result and the
+TSV. Peak owned-tree RSS is157601792 bytes; minimum host available is
+183805202432 bytes. No resource abort occurs. The measured intervals outside
+owner timings total67.076s across11 pair handoffs, including preparation/
+analysis/admission; within finite queues each is0.194–0.358s. Static preparation
+and analysis CPU/memory were not separately metered. These are shared2-core
+measurements, not isolated speed benchmarks.
+
+No future replay is selected. The two generated negative exports,129339 bytes,
+are hash-bound then pruned; all inputs, results, sources, resource proofs and
+actual-coordinate maps remain local. Earlier44 selected replay bytes and272
+historical payloads remain unchanged.1979 is reserved for the publication and
+documentation audit. Public C++/models are unchanged, so normal62/62 task1753
+remains applicable; documentation CTest and ledger/retention checks cover this
+publication. Both finite queues are closed and leave no scoring driver queued.
+The4B/7B goal remains active and unmet; publication cleanup starts no new batch.

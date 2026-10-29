@@ -6,9 +6,10 @@ and bounded local searches. All shots are permitted; Scarlet Team has priority.
 The active targets are **4B Extra and7B complete Lunatic**, then the story
 all-shot human reference. The6.5B milestone is achieved. Scarlet remains the
 priority; solo Sakuya now has separately retail-seeded complete NMNB baselines.
-The latest local batch raises complete Lunatic through per-spell beam
-composition:187 uses64, then191 uses384. Experiments1930–1953 have finished;
-publication audit1954 checks the two verified improvements and complete negatives.
+The current complete record retains per-spell beam composition:187 uses64,
+then191 uses384. The latest1955–1978 batch tests actual no-fire6 and carries two
+changed early worlds through complete routes;6.265B/6.457B are below the record.
+Publication audit1979 closes this negative batch and its source-backed findings.
 The owner now requests **local-only work** after a VPS SSH identity change.
 Nineteen earlier remote terminal receipts remain unavailable; their state is
 explicitly unresolved and they certify no new score. Remote closure/retention
@@ -93,10 +94,11 @@ closures; those historical uncertainties are not a live queue or new certificate
 | New202 point-pool diagnosis |1916’s higher-PIV world loses45 points. Stock/observer rows and full audits agree; all45 requests encounter2096/2096 occupancy. Human retiming restores1051 final points but ends3,246,938,610 | Correct the measured mechanism, then compare full income; recovering points alone does not guarantee a record |
 | Per-spell smaller beams and broader worlds |1931 preserves the first155473 inputs, improves187 with beam64, then1938 restores beam384 at actual191 entry156833 and verifies6,626,897,920. Earlier-FinalB beam128/64 compositions finish6,555,553,350/6,491,775,810 | Transfer scene-specific policies while recomputing each actual world; a cheap whole-stage profile is not automatically a better route |
 | Extra198 frontier |1935/1936 gain895/376198 orbs plus higher awards; complete compositions1946/1947 finish3,280,306,170/3,254,041,190 with1051 points | Local orb/SCB gains do not bound the changed later trajectory |
+| Actual cold6 and complete early worlds |1955/1956 realize2565-orb timeout and1622-orb capture with actual fire bits checked. Restored Stage2/5 guides and retimed77 lead to full1977/1978 at6,264,693,320/6,456,972,200 NMNB | Preserve the26/26 Stage5 control1962; changed77 reserve600 times out in one world, and local income does not certify a score |
 | Checkpoint units and interruption | Audit calculation counters differ from owner input counts. V104 corrects3–5-update labels without changing raw trials. SSH identity changes leave missing remote closures unverified | Use measured owner phase maps; preserve failed setup/unknown receipts and local-only steering |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V168 case and source-backed conclusion, including setup failures, resource
+V47–V182 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)
@@ -249,3 +251,11 @@ These are the separate legacy subset catalog counts, not Native scoring coverage
 There are 38 core CTests without private data, plus optional pinned-source checks.
 The current local DAT/retained configuration has62 cases. Old57/59/60-case suites
 remain historical measurements in Validation and the experiment journal.
+The latest cold6 compositions remain below the record. Prioritize measured
+Stage1 nonspell production and entry pickups: the NMNB human first stage has
+2515 orbs before2 versus810 at the same26 points, and the generic hit-income
+lane excludes Boss presence. The earlier151-pickup6 bootstrap is historical,
+not a new gain. Measure actual child counts, source reward requests and focused
+collection before changing the sub16 policy; retain original32796 and full-route
+acceptance. [The current journal](experiments/2026-10-28-stage-spell-search.md#v181-source-backed-priority-with-the-old-bootstrap-kept-historical)
+separates these hypotheses from the completed negatives and unstarted prototypes.
