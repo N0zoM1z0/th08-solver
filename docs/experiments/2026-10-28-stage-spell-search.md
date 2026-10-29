@@ -2428,7 +2428,7 @@ worlds. V199 is a finite recovery queue, not a rerun of the first four trials.
 |2035 |H256 parent, full Extra |76725 |**3306483020** |14 |250.004 |
 
 All gameplay cases are NMNB.2034's6048 phase205 orbs/58,384,000 pending award
-end1051 points/134950 orbs/PIV974750.2035 instead collects6221/59,608,000 and
+end1051 points/134950 orbs/PIV974750.2035 instead collects6219/59,608,000 and
 ends1051/135231/976160. Its actual205 entry is70754, rather than the old70710.
 The locally higher-orb H128203 future is639,580 below2019; the H256203 future
 improves2019 by1,982,950. Keeping distinct actual-world archives matters even
@@ -2474,3 +2474,286 @@ audit exit and error remain charged. Fresh audit2043 filters actual running/
 activating/deactivating units and checks resource guards, lineage and closure.
 No owned experiment queue remains; cleanup starts no further scoring batch.
 The active4B/7B goal is not marked complete by this publication.
+
+## October29 continuation: adaptive futures, cheaper scouts and the unchanged Stage5 control
+
+The4B Extra/7B complete-story goal remains active after195deef. Work resumes
+locally with original9098/32796 seeds and NMNB/optional captures. No Wine seed
+is reacquired and no remote connection occurs. Extension2048→2112 is recorded
+at2043 before2044. The V202 launcher/2112 guard retain the same two owners/two
+cores and AS/tree4GiB,6GiB high/10GiB hard/no swap, host12/8GiB guards. Earlier
+48 selected replays and272 historical payloads remain unchanged.
+
+### V202: complete the unchanged Stage5 control, and retest205
+
+1962 is the actual early6-reserve1200 world with26/26 captures through Stage5,
+3,441,126,580,115298 owned inputs. The earlier1978 full negative retunes77 and
+therefore does not certify its unchanged continuation.2044 reexecutes1962's
+entire prefix, then uses the frozen16fe FinalB price collector to actual151
+entry. It reaches4,227,301,240/120383 inputs, NMNB,26 captures.2046 restores
+F4 H128/beam384/cash4/movement4 through171 with the explicit existing
+7:171:208:7:0:feedback:youkai plan. It reaches5,018,062,510/148438 inputs,
+NMNB32 captures. Read-only2048 matches all41 terminal words and the full partial
+audit before locating actual171 entry144373; the old146244 is not reused.
+
+The incoming Stage5 advantage does not survive every FinalB component. At151
+entry the incumbent has4,246,357,890. In the new world151/155 close after1543/
+1688 observations versus2158/3258, collecting1726/1007 orbs versus2779/3267.
+Their remaining time857/1912 shows earlier damage completion.159 improves5606
+versus5139, but163/167 collect4165/4807 versus5242/5096.171 collects15335 versus
+17504, ending1335 updates before its limit. These are actual changed-world
+measurements, not a causal claim that the early6 treatment alone loses income.
+Cold171 retargeting and complete settlement are still required.
+
+In parallel,2045/2047 preserve the latest2035's exact70754 inputs to actual205.
+Both use the existing guided Native32 portfolio, cash0/movement4, policy24.
+2045 changes H128/publication64/replan32 to H256/128/64 at beam128 and completes
+3,292,940,740 NMNB14/14 in160.500s, below the record. It admits1804 extra Native
+alternatives.2047 instead keeps H128/64/32 and reduces beam128→64, completing
+3,308,826,050 NMNB14/14 in178.810s, a2,343,030 candidate improvement pending
+fresh verification. All comparisons retain original9098 and actual carried
+world/RNG; no new seed or future input tape is grafted.
+
+### V203/V204: test the cost of removing adaptive guidance
+
+The prior Native32 portfolio spends much of its cost rebuilding guided futures.
+A private C++17 prototype changes only the extra portfolio calls: after each
+motion/fire/form pulse, it appends the incumbent's remaining nominal inputs
+and independently reexecutes the entire128-update proposal in Native. The old
+world, RNG and predicted states are never reused. Shortened terminal seeds are
+skipped and counted; failed/incomplete trajectories cannot rank or publish.
+Actual end orbs/score/signed gauge and stable ties remain the full-candidate
+ranking. The original safe incumbent remains available.
+
+Variant32 keeps durations8/32, preserve-or-focused-fire and eight directions.
+Variant128 uses durations8/32/16/64 and four modes: preserve, focused fire,
+human fire, focused no-fire. All retain the immutable lead. The same30000ms
+search and shared2000ms economic-admission budgets apply, with every additional
+Native attempt/failure/adoption/update/native/guidance/I/O cost recorded. The
+scope stays Extra203/205 and FinalB175/179/183/187/191. Native physics, public
+C++ and models are unchanged. This is a declared proposal approximation, not
+an execution or score-equivalence claim.
+
+2049 builds0/32/128 cleanly in Release C++17.2050–2055 replay the complete2035
+Extra and2030 story with each binary; all41 terminal words, full audits and
+entire accepted tapes match. These literal tests bypass planning.2056/2057
+therefore also compare public versus0 while actually replanning205, and2058/
+2059 do the same at191 with beam128. Both pairs match all41 words/audits/inputs.
+Only then do2060–2063 run the full fixed32/128 scoring futures from the same
+70754 Extra and151389 story prefixes. They preserve NMNB/optional capture flags.
+
+Fixed32 finishes Extra3,286,940,860 and story6,612,119,210, NMNB14/14 and36/37.
+Its extra portfolio guidance counters are exactly0, but4812/6774 fixed futures
+have3929/5860 failures and only9/23 adoptions. Native portfolio updates are
+224049/225250; total process times83.438/169.429s. Baseline guidance still costs
+24.734/78.089s. These are complete lower-score outcomes, so the cheaper proposal
+method is not adopted as an improvement. Fixed128 Extra finishes3,289,519,520,
+NMNB14/14,19641 extra attempts/48 adoptions in194.663s, also below the record.
+
+Fixed128 story completes6,593,175,380 NMNB36/37 in322.734s, with26896 extra
+attempts/23049 failures/84 adoptions and953789 Native updates. Its portfolio
+Native cost is98.446s and guidance0. All four fixed-tail complete futures are
+below the overall record; this approximation is rejected as a scoring gain.
+
+### V205: actual cold171 choices and complete37-capture futures
+
+2064/2065 retain2046's first144373 inputs to actual171 entry.2064 cold-starts
+F4 H128/beam384/cash4/movement4 with the existing focused feedback reserve0.
+2065 uses the already gated V120 true-no-fire controller, cash0/movement4,
+top208/seven rows and a1500-update focused-fire capture reserve. F4 retains default-off phase recovery prior, capture recovery fire and enabled
+upper/farm flow; V120 explicitly uses prior1, preserve recovery fire and disables
+upper/farm flow. Source/cash/flow profiles differ, so this is a strategy
+comparison rather than a single-variable estimate.
+
+Both capture171 with the30M pending award.2064 takes4258 phase inputs,2307 Fire/
+3939 Focus, collects14195 orbs and retains1142 updates.2065 takes4778,880 Fire/
+4774 Focus, collects17000 and retains622. The latter's first Fire after the
+immutable lead is at phase index3899, matching the declared late reserve; both
+retained prefixes match exactly. The actual treatment is checked from inputs,
+not inferred from a controller name. The cached through171 control2046 has
+15335 orbs; cold restart alone does not reproduce the old record's17504.
+
+2066/2067 recompute175–187 using the guided Native32 family. Selection compares
+complete old2030 and the two fixed-tail story results; old2030 remains higher,
+so no fixed-tail policy is promoted. This transfers a proposal family only,
+never another world's future inputs.2068/2069 restore beam128 at each actual
+closed187 boundary and finish191 plus complete settlement. Both are NMNB37/37:
+6,510,239,280/157005 inputs and6,499,591,740/157525 inputs, below6,635,012,890.
+The locally higher-orb171 world finishes10,647,540 lower than its companion.
+The unchanged1962 Stage5 prefix now has complete future evidence, including
+both actual cold171 choices; the earlier retuned77 negatives stay separate.
+These lower overall scores do not qualify a new replay under the retention rule.
+
+### V206/V207: nominate short Native pulses, retain adaptive full futures
+
+The fixed-tail failures motivate a different approximation. Native first checks
+each short motion/fire/form pulse. Within each equal-duration group it ranks
+actual orbs, graze, score and signed gauge, stably nominating at most two. Graze
+is only a proposal signal; no fixed orb-per-graze conversion is assumed. Selected
+input prefixes are then independently reexecuted from the unchanged owner with
+adaptive policy guidance to the full horizon. Only these complete certified
+futures can replace the incumbent, ranked by actual orbs/score/signed gauge.
+Short predictions, failed branches and partial outputs are never published.
+
+Identical input prefixes within a duration group are deduplicated; different
+physical states/worlds are never merged. All repeated Native execution is
+charged. Variant32 keeps the original8/32-update, two-mode/eight-direction pool.
+Before build/run, the larger prepared variant is amended128→144: four durations
+8/32/16/64, four fire/form modes and nine directions including stationary0.
+This tests a missing proposal, since moving pulses alone do not compare staying
+inside a graze stream. Two per-duration nominations bound adaptive extensions
+to at most four/eight. The shared2000ms admission and30000ms total search remain
+unchanged; if scouting consumes admission, no unverified pulse is substituted.
+All scouting, duplicate, safe/failed, guided, update/native/guidance/I/O costs
+are explicit. The private metadata exporter now includes every `orb_scout_`
+counter; old rows have none and their published fields remain unchanged.
+
+2070 builds0/32/144 cleanly.2071–2076 repeat both entire original2035/2030 tapes,
+with all41 terminal words, full audits and all inputs exact.2077/2078 also pass
+actual205 public/off replanning equality. The remaining default and complete
+score gates are distinct from those literal checks. The private source/ELF
+manifests retain195deef as base, and Native physics/public C++/models remain
+unchanged.
+
+2079/2080 complete the actual191 public/off equality gate.2081/2082 then finish
+scout32 at3,295,167,550/6,622,706,800;2083/2084 finish scout144 at3,303,874,870/
+6,591,270,190. All are complete NMNB14/14 and36/37, below their overall records.
+Extra scout32 uses2764 short scouts/585 guided extensions/61 adoptions; story
+scout32 uses5131/711/76. Extra scout144 uses17559/1169/94; story uses25894/
+1259/137. Story144 observes10843 safe short scouts and4674 identical-prefix
+omissions. Its whole433.286s cost and lower score reject a universal speed or
+score improvement. Short-horizon nomination can omit useful longer futures.
+
+### V208/V209: small guided pulses improve this story entry
+
+The next private prototype keeps full adaptive Native guidance and changes the
+extra action proposals to1/2/4/8-update pulses, nine directions including dwell,
+and the four preserve/focused-fire/human-fire/focused-no-fire modes. Lengths
+are interleaved within each mode/direction; identical input prefixes alone are
+deduplicated. Stable actual orbs/score/signed-gauge ranking and all safety gates
+remain unchanged. Total30000ms and shared2000ms admission stay fixed. This is
+a scene-specific proposal strategy, not a physics or collision change.
+
+2085 cleanly builds0/144 in7.132s.2086–2089 pass both complete original tapes,
+all41 terminal words/full audits/all inputs;2090–2093 pass actual205/191 public
+versus0 replanning with the same respective profile. Extra uses beam64, matching
+2047's actual-entry profile; story uses beam384 across all final survivals.
+2094 completes Extra3,297,953,740 NMNB14/14 in330.099s, below2047 despite7997
+attempts/263 adoptions/3600 duplicate prefixes and833247 total branch updates.
+More local adoptions do not guarantee more complete income.
+
+2095 completes story**6,648,176,870**,159445 inputs,NMNB36/37, only10 timeout,
+in491.815s. Its FinalB totals are434 points/75204 orbs/PIV1471540. Relative to
+record2030,175/179/183/187/191 pickup changes are+30/−9/+57/+104/+491; the191
+pending award rises52,480,000→56,440,000. It gains13,163,980 overall. This profile
+also restores191 beam384 relative to2030's128, so that entire difference is not
+attributed to pulse length alone. Matched uniform-beam384 guided32 trial2020
+uses the same first151389 inputs and finishes6,634,534,150; the new profile is
+13,642,720 higher in that comparison. No universal cross-entry advantage is claimed.
+
+### V210/V211: qualify and archive the two new overall records
+
+2096/2097 fresh/natural for2047 and2098/2099 for2095 pass all8 checks: complete
+execution, exact41 terminal words, natural completion, score, coverage/outcomes,
+zero misses/bombs and `ysopwnab` name.2047's final Extra totals are1051 points/
+135367 orbs/PIV976840.205 pickups rise6219→6355 versus2035, with a60,760,000
+pending award. Both selected record replays retain original9098/32796 receipts.
+Their exact replay/action/source hashes are in Validation and the progress index.
+Earlier48 selected bytes remain unchanged; these are Native execution checks,
+with no inherited retail validation.
+
+Read-only2100/2101 match all41 terminal words and full14/37-card audits. Literal
+prefixes exactly retain2047's70754 inputs from2035 and2095's151389 from2030.
+Actual new205/175/191 entry coordinates remain70754/151389/156833; each future
+must still carry the appropriate changed physical world. The selected count
+becomes50. The source-bound V212 prototype has a separate V213 experiment queue.
+Extension2112→2176 is recorded at2099 before2100 to cover that experiment,
+qualification and maintenance costs without changing concurrency or memory limits.
+
+### V212/V213: test moving to a location, then dwelling
+
+This proposal family compares complete Native tapes: move for0/8/16/32 updates
+after the immutable lead in one of nine directions, then use no movement for
+the remaining horizon. Nominal per-frame fire/form bits can be preserved or
+replaced by focused fire/human fire/focused no-fire. Identical complete input
+tapes are deduplicated; no physical states are merged. Every candidate is fully
+reexecuted in its own Native world. End orbs/score/signed gauge rank only whole
+certified results, retaining the previous safe incumbent on ties or failure.
+This tests whether a safe stationary collection/graze position can outperform
+continuing the nominal path. Full-horizon-only eligibility and all additional
+attempt/failure/adoption/duplicate/native/I/O/guidance costs are explicit.
+
+2102 performs the separate clean Release build0/144 in7.684s; V213 validates
+and reuses this build receipt rather than allocating a duplicate build.2103–
+2106 pass both latest full literal tapes, all41/full audits/all inputs.2107–
+2110 pass actual205/191 public/off replanning equality. Source, Native library,
+original episodes, optional capture flags and30000ms/2000ms budgets retain their
+identities.2111/2112 are the two complete scoring futures; no short scout or
+partial prefix may substitute for their whole-route acceptance.
+
+2111/2112 complete at3,294,243,450/6,589,709,680, NMNB14/14 and36/37, below
+the new overall records. Extra holds use12963 extra attempts/39 adoptions and
+9432 identical-tape omissions in158.524s; story completes in359.881s. No new
+whole-route record qualifies. The existing safe continuation remains necessary;
+a stationary candidate is not automatically a productive farming strategy.
+
+### V216: retarget191 in the newly qualified Fine world
+
+2113/2114 preserve exactly2095's first156833 inputs and its actual191 entry,
+then run the same fine144 family with beam64/128 instead of384, H128/cash4/
+movement3. The original32796 receipt, carried actors/RNG, search30000ms and
+shared2000ms admission remain fixed. These are full settlement comparisons;
+a phase orb improvement alone cannot select a replay. This final pair closes
+before qualification and publication maintenance; no additional scoring batch
+is started during cleanup.
+
+2113/2114 complete6,653,194,550/6,652,040,910,NMNB36/37, only10 timeout, in
+148.020/149.281s.191 pickups are3286/3255 versus2095's3021, with pending awards
+58,328,000/57,864,000 versus56,440,000. Beam64 admits3569 extra candidates and
+adopts122; beam128 admits2572 and adopts107. The same wall-admission budget can
+admit more alternatives at a cheaper proposal beam; this is not an uncharged
+budget extension or universal beam preference.2113 improves2095 by5,017,680.
+
+Fresh2115/natural2116 pass all8 checks for2113. Read-only2117 matches all41
+terminal words/full37-card audit, the exact156833-input parent prefix and its
+entire191 entry projection. It ends159445 inputs,434 FinalB points/75471 orbs/
+PIV1472880. The strict overall winner2113 is retained;2114's smaller gain is
+recorded without retaining another replay. The selected count becomes51,
+including2095's verified intermediate and every earlier exact byte.
+
+### Closure, costs and next evidence
+
+2044–2117 are74 terminal allocations:54 complete Native runs (including literal
+and actual-default controls), five safe phase boundaries, one safe road boundary
+and14 build/probe/fresh/natural owners. All gameplay outcomes are NoMiss/Bomb0;
+actual captures/timeouts remain explicit in the task TSV. Summed process wall
+cost is6100.012s, peak tree RSS324857856 bytes, minimum host available190817030144
+bytes, and no resource abort occurs. Native/guidance/I/O and new scout/fine/hold
+cost counters remain separate. These are shared-two-core measurements, not
+isolated CPU speed benchmarks. Static analysis/preparation and otherwise
+unmetered orchestration time are not invented as zero.
+
+Three new qualified overall record replays are selected:2047,2095 and2113.
+Fifty-one duplicate/unselected exports,2490158 bytes, are hash-bound then pruned;
+all required actions, reports, sources/build/library manifests and actual-world
+archives remain local. Earlier48 selected bytes and272 historical payloads are
+unchanged. A historical prose count for2035's205 is corrected6221→6219: its
+actual map and audit both show128361→134580. No old replay or raw result changes.
+
+The full1962 continuations demonstrate that extra early captures and a better
+Stage5 score do not guarantee a better final world. Its151/155 close early;
+actual capture timing and first-road production remain concrete questions.
+Guided fine pulses work in the current late story but not Extra; fixed tails,
+short scouting and dwelling are complete negative strategies in these tested
+entries. Keep those distinctions when testing new scenes, rather than promoting
+a faster lower-score algorithm or adding partial incomes together.
+
+Public C++/models remain unchanged and the normal62/62 suite1753 remains
+applicable. The private algorithms have the narrower build/literal/default/
+real-data scopes recorded above. Publication218 checks documentation CTest,
+old2043 ledger/result prefixes, old48 progress prefix, all51 selected hashes,
+272 historical payloads, reversed-export identity, source/resource/queue closure
+and the3 new all8-qualified records. All owned scoring queues close before
+maintenance; no further scoring batch starts during cleanup. No remote contact
+or new Wine playback occurs, and19 older remote closures remain unresolved.
+The4B/7B goal remains active and unmet.

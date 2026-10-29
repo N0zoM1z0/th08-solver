@@ -238,9 +238,9 @@ Historical272 payloads are relocated unchanged under the paths recorded in
 paths in frozen reports remain historical provenance. Earlier local-only labels
 below predate this publication request; raw reports, tapes and videos stay local.
 
-Latest overall records are Scarlet Extra **3,306,483,020,14/14** (2035,
-fresh2036/natural2037) and complete story **6,635,012,890,36/37**,only10 timeout
-(2030, fresh2038/natural2039). Both are NMNB, use the original9098/32796 receipts,
+Latest overall records are Scarlet Extra **3,308,826,050,14/14** (2047,
+fresh2096/natural2097) and complete story **6,653,194,550,36/37**,only10 timeout
+(2113, fresh2115/natural2116). Both are NMNB, use the original9098/32796 receipts,
 and pass all41 terminal words plus natural score/outcomes/name checks. Exact
 bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
 progress table.
@@ -325,7 +325,7 @@ Extra2035 composes the actual2019→2029→2033→2035 worlds: retain60316 input
 to203, use Native32 H256/beam384/cash4/movement4 through64936, restore F4
 H128/beam384/cash4/movement4 through closed204 at70512, then use Native32
 H128/beam128/cash0/movement4 through settlement. Every literal parent prefix
-matches exactly. The actual205 entry moves to70754; its6221 collected orbs
+matches exactly. The actual205 entry moves to70754; its6219 collected orbs
 include post-award pickups and produce a59,608,000 pending award. The complete
 route executes76725 inputs,1051 points/135231 orbs/PIV976160. Fresh2036 and
 natural2037 pass all8 checks; map2040 matches all41 terminal words and the full
@@ -344,6 +344,43 @@ actions SHA-256 is `5de72314fa67a5c849b2fc07e3b1074bd54a4dc47dc5d72d022a4404b396
 Both use the same78db84b/private64450f68 source and81d6f3fc ELF above. The48
 selected files include2019/2020 intermediates and all earlier exact bytes.
 Original receipts remain9098/32796, and both latest scores remain Native-only.
+
+Extra2047 retains2035's exact first70754 inputs to actual205 entry and changes
+the guided Native32 proposal beam128→64, keeping H128/cash0/movement4. It
+completes76725 inputs,NMNB14/14,1051 points/135367 orbs/PIV976840. Fresh2096/
+natural2097 pass all8 checks; map2100 agrees on all41 terminal words and the
+full14-card audit. Its31962-byte replay SHA-256 is
+`b6b594be9e8a152c1e9fc9d0d691168e0fc053d467e5a5577f0daad0c1e3ea87`;
+actions SHA-256 is `7eee559f8275a5219560acf2780d9443b9d23cafe84e459cd3440bd65d9cfea2`.
+The frozen81d6f3fc ELF/private64450f68 source above remain its producer.
+
+Story2095 retains2030's first151389 inputs to175, then uses private fine pulses
+of1/2/4/8 updates, nine directions including dwell and four fire/form modes.
+Each extra candidate has a fully adaptive Native future, actual end orbs/score/
+signed-gauge ranking, stable ties and explicit additional costs. Total30000ms
+search/shared2000ms admission are unchanged; exact duplicate input prefixes are
+deduplicated and physical worlds are never merged. H128/cash4/movement3/beam384
+through all five survivals finishes6,648,176,870,NMNB36/37, only10 timeout.
+Fresh2098/natural2099 pass all8 checks; map2101 agrees on all41 words/full audit.
+Its65266-byte replay SHA-256 is
+`aebf5558c600759871ed332adb981bf5c68abb0f52526b2dec2a4afbe343a9e8`;
+actions SHA-256 is `572d7f3971fc4bf5c17893370b98223bab56e31a88294273378a0664f80f583d`.
+The private source base is195deef, source manifest
+`505aeb07a0847297e0658c44f82af2e5ef30159510f107577bb7ecc84ab5b789`,
+producer ELF `e2343dc1e5402bc342de4a1b703a341c40d99c2bdca7aff8d887a5524087bf56`.
+Public C++/models and Native physics remain unchanged. Literal and actual
+default-off canaries precede scoring; the journal records their separate scope.
+
+Story2113 retains2095's exact first156833 inputs and full191 entry projection,
+then changes only that fine144 scene to beam64, keeping H128/cash4/movement3.
+It finishes159445 inputs,NMNB36/37, only10 timeout,434 FinalB points/75471 orbs/
+PIV1472880. Fresh2115/natural2116 pass all8 checks; map2117 agrees on all41
+terminal words and full37-card audit. Its65215-byte replay SHA-256 is
+`198001feacdd3de53bdc949358f5dfb1f037deeb9923896249c43c3b1fbb348f`;
+actions SHA-256 is `f1f027465d1e3fac35de6e66a38369cb4acf0661cbf7c2debcf760dbbc7ec8f2`.
+It uses the same fine source/ELF as2095. All51 selected files preserve earlier
+bytes, original9098/32796 receipts and exact `ysopwnab` names. Both latest
+records remain Native-only;4B/7B and the story all-shot retail gate remain unmet.
 
 Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
 The new3.165B retains786 through actual193 entry7723, uses H128/cash0/movement4

@@ -1,7 +1,7 @@
 # th08-solver
 
 > [!NOTE]
-> **Native score attack: Extra 3,306,483,020 · complete Lunatic 6,635,012,890.**
+> **Native score attack: Extra 3,308,826,050 · complete Lunatic 6,653,194,550.**
 > Scarlet Team, No Miss / No Bomb, with verified exported replays.
 > Targets: **4B Extra · 7B complete Lunatic**, using stage/spell strategy composition. Current search is local-only.
 
@@ -22,9 +22,9 @@ Each score links to its exact replay.
 
 | Route | Shot | Score | Captures |
 | --- | --- | ---: | ---: |
-| Extra | Scarlet — Sakuya/Remilia | **[3,306,483,020](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3306483020-seed9098.rpy)** |14/14 |
+| Extra | Scarlet — Sakuya/Remilia | **[3,308,826,050](reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3308826050-seed9098.rpy)** |14/14 |
 | Extra | Magic — Marisa/Alice | [3,013,913,970](reports/native/replays/magic/extra/extra-native-nmnb-3013913970-seed46997.rpy) |14/14 |
-| Complete Lunatic | Scarlet — Sakuya/Remilia | **[6,635,012,890](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6635012890-seed32796.rpy)** |36/37 |
+| Complete Lunatic | Scarlet — Sakuya/Remilia | **[6,653,194,550](reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6653194550-seed32796.rpy)** |36/37 |
 | Complete Lunatic | Magic — Marisa/Alice | [5,550,599,270](reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-5550599270-seed1805.rpy) |36/37 |
 
 These have original-entry fresh execution and natural replay agreement, with
@@ -36,8 +36,8 @@ input lineage, verification tasks and hashes, including earlier records.
 
 The October27 [all-shot human references](https://maribelhearn.com/wr#IN) are
 **3,178,460,830 Extra** and **7,053,332,460 Lunatic**, both solo Youmu.
-Native Extra is128,022,190 above its human reference; complete Lunatic is
-364,987,110 below the next7B milestone. Historical same-shot references remain in
+Native Extra is130,365,220 above its human reference; complete Lunatic is
+346,805,450 below the next7B milestone. Historical same-shot references remain in
 [Status](docs/STATUS.md). All shots may be explored; Scarlet has priority.
 
 ## Original Wine results
