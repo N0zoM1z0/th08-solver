@@ -430,6 +430,25 @@ audit of pre-reboot1835 before publication. This checks Native execution
 consistency across the environment change, not independent retail equivalence.
 All39 earlier selected replay bytes and272 historical payloads stay unchanged.
 
+The subsequent Extra V116–V135 investigation changes no published record.
+Private graze-only proposals have focused contract and complete local literal/
+natural-row gates; no public C++ or Native physics change is promoted. Four
+phase tapes initially bypass the intended fire rule through proposal/cash paths;
+actual input counts identify the failed treatment. Cash0 during199 realizes
+25040 orbs/timeout, but full1879 completes3,155,221,160 NMNB13/14 and omits the
+45 post199 point requests. Stock1882/read-only1883 match all7478500 natural row
+bytes/full audit; captured202 later spawns45/45 at1764→1809 occupancy, disproving
+the initial202 saturation hypothesis for that world.
+
+Eight new complete scoring trials remain below3,255,579,400. Best1896 is
+3,239,225,090 NMNB14/14, preserving gold's first68054 inputs and using continuous
+focused205 flow, top16/14 rows, H128/cash0/movement3. It is not selected and its
+temporary replay is pruned after retaining its hash and input/result evidence.
+Source Spellcard reward payment occurs at effect timer130, so immediate phase
+cash is pre-settlement; all accepted score comparisons use full continuations.
+The [journal](experiments/2026-10-28-stage-spell-search.md#october29-continuation-after6619b-extra-control-and-capture-lifecycle)
+retains exact source/ELF identities, setup failures, control differences and costs.
+
 Earlier story1381 retains1225's exact151302 inputs through the closed171 boundary,
 then uses H128/publication64/replan32/cash4/movement3 over all five remaining
 survivals and full settlement. This increases the complete score by924080 to

@@ -6,8 +6,8 @@ and bounded local searches. All shots are permitted; Scarlet Team has priority.
 The active targets are **4B Extra and7B complete Lunatic**, then the story
 all-shot human reference. The6.5B milestone is achieved. Scarlet remains the
 priority; solo Sakuya now has separately retail-seeded complete NMNB baselines.
-Local scoring, fresh verification and phase maps through1857 have finished;
-publication audit1858 closes this batch.
+Local experiments through1897 have finished; publication audit1898 closes
+the latest batch. The current Native records are unchanged by that batch.
 The owner now requests **local-only work** after a VPS SSH identity change.
 Nineteen earlier remote terminal receipts remain unavailable; their state is
 explicitly unresolved and they certify no new score. Remote closure/retention
@@ -86,10 +86,11 @@ closures; those historical uncertainties are not a live queue or new certificate
 | Trajectory and guidance negatives | Larger story proposal horizons/beams, hard/soft charge phases and six complete203 upper geometries yield no further record | Retain costs and actual action traces; unproductive controller prototypes remain private |
 | Actual171 and final survivals | Earlier V56/V64 remain negative. V97/V98/V100 carry a new77 world through Stage5 and FinalB; initial full1813 loses. Retarget actual owner146244 at171; reserve0 world1838 yields17504 orbs and complete1847 verifies6,618,962,600, while18522-orb1842 gives a lower full score | Recompute the complete suffix and retain original input/owner-coordinate lineage |
 | Faster streams and priming | Current199 sampling excludes80.44% of eligible slot-observations at the3px/update lookup cutoff. Private8/8 gains51.110M over a matched full control, still below Extra record. Above-boss priming is mixed/negative phase evidence | No private experimental controller is promoted; source simulation remains unchanged |
+| Actual phase control and reward lifecycle | V116–V135: cash4 overrides new fire intent; cash0 realizes25040-orb199 timeout but omits45 point requests and its capture award. Eight complete199/205 futures stay below the record; best3,239,225,090 | Inspect actual inputs, carry130-update pending rewards, and distinguish absent drops from pool failures |
 | Checkpoint units and interruption | Audit calculation counters differ from owner input counts. V104 corrects3–5-update labels without changing raw trials. SSH identity changes leave missing remote closures unverified | Use measured owner phase maps; preserve failed setup/unknown receipts and local-only steering |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V115 case and source-backed conclusion, including setup failures, resource
+V47–V135 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)

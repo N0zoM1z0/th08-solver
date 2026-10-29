@@ -8,7 +8,7 @@ published replay index.
 
 | Record | Purpose |
 | --- | --- |
-| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.256B/story6.619B, source/replay analysis, actual-world compositions, checkpoint-unit correction and local-only continuation |
+| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.256B/story6.619B, source/replay analysis, actual-world compositions, checkpoint-unit correction, fire-intent tracing and delayed capture settlement |
 | [Campaign lifecycle ledger](campaign-ledger.tsv) | All existing task allocations and original lifecycle notes, including repeated notes for the same ID. IDs are never reset or reused |
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
@@ -111,3 +111,9 @@ The local two-owner/two-core continuation records a host restart explicitly as
 measurements stay empty. Fresh-ID retries do not replace those charged tasks.
 Post-reboot whole replay rows/audit are compared before publication; private
 fast8/stride8 ELF binding exposes source base91f61a1 for new local rows.
+
+The V116–V135 continuation preserves two pre-scoring setup/compile failures and
+four duplicate phase tapes whose requested no-fire intent was overridden.
+Literal execution/index parity does not verify a proposal path. Source reward
+settlement and item request/spawn/collect evidence remain separate from phase
+cash and complete-route acceptance. No new overall replay qualifies in this batch.

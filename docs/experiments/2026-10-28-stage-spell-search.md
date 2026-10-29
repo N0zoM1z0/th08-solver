@@ -1383,3 +1383,227 @@ CTest. Public C++ and the normal62/62 suite1753 are unchanged; no relink occurs.
 The two host-interrupted rows retain blank score, constraints and per-task
 resource measurements. All local owners finish before publication; no further
 scoring batch is started during this closure.
+
+## October29 continuation after6.619B: Extra control and capture lifecycle
+
+After the completed `b6664b4` publication, the owner says "go on". This resumes
+local Native exploration under the same two-owner/two-core service,4GiB AS/tree
+RSS,6GiB high/10GiB hard/no-swap service memory and12GiB admission/8GiB host
+abort reserves. No remote contact or new seed episode occurs. Scarlet original
+9098 remains fixed; all scoring uses No Miss/No Bomb and optional captures.
+Every actual bomb/capture result and failed setup/build remains charged.
+
+### V116–V122: check actual inputs, not just a controller label
+
+[`Player::AwardGraze`](../../third_party/th08/src/Player.cpp) adds100 gauge for
+an actual youkai graze. Focused shooting also charges through the source ramp;
+without shooting the gauge slowly returns toward zero. The question is whether
+dense199 grazing can establish extreme mode without the early HP damage seen
+in1853. Its earlier wide fast-flow feedback captures with2171 updates remaining
+and9864 orbs; the record component has20385 orbs and156 remaining.
+
+Private V116 changes only feedback proposals before their capture reserve:
+release fire and keep the existing form/geometry schedule. Continuous fire,
+reserve capture, empty plans and Native physics remain unchanged. The source
+report marks `phase_graze_charge_revision=1`; the public `feedback` grammar and
+semantics are unchanged. Clean build1859 passes a focused input contract.
+Complete original-entry Extra/story literal canaries1860/1861 reproduce all41
+terminal words, full producer audits and every input byte. Natural1862/1863
+reproduce all7401700/15953200 row bytes and their respective natural audits.
+These are local execution checks, not independent retail equivalence or a
+proof that every proposal path honors a new control intent.
+
+Gate setup1864 initially compares a natural audit to a producer audit, then an
+unchecked orchestration step starts a missing spec. No scoring starts. Preserve
+the28ms failed service and unavailable per-process memory measurements. Correct
+comparison is natural-to-natural, while the literal check remains
+producer-to-producer. The existing raw canaries remain unchanged.
+
+Actual phases1865/1866 both fire982 of1926 inputs and capture with2274 remaining,
+9695 orbs, NMNB8/8 encountered cards. Their complete input bytes are identical.
+They are genuine phase executions, but **not a realized no-fire treatment**.
+[`propose_after_lead`](../../src/shadow_proposal.cpp) returns value-proposal
+prefixes directly, while `phase_input` filters the later guided tail. A pure
+`propose` unit test and complete literal parity do not test that planning path.
+
+V119/V120 adds one observed-world fire intent shared by policy decisions, value
+prefixes, goal-preserving recovery and guided tails. Native still validates the
+actual candidate afterward; no accepted certificate or literal prefix is
+rewritten. Build1867 fails because its new contract uses nonexistent
+`beam_width`/`boss_y` fields. Preserve10.589s and the original sources. Clean
+rebuild1868 uses actual `beam` and score-memory interfaces, passing cold/warm,
+reserve/lifecycle and every value-prefix fire-bit check. It recompiles all three
+objects; no archived object is reused. The report marks revision2.
+
+Before scoring, literal1869/1870 and natural1871/1872 again pass both complete
+routes: all41, whole inputs, full corresponding audits and every natural row
+byte. V120 ELF SHA-256 is
+`89fc636ef68a1345acc0c01516abdd0fe56ba3617c55417fd8a2d4bb8f44ba87`;
+source manifest is
+`42e9ab3e48561373e26bb1e77289f01dba139efacd40cb2001cd2036b1eb07f1`,
+based on91f61a1 with explicit private overlays. Native library remains
+`cb618d78f944937ab9cff6022886452f9134f615a2e8a9f917db6dbf7cd503e0`.
+The earlier V116 ELF/source hashes are in the task rows; neither prototype is
+promoted into public C++.
+
+V1211873/1874 nevertheless produces **the same complete inputs** as1865/1866.
+The next boundary is the outer
+[`finish` lambda in `search`, fire/form comparison](../../tools/shadow_style.cpp): `cash4`
+directly tries modes1/5/0/4 for32 prefix inputs and selects short-horizon cash.
+It can override the policy intent before its own Native validation. This
+explains why changing nominal fire intent alone did not change this family;
+the earlier attribution to value prefixes alone was incomplete.
+
+V122 disables those fire/form comparisons **only for the target phase** with
+cash0, retaining movement4 and the same H128/publication64/replan32, policy24/
+beam384, proposal60ms/search30000ms and900s wall budget. The first actual new
+input and final inclusive reserve0 boundary fire; all4198 interior199 inputs
+of1875 do not. This realizes the treatment:25040 orbs over4200 inputs, NMNB,
+intentional timeout.900 focused-fire reserve also times out. Cash4 is restored
+for every complete suffix; the earlier V48 cash0 full-tail confound is not
+repeated.
+
+An initial local annotation incorrectly called both1875 firing inputs warmup;
+raw positions40854/45053 show first and final boundary. The correction preserves
+the original annotation and unchanged tape. Focus escapes and actual fire/form
+counts, rather than an intended mode name, remain the experimental evidence.
+
+### V123–V130: capture time depends on the actual damage trajectory
+
+All199 variants retain exactly the record1740's first40853 owned inputs.
+Source geometries use32px row spacing. Each closed phase is NMNB; every trial
+has zero bombs. These are partial scene results and not complete scores.
+
+| Task | Source variant / cash | Top / rows / reserve / capture | Phase inputs / firing | Collected orbs | Outcome / remaining | Pre-settlement cash | Owned seconds |
+| --- | --- | --- | ---: | ---: | --- | ---: | ---: |
+|1865 |private V116 /4 |16 /14 /0 /youkai |1926 /982 |9695 |captured /2274 |1,344,534,340 |32.164 |
+|1866 |private V116 /4 |16 /14 /900 /youkai |1926 /982 |9695 |captured /2274 |1,344,534,340 |32.379 |
+|1873 |private V120 /4 |16 /14 /0 /youkai |1926 /982 |9695 |captured /2274 |1,344,534,340 |37.386 |
+|1874 |private V120 /4 |16 /14 /900 /youkai |1926 /982 |9695 |captured /2274 |1,344,534,340 |37.579 |
+|1875 |private V120 /0 |16 /14 /0 /youkai |4200 /2 |25040 |timeout /0 |1,423,071,960 |56.226 |
+|1876 |private V120 /0 |16 /14 /900 /youkai |4200 /902 |21678 |timeout /0 |1,406,812,450 |54.584 |
+|1877 |private V120 /0 |16 /14 /1500 /human |3775 /1077 |15728 |captured /425 |1,378,653,950 |38.257 |
+|1878 |private V120 /0 |208 /7 /0 /youkai |4200 /2 |21351 |timeout /0 |1,404,897,060 |42.552 |
+|1884 |private V120 /0 |16 /14 /1200 /youkai |4200 /1202 |21617 |timeout /0 |1,404,658,290 |41.311 |
+|1885 |private V120 /0 |16 /14 /1150 /human |4200 /1152 |18616 |timeout /0 |1,390,162,340 |41.733 |
+|1888 |private V120 /0 |16 /14 /1500 /youkai |3924 /1226 |18370 |captured /276 |1,392,807,210 |43.671 |
+|1889 |private V120 /0 |16 /14 /1650 /youkai |3428 /880 |16598 |captured /772 |1,382,118,180 |39.232 |
+|1890 |private V120 /0 |16 /14 /1350 /youkai |4126 /1278 |19557 |captured /74 |1,398,974,210 |44.748 |
+|1891 |original fast V94 /0 |16 /14 /900 /youkai |3757 /1391 |18760 |captured /443 |1,396,438,240 |37.431 |
+
+Read-only1886/1887 reexecute the actual900/1200-youkai tapes, matching all41
+terminal words and their full partial audits before reading HP/gauge/pose every16
+updates. At27 remaining, HP is512/422. Earlier human1500 captured after1077
+fire inputs, yet human1150 later times out: shot count is not a transferable DPS
+bound. Option positions were considered but not measured; no damage loss is
+attributed to fixed options without that evidence.1350-youkai eventually captures
+with74 remaining/19557 orbs; standard feedback plus cash0 captures with443/18760.
+
+### V124–V131: full futures and a rejected point-pool diagnosis
+
+Selected phase worlds reexecute their entire original-entry input prefixes.
+The complete200–205 suffix restores ordinary F4 H128/cash4/movement4, including
+all pending effects, RNG, items, actors, options and source settlement.
+
+| Task / phase parent | Complete displayed score | Actual constraints | Points / orbs | Owned seconds |
+| --- | ---: | --- | ---: | ---: |
+|1879 /1875 |3,155,221,160 |NMNB13/14 |1006 /133844 |404.406 |
+|1880 /1877 |3,072,818,120 |NMNB14/14 |1006 /121259 |381.398 |
+|1892 /1890 |3,219,569,420 |NMNB14/14 |1051 /125720 |378.768 |
+|1893 /1891 |3,141,986,630 |NMNB14/14 |1006 /127508 |393.587 |
+
+No full route improves3,255,579,400.1879's133844 orbs/PIV969220 exceed the
+record129738/948690, but points fall1051→1006. Full owner map1881 agrees in all41
+words/full14-card audit. Its actual202 entry is55883, not55417. The initial
+hypothesis is the older202 full-pool failure; it is **rejected for this world**.
+
+Stock1882 and read-only point observer1883 agree on every7478500 row byte
+and the entire natural audit. The45-point deficit already exists at200 entry:
+826 instead of871. No199-timeout point request occurs. Later captured202 requests
+and spawns all45 at58183, with occupancy1764→1809 of2096. There is no202 saturation
+to repair.
+
+[`Enemy::HandleTimerCallback`](../../third_party/th08/src/EnemyManager.cpp) follows
+a DAT-controlled ECL transition, while the HP-death path in
+[EnemyManagerUpdate.cpp](../../third_party/th08/src/EnemyManagerUpdate.cpp) can
+call `DropItems`. The observed199 timeout omits this45-point batch; this is a
+case-specific source/trace result, not a rule that every timeout omits all drops.
+1880 and1893 also end1006 points but have captured199 and all14 cards; their gap
+starts after202. Its exact cause is not inferred from the shared final count.
+Those different worlds are not collapsed into one diagnosis.
+
+The actual record's45 post199 pickups give67,743,900 displayed cash, all at
+extreme-human pricing. Its199 capture award is42,742,000. The omitted categories
+are110,485,900 in that reference ledger, while1879's complete deficit is
+100,358,240; other actual ledger changes net10,127,660 in the opposite direction.
+This is descriptive accounting between complete runs, not a reachable
+counterfactual or an amount added to1879's future.
+
+A local CSV summary first used capacity column10 as occupied; column9 is the
+actual occupancy. Another preliminary annotation multiplied point collect values
+by10. Source[`GameManager::AddScore`](../../third_party/th08/src/GameManager.cpp)
+already accepts displayed units and stores argument/10; the CSV value is its
+argument. Both annotations are corrected before publication, retaining originals
+and unchanged raw CSV/tapes.
+
+### Capture boundaries include delayed gameplay rewards
+
+[`Spellcard::EndSpell`](../../third_party/th08/src/Spellcard.cpp) arms a pending
+reward effect. `OnUpdateImpl` credits `bonusAward` at effect timer130, clears the
+pending flag and pays remaining pending time orbs. A spell-end checkpoint is
+therefore **before final capture settlement**.1875's apparent19,560,010 cash
+lead over the record's immediate199 end did not include that old pending award.
+H128 also cannot see a newly armed130-update payment inside that same horizon.
+This explains a horizon/accounting limit; increasing H alone is not claimed
+to improve the route.
+
+The literal-prefix method carries the real effect/bonus state without manually
+adding a reward or substituting scalar cash/PIV. Selection may inspect pending
+rewards, but only a complete Native future certifies a score. The final negative
+results above retain all discovery, duplicate-control and composition costs.
+
+### V132/V134: transfer to survival205, then test continuous fire
+
+Source205 is a survival last spell:4740 declared timer frames,4980 actual owned
+inputs, ending at73034 with remaining−60. All earlier13 cards retain exactly
+gold1740's first68054 inputs, confirmed by its actual owner map. The two
+geometries use top16/14 rows and208/7 rows, cash0/movement3, H128 and the same
+Native validation. Every candidate continues through130-update reward credit
+and all stage-clear payments to complete74021 inputs.
+
+| Task | Mode / top | Actual205 fire / focus |205 orbs / extreme-youkai grazes | Complete score | Owned seconds |
+| --- | --- | ---: | ---: | ---: | ---: |
+|1894 |private graze-only /16 |242 /4538 |3563 /1182 |3,230,744,500 |57.127 |
+|1895 |private graze-only /208 |274 /4547 |3704 /1231 |3,232,495,950 |55.401 |
+|1896 |shoot /16 |4980 /4544 |4082 /1354 |3,239,225,090 |51.155 |
+|1897 |shoot /208 |4807 /4484 |3485 /1156 |3,229,475,240 |51.336 |
+
+All four are NMNB14/14. Private graze-only gives fewer extreme-youkai grazes
+than the record's1678 and5072 orbs. Continuous fire improves the upper case but
+not the lower one; none beats the existing record. Actual fire counts, including
+source lifecycle/recovery intervals, remain explicit. Neither this bounded
+linear flow proxy nor no-fire is a universal farming policy.
+
+### Publication closure
+
+The39 allocations1859–1897 comprise14 closed NMNB phase cases, eight complete
+NMNB scoring trials, four complete literal canaries, four natural-row checks,
+three build/contract owners(including the failed compile), one pre-Native setup
+failure, one owner map, two stock/point controls and two HP observers. No new
+overall replay qualifies; Extra stays3,255,579,400 and complete Lunatic6,618,962,600.
+The4B/7B targets and story7,053,332,460 retail gate remain unachieved.
+
+Final publication1898 checks complete accounting, exact old1858-row results and
+ledger prefixes, all40 selected replay hashes and272 historical payloads,
+source bindings, resource receipts, reversed exporter traversal and documentation
+CTest. Public C++ and its normal62/62 suite1753 remain unchanged. The private
+variants have the narrower focused/real-data scopes above and are not promoted.
+No new Wine replay playback or remote connection occurs. Earlier19 remote
+terminal receipts remain unresolved; no remote closure is claimed. All local
+scoring/probe/test owners finish and no further batch starts during cleanup.
+
+Scoped retention hashes and removes12 unselected temporary replay exports
+(440725B); all action tapes, reports, observer rows and source/seed receipts
+remain local. The prior40 selected replay bytes and historical payloads are
+preserved. No source pool limits, unknown opcodes, clocks or gameplay RNG are
+changed to improve an experiment.
