@@ -3120,3 +3120,196 @@ all18 prior owner closures,12 prefix edges, two full Native maps, complete repla
 row/audit observer checks, old2149 TSV prefixes,51 selected/272 historical hashes
 and reverse export pass. Including the audit,19 allocations close through2168;
 no owned scoring/probe/test driver remains and no new scoring starts in cleanup.
+
+## October29 continuation: separate capture movement from fire, then compose within47
+
+The4B/7B goal remains active after1cb84e0. Original9098/32796, NoMiss/Bomb0,
+optional captures and the complete-route acceptance gate remain fixed. Extension
+2176→2240 is recorded at2168 before2169; the ledger is not reset. V232 keeps two
+owners/two aggregate cores, AS/tree4GiB, service6GiB high/10GiB hard/no swap and
+host12/8GiB admission/abort reserves. No SSH or new Wine episode is used.
+
+### V233/V234: a private movement-lifetime experiment with actual-replanning gates
+
+The source hypothesis from V228 concerns two V120 policy decisions: the phase
+proposal grid/speed/sampling profile and phase flow both expire at the capture
+reserve. A private C++17 adapter changes those two lifetime predicates only for
+actual stage2/card47 (the third human stage). Compile variant0 retains the old
+predicate. Variant1 keeps the explicit phase movement profile through capture:
+its16/7 upper geometry,8px/update proposal speed filter, sample stride8 and flow
+remain available. These are coupled proposal changes, not an isolated geometry
+ablation. Fire/form intent, reserve, Options ABI, Native physics and gameplay RNG
+are unchanged. Independent recovery can still leave the nominal grid.
+
+Build2169 runs20 commands, including both variants of the focused profile-lifetime
+contract and the existing fire/policy contracts. All pass in20.874s. The new
+contract checks independent fire/form intent across the reserve, inactive-phase
+termination and unchanged151/205/43 behavior. Source base91f61a1 and parent V120
+manifest42e9ab3e… remain separate from public head1cb84e0. Policy source SHA256
+is ea8100c2741aee4194d42671957982f279ddd98a9d6529c4f9635cf2a7836c5f;
+variant ELFs are8c75782ec2dc24d4849c889bbcf72233baa92a4d3e4baed0ad3f0674ea528b6a
+and0405c4dfd7841d28c27d34b068a30c1184c4586e81362757f03269ddef54335a.
+The qualified release binds every source file, build command, ELF and the
+unchanged Native librarycb618d78…. No public controller is promoted.
+
+Literal2170/2171 reproduce Extra2047;2172/2173 reproduce story2113. Each variant
+matches every input, all41 terminal words and the full14/37-card audit. This
+alone tests execution rather than proposal decisions. Actual47 replanning2174
+with frozen V120 and2175 with private0 then agrees in every input, all41 words
+and full partial audit at52385. Both use original2113's exact first50124 inputs,
+H128/publication64/replan32, policy24/beam384, cash0/movement4, prior1,
+recovery-fire preserve and2:47:16:7:900:feedback:youkai. Only after those gates
+pass are private1 candidates scored.
+
+The four literal specifications accidentally inherit old scoring-composition
+metadata from their templates. Their actual CLI, complete input hash, reason
+and equality gate consistently use whole2047/2113 tapes. Supplemental per-owner
+lineage corrections and the aggregate V234 correction bind parent2047/prefix76725
+and parent2113/prefix159445; original manifests/results remain unchanged. Ledger
+notes preserve this metadata error. No Native rerun or outcome substitution occurs.
+The exporter now records the private profile flag in new rows' search costs;
+previously published rows remain byte-identical.
+
+### V234/V235: keep upper movement briefly, then restore the capture policy
+
+Both private1 reserves safely survive47 but time out. Their terminal body stays
+nearY151.09/143.32, unlike the earlier capture retreat nearY390. The larger orb
+counts establish that the treatment changes realized income; neither captures.
+A second composition therefore retains private1 movement for150 or300 capture
+inputs, then resumes frozen V120 from the actual safe2177 tape. The common first
+51623 inputs include the original47 entry50124 and1499 active inputs. Checkpoints
+51773/51923 retain150/300 further inputs. Full original-entry reexecution carries
+actual RNG, actors, shots and option anchors; no world is injected. Policy history
+is rewarmed/replanned at the handoff, a named confound of this composition.
+
+| Task | Movement during capture | Collected orbs | Outcome / remaining | Pending displayed award / time orbs | Owner inputs | Cash before settlement | Wall seconds |
+| --- | --- | ---: | --- | ---: | ---: | ---: | ---: |
+|2176 |private1, reserve600 |11285 |timeout /0 |0 /0 |52524 |1026131460 |25.169 |
+|2177 |private1, reserve900 |11319 |timeout /0 |0 /0 |52524 |1026188850 |25.247 |
+|2178 |private1 first150 capture inputs, then V120 |9242 |captured /68 |17716330 /100 |52456 |1019932190 |19.529 |
+|2179 |private1 first300 capture inputs, then V120 |9656 |captured /19 |18249940 /100 |52505 |1022527090 |18.277 |
+
+All four are complete safe47 scenes, NMNB, not complete routes.2179 gains1507
+orbs over old captured2151's8149 while retaining a similar pending award. The
+old incumbent2113 collects3999 in a different, earlier-firing profile. Human47's
+11608 remains bomb-preceded evidence, not an NMNB target world. Capture awards
+and field items are carried through settlement rather than added to local cash.
+
+V236 selects2177's highest-orb timeout and2179's higher captured local income for
+two complete futures. This bounded diversity heuristic is not a proof of future
+dominance;2176/2178 tapes, worlds and audits remain archived locally. The finite
+five-pair continuation recomputes Stage3 remainder/4A/5, FinalB road, through171,
+fine144 through187 and beam64 final settlement. It restores the same tested
+suffix profiles as V227, carries actual worlds and accepts captured or timed-out
+safe components. Only complete results can change the recorded route score.
+
+### V240: an unlaunched13 hypothesis from existing gated evidence
+
+Read-only metadata analysis uses2113's already mapped actual13 entry13817 and
+its existing natural rows, plus the original human Levea rows. Unlike the
+bomb-preceded47 comparison, the human first-stage rows contain no Bomb inputs
+and no life decrement (lives remain2). The human whole route is still1-miss/
+9-bomb evidence. Native13 captures after1714 active observations,3765 orbs and
+686 remaining; human13 captures after2300,5639 orbs and100 remaining. Those are
+descriptive measurements, not a reachable income delta.
+
+Mean body heights over the first1500 inputs are similar, while human fire counts
+are sometimes higher. Reusing the already row/audit-gated option traces1058 and
+2164 requires no new Native owner:2164's complete route retains2113's exact
+pre47 history, including all of13. Both start raw life1600. At age1500 Native
+has182 versus human241; Native ends at raw1 on age1713. Human falls to65 at1800,
+19 at2100 and1 at2299, with progressively less fire. A useful next experiment
+could preserve a damaged actual13 prefix, stop fire for a bounded interval, then
+recover capture. Incoming anchors and residual shots remain real carried state;
+neither fire counts nor mean pose isolate their causal contribution. These
+V240 receipts are read-only hypotheses, without a launched spec, new tape or
+score certificate. Existing V236 futures are finished before further scoring.
+
+### V236 complete outcomes: a better47 scene is still not a better route
+
+| Boundary |11319-orb timeout-world task / score |9656-orb captured-world task / score |
+| --- | ---: | ---: |
+|Stage5 |2180 /3398653580 |2181 /3429161890 |
+|road151 |2182 /4203286590 |2183 /4214916220 |
+|171 |2184 /5043012010 |2185 /5030300490 |
+|187 |2186 /5513147700 |2187 /5497217390 |
+|full |2188 /6554033050 |2189 /6534027080 |
+
+Both complete routes are NMNB.2188 ends159525 inputs,34/37, with10/47/74
+timeouts;2189 ends158989,35/37, with10/74 timeouts. Neither exceeds6,653,194,550,
+so no fresh all8 qualification or new selected replay is charged. The captured
+world is only4,467,170 below the incumbent's3,433,629,060 at Stage5 despite
+missing74, but later differences widen the deficit. This does not imply that
+restoring74 alone recovers a fixed amount or the incumbent's later world.
+
+Both new167s capture, with4723/3932 orbs versus the incumbent5096.171 collects
+17545/14206 versus17504. At171 closure the displayed cash is5,043,012,010/
+5,030,300,490 versus the incumbent's immediate audit5,119,990,170. These owner
+boundary/audit timestamps are named separately; small transition cash is not
+silently aligned. The timeout-world151 captures with902 remaining/1561 orbs,
+while the captured-world151 has145/3263. An earlier scene's higher income and
+capture count do not order the downstream components.
+
+### V237–V239: full fidelity and actual-world archives
+
+Natural2190/2191 and unchanged observer1057 reuse2192/2193 match each complete
+100-byte row stream and full37-card audit. Producer audits agree after only the
+previously named clock/observation normalization. The observer changes no policy
+or Native state; this establishes instrumentation fidelity, not independent
+retail equivalence. Both47s first damage at age1507. The retained-profile timeout
+ends at rawHP2696; the300-input hybrid reaches2397 and captures. At age1800 both
+have raw3815/bodyY117.22. At2100 they have3286/Y119.19 versus3128/Y382.25. Both
+actual option target centers remain near(145.094,176.322); no anchor is reset or
+injected. Later boss trajectories also differ in the real carried worlds, so
+these observations do not isolate one DPS cause. Callback-adjusted capture HP,
+rather than raw-life-to-zero, remains the runtime contract.
+
+Read-only Native2194/2195 match all41 terminal words and the complete audits.
+Their full input-history archives include all37 boundaries. Nine selected cold
+entries are summarized, including167 explicitly:
+
+| Producer / map |47 |74 |77 |151 |155 |167 |171 |175 |191 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+|2188 /2194 |50124 |80269 |83470 |120834 |125563 |142837 |146202 |151469 |156913 |
+|2189 /2195 |50124 |79065 |82266 |119750 |125223 |143156 |146535 |150933 |156377 |
+
+All16 exact parent-prefix edges pass: frozen/private0 controls, both private1
+scenes, both intraspell hybrids and ten complete-continuation components. V239
+records386040745ns selection/classification cost and selects zero new overall
+replays. A later74 experiment must use these actual owner entries, not natural
+rows or audit-derived estimates. Four changed47 worlds across V227/V236 miss74;
+its incumbent capture at remaining−27 is a fragile timing observation, not a
+physics-bug diagnosis. Earlier continuous fire or a different capture reserve
+can be tested independently, followed by actual77/Stage5/FinalB recomputation.
+That V243 hypothesis is unlaunched; no new scoring starts during this publication.
+
+### Closure and cost accounting
+
+2169–2195 are27 terminal allocations: one private build/contract owner, six
+complete Native runs (four literal controls/two new futures), ten safe phase
+boundaries, two Stage5 boundaries, two151 road boundaries and six read-only
+owners. Summed owner wall cost is4134.235s, peak tree RSS306470912 bytes and
+minimum host available225359835136 bytes. No resource abort occurs. Source
+investigation, metadata corrections and preparation were not separately metered;
+unrecorded cost is not zero. Native/guidance/I/O and failed proposal counters
+remain separate in the per-task TSV. Shared-two-core wall is not an isolated
+throughput benchmark.
+
+Six duplicate/lower exports,324371 bytes, are hash-bound then pruned after full
+observer/map closure. All four47 scene archives and complete inputs, results,
+audits, traces, source/build/library/seed bindings remain local. Every earlier51
+selected replay file and272 historical payload retains its exact bytes. The
+private movement adapter is not promoted to public C++; public sources/models
+are unchanged and normal62/62 task1753 remains applicable. Publication242 checks
+documentation CTest, old2168 TSV prefixes, deterministic reverse export, private
+release/gates, literal metadata corrections,16 prefix edges, whole-row/audit
+fidelity, two full actual-world maps, resource receipts and retention. The owned
+scoring and read-only services are closed before that maintenance owner starts.
+Extra3,308,826,050 and story6,653,194,550 remain the records;4B/7B stays active.
+
+Publication242 passes in6.410s, peak tree RSS782090240 bytes. Documentation CTest,
+all27 prior closures,16 prefix edges, private release/real-data gates, preserved
+literal corrections, whole replay rows/audits, two Native maps, old2168 prefixes,
+51 selected/272 historical hashes and reverse export pass. Including this audit,
+28 allocations close through2196. No owned scoring/probe/test driver remains;
+cleanup starts no further scoring. The4B/7B goal remains active and unmet.

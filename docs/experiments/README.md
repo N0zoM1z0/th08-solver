@@ -8,7 +8,7 @@ published replay index.
 
 | Record | Purpose |
 | --- | --- |
-| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.309B/story6.653B, focused47/151/155 complete futures, HP/option-anchor replay checks and actual-world archives, capture movement, checkpoint units and delayed rewards |
+| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.309B/story6.653B, focused47/151/155 complete futures, HP/option-anchor replay checks and actual-world archives, capture movement/intraspell hybrids,13 timing, checkpoint units and delayed rewards |
 | [Campaign lifecycle ledger](campaign-ledger.tsv) | All existing task allocations and original lifecycle notes, including repeated notes for the same ID. IDs are never reset or reused |
 | [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
 | [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
@@ -117,3 +117,11 @@ four duplicate phase tapes whose requested no-fire intent was overridden.
 Literal execution/index parity does not verify a proposal path. Source reward
 settlement and item request/spawn/collect evidence remain separate from phase
 cash and complete-route acceptance. No new overall replay qualifies in this batch.
+
+V233–V242 records private movement-profile0/1 contracts, whole-route literal
+controls and actual-default47 replanning equality before new scoring. A300-input
+capture handoff gains1507 orbs over the earlier captured47 scene, but both new
+complete futures are lower. Four stale literal-composition fields have explicit
+ledger/supplemental corrections; raw manifests remain unchanged. New rows expose
+the private profile flag alongside existing search metadata. No public C++ or
+model change is claimed.

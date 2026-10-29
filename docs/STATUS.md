@@ -12,12 +12,14 @@ pulses through the final five survivals;2113 keeps its first156833 inputs and
 changes only191 to beam64. Fresh2096–2099/2115–2116 and maps2100/2101/2117
 verify the complete records. Fixed tails, short scouts, moving then dwelling,
 and two full37-capture continuations of the higher1962 Stage5 world are lower.
-Focused151/155 strategies now have six further complete futures and separate
-actual-world archives. Their best6,579,464,290 captures37/37 but remains below
-the overall record. Actual47 focused feedback now collects8149 orbs/capture or
-9532/timeout, but full6.436B/6.495B futures are lower. Read-only replay/anchor
-traces and Native maps pass. The next question is retaining the phase movement
-profile during capture; its current reserve switch drops the upper grid.
+Focused151/155 strategies have six further complete futures and separate
+actual-world archives; their best6,579,464,290 captures37/37 below the record.
+A private47 movement profile now retains upper proposals during capture.
+Switching back after300 capture inputs yields9656 orbs/capture, versus8149
+before; full retention yields11319/timeout. Their complete6.534B/6.554B NMNB
+futures remain lower. Whole-row/audit replay checks,16 prefix edges and actual
+Native maps pass. Next: retarget fragile74 capture in these real worlds, and
+study13's damaged-prefix fire pause using existing human/Native HP traces.
 The owner now requests **local-only work** after a VPS SSH identity change.
 Nineteen earlier remote terminal receipts remain unavailable; their state is
 explicitly unresolved and they certify no new score. Remote closure/retention
@@ -108,10 +110,11 @@ closures; those historical uncertainties are not a live queue or new certificate
 | New scene profiles and full controls |2044–2117: Extra205 beam64 verifies3.309B; fine pulses then191 beam64 verify6.653B. Four fixed-tail, four scout, two dwell and two full37-capture early-world futures are lower | Keep successful per-scene profiles; record extra costs and preserve the actual incoming world |
 | Focused151/155 transfer and archives |2119–2148: six phase outcomes become six complete NMNB futures, best6.579B/37of37;24 exact prefix edges and six full-audit/41-word maps pass. Same-entry151 local ordering reverses downstream | Retain distinct worlds; retest47's old6747-orb strategy at current50124 and investigate13's unused duration without adding partial income |
 | Actual47 form/fire and capture movement |2150–2167:8149-orb capture and9532-orb timeout become full6.436B/6.495B, both34/37. Full replay rows/audits,12 prefix edges and two Native maps pass;74 and167 introduce later capture losses | Separate fire timing from the phase movement profile, which expires at reserve. Preserve actual option anchors and callback-adjusted HP; human47 had a preceding bomb |
+| Capture movement and intraspell composition |2169–2195: compile0/literal/actual-default gates pass; upper-profile300 then ordinary capture yields9656 orbs, while full retention yields11319/timeout. Full6.534B/6.554B are lower; all16 prefixes, whole replay rows/audits and two Native maps agree | Keep actual-world archives; retarget74, which times out in all four changed47 futures, and test13 fire pauses without transplanting human state |
 | Checkpoint units and interruption | Audit calculation counters differ from owner input counts. V104 corrects3–5-update labels without changing raw trials. SSH identity changes leave missing remote closures unverified | Use measured owner phase maps; preserve failed setup/unknown receipts and local-only steering |
 
 The [October28 journal](experiments/2026-10-28-stage-spell-search.md) records each
-V47–V230 case and source-backed conclusion, including setup failures, resource
+V47–V242 case and source-backed conclusion, including setup failures, resource
 aborts and all unsuccessful complete combinations. The
 [October27 phase journal](experiments/2026-10-27-phase-composition.md) owns earlier
 phase maps and the6.5B composition; the [VPS journal](experiments/2026-10-27-vps.md)
@@ -129,7 +132,7 @@ It is historical evidence, not another current launch plan.
 | Local memory |Service MemoryHigh6GiB/MemoryMax10GiB/no swap;4GiB address space per process and4GiB summed RSS per owned tree; admit with at least12GiB host MemAvailable, abort below8GiB. Resource-aborted work remains charged and certifies nothing |
 | Remote owners | Currently paused by owner local-only steering; do not reconnect or replace host keys without verified identity. Standing contract: Native only; at most32 owners and32 total CPU cores under the owned user systemd manager, low CPU/I/O priority; preserve the old checkout and unrelated workloads |
 | Remote memory |4GiB AS/tree per owner,96GiB aggregate owned RSS guard,128GiB hard service limit, no service swap; host128GiB admission/96GiB abort reserves |
-| Campaign | One cumulative ledger at `reports/local/shadow-runtime-v1/tasks.tsv`; cap2176. Extension2048→2112 is recorded at2043 before2044, and2112→2176 at2099 before2100. Extension1984→2048 is recorded at1979 before1980;1920→1984 at1918 before1921;1856→1920 at1851 before use. Extensions1664→1728,1728→1792 and1792→1856 were recorded at1657,1713 and1783 before use. Record further64-task extensions before use; never reset, reuse IDs or omit aborted/retried work |
+| Campaign | One cumulative ledger at `reports/local/shadow-runtime-v1/tasks.tsv`; cap2240. Extension2176→2240 is recorded at2168 before2169. Extension2048→2112 is recorded at2043 before2044, and2112→2176 at2099 before2100. Extension1984→2048 is recorded at1979 before1980;1920→1984 at1918 before1921;1856→1920 at1851 before use. Extensions1664→1728,1728→1792 and1792→1856 were recorded at1657,1713 and1783 before use. Record further64-task extensions before use; never reset, reuse IDs or omit aborted/retried work |
 | Scope | No Miss, `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual bombs and captures. Restore both capture flags to1 for strict all-capture work |
 | Episodes | Fixed original retail seeds from the table below; new shot/entry episodes require a new original Wine pre-RegisterChain receipt before Native exploration. No Native-selected or hindsight-selected seed |
 | Checkpoints | Reexecute literal firstN owned inputs from that same original entry. N is owner updates, not spell age or replay row count. Carry RNG, bullets, actors, items, latch and observer histories |
@@ -140,10 +143,10 @@ It is historical evidence, not another current launch plan.
 | Evidence | Hash-bind source, ELF, loader/libraries, DAT, receipt, actual args and input prefix. Charge retries, target selection and cross-host canaries. Fresh replay is not independent retail equivalence |
 
 The current local launcher is
-`reports/local/global-score-20261027/run-local-two-v214.cjs`, which calls
-`run-scarlet-guarded-2176.cjs`; its memory guard is
+`reports/local/global-score-20261027/run-local-two-v232.cjs`, which calls
+`run-scarlet-guarded-2240.cjs`; its memory guard is
 `reports/local/retail-score-offline-20261026/memory-guard.cjs` and its relaxed
-fresh/natural checker is `reports/local/score-continue-20261027/verify-no-bomb-2176.cjs`.
+fresh/natural checker is `reports/local/score-continue-20261027/verify-no-bomb-2240.cjs`.
 These are ignored workspace tools, not files supplied by a fresh clone.
 Use fresh names and the maximum first ledger column, not line count: the ledger
 preserves repeated historical lifecycle notes. Older320/1280-task launchers and
@@ -238,6 +241,10 @@ ending434 FinalB points/75471 orbs/PIV1472880 at6,653,194,550.
   Earlier1962 now has two full NMNB37/37 futures, both below the record. Its
   151/155/171 close early or collect fewer orbs, so study actual capture timing
   and early road production with the true incoming actors, items and gauge.
+- Retarget74 at actual80269/79065 in the new2188/2189 worlds; both preserve
+  capture of167 but lose74. New47 income needs a complete profitable suffix.
+  For13, actual13817 and reused HP/anchor traces support testing a damaged
+  input prefix followed by a bounded fire pause; no such scoring trial has run.
 - Preserve failures and explicit counterexamples: local score, PIV or orb
   dominance does not prove the best complete continuation or world equivalence.
 - The latest Extra remains Native-only. Schedule final original Wine playback
