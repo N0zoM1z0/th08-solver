@@ -2,7 +2,7 @@
 
 The maintained resource formats and collision predicates are informed by
 N0zoM1z0/th08 and the user's preparation artifacts. The optional source oracle
-extracts unmodified functions from a separately obtained pinned checkout. The native
+extracts hash-checked functions from a configured pinned source tree. The native
 runtime is an adapted ordinary source import under `third_party/th08`, retaining
 the upstream [MIT license](../third_party/th08/LICENSE) and a recorded source revision.
 

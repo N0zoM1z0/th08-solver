@@ -25,8 +25,9 @@ archive. Its original ZIP SHA-256 is
 The supplied histogram aggregation script has SHA-256
 `d864dbc990cae8de693cd9166ea89e083cf5398bc4145118026424e5c113eea0`;
 it is historical provenance, not a Python implementation/dependency of this
-repository. The original preparation inputs remain unchanged. The current remote
-four-file pack independently matches `teacher-plus-student-v1` exactly.
+repository. The original preparation inputs remain unchanged. The archived deployment
+comparison found its four-file pack identical to `teacher-plus-student-v1`; this
+does not assert the current state of a remote host.
 
 The supplied corpus used shot 0. Exact contributing seed/episode membership,
 sampling choices and a disjoint held-out evaluation cannot be recovered from a

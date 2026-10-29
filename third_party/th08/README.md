@@ -16,6 +16,7 @@ are omitted. Original game data are supplied separately and never distributed.
 The solver's [headless build](../../cmake/Headless.cmake) replaces window/render
 submission with CPU resource storage, exposes deterministic input/time, and makes
 resource initialization synchronous. Gameplay and ANM update code remain in the
-imported production translation units. Changes are guarded by `TH08_HEADLESS`.
+imported production translation units. `TH08_HEADLESS` selects the solver's
+non-rendering adapters; the import also contains upstream portable/Linux changes.
 The numerical profile uses native float32 with contraction disabled and no
 fast-math. See the solver's [validation](../../docs/VALIDATION.md).

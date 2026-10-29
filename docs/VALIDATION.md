@@ -8,11 +8,11 @@ Historical component commands below retain their named build/profile assumptions
 ## Native score-first workflow
 
 The owner permits all shots, prioritizing Scarlet Team and solo Sakuya, for
-Extra and complete Lunatic4A→FinalB. Current scoring requires No Miss and No
+Extra and complete Lunatic 4A→Final B. Current scoring requires No Miss and No
 Bomb, permits missing captures and retains independent CLI controls. Bomb
-experiments are paused. The October27 all-shot retail gates are complete scores
-strictly above3,178,460,830 Extra or7,053,332,460 Lunatic under the declared
-constraints. Earlier Magic same-shot references3,021,639,920/6,168,365,790 and
+experiments are paused. The October 27 all-shot retail gates are complete scores
+strictly above 3,178,460,830 Extra or 7,053,332,460 Lunatic under the declared
+constraints. Earlier Magic same-shot references 3,021,639,920/6,168,365,790 and
 historical NMNB/all-capture results retain their identities. Live Wine solving
 is paused. Native budgets are explicit offline
 compute limits; they need not meet an online frame deadline.
@@ -45,7 +45,7 @@ discarded after a score preview. Seed acquisition is not a gameplay certificate.
 
 The first episodes under this rule are in
 `reports/local/retail-seed-episodes-20261026/`. Extra `extra-entry-v4` captures
-seed46997; `story-4a-finalb-entry-v1` captures seed1805. Both freeze the existing
+seed 46997; `story-4a-finalb-entry-v1` captures seed 1805. Both freeze the existing
 observer SHA-256 `9647fef617cfef1611296cd4eb611c399db6e20aab439f027f91c07ead5bb24e`
 and launcher SHA-256 `2fdeee516adf32dd14b682256969edca63e06537be8f2c95920b239a9565ade1`.
 They use the pinned retail/DAT identities documented below. Each directory keeps
@@ -53,30 +53,30 @@ the exact driver, manifest, `start.txt`, `seed-receipt.json` and `native-entry.j
 `native-entry.json` binds the receipt hash before Native planning; its stage is
 the raw runtime index, not the follower CLI's human stage label.
 
-| Identity | Extra46997 | Story1805 |
+| Identity | Extra 46997 | Story 1805 |
 | --- | --- | --- |
 | Original `start.txt` SHA-256 |`db65567c75aa3e3cbc2e85ef96914fea18ceae84106ce0919044dd67086f8126` |`80c1d2c1c72d3c8e41b8e861235bda537e0a05d2c416e2789b90ccaf7fa211b3` |
 | Seed receipt SHA-256 |`fcecb629fffb3a7973d37da14b73c6c61250db6e38a80e4995d4bee738a93c92` |`88516cae49c9c04a2ebc0857f88eb81b3d0ed7277ff4c4c95a1a8b39d55ae133` |
 
 ### Scarlet Team retail episodes
 
-The October27 owner permits all shots and prioritizes Scarlet Team (shot2).
-Its source route is1→2→3→4A→5→FinalB. Both new entries use original retail
+The October 27 owner permits all shots and prioritizes Scarlet Team (shot 2).
+Its source route is 1→2→3→4A→5→Final B. Both new entries use original retail
 pre-RegisterChain seeds, captured before any Native scoring candidate:
 
 | Entry | Extra | Complete Lunatic story |
 | --- | --- | --- |
 | Episode under `reports/local/retail-seed-episodes-20261027/` | `scarlet-extra-entry-v6` | `scarlet-story-4a-finalb-entry-v1` |
-| Owner task / fixed seed |665 /9098 |666 /32796 |
-| Raw stage / difficulty / shot |8 /4 /2 |0 /3 /2 |
-| Story / prior FinalA clear |true /false |true /true |
+| Owner task / fixed seed | 665 /9098 | 666 /32796 |
+| Raw stage / difficulty / shot | 8 /4 /2 | 0 /3 /2 |
+| Story / prior Final A clear | true /false | true /true |
 | `start.txt` SHA-256 |`90face8749068b9bb67b2d9e220d20a8b7df1a6e9a328551a40ede14f76c560c` |`701f1280c82f234c2ac3bbda95367f9832f2979d3391ea86bf63cb4b8017e95d` |
 | Seed receipt SHA-256 |`44955955273c6e1ad3f5f2ddc74eef01776243d80f5dc098ef9db27bff247fb0` |`ab5faf14bc8578a873f012b2560803bc277139ba822879b4d4c677fb9e68f638` |
-| One228-byte frame SHA-256 |`a0d5f19e27732e59b50827bcf59eac938dc1acb022a2fae9bfd00ccf8953b7bf` |`af143e3c863545b79d9405c514b65ba6f188c42c8bfd9bcb13b1eb431a39850c` |
+| One 228-byte frame SHA-256 |`a0d5f19e27732e59b50827bcf59eac938dc1acb022a2fae9bfd00ccf8953b7bf` |`af143e3c863545b79d9405c514b65ba6f188c42c8bfd9bcb13b1eb431a39850c` |
 
 Both keep the pinned retail/DAT/observer/launcher identities above, dialogue
-advance, spell=-1, successful launcher exit0 and clean resource guards. Their
-explicit32-bit Wine server hashes
+advance, spell=-1, successful launcher exit 0 and clean resource guards. Their
+explicit 32-bit Wine server hashes
 `2a91df0aa96cb5713390a16efa6c694ccee745d3eba5c22a01e31ddf5bb014dd`.
 The original acquisition flow uses neither the diagnostic socket alias nor
 preload override. Every failed startup and diagnostic remains local and charged;
@@ -84,39 +84,39 @@ none supplies a substitute seed. `native-entry.json` binds its receipt hash;
 `scoring-episode.json` declares the objective before Native exploration.
 The Scarlet guarded launcher also requires a clean acquisition-owner exit and
 the exact one-frame identity before admitting a candidate. Seeds remain fixed
-for all subsequent profiles; Magic46997/1805 episodes retain their identities.
+for all subsequent profiles; Magic 46997/1805 episodes retain their identities.
 
-The owner expands the **entire current phase** to4GiB per-process address space
-and4GiB owned-tree RSS before665, including Native solvers and Wine acquisition.
-Host12GiB admission/8GiB abort and the four-driver cap stay unchanged. Owners
-already launched retain their frozen original limits; old2GiB results are not
+The owner expands the **entire current phase** to 4 GiB per-process address space
+and 4 GiB owned-tree RSS before 665, including Native solvers and Wine acquisition.
+Host 12 GiB admission/8 GiB abort and the four-driver cap stay unchanged. Owners
+already launched retain their frozen original limits; old 2 GiB results are not
 relabelled. This is an explicit resource change, not a search-budget increase.
-It follows a Wine initialization crash with exactly2GiB mapped at664. The
-4GiB receipts record actual tree peaks of136007680/139206656 bytes. Native
+It follows a Wine initialization crash with exactly 2 GiB mapped at 664. The
+4 GiB receipts record actual tree peaks of 136007680/139206656 bytes. Native
 search/rollout/proposal budgets and failure meanings remain explicit per case.
 Wine remains restricted to seed acquisition and qualified final replay viewing.
 
 ### Solo Sakuya retail episodes
 
-The October28 owner requests solo Sakuya alongside Scarlet. Both shot8 entries
+The October 28 owner requests solo Sakuya alongside Scarlet. Both shot 8 entries
 were captured from original Wine before Native scoring; story solos naturally
-have FinalB available and require prior-Final-A=false.
+have Final B available and require prior-Final-A=false.
 
-| Entry | Extra | Complete Lunatic4A→FinalB |
+| Entry | Extra | Complete Lunatic 4A→Final B |
 | --- | --- | --- |
 | Episode under `reports/local/retail-seed-episodes-20261028/` |`sakuya-extra-entry-v1` |`sakuya-story-4a-finalb-entry-v3` |
-| Owner task / fixed seed |1659 /53346 |1676 /24238 |
-| Raw stage / difficulty / shot |8 /4 /8 |0 /3 /8 |
-| Story / prior FinalA clear |true /false |true /false |
+| Owner task / fixed seed | 1659 /53346 | 1676 /24238 |
+| Raw stage / difficulty / shot | 8 /4 /8 | 0 /3 /8 |
+| Story / prior Final A clear | true /false | true /false |
 | `start.txt` SHA-256 |`1d26ba414d6a15d5df609661f8c19e8511c7afecff2dad875d7e700c8255d89c` |`cdfb44de8afa94e87435c67d91f2b3e2b14ac497f5531fe9d857e259a92b9492` |
 | Seed receipt SHA-256 |`c583381fa5e4c50dd9474ced1e586abdd6f9f3c18b3c2d3ec12174dcb5faf2ec` |`092e5c95fc986054633dc48b298cd64a6334f5f128b22e052b189614179f56b7` |
-| One228-byte frame SHA-256 |`edf85c9a188ff79175bbea56010bc7395c78d17314094988a2456e1d8c66d5b4` |`8cf6769fd1dde13a683ce6ec8cee840d52655bd0a14c5bc31b4555a2ff111057` |
+| One 228-byte frame SHA-256 |`edf85c9a188ff79175bbea56010bc7395c78d17314094988a2456e1d8c66d5b4` |`8cf6769fd1dde13a683ce6ec8cee840d52655bd0a14c5bc31b4555a2ff111057` |
 
-Failed1662/1675 startups yield no valid story receipt. The first valid24238
+Failed 1662/1675 startups yield no valid story receipt. The first valid 24238
 receipt is fixed; later setup/CLI failures do not replace it. Hash-checked
-remote deployment keeps the two episode directories distinct.1674 Extra
-2,182,761,340 NMNB14/14 passes fresh1715/natural1716;1712 story4,417,570,020
-NMNB37/37 passes fresh1754/natural1755 with actual stages0/1/2/3/5/7. Both are
+remote deployment keeps the two episode directories distinct. 1674 Extra
+2,182,761,340 NMNB 14/14 passes fresh 1715/natural 1716; 1712 story 4,417,570,020
+NMNB 37/37 passes fresh 1754/natural 1755 with actual stages 0/1/2/3/5/7. Both are
 below the project overall records. Their replay bytes are measured for temporary
 verification, then pruned; action/receipt/report/source provenance remains local.
 The [journal](experiments/2026-10-28-stage-spell-search.md#solo-sakuya-original-episodes-setup-failures-and-complete-routes)
@@ -124,649 +124,65 @@ owns costs, failure receipts and human comparisons.
 
 ### Scarlet Team verified Native baselines
 
-Tasks667/669 use the original Scarlet receipts above, fixed seeds9098/32796,
-SampledGameplay, No Miss/No Bomb, captures optional and `ysopwnab`. Both use
-the public Release solver with beam384,30s per search, cash4/parent100/human5.
-Extra uses H128/publication64/replan32, original stream grid, no gauge charging,
-reserve1.2/120 and preserve-fire recovery; story uses H256/publication128/
-replan64, upper grid, charging, reserve1.5/240 and capture-fire recovery.
+The current Scarlet records are complete NMNB runs from the original retail
+receipts above. Captures are optional. The published replay bytes, action hashes,
+source revision, producer and receipt hash are indexed in
+[progress.tsv](../reports/native/replays/progress.tsv); that file is the canonical
+identity table for all 51 selected progress replays.
 
-| Complete result | Extra | Lunatic1→2→3→4A→5→FinalB |
-| --- | ---: | ---: |
-| Displayed score |2,872,562,940 |5,011,063,470 |
-| Actual bombs / misses |0 /0 |0 /0 |
-| Captures |14/14 |35/37;74/77 time out |
-| Owner inputs |71005 |152981 |
-| Wall seconds |709.695 |1667.18 |
-| Branch + proposal updates |883371+25 |2081032+17 |
-| Economic attempts / adoptions |6721 /827 |7114 /1089 |
-| Fresh / natural verification tasks |678 /681 |682 /684 |
+| Property | Extra | Complete Lunatic |
+| --- | --- | --- |
+| Score / captures | **3,308,826,050 / 14 of 14** | **6,653,194,550 / 36 of 37**, card 10 timeout |
+| Producer / fresh / natural | 2047 / 2096 / 2097 | 2113 / 2115 / 2116 |
+| Actual Native map | 2100 | 2117 |
+| Original seed | 9098 | 32796 |
+| Complete owner inputs | 76,725 | 159,445 |
+| Retained parent / inputs | 2035 / 70,754 | 2095 / 156,833 |
+| Changed suffix | Card 205, guided Native-32 portfolio, beam 64 | Card 191, fine144 portfolio, beam 64 |
+| Suffix schedule | H128 / publication 64 / replan 32 | H128 / publication 64 / replan 32 |
+| Cash / movement comparisons | 0 / 4 | 4 / 3 |
+| Local producer directory under `reports/local/retail-score-offline-20261026/` | `local-extra205-P64-v202-parent2035/` | `local-fine191-v216-beam64/` |
 
-Each pair checks all41 terminal words, score, exact capture map, zero
-misses/bombs and the eight-byte player name. Fresh execution/index agreement
-and natural source replay do not establish independent physics or retail
-equivalence. At that baseline, the all-shot score gates and6B milestone remained unmet.
+The suffixes are applied to their actual incoming worlds. Complete prefixes
+reexecute from the original entry and carry RNG, actors, projectiles, items and
+capture effects. No old future is spliced into a changed world. These private
+proposal profiles have their own frozen source/build manifests; they are not
+features silently enabled in public-main search. Replaying the selected inputs
+is reproducible without reconstructing the private search itself.
 
-The selected files are local under
-`reports/local/global-score-20261027/selected/`; published Magic milestones stay
-unchanged. `extra-scarlet-2872562940-provenance.json` and
-`story-scarlet-5011063470-provenance.json` bind receipt, DAT, binary, controls,
-source, tape and natural-row identities, environment and limitations.
+All eight checks in each producer's `verification/verified.json` pass:
+`capture_outcomes`, `fresh_complete`, `exact_terminal`, `natural`,
+`score`, `captures`, `nmnb` and `name`. Fresh execution matches all
+41 terminal words; natural playback matches completion, score, capture outcomes,
+zero misses/bombs and the eight-byte `ysopwnab` name. The read-only maps also
+match the complete score audits. These checks share the Native implementation
+and do not independently establish retail physics equivalence.
 
-| Local replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `extra-scarlet-native-nmnb-2872562940-seed9098.rpy` |29901 |`13e2b8f806406b9bee3201d4865994db94a045e7ebc3ffa1c89b14e60c187faa` |
-| `story-scarlet-native-nmnb-4a-finalb-5011063470-seed32796.rpy` |56914 |`d6fcc33c6a75b28c6fc2a345fe8f31fcb3955947cecfee8ce3d332367f4dd0e0` |
+To replay either supplied result after building the Native tools, create a fresh
+local output directory and use the natural checker:
 
-Their action hashes are respectively
-`6ac85ca19270572efa23b816499000c14d4e4403ffe5143f30a8ee29fe000c72` and
-`a82a0e5ece6c823f1565951ec5ac3860c6522c00ddd105ab22afcd5b5c6ce985`.
-Environment: Linux6.1.0-54-cloud-amd64, AMD EPYC7B12, GCC12.2.0, C++17 Release,
-`-ffp-contract=off`, no fast-math; each guarded owner has4GiB process/tree limits
-and host12/8GiB admission/abort thresholds. All I/O remains charged to wall time.
+```sh
+mkdir -p reports/local/record-check
+./build-headless/th08_replay_check game_data_donottrack/th08.dat \
+  reports/native/replays/scarlet/extra/extra-scarlet-native-nmnb-3308826050-seed9098.rpy \
+  reports/local/record-check/extra.rows --score-audit reports/local/record-check/extra-audit.json
+./build-headless/th08_replay_check game_data_donottrack/th08.dat \
+  reports/native/replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6653194550-seed32796.rpy \
+  reports/local/record-check/story.rows --score-audit reports/local/record-check/story-audit.json
+```
 
-The complete Extra continuation694 improves Scarlet to **2,888,408,190,NMNB14/14**.
-It keeps19000 literal inputs from689:676's direct same-shot human road pose
-through5400 followed by the private Probe-focus revision2 through Keine. The
-remaining public tail uses H256/publication64/replan32/cash4/human5, original
-grid, ordinary charging0 and reserve1.2/120. It is a combined profile at the
-same fixed9098 entry, without reference world/RNG transplantation.
+Scoring is paused after the owner-requested handoff. The six latest card 74
+scenes include one capture, but no complete continuation or new record. Actual
+current outcomes and proposed work belong in [Status](STATUS.md); per-task
+parameters, failures, costs and prefix lineage are in the
+[experiment journal](experiments/2026-10-28-stage-spell-search.md) and its
+[results table](experiments/results.tsv).
 
-The68005-input route costs1156.77s wall,1255003+45 branch/proposal updates and
-4654 economic attempts/576 adoptions. Fresh709/natural710 pass exact41-word
-terminal, score,14/14 outcome map, zero-miss/bomb and name checks. Its local
-selected replay `extra-scarlet-native-nmnb-2888408190-seed9098.rpy` is28604 bytes,
-SHA-256 `fa430b2aa91f80e72e7910f63da12d934d5cad91cb4ef9fa22775ad6a3d4b95a`;
-the complete action tape hashes
-`dc5c68470762843b4c430289ad8d46941b672dd08094fa392f9b19757a089561`.
-`extra-scarlet-2888408190-provenance.json` binds the full lineage and environment
-above. Earlier local/published selected bytes retain their identities. The
-global Extra gate remains unmet.
-
-The next Extra profile716 changes only that post19000 verification horizon
-from256 to128, retaining publication64/replan32 and the same seed/prefix/other
-controls. It completes **2,939,109,600,NMNB14/14**,71965 inputs,560.362s wall,
-659170+21 branch/proposal updates,5043 economic attempts/565 adoptions.
-Fresh718/natural719 pass the same complete agreement checks. Its local selected
-`extra-scarlet-native-nmnb-2939109600-seed9098.rpy` is30727 bytes, SHA-256
-`f104c41a7cd0ffacd4eb23c63c21ed1116ff5a1310a3d6ca64a301a96eb52c3b`;
-actions hash `220b05bb0c19657b4224cda9ea2d7557e89fc04311be84dc2fef84e317e82872`.
-The preceding prefix/guide production costs remain separately charged.
-
-Story722 completes **5,317,717,330,NMNB35/37**,155037 inputs;10/74 time out.
-Its prefix lineage is baseline669 through8205, relative first-stage spell poses
-698 through15785, Levea's4096 bomb-free Stage2 input proposals at705, public
-Native adaptation through28000, and public H256/publication128/replan64/cash4/
-human5/upper-flow1/charge1. The3600s wall budget was declared before711.
-Host-memory-aborted711 certifies no result; its committed141312-input tape is
-only a proposal. New722 reexecutes the exact committed bytes from original
-entry32796 with the same frozen binary, then validates its complete Native tail.
-Fresh729/natural731 pass all41 terminal words, score, exact35/37 outcomes,
-zero-miss/bomb and name. These remain execution checks, without a retail claim.
-
-Original711 costs1321.190s before abort; clean722 costs145.944s process wall,
-of which145.789s is reported planning/simulation wall including prefix execution.
-Both owners and all earlier source/guide/transfer trials remain charged. The
-retry's147391+1 branch/proposal updates and646 economic attempts/80 adoptions
-are not totals for the aborted search, whose branch counters were not saved.
-The local selected
-`story-scarlet-native-nmnb-4a-finalb-5317717330-seed32796.rpy` is59101 bytes,
-SHA-256 `adcf5fcf8d14d1aebff616ff9e5cd770cb4224f29bcd1b6ceffcdc186677a123`;
-actions hash `2d6ba5e401cbc5020e9642fda7ee1918fd64466029db2acd6e3386ec89e473b0`.
-
-Separate private36-spell profile723 completes5,262,569,250,NMNB32/37 after the
-same kind of original-entry recovery from aborted712's142336 inputs. Only
-10/29/47/77/171 time out. Fresh727/natural728 pass all agreement checks.
-Its local selected
-`story-scarlet-native-nmnb-4a-finalb-5262569250-seed32796.rpy` is58030 bytes,
-SHA-256
-`75cc6fee62e3f4733c186d9b528dca54acc5d7cb252d84d6a016da6ff557711f`;
-actions hash `84be0dfc805a8ecf038944fba4aea0db5f66e78bec6e98ae0eae43996041ec93`.
-All selected provenance files bind the producer/manifest, original receipt,
-DAT, prefix, binary, natural rows, controls and environment above. Published
-Magic milestone bytes remain unchanged; at that checkpoint6B and the global gates were unmet.
-
-The owner subsequently requested publication of all17 selected verified Scarlet
-and Magic improvements, followed by retention of new overall project records.
-At that checkpoint seven later verified records brought the selected uploads to24.
-Their exact bytes are now grouped by shot and route in
-[the Native evidence index](../reports/native/README.md); the compact
-[progress table](../reports/native/replays/progress.tsv) binds tasks, actual
-misses/bombs, capture outcomes, seed receipts, replay/action hashes and source.
-Historical272 payloads are relocated unchanged under the paths recorded in
-[the relocation table](../reports/native/archive/relocations.tsv). Old recorded
-paths in frozen reports remain historical provenance. Earlier local-only labels
-below predate this publication request; raw reports, tapes and videos stay local.
-
-Latest overall records are Scarlet Extra **3,308,826,050,14/14** (2047,
-fresh2096/natural2097) and complete story **6,653,194,550,36/37**,only10 timeout
-(2113, fresh2115/natural2116). Both are NMNB, use the original9098/32796 receipts,
-and pass all41 terminal words plus natural score/outcomes/name checks. Exact
-bytes/hashes and the intermediate3,073,007,650/5,594,687,960 records are in the
-progress table.
-
-Extra1903 extends1740’s original9098 lineage: retain exactly22600 owner inputs
-to actual195 entry;1901 uses private V120 unified no-fire feedback, top16/14
-rows, reserve1500/youkai, H128/cash0/movement4 through actual195 end25372.
-1903 reexecutes that full prefix, restores frozen F4 H128/cash4/movement4, and
-recomputes196–205 plus settlement. It completes76677 inputs,1051 points,133714
-orbs and PIV968570, improving1740 by26,552,640. The captured195 has1214 orbs
-versus494, with a9,710,380 lower capture award; this is a complete-world result,
-not an addition of phase cash. Actual input checks count674 Fire/2694 Focus
-over2772 phase inputs. Fresh1905/natural1906 pass all8 checks; read-only map1907
-matches all41 terminal words and the full14-card audit. Its32216-byte replay SHA-256
-is `9f2ce7feb6f59d10fa374147c2935f8f624b16363dad64ce48e0ef6e3f104b67`;
-actions SHA-256 is `5f330a9e9801dae6483bb5ae896524ab21cefdb73080472abf3fb4c4adb356f8`.
-The phase binary is `89fc636ef68a1345acc0c01516abdd0fe56ba3617c55417fd8a2d4bb8f44ba87`
-(source base91f61a1, manifest42e9ab3e); the full producer remains F4/c4c798d.
-The original receipt, earlier40 selected files and all272 historical payloads
-remain unchanged. This new record is Native-only. Its actual197/202/205 owner
-entries are32925/57829/70710; earlier gold coordinates do not describe this world.
-
-Extra1917 extends1903 by preserving its first70710 actual owner inputs to205
-entry; the new map1921 matches that entry’s entire41-word projection. It uses
-frozen F4 H128/cash0/movement4, beam128 through205 and settlement. The matched
-beam384 trial1918 finishes3,289,399,130 NMNB14/14;1917 finishes3,296,376,500
-NMNB14/14,1051 points/134579 orbs/PIV972900. It executes76677 inputs, improving
-1903 by14,244,460 and the prior1740 overall record by40,797,100. Fresh1919/natural1920
-pass all8 checks;1921 matches all41 terminal words and the full14-card audit.
-The selected31882-byte replay SHA-256 is
-`d38c3544978a1fb92e51fdad1bc21a325f71db91ff8f408605b8efea34b1914f`;
-actions SHA-256 is `f4d2afd15befb9db92cc85db38f9fd8fc083148cd865c2208fea4f1f8292cfeb`.
-The42 selected files include the verified1903 intermediate and all earlier bytes.
-Both new records remain Native-only.
-
-Story1931 preserves1847’s first155473 owner inputs to actual187 entry, then
-uses F4 H128/cash4/movement3 with beam64 through187,191 and settlement. Its
-6,622,525,640 NMNB36/37 improvement passes fresh1932/natural1933 and map1934’s
-all41 terminal/full37-card audit. The selected65076-byte replay SHA-256 is
-`3f11b6e261a2fe42f8cfcbac20561b2b1b79fc0f502a2d1dbb21ade58b3d0ca6`;
-actions SHA-256 is `41da7d1f3de5e8ea78e95e33e00560a41fb9af2b12c889ae602efe314e65fbb2`.
-Story1938 retains1931’s actual156833 inputs to191 entry and restores beam384
-only there, keeping H128/cash4/movement3. Both input prefix and191 entry’s entire
-41-word projection match. It completes6,626,897,920,159445 inputs,NMNB36/37,
-only10 timeout,434 FinalB points/74073 orbs/PIV1465890. Fresh1939/natural1940
-pass all8 checks; map1941 agrees on all41 terminal words and the full37-card
-audit. Its65153-byte replay SHA-256 is
-`055af6f2a4e5e30accddb4cc422910a3a89b8b9595e1b4da178282ce39602b78`;
-actions SHA-256 is `f12ab4367d478cf87e427a583cc3cfdce83b136e86b7658ad94d37e55c002699`.
-The original32796 receipt and all earlier42 selected bytes remain unchanged.
-These two new selected Native records use frozen F4/c4c798d and do not inherit
-retail validation. The source/guidance/scoring world boundaries and negative
-complete combinations are recorded in the maintained stage/spell journal.
-
-Extra2019 retains1917's exact first70710 inputs to actual205 entry; story2020
-retains1938's first151389 inputs to175. Each retained prefix and its entire
-entry41-word projection match. A private proposal-only Native-orb portfolio
-compares up to32 certified8/32-update motion prefixes in survivals, ranks actual
-orbs/score/signed gauge with stable ties, and carries each actual world through
-complete settlement. It changes no Native physics, public defaults or models.
-The source base is78db84b, private source manifest
-`64450f6876ba39cfe7d55230f999f5fe0b8148197d60dbce861fef7396d87ac3`,
-and producer ELF SHA-256
-`81d6f3fce71d7d9fe55ad41d05162b10b580959cf8aeffec76feec0c97579b7b`.
-Full literal and actual-replanning default-off gates2011–2018 precede scoring;
-the journal separates their scopes and additional search costs.
-
-2019 completes76677 inputs,1051 points/135056 orbs/PIV975280. Its31842-byte
-replay SHA-256 is
-`dfc334fbaec827a4f01c67667fab764cf24722d7a4629510619316ea32f11d66`;
-actions SHA-256 is `2f28be2e2b119e310f35990b1dba95445ef0a3be35eaf4e4a3ec5ff3c7e4c193`.
-2020 completes159445 inputs,434 FinalB points/74464 orbs/PIV1467840. Its
-65112-byte replay SHA-256 is
-`0bfa3f8eb0c0e28eaad7942dacc044a3b7d003dd1ce3a487f10c44134d7f9cdf`;
-actions SHA-256 is `dd37f71cc9a6b0b88f888c5c66f147fc1b63c57953b110919b4bbef4cda5e741`.
-Fresh2021/2023 and natural2022/2024 pass all8 checks; maps2025/2026 agree in
-all41 terminal words and full14/37-card audits. The46 selected files preserve
-every earlier byte. Both new records remain Native-only; the7B target and
-7,053,332,460 story retail gate remain unmet.
-
-Extra2035 composes the actual2019→2029→2033→2035 worlds: retain60316 inputs
-to203, use Native32 H256/beam384/cash4/movement4 through64936, restore F4
-H128/beam384/cash4/movement4 through closed204 at70512, then use Native32
-H128/beam128/cash0/movement4 through settlement. Every literal parent prefix
-matches exactly. The actual205 entry moves to70754; its6219 collected orbs
-include post-award pickups and produce a59,608,000 pending award. The complete
-route executes76725 inputs,1051 points/135231 orbs/PIV976160. Fresh2036 and
-natural2037 pass all8 checks; map2040 matches all41 terminal words and the full
-14-card audit, including the original203 entry's full41 words. Its31989-byte
-replay SHA-256 is
-`1d9f30f99e30e46280b32cf935349eff9e2c37ca9dfaecbb5cf873ecd39d57e1`;
-actions SHA-256 is `154a06758c8febfd69fd5a44db6ed63d1e1ca002aacbd4d8af4b6c6fd1780208`.
-
-Story2030 retains2020's first156833 inputs and actual191 entry, then uses
-Native32 H128/beam128/cash4/movement3. It completes159445 inputs,NMNB36/37,
-only10 timeout,434 FinalB points/74496 orbs/PIV1468000. Fresh2038/natural2039
-pass all8 checks; map2041 matches all41 terminal words, the full37-card audit
-and the parent's191 entry projection. Its65090-byte replay SHA-256 is
-`15e42676444b7791d8f774f46a4ec4336bce61bbd305d0c5c8163342e7cf446c`;
-actions SHA-256 is `5de72314fa67a5c849b2fc07e3b1074bd54a4dc47dc5d72d022a4404b3962241`.
-Both use the same78db84b/private64450f68 source and81d6f3fc ELF above. The48
-selected files include2019/2020 intermediates and all earlier exact bytes.
-Original receipts remain9098/32796, and both latest scores remain Native-only.
-
-Extra2047 retains2035's exact first70754 inputs to actual205 entry and changes
-the guided Native32 proposal beam128→64, keeping H128/cash0/movement4. It
-completes76725 inputs,NMNB14/14,1051 points/135367 orbs/PIV976840. Fresh2096/
-natural2097 pass all8 checks; map2100 agrees on all41 terminal words and the
-full14-card audit. Its31962-byte replay SHA-256 is
-`b6b594be9e8a152c1e9fc9d0d691168e0fc053d467e5a5577f0daad0c1e3ea87`;
-actions SHA-256 is `7eee559f8275a5219560acf2780d9443b9d23cafe84e459cd3440bd65d9cfea2`.
-The frozen81d6f3fc ELF/private64450f68 source above remain its producer.
-
-Story2095 retains2030's first151389 inputs to175, then uses private fine pulses
-of1/2/4/8 updates, nine directions including dwell and four fire/form modes.
-Each extra candidate has a fully adaptive Native future, actual end orbs/score/
-signed-gauge ranking, stable ties and explicit additional costs. Total30000ms
-search/shared2000ms admission are unchanged; exact duplicate input prefixes are
-deduplicated and physical worlds are never merged. H128/cash4/movement3/beam384
-through all five survivals finishes6,648,176,870,NMNB36/37, only10 timeout.
-Fresh2098/natural2099 pass all8 checks; map2101 agrees on all41 words/full audit.
-Its65266-byte replay SHA-256 is
-`aebf5558c600759871ed332adb981bf5c68abb0f52526b2dec2a4afbe343a9e8`;
-actions SHA-256 is `572d7f3971fc4bf5c17893370b98223bab56e31a88294273378a0664f80f583d`.
-The private source base is195deef, source manifest
-`505aeb07a0847297e0658c44f82af2e5ef30159510f107577bb7ecc84ab5b789`,
-producer ELF `e2343dc1e5402bc342de4a1b703a341c40d99c2bdca7aff8d887a5524087bf56`.
-Public C++/models and Native physics remain unchanged. Literal and actual
-default-off canaries precede scoring; the journal records their separate scope.
-
-Story2113 retains2095's exact first156833 inputs and full191 entry projection,
-then changes only that fine144 scene to beam64, keeping H128/cash4/movement3.
-It finishes159445 inputs,NMNB36/37, only10 timeout,434 FinalB points/75471 orbs/
-PIV1472880. Fresh2115/natural2116 pass all8 checks; map2117 agrees on all41
-terminal words and full37-card audit. Its65215-byte replay SHA-256 is
-`198001feacdd3de53bdc949358f5dfb1f037deeb9923896249c43c3b1fbb348f`;
-actions SHA-256 is `f1f027465d1e3fac35de6e66a38369cb4acf0661cbf7c2debcf760dbbc7ec8f2`.
-It uses the same fine source/ELF as2095. All51 selected files preserve earlier
-bytes, original9098/32796 receipts and exact `ysopwnab` names. Both latest
-records remain Native-only;4B/7B and the story all-shot retail gate remain unmet.
-
-Earlier Extra3.088B keeps19000 prior inputs and public H128/cash4/movement4.
-The new3.165B retains786 through actual193 entry7723, uses H128/cash0/movement4
-to actual193 end11259 (1256,7183 orbs/capture), then H128/cash4/movement4
-through the full Extra. It executes73085 inputs; all14 cards capture. Its30568-byte
-replay SHA-256 is `3a985a99ef9d0e08ed405be65b3dfe4ab995cfe383775d02105225b781cffb33`,
-actions `205903a24c890347dd813ad774efcaf1b9d6b486ee6e38b76a325d622a28c108`.
-The frozen experimental CLI/source overlay is documented in the
-[phase journal](experiments/2026-10-27-phase-composition.md#october28-extra-first-checkpoint-archive-experiment);
-the progress table preserves the pinned Native runtime base revision. The original
-Extra9098 receipt and all earlier selected replay bytes are unchanged. The13,793,120
-gap at that snapshot still prevents retail Wine playback.
-The subsequent3.171B retains1272's first67117 actual inputs at last205 entry, then
-H128/publication64/replan32/cash0/movement4. This increases205 orbs5006→5404
-and complete score by6238490, keeping73085 total inputs and14/14. Its30475-byte
-replay SHA-256 is `ddb95beb00e8765824acda39018183f7c8391b4e2c67af98ce57ba741611ec12`,
-actions `f13a8b4fa780fe301caf07f4686e610c4022c53375cc531cdb66af0c1f33faf3`.
-Fresh1323/natural1324 pass all eight gates. The remaining7554630 gap keeps the
-all-shot retail gate closed at that snapshot. Both selected progress files retain exact bytes.
-The subsequent3.179B uses the same67117-input parent1272 prefix with H128/cash0,
-three extra cash-ranked movement pulses (up/down/left, with ordinary rightward
-policy movement still allowed), beam384/policy24. Card205 yields5890 orbs; all14
-capture, NMNB,73085 inputs. Its30431-byte replay SHA-256 is
-`2dfaddbd0ea623f6838fc6b0dfc07a07d7660594b9e6bd9bbfeb2db4a8e625d8`, actions
-`d126950d5d97b972bde595b71c7d09fc98552a93c7da7fcab30f31ff5c08ed84`.
-Fresh1329/natural1330 pass all eight checks. It exceeds3,178,460,830 by733,030:
-its original Wine replay validation now passes (1343/1367). The original retail
-EXE `330fbdbf58a710829d65277b4f312cfbb38d5448b3df523e79350b879213d924`
-plays the exact selected replay at normal playback from Extra entry. The observer
-returns original inputs, with no controller, checkpoint or RNG replacement.
-All72214 callback packets decode with valid version/size/sequence, zero deaths,
-zero bombs, source completion and passive command counters. Actual final score
-is3179193860; all14 seen-active/source-captured flags192–205 are observed.
-The callback journal SHA-256 is
-`886150f649e998c5d18fbcf382c9d161a2a45a435e62390c589a9e59d6e9798d`.
-
-The original1343 wrapper exits1 after a private64-byte-header decoding error,
-although the retail process exits0 and writes complete original rows. Its error
-is preserved. Independent typed reanalysis1367 passes using the protocol Packet
-header40 bytes,41 projection words and24 trailing timing bytes. It verifies the
-original EXE/DAT/observer/replay/seed-receipt identities and unchanged rows. The
-72214 observed callbacks are not73085 Native input receipts, nor a claim of full
-41-word cross-runtime equality. The exact17-field prefix matches18407 rows; the
-next latched-input difference remains documented. This is complete retail score/
-NMNB/capture validation, with all setup, observation and correction costs retained.
-
-New Extra1517 completes **3,194,638,140,NMNB14/14** at the unchanged original
-retail9098 entry. It retains1474's actual8940 inputs: original1314 through5607,
-then192 feedback in rows368/400/432 with600-update focused-capture reserve.
-The complete suffix uses H128/publication64/replan32/economic4/movement4.
-Fresh1527 and natural1528 pass all eight execution/index checks. Its29867-byte
-replay SHA-256 is
-`afc185c455e68d88dc340010906147e77543d32bfb6e8cbef9fb5c2900ae8463`; actual inputs
-`e0cbf27290aa628ecee8eb4878a0c03237e71c3d604c64b6d5c4cd67c737cca1`. Native input count is71237;
-producer wall1104.89s (owned wall1105.043s),1127590 branch/19 proposal updates,
-5935 economic attempts/663 adoptions. This does not include discovery, negative
-cash0 continuations or verification costs, all retained in the experiment ledger.
-The gain is15,444,280 over1314 and16,177,310 above the declared all-shot reference.
-The new replay is Native-only; earlier1314's retail validation remains separate.
-All34 earlier selected replay bytes and272 historical payloads remain unchanged.
-
-New Extra1539 retains1517's actual65269 inputs through the true205 entry,
-then uses H128/publication64/replan32/economic0/movement4 for the remaining
-spell and full settlement. It completes **3,203,494,130,NMNB14/14**,71237 inputs,
-with fresh1547/natural1548 all eight checks passing. Its29709-byte replay SHA-256
-is `da824d3da204cfc504d60ed31d6edf2f836adc13203e70d39615f6a0f89932ff`;
-actual input SHA-256 `d4a859bc8caba79ca8f74eebc9699a0e673fa226b0622dd098a33864a3435980`.
-Producer wall75.5334s/owned75.687s,71905 branch/2 proposal updates,0 economic
-attempts. It adds8,855,990 over1517 and25,033,300 over the declared human
-reference. The twelve-case search and both verification costs remain charged.
-All35 earlier selected replay bytes and272 historical payloads remain unchanged.
-This newest Extra is Native-only; original retail validation1343/1367 is for1314.
-
-New Extra1621 completes **3,212,949,960,NMNB14/14** at original9098. It retains
-1574's actual55547 inputs:1517's lower192 record feeds1559's lower197 component,
-whose complete cash4 continuation reaches the changed202 world. At202 it uses
-feedback rows368/400/432, reserve600, youkai capture, H128/publication64/replan32,
-economic4/movement4 throughout the remaining full suffix. The route restores
-1035 points and ends at PIV949390. Source read-only1611/1612 bind the earlier
-45-point failure to a full2096-item pool; the selected variant restores production.
-Fresh1635/natural1636 pass all eight checks. Its30749-byte replay SHA-256 is
-`14a22350a607bf25c2471e74a17859e1b91d0fd362124ceaba9784631e8b88b7`;
-actual input SHA-256 `d923926e4d4558b7178f757d80e6b7636bc04c6151d0269233db7d659538e194`.
-It consumes73597 inputs; producer wall328.609s/owned328.776s,349492 branch/
-8 proposal updates,1710 economic attempts/204 adoptions. Discovery, failures and
-verification costs stay in the journal. Gain over1539 is9,455,830; margin above
-the declared all-shot reference34,489,130. This replay is Native-only; all36
-earlier selected replay bytes and272 historical payload hashes are unchanged.
-
-New Extra1740 completes **3,255,579,400,NMNB14/14**,74021 inputs, from original9098.
-Its prefix lineage is1621→1654→1665→1740: retain1621's first15966 inputs through
-closed194;1654 changes the road/195 to human-bias100/parent-chain0 and reaches
-646 points at24028;1665 restores ordinary cash4/movement4 through the actual202
-entry55417.1740 retains exactly those55417 inputs, then replans the full suffix
-with H128/publication64/replan32, cash4/movement4 and no explicit phase plan.
-The final1051 points are45 above1665 and16 above1621; PIV948690 is slightly
-below1621's949390. Read-only1758 agrees with all natural rows/full audit and
-observes45/45 point spawns at57325, occupancy1704→1749, instead of1665's45
-failures at2096/2096.1759 maps every new actual spell entry and agrees in all41
-terminal fields/full14 audit. This preserves gameplay pool semantics.
-
-Fresh1756/natural1757 pass all eight checks, including exact terminal, natural
-completion, score, capture outcomes, zero misses/bombs and name `ysopwnab`.
-The31206-byte replay SHA-256 is
-`4bde2a81e819fcb15d1da7cb83d6c71963bfc6e9cede4e2985dd8f88bb574bf1`;
-input SHA-256 `f08614a7634258b8a85f5663ab6b24717195b08d9b771bba38e313cf06c764c3`.
-Producer335.187s/owned335.339s,358360 branch/8 proposal updates,1761 economic
-attempts/232 adoptions; peak owned tree137601024B. It uses the frozen public
-phase V1 source overlay based onc4c798d, manifest
-`c01806c4b5372045a3adb6d0ec8b68fcf9412eb36fea994baaed647bf9e46eaf`,
-ELF `f4ea1fa71d1464cbd8c4066cac6f4f22af3ea61478befbd84582da5a05583e61`.
-The initial remote bundle'sbc75a3e identity is separate from that overlay.
-The progress index uses the overlay's source head; exact source hashes stay in
-the per-task journal. All37 earlier selected bytes and272 historical payloads
-are unchanged. Gain over1621 is42,629,440; margin above the declared all-shot
-reference77,118,570. This record remains Native-only; original Wine validation
-1343/1367 still belongs to1314.
-
-New story1830 completes **6,610,839,240,NMNB36/37**, only10 timeout,159445 owned
-inputs, original32796. Its complete input lineage is
-1381→1806→1808→1811→1813→1827→1830:
-
-- 1806 retains the first82449 gold inputs, three before the actual77 entry82452,
-  then uses lower368/400/432 feedback, reserve600, H256/cash0/movement4.
-  It captures5990 orbs and closes77 at86217 inputs.
-- 1808 carries that actual world through Stage5 with the frozen NPC bridge,
-  H256 roads/H128 spells/cash4/movement4, reaching114338 inputs.
-- 1811 recomputes the FinalB prelude with the frozen first151 price producer,
-  reaching119304 inputs at **open151**, not a closed spell.
-- 1813 recomputes full FinalB with H128/cash4/movement4. It finishes6,490,883,540,
-  below the old record, and supplies the actual world for the next experiment.
-- 1827 retains its first146244 **owned inputs**, not audit calculation146239,
-  then retargets171 to rows208..400, reserve600, feedback/youkai capture,
-  H128/cash4/movement4. It captures17501 orbs and closes at151073 inputs.
-- 1830 retains exactly those151073 inputs and recomputes all five survivals and
-  settlement with H128/publication64/replan32/cash4/movement3.
-
-Fresh1834/natural1835 pass all eight gates: complete fresh execution, exact41-word
-terminal, natural replay completion, score, capture outcomes, zero misses/bombs
-and name `ysopwnab`. Read-only1836 maps every actual owner entry/end and matches
-the full37-card audit and terminal. A higher phase cash or PIV is never added
-to an old future. The65180-byte selected replay SHA-256 is
-`0a22df0c2a179ee28780c23598f11b9112a7bb7bf4d1976417d5de998439adce`;
-actions `591ea61f9f7c0df90629501eed65385773685ec6c2be80a61dd4f9103327ceeb`.
-Gain over1381 is97,383,060;7B remains389,160,760 away and the all-shot retail
-gate remains442,493,220 away. This score is Native-only.
-
-The selected tail uses the unchanged frozen F4 ELF/source overlay documented
-above. Stage5 bridge ELF is
-`dd35c186bfb03d0a43b98a3f09e6a7416169a7b4d47300c27fa1b834d6561415`,
-source manifest `adc95b6614f9820b099a8f954a947adde2f860b665c2423d5fc824ed03b30066`;
-prelude ELF `16fe5f86c90d48cb8942e96eb1d0810bf6067d8d0f788426f5db3a99c1a728ad`,
-source manifest `1de3dc57dae25a9776324c25e9663eb969a9acec5a2999f5e860d68e0797352d`.
-All source files are hash-checked before reuse; no archived objects are relinked.
-Final producer131.207s/owned131.439s,121141 branch/1 proposal updates,
-770 economic attempts/80 adoptions, peak owned tree158040064B. All discovery,
-failed full routes, selection and verification costs remain in the cumulative
-journal. The raw local manifests retain workspace head91f61a1; exact frozen
-ELF identity resolves the actual phase overlay basec4c798d in the progress index.
-All38 earlier selected bytes and272 historical payloads remain unchanged.
-
-New story1847 completes **6,618,962,600,NMNB36/37**, only10 timeout,159445
-owned inputs at original32796. Its effective input chain is
-1381→1806→1808→1811→1813→1838→1847.1838 reads1830's first146244 owned inputs;
-those equal1813's prefix and stop at the actual171 entry, before the old1827
-component contributes any input. It retargets171 to top208/7 rows/reserve0,
-feedback/youkai, H128/cash4/movement4, captures17504 orbs and closes151073.
-1847 reexecutes exactly those151073 inputs, then recomputes all five survivals
-and full settlement with H128/publication64/replan32/cash4/movement3.
-
-Fresh1855/natural1856 pass all eight checks. Read-only1857 matches all41
-terminal words and the complete37-card audit, recording every actual owner
-entry/end. The65179-byte selected replay SHA-256 is
-`8426f5ce8f6c8d0eaf32745e04d51ad1cefa04e25c7de47d51cf12f4c46ffb9b`;
-actions `f7dae510a286ffee6a3ee5d6880c57e5ff41096b561f157f35ea1952386e3be5`.
-Producer126.343s/owned126.532s,118243 branch/1 proposal updates,758 economic
-attempts/89 adoptions, peak owned tree156561408B. Search uses the tighter
-two-owner/two-core local service; the unchanged F4 source/ELF binding above
-applies. Phase-cash leader1842's full1846 loses; all negative futures, duplicate
-input trial1839, interrupted Extra1848/1849 and new-ID retries stay charged.
-
-Gain over1830 is8,123,360;7B remains381,037,400 away and the all-shot retail
-gate434,369,860 away. This score is Native-only. After the host reboot,
-old1830 replay canary1854 reproduces every natural row byte and the full
-audit of pre-reboot1835 before publication. This checks Native execution
-consistency across the environment change, not independent retail equivalence.
-All39 earlier selected replay bytes and272 historical payloads stay unchanged.
-
-The subsequent Extra V116–V135 investigation changes no published record.
-Private graze-only proposals have focused contract and complete local literal/
-natural-row gates; no public C++ or Native physics change is promoted. Four
-phase tapes initially bypass the intended fire rule through proposal/cash paths;
-actual input counts identify the failed treatment. Cash0 during199 realizes
-25040 orbs/timeout, but full1879 completes3,155,221,160 NMNB13/14 and omits the
-45 post199 point requests. Stock1882/read-only1883 match all7478500 natural row
-bytes/full audit; captured202 later spawns45/45 at1764→1809 occupancy, disproving
-the initial202 saturation hypothesis for that world.
-
-Eight new complete scoring trials remain below3,255,579,400. Best1896 is
-3,239,225,090 NMNB14/14, preserving gold's first68054 inputs and using continuous
-focused205 flow, top16/14 rows, H128/cash0/movement3. It is not selected and its
-temporary replay is pruned after retaining its hash and input/result evidence.
-Source Spellcard reward payment occurs at effect timer130, so immediate phase
-cash is pre-settlement; all accepted score comparisons use full continuations.
-The [journal](experiments/2026-10-28-stage-spell-search.md#october29-continuation-after6619b-extra-control-and-capture-lifecycle)
-retains exact source/ELF identities, setup failures, control differences and costs.
-
-Earlier story1381 retains1225's exact151302 inputs through the closed171 boundary,
-then uses H128/publication64/replan32/cash4/movement3 over all five remaining
-survivals and full settlement. This increases the complete score by924080 to
-6513456180, NMNB36/37, only10 timeout. Baseline1382 with movement4 exactly
-reproduces1225; all30 ordinary/phase families complete safely below7B. Fresh1403
-and natural1404 pass all eight checks. Its64792-byte replay SHA-256 is
-`d0958e5b660de4bbee0bd95c8faa357e128693a8241898e474f2fd680f43ab22`; actions
-`e11243dfdad13b1a252fff1cea9f8e77b57c4b2a1364fa84e1abf39635e123c7`. This score is Native-only; the7B milestone
-and all-shot7053332460 retail gate remain above it. The earlier6.5B milestone
-replay and all33 prior selected identities remain unchanged.
-
-The preceding5.784B story retains the actual first51253 inputs of H256 task794 through47,
-then uses H128/publication64/replan32/cash4/movement4. Its61373-byte replay
-has SHA-256 `37ea4e2f9b6ca020a470ab777f700e09aa5fe4d6acffeae3e714dbca4c67d488`,
-actions `407e157a43c9baff3d43b5c2cd2748465244b260182c56a2738604c9be17dcc4`.
-That5.784B parent remains unchanged. The new5.821B record retains its exact
-first142675 inputs through171 entry, then uses H128/cash4/reserve1.2+120.
-Its61631-byte replay SHA-256 is
-`9b3b6091efbe5414f4eaf27621a8df01cfebd0186dd2a181585b51e59f418c46`, actions
-`d00b24d6327d9c1ddbf0a9f85e4cb883f61637eab2e264075a595a46c963cc88`.
-That5.821B parent also remains byte-identical. The new5.922B route retains
-the first114642 inputs of5.784B to raw7 entry, H256/cash4/parent100/human5/
-collection5 through first151 at119607, then H128/cash4/reserve1.2+120. Its
-62498-byte replay SHA-256 is
-`361e65d156f2832070760e160ea18375e15f455e8d25cc8d74b462836fa0b10a`, actions
-`c84252613e66539e87472c74a5d3915dec8c277ffae9eee5f1dc24e28f38e036`.
-The5.922B record remains unchanged. New5.961B task1022 retains1014's actual
-118858 inputs:877 through Stage5 entry86090; source-clock NPC Stage5 H256/
-cash4/reserve1.5+240 to FinalB entry113978 (998); public H256/parent100/
-human20/collection20 to first151 (1014); then public H128/publication64/
-replan32/cash4/reserve1.5+240 through the complete route. It executes157301
-inputs in652.006s,656346 branch and2 proposal updates. Its61846-byte replay
-SHA-256 is `221de1fc5c181ebb104a49dba503908b4d64fa0543f3a60b132a2a951366ad06`, actions
-`165c213753871e73d416e07f2f348bb2f3e61765de96fdce188677f02411f4f6`. Fresh1051/natural1052
-pass all checks;35/37 captures retain10/77 timeouts,0 misses and0 bombs.
-Preceding6.020B task1047 is a different composition from the same original episode:
-retain877's first35210 inputs to raw2 entry, then private NPC-clock guidance
-on raw2/3/5/7 with immutable human X (zero Native-target blend), preserving the
-proven initial4500-frame Stage3 boss-nonspell recipe. Nonspells/roads use
-H256/publication128/replan64, active spells H128/64/32, cash4/movement4 and
-reserve1.2+120. Actual context changes discard only pending planner queues and
-nominal/history, retaining the complete owned world and warmed observer memory.
-Task1047 records56 changes,4153 discarded future inputs,160045 actual inputs,
-2251813 branch/69 proposal updates and2027.77s concurrent wall. Fresh1097 and
-natural1098 pass all eight gates;10/54/74 time out, other34 captures succeed,
-and no miss or bomb occurs. Its65510-byte replay SHA-256 is
-`b3cb064c97bc723377de95c6ce62f67c9e3ad128c0adeaa22666584c1f8c92a8`, actions
-`ea08d6fa3727fe1d9dc7e0d3b084c00ef5efec4732eb07293012e6745c03961f`.
-The actual private producer SHA-256 is
-`8c73940a26212b53a12ede6cc62a8a1b160f4edcfa0233363f57c9e3d4e8c955`, compiled at
-bec5b40 over the unchanged source kernel and pinned GCC12/libc/loader closure.
-Both source hashes and the original receipt are bound by the progress/journal
-metadata; the NPC demonstration is proposal guidance, not transplanted state.
-Preceding6.130B task1114 retains1047's actual first116226 inputs through the first
-five stages, banking3,161,704,460/PIV1028490 at FinalB entry. Task1107 reapplies
-public H256/publication128/replan64/parent100/human5/collection5/cash4 to first151
-at121103 inputs, banking3,945,539,370. Public H128/publication64/replan32/cash4/
-movement4/reserve1.2+120 then completes6,130,475,890,NMNB34/37 (10/54/74 timeout).
-Fresh1125/natural1126 pass all eight gates;441 FinalB points versus398 in1047
-are actually collected. Its65335-byte replay SHA-256 is
-`fc730a9ffee86a45f2dfba8951dbd26d82927dd04c9b583419b5fb81b64662d9`, actions
-`a84a6f2eff8d090dc1998df6deb1191d5e4aa9dc439058cf806f7635c4346740`.
-The frozen public tail producer hash is
-`23c0ad8d01f9cf09b055b71911f5ad2859a31ffe9ebefcba37e2b2a0a99f9a4f`; its prefix retains the earlier
-private NPC/profile lineage. Actual work is160589 owner inputs,675421 branch/
-1 proposal update,1234 searches and666.584s concurrent wall, with all prefix,
-prior component and failed/lower trial costs retained in the campaign ledger.
-Preceding6.291B task1172 uses the exact117737-input prefix of1161: focused17/25/29
-through1133, actual complete Stage3/4A/5 recomputation1141, then public H256/
-parent100/human5/collection5/cash4 to first151. Its entry receipts are
-3,357,599,860/PIV1059960 at FinalB and4,087,330,040/PIV1086510 at first151.
-Public H128/publication64/replan32/cash4/movement4/reserve1.2+120 completes
-6,291,093,190,NMNB36/37,only10 timeout. Fresh1191/natural1192 pass all eight
-checks. Its63563-byte replay SHA-256 is
-`47f0e80219e70944b18d6c27b5718f49410b7cbe47418fffd4e0799c656d78dc`; actions
-`cb30a7a1937ed45670f36c27506ab111df48d8796420423a3dd39aef9ceed1c9`.
-Preceding6.440B task1207 retains1204's119649 actual inputs: the same early17/25/29
-composition through1141, targeted77 shoot/focused600 (1180,3827 orbs/capture),
-actual Stage4A settlement and Stage5 recomputation1186, then public H256 to
-first151. Those actual entries are3,405,901,940/PIV1092360 at114770 inputs
-and4,220,644,870/PIV1119940 at119649. Public H128/cash4/movement4/reserve1.2+120
-finishes6,439,636,250,NMNB36/37,only10 timeout; fresh1219/natural1220 pass all
-eight gates. Its64955-byte replay SHA-256 is
-`770bb0b3e502b18a1bb9b8927e9f0072019b3b2c8123eb9dbaa58ae2d156f57e`; actions
-`c13d4b088a8d881151cb5717e7d4bf8b229f90956c3481a3b07ce908219ae3c7`.
-New6.513B task1225 retains1222's exact151302 inputs. Its prefix is1207's
-actual145927 inputs through171 entry, followed by lower368–432 feedback/
-focused600 capture, H256/cash0/movement4, in that carried world.171 captures
-16788 orbs and30,000,000 bonus. Public H128/publication64/replan32/cash4/
-movement4 finishes6,512,532,100,NMNB36/37,only10 timeout. Fresh1229/natural1230
-pass all eight checks. Its64782-byte replay SHA-256 is
-`2912bf684755afd10e4674fc327bb8e61902500b170f91f70a1c74e01a1417c4`; actions
-`0baaf83495597ee29da797afe18dfb193974cfae81ed4c287b68d75975c231cd`.
-The literal prefix preserves unsettled capture rewards and carried world/RNG;
-no component scores or states are combined arithmetically. These are
-whole Native continuations, not retail equivalence or isolated speed evidence.
-The [experiment journal](experiments/2026-10-27-vps.md) owns complete costs,
-matched-profile comparisons, resource guards, negative results and future work.
-Normal831 passes60/60 after resource-aborted803; no gameplay binary is relinked
-during either test owner. The all-shot replay gates remain unmet; the complete6.5B milestone is now
-achieved by1225 and verified by1229/1230. [Per-phase evidence](experiments/2026-10-27-phase-composition.md)
-records the partial experiments and full-route combinations separately.
-
-The current Scarlet bests extend those lineages without changing the public
-runtime physics or the original9098/32796 receipts:
-
-| Local selected replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `extra-scarlet-native-nmnb-2969055340-seed9098.rpy` |28059 |`d8dc7835480d11d47cbf5e8e5aafbfe51b966a3f5f778e689ebb6bfc4b80d2d7` |
-| `extra-scarlet-native-nmnb-2979717840-seed9098.rpy` |27959 |`1b4994b28fd6899ae76dc7114cfc53add97cc765143f83197d10fca192555897` |
-| `story-scarlet-native-nmnb-4a-finalb-5383092450-seed32796.rpy` |59253 |`91801eb38523d453dcc5ba90add7cd867ceebb38309672cef2eac680476eaaf3` |
-
-Extra734 uses720's first5400 inputs (a freshly executed shorter3200-input human
-proposal followed by Native pose guidance/recovery), Probe2 at726 through19000,
-then public H128/publication64/replan32/cash4. It completes2,969,055,340,NMNB14/14;
-fresh741/natural742 pass. Its66925-input action tape hashes
-`e84d0cd530a02883c160c4aea6e0c46c5c582cbc48aeea1e679dec25a92a4ee5`.
-The failed full human input transfer717 and resource-aborted721 certify no
-prefix and remain charged; new owners always reexecute from original entry.
-
-Extra744 keeps734's first60958 inputs, then uses the private Extra205-only
-movement cash comparison described in Status. It completes **2,979,717,840,
-NMNB14/14**; fresh747/natural749 pass all41 words, exact score/outcomes,
-zero misses/bombs and name. The66925-input action tape hashes
-`d7d168ff516a6c9a4ec389818a425b44ac698e2916d20a01806449b1a340f91a`.
-The tail charges105.505s,108352+1 branch/proposal updates,493 fire/form attempts/
-65 adoptions and620 movement attempts/46 adoptions. This cost is additional to
-734's499.38s and earlier prefix/guide/abort/build/selection costs; it is not a
-105-second whole-route solve. The private comparison changes proposals only,
-keeps the original shared economic/total budgets and does not claim independent
-physics equivalence. The public opt-in control is now `--economic-movement 0..4`;
-real-data754 reproduces the entire744 tape and terminal exactly. Focused756 and
-normal767 (60/60) pass. Comment-only rebuild780 preserves the tested binary SHA-256
-`23c0ad8d01f9cf09b055b71911f5ad2859a31ffe9ebefcba37e2b2a0a99f9a4f`.
-Resource-aborted normal760 remains charged and does not count as a test pass.
-
-Story737 keeps724's35209 first-two-stage inputs, uses the same-shot Stage3 road
-pose guide/adaptation733 through45000, then public H256/publication128/replan64/
-cash4/human5/upper-flow1/charge1. It completes **5,383,092,450,NMNB35/37**;
-10/74 time out. Fresh748/natural750 pass all complete agreement checks.
-Its154837 inputs cost1214.64s,1446574+15 branch/proposal updates and5163 economic
-attempts/690 adoptions, plus all earlier prefix, aborted713 and recovery724
-costs. Actions hash
-`a9023eb9790aa13069701504170e618a39b0be8fc7dc246c001a752b368c66da`.
-All selected files/provenance remain under the local directory above. Earlier
-selected bytes remain unchanged. New verified selected improvements are:
-
-| Local selected replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `extra-scarlet-native-nmnb-2980273700-seed9098.rpy` |27311 |`73d06b933b7ea7bf583c88cb88e385796fa0885ee25300b8e0f3d2c619c1e629` |
-| `extra-scarlet-native-nmnb-3072999650-seed9098.rpy` |28983 |`d4ce7c74d70c0e987dc6f307e1a6904146212bfd0a35e0600fc8e50dd8bbdb95` |
-| `story-scarlet-native-nmnb-4a-finalb-5544203730-seed32796.rpy` |59400 |`82dda92a2e8309eac5510b01213cc891557d17e3641690254bf2d533d96b18bf` |
-
-Tasks761/769/768 produce these three complete NMNB results; their fresh checks
-765/772/773 and natural checks766/774/775 pass all41 terminal words, capture
-outcomes, natural completion, exact score, zero misses/bombs and `ysopwnab`.
-Their action SHA-256 values are respectively
-`ded4571c2a09a05b396e06c5095df97330b468b2c3d325c6b94fdb36eeb80389`,
-`624e6bd7ca381e46184f47e45180862f24b1f344c71b436a087848d39ec6edb8` and
-`30186d0edb01bb9622124f6e0f15499965f0bb2ab1238427ef6fc49e94cf36d3`.
-769 follows763's second-road proposal and freshly reexecutes the committed33792
-inputs of resource-aborted764;768 freshly reexecutes126976 inputs of aborted759.
-Original aborts certify nothing and remain charged. Status owns full lineage,
-profiles and separate original/recovery costs. At this historical checkpoint, Scarlet3.073B led Native
-Extra; Magic5.551B still leads story. The6B and all-shot gates remain unmet.
-
-New scoring exports default to `ysopwnab`, the owner's selected eight ASCII
-bytes. The original `ReplayData::playerName[8]` is followed by reserved and
-practice-mode bytes; longer strings are rejected instead of overwriting mode.
-`--replay-name` accepts1..8 identifier bytes. The checker reports the eight bytes
-as `player_name_hex` (`79736f70776e6162` for this name), avoiding arbitrary binary
-or legacy-encoded text in JSON. Historical selected replay bytes remain unchanged.
-
-Use `--require-all-captures 1 --verify-captures 1 --replay-name ysopwnab`
-and `--target-score DISPLAYED` for the active campaign.
-The report separates game completion, capture coverage, exported replay and
-`objective_met`. Exit3 means capture failure; exit5 means a complete qualifying
-NMNB/capture run below the explicit score target. Such below-target replays may
-be exported for Native progress, but do not pass the retail-playback gate.
+The early Scarlet baselines, intermediate record chains and their detailed
+verification receipts remain in the
+[pre-cleanup validation snapshot](https://github.com/N0zoM1z0/th08-solver/blob/cf277285d64429b4c3720fb5c30eb0f360e7229c/docs/VALIDATION.md#scarlet-team-verified-native-baselines),
+the journals and unchanged selected files. They are historical evidence, not
+additional current run instructions.
 
 ### Offline compute budgets and checkpoint continuation
 
@@ -775,30 +191,30 @@ The owner now prioritizes complete score before optimizing solve speed. Native
 
 | Control | Default | Accepted Native range |
 | --- | ---: | --- |
-| `--verify-horizon` |64 | Powers of two64..2048 |
-| `--spell-horizon` |0 | Optional active-spell verification H64..2048, publication H/2, replan H/4; zero preserves the original schedule |
-| `--phase-plan` |none | Up to32 comma-separated `stage:card:top:rows:reserve:feedback\|shoot:human\|youkai` entries; requires attack pacing; stage0..8, card1..256, rows1..14 at32px spacing, band inside Y0..432, reserve0..10000 gameplay updates |
-| `--phase-recovery-prior` |0 |0/1;1 requires a nonempty phase plan and baseline recovery; uses its capture-form prior in recovery without adding scoring memory or generic pacing |
-| `--stop-after-card` |0 |0 disables;1..256 stops after the actual closed card audit, returns incomplete exit2 and never exports a replay |
-| `--publish-horizon` |64 | Powers of two64..2048, at most verification |
-| `--search-budget-ms` |110 |1..60000 per search |
-| `--lead-updates` |8 |1..32, below publication |
-| `--nominal-warm-updates` |0 |0 means full old tail; otherwise lead..verification |
-| `--replan-updates` |8 |1..publication |
-| `--policy-horizon` |24 |2..200, with lead+horizon-1 at most verification |
-| `--policy-beam` |192 |1..8192 |
-| `--verify-captures` |0 |0/1;1 requires the all-capture run goal |
-| `--drop-target` |0 |0/1, current source enemy target; no budget/physics change |
-| `--economic-proposals` |0 |0..4 extra full-Native horizon fire/focus comparisons, sharing total search budget |
-| `--economic-movement` |0 |0..4 active-spell movement comparisons; independent of fire/focus comparisons |
-| `--checkpoint-updates` |0 |0 disables;64..400000 executed inputs between prefix saves |
-| Positional `WALL_SECONDS` |Explicit |1..7200 per owner attempt |
+| `--verify-horizon` | 64 | Powers of two 64..2048 |
+| `--spell-horizon` | 0 | Optional active-spell verification H64..2048, publication H/2, replan H/4; zero preserves the original schedule |
+| `--phase-plan` | none | Up to 32 comma-separated `stage:card:top:rows:reserve:feedback\|shoot:human\|youkai` entries; requires attack pacing; stage 0..8, card 1..256, rows 1..14 at 32 px spacing, band inside Y 0..432, reserve 0..10000 gameplay updates |
+| `--phase-recovery-prior` | 0 | 0/1; 1 requires a nonempty phase plan and baseline recovery; uses its capture-form prior in recovery without adding scoring memory or generic pacing |
+| `--stop-after-card` | 0 | 0 disables; 1..256 stops after the actual closed card audit, returns incomplete exit 2 and never exports a replay |
+| `--publish-horizon` | 64 | Powers of two 64..2048, at most verification |
+| `--search-budget-ms` | 110 | 1..60000 per search |
+| `--lead-updates` | 8 | 1..32, below publication |
+| `--nominal-warm-updates` | 0 | 0 means full old tail; otherwise lead..verification |
+| `--replan-updates` | 8 | 1..publication |
+| `--policy-horizon` | 24 | 2..200, with lead+horizon-1 at most verification |
+| `--policy-beam` | 192 | 1..8192 |
+| `--verify-captures` | 0 | 0/1; 1 requires the all-capture run goal |
+| `--drop-target` | 0 | 0/1, current source enemy target; no budget/physics change |
+| `--economic-proposals` | 0 | 0..4 extra full-Native horizon fire/focus comparisons, sharing total search budget |
+| `--economic-movement` | 0 | 0..4 active-spell movement comparisons; independent of fire/focus comparisons |
+| `--checkpoint-updates` | 0 | 0 disables; 64..400000 executed inputs between prefix saves |
+| Positional `WALL_SECONDS` | Explicit | 1..7200 per owner attempt |
 
 For example, `--attack-pacing 1 --phase-plan 8:203:368:3:0:feedback:youkai
---stop-after-card 203` proposes three rows Y368/400/432 during actual card203.
+--stop-after-card 203` proposes three rows Y 368/400/432 during actual card 203.
 It does not guarantee those positions or require every accepted input to follow
 the proposal; Native safety recovery remains independent. A phase boundary is
-an incomplete exit2, even if its local score improves. Resume its actual tape
+an incomplete exit 2, even if its local score improves. Resume its actual tape
 from the same original episode and require the complete route before promotion.
 
 Full story `th08_shadow_style` entries apply prior-Final-A history to team shots
@@ -807,31 +223,31 @@ Full story `th08_shadow_style` entries apply prior-Final-A history to team shots
 team-history/solo combination. No new history flag is required. A new solo
 scoring episode still needs its own original retail seed receipt before search.
 
-`th08_phase_frontier INPUT_TSV WIDTH GENERATION OUTPUT_TSV` selects1..64 entries
-from at most4096 rows. The exact input header is
+`th08_phase_frontier INPUT_TSV WIDTH GENERATION OUTPUT_TSV` selects 1..64 entries
+from at most 4096 rows. The exact input header is
 `id\tboundary\tfamily\trequest\tcheckpoint\tscore\tcompleted\tno_miss\tbombs`
-with literal tabs. Identity hashes are64 lowercase hex characters. `completed`
-and `no_miss` are0/1; completion refers to the declared segment, not the route.
+with literal tabs. Identity hashes are 64 lowercase hex characters. `completed`
+and `no_miss` are 0/1; completion refers to the declared segment, not the route.
 The campaign owner supplies hash-bound provenance and actual Native outcomes.
 The output lists `id`, `checkpoint`, `score` for selected worlds; malformed or
 conflicting evidence fails before opening the output. Family diversity is a
 search allocation rule, never a gameplay certificate or claimed score bound.
 
-For example, H512/publication256,5000ms, lead1/nominal1 and interval128 spends
+For example, H512/publication 256,5000 ms, lead 1/nominal 1 and interval 128 spends
 more computation on freshly guided future actions. All proposed actions still
 execute through the owned Native world. A certified block may be consumed while
-the owner is synchronous; no-certificate retry spacing remains at most8 updates.
-The normal proposal budget remains60ms. Record complete score/outcome and work
+the owner is synchronous; no-certificate retry spacing remains at most 8 updates.
+The normal proposal budget remains 60 ms. Record complete score/outcome and work
 before deciding whether the larger profile helps.
 
-`--economic-movement N` compares up toN differing cardinal pulses in stable
+`--economic-movement N` compares up to N differing cardinal pulses in stable
 up/down/left/right order, only while a spell is active and dialogue is absent.
 Each pulse keeps the certified lead and the incumbent's fire/form bits, changes
-only direction for16 Native updates, then continues with ordinary guidance in
+only direction for 16 Native updates, then continues with ordinary guidance in
 its own Native world. Fire/form alternatives run first; both kinds share the
-existing2000ms economic admission window within the total search budget. An
+existing 2000 ms economic admission window within the total search budget. An
 admitted Native future can use the remaining total budget, as with the existing
-fire/form comparison;2000ms is not a hard per-rollout deadline. The new control
+fire/form comparison; 2000 ms is not a hard per-rollout deadline. The new control
 does not require `--economic-proposals` to be enabled. Zero keeps the old path.
 Only certified complete-horizon/terminal futures compete; strictly higher raw
 cash adopts, while stable ties retain the incumbent. This horizon ranking is
@@ -841,11 +257,11 @@ charge every extra attempt to the existing branch counters and timing.
 
 Append `--prefix-actions PATH --prefix-updates N` to continue after an explicit
 input checkpoint. The original entry configuration, seed and sampled input
-profile must match its provenance. The tool executes and observes all firstN
+profile must match its provenance. The tool executes and observes all first N
 inputs, then plans from the same owned world without resetting RNG, carried
 shots/items, actors or lifecycle state. Prefix reconstruction is included in
 owner updates and Native work. Both options are required together; short files,
-invalid NMNB actions and an actual terminal beforeN are rejected. The output
+invalid NMNB actions and an actual terminal before N are rejected. The output
 contains the full prefix plus regenerated continuation, with requested/executed
 prefix counts for auditing. All generated tapes/replays/reports stay local until
 a selected progress replay is authorized for publication.
@@ -854,12 +270,12 @@ a selected progress replay is authorized for publication.
 count source calculations; modeled transition inputs can make them differ.
 Use the read-only phase map's `owner_updates` for a spell entry or end, and the
 producer's actual consumed count for a declared checkpoint. An audit timestamp
-is not an interchangeable input offset. V104 preserves the original3-input
+is not an interchangeable input offset. V104 preserves the original 3-input
 pre-entry trials and records their corrected labels in the journal.
 
 With `--checkpoint-updates N`, the owner appends only actually consumed inputs
 to `checkpoint.inputs.actions`, then flushes and replaces `checkpoint.json`
-everyN inputs and at an ordinary exit. Branch predictions never write this
+every N inputs and at an ordinary exit. Branch predictions never write this
 tape. The default writes neither file. Units are owner input updates, including
 prefix reconstruction, rather than natural replay row indices. No simulation
 state, RNG or search memory is serialized. Reports include the interval,
@@ -876,32 +292,32 @@ safety, a capture or a complete result, and does not rehabilitate a failed or
 resource-aborted owner. Flush/rename supports process-termination recovery;
 there is no fsync or machine-crash durability claim.
 
-Focused692 passes the complete real-DAT test in144.62s: final saved/final tape
-equality, default-off absence, and an exact1024-input budget-limited owner that
-exports no replay. Controlled SIGTERM695 preserves19584 inputs/80439 bytes,
-with no result or replay. Fresh696 reexecutes that committed prefix at the
-original Scarlet9098 entry and returns budget with19584 updates,0 deaths and
+Focused 692 passes the complete real-DAT test in 144.62 s: final saved/final tape
+equality, default-off absence, and an exact 1024-input budget-limited owner that
+exports no replay. Controlled SIGTERM 695 preserves 19584 inputs/80439 bytes,
+with no result or replay. Fresh 696 reexecutes that committed prefix at the
+original Scarlet 9098 entry and returns budget with 19584 updates, 0 deaths and
 No Bomb. These are partial-duration recovery checks, not scoring certificates.
-Normal693 passes **60/60 in1207.78s**. Complete affected-data Extra694 and its
-fresh709/natural710 checks pass; the saved tape exactly equals all68005 final
-inputs/274915 bytes. Its83,431,757ns checkpoint I/O remains charged within
-1156.77s wall. All new owners use the authorized4GiB process/tree bounds and
-unchanged host12/8GiB guards; the normal suite peaks at1004314624 bytes tree RSS.
+Normal 693 passes **60/60 in 1207.78 s**. Complete affected-data Extra 694 and its
+fresh 709/natural 710 checks pass; the saved tape exactly equals all 68005 final
+inputs/274915 bytes. Its 83,431,757 ns checkpoint I/O remains charged within
+1156.77 s wall. All new owners use the authorized 4 GiB process/tree bounds and
+unchanged host 12/8 GiB guards; the normal suite peaks at 1004314624 bytes tree RSS.
 
-These checkpoint/compute controls pass the normal Release Native/DAT suite57/57
-in970.95s. The focused checkpoint regression passes1/1 in35.65s and verifies
-literal-prefix retention plus a regenerated continuation with H512/publication256,
-lead1/nominal1/interval128/2000ms, fresh exact terminal execution and natural
+These checkpoint/compute controls pass the normal Release Native/DAT suite 57/57
+in 970.95 s. The focused checkpoint regression passes 1/1 in 35.65 s and verifies
+literal-prefix retention plus a regenerated continuation with H512/publication 256,
+lead 1/nominal 1/interval 128/2000 ms, fresh exact terminal execution and natural
 original-writer replay. Invalid schedules and an overlong terminal prefix fail.
 
 The capture-aware/wider-guidance follow-up passes the normal Release Native/DAT
-suite **59/59 in919.31s**, with frozen test binaries. The checkpoint regression
-now also uses policyH48/beam256 and capture verification. A source ordinary-spell
+suite **59/59 in 919.31 s**, with frozen test binaries. The checkpoint regression
+now also uses policyH 48/beam 256 and capture verification. A source ordinary-spell
 timeout fixture demonstrates that safety-only survival certifies while the
-capture goal rejects the same Native trajectory, preserving all41 fields until
+capture goal rejects the same Native trajectory, preserving all 41 fields until
 the stop and leaving the parent world/audit unchanged. Its explicit synthetic
 invulnerability isolates capture semantics and is not NMNB gameplay evidence.
-A selected-story replay regression covers Stage1→2, including a read-only
+A selected-story replay regression covers Stage 1→2, including a read-only
 projection of the recording owner's carried clear flag; it checks the previous
 catalogue without falsely failing the unfinished new one. The H48 adapter test
 checks bounded single-action proposals and a complete Native guided horizon.
@@ -925,8 +341,8 @@ Positional flags after the seed are story and prior-Final-A history. Use
 `0 3 1 40755 1 1` for the full story configuration. `--family fire` explores
 fire-on/released-fire windows instead. Every trial completes the actual remaining
 Native trajectory; only strict final-score improvements retaining NMNB, the
-same capture catalogue and final route replace the incumbent. Exit2 rejects an
-invalid incumbent, recording its status and cost in `result.json`; exit5 exports
+same capture catalogue and final route replace the incumbent. Exit 2 rejects an
+invalid incumbent, recording its status and cost in `result.json`; exit 5 exports
 a valid progress replay below the requested target. The chosen name remains
 `ysopwnab`. Fresh tape following and natural `.rpy` checks remain required.
 
@@ -950,8 +366,8 @@ permission does not guarantee a useful bomb or a higher complete score.
 
 For the capture-optional Native planner, `--farm-to-timeout 1 --attack-pacing 1`
 allows a measured profitable farm to continue past the capture reserve. It
-requires `--require-all-captures 0 --verify-captures 0`; the active campaign also
-passes `--allow-bombs 0`. Every240 updates the income sample refreshes, and zero
+requires `--require-all-captures 0 --verify-captures 0`; the last scoring campaign also
+passes `--allow-bombs 0`. Every 240 updates the income sample refreshes, and zero
 income restores fire. This is a default-off proposal preference, not a promise
 of timeout or scoring profit. Reports record `farm_to_timeout` and its revision;
 the source audit owns actual timeout/capture outcomes. Historical benchmarks and
@@ -966,7 +382,7 @@ whether the preparation helped. [Planner](PLANNER.md#stream-proposals-and-attack
 owns the fire-intent priority and sample boundary.
 
 Native `--upper-flow 1` requires `--attack-pacing 1` or `--survival-flow 1`.
-It expands stream proposal targets from Y208..400 to Y16..400, defaults off,
+It expands stream proposal targets from Y 208..400 to Y 16..400, defaults off,
 and records `upper_flow`, `flow_grid_revision` and `flow_grid_min_y`. No early
 damage-Probe approach is added. Native still owns boss bodies, collision and
 realized income. [Planner](PLANNER.md#stream-proposals-and-attack-pacing) owns
@@ -984,7 +400,7 @@ Native `--parent-chain-bias 100 --drop-target 1` names the first adaptive parent
 experiment. Zero restores the historical proposal. Positive values exclude
 attached-child lanes and prefer focused shots at a root with a current chain,
 temporarily superseding its human/hit-income goal; actual item trips still win.
-Revision2 waits until fewer than24 root-reduction updates remain and yields
+Revision 2 waits until fewer than 24 root-reduction updates remain and yields
 form to any full pending pickup batch, including when bullet density delays
 the collection movement gate. The snapshot copies only the signed update count.
 Reports include `parent_chain_focus_bias` and `parent_chain_revision`. The value
@@ -995,7 +411,7 @@ snapshot-only and predicts no guaranteed child reward.
 
 Refiner `--family bomb --allow-bombs 1` compares human/focused X windows against
 the complete incumbent terminal. Use `--window 1` for a one-update pulse and
-`--first-update N` to begin trials at a declared owner-input index (default64).
+`--first-update N` to begin trials at a declared owner-input index (default 64).
 Every edit still needs a complete no-miss tail, the original final route and
 strictly higher actual terminal score. Restoring either constraint rejects tapes
 that violate it; no partial result is certified. `result.json` records both
@@ -1014,657 +430,73 @@ capture outcomes and name against the producer. The focused
 The original writer computes slowdown from the supervisor's accumulated lag
 numerator/denominator. `Supervisor::CalculateFps(shouldDraw)` updates these
 counters through the drawing/FPS path. Headless `Session::step` deliberately
-executes only the calculation chain, so both counters remain0; the writer's
-0/0 produces IEEE754 NaN. This is unavailable rendering-performance metadata,
+executes only the calculation chain, so both counters remain 0; the writer's
+0/0 produces IEEE 754 NaN. This is unavailable rendering-performance metadata,
 not a measurement of Native solver time or retail playback speed. The slowdown
 fields are not read by the gameplay replay executor.
 
 Silent Selene's [uploaded Native Extra](https://www.silentselene.net/replays/th08/89742)
 therefore displays `nan%`; its downloaded bytes have the exact selected replay
 SHA-256 below. The [human comparison](https://www.silentselene.net/replays/th08/54125)
-displays0.3102%. `th08_replay_check` exposes finite values as `slowdown_percent`,
+displays 0.3102%. `th08_replay_check` exposes finite values as `slowdown_percent`,
 nonfinite values as JSON `null`, and preserves `slowdown_ieee754_bits` for
-diagnosis. Selected replay bytes are preserved; no measured0% is invented.
-The downloaded human replay decodes to0.31015873%, matching the site's rounded
+diagnosis. Selected replay bytes are preserved; no measured 0% is invented.
+The downloaded human replay decodes to 0.31015873%, matching the site's rounded
 display, and completes naturally in Native. Its SHA-256 is
 `78e559c1deb8fca62941b1ee4ade69ecc9ca8bf6ec2acd99882e6794268a7e92`;
 the external replay remains local.
 
-## October27 verified Native progress
+## October 27 verified Native progress
 
-The requested Native thresholds are achieved: **Extra3,010,040,230,NMNB14/14**
-and **complete1→2→3→4A→5→FinalB5,025,195,380,NMNB37/37**. Both milestone exports
-capture every eligible spell, despite the capture-optional campaign goal.
-Original retail receipts46997/1805 and the exact `ysopwnab` name are preserved.
-Fresh original-entry execution matches all41 terminal words; natural original-
-writer replay agrees on score, zero misses/bombs, exact captures and name.
-This is Native execution agreement. Both separate human-reference retail gates
-remain unmet, so no Wine playback is launched.
+This section retains the **dated October 27, 2026 comparison snapshot**. It is
+not a live leaderboard claim. The original source is the
+[Touhou World Records page](https://maribelhearn.com/wr#IN):
 
-The owner selected these two exact files for publication on October27. Copies
-under `reports/native/replays/` retain the verified bytes; the original local
-`reports/local/target-3b5b-20261027/selected/provenance.json` and producer
-directories remain the full execution evidence:
+| Route | All-shot human reference | Player / shot | Recorded date |
+| --- | ---: | --- | --- |
+| Extra | 3,178,460,830 | Sakurei / solo Youmu | June 21, 2022 |
+| Lunatic | 7,053,332,460 | IwanaM / solo Youmu | July 14, 2026 |
 
-| Published replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| [Extra3.010B](../reports/native/replays/magic/extra/extra-native-nmnb-3010040230-seed46997.rpy) |30331 |`d5d95ec115afee3ef2c301b378af9385e77d9b2e89edae572641146e24b8aad5` |
-| [Complete story5.025B](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-5025195380-seed1805.rpy) |55241 |`1d53cd6a624a3e0821f11951ec9c1fd24752c76894b76908eea8451a5ead7dbc` |
+Require a complete no-miss result above the corresponding reference, under its
+declared bomb/capture constraints, before retail replay validation. Native Extra
+now exceeds the dated reference; complete Lunatic does not. A 7 billion story
+would still be below its gate. Historical same-shot comparisons and constraints
+remain in [Status](STATUS.md#score-targets-and-historical-references).
 
-Extra is entirely produced by the public implementation. First,
-`target-extra-firststage-human100-v1/` starts from the proper retail-seeded entry
-and executes5400 inputs with human bias100/drop-follow. Next,
-`target-extra-public-early-keine-v1/` retains those5400, restores human5 and uses
-reserve1/0 through17000, capturing all three Keine spells. Finally,
-`target-extra-public-early-full-tail-v1/` retains17000 and restores1.2/120 for the
-complete tail. All use H128/publication64/replan32, lead1/warm1/beam384/30s search,
-attack/survival focus10, priced/upper/hit-income/drop goals and cash4; timeout
-farming, bombs and parent bias remain off. No private parent prefix is inherited.
-Its full69957-input tape SHA-256 is
-`a4f81471ae49061b1e850acfaf6a97184e063d39f62f46d9662e2e2590c5a35b`.
+The earlier owner-selected milestones were Extra 3,010,040,230 (task 467) and
+complete Lunatic 5,025,195,380 (task 487), both Magic Team NMNB with all captures
+and original retail seeds 46997/1805. At that time both all-shot gates were unmet.
+Later Magic records are Extra 3,013,913,970 and story 5,550,599,270; the distinct
+all-capture story is 5,107,553,670. Their exact bytes, constraints, hashes,
+source and receipts remain in the [progress index](../reports/native/replays/progress.tsv).
 
-Story producer `target-story-captured77-cash-h256-p64-v2/` retains106321 inputs
-of the verified all-capture4.708B route (see its earlier provenance below), then
-uses parent100 revision2/H256/publication64/replan32/cash4, reserve1.5/240,
-capture-fire recovery, lead1/warm1/beam384/30s and ordinary human/farm focus5.
-The full146229-input tape SHA-256 is
-`0e783f185b5821232f9ddfa5911109d7fbfe11d566e3a7c06c45c014e4c3954a`.
-Each producer's `verification/{verified.json,identities.json}` binds the exact
-source/binary/receipt/prefix/DAT/argument and fresh/natural outputs. Original
-selected historical files retain their bytes. Normal Release Native/DAT CTest
-passes60/60 in1133.27s for the implementation; final documentation also passes.
-
-The preceding verified bests are Extra2,979,939,680,NMNB14/14 and complete
-story4,827,562,920,NMNB36/37. Only card77 times out in that story; the earlier
-all-capture route reaches4,708,495,930,37/37. Those earlier3B/5B attempts had not
-yet reached the requested milestones. Seed receipts46997/1805, full-entry history and `ysopwnab` are
-unchanged. No Wine playback is launched.
-
-### Global-goal continuation: 5.551B story
-
-Task620 improves the complete Magic Team route to **5,550,599,270,NMNB36/37**;
-only47 times out. It retains the5.458B tape's first52561 inputs, executes the
-Stage4A human-pose guide at618 through60000, then restores the public
-H256/publication128/replan64/cash4/human5/upper-flow1 tail. Capture pacing is
-normal; no bombs are allowed. Source references are immutable XY/fire/form
-hints from Alan's bomb-free Stage4A gameplay1..6500, not source RNG, bullets,
-HP or actor state. The private guide owns a temporary current-snapshot baseline
-proposal every8 inputs (H24/beam384/anchor0.08/focus±10); independent recovery
-and complete Native futures remain the safety authority. Its exact source,
-reference/header hashes and current-ABI link inputs remain frozen locally.
-
-The actual148021-input route charges1019.43s wall,1105467+23 branch/proposal
-updates,4171 economic attempts/556 adoptions. Fresh634 and natural638 pass
-exact41-word terminal, score,36/37 outcome map, zero-miss/bomb and eight-byte
-name agreement. This is execution agreement, not independent physics or retail
-equivalence. The seed1805 receipt, DAT, Release environment and resource
-bounds remain those below. The6B/all-shot gates remain unmet.
-
-Local selected replay
-`reports/local/global-score-20261027/selected/story-native-nmnb-4a-finalb-5550599270-seed1805.rpy`
-is58519 bytes, SHA-256
-`7ef6066e5e4ec84e0a6e50f31c7f222935bd76b2c8e3c6f52c4b9234959d4eb2`.
-Its complete action tape hashes
-`8e0d2125b06263eb094326a4dea1f285340c94bc3fa37b54bff55254eec7f552`.
-The selected provenance JSON preserves the producer, prefix, receipt, source,
-binary, DAT, natural-row identities and verification results. Published milestone
-replays keep their original bytes. Public code remains `79882c6`, tested by
-normal59160/60 and complete real-data592; the pose adapters remain private.
-
-### Global-goal continuation: 5.458B story
-
-At that checkpoint, selected Native bests are **Extra3,013,913,970,NMNB14/14** and
-**complete Magic Team4A→FinalB5,457,960,010,NMNB35/37**. The separate
-all-capture story is **5,107,553,670,NMNB37/37**. These use the original retail
-episodes Extra46997/story1805, proper non-practice entries, No Bomb and
-`ysopwnab`. Story47/74 time out in the highest-score route. The owner-selected
-published3.010B/5.025B milestone bytes remain intact; these newer exports stay
-under ignored `reports/local/global-score-20261027/selected/`.
-
-| Selected local replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `extra-native-nmnb-3013913970-seed46997.rpy` |30326 |`0015f7c7b132f4febd114d9ff0737c4852726c306422fd011f1708bdccf72b2b` |
-| `story-native-nmnb-4a-finalb-5457960010-seed1805.rpy` |56800 |`387269153db836f15728d8699694da138f6a73093e3d629a8ee3596854ee8994` |
-| `story-native-nmnb-4a-finalb-5107553670-seed1805.rpy` |53961 |`2c192a7c6289f89310eacb0a8d6cb263ca450e2de1fb093528d6001b853a7cd7` |
-
-Task597 keeps63908 literal inputs of the published Extra lineage and enables
-only `--upper-flow 1` for the terminal205 tail: H128/publication64/replan32,
-cash4, reserve1.2/120, focus10, preserve-fire recovery. Its complete69957-input
-tape hashes `62598246791f1ab6ca1aef0d80dc666d9105f8816e04f1168b39e4ad15c217e2`.
-Wall time is74.4912s,64363+2 branch/proposal updates,498 economic attempts/54
-adoptions. Fresh603 and natural606 pass all terminal, score,14/14 outcomes,
-zero-miss/bomb and eight-byte name checks.
-
-Task595 retains49286 literal inputs from the Stage3 human-road/upper47 scene.
-Its lineage is task503's14529 first-stage inputs, task567's first32721 inputs,
-3500 bomb-free Alan Stage3 gameplay inputs executed at our own seed in578,
-Native adaptation through580, and585's complete upper Sample47 timeout. Failed
-4096-input transfer576 certifies no prefix;578 freshly executes the shorter
-proposal from original entry. Task592's public `--upper-flow 1` reproduces the
-complete585 tape and41-word terminal exactly. The585 standalone binary/source
-correction is retained explicitly in `source-provenance-correction.json` and
-`frozen-bin/online_native_at_link.cpp`, alongside the untouched original manifest.
-No reference RNG or world state is transplanted; no old object is relinked
-against the changed policy header.
-
-After that prefix,595 uses public H256/publication128/replan64/cash4/human5,
-upper-flow1, charge-fire0, normal capture pacing and reserve1.5/240. Its
-146853-input tape hashes
-`d59f144c7943dff00f98b134d5e4defde7cf30a65a032d03eef170105097cfea`.
-It charges978.846s wall,1248015+23 branch/proposal updates,4611 economic
-attempts/621 adoptions,2241 rejected future deaths, and zero search timeouts,
-budget overruns or resource aborts. Fresh600/natural602 agree exactly, including
-the35/37 capture map. It is a complete combined profile; partial gains are not
-added to terminal scores.
-
-All-capture task575 uses the successful Stage2 human-road4096-input proposal
-and Native adaptation through26000, followed by H256/publication256/replan128,
-cash4/human5, original grid and reserve1.5/240. It completes143109 inputs in
-689.318s,750113+13 branch/proposal updates,2752 economic attempts/404 adoptions.
-Fresh588/natural589 pass. Its tape hashes
-`c00240006d7450faf4da2db01738e4d313364c1e625746e1bce0fbaf17a7baca`.
-
-Selected provenance JSONs retain the full controls, exact producer/prefix,
-binary, receipt, DAT and natural-row hashes. Environment remains Release
-GCC12.2.0, C++17, `-ffp-contract=off`, no fast-math, AMD EPYC7B12 and
-Linux6.1.0-54-cloud-amd64 x86_64. Reported Native timing excludes file I/O;
-the complete wall cost is also charged. These historical owners obeyed the then-current2GiB limits
-and host memory guards. Fresh execution and source natural replay establish
-execution agreement, not an independent physics oracle or retail equivalence.
-Neither the6B milestone nor either all-shot human reference is reached; no
-retail replay playback is qualified. Focused590 passes2/2; normal Release
-Native/DAT591 passes60/60 in1092.11s;592 covers the complete real-data47 scene.
-
-### Global-goal continuation: 5.163B story
-
-Task568 improves the complete Magic Team4A→FinalB route to **5,162,703,270,
-0 misses,0 bombs,35/37 captures**. Only32/77 time out; all37 eligible cards are
-encountered. At that point the37/37 best is5,025,195,380. Original retail seed1805,
-entry receipt SHA-256
-`88516cae49c9c04a2ebc0857f88eb81b3d0ed7277ff4c4c95a1a8b39d55ae133`
-and `ysopwnab` remain unchanged. Both6B and the7,053,332,460 all-shot reference
-are still above this score; no retail playback is qualified.
-
-This lineage uses public code throughout. Task503 supplies the first14529
-inputs: human100, charge-fire1, H128/publication64/replan32, no cash comparison.
-Task563 retains those inputs and uses human100/charge-fire0/H256/publication256/
-replan128/cash4 through26000. Task568 retains that literal26000-input tape,
-restores human5 and uses H256/publication128/replan64/cash4 for the complete tail.
-The economic edit window stays32 updates. Common controls include parent100
-revision2, drop-follow, reserve1.5/240, capture-fire recovery, lead1/warm1,
-beam384 and30s total search. The record does not inherit the human-button
-transfer experiments or private boss/age/window prototypes.
-
-Producer `global-story-public-earlycash-h5-p128-r64-full-v1/` is under the
-existing local campaign directory. It records142709 complete owner inputs,
-1329.203s wall time,1506421+21 branch/proposal updates,2395 rejected future
-deaths,5452 economic attempts/770 adoptions and zero timeouts/overruns/resource
-aborts. Measurements use Release GCC12.2.0, C++17, `-ffp-contract=off`, AMD
-EPYC7B12 and Linux6.1.0-54-cloud-amd64 x86_64. The report separates Native,
-guidance and file-I/O time; wall time is the charged owner cost.
-
-Tasks577/579 verify exact fresh41-word terminal agreement, complete natural
-original-writer replay, score, no misses/bombs, the exact35/37 outcome map and
-name. This remains execution agreement, rather than an independent physics
-oracle or retail equivalence. Public source is unchanged from the tested
-`de87af9` controls; normal Release Native/DAT task504 passes60/60 in1099.82s.
-
-The exact selected file stays local at
-`reports/local/global-score-20261027/selected/story-native-nmnb-4a-finalb-5162703270-seed1805.rpy`:
-
-| Local artifact | Bytes / SHA-256 |
-| --- | --- |
-| Replay |54682 / `70c3ddb6e933d9040cf1d82fbe5e598950e30119b2e143345ea3e2e6902846dc` |
-| Complete action tape |`6f3e6ec003e4bb155844d36128a557ef55b3c8e2dd3ec6f5c74bc5889c6285a3` |
-
-The selected provenance JSON and producer's `verification/` retain all binary,
-DAT, prefix, receipt and natural-row hashes. Earlier published bytes remain intact.
-
-The earlier `reports/local/target-3b5b-20261027/selected/` directory also
-contains these exact exports:
-
-| Local replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `extra-native-nmnb-2979939680-seed46997.rpy` |29446 |`5f279c472bea6e148ce151a292aca59735ef6d478a899e39606ec857544bfe6c` |
-| `extra-native-nmnb-2978088160-seed46997.rpy` |29453 |`2b060437ede1cd9f81da33d97331faa0703ab6dc99744751f381807207f24f68` |
-| `story-native-nmnb-4a-finalb-4827562920-seed1805.rpy` |54042 |`cd86d2785d0f9c08ada25d3c774ff1d8af6213eb8eff531b787f8e413c13cde3` |
-| `story-native-nmnb-4a-finalb-4708495930-seed1805.rpy` |52909 |`ff591f56d44dc2853bb9e4989948f72df0d3151b65b8e74f8f2c1410a8056c70` |
-
-`target-extra-early-income-follow-tail-v1/` retains16187 inputs (card194 end+200)
-of the measured193-farm2.891B tape, then uses H128/publication64/replan32,
-focus10/reserve1.2/120/drop-follow/cash4. `target-extra-last205-flow-v1/` retains
-63200 of its inputs and enables survival flow for the final205 continuation.
-The full69277-input tapes hash to
-`51051ff465852e48e77ed23499bdbb4cbba104193afc63204b2ea474cf462afa` and
-`41abb2efdf0ebe998b18da3d1bc960f3c79a13cdeed8b6e3f68ca590c5f91e58`.
-The inherited early prefix keeps its earlier private pulse/repair provenance;
-this does not claim a new public full-entry parent.
-
-`target-story-parent-full-v1/` retains14409 inputs of the4.469B tape and uses
-the first parent100 proposal. `target-story-parent-finalb-cash-h256-v2/`
-retains its first105673 inputs, including the ordinary Last Spell77 timeout,
-then uses revision2 parent100/H256/publication128/replan64/cash4. The new gates
-preserve root reduction income and pending-item human form. Its full144885-input
-tape hashes to `727d41b17ec8839e39402e233dd836664f290b482a06c9f9e5605e9526d920a1`.
-The all-capture `target-story-parent-full-v2/` instead retains14409 original
-inputs and applies revision2/H128/publication64/replan32 without cash comparisons;
-its full145197-input tape hashes to
-`f4533b8ac8a50dd07a89c839a6002f7e7b48d690aa6e740da6ccc9989d969dfb`.
-Both use reserve1.5/240 and capture-fire recovery. Each selected export has fresh
-original-entry exact41-word terminal and natural original-writer
-score/NMNB/exact spell outcomes/name agreement. These remain execution checks,
-not an independent physics or retail oracle. Revision2 passes normal Release
-Native/DAT CTest60/60 in1133.27s; the obsolete revision1 test owner is explicitly
-interrupted and charged, not reported as passed. New artifacts remain local.
-
-Earlier source-guided continuations reach Extra2,891,728,530,NMNB14/14
-and complete story4,469,021,890,NMNB37/37. Neither reaches the
-owner's new3B/5B milestone or its historical human reference. Seed receipts,
-entry/history and `ysopwnab` are unchanged; no Wine replay is launched.
-
-These selected local copies are under
-`reports/local/target-3b5b-20261027/selected/`, with exact producer/verification
-identities in `provenance.json`:
-
-| Local replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `extra-native-nmnb-2891728530-seed46997.rpy` |30719 |`c2d4d016e324b72d768f2ffca6db5d45e6cce16cd5ec2bbe9331e86caae7067b` |
-| `extra-native-nmnb-2825597670-seed46997.rpy` |29008 |`4365ce22a3749d76e49a47eb4a18319d712452a10a4d19bd1c16fe0296331dde` |
-| `story-native-nmnb-4a-finalb-4469021890-seed1805.rpy` |52502 |`6d58e47e4aa2c5a80071a686470d8f542c235f58256097302e28610557423b19` |
-
-Producers `target-{extra,story}-drop-follow-v1/` are under the existing local
-campaign directory. Extra retains14026 literal inputs of the2.650B tape and
-uses H128/publication64/replan32, beam384/30s search, lead1/warm1, focus/survival
-bias10, reserve1.2/120 and four economic alternatives. Story retains14409 inputs
-of the4.444B tape, with the same horizon/schedule/beam/budget, bias5, reserve1.5/
-240 and capture-fire recovery. Both enable drop-follow, retain the priced/upper/
-hit-income goals and disable timeout farming/bombs. Their full69677/144837-input
-tapes hash to `b566ce5274be7809d12bc93e2837505b0c9afc5f7394b744f42de59bde5579ac`
-and `0e2b94297b23e6d8da160267692e0328777dcd97e0e8889a4568d3fc4b0894da`.
-Fresh original-entry exact41-word terminal and natural original-writer
-score/NMNB/exact capture outcomes/name all agree. These are Native execution
-checks, not an independent physics or retail oracle. New bytes remain local.
-
-`target-extra-card193-income-v1/` retains9400 original2.650B inputs and enables
-timeout farming only until11900. `target-extra-card193-capture-tail-v1/` retains
-that explicit safe prefix, then restores ordinary capture pacing with the same
-H128/focus10/reserve1.2/120 profile and drop-follow disabled. It captures193/194
-late and completes2.891B with14/14. Its full71253-input tape SHA-256 is
-`5e8afbc5091100d801022f71d50b691ed545567c02d97e9c749241b1f0ae2783`.
-Both setup and complete-tail costs remain charged; fresh/natural checks pass.
-Normal Release Native/DAT CTest passes60/60 in1214.34s for these public controls.
-
-The preceding No Miss/No Bomb campaign allows missing captures. Extra improves
-to2,650,283,240,14/14; the complete1→2→3→4A→5→FinalB story improves to
-4,444,083,080,36/37, with only ordinary card58 timing out. Its all-capture
-alternative reaches4,403,879,050,37/37. All keep the original
-retail seed receipts (46997/1805), entry/history and eight-byte `ysopwnab` name.
-Both remain below their human-reference targets; no Wine replay is launched.
-
-New artifacts remain local under
-`reports/local/score-continue-20261027/selected/`, with `provenance.json` and the
-original producer/verification directories under the existing local campaign:
-
-| Local replay | Bytes | SHA-256 |
-| --- | ---: | --- |
-| `extra-native-nmnb-2650283240-seed46997.rpy` |29062 |`335711a86dc773d74e8a85e836fede70adcb0c92b7341c32bf93632154f261dd` |
-| `story-native-nmnb-4a-finalb-4444083080-seed1805.rpy` |51805 |`0a6f1cc3b36cd0dcfcd748d16b0815866c3042a686dca9783b90d8000b910386` |
-| `story-native-nmnb-4a-finalb-4403879050-seed1805.rpy` |51392 |`00a2e80784e1c5fd67928e4b676bfd4786b9ffb0b5832480a90bb93e9c44c0ad` |
-| Earlier `extra-native-nmnb-2624965020-seed46997.rpy` |28892 |`9791826a7e91dcd9e9cf9f652b11a86e127345034352704242ea10988201825c` |
-
-The earlier H256 Extra producer `oct27-extra-strong-focus-tail-v3/` retains60879 inputs from the
-verified2.620B tape, then uses H256/publication128/interval64, bias10, reserve1.2/
-120 and four bounded cash comparisons. Its complete72597-input tape hashes to
-`75bed4fc7161615078b4be763b9248b439ad3c2201b83964b840703348901f5e`.
-The final `oct27-extra-strong-focus-h128-v4/` uses the same original prefix and
-bias/reserve/comparison controls, H128/publication64/interval32. Its complete
-72461-input tape hashes to
-`0f4f88e449c6453b4e665e0781803c7849d3b36fe7e69d4c6e1f26ff4aa70bd4`.
-
-Story producer `oct27-story-58-prefix-safe-tail-h128-v3/` reconstructs59476 inputs
-from `oct27-story-selective58-timeout-v2/`, which itself retains56276 inputs of
-the old4.311B incumbent. The failed later parent remains charged and unused.
-The continuation disables timeout farming, with H128/publication64/interval32,
-reserve1.5/240 and capture-fire recovery. Its complete143157-input tape hashes to
-`c2fe3b2def69a87c23891e7227818ed19ed7772090be3decefe77ac3777c38f6`.
-The all-capture `oct27-story-incumbent58-h128-control-v4/` instead retains58764
-inputs of the original captured58 incumbent (its source end plus200), with the
-same H128 tail configuration. Its complete142845-input tape hashes to
-`7c288d5fec1b1c187a47688cdc872eb5825ceb1b988ad6ce646b4de5cb594a43`.
-It is a separately charged whole-route counterfactual, not a free score estimate
-or a general claim about the value of one spell.
-
-`verification/{verified.json,identities.json}` in all four producer directories
-records fresh original-entry exact41-word terminal agreement and natural
-original-writer score, no-miss/no-bomb, exact spell outcomes and name agreement.
-The local guarded `reports/local/score-continue-20261027/verify-no-bomb.cjs`
-compares capture outcomes instead of imposing all captures. Checks are Native
-execution agreement, not an independent retail oracle. Earlier tracked selected
-replays retain their exact bytes; these new progress files are not published.
+The intermediate 3B/5B and 5.163B/5.458B/5.551B campaigns are historical,
+not parallel active goals. Full original lineage, costs and failed attempts are
+preserved in the
+[pre-cleanup snapshot](https://github.com/N0zoM1z0/th08-solver/blob/cf277285d64429b4c3720fb5c30eb0f360e7229c/docs/VALIDATION.md#october27-verified-native-progress)
+and the cumulative [experiment records](experiments/README.md).
 
 ## Selected Native progress replays
 
-The owner selected the October26 Native progress files for publication. They
-retain the original writer's exact bytes, player name `ysopwnab`, proper
-non-practice entry and SampledGameplay. The original two baseline files below
-use no prefix repair. All selected progress files have
-exact fresh41-word terminal agreement and natural original-writer replay with
-zero death/bomb-input rows, matching score and all eligible captures.
+[progress.tsv](../reports/native/replays/progress.tsv) records all 51 selected
+Native progress files by shot and route. It preserves each score, seed, actual
+miss/bomb/capture constraints, producer/source, original receipt and exact
+replay/action SHA-256. Earlier selected files are historical snapshots; a later
+record does not rewrite their bytes, names, constraints or original identities.
 
-| Field | Extra | Lunatic4A→FinalB |
-| --- | --- | --- |
-| Replay | [Extra2,589,417,330](../reports/native/replays/magic/extra/extra-native-nmnb-2589417330-seed10025.rpy) | [Story3,890,487,560](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy) |
-| Displayed / stored score |2,589,417,330 /258941733 |3,890,487,560 /389048756 |
-| Captures |14/14 |37/37 |
-| Initial stage / difficulty / shot / seed |8 /4 /1 /10025 |0 /3 /1 /40755 |
-| Prior FinalA clear |false |true |
-| Owner updates / solve seconds |69381 /448.547 |119637 /479.403 |
-| Replay bytes |26995 |35865 |
-| Replay SHA-256 |`5fb88138ce1a301b9695f1b3ebff2039fb36eb046242bbff7c7a590c6de76898` |`6b9bb1a5158946194c336240b2f4209cdf407e298e62cfc1386e0790fb3e9ce4` |
-| Natural calculation rows |69377 |119724 |
-| Natural25-field row SHA-256 |`eb25c17721fe088bca05e9bfe6a4d2ceb93684173538f92aa2caa4a481223d56` |`903b45fb0945a89ddde66c198ddd4058c738b9412669db0b9f2e5a9fe1fe98bd` |
+The [evidence index](../reports/native/README.md) links current maxima and their
+shot/route directories. Its [archive index](../reports/native/archive/README.md)
+and [relocation table](../reports/native/archive/relocations.tsv) identify the
+272 historical payloads without rewriting old embedded paths. The selected
+online recordings below have separate execution provenance.
 
-The common profile uses score-harvest, held/baseline recovery,500ms total/60ms
-proposal, priced collection/upper-stage positioning and collection/human bias5.
-Extra uses H256/publication128 and pacing1.5*HP/DPS+240. Story uses
-H128/publication64 without ordinary pacing. Both retain the original lead8;
-these are offline compute profiles. The producers are main parent `d434e7e`
-plus this Native replay-name/objective change. Frozen solver SHA-256:
-`f03447bad8b1699d483be000c628bdbedffce094995537207583235257250ada`;
-source patch SHA-256:
-`c5760b747bc4d33b15c42ec78c4669b80817ea216de8571b5449c534ae1ad4e4`.
-Fresh follower SHA-256:
-`8c591082ee7d9623c133e26af4af91f80034ae52a5af273226dedf96cda4789b`;
-checker SHA-256:
-`326e24173f55613a8ac782f93c222124b2557d112d2bb12d5f943fa96a7bea92`.
-The DAT and1.00d export target are the same as the v15 section below.
-
-Complete local manifests, tapes, reports and rows remain under
-`reports/local/native-score-offline-20261026/{extra-native-baseline-v1,story-native-price-v1}/`.
-The two baseline files and selected follow-ups below are published. They remain
-below the human score target, so retail Wine playback waits. Reproduce natural verification:
-
-```sh
-mkdir -p reports/local/native-progress-check
-build-extra-live/th08_replay_check game_data_donottrack/th08.dat \
-  reports/native/replays/magic/extra/extra-native-nmnb-2589417330-seed10025.rpy \
-  reports/local/native-progress-check/extra.rows \
-  --score-audit reports/local/native-progress-check/extra-audit.json \
-  --require-all-captures
-build-extra-live/th08_replay_check game_data_donottrack/th08.dat \
-  reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3890487560-seed40755.rpy \
-  reports/local/native-progress-check/story.rows \
-  --score-audit reports/local/native-progress-check/story-audit.json \
-  --require-all-captures
-```
-
-For fresh story tape following, add `--prior-final-a-clear 1` as well as
-`--stage 1 --story 1 --difficulty 3 --shot 1 --seed 40755` and the sampled input
-profile. Omitting this history follows6A instead of the producer's6B. The first
-incorrect verification is retained locally; the corrected configuration agrees.
-
-This Native-first progress passes the normal Release Native/DAT suite56/56
-in970.10s, core36/36 in8.37s and focused writer/name/capture checks2/2 in39.85s.
-
-The selected source-survival follow-up is
-[Story3,903,603,650](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy),
-36213 bytes, SHA-256
-`1d4d1338a6af34049ee1a9d0ad51d65f9d61d6b672b3f24894d8387574d2186e`.
-It retains the same complete story entry, seed40755, prior-Final-A history,
-SampledGameplay,500ms/H128/publication64 and collection/human bias5, with the
-source survival-form priority fix and explicit `--survival-bias 5`. It completes
-NMNB,37/37 in119637 owner updates/515.804s; fresh41-word terminal agreement and
-natural replay verification pass. Natural119724 rows SHA-256:
-`99aeb5ede5ca99e6301ba992b5bad2b8dfd8820087706953d035d4afa0aff35d`.
-Frozen solver SHA-256:
-`d6c145a9fe077d7dfe90b88185cc80e37d19a31452bc2af73a56a1982c19265c`;
-parent `cb6f47a`, source patch SHA-256:
-`be41529b785ef3581182a201db01e736433d3a018637b4024bd548238186968b`.
-Fresh follower SHA-256:
-`f7e112e93a739fd692044c116faca426cf3600f808703b7c35e3439a77cdd59f`;
-checker SHA-256:
-`8aa8344addb7e5a542895473a36bf76ddcf81e77c732bce4aa30e30ecd609fc7`.
-The original-writer name remains `ysopwnab`. Complete manifests and checks are
-under `reports/local/native-score-offline-20261026/story-survival-prior-v2/`.
-The earlier selected story replay remains unchanged.
-
-The selected offline continuation is
-[Story4,126,102,910](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-4126102910-seed40755.rpy),
-42372 bytes, SHA-256
-`00d9207984e33c17d9090ba22e7a9b0dc4872540aaf662e625403ce2c35ef930`.
-It is NMNB,37/37, with the same original entry/seed40755/prior-Final-A history
-and `ysopwnab`. The full128013-input tape includes61710 literally reconstructed
-inputs from the failed4,071,061,590/36-of37 prototype tape; that tape itself
-reconstructs59818 inputs from the selected3,903,603,650 run. No world/RNG/item
-reset occurs at either boundary. The new tail uses reserve2/480, source ordinary
-pacing, survival bias5, H512/publication256, lead1/nominal1/interval128,
-30s search/7200s owner, and capture-fire recovery in the frozen generic
-future-repair prototype. The complete attempt charges215.523s/305829+16
-branch/proposal updates/387 future deaths/0 timeouts/5 repair attempts/1 adoption;
-the original failures remain separately charged. These are combined profiles.
-Full fresh41-word terminal agreement and natural original-writer replay pass.
-Natural128100 rows SHA-256:
-`f6dc6766095d643c2ccb4547cd743142ad0d81753d3595ef2bc6abcbc48a2258`.
-Frozen producer SHA-256:
-`f141348215249d9367f35c3fb03333853326921653e0965bc3b7e8402d430aac`;
-private producer source SHA-256:
-`55e42bbb3eaaa705c2706261860b01277ee007e5be268a79f0ce5a7646151692`.
-Follower SHA-256:
-`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5`;
-checker SHA-256:
-`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
-The producer is the frozen local future-repair prototype, not an assertion that
-current-main searches regenerate identical actions. Complete identities, prefix
-lineage and verification receipts stay under
-`reports/local/native-score-offline-20261026/conservative-tail-score-v1/story-conservative-capture-v1/`
-and its referenced prototype manifests. Earlier selected replay bytes stay unchanged.
-
-The complete-tape refiner, survival-priority regression and unavailable-slowdown
-JSON reporting pass the full Release Native/DAT suite57/57 in1020.13s. The new
-refinement CTest covers full-duration capture/score retention, fresh exact
-terminal replay, natural `.rpy`, incomplete-incumbent rejection and timeout work
-charging. The initial focused pair passes2/2 in48.19s; the final documentation
-check passes after the selected story and measured negative trials are recorded.
-
-The selected retail-seeded full-entry story is
-[Story4,160,457,200](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-4160457200-seed1805.rpy),
-41117 bytes, SHA-256
-`76d8860c334abffac0fdf8eb42b34ee34e86771f837f8383d0fd35e0660b0768`.
-It is Magic Team Lunatic4A→FinalB, NMNB,37/37, with `ysopwnab`, raw stage0,
-difficulty3, shot1, story=true, prior-Final-A=true and SampledGameplay. Seed1805
-is bound to the original Wine acquisition receipt documented above before any
-Native candidate. This run starts from original entry with no imported prefix.
-
-The producer is the frozen private future-repair v3, rebuilt against main
-`5a5f2af`'s audited Native libraries and corrected owner handoff. It uses
-H512/publication256, lead1/nominal1/interval128, policyH24/beam384,30s per
-search/7200s owner, source pacing and reserve2/480, priced/upper collection,
-collection/human/survival biases5 and capture-fire recovery. Every accepted
-proposal still completes its Native horizon or the actual terminal; failed
-partial paths are only proposal material. The run charges124549 owner updates,
-543.230s,624148+15 branch/proposal updates,790 rejected future deaths,
-0 timeouts/overruns and319 repair attempts/4 adoptions. This is a named combined
-profile, not a component ablation. The main CLI without that private search
-does not promise to regenerate its tape.
-
-Frozen producer/source SHA-256:
-`71b1b3e972017e3165ec29ea3ea41521baaea318219432b8a398476ae5821caf` /
-`fe4f63d18f860e628baada77e242dd0702b2164bbbca96f8f67028ce25f75d8c`.
-Full input-tape SHA-256:
-`d055afa43af7511a47cd837f964d6839830c21dfb134baf10652c467c00cb872`.
-Fresh follower/checker hashes remain
-`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5` /
-`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
-Fresh41-word terminal agreement passes; natural124636 rows have SHA-256
-`7f6a2825695608aeaf4c9e58f39d7d1f562599cef8bbf353eecacb963d6fdd2b`.
-Natural score416045720 stored units,37 captures, zero death/bomb rows and the
-selected name all agree. Complete manifests, frozen tools/sources, input tape
-and verification receipts stay local in
-`reports/local/retail-score-offline-20261026/story-retail-long-repair-v3/`.
-The earlier selected replay bytes remain unchanged. Retail playback waits for
-the owner's human-score target; the seed-acquisition run is separate evidence.
-
-The selected next story continuation is
-[Story4,311,260,760](../reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-4311260760-seed1805.rpy),
-47437 bytes, SHA-256
-`a20f0dac5c00ea61d6eee673e554bf5ac5cabda2fe8c5c73d48178e2255d8c04`.
-It retains the original retail seed1805, Magic Team Lunatic entry/history,
-SampledGameplay and `ysopwnab`, with NMNB and37/37. It reconstructs49753 actual
-inputs from the early no-fire graze trial, then uses the conservative v3
-H512/publication256/beam384/30s/reserve2/480/capture-fire profile. Those inputs
-precede the failed ancestor's4A encounter; the entire new run is executed from
-original entry without world/RNG/item resets. The ancestor fails later at71183
-and stays charged. Its early-graze policy SHA-256 is
-`52f360f88531418f12a3d8228a4898eed652d15d84f240f4173bff6721b52e6f`;
-its full failed tape SHA-256 is
-`4d8db5ff61f221000fb47889816f2b9781a45978ae8385731e6e50837480fcff`.
-
-The completed continuation charges136061 owner updates/440.974s,
-452782+15 branch/proposal updates,654 rejected deaths,0 timeouts/overruns and
-169 repairs/1 adoption, in addition to the ancestor's408.359s. Producer/source
-and verification-tool hashes are the same v3 identities immediately above.
-Full selected-tape SHA-256:
-`25d844d137a70be1346015d49620e8a70645090b3642d18aa590b93e5bdc330e`.
-Fresh exact41-word terminal agreement passes. Natural136148 rows SHA-256:
-`a1e39f043f91f223afcf83997a05eabd45f6356de67386959fc37620b0d1f4e7`.
-Score431126076 stored units,37 captures, zero death/bomb rows and the selected
-name all agree. Complete local producer/check receipts are in
-`reports/local/retail-score-offline-20261026/story-retail-early-prefix-safe-tail-v3/`.
-
-The selected real-seed Extra progress is
-[Extra2,504,560,470](../reports/native/replays/magic/extra/extra-native-nmnb-2504560470-seed46997.rpy),
-28886 bytes, SHA-256
-`e2a98fdde8ae9071ffb282890ddb2bb6d01f858e759cebbaa153fafe4d74ecab`.
-It uses the original retail seed46997, raw stage8/difficulty4/shot1/story=true,
-prior-Final-A=false, SampledGameplay and `ysopwnab`, with NMNB and14/14. The
-first61756 literal inputs come from the verified source suppressed-hit-period2
-incumbent, then the off-axis policy regenerates the last HP/survival tail.
-Both execute freshly from the same original entry. The current-episode score
-crosses2.5B; historical seed10025 still has the higher2,589,417,330 Extra record.
-
-The tail uses H512/publication256, lead1/nominal1/interval128, policyH24/beam384,
-30s search/7200s owner, reserve1.5/240, capture-fire recovery and hit-income1.
-Its completed attempt charges72637 owner updates/64.1007s including literal
-prefix reconstruction,62027+6 branch/proposal updates,129 rejected deaths,
-0 timeouts/overruns and0 future repairs. The incumbent's585.409s remains charged.
-Producer SHA-256:
-`30011df351374b760ee81247e932c5e5aef5264141a5d8f7b99071432676eb4a`;
-CLI source is v3 above, paired off-axis policy SHA-256:
-`fb5e60414a2e3953fabc1183a589d0c717f81b777040f3a96cf8418715f8f1f4`.
-Full tape SHA-256:
-`44b98efb7cddd71f0488013ec1bba30cb027245bba5ac968f37d596a20d42523`.
-Fresh41-word agreement and natural72633 rows pass; natural row SHA-256:
-`0065922919b0af0c70e450bb88faab15aaf03ae4f7d064cb69e6520df61a7e21`.
-Score250456047 stored units,14 captures, zero death/bomb rows and `ysopwnab`
-agree. Local provenance/checks remain in
-`reports/local/retail-score-offline-20261026/extra-retail-last-hp-offaxis-v4/`.
-Both newly selected files preserve the original writer's exact metadata bytes.
-The frozen public runtime's full Release Native/DAT suite passes59/59 in1078.17s;
-the maintained-document check is rerun after these selected results are added.
-
-The earlier selected Extra continuation is
-[Extra2,508,068,110](../reports/native/replays/magic/extra/extra-native-nmnb-2508068110-seed46997.rpy),
-29318 bytes, SHA-256
-`e826b1c49b513937098e768ce7d60d544649de6d0d28cd7c6d62275358c95455`.
-It retains the same original retail Extra entry/seed46997 and the verified
-61756-input prefix from2,493,554,650. The regenerated suffix uses the stock v3
-policy with reserve1.2/120, preserve-fire recovery, hit-income1 and the same
-H512/publication256/lead1/nominal1/interval128/beam384/30s schedule. It completes
-NMNB,14/14 in73237 updates/57.5388s including prefix reconstruction,
-55282+5 branch/proposal updates,131 rejected deaths and0 timeouts/overruns/repairs.
-The585.409s ancestor remains charged. Producer/CLI-source hashes match v3 above.
-Full tape SHA-256:
-`7619204268bdbf80150aa180bdf54e0147ec9233c352c0acbcb36d85853c8844`.
-Fresh exact41-word agreement and natural73233 rows pass; natural row SHA-256:
-`ed6b58e464a55a519e665245e29db8c5070c516d0a450965a22b7663cf5174a3`.
-Score250806811 stored units,14 captures, zero death/bomb rows and `ysopwnab`
-agree. Complete local provenance is in
-`reports/local/retail-score-offline-20261026/extra-retail-terminal-orb-income-v5/`.
-
-The final read-only item-economy probe uses the current source ItemManager with
-request/allocation/pickup logging. It changes no gameplay control flow, input or
-RNG. Tasks319/320 preserve exactly the Extra natural rows immediately above and
-the Story4,311,260,760 natural rows above; complete logged pickups equal925/1340
-source-audit points. Per-event `fflush` is required because `th08_replay_check`
-deliberately uses `_exit`. The first buffered attempt's exact gameplay rows pass,
-but its truncated CSV is explicitly incomplete and excluded from whole-run
-economy conclusions. Corrected identities and checks remain local in
-`reports/local/retail-score-offline-20261026/point-income-probe-v7/{extra,story}/`;
-[Status](STATUS.md#measured-point-economy-and-next-scoring-work) owns measured
-totals, limits and the proposed scoring experiments. New replays/reports/tapes
-outside the explicitly selected files remain ignored.
-
-The selected current Extra files are the full-entry
-[2,603,278,620 parent](../reports/native/replays/magic/extra/extra-native-nmnb-2603278620-seed46997.rpy)
-and its
-[2,620,568,090 continuation](../reports/native/replays/magic/extra/extra-native-nmnb-2620568090-seed46997.rpy).
-Both retain original retail seed46997, proper Extra8/4/1/story=true/priorFinalA=false
-and player `ysopwnab`. Fresh41-word terminal and natural NMNB14/14 agreement pass.
-
-| Identity | Full-entry parent | Cash-comparison continuation |
-| --- | --- | --- |
-| Task / owner updates / seconds |324 /72133 /620.136 |338 /72557 /114.434 |
-| Replay bytes |28613 |28968 |
-| Replay SHA-256 |`d6e7b34da1a08ea00889af106dabfb7fb97910cdef54288b3ab29323ad7eeb7c` |`332f5fe46d8f7419bc3e58cf40032d8625060472332f04aa71da637f503d616c` |
-| Full input tape SHA-256 |`602b3859599184c4dcc2de31fc863a3b7b4191d663d6abfbdffb26bafd580546` |`47bf615c33c300dd29ce22cd28c4ca04b17662d9add6d4152b4c7d6a90ee84c9` |
-| Natural rows / SHA-256 |72129 /`9be971dbfb2cb00ef8d6040e02d632d7ea76a3304bc90df9bb9ecedba9640571` |72553 /`cb4de67f40a68533950af55f5b33502397be8e47d7e3483e5a652d363b91d368` |
-| Producer binary SHA-256 |`dbf54e5da1001533f6cdd8eb4029952d5db6834c95294b8c7291587fecd822de` |`0efbbae585285e9b0f2ae3d8a7c35ce006b5c3228b5e33915cf93bb7753746b4` |
-
-The parent uses score-harvest, held/baseline preserve-fire recovery, current
-source drop-count/HP/reach target, source hit-window focus-pulse2, hit-income1,
-priced/upper collection, human/collection/survival bias5, H256/publication128,
-lead8/nominal0/interval8, beam384,12s total search and reserve1.5/240. Its CLI
-is the recorded future-repair v3 source, SHA-256
-`fe4f63d18f860e628baada77e242dd0702b2164bbbca96f8f67028ce25f75d8c`. Its frozen adapter/kernel/proposal sources are
-`a9a505e2267e5c1ac10a96e90a87140e6ae525e94095e42ebf7f0146b5df5000`,
-`8203243bbf77019d3bdcebc57262b602d2beea7befb9d52765cf63415e1508f1` and
-`53e884e46a339f88687d480e92226d90580f0dc7bda1e83beefed6acaf1b8155`, respectively.
-This is a named combined profile, not a component ablation.
-
-The continuation executes60879 literal parent inputs from original entry and
-warms its observers; it resets no world, bullets, items, actors or RNG. Then the
-stock policy uses H512/publication256/lead1/nominal1/interval128, beam384,30s total
-search, reserve1.2/120 and preserve-fire recovery. Up to4 Native32-update fire/focus
-comparisons retain stable ties, preserve the fixed lead/movement and require full
-horizon certificates. It records271 attempts/34 adoptions,138928+6 branch/proposal
-updates,328 rejected future deaths,0 timeouts/overruns and0 future repairs. Its
-CLI source SHA-256 is `7acc4e6c9629ca028977508ffdb6e30c13266a12c35adf27eae5d41969364747`. Parent work stays charged.
-
-Parent follower/checker SHA-256:
-`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5` /
-`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
-Continuation follower/checker SHA-256:
-`0343f2edbd2e66a6ae6fde5b591042690712a32f9b06258c9a2516acb1eb64d5` /
-`039b3134d2edb0da655d3f6089542d2caff9007830ceb5d7e255bf51802d3195`.
-The instrumentation over the parent preserves its stock natural rows and logs
-1042 requests/1041 spawned/1015 collected large points, with1 X-bound rejection
-and0 full-pool rejections. Its exact read-only source/binary/row identities are
-local in `extra-drop-target-h256-v1/pool-audit-v9/`.
-
-Complete frozen sources, compile/link commands, seed-bound manifests, literal
-tapes, resource records and verification outputs stay in
-`reports/local/retail-score-offline-20261026/{extra-drop-target-h256-v1,extra-newbest-cash-compare-v1}/`.
-The final public Native producer reproduces the identical72557-input tape and
-41-word terminal in131.492s, using `--economic-proposals 4` and the same original
-60879-input prefix. Its binary SHA-256 is
-`a92af259282880aba49d5a2550da4f0aeaa44c09bb84cd84b55210dd3ac545f4`; CLI source SHA-256 is
-`71adf15044d54b143845629c155f1db22087bcb0123a57e2faf83e4cad4fe8ba`. The selected replay retains the first verified
-prototype export's exact bytes; public-run exports remain local. The preceding
-public build also passes fresh/natural verification with the same inputs.
-
-Public Native now exposes default-off `--drop-target` and
-`--economic-proposals`; the selected parent additionally uses the separately
-frozen private focus-pulse/repair producer. Neither replay meets the human-score
-gate yet, so Wine playback remains pending. The Native slowdown metadata remains
-the original unmeasured writer value.
-
-The integrated default-off goals pass the normal Release Native/DAT suite
-**59/59 in1191.44s**, plus the maintained-document check. The full suite peaks
-at1,002,758,144 summed-RSS bytes; its minimum host MemAvailable is12,034,150,400
-bytes, above the8GiB abort threshold. No memory abort occurs. Two earlier
-partial suites were deliberately stopped before relinking and remain charged;
-neither is reported as a pass. The final public full-entry Extra continuation
-reproduces the selected exact input tape and terminal at131.492s.
+Retain a future scoring replay only for a freshly verified improvement of the
+project's overall Extra or complete-Lunatic record. Below-record shot results,
+failed tapes, action files and experiment JSON remain local. Exact intermediate
+Magic and Scarlet prefix/verification narratives are available in the
+[fixed validation snapshot](https://github.com/N0zoM1z0/th08-solver/blob/cf277285d64429b4c3720fb5c30eb0f360e7229c/docs/VALIDATION.md#selected-native-progress-replays)
+and [per-task results](experiments/results.tsv); they are not duplicate current
+launch recipes.
 
 ## Selected Extra score replay
 
@@ -1694,8 +526,8 @@ prototype source snapshots are in `alpha-v15-src/`. Policy source SHA-256:
 Native adapter SHA-256:
 `f00d548075dffe1dce60ba95bbdcc8465b71306dcf97a62e525d1e2ef0e1f743`.
 
-The explicit profile is 256-update verification,128 publication,8-update lead,
-250 ms total search,60 ms proposal, held recovery and neutral baseline movement
+The explicit profile is 256-update verification,128 publication, 8-update lead,
+250 ms total search, 60 ms proposal, held recovery and neutral baseline movement
 recovery preserving primary fire intent. Collection uses source pickup reach+2,
 no-boss upper-stage positioning and 5-point collection/economic human preferences;
 active graze goals take priority. Capture reserve is 1.5*observedHP/DPS+240.
@@ -1712,9 +544,9 @@ Wine scoring run or retail playback validation**. It remains a frozen prototype
 result; current-main searches can choose a different action-dependent future.
 
 Handoff checks pass Release Native/DAT CTest **56/56 (933.85 s)** and core
-**36/36 (8.49 s)**. Fresh tape execution costs29.622s in this verification;
-the original38.097s follow remains part of the original experiment's accounting.
-Documentation path/heading checks and14 local chapter-anchor checks pass.
+**36/36 (8.49 s)**. Fresh tape execution costs 29.622 s in this verification;
+the original 38.097 s follow remains part of the original experiment's accounting.
+Documentation path/heading checks and 14 local chapter-anchor checks pass.
 The fresh checks and publication receipt stay in
 `reports/local/handoff-cleanup-20261026/`; only the selected `.rpy` is newly published.
 
@@ -1737,136 +569,37 @@ a separate check, not a property established by the export target header.
 
 ## Resume Extra scoring on main
 
-The [operational contract](STATUS.md#operational-resume-contract) owns the current
-cumulative campaign window, resource bounds and fixed original episodes.
-Current scoring is No Miss/No Bomb with optional captures, prioritizing Scarlet
-Extra9098 and complete Lunatic32796. Magic46997/1805 progress remains preserved.
-The current maintenance pass starts no scoring queue.
+Scoring is paused. This section describes prerequisites for a later owner-approved
+resumption; it is not an active queue or launch authorization.
 
-The ignored local workspace launcher is
-`reports/local/global-score-20261027/run-scarlet-guarded.cjs`. It binds the
-original seed receipt, freezes source/binary/actual arguments, allocates a fresh
-ledger ID and applies the4GiB process/tree and host-memory guards. Count all
-other local owners: a one-to-four-case spec is not a global concurrency lock.
-The older `run-batch.cjs` and2.620B example belong to the fixed
-[historical command snapshot](https://github.com/N0zoM1z0/th08-solver/blob/5929ced/docs/VALIDATION.md#resume-extra-scoring-on-main).
-Do not use their old campaign cap or shot defaults for a new Scarlet trial.
+1. Read [Status](STATUS.md#operational-resume-contract), the cumulative ledger and
+   the relevant source/binary/input/seed-receipt manifests. Fetch main and preserve
+   existing work. Use fresh task IDs and output paths within the recorded budget.
+2. Reuse the declared original episode and its actual checkpoint, or acquire a
+   new original Wine receipt before starting a genuinely new episode. Never select
+   a seed after inspecting Native scores.
+3. Declare NMNB/optional-capture controls and exact search/resource budgets. Keep
+   strict CLI defaults independent from the campaign's explicit relaxed capture goal.
+4. Recompute the complete continuation with the carried world/RNG. Inspect each
+   owner exit, result and audit; a high-scoring prefix is not a route result.
+5. For a strict overall improvement, pass all fresh/natural gates before retaining
+   the replay. Apply the separate all-shot qualification gate before Wine playback.
 
-For newly authorized work, inspect the current frozen packet schema, declare
-entry/prefix, controls, wall/search/proposal budgets and acceptance first, then
-use a unique spec and output name. Never attach another shot/episode's inputs.
-The local orchestration files are not supplied by a fresh clone; production
-solver/build/tests remain C++17/CMake.
-
-After an owner exits, inspect `exit.json`, `run/result.json` and
-`run/score-audit.json`. A launcher can exit0 while a child fails. Native exit5
-can represent valid complete below-target progress; failed, incomplete or
-resource-aborted work cannot certify a result. The relaxed checker is
-`reports/local/score-continue-20261027/verify-no-bomb.cjs`; it requires fresh
-verification paths and compares exact terminal, score, zero misses/bombs,
-actual capture outcomes and the eight-byte name. Older strict all-capture
-checkers are for their original goal, not an optional-capture candidate.
-
-Only a verified new overall Extra or complete-Lunatic record retains a future
-replay. Preserve original writer bytes and all earlier selected replays; do not
-fabricate slowdown metadata. Rejected trials retain parameters, inputs, failures
-and costs in the experiment journal. Remote deployment additionally needs the
-source/binary/library/DAT/input/receipt bindings and cross-host canaries in Status.
-
-For code changes, build Release with `--parallel 2` and stop relinking before
-verification. Run relevant real-DAT checks and normal CTest in a guarded owner.
-The latest unchanged-binary normal coverage is1529's59 cases plus1545's3-case
-recovery, all62 covered; the original host-memory abort remains charged.
-Documentation-only changes run the documentation CTest.
-
-### Historical Native and online commands
-
-These commands retain earlier benchmark/recovery profiles. They are not the
-active retail-seeded campaign or an instruction to resume Wine solving.
-
-Build with the private DAT configuration described under
-[local build](#local-build-and-core-checks) and
-[Native reproduction](#native-headless-reproduction-and-acceleration-checks).
-The following is the historical integrated seed10025
-profile that previously completed at 2,453,582,120, NMNB/14/14:
-
-```sh
-build-headless/th08_shadow_style game_data_donottrack/th08.dat \
-  reports/local/extra-main-next 8 4 1 10025 score-harvest 100000 1 900 \
-  --verify-horizon 256 --publish-horizon 128 --held-recovery 1 \
-  --attack-pacing 1 --baseline-recovery 1 --search-budget-ms 250 \
-  --priced-collection 1 --upper-stage 1 --collection-bias 5 --human-bias 5 \
-  --capture-factor 1.2 --capture-padding 120
-```
-
-For the integrated v15-style seed 19732 profile, change the seed and use
-`--capture-factor 1.5 --capture-padding 240`. Its last main run **failed 13/14**;
-this command does not promise the selected prototype's2,564,311,730. Freeze
-source/binary/options and report every attempt. Wall-time budgets, timeouts and
-proposal ordering can change the trajectory. Prefer a recorded bounded failure
-investigation over repeatedly searching until only a favorable tape is reported.
-
-After a complete solve, verify full inputs and the original-writer replay:
-
-```sh
-build-headless/th08_shadow_follow --dat game_data_donottrack/th08.dat \
-  --actions reports/local/extra-main-next/plan.actions \
-  --output reports/local/extra-main-next/fresh-follow.json \
-  --stage extra --difficulty 4 --shot 1 --seed 10025 --story 1 \
-  --input-profile sampled-gameplay --frames 100000
-build-headless/th08_replay_check game_data_donottrack/th08.dat \
-  reports/local/extra-main-next/native.rpy reports/local/extra-main-next/natural.rows \
-  --score-audit reports/local/extra-main-next/natural-audit.json \
-  --require-all-captures > reports/local/extra-main-next/natural.json
-```
-
-Require matching all 41 terminal words, score and every capture outcome/bonus.
-A failed or incomplete solve cannot certify a successful full run; its partial
-score stays labeled as such. The synchronous Native owner waits during planning,
-so its throughput is not actual online FPS. The live `th08_shadow_online` CLI
-now exposes pacing, reserve, price/staging/form, baseline recovery and total
-search budget. For example, after launching an isolated Wine observer/owner:
-
-```sh
-build-issue1/th08_shadow_online game_data_donottrack/th08.dat RUN_DIRECTORY \
-  reports/local/extra-live/comparison.json mpc 2400 behavioral h256-held \
-  score-harvest --attack-pacing 1 --baseline-recovery 1 --search-budget-ms 250 \
-  --lead-updates 24 --publish-horizon 128 --priced-collection 1 --upper-stage 1 \
-  --collection-bias 5 --human-bias 5 --capture-factor 1.2 --capture-padding 120
-```
-
-Create the output parent first. `RUN_DIRECTORY` must contain the real observer's
-versioned start, journal and mapped command file. This is the failed wine-64
-profile, not a complete online result. Lead is an immutable1..32-input prefix;
-publication must exceed lead and fit both the complete certificate and128-input
-wire capacity. Invalid/duplicate controls are rejected before waiting for an
-owner. Search telemetry is `comparison.json.searches.tsv`; preserve it with the
-report, original RNG start, frozen binary/source/options and actual inputs.
-The owner continues while branches run. Completion, NMNB and capture/export
-checks are required separately from favorable average FPS or publication slack.
-With `--baseline-recovery 1`, `--recovery-style expert|zen` selects the alternate
-movement policy, and `--recovery-fire capture` enables new fire in that recovery
-instead of preserving the primary pacer's fire intent. Defaults remain
-baseline/preserve. These controls keep the original total budget and forced lead;
-their extra Native work is charged. Wine-66 is a separately recorded trial of
-expert/capture, not an established replacement for the complete online PB.
-
-Those older commands used proposal H24/beam192 and an8-update interval. Current
-Native horizon/beam/lead/publication overrides are listed above; do not infer a
-fixed current budget from an old command. These Native-selected seeds and live
-Wine examples remain historical, with online MPC paused.
+Old 3B/5B campaigns and online-controller commands are retained in the
+[historical snapshot](https://github.com/N0zoM1z0/th08-solver/blob/cf277285d64429b4c3720fb5c30eb0f360e7229c/docs/VALIDATION.md#resume-extra-scoring-on-main).
+They are not recommended commands for resuming the current episode.
 
 ## Selected online recordings and replay provenance
 
 These are preserved online/media results with their own profiles. They do not
-become the producer of the selected2.564-billion Native replay above.
+become the producer of the selected 2.564-billion Native replay above.
 
 The owner-requested [recorded Stage 4A replay](../reports/native/replays/online/shadow-recording-v2--stage4a-d3-s1-seed34235.rpy)
-corresponds to the actual split-capture Lunatic Marisa/Alice practice, real seed34235.
+corresponds to the actual split-capture Lunatic Marisa/Alice practice, real seed 34235.
 The original Native replay writer consumes a fresh execution of all 43597 actual
 sampled input/control receipts; each receipt agrees with the Wine journal before
 export. Natural replay then completes all 43597 calculation rows, zero deaths/bomb
-inputs, raw end score27231727 and the pinned 1.00d executable target. Its replay
+inputs, raw end score 27231727 and the pinned 1.00d executable target. Its replay
 input clock is 43528, a different unit from calculation receipts. This is an
 export of verified actual inputs, not a different searched route; its producer
 metadata is Native and its playback clock is not the video's wall clock.
@@ -1875,17 +608,17 @@ Replay SHA-256: `0e670b832b595bb153429407d17c03d280450dcfe19dbcca002145de2029a92
 Original matched video SHA-256: `7f5f4d2938840971b7eeb23c05d56d4ba86c25096ab16a1f95a2e0b9ed4b31a0`.
 The original video is 770.566 seconds, H.264 640x480 with actual AAC stereo game
 audio; videos remain local. A later compressed delivery retains this case identity.
-The compact 640x480 fast-CRF26/AAC128k delivery is 191516144 bytes over 770.584
+The compact 640x480 fast-CRF 26/AAC 128k delivery is 191516144 bytes over 770.584
 seconds, with SHA-256 `003be7ce892e8e1f366eb89cc9454d78175198eae585d25b43c0eeeeb4d971c8`.
 Its complete decode passes; capture frame timing is retained apart from four
 duplicate-timestamp drops required for the encoded delivery.
 Copy the replay into an unused `replay/th8_XX.rpy` slot in an owned game copy.
 The [standalone Final B replay](../reports/native/replays/online/shadow-recording-v3--finalb-d3-s1-seed29085.rpy)
-corresponds to real seed29085, Lunatic shot1, the `fbb7758` client and V2 dialogue
+corresponds to real seed 29085, Lunatic shot 1, the `fbb7758` client and V2 dialogue
 advancement. Fresh following and export agree on all 30333 actual receipts,
-zero miss/bomb, zero drift/player error and raw live score93642342. The 8845-byte
+zero miss/bomb, zero drift/player error and raw live score 93642342. The 8845-byte
 replay naturally completes NMNB with the pinned 1.00d target. Natural playback
-reports 30330 rows, replay input clock29829 and end score127392342: the original
+reports 30330 rows, replay input clock 29829 and end score 127392342: the original
 final-practice/playback clear-bonus offset is 33750000, as documented below.
 This is not a row-for-row terminal or score equality claim; the file preserves
 the verified actual inputs through the original writer. Actual retail playback
@@ -1895,19 +628,19 @@ Final B replay SHA-256: `e565f51c06e210e3242d1e136133184023863ca170b7b83d2810dba
 Matched capture-quality MP4 SHA-256: `9f94a8e74b56836211bab62a3a06d763577e33512a43004557b936b41d71fff8`.
 The MP4 is 523.983 seconds/672570952 bytes, with its capture video stream copied
 and audio aligned by trimming 10816 samples at 48 kHz. Its complete decode passes.
-The 20-second spell158 Kaguya preview starts at movie second198, remains 640x480,
+The 20-second spell 158 Kaguya preview starts at movie second 198, remains 640x480,
 and is 6748573 bytes, SHA-256 `b8eb00563589ff2fceec2d6377e4acaa8b95d14ba94d62bcb5bd90081eacc4ac`.
 The [full 4A-to-Final-B replay](../reports/native/replays/online/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy)
-corresponds to the actual complete Lunatic shot1 story, real seed40755, identical
+corresponds to the actual complete Lunatic shot 1 story, real seed 40755, identical
 `fbb7758` client, prior-Final-A-clear and dialogue advancement recorded in V2.
 Fresh following and export agree on all 121533 actual receipts, 121528 calculations
 and five handoffs, zero miss/bomb/player-position error. Numeric drift remains
 telemetry. The 34489-byte replay naturally completes NMNB through raw stages
-0/1/2/3/5/7, 121654 playback rows and raw end score218996507, matching the live
+0/1/2/3/5/7, 121654 playback rows and raw end score 218996507, matching the live
 terminal. Its per-stage input clocks are 14049/15458/14962/24775/21583/29811;
 these are separate from receipt/calculation counts and video wall time. This is
 the original writer's export of verified actual inputs, without another search.
-Selected Stage2 also completes actual normal-mode retail replay timing with
+Selected Stage 2 also completes actual normal-mode retail replay timing with
 all 15216 callback packets identical across the four renderer configurations and
 no death/bomb rows. A held-out normal-mode Final B playback completes with 29501
 callbacks, stage-complete set, no death/bomb rows and matching score 218996507.
@@ -1916,13 +649,13 @@ These are selected-stage playback checks. Full retail playback remains unchecked
 Story replay SHA-256: `202622b4e52e3cedc959f5f41d3e745b8f9d51faad33cf09571834f884758c2a`.
 Matched original MP4 SHA-256: `ac7fe1f8abdeb0ecee88d5b7e7b2e26cfa76ae0ee20b56076263dbd9b77fbe03`.
 It is 2129.716 seconds/2608210712 bytes, with capture video copied and audio
-aligned by trimming 21242 samples at48kHz. Complete media decode passes. The
-compact full-story delivery retains 640x480 and capture cadence, fast CRF26 and
-AAC128k from aligned original PCM: 2129.717 seconds/683523714 bytes, SHA-256
+aligned by trimming 21242 samples at 48 kHz. Complete media decode passes. The
+compact full-story delivery retains 640x480 and capture cadence, fast CRF 26 and
+AAC 128k from aligned original PCM: 2129.717 seconds/683523714 bytes, SHA-256
 `615c78f3c0cdfe2c9c7f8536c573355941a9c3e018c9c94f37bac8de4fbfee9c`.
 Its full video/audio decode passes, with eight duplicate-timestamp drops and no
 interpolation. The stopped first-clear
-seed24474 attempt is not published as a completed route.
+seed 24474 attempt is not published as a completed route.
 
 `th08_shadow_export DAT RECORDING_DIRECTORY OUTPUT.rpy` reads the versioned start
 record and requires the owner's Complete marker plus an exact-length journal.
@@ -1935,27 +668,27 @@ they do not establish independent physics equivalence or actual retail playback.
 
 The owner's un-compacted Extra delivery is the complete actual `wine-35` movie:
 `reports/local/shadow-runtime-v1/wine-35/extra-baseline-online.mp4`,836.633 seconds,
-1128157155 bytes,640x480 H.264 and48kHz stereo AAC. No second video encode is used.
+1128157155 bytes,640x480 H.264 and 48 kHz stereo AAC. No second video encode is used.
 Its SHA-256 is `eec2c0a6e9ca064a78e7db45f83341e6d050844b5167029e7bc9275460d312c5`.
 Both its video and the original Matroska capture have canonical Annex-B stream
 SHA-256 `4f7faee6c923b16d974196ce692b13f11479b5d5c3829d4795d620f738d4fd8f`.
-Audio alignment trims13995 original48kHz samples. Complete video/audio decode
+Audio alignment trims 13995 original 48 kHz samples. Complete video/audio decode
 passes. The matching local `complete-extra.rpy` has SHA-256
 `dea524c41bf88b9355ff7d6cd1a978515e1a702ec47ae5d8e47597589104b058`;
 the movie and replay remain ignored, with the earlier live/following evidence in Status.
 
 ## Source capture audit and Native scoring contracts
 
-The October25 read-only source-lifecycle audit repeats both preserved natural
-replays. All121654 story rows and46497 Extra rows remain byte-identical to the
+The October 25 read-only source-lifecycle audit repeats both preserved natural
+replays. All 121654 story rows and 46497 Extra rows remain byte-identical to the
 original captures: row SHA-256 respectively
 `17815533a8e343a54de382f108e88a89cebf184e434e57b877f0c9fbec33330e` and
 `452fc7cc120a6da7c81532eb98f19c47b185bd2fd7e505d82a69016fffd81074`.
-Story's missing Last Spells are one-based cards13/32; ordinary cards6/10 end with
-timer-transition failure. The other33 captures include Kaguya's timed Last Spells.
-Extra captures14/14, including card205. Bonus award values come from `EndSpell`,
+Story's missing Last Spells are one-based cards 13/32; ordinary cards 6/10 end with
+timer-transition failure. The other 33 captures include Kaguya's timed Last Spells.
+Extra captures 14/14, including card 205. Bonus award values come from `EndSpell`,
 not from an OCR estimate or a positive score delta that might include item pickups.
-Stored/displayed terminal scores are218996507/2189965070 and116696962/1166969620.
+Stored/displayed terminal scores are 218996507/2189965070 and 116696962/1166969620.
 These observations describe the matching Native playback and its published state
 projection; replay mode deliberately does not update persistent capture history.
 
@@ -1968,13 +701,13 @@ build-issue1/th08_replay_check game_data_donottrack/th08.dat \
   --require-all-captures
 ```
 
-Exit3 means natural playback succeeded but complete capture coverage failed;
-exit2 means playback/reporting failed. The report uses source card catalogues for
+Exit 3 means natural playback succeeded but complete capture coverage failed;
+exit 2 means playback/reporting failed. The report uses source card catalogues for
 visited stages, retains skipped Last Spells and reports each lifecycle outcome
 and bonus. `observations` counts replay calculation rows in this mode, not batched
 Session calls. Start/end timestamps count GameManager calculations. The two
 focused real-data regressions cover the old story's negative capture case and a
-complete Stage1 scoring4/4 case, fresh execution and natural replay.
+complete Stage 1 scoring 4/4 case, fresh execution and natural replay.
 
 The bounded Native comparison tool is:
 
@@ -1992,10 +725,10 @@ The score base enables current-item collection and literal boss aiming.
 Optional `--collect-items 0|1` and `--aim-boss 0|1` independently override those
 two controls. The result records both resolved booleans and the score-goal
 revision, so later ablation runs need no source edits. No new ablation matrix is
-required for the current score-improvement campaign.
+required by the recorded score-improvement profile.
 `score-survival` enables the separate `--survival-focus 0|1` control, recording
-form-goal revision2. `--survival-bias VALUE` records the nonnegative prior strength
-(default0.01). `score-harvest` adds quiet nonspell boss collection and an existing
+form-goal revision 2. `--survival-bias VALUE` records the nonnegative prior strength
+(default 0.01). `score-harvest` adds quiet nonspell boss collection and an existing
 edge prior; `score-precollect` additionally prepares current unconditional enemy
 drops before firing. `--boss-collect 0|1` and `--precollect 0|1` independently
 override these collection controls; both require item collection enabled. Policy
@@ -2006,12 +739,12 @@ finished collection target. `--verify-horizon 64|128|256`, `--publish-horizon 64
 resolved values, failed branches and retained-window counts are reported. The
 read-only score audit counts physical graze awards separately from displayed
 graze. Its frozen negative replay regression checks their source bounds and the
-unchanged complete25-field row hash.
+unchanged complete 25-field row hash.
 Per-spell audits now record source-boundary score, collected-orb, point-count and
 point-value snapshots, plus physical/ordinary/suppressed graze counts. The start
 hook follows preceding-reward settlement; a focused fast-transition regression
 guards against charging that bonus to the new spell. Fields remain additive in
-audit schema1 and no instrumentation changes gameplay/RNG.
+audit schema 1 and no instrumentation changes gameplay/RNG.
 `score-flow`/`--survival-flow 0|1` exposes the separate source-survival stream
 proposal, with its resolved strength and flow-goal revision recorded. The policy
 contract checks that ordinary attacks keep the harvest result and that an active
@@ -2020,7 +753,7 @@ Mirroring a distant stream must change its proposed endpoint; this regression
 fails when the macro omits the source's20-pixel graze expansion. Native safety
 verification remains unchanged, and the corrected complete-duration trial's
 13/14 failure remains recorded in Status.
-Default Native budgets are H64/lead8/110ms/60ms; overrides are explicit.
+Default Native budgets are H64/lead 8/110 ms/60 ms; overrides are explicit.
 `--attack-pacing` has a separate contract for excluding source damage reduction
 from mature DPS, waiting for extreme-youkai state, profitable/unprofitable orb
 samples, bounded unproductive warmup, capture deadlines and fire intent in both
@@ -2037,11 +770,11 @@ endpoint/phase behavior without prescribing that incidental first movement.
 The optional `--capture-factor`/`--capture-padding`, price height, stage anchor
 and two human preferences are independently reported. Complete-duration local
 cases retain both higher scores and weaker outcomes; read-only price probes
-require byte-identical original25-field replay rows before interpreting values.
+require byte-identical original 25-field replay rows before interpreting values.
 The tool records all rejected work,
 timeouts, owner/branch Native CPU excluding file I/O, movement/form metrics and
-terminal41-word projection. Periodic Z advances dialogue. Story mode declares
-prior FinalA history except Extra. Output is a tape, source score audit, complete
+terminal 41-word projection. Periodic Z advances dialogue. Story mode declares
+prior Final A history except Extra. Output is a tape, source score audit, complete
 result and original-writer replay for a successful terminal. A synchronous owner
 pauses during planning; this tool never supplies online FPS evidence.
 Fresh `th08_shadow_follow` accepts `--input-profile sampled-gameplay` and
@@ -2049,18 +782,16 @@ Fresh `th08_shadow_follow` accepts `--input-profile sampled-gameplay` and
 accepts a final optional proposal-preference argument after its existing horizon
 profile and records its name/revision. Baseline remains unchanged by default.
 
-Core CTest cases: 38
-
 Normal core tests require no game assets or reconstruction. Optional source comparisons
 add two CTests (38 total). Native builds add process, semantic, hazard-probe and
 unsupported-instruction and online-policy contracts; private DAT enables the
 complete-scene, online-stage/replay, shadow-follow and planner-prefix CTests (54 total,
 including the score-audit and complete style-scene regressions).
 An optional `TH08_SHADOW_FAILURE_TRACE` CMake FILEPATH enables one additional
-retained-journal regression (55 total) against the private seed42386 Stage4B trace.
-`TH08_SHADOW_PULSE_TRACE` adds the private seed56891 move-then-stop regression
-(56 total with both traces). It reconstructs all21120 actual receipts, requires
-a fatal held direction and a surviving256-update16-step pulse, compares all256
+retained-journal regression (55 total) against the private seed 42386 Stage 4B trace.
+`TH08_SHADOW_PULSE_TRACE` adds the private seed 56891 move-then-stop regression
+(56 total with both traces). It reconstructs all 21120 actual receipts, requires
+a fatal held direction and a surviving 256-update 16-step pulse, compares all 256
 rows with a literal Native tape and checks the actual lead/parent remain unchanged.
 
 The common-start shadow follower compares independently initialized Native
@@ -2083,9 +814,9 @@ synchronization only; replayed input is not a new solver or live Wine result.
 The same real-data test also verifies the complete true-RNG native branch,
 rejects a fatal stationary candidate, checks parent world/RNG/filesystem isolation
 and executes every accepted action through the original Session. Held-tail verification is compared with literal Native execution for the same
-complete64-input action tape, including a released shoot bit and parent isolation.
-The optional retained4B test reconstructs all34256 original receipts: the same
-32-input prefix dies at62 with a Policy tail and survives64 when held. It checks
+complete 64-input action tape, including a released shoot bit and parent isolation.
+The optional retained 4B test reconstructs all 34256 original receipts: the same
+32-input prefix dies at 62 with a Policy tail and survives 64 when held. It checks
 the full prefix and parent state, with its diagnostic timeout recorded separately
 from live search budgets. The core wire
 contract also checks bounded publication of a longer successful certificate,
@@ -2152,16 +883,16 @@ boundaries, such as rendering, limiting, scheduling and journal writes; they do
 not attribute a slow frame to one component. Total elapsed time starts at the
 first hooked calculation's entry and ends at the last projection timestamp.
 `TH08_SHADOW_RENDER_TIMING=1` adds an independent `render-times.bin` journal
-without changing the existing228-byte receipt format. Its16-byte little-endian
-header contains uint32 magic0x31544d52, version1, sample size64 and reserved0.
+without changing the existing 228-byte receipt format. Its 16-byte little-endian
+header contains uint32 magic 0x31544d52, version 1, sample size 64 and reserved 0.
 Each sample has eight uint64 words: receipt sequence, raw stage, elapsed ns,
 Present-end period ns, BeginScene-to-EndScene ns, original Present-call ns, scene
-count and flags (1 no draw,2 failed Present,4 repeated receipt). The first period
+count and flags (1 no draw, 2 failed Present, 4 repeated receipt). The first period
 is unavailable. Draw includes submission/synchronization; Present includes backend
 waits. Remaining period time includes original pacing, other callbacks, scheduling
 and preceding profiling writes. These are measured boundaries, not GPU-only costs.
 The core wire contract also checks the disabled legacy refresh setting and the
-exact128-receipt refresh boundary, including spacing after a failed attempt.
+exact 128-receipt refresh boundary, including spacing after a failed attempt.
 
 `TH08_SHADOW_OBSERVE_REPLAY=1` requires render timing and rejects history/dialogue
 flags and non-replay gameplay. It forwards original input calls and lets the
@@ -2172,41 +903,41 @@ counts observed callbacks, not certified live calculations. Discontinuities are
 retained in `replay-clock-events.tsv`. Ordinary live cursor checks remain strict.
 A selected-stage replay timing run has no Native planner or capture process; record
 its playback mode, software-renderer threads, environment and terminal separately.
-The selected Stage2 comparison uses Wine8, llvmpipe with two renderer threads,
+The selected Stage 2 comparison uses Wine 8, llvmpipe with two renderer threads,
 private game audio, no planner/capture, and the same story replay hash above.
-Only the per-process `vblank_mode` setting changes from unset to0. Mean
-presentations/s improves56.167→59.343; mean Present time7.900→2.342ms.
-All15216 packets agree exactly, including input and all41 fields. The
+Only the per-process `vblank_mode` setting changes from unset to 0. Mean
+presentations/s improves 56.167→59.343; mean Present time 7.900→2.342 ms.
+All 15216 packets agree exactly, including input and all 41 fields. The
 [Mesa option documentation](https://dri.freedesktop.org/wiki/ConfigurationOptions/)
-defines0 as disabling swap-interval synchronization. This remains an opt-in
+defines 0 as disabling swap-interval synchronization. This remains an opt-in
 measured environment choice; local slow windows and scheduling tails remain.
-A further matched control changes only renderer threads: LP1 reaches41.045/s,
-whereas LP4 reaches59.997/s with mean Present0.043ms. Both match all15216 LP2
-packets exactly. LP4 has a59.811/s slowest complete5-second window and18.729ms
+A further matched control changes only renderer threads: LP 1 reaches 41.045/s,
+whereas LP 4 reaches 59.997/s with mean Present 0.043 ms. Both match all 15216 LP 2
+packets exactly. LP 4 has a 59.811/s slowest complete 5-second window and 18.729 ms
 period p99. It uses additional rendering workers while solver concurrency stays
 fixed. [Mesa documents LP_NUM_THREADS as the renderer thread count](https://docs.mesa3d.org/envvars.html#lp-num-threads).
-A held-out normal-mode Final B check uses the unchanged LP4/vblank0 profile,
+A held-out normal-mode Final B check uses the unchanged LP 4/vblank 0 profile,
 original pacing and 640x480, private game audio and no planner/capture. Its 29500
 Present samples average 59.95552/s; the slowest complete 5-second window is 58.00598/s
-and period p99 is 19.81930ms. There are no repeated receipts, absent draws or failed
+and period p99 is 19.81930 ms. There are no repeated receipts, absent draws or failed
 Present calls. The 29501 callback packets end at stage-complete, score 218996507 and
 zero death/bomb violations. This is held-out rendering and replay evidence, rather
-than an additional solver clear or every-frame60Hz guarantee.
-The buffered solver profile separately declares512 verification,128 publication,
-lead32,480ms total and128-receipt fresh-planning intervals. Keep this latency and
-compute budget distinct from the original110ms/lead8 controls.
+than an additional solver clear or every-frame 60 Hz guarantee.
+The buffered solver profile separately declares 512 verification,128 publication,
+lead 32,480 ms total and 128-receipt fresh-planning intervals. Keep this latency and
+compute budget distinct from the original 110 ms/lead 8 controls.
 
 Optional trailing arguments `[behavioral|exact] [h32|h64|h64-held|h128-held|h256-held|h256-pulse|h512-buffered|h128-recorded|h64-recorded]` select comparison and
 planning profiles (defaults `behavioral h32`).
-The recorded mode uses128 verification/publication, lead8 and110ms total, with
+The recorded mode uses 128 verification/publication, lead 8 and 110 ms total, with
 Native conditional hazard recording and independent full-path verification.
 `recorded_*` fields separate geometry/search work and timeouts; its recording
 updates are also charged in `proposal_*` totals. The real-data contract checks
 literal replay, immutable lead, parent RNG/filesystem isolation and the retained
 4B failure; the ordinary current-memory Policy remains unchanged.
-The `h64-recorded` portfolio preserves H64 nominal guidance, then verifies128
+The `h64-recorded` portfolio preserves H64 nominal guidance, then verifies 128
 updates for a recorded repair and preserves its longer literal continuation.
-Publication remains64. JSON separates base/maximum verification, publication,
+Publication remains 64. JSON separates base/maximum verification, publication,
 recording horizon and profile revision. The API also supports independently
 verified shorter windows; the regression rejects overstating their length.
 Live comparison records numeric bullet/laser digest drift, player differences up
@@ -2507,7 +1238,7 @@ invalid identities/outcomes and known interval/binomial-tail values. Spell pract
 remains a proxy; it does not establish complete-story probability.
 
 The independent Release campaign freezes shot 0, Lunatic, seed 0, non-practice
-6B story entry, H64/beam192/cell16/guard16, reach filter and soft phantom option.
+6B story entry, H64/beam 192/cell 16/guard 16, reach filter and soft phantom option.
 It tests both no-model and the unchanged four-file risk model. Actual spell-166
 prefixes have 42681/45032 updates; each measured continuation has 2400 decisions.
 Warming does not replay tie RNG, so compare each continuation with its own frozen
@@ -2649,7 +1380,7 @@ and supported v4 schema, verifies replay hashes, creates a new output directory,
 requires natural successful captures with every expected row/fingerprint.
 
 ```sh
-./build-headless/th08_replay_suite --checker build-headless/th08_replay_check --dat game_data_donottrack/th08.dat --manifest reference/config/replay-fixtures.json --schema reference/scripts/replay-external-schema.json --corpus reference/tests/fixtures/replays/th08-1.00d/accepted --output reports/local/fidelity --jobs 8
+./build-headless/th08_replay_suite --checker build-headless/th08_replay_check --dat game_data_donottrack/th08.dat --manifest reference/config/replay-fixtures.json --schema reference/scripts/replay-external-schema.json --corpus reference/tests/fixtures/replays/th08-1.00d/accepted --output reports/local/fidelity --jobs 1
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92 --stage 4b --spell 92 --difficulty 3 --seed 0 --rollout 64 --diversity-cell 16 --shoot 1 --checkpoint 60 --keep 12 --frames 10000 --seconds 180
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/spell92-verify --stage 4b --spell 92 --difficulty 3 --seed 0 --verify reports/local/spell92/plan.actions
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/story --stage 1 --story 1 --difficulty 3 --seed 0 --rollout 64 --beam 384 --diversity-cell 16 --checkpoint 120 --keep 64 --shoot 1 --frames 250000 --seconds 2400
@@ -2658,7 +1389,7 @@ requires natural successful captures with every expected row/fingerprint.
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/final-b --stage 1 --story 1 --difficulty 1 --shot 1 --seed 0 --final-route b --rollout 64 --beam 384 --diversity-cell 16 --checkpoint 120 --keep 64 --frames 350000 --seconds 3000
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/extra --stage extra --story 1 --difficulty 4 --shot 11 --seed 0 --frames 350000 --seconds 3000 --diversity-cell 16
 ./build-headless/th08_hazard_probe --dat game_data_donottrack/th08.dat --stage 4b --spell 92 --difficulty 3 --seed 0 --event-update 393 --leads 393,360,320,280,240,200,160 --output reports/local/spell92-probe.json
-./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --replay-dir reports/native/replays --output reports/native/archive/planner_current_summary.json
+./build-headless/th08_planner_report --root reports/local/campaign --fidelity reports/local/fidelity/summary.json --known-binary-sha256 01cdab0637be646f45d3e0db12734837a979aa5a8e218fc8dabc7e427f0171e8 --replay-dir reports/local/campaign/archive/replays --output reports/local/campaign/planner_current_summary.json
 ```
 
 `reference/` above is a placeholder for supplied pinned corpus files, not a runtime
@@ -2668,7 +1399,7 @@ not count as a full gate. `--rows FILE --schema FILE` independently fingerprints
 existing capture. One Session step can perform multiple replay calculations; capture
 rows and API call counts are checked separately.
 
-The current measured corpus result is **106/108**, not the handoff's recorded 108/108.
+The recorded pinned-corpus result is **106/108**, not the handoff's recorded 108/108.
 `lunatic-1-b` ends early at 36200 rows; `lunatic-11-a` has all 116281 rows but a different
 fingerprint. Both reproduce with O0/O3 and a fresh pinned full native Debug build;
 restoring the draw chain does not fix them. Their retail-divergent row and cause remain
@@ -2681,8 +1412,8 @@ forking, outside native timing. The first recorded comparison campaigns predate 
 metadata addition; the retained spatial-planner binary is identified separately in
 their evidence. That explicit composer hash is specific to those archived campaigns;
 it must not be assigned to other builds. New campaigns use producer-recorded hashes.
-Concurrent campaign wall times are not isolated single-core benchmarks. The current
-remote campaigns use Linux x86_64, AMD EPYC 9654 and GCC 13.3 Release, with contraction
+Concurrent campaign wall times are not isolated single-core benchmarks. Those
+recorded remote campaigns used Linux x86_64, AMD EPYC 9654 and GCC 13.3 Release, with contraction
 disabled. Local diagnostic probes use AMD EPYC 7B12/GCC 12.2 Release. Independent jobs
 have task-specific scratch/output directories, low CPU/I/O weights, bounded memory
 and no additional swap; the shared host's other workloads are not modified.
@@ -2764,7 +1495,7 @@ mean that every planned sample pair has been observed.
 ./build-headless/th08_planner_report --root reports/local/seed-campaign --fidelity reports/local/seed-campaign/fidelity-v1/summary.json --group training-c16 --group training-c32 --group holdout-c16 --group holdout-c32 --group training-resume-c16 --group training-resume-c32 --group holdout-resume-c16 --group holdout-resume-c32 --replay-dir reports/local/seed-campaign/archive/replays --failed-actions-dir reports/local/seed-campaign/archive/failed-actions --output reports/local/seed-campaign/planner_seed_summary.json
 ```
 
-The current full-run ledger uses all four portfolio groups:
+The archived full-run ledger used all four portfolio groups:
 
 ```sh
 ./build-headless/th08_planner_report \
@@ -2802,7 +1533,7 @@ same floating-point flags. An independent IPO build uses the baseline source and
 with the measured cache gain.
 
 Build each source snapshot into its own measurement directory. For example, the
-seed-4455 full-tape workload on the current build is:
+seed-4455 full-tape verification command is:
 
 ```sh
 ./build-headless/th08_plan --dat game_data_donottrack/th08.dat --out reports/local/perf-seed4455 --stage 1 --story 1 --difficulty 3 --seed 4455 --verify reports/native/archive/replays/training-resume-c16--s4455.actions
@@ -2818,7 +1549,7 @@ prefix must retain exit 2, `verified:false` and no complete terminal.
 The cache build and the separate IPO build reproduce all 108 baseline case tuples
 without changing the two reference failures. Additional raw captures of both failing
 fixtures match byte for byte, as do all 3706547 calculation rows from the 16 new
-seed routes. The additional training-only planning pair uses the original cell16
+seed routes. The additional training-only planning pair uses the original cell 16
 seed-4455 prefix and unchanged 900-second continuation profile; its full actions and
 all deterministic plan fields match after excluding timing/producer identity.
 Native timing excludes file I/O; shared-host scope CPU includes compilation and
@@ -2842,7 +1573,7 @@ behavior, so it is not an independent retail physics oracle.
 The export fix's full Release native suite passes 36/36 CTests in 950.99 seconds,
 including complete real-data scenes. Earlier receipt hardening passed 35/35 in
 751.96 seconds before the export regression was added. Concurrent host workloads
-make these suite wall times unsuitable as isolated solver benchmarks. The current
+make these suite wall times unsuitable as isolated solver benchmarks. That historical
 full 108-fixture run retains exactly the prior row counts, fingerprints and outcomes:
 106 pass and the same two failures remain. No expected fingerprint is changed.
 After the repair utility and its additional contracts, all 35 tests excluding the
@@ -2858,7 +1589,7 @@ trailing-action rejection, a death at update 382 and budget exhaustion before up
 search frame/time limits apply to planning episodes. Bound verification separately
 with a process timeout when running a campaign.
 
-The updated upstream polar math also changes four Stage6b collision values. The named
+The updated upstream polar math also changes four Stage 6b collision values. The named
 `stage6b-02ff72f-semantic-v1` contract keeps the old `stage6b-semantic-v1` fixture intact,
 pins the new source/geometry, and retains strict fresh replay and all 18 latch probes.
 Neither contract asserts universal cross-host float identity.
@@ -2950,6 +1681,8 @@ does not establish an unpaused controller, deadline compliance or all-seed succe
 
 ## Local build and core checks
 
+Core CTest cases: 38
+
 Requires CMake 3.16+, C++17 and OpenSSL development libraries. Linux x86_64 is tested.
 Modern float32 with contraction disabled is the numerical profile; no fast-math.
 
@@ -2981,7 +1714,7 @@ is valid benchmark evidence and not a solved scene.
 ./build/planner_bench > reports/local/planner_benchmark.json
 ```
 
-ID179 verification checks exact events/terminal occupancy, RNG isolation, checkpoint
+ID 179 verification checks exact events/terminal occupancy, RNG isolation, checkpoint
 copy/resume and unknown-opcode rejection. The normal tool compares four strategies for
 seeds 0, 1, 65535, storing twelve seed-qualified routes and a summary. It also checks illegal
 and incomplete replay tapes. Raw assets are not extracted or committed.
@@ -3032,24 +1765,24 @@ ctest --test-dir build-headless --output-on-failure
 ./build-headless/th08_headless --dat game_data_donottrack/th08.dat --stage extra --spell-id 204 --difficulty 4 --seed 0 --strategy spell-portfolio --frames 6000 --actions reports/local/id204.actions --output reports/local/id204-native.json
 ```
 
-The real-data CTest runs Stage 1 to clear (22176 updates), ID179 through its original
+The real-data CTest runs Stage 1 to clear (22176 updates), ID 179 through its original
 wrapper/end (1292 updates, activation at 92) for seeds 0/1/65535, stationary collision
 at 382, and retained/adapted boundaries for IDs 85, 89, 93, 198 and 201. IDs 85, 89,
-93 and 198 complete for seeds 0/1/65535; ID201 preserves its generic WAIT collision at
+93 and 198 complete for seeds 0/1/65535; ID 201 preserves its generic WAIT collision at
 362 and requires the seed-0 portfolio completion at 4292. Portfolio IDs 193/195/199
-also run through their complete wrappers. ID202 retains its generic WAIT collision at
+also run through their complete wrappers. ID 202 retains its generic WAIT collision at
 3265 and its WAIT-only portfolio collisions at 4204/4216/3613 for seeds 0/1/65535;
 its original 12-update horizon and disabled future-ECL adapter are checked explicitly.
-ID204 retains its generic relative-direction collision at 1205, requires complete
+ID 204 retains its generic relative-direction collision at 1205, requires complete
 4832-update wrappers for seeds 0/65535, and preserves seed 1's collision at 3008.
-ID32 preserves its generic 594 collision, checks the explicit 13-update/one-update-leg
+ID 32 preserves its generic 594 collision, checks the explicit 13-update/one-update-leg
 profile and 192132 candidate evaluations for each complete 2372-update seed wrapper,
 and runs Stage 3 through both its 7443 baseline collision and 39767 clear.
-ID167 retains its generic 932 collision, requires all three 5492-update wrappers
-with H12/four-update first leg and 444852 candidates. ID183 retains its generic 1041
+ID 167 retains its generic 932 collision, requires all three 5492-update wrappers
+with H12/four-update first leg and 444852 candidates. ID 183 retains its generic 1041
 collision and requires three complete 1292-update wrappers with H32/four-update leg
-and 104652 candidates. It owns the single current continuous Stage6b gate: clear58853.
-ID139 preserves its generic 5326 collision, requires all three 7292-update seed
+and 104652 candidates. It owns the single current continuous Stage 6b gate: clear 58853.
+ID 139 preserves its generic 5326 collision, requires all three 7292-update seed
 wrappers, and runs Stage 6a through both its 48302 baseline collision and 61041 clear.
 The native laser-item executable also checks 18 cancellation geometry cases, including
 both source cancellation paths, angle quadrants, 32-unit spacing, exclusive end bounds,
@@ -3061,7 +1794,7 @@ tests also reject unsupported input, excess tape and wrong-ID wrapper selection.
 Generated tapes and `summary.json` are under `build-headless/headless-regression/`.
 Without `TH08_HEADLESS_DAT`, these private-data tests are not registered.
 
-The focused ID202 group can also run through the same generator, preserving its
+The focused ID 202 group can also run through the same generator, preserving its
 baseline and all three failed seed wrappers rather than declaring the spell solved:
 
 ```sh
@@ -3069,15 +1802,15 @@ cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" -DCOMPARE_EXECUTABLE="$PW
 ```
 
 The 2026-10-02 Intel Xeon Platinum 8573C/GCC 14.2 run passed all 26 core tests and
-the four focused ID202 scenes with fresh replay and native O0/O3 agreement. The normal
-aggregate originally failed the unconditional historical Stage6b digest assertion:
+the four focused ID 202 scenes with fresh replay and native O0/O3 agreement. The normal
+aggregate originally failed the unconditional historical Stage 6b digest assertion:
 this host produces 6279671846274327225, versus historical 4060221407534777929. Clean-main
-and O0/O3 replay reproduce the current digest, while the 854/slot664 boundary, complete
+and O0/O3 replay reproduce the current digest, while the 854/slot 664 boundary, complete
 collision object, RNG and feedback agree. The older profile did not identify solver
 build/libm/CPU sufficiently to claim cross-environment float-bit equality. The precise
 intermediate difference is not diagnosed.
 
-The stage6b-semantic-v1 contract now guards DAT/profile/scene, terminal, RNG, feedback
+The stage 6b-semantic-v1 contract now guards DAT/profile/scene, terminal, RNG, feedback
 and every collision field instead. It retains the old digest/report and emits
 historical_digest_match plus numerical_profile_match=unverified; there is no compiler
 whitelist or replacement digest. Strict current-run replay/O0/O3/diagnostic equality and
@@ -3085,19 +1818,19 @@ all 18 input-latch probes are unchanged. Negative DAT, RNG (including malformed 
 integers), collision and replay mutations fail. This loses the unsupported historical
 intermediate-trajectory oracle, so cross-host float drift outside the named boundary
 is not proven absent. The historical aggregate remains an immutable provenance record.
-`CASE_GROUP=id204` similarly runs the four ID204 fixtures and emits `id204-summary.json`.
+`CASE_GROUP=id204` similarly runs the four ID 204 fixtures and emits `id204-summary.json`.
 Its baseline and seed-1 failure, as well as both complete seed wrappers, agree in fresh
 processes and at native O0/O3 on this host. Both group selectors use the same scene/replay
 checks as the full aggregate, whose historical digest remains provenance, with current-run equality still strict.
 
-`CASE_GROUP=id32` runs the six ID32 wrapper/Stage3 cases and emits `id32-summary.json`.
+`CASE_GROUP=id32` runs the six ID 32 wrapper/Stage 3 cases and emits `id32-summary.json`.
 All three seed wrappers and both baseline/complete stage tapes agree at O0/O3.
 `CASE_GROUP=id167` now runs four wrapper fixtures and emits `id167-summary.json`.
-The tracked five-case ID167 report is retained as preceding-checkpoint evidence,
-including the then-genuine Stage6b ID183 collision. `CASE_GROUP=id183` runs five
-current fixtures and emits `id183-summary.json`, including the new Stage6b clear.
+The tracked five-case ID 167 report is retained as preceding-checkpoint evidence,
+including the then-genuine Stage 6b ID 183 collision. `CASE_GROUP=id183` runs five
+current fixtures and emits `id183-summary.json`, including the new Stage 6b clear.
 All checked O3/O0 replays match; the full stage runs once in the aggregate.
-For ID183 seed 0 on this GCC14 host, the complete 1292-update H32/81-path wrapper
+For ID 183 seed 0 on this GCC 14 host, the complete 1292-update H32/81-path wrapper
 uses 8894.1 ms of decision time; the failing 1041-update baseline uses 613.6 ms. These
 different durations are not an equal-work performance comparison. Both exclude file
 I/O and make the additional planning cost explicit.
@@ -3146,69 +1879,69 @@ so the combined documented recipe solves 56/56. All 56 rolling tapes
 then agreed in a fresh process on the semantic fields used by `agree()` above. This is
 broad algorithm evidence, while the smaller real-data CTest keeps the affected
 transform/profile boundaries practical to rerun on every local change.
-The ID204 change was compared with its preceding main checkpoint across all 56 cases:
+The ID 204 change was compared with its preceding main checkpoint across all 56 cases:
 the other 55 semantic reports and action tapes remained unchanged, and both versions'
-tapes freshly replayed. Continuous Extra also remained at its earlier ID192 collision
-on update 7424 at that historical checkpoint. The later ID192 change advances Extra below.
+tapes freshly replayed. Continuous Extra also remained at its earlier ID 192 collision
+on update 7424 at that historical checkpoint. The later ID 192 change advances Extra below.
 
-The ID139 comparison runs the previous portfolio and the new isolated profile on the
+The ID 139 comparison runs the previous portfolio and the new isolated profile on the
 same corrected laser-item runtime: 49 versus 50 complete spells. All 55 unaffected
 semantic records and literal action tapes agree; all 112 tapes freshly replay. Stage
 6a changes from its preserved 48302 collision to a 61041 clear. Older aggregate
 reports retain their original numerical/runtime profile rather than silently receiving
 corrected item scores or digests.
 
-The subsequent ID32 comparison changes only ID32 among 56 spells (50 to 51 clears):
+The subsequent ID 32 comparison changes only ID 32 among 56 spells (50 to 51 clears):
 all 55 unaffected semantic records and literal action tapes agree, and all 112 tapes
-freshly replay. Continuous Stage3 changes from collision7443 to clear39767. The new
-13-update horizon and 81 one-update-leg paths are isolated to ID32; generic projection
+freshly replay. Continuous Stage 3 changes from collision 7443 to clear 39767. The new
+13-update horizon and 81 one-update-leg paths are isolated to ID 32; generic projection
 and tie-breaking are unchanged.
 
-The subsequent ID167 comparison changes only ID167 among 56 spells (51 to 52 clears):
+The subsequent ID 167 comparison changes only ID 167 among 56 spells (51 to 52 clears):
 all 55 unaffected semantic records and literal action tapes agree, and all 112 tapes
-freshly replay. Continuous Stage6b advances from ID167 at 42560 to the retained ID183
+freshly replay. Continuous Stage 6b advances from ID 167 at 42560 to the retained ID 183
 collision at 54401. This does not increase the stage-clear count.
 
-The subsequent ID183 comparison changes only ID183 among 56 spells (52 to 53 clears):
+The subsequent ID 183 comparison changes only ID 183 among 56 spells (52 to 53 clears):
 all 55 unaffected semantic records and literal action tapes agree, and all 112 tapes
-freshly replay. Continuous Stage6b advances from its preserved ID183 collision54401
-to clear58853, adding the eighth complete stage. The prior ID167 report retains its
-historical failure; the current single Stage6b fixture belongs to ID183.
+freshly replay. Continuous Stage 6b advances from its preserved ID 183 collision 54401
+to clear 58853, adding the eighth complete stage. The prior ID 167 report retains its
+historical failure; the current single Stage 6b fixture belongs to ID 183.
 
 The subsequent source/body comparison uses a complete separately compiled source snapshot
 of preceding main 54f926d (original headers, Session, CLI and native units), rather than
 an old-adapter/new-layout hybrid. It changes 53 to 54 clears, preserving all 53 successes.
-Only ID192 and the still-failing ID203 prefix differ; 54 other semantic records and
-literal tapes agree, including IDs201/202. Both versions of all 56 spells and Extra
-freshly replay (114 tapes). Extra advances7424→67738, stopping in ID202.
+Only ID 192 and the still-failing ID 203 prefix differ; 54 other semantic records and
+literal tapes agree, including IDs 201/202. Both versions of all 56 spells and Extra
+freshly replay (114 tapes). Extra advances 7424→67738, stopping in ID 202.
 
-ID192's focused five-record report preserves baseline 466, complete seeds 0/65535 at 3692,
+ID 192's focused five-record report preserves baseline 466, complete seeds 0/65535 at 3692,
 seed 1 collision 1470 and actual Extra 67738. All agree with fresh O3 and O0 replays.
-The H12/81-path profile costs 299052 candidates and 11074.8ms decision time for seed 0,
-versus 4194 candidates/84.5ms for the 466-update baseline; these are unequal workloads.
-At preceding checkpoint bd678, ID203's four-record report retained baseline 1711
+The H12/81-path profile costs 299052 candidates and 11074.8 ms decision time for seed 0,
+versus 4194 candidates/84.5 ms for the 466-update baseline; these are unequal workloads.
+At preceding checkpoint bd 678, ID 203's four-record report retained baseline 1711
 and failures 1711/4823/2896 with bounded WAIT/vector projections; the current five-record
 report below supersedes that partial evidence.
 Native-linked regressions check WAIT/vector activation and final-clear boundaries,
 DESPAWN's last lethal movement, 27 body source/lifecycle/clock guards, native movement
 containment and the reciprocal-multiply size cancellation boundary. Both O0/O3 pass.
 Independent native differential checks cover 23976 WAIT/vector updates and complete
-ID192 tapes, including continuous Extra's delayed EndSpell-immunity transition.
-That preceding bd678 normal CTest took 401.05s: 26 core tests passed; its native aggregate ended
-at the unchanged historical Stage6b golden assertion described below, not a new gate.
+ID 192 tapes, including continuous Extra's delayed EndSpell-immunity transition.
+That preceding bd 678 normal CTest took 401.05 s: 26 core tests passed; its native aggregate ended
+at the unchanged historical Stage 6b golden assertion described below, not a new gate.
 
-The subsequent ID203 change keeps the rolling portfolio at 54/56 and adds one complete
+The subsequent ID 203 change keeps the rolling portfolio at 54/56 and adds one complete
 seed 0 wrapper through bounded native-prefix repair. Compare against a complete separately
-built bd678 source snapshot: the other 55 spell tapes/semantic results and continuous
-Extra remain unchanged; the new rolling ID203 fails 787. Every comparison tape freshly
+built bd 678 source snapshot: the other 55 spell tapes/semantic results and continuous
+Extra remain unchanged; the new rolling ID 203 fails 787. Every comparison tape freshly
 replays. The repaired 5492 tape is a separate verified outcome with full search costs,
 not a replacement of the rolling failure record or a hardcoded route.
 The final search used 91 candidates and 138198 native candidate updates, including 119908
-replayed-prefix updates, in 384041ms. Initial execution used 787 updates/3919.03ms; the
-built-in final replay used 5492 updates/875.446ms. Zero interrupted updates were charged.
+replayed-prefix updates, in 384041 ms. Initial execution used 787 updates/3919.03 ms; the
+built-in final replay used 5492 updates/875.446 ms. Zero interrupted updates were charged.
 The selected tape digest is 2771752472810487521 and independently agrees at native O0/O3.
-The preceding f372 normal CTest took 799.97s and stopped at the old unconditional
-Stage6b digest assertion. The latest expanded protocol suite
+The preceding f372 normal CTest took 799.97 s and stopped at the old unconditional
+Stage 6b digest assertion. The latest expanded protocol suite
 also passes separately. These host timings include process setup/artifacts and concurrent verification; they are
 not the candidate policy's decision-only time or a performance guarantee.
 
@@ -3217,7 +1950,7 @@ to reject malformed/duplicate/trailing JSON, wrong scene/prefix/hold/exit artifa
 existing output directories and a TERM-ignoring timeout. It checks conservative charges
 for semantically invalid children. Native policy tests check the pending-input step,
 all nine first-action families, deterministic ties and 16533-expansion bound. The real-DAT
-ID203 group checks baseline 1711, rolling 787 for three seeds, strict replay/prefix control,
+ID 203 group checks baseline 1711, rolling 787 for three seeds, strict replay/prefix control,
 and the complete bounded search with fresh O3/O0 replay. Its public JSON records include
 child/repair executable SHA256 identities; `source_revision` remains the imported native
 runtime provenance and does not identify a planner build. Historical numerical-profile limitations remain explicit under the v1 semantic contract.
@@ -3255,7 +1988,7 @@ done
 ```
 
 | Stage | Outcome | Updates | Blocking spell | Decision ms | Execution ms | Peak bullets |
-|---|---:|---:|---:|---:|---:|---:|
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | 1 | complete | 24135 | - | 1828.4 | 4009.8 | 258 |
 | 2 | complete | 32448 | - | 1581.4 | 3370.9 | 293 |
 | 3 | complete | 39767 | - | 2195.0 | 3957.6 | 294 |
@@ -3266,11 +1999,11 @@ done
 | 6b | complete | 58853 | - | 22694.2 | 27796.8 | 1199 |
 | extra | collision | 67738 | 202 | 32346.5 | 41409.4 | 1536 |
 
-The corrected-runtime stage records, including the subsequent ID32 Stage3 and ID167/183
-Stage6b and ID192 Extra reruns, cover 393119 updates and eight clears. All nine tapes freshly replayed.
+The corrected-runtime stage records, including the subsequent ID 32 Stage 3 and ID 167/183
+Stage 6b and ID 192 Extra reruns, cover 393119 updates and eight clears. All nine tapes freshly replayed.
 These Intel Xeon Platinum 8573C/GCC 14.2 samples were run
 alongside other verification; timings are workload records, not performance guarantees.
-The earlier AMD EPYC/GCC12 five-clear sweep is superseded for current coverage. The
+The earlier AMD EPYC/GCC 12 five-clear sweep is superseded for current coverage. The
 older 22176-update Stage 1 CTest uses the different `reactive` action tape and remains
 a separate baseline.
 
@@ -3348,36 +2081,31 @@ restricted/component evidence, not whole spells. The two motion fixtures remain
 useful regression baselines. `th08_first_spell` and entry/camera/effect tests are older
 optional diagnostics, not mandatory solver checkpoints or the current roadmap.
 
-Use `reports/local/` for experiments. Refresh only affected tracked outputs in
-`reports/native/`, preserving their scope labels and input identities. Investigate
+Use `reports/local/` for new experiments and regenerated reports. Existing tracked
+reports under `reports/native/archive/` are frozen historical evidence. Investigate
 changed hashes, event counts, digests, routes or outcomes before publishing; timing-only
 variation is expected. Preserve 64-bit digests as strings/integer-safe data.
 
-The documentation CTest checks maintained local links/headings, selected report/status
-counts and CMake's core-test count. It does not prove semantic correctness or inspect
-historical preparations. Keep README, Status, Scenarios and generated evidence consistent.
+The documentation CTest covers maintained Markdown in the root, docs, models and
+evidence indexes, plus the imported-runtime README. It checks local links and
+Markdown anchors, empty headings, obvious English number/date/unit spacing,
+legacy catalog counts and CMake's core-test count. It does not prove semantic
+correctness or inspect private preparations.
 
 Generated source-oracle translation units belong only in ignored build directories.
 Their maintained generators share `source_probe_support.*`, not another tool's main().
 Game DAT/EXE/assets are not distributed. Keep [third-party notices](THIRD_PARTY_NOTICES.md)
 and the original preparation attribution; do not assign those artifacts a new license.
 
-### Restored full verification (2026-10-03)
+### Historical completion and rejected experiments
 
-The H12/H32 repair adapter derives half-horizon holds from the selected failure's
-homogeneous terminal unsafe run. It does not relabel ID202 as H32. The rebuilt
-GCC14 O3/O0 run completes ID202 at 4712: 24 candidates, 102001 candidate updates,
-100602 replayed-prefix updates, digest `7360258866840071988`. ID203 reproduces
-5492 with 91 candidates and 138198 candidate updates. Both reports preserve their
-rolling failures and independently replay at O0/O3. These two bounded repairs plus
-the unchanged 54 rolling successes establish 56/56 seed-0 checkpoint recipes.
-The fresh full CTest run passed 29/29 in 732.98 seconds, including native real-DAT,
-O0 comparison and the historical Stage6b semantic-contract/18-probe checks.
-Earlier timing paragraphs are historical measurements, not this run's timings.
-
-The optional broad sweep now has a maintained producer. It records compact current
-results, literal tape hashes and native executable identity while retaining the
-full reports/tapes in the local output directory:
+The October 3 verification and later completion/robustness runs remain frozen in
+[headless_current_summary.json](../reports/native/archive/headless_current_summary.json)
+and the [archive index](../reports/native/archive/README.md). The reported
+56 checkpoint recipes and nine continuous-stage recipes belong to those exact
+seed-0 profiles; they do not certify all seeds or current scoring policies.
+The separate rolling matrix has genuine retained failures on seeds 1, 42 and
+65535. Reproduce the sweep into a local directory:
 
 ```sh
 cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" \
@@ -3385,149 +2113,18 @@ cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" \
   -DWORK="$PWD/reports/local/full-sweep" -P tests/headless_sweep.cmake
 ```
 
-Its fixed 56-case rolling sweep and nine actual stage entries are independent of
-the repair searches. A collision remains a collision in this report; adding two
-isolated repair successes does not imply continuous Extra is complete.
+Use `-DSEED=<value>` for another declared regression seed. Record the binary,
+input identities and full outcomes; a collision remains a collision. A successful
+isolated repair does not imply continuous Extra completion. Search-resume and
+original O0/O3 recipes are retained in the
+[fixed pre-cleanup snapshot](https://github.com/N0zoM1z0/th08-solver/blob/cf277285d64429b4c3720fb5c30eb0f360e7229c/docs/VALIDATION.md#restored-full-verification-2026-10-03).
 
-A stage-sized Extra episode explicitly uses 144 candidates, 14400000 candidate
-updates and 1800 search seconds, not the smaller isolated-spell budget. The first
-fresh run used 9809223 candidate updates and 872386 ms of search, reaching ID203 at
-69227 (`496550657910513129`, fresh O0 replay agrees). It is a failure, not stage clear.
-To continue only an improved validated frontier without repeating earlier branches:
-
-```sh
-./build-headless/th08_headless_repair --executable "$PWD/build-headless/th08_headless" \
-  --dat "$PWD/game_data_donottrack/th08.dat" --stage extra --difficulty 0 --seed 0 \
-  --shoot 1 --frames 100000 --seconds 1800 --update-budget 14400000 \
-  --resume-search "$PWD/reports/local/extra-episode1" \
-  --resume-producer /path/to/exact/previous/th08_headless_repair \
-  --output-dir "$PWD/reports/local/extra-episode2"
-```
-
-Keep the previous producer binary when rebuilding the search tool. Resume verifies
-its hash, copies the selected artifacts, reconstructs the selected world afresh,
-and reports prior/new/cumulative costs. An unchanged frontier is rejected rather
-than silently starting the same finite proposal family again.
-
-### Final seed-0 completion
-
-The resumed Extra episode completes the actual carried-world stage at 92339,
-ending after ID204, digest `15529738245795540729`. Its 87 candidates cost 6078636
-native updates, with 6040785 repeated-prefix updates. Fresh source regeneration
-used 69227 updates; final replay used 92339. Across both episodes the verified total
-is 16117163 updates, with no interrupted uncertainty charge, and about 1591.15 seconds
-of managed process wall time. Independent O0 replay agrees; those additional validation
-costs and broad-sweep runs are separate from the managed episode totals.
-The final integrated normal CTest passes 29/29 in 692.31 seconds.
-
-After the rolling sweep and repaired searches, generate the current combined report:
-
-```sh
-cmake -DEXECUTABLE="$PWD/build-headless/th08_headless" \
-  -DCOMPARE_EXECUTABLE="$PWD/build-headless-o0/th08_headless" \
-  -DDAT="$PWD/game_data_donottrack/th08.dat" \
-  -DSWEEP_DIR="$PWD/reports/local/full-sweep" \
-  -DSPELL202_DIR="$PWD/build-headless/headless-regression/id202-repair" \
-  -DSPELL203_DIR="$PWD/build-headless/headless-regression/id203-repair" \
-  -DEXTRA_DIR="$PWD/reports/local/extra-episode2" \
-  -DWORK="$PWD/reports/local/completion-verification" \
-  -DOUTPUT="$PWD/reports/native/archive/headless_current_summary.json" \
-  -P tests/headless_completion.cmake
-```
-
-This verifies three repaired tapes afresh at O3/O0, checks binary/data identities,
-and embeds the rolling failures, prior Extra search, hash-bound lineage, successful
-searches and replay reports. The primary totals are 56 checkpoint recipes and nine
-continuous stage recipes. The nested rolling-only totals remain 54/56 and 8/9.
-
-### Multi-seed robustness baseline (2026-10-03)
-
-The requested additional seeds were fixed before inspection: 1, 42 and 65535.
-Each ran the same 56-checkpoint plus nine-continuous-stage rolling matrix and
-frame caps, without automatic repair searches. All 195 fresh replays agree.
-Use `-DSEED=<value>` with `tests/headless_sweep.cmake`; the default remains zero.
-
-| Seed | Rolling spell clears | Rolling stage clears | Native updates including replay | Decision time, all 65 runs |
-|---|---|---|---|---|
-| 0 | 54/56 | 8/9 | 1160236 | 147.16 s |
-| 1 | 51/56 | 7/9 | 1046086 | 113.64 s |
-| 42 | 48/56 | 6/9 | 934060 | 100.44 s |
-| 65535 | 50/56 | 5/9 | 916710 | 102.17 s |
-
-These are rolling-only comparisons, not comparisons with seed zero's additional
-repair wins. Earlier failed termination reduces work, so lower elapsed time is not
-an efficiency improvement. Seed zero also ran alongside other verification;
-these host timings are descriptive, not isolated performance benchmarks.
-
-Retained spell failures (ID@update):
-- Seed 1: 192@1470, 200@4161, 202@4216, 203@787, 204@3008
-- Seed 42: 147@742, 192@727, 194@907, 200@1018, 201@2317, 202@4197, 203@787, 204@3008
-- Seed 65535: 119@1511, 127@3964, 194@3236, 201@700, 202@3613, 203@787
-
-Continuous-stage failures expose carried-world differences: ID127 in Stage6a
-(seeds 1/65535), ID155 in Stage6b (42/65535), direct/imminent lasers in Stage4b
-(42/65535), and different Extra failures. An isolated successful spell is not a
-promise that the same spell clears inside a stage. ID201 seed 1 now completes on
-this current native build; the earlier 3455 failure is historical evidence.
-
-A diagnostic-only global H32 control, with the same nine focused constant paths,
-avoids four local ID127/155 wall traps from identical replayed prefixes. It also
-creates regressions: seed zero ID108/147 hit enemy bodies and ID175 hits an
-unsupported polar transform. It is rejected as a general fix. No seed/frame or
-new spell-ID branch is introduced to hide those failures. Seeds 7 and 2026 remain
-reserved, uninspected holdouts until a justified candidate is frozen.
-
-
-### Paused transform-contract experiment
-
-The owner requested a tidy, published stopping point. The active source remains
-at the reviewed body-observation/multi-seed checkpoint; the following experiment
-was rejected rather than silently changing failure fixtures or tuning seeds.
-The existing seed-zero completion report remains historical evidence for its
-recorded native binary, not a newly regenerated search under this experiment.
-
-Native-linked probes established three forecast defects:
-- A VECTOR clearing at update 2 followed by a blocked POLAR produces x=2,4,8;
-  the old unbounded vector projection gives 2,4,6. An allowed concurrent POLAR
-  already changes the first update from predicted x=2 to actual x=4
-- Native float recurrence gives x=8.480000496 at update 32 for vx=.1, ax=.01;
-  the closed form gives 8.479999542. Exact float equivalence is not established
-- WAIT timer 2 with the extra timer step and a subsequent POLAR gives x=1,2,6,
-  whereas the nominal three-update linear certificate incorrectly gives x=1,2,3
-
-The draft adds bounded VECTOR recurrence, explicit supported-clock checks and an
-inactive-program linear certificate. It does not enable generic WAIT/POLAR or H32.
-Focused core tests pass 26/26 and native bounds checks pass O3/O0 before the final
-INT_MAX safe-prefix clamp; that final clamp has a focused O3 pass. The full normal
-suite was **not** completed for this draft. Its old ID202 boundary assertion failed
-because rolling collision moved from 4204 to 4212; it was not rebaselined.
-
-The already-started four-seed, 65-route sweep completed with fresh replay agreement
-for all 260 routes. Compared with the published rolling baseline:
-
-| Seed | Draft spell clears | Draft stage clears | Published spell/stage clears |
-|---|---|---|---|
-| 0 | 54/56 | 8/9 | 54/56, 8/9 |
-| 1 | 51/56 | 7/9 | 51/56, 7/9 |
-| 42 | 47/56 | 6/9 | 48/56, 6/9 |
-| 65535 | 49/56 | 5/9 | 50/56, 5/9 |
-
-New failures are ID195 seed42 at 2752 and ID192 seed65535 at 2631. The unchanged
-seed-zero bounded repair budgets still complete ID202 (4712 updates, six candidates,
-25764 candidate updates) and ID203 (5492 updates, 77 candidates, 85144 candidate
-updates), with built-in fresh replay. Independent O0 comparison of these draft
-repair tapes was not run. No repaired Extra search or new completion claim follows.
-
-[Compact results](../reports/experiments/transform-contract-rejected.json) record
-binary/report hashes, failures, costs and verification limits. The accompanying
-[archived patch](../reports/experiments/transform-contract-rejected.patch) applies
-to fdc8f8fb0ccd4119e7c9cf0b17b5eb84961a9337, but is not compiled or applied.
-The sweep binary precedes its final INT_MAX clamp; that edge change must not be
-mistaken for a fully swept final binary. Do not apply it without integration review
-and the same regression matrix. No DAT, extracted assets or action tapes are included.
-
-Remaining work is bounded and separate: fix the demonstrated transform contracts
-without losing successful scenes; cover lethal body motion only with valid
-lifecycle/child/timeline certificates; improve the two late laser warnings without
-hardcoded frames or unsupported geometry. Global H32 remains rejected. Holdout
-seeds 7 and 2026 remain uninspected, and work is paused until requested again.
+The transform-contract draft is a rejected historical experiment, not active
+source. Its [compact results](../reports/experiments/transform-contract-rejected.json)
+and [patch](../reports/experiments/transform-contract-rejected.patch) retain
+failures, costs, source/binary hashes and verification limits. The patch applies
+to `fdc8f8fb0ccd4119e7c9cf0b17b5eb84961a9337` and is not compiled or applied.
+The swept binary predates its final INT_MAX clamp; it is not proof of a fully
+swept final patch. Do not replace successful fixtures or claim untouched holdouts
+from these old results. Any renewed experiment needs explicit integration review
+and the original regression matrix.

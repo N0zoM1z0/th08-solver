@@ -19,7 +19,7 @@ Distinguish synthetic scenes, actual-DAT controlled projections and source-faith
 
 ## Native headless complete scenes
 
-The current fork planner additionally supports continuous full runs for all twelve
+The full-run fork planner (`th08_plan`) supports continuous stories for all twelve
 shots through original stage handoffs. `--final-route a|b` requires a non-practice
 standard story beginning before its final stage. Its explicit checkpoint provides
 one prior normal Final B clear for the selected shot, enables both original choices
@@ -27,7 +27,7 @@ and records `clearState` 2. Actual direction/shoot edges choose the requested ro
 no gameplay flag is forced during a run and no RNG is replaced. The default
 `--final-route natural` preserves the earlier empty-history profile.
 
-Full Extra uses `--story 1 --stage extra --difficulty 4`: original two-life,
+For that planner, full Extra uses `--story 1 --stage extra --difficulty 4`: original two-life,
 06:00 non-practice initialization and native Extra clear terminal. Standard stories
 require difficulties 0..3. Practice and spell checkpoints retain their separate
 interfaces and evidence below. The 108-case matrix concerns full stage-1 stories
@@ -57,9 +57,10 @@ source-execution profile, distinct from the controlled subset below.
   `timeGetTime = floor(update_count * 1000 / 60)` milliseconds. One input executes one
   original calc-chain update; timers retain original multiplier/update order. Original
   shared RNG consumers in that chain remain active, including visual effects
-- Carry the original live managers through boss/dialogue/spell transitions. Stage mode
-  stops at native stage-clear state before result/next-stage processing; continuous
-  multi-stage execution is not implemented. Spell mode stops when the requested spell,
+- Carry the original live managers through boss/dialogue/spell transitions. This CLI
+  stops stage mode at native stage-clear state before result/next-stage processing.
+  Continuous stories are owned by the separate `th08_plan` and `th08_shadow_style`
+  tools; this single-stage fixture does not implement them. Spell mode stops when the requested spell,
   after becoming active, becomes inactive. No terminal cleanup/reset is invented
 - Raw `--spell-id` is zero-based 0..221. Stage/difficulty wrappers can select another
   ID; first activation is checked and a mismatch stops the case. An insufficient
@@ -89,32 +90,32 @@ coordinates. A conservative perpendicular-axis broad phase can discard a candida
 laser only when their predicted path rectangles cannot overlap at the observed angle.
 
 `spell-portfolio` selects hazard options in `spell_policy.hpp`. The default is the
-source-vector profile. ID199 uses the measured linear-ranking ablation: it completed
+source-vector profile. ID 199 uses the measured linear-ranking ablation: it completed
 seeds 0, 1 and 65535, while vector ranking failed seed 0; IDs 193/195 show the opposite
-need for vector projection. ID85 measures each pooled laser's translation and shortest
+need for vector projection. ID 85 measures each pooled laser's translation and shortest
 angle delta across the preceding native update. Its isolated profile fits the rotation
 center implied by those two source-owned states and extrapolates one rigid transform per
 forecast update; moving lasers bypass the constant-angle broad phase. This proposal is
 refreshed every update and does not claim that other pooled lasers continue rigid motion.
-ID93 reads only a currently due native ECL opcode 114. Its typed observation copies the
+ID 93 reads only a currently due native ECL opcode 114. Its typed observation copies the
 52-byte spawn payload, resolves a local-float angle without calling the gameplay operand
 resolver, and reconstructs the same-update pooled-laser lifecycle from the source-owned
 enemy position and shoot offset. Aimed opcode 115, child contexts and variable geometry
 stop the adapted case; suppressed spawns produce no warning. The warning ranks the nine
 directions before the pooled laser exists, accounting for the already-latched first move.
-ID198 combines that fixed-origin rotation observation with 81 two-leg proposals: each
+ID 198 combines that fixed-origin rotation observation with 81 two-leg proposals: each
 initial direction lasts four candidate-controlled updates, then one of nine continuation
 directions repeats. Bullet projections and laser lifecycle forecasts are immutable and
 shared across those paths within one decision; mutable player paths remain separate and
 all proposal/check costs are reported. Only the first action executes before fresh native
-state is observed and the portfolio replans. ID201 uses a 32-update bullet horizon. For a
+state is observed and the portfolio replans. ID 201 uses a 32-update bullet horizon. For a
 live bullet whose only active transform is WAIT, the session follows the copied transform
 records without mutating them and exports exactly how many later updates retain the current
 velocity. Disabled records and source `allowWhileActive` order are preserved; a terminal
 child-pattern record contributes the parent's final movement/collision update, while any
 other enabled transform ends the proof.
 
-ID201 also has a narrow future-ECL adapter. From the current main cursor it accepts only
+ID 201 also has a narrow future-ECL adapter. From the current main cursor it accepts only
 the same-time opcode sequence needed by this spell: known local-float add/subtract,
 literal/local-float transform record writes, and deterministic non-aimed fan/circle shots.
 It copies the descriptor and local variables, forecasts supported enemy interpolation,
@@ -126,15 +127,15 @@ candidate path advances once and is reused across all bullets at that boundary. 
 seed-0 wrapper completes; seeds 1 and 65535 remain failures, and seed 1 confirms that
 RNG-dependent child patterns are outside this adapter.
 
-ID202 opts into the same bounded projection of already-observed WAIT bullets, with its
+ID 202 opts into the same bounded projection of already-observed WAIT bullets, with its
 original 12-update horizon. The random child's angle and speed have already been chosen
 by the native runtime before observation; forecasting its proven linear interval does
-not sample a future RNG state. ID202 does not enable the deterministic ECL adapter:
+not sample a future RNG state. ID 202 does not enable the deterministic ECL adapter:
 other visible opcode-99 shots use random-angle selector 10082. The baseline collision
 at 3265 is avoided, but seed 0/1/65535 wrappers still collide at 4204/4216/3613. This is
 a local modeling improvement, not another completed checkpoint.
 
-ID32 uses the existing two-leg scorer with a 13-update observed-bullet horizon and
+ID 32 uses the existing two-leg scorer with a 13-update observed-bullet horizon and
 one-update first leg. At the baseline bottom-left corner, the 12-update view waits
 at decision 582 and collides at 594; rightward intervention at 582 survives, while
 all nine replacements at 583 fail. Horizon 13 alone avoids that hit but fails at
@@ -145,25 +146,25 @@ bullet steps. It changes no source projection, RNG, tie-break or terminal rules.
 All three seeds complete the 2372-update wrapper; continuous seed-0 Stage 3 clears
 at 39767 with carried native state and fresh O0/O3 replay.
 
-ID167 keeps the 12-update horizon and enables the existing 81 two-leg paths with a
+ID 167 keeps the 12-update horizon and enables the existing 81 two-leg paths with a
 four-update first leg. Its baseline enters a bottom-left constant-path trap and
 collides at 932; all constant proposals predict collision from observation 917.
 The successful profile changes earlier decisions (first divergence 567), rather
 than claiming a late escape from that prefix. It reuses unchanged source projections
 and costs 444852 candidate evaluations for each 5492-update complete seed wrapper.
-Seeds 0/1/65535 freshly replay at O0/O3. Its preceding-checkpoint Stage6b run passed ID167 but collided in ID183 at 54401;
-the later ID183 profile supplies the current whole-stage clear.
+Seeds 0/1/65535 freshly replay at O0/O3. Its preceding-checkpoint Stage 6b run passed ID 167 but collided in ID 183 at 54401;
+the later ID 183 profile supplies the current whole-stage clear.
 
-ID183's original constant-path profile collides at 1041. All nine interventions at
+ID 183's original constant-path profile collides at 1041. All nine interventions at
 1030 fail; upward input at 1029 survives through 1041 with the original suffix. Horizon 13 alone instead fails at 820, and
-H12/two-leg4 fails at 819. In the latter run the fatal 24-pixel bullet is already
+H12/two-leg 4 fails at 819. In the latter run the fatal 24-pixel bullet is already
 visible 31 updates earlier, beyond the short horizon. Its isolated profile therefore
-uses the existing 32-update/two-leg4 search scope, with unchanged linear source
+uses the existing 32-update/two-leg 4 search scope, with unchanged linear source
 projection: 81 candidates and 31 future bullet steps, 104652 candidates per wrapper.
-It clears all three 1292-update seed wrappers and continuous Stage6b at 58853, with
-fresh O3 and O0 replay. It does not enable ID139's boundary-bounce source adapter.
+It clears all three 1292-update seed wrappers and continuous Stage 6b at 58853, with
+fresh O3 and O0 replay. It does not enable ID 139's boundary-bounce source adapter.
 
-ID139 uses source-bounded active boundary-bounce projection. The native boundary test
+ID 139 uses source-bounded active boundary-bounce projection. The native boundary test
 runs before movement and uses loaded sprite dimensions, not the smaller collision box.
 It mirrors strict outside tests, X then Y reflection, bounded native angle normalization,
 velocity replacement and bounce counting, including the final active update. Bottom-
@@ -177,7 +178,7 @@ The latter fatal bullet was already observed 31 updates before impact, motivatin
 than 11 future bullet steps. Seeds 0/1/65535 complete 7292 updates; seed-0 continuous
 Stage 6a completes 61041 without resetting the world between spells.
 
-ID204 keeps the same 12-update horizon and enables the source-bounded active
+ID 204 keeps the same 12-update horizon and enables the source-bounded active
 relative-direction recurrence. Its observation copies the current angle/base speed,
 turn angle/speed, interval and timer. The validity bound includes the final turn's
 movement/collision but stops before the next transform-program update; an enabled
@@ -187,7 +188,7 @@ Fractional timers, a non-unit frame multiplier and scripted freeze invalidate th
 It does not forecast aimed turns or execute the next transform record. Seeds 0 and
 65535 complete the 4832-update wrapper; seed 1 retains a collision at 3008.
 
-ID89 observes only the current native ECL cursor. A constant
+ID 89 observes only the current native ECL cursor. A constant
 opcode 136/137 selector for direct-laser EX callbacks 9/11/25 becomes a warning only
 when difficulty and timer state match and the currently observed parent, interpolation,
 movement and rotation state is static. The adapter refreshes that proposal every update;
@@ -238,9 +239,9 @@ coordinates. None of this changes acceptance physics or calls the RNG. The origi
 FNV projection is unchanged and remains a partial diagnostic projection, not a complete
 state key.
 
-### ID192 body geometry and ID203 transform boundary
+### ID 192 body geometry and ID 203 transform boundary
 
-ID192's baseline 466 is the boss body, with native dimensions 48×32 at (192,128).
+ID 192's baseline 466 is the boss body, with native dimensions 48×32 at (192,128).
 Input 466 changes fail 9/9; input 465 has 6/9 local survivors. The adapter exports direct
 inclusive endpoints using native reciprocal multiplication by 1/1.5, followed by /2.
 It handles observed static/resolved interpolation and one literal future random 67
@@ -263,30 +264,30 @@ complete unseen-spawn prediction. Native execution remains the collision oracle.
 The profile uses 81 actual two-leg paths, H12, first leg 1, with bounded WAIT projection.
 Bodies affect earliest overlap only; bullet clearance/danger/ties stay unchanged on
 body-safe paths. Common pending-input overlap and absence of body-safe continuations
-have separate counters. Seeds 0/65535 clear 3692, seed 1 fails1470. Actual Extra reaches
-ID202 at 67738 without any world reset; it does not yet clear.
+have separate counters. Seeds 0/65535 clear 3692, seed 1 fails 1470. Actual Extra reaches
+ID 202 at 67738 without any world reset; it does not yet clear.
 
 A WAIT followed by DESPAWN still has a final fired movement/collision before the next
 nonlethal despawn update. A distinct typed WAIT→VECTOR→NONE view models the copied
 resolved acceleration, activation delay and final-clear movement, rejecting concurrent,
-fractional, frozen, nonfinite or unsupported programs. ID203's preceding H12/nine-candidate profile retained failures 1711/4823/2896. The
+fractional, frozen, nonfinite or unsupported programs. ID 203's preceding H12/nine-candidate profile retained failures 1711/4823/2896. The
 certificate itself does not solve the spell or predict action-dependent future RNG.
 
 ### Bounded native-prefix repair
 
-ID203 now uses an observed-bullet H32 beam, retaining seven prefixes per first-action
+ID 203 now uses an observed-bullet H32 beam, retaining seven prefixes per first-action
 family, 63 total. Every prefix owns only player coordinates and score; bullet projections
 are immutable. It consumes the pending native input before candidate movement. Stable
 sorting preserves the existing comparator, numeric action/last-action ties and generation
 order. The reported continuation action is the last beam action, not a two-leg command.
 Observed pooled lasers and supplied body warnings are explicitly unsupported. The
-ID203 profile does not enable the ID192-specific body adapter; these are partial
+ID 203 profile does not enable the ID 192-specific body adapter; these are partial
 observed-bullet proposals, not complete world-safety certificates. Unsupported bullet
 transforms remain counted soft projections, never certified empty future space.
 The rolling beam still collides at 787 for seeds 0/1/65535.
 
 `th08_headless_repair` first executes that policy from the requested original checkpoint.
-For ID203's H32 collision with an observed terminal safe-to-unsafe transition, it enumerates
+For ID 203's H32 collision with an observed terminal safe-to-unsafe transition, it enumerates
 rollback counts 1..8 times 16 updates and nine row-major direction holds of 16 updates.
 The first replaced action is one-based; earlier tape actions and the hold's non-direction
 bits are preserved. Each child process replays its exact prefix, executes its intervention,
@@ -299,10 +300,10 @@ candidate winning equal-frame ties. Search stops on the first full completion, n
 unsupported trigger or explicit budget. The fixed tested family is two rounds, 144 candidates,
 2160000 native candidate updates and 600 seconds; the CLI exposes frame/update/wall budgets
 for longer scenes. Initial execution and final verification replay are counted separately.
-The seed 0 ID203 run automatically finds a complete 5492-update tape after 91 candidates;
+The seed 0 ID 203 run automatically finds a complete 5492-update tape after 91 candidates;
 none of its intervention frames are encoded in the algorithm. This does not establish
-other seeds or a continuous Extra clear. The rolling stage route stops in ID202;
-the first stage-sized native repair reaches ID203 at 69227, still a collision.
+other seeds or a continuous Extra clear. The rolling stage route stops in ID 202;
+the first stage-sized native repair reaches ID 203 at 69227, still a collision.
 The verified resumed episode subsequently completes the continuous stage at 92339.
 
 Strict `--replay` stops at its tape boundary. Explicit `--resume-prefix` continues
@@ -354,21 +355,21 @@ This repairs the checked late-gate case while retaining identical relay/lane-swi
 routes. It can still fail when no stationary grid refuge exists or budget is insufficient.
 Failure executes no invented action and is not a proof that the scene is impossible.
 
-## Real-DAT controlled ID179 Easy
+## Real-DAT controlled ID 179 Easy
 
 Member `ecldata7sp.ecl`, SHA256
 `7f1a847fdd7ceb5e35dfd3529a54961ab4d1c9e7607fbcfb577936465326ab0e`.
-Spell179 is 「永夜返し  -丑の刻-」, owner 蓬莱山輝夜. Exact occurrence:
-main sub72 PC10, offset 56084, instruction mask 0xf1, execution bit 1.
+Spell 179 is 「永夜返し  -丑の刻-」, owner 蓬莱山輝夜. Exact occurrence:
+main sub 72 PC 10, offset 56084, instruction mask 0xf1, execution bit 1.
 DAT identity and reconstructed source pin are in [Validation](VALIDATION.md).
 
 ### Supplied checkpoint
 
-- Begin after sub72 PC0..9, immediately before START_SPELL; empty call/child state
+- Begin after sub 72 PC 0..9, immediately before START_SPELL; empty call/child state
 - Boss at (192, 224), move-to target already the same position; interaction bits 3 disabled;
   no other actors, shoot interval/offset zero, sounds-1, empty transforms
 - Boss timer 0/limit 1200, death/timer callback 1, initialized source-template scalars,
-  context extraInt3=0; empty 1536-slot bullet pool with cursor 0
+  context extraInt 3=0; empty 1536-slot bullet pool with cursor 0
 - Player alive at (192, 400), focused `ply00a.sht` speed/hurtbox, movement-only actions;
   no shots, bombs or form changes; explicit gameplay and visual seeds
 
@@ -378,7 +379,7 @@ state, not a claim that menu or preceding stage initialization executed.
 
 ### Executed behavior and ending
 
-Actual scalar ECL calls/waits execute through charge sub33 and install child73 at update 162.
+Actual scalar ECL calls/waits execute through charge sub 33 and install child 73 at update 162.
 The child runs that same update, emitting two eight-bullet rings every 15 updates through 1197:
 140 requests and 1120 successful allocations. Births remain below 1536, so the source circular
 cursor never wraps or contends even as earlier slots retire.
@@ -430,9 +431,9 @@ process, then resumes the unchanged portfolio. A later selected round derives it
 own horizon; candidates do not change the source horizon mid-round. Native state,
 RNG, input-latch semantics and collision authority remain unchanged.
 
-The isolated ID202 seed-0 recipe retains H12 and completes 4712 updates after 24
+The isolated ID 202 seed-0 recipe retains H12 and completes 4712 updates after 24
 native candidates. This does not solve its other seeds or permit deterministic
-preview to omit random shots. ID203 retains its H32/63-prefix proposal profile.
+preview to omit random shots. ID 203 retains its H32/63-prefix proposal profile.
 
 ### Resuming a bounded native search
 

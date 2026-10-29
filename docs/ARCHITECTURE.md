@@ -7,7 +7,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 ## Responsibilities and code map
 
 | Responsibility | Owner |
-|---|---|
+| --- | --- |
 | Resource decoding and formats | `resources.hpp`, `resources.cpp`, `formats.cpp`, `schema.cpp` |
 | Immutable ECL programs and resumable scalar execution | `emitter.hpp`, `emitter.cpp` |
 | Timeline and enemy/world motion | `timeline.*`, `enemy_motion.hpp`, `world_motion.*` |
@@ -16,7 +16,7 @@ Do not infer complete-world behavior from a supported parser, opcode or kernel.
 | Circular bullet-slot selection | `bullet_slots.hpp`; selects slots, not a complete storage/lifecycle owner |
 | Geometry/index and fixed-model search | `geometry.hpp`, `planner.hpp` |
 | Synthetic continuous world and runner | `scenario.hpp`, `scenario.cpp`; separate `th08_scenarios` library |
-| Controlled real-DAT ID179 world and solver | `spell_scenario.hpp`, `spell_scenario.cpp`; separate `th08_spell_scenarios` library |
+| Controlled real-DAT ID 179 world and solver | `spell_scenario.hpp`, `spell_scenario.cpp`; separate `th08_spell_scenarios` library |
 | CLI/report serialization | `tools/scenario_cases.cpp`, `tools/spell_cases.cpp` |
 | Older entry/effect/camera integration | `practice_entry.*`, `practice_camera.*`, `effect_pool.cpp`, `effect_animation.cpp`, `camera_particle.hpp` |
 | Independent source extraction | `tools/*_source_probe.cpp`, shared `source_probe_support.*`, `tests/source_*_cases.hpp` |
@@ -249,9 +249,10 @@ its final spawning update. Do not advance transform clocks prematurely at creati
 Velocity calculation and actor displacement are separate source phases with possible
 intervening effects. A kernel pass does not establish global manager scheduling.
 
-Gameplay and controlled visual RNG are separate named channels in the current profiles.
-Record seed/state and hook policy. Visual isolation intentionally changes retail shared
-RNG semantics; it does not justify changing gameplay randomness. If player actions can
+Synthetic and controlled-DAT profiles may define separate named gameplay and visual
+RNG channels. Record their seed/state and hook policy. The imported Native profile
+keeps the source shared RNG; it does not use that visual split. Visual isolation
+changes retail RNG semantics and does not justify changing gameplay randomness. If player actions can
 change aiming, rank/form, damage, cancellation, pools or RNG, their future must be owned
 per candidate or otherwise proven equivalent before sharing it.
 
@@ -307,7 +308,7 @@ historical numeric manager priorities into a new world owner.
 
 ## Older fixtures and entry code
 
-The existing Wriggle sub40/41 fixtures use `ecldata1.ecl`, mask 8, a fixed emitter at
+The existing Wriggle sub 40/41 fixtures use `ecldata1.ecl`, mask 8, a fixed emitter at
 (192, 96), empty transforms/pool/cursor 0 and no rank/gates/cancellation. Each instantiates
 840 type 2 bullets, below 1536 total allocations, and checks 600 frames. Type 2 uses ANM
 main script 2, fast-spawn script 21 and full collision size (4, 4); player movement/hurtbox

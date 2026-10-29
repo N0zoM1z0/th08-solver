@@ -23,8 +23,8 @@ The trainer rejects mixed held-last/replan targets; old v1 bytes remain unchange
 
 The same ordered 16 training/eight tuning seeds and 103/107/111/202 assignments
 as v1 are reused as known training/tuning data. Twenty-four regular episodes use
-stride128, first observation128, maximum32 checkpoints. Three additional known
-failure-tail strata use inclusive windows and stride32, maximum8 checkpoints:
+stride 128, first observation 128, maximum 32 checkpoints. Three additional known
+failure-tail strata use inclusive windows and stride 32, maximum 8 checkpoints:
 
 | Split | Seed / spell | Window | Prior failed nominal terminal |
 | --- | --- | --- | --- |
@@ -63,7 +63,7 @@ classification improvement. It remains opt-in; neither weights nor the selected
 multiplier were retrained or tuned on these outcomes. These shared spell-practice
 proxies do not establish whole-stage/story reliability or a live deadline.
 
-Collection uses H24/beam192/cell16/guard16/reach-filter, hard phantoms and motion
+Collection uses H24/beam 192/cell 16/guard 16/reach-filter, hard phantoms and motion
 envelope; child-birth/heading options, lag, fallbacks, legacy risk and learned
 models are off. Source archive SHA-256 is
 `095ac59b8c5526e0e4364aa568f55e83bd8c255416b880cc7e67d0f92771d613`;
@@ -71,8 +71,8 @@ collector SHA-256 is
 `9c863acb340f6442836b5c9341ebcbf0fa7a08c0fd6079a602bc01801db8e234`.
 Manifest SHA-256 is
 `bd126c3058d2c7ed2cb1c8f6e841a83ca1f145e5649d6ade291cd4c3eba1d57e`.
-GCC13.3 Release on EPYC9654 uses policy `-march=native` and `-ffp-contract=off`;
+GCC 13.3 Release on EPYC 9654 uses policy `-march=native` and `-ffp-contract=off`;
 Native library/DAT identities are unchanged from v1. Full source/binaries, labels,
 actual branch inputs, parent tapes and failed receipts stay local and ignored.
 The saved snapshot is not retrained on evaluation outcomes. Global weight tuning
-and new-seed evaluation are separate gates owned by [Status](../../docs/STATUS.md).
+and new-seed evaluation remain separate gates for any future snapshot.

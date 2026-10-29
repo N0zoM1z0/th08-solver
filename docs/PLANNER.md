@@ -1,7 +1,13 @@
 # Native planner and experiment protocol
 
+This page describes public code contracts, not an active experiment queue. Scoring
+and Wine online solving are paused after the owner-requested handoff. Current
+results and authorization are in [Status](STATUS.md); dated run evidence belongs
+in the [experiment journals](experiments/README.md). Private frozen scoring
+profiles do not become public features merely because their results are recorded.
+
 The active owner workflow is offline Native scoring for Extra and complete
-Lunatic4A→FinalB, exporting `ysopwnab` replays. Retail Wine playback follows a
+Lunatic 4A→Final B, exporting `ysopwnab` replays. Retail Wine playback follows a
 qualified complete NMNB score above its all-shot reference under the declared
 capture goal; online MPC is paused. Current scoring permits missing captures.
 Historical live protocols
@@ -12,7 +18,7 @@ pre-RegisterChain boundary, records its entry/provenance, and keeps it fixed for
 offline Native candidates. Native does not select a replacement seed. Wine seed
 acquisition precedes planning; qualified retail replay validation follows it.
 
-The current target is Extra and complete Lunatic4A→FinalB, with all twelve
+The current target is Extra and complete Lunatic 4A→Final B, with all twelve
 team/solo shots available and Scarlet Team prioritized. The broader difficulty/
 route matrices below describe earlier generic coverage experiments, not a current
 scoring queue. [Status](STATUS.md) owns results; [Validation](VALIDATION.md) owns commands
@@ -40,13 +46,13 @@ the run. Search exhaustion, runtime failure and budget exhaustion remain distinc
 [Issue #11](https://github.com/N0zoM1z0/th08-solver/issues/11) sets the scoring objectives:
 complete NMNB, capture every card in the chosen route's source catalogue, then
 maximize actual terminal displayed score. A skipped conditional Last Spell stays
-in the coverage target. Lunatic4A/FinalB has37 cards; Extra has14. Other branches,
+in the coverage target. Lunatic 4A/Final B has 37 cards; Extra has 14. Other branches,
 difficulties and Last Words require separate runs. These are run-level capture
 goals, distinct from populating every Spell Practice entry in a persistent profile.
 
 Current outcomes and historical failures belong in [Status](STATUS.md); this
 section describes the implemented mechanisms and their limits. Current Native
-experiments cover Extra and complete Lunatic4A→FinalB across declared shots,
+experiments cover Extra and complete Lunatic 4A→Final B across declared shots,
 with NMNB and optional captures; the original all-capture goal remains available.
 
 ### Capture-aware Native horizons
@@ -66,7 +72,7 @@ still requires the complete source catalogue. Historical safety-only profiles
 keep their declared behavior unless this control is explicitly enabled.
 
 `--policy-horizon` and `--policy-beam` separately control proposal guidance.
-The learned value-feature interface retains its fixed24-update schema. Other
+The learned value-feature interface retains its fixed 24-update schema. Other
 policy horizons use ordinary single-action decisions, freshly generated on
 each guided Native update; they do not fabricate longer learned-feature paths.
 Native verification, rather than the proposal horizon or beam size, certifies
@@ -82,14 +88,14 @@ and selection share `score_capture_coverage`, so they cannot silently use
 different capture goals.
 
 The refiner advances the owner through the certified incumbent. At spaced
-boundaries after a64-update phase warmup, it tries two form alternatives or two
+boundaries after a 64-update phase warmup, it tries two form alternatives or two
 fire alternatives over an explicit update window. These edits have no seed,
 card-number or human-input lookup. Each trial forks the actual current world
 and executes the **entire remaining tape** with its own action-dependent RNG,
 bullets, actors, items and transitions. It accepts only complete NMNB/all-capture
 results with the identical expected spell set, identical final stage and a
 strictly higher actual terminal score. Ties retain the incumbent. Final owner
-execution must match the selected trial's complete41-word terminal projection.
+execution must match the selected trial's complete 41-word terminal projection.
 
 This evaluates delayed bonus, clear rewards, PIV and carried-item effects through
 the source instead of adding an approximate local economic reward. Trial death,
@@ -108,21 +114,21 @@ It neither proves optimality nor supplies retail or online-FPS evidence.
 
 The owner prioritizes higher complete score before reducing compute cost.
 Native `th08_shadow_style` therefore accepts explicit larger search budgets and
-verification/publication horizons through2048 updates. Lead, nominal-prefix
+verification/publication horizons through 2048 updates. Lead, nominal-prefix
 reuse and replanning interval are independent recorded controls. Defaults retain
-H64/publication64,110ms, lead8, interval8 and full nominal reuse. Live Wine
+H64/publication 64,110 ms, lead 8, interval 8 and full nominal reuse. Live Wine
 controls and scheduling are unchanged.
 
-An offline profile can use lead1 and nominal reuse1 so the owned rollout makes
+An offline profile can use lead 1 and nominal reuse 1 so the owned rollout makes
 fresh policy decisions after one input, rather than copying nearly a whole old
 tail. Larger certified execution blocks let it spend time on the longer future.
 Every replacement still requires a complete Native horizon or the real terminal;
-when no certificate remains, retries keep at most the original8-update spacing.
+when no certificate remains, retries keep at most the original 8-update spacing.
 Longer budgets are search opportunities, not evidence of better score or safety.
 
 Offline `--spell-horizon H` optionally assigns active spells a different search
 schedule: verification H, publication H/2 and replanning H/4 owned inputs. H is
-a power of two64..2048; zero/default preserves the existing schedule and queue
+a power of two 64..2048; zero/default preserves the existing schedule and queue
 lifetime. The ordinary horizon/publication/replan controls then govern roads and
 boss nonspells. Select the profile from the actual owned spell-active state,
 never a forecast's future phase. On an enabled context change, discard only
@@ -136,7 +142,7 @@ controlled owner-input counts, excluding the literal prefix. Extra search and
 reconstruction costs remain charged; this changes neither live Wine controls
 nor the whole-route acceptance gate.
 
-`--prefix-actions FILE --prefix-updates N` executes the firstN inputs literally
+`--prefix-actions FILE --prefix-updates N` executes the first N inputs literally
 from the declared original entry, observing every actual update in both policy
 histories. Fresh planning then continues the same world, RNG, carried projectiles,
 items and actor lifecycles. Prefix execution costs remain in owner work. An early
@@ -156,11 +162,11 @@ preference, selected by actual core stage/card identity. It needs neither scorin
 memory nor generic attack pacing in recovery; it does not inherit farm geometry,
 fire or reserve control. This is a soft proposal preference, not a form filter or
 a safety certificate. It requires a nonempty plan and enabled baseline recovery;
-the default0 preserves ordinary recovery. The full-plan constructor still
+the default 0 preserves ordinary recovery. The full-plan constructor still
 requires pacing.
 
 The phase reserve is an explicit fixed gameplay-update threshold. It can
-override the generic HP/DPS pacer's farming decision; a configured600-update
+override the generic HP/DPS pacer's farming decision; a configured 600-update
 reserve does not guarantee enough damage time to capture. Recheck actual HP,
 position, carried shots and outcomes after an earlier component changes the world.
 Reports separate actual targeted inputs from newly planned inputs after the
@@ -170,7 +176,7 @@ An absent plan and explicit `none` preserve the original path.
 `--stop-after-card` stops after the actual audit closes that card. Its
 `phase_boundary` outcome is incomplete for route acceptance and never exports
 a replay. Resume by reexecuting its exact actions from the same original entry;
-do not splice another world's suffix or treat the41-word projection as a snapshot.
+do not splice another world's suffix or treat the 41-word projection as a snapshot.
 
 `th08_phase_frontier` selects a bounded archive from completed NMNB segments.
 It retains one representative per declared strategy family before admitting a
@@ -193,22 +199,24 @@ handling and can award a capture at zero remaining time. A timer value alone is
 therefore not a classifier. Misses and bombs invalidate capture through
 [Player.cpp](../third_party/th08/src/Player.cpp). Capture statistics are updated
 only outside replay mode: watching a saved replay does not fill profile captures.
+Capture settlement can remain pending for 130 updates after `EndSpell`; carry that
+state into the next component rather than adding a pending award to local cash.
 
 [GameManager.cpp](../third_party/th08/src/GameManager.cpp) stores score in units
 of ten displayed points: `AddScore(points)` adds `points / 10`. Spell bonuses and
 point-item values already use displayed units. Do not compare raw journal scores
-directly with videos or scoreboards. Source score clamps at999999999 stored units.
+directly with videos or scoreboards. Source score clamps at 999999999 stored units.
 
 Several coupled mechanisms matter more than a distance-to-bullet reward:
 
-- Faster ordinary captures preserve bonus and award100–1000 time orbs, reaching
+- Faster ordinary captures preserve bonus and award 100–1000 time orbs, reaching
   1000 within the first one-seventh of the limit. The native timeout-spell path
-  requests700. These are pending requests, emitted in deferred batches, not a
-  guarantee of that many realized pickups. Time-orb pickup also increases the active spell bonus by8000, subject
+  requests 700. These are pending requests, emitted in deferred batches, not a
+  guarantee of that many realized pickups. Time-orb pickup also increases the active spell bonus by 8000, subject
   to its source limit, and increases future point-item value.
 - The stage Last Spell operand compares collected orbs **plus pending capture
   reward and field orbs** with the stage requirement. Lunatic thresholds for
-  1/2/3/4A/5 are3000/7200/8800/9999/9999. The clock also affects the FinalB clear
+  1/2/3/4A/5 are 3000/7200/8800/9999/9999. The clock also affects the Final B clear
   reward. Omitting an attack by missing its gate is not a complete capture route.
 - [ItemManager.cpp](../third_party/th08/src/ItemManager.cpp) uses collection height
   or max-value state to price point items. Extremely human gauge doubles their
@@ -217,31 +225,31 @@ Several coupled mechanisms matter more than a distance-to-bullet reward:
   price still uses the item's height when collected. This creates a positioning
   objective that can require staying high until pickup, not merely crossing up.
 - Ordinary time-orb pickup pays `max(100, 10 * floor(totalPointItems / 2))`,
-  except the source's special orb mode and2000-stage-point branch. Conversely,
-  every two time orbs add10 to future point-item value. Early point collection
+  except the source's special orb mode and 2000-stage-point branch. Conversely,
+  every two time orbs add 10 to future point-item value. Early point collection
   therefore raises later orb income, while earlier orbs raise later point income;
   a controller should value both carried economy state and immediate pickup score.
-- Native graze awards2000 or4000 displayed points and1/2/3 graze count depending
+- Native graze awards 2000 or 4000 displayed points and 1/2/3 graze count depending
   on gauge. At extreme youkai gauge against a boss, it can generate additional
   time orbs, including extra spell rewards. Ordinary bullets graze once; lasers
   follow a separate repeated-graze path. Graze also raises rank, changing later
   nonspell patterns. The source resets boss bullet-rank influence on spell start.
 - [Gui.cpp](../third_party/th08/src/Gui.cpp) clear rewards include stage base,
-  graze, point items and time orbs, then final-stage life/bomb reserves and FinalB
+  graze, point items and time orbs, then final-stage life/bomb reserves and Final B
   clock value, difficulty and configured starting-life scaling. Its displayed
   bonus is ten times the intermediate integer sum. Retaining NMNB reserves and
   collecting items therefore have consequences beyond immediate pickup score.
 
-`Player::AwardGraze` increments the displayed counter by3 at extreme human gauge,
-2 at moderate human gauge and1 otherwise. Compare actual award events and gauge,
+`Player::AwardGraze` increments the displayed counter by 3 at extreme human gauge,
+2 at moderate human gauge and 1 otherwise. Compare actual award events and gauge,
 not just that counter. The opt-in read-only audit now counts total events and
 the two extreme-gauge subsets, including repeated laser contacts. Ordinary boss
-spell graze at extreme youkai requests three time orbs for teams0..3 and solo
-Youmu10, two for solo youkai5/7/9/11, and none for solo humans4/6/8. Laser calls
+spell graze at extreme youkai requests three time orbs for teams 0..3 and solo
+Youmu 10, two for solo youkai 5/7/9/11, and none for solo humans 4/6/8. Laser calls
 that suppress extra items request only the base one for eligible shots. Solo
-humans4/6/8 cannot reach extreme-youkai gauge; solo youkai cannot reach the
-extreme-human point doubling. Ghost Team3 reaches extreme human at−3000;
-solo Youmu10 reaches both extremes at±3000. Other teams use±8000. Character
+humans 4/6/8 cannot reach extreme-youkai gauge; solo youkai cannot reach the
+extreme-human point doubling. Ghost Team 3 reaches extreme human at−3000;
+solo Youmu 10 reaches both extremes at±3000. Other teams use±8000. Character
 switching and gauge control are separate capabilities. Those pickups also affect
 spell bonus and future point value. `Spellcard::AddBonusProgress` clamps at its score
 limit, so faster capture need not maximize bonus when sustained orb income can
@@ -260,8 +268,8 @@ separate requests, realized items, collected items and optimistic repricing.
 Optimize these with complete native outcomes and explicit resource costs. Ordinary
 speed kills, controlled familiar cancellation, item collection and timed grazing
 can conflict; local graze or damage alone cannot identify the highest-score run.
-The [PND score list](https://thscore.pndsng.com/index.php?th=8), checked October25,
-lists a6,168,365,790 Marisa/Alice score and higher scores for other shots. It is a
+The [PND score list](https://thscore.pndsng.com/index.php?th=8), checked October 25,
+lists a 6,168,365,790 Marisa/Alice score and higher scores for other shots. It is a
 score-attack reference, not an established matching-NMNB bound for this solver.
 
 ### Collection and form controls
@@ -270,19 +278,19 @@ The opt-in `score` preference adds two independent current-memory controls:
 `Configuration::scoring_collection` and `scoring_aim`. The Native adapter owns a
 copy of visible point/useful power items, literal boss position, current power
 and the loaded SHT collection line. It reads no future drops or RNG. Collection
-starts with at least four useful items and fewer than64 observed bullets, aims
+starts with at least four useful items and fewer than 64 observed bullets, aims
 12 pixels above that source line and retains its intent until items disappear,
 eligibility ends or a boss arrives. This hysteresis prevents turning back while
 the last items are still approaching. Boss aiming uses its actual position and
-the ordinary400-pixel vertical anchor. These are proposal goals. Complete Native
+the ordinary 400-pixel vertical anchor. These are proposal goals. Complete Native
 rollouts decide safety with the explicitly selected budgets; the Native harness
-default is H64/lead8/110ms/60ms.
+default is H64/lead 8/110 ms/60 ms.
 Baseline actions and tie ordering remain unchanged. The scoring goals reject the
 fixed-height delayed executor and existing branch-value models rather than
 silently mixing unsupported control or training assumptions.
 
 `score-survival` adds a soft focus preference only while the actual source
-`ENEMY_FLAG_TIMEOUT_SPELL` is visible, for a team that can switch forms. Its0.01
+`ENEMY_FLAG_TIMEOUT_SPELL` is visible, for a team that can switch forms. Its 0.01
 node cost uses the scale of the existing action-change cost; ordinary attacks
 retain the original score preference. This signal describes source timer handling,
 not a proof that HP can never finish the attack early. The blanket all-spell
@@ -290,8 +298,8 @@ form prototype is retired after two complete-duration failures. These preference
 use no spell-ID decisions or input scripts and remain opt-in.
 
 `score-harvest` allows a collection trip during a quiet nonspell boss interval:
-the existing four-item/<64-bullet entry gate remains; an active spell or128
-observed bullets ends a boss trip. Its existing edge-cost term is2 with40-pixel
+the existing four-item/<64-bullet entry gate remains; an active spell or 128
+observed bullets ends a boss trip. Its existing edge-cost term is 2 with 40-pixel
 margin. The baseline and original `score` behavior remain unchanged. Complete
 scoring outcomes and weaker variants are recorded in Status.
 
@@ -307,7 +315,7 @@ trip until collection; empty actor/item state clears it. Precollection remains
 experimental, with failed and weaker complete trials retained in Status.
 
 Boss collection, precollection and source-survival focus strength are independent
-recorded controls. The survival prior defaults to0.01; changing its nonnegative
+recorded controls. The survival prior defaults to 0.01; changing its nonnegative
 strength does not affect ordinary attacks. No failed/incomplete branch certifies
 an input prefix. The first ordinary-spell milking variants were discarded after
 failed full scenes; the maintained attack-pacing control below supersedes them.
@@ -316,11 +324,11 @@ Extending an attack must still improve a complete valid terminal score.
 ### Stream proposals and attack pacing
 
 The all-shot reference has an important source capability difference. In
-`Player::AddedCallback`, solo Youmu (shot10) uses gauge limits ±5000 and extreme
+`Player::AddedCallback`, solo Youmu (shot 10) uses gauge limits ±5000 and extreme
 thresholds ±3000, versus the Magic Team's ±10000/±8000.
 `Player::UpdateMovementAndOptions` still forces its actor to human after focus
 processing, while shooting shifts
-gauge according to focus. `AwardGraze` explicitly exempts shot10 from the
+gauge according to focus. `AwardGraze` explicitly exempts shot 10 from the
 solo-human exclusion: extreme-youkai boss graze can produce three ordinary-spell
 apex items even though the actor remains human. `Item::CollectTimeOrb` changes
 gauge by ±111 according to focus, unless its suppression timer is active.
@@ -331,9 +339,9 @@ its Magic Team attack-pacing gate must not be treated as evidence of solo
 Youmu pacing support. A new-shot scoring test needs its own original retail
 seed receipt and an explicit capability contract first.
 
-Scarlet Team (shot2) has another source state boundary. Its four callbacks are
+Scarlet Team (shot 2) has another source state boundary. Its four callbacks are
 `UpdateOrbitingOption`: initialization saves targets at player offsets
-(-30,-16),(-10,-32),(10,-32),(30,-16) pixels. Active options orbit8 pixels
+(-30,-16),(-10,-32),(10,-32),(30,-16) pixels. Active options orbit 8 pixels
 around those saved targets; that function does not move the targets with the
 player. `UpdateMovementAndOptions` recreates the team option states on focus
 entry. Moving the player while holding focus therefore does not itself move
@@ -344,51 +352,51 @@ Scarlet production deficit motivates this hypothesis, rather than proving a
 scoring benefit from any proposed refresh interval.
 
 The experimental `score-flow` adds a source-survival-only stream goal, with a
-recorded5.01 focus prior. Every64 updates it ranks70 stationary targets on a
-32-pixel grid over x48..336/y208..400. Current ungrazed ordinary bullets with
-speed at most3 pixels/update are extrapolated192 updates in16-update samples.
+recorded 5.01 focus prior. Every 64 updates it ranks 70 stationary targets on a
+32-pixel grid over x48..336/y 208..400. Current ungrazed ordinary bullets with
+speed at most 3 pixels/update are extrapolated 192 updates in 16-update samples.
 Contact bounds include the source's20-pixel bullet expansion as well as the
 bullet/player graze half sizes. The target cost combines unique contact opportunity, a body-danger proxy and
 travel distance. Current lethal bodies and movement bounds exclude targets.
-Local proposal contact reward3 and anchor weight0.03 apply only in this mode;
+Local proposal contact reward 3 and anchor weight 0.03 apply only in this mode;
 native collision/margin costs and true-RNG safety verification remain intact.
-This long linear hypothesis is not a192-update Native certificate. The complete
-precursor had empty macro contacts because it omitted the20-pixel expansion;
+This long linear hypothesis is not a 192-update Native certificate. The complete
+precursor had empty macro contacts because it omitted the 20-pixel expansion;
 its valid score does not validate that earlier target. The mirrored-stream
 contract catches the omission and checks goal direction. The source-survival-only
 profile still has complete-duration failures in Status.
 The default controller remains unchanged.
 
-Native `--upper-flow 1` extends only the stream proposal grid to130 targets,
-x48..336/y16..400 at the same32-pixel spacing. It defaults off and requires
+Native `--upper-flow 1` extends only the stream proposal grid to 130 targets,
+x48..336/y 16..400 at the same 32-pixel spacing. It defaults off and requires
 survival flow or attack pacing; ordinary recovery clears this setting through
 `with_style`. Bullet filtering, contact/danger arithmetic, body exclusions,
 64-update target cadence and strict-improvement tie order are unchanged. The
-default profile still visits exactly the original70 cells in the original
+default profile still visits exactly the original 70 cells in the original
 order. The upper profile changes possible movement, rather than granting safe
 passage around a live boss. Every actual input still needs a complete Native
-future. Reports record `upper_flow`, `flow_grid_revision` (0 unused,1 original,
+future. Reports record `upper_flow`, `flow_grid_revision` (0 unused, 1 original,
 2 upper) and `flow_grid_min_y`. A synthetic cluster beyond the local movement
-horizon tests the new approach direction; the complete real-data47 scene and
+horizon tests the new approach direction; the complete real-data 47 scene and
 whole-route evidence are recorded in Status and Validation. Earlier approach
 during the damage Probe is a separate rejected experiment, not this control.
 
 The separate opt-in `--attack-pacing 1` uses current source HP-to-callback,
 remaining updates, damage-reduction state, extreme-youkai state, collected orbs,
-orb value and bonus decay. After60 mature observations it estimates DPS from a
+orb value and bonus decay. After 60 mature observations it estimates DPS from a
 120-update damage history. That measured firing rate is retained through the
 income experiment; it is not an exact future damage model. The default capture
-reserve is1.5*HP/DPS+240 updates. With
-700 additional updates,16 nearby slow ordinary bullets and8 macro contacts,
-it releases new fire and samples income. It waits at most1200 updates for the
-gauge/income experiment; after source extreme-youkai activation it measures240
+reserve is 1.5*HP/DPS+240 updates. With
+700 additional updates, 16 nearby slow ordinary bullets and 8 macro contacts,
+it releases new fire and samples income. It waits at most 1200 updates for the
+gauge/income experiment; after source extreme-youkai activation it measures 240
 updates. Orb rate*(current orb value+8000) must exceed current bonus decay to
 continue. The reserve or low remaining HP restores fire. This is a proposal
 proxy: bonus caps, future decay, PIV and clear-bonus effects are not an exact
-terminal value model. Carried shots and the source20-update shot cycle remain
+terminal value model. Carried shots and the source 20-update shot cycle remain
 owned by Native; releasing the key does not instantly remove damage.
 `--capture-factor` and `--capture-padding` independently expose that reserve;
-defaults remain1.5 and240, and the1.2/120 complete trial retains its extra costs.
+defaults remain 1.5 and 240, and the 1.2/120 complete trial retains its extra costs.
 
 Native `--farm-charge-fire 1` optionally holds fire during the initial Sample
 gauge preparation, before the first observed extreme-youkai state. It requires
@@ -401,7 +409,7 @@ gauge activation or score gain is guaranteed. Collection preparation retains
 priority. Decisions, value proposals and Native recovery read one shared fire
 intent. Reports include `farm_charge_fire` and its revision.
 
-`--attack-focus-bias` independently controls the pacing form prior (default5).
+`--attack-focus-bias` independently controls the pacing form prior (default 5).
 The Native harness can try `--baseline-recovery 1` after a failed nominal future.
 The baseline owns movement; the branch-owned primary policy observes every
 future packet and supplies fire intent, including transitions back to capture.
@@ -442,8 +450,8 @@ uses the same price-aware target before restoring new fire.
 `--hit-income 1` is an independent, default-off experiment. A current SHT
 descriptor with negative extreme-gauge behavior can generate human shot-hit orbs
 before enemy HP suppression. With no boss, the Native adapter copies accepted
-nonboss shot targets with at least24 remaining reduction updates. The proposal
-ranks current targets by remaining window and travel distance, aiming64 pixels
+nonboss shot targets with at least 24 remaining reduction updates. The proposal
+ranks current targets by remaining window and travel distance, aiming 64 pixels
 below the chosen actor for upward shots. Item trips and boss/graze goals retain
 priority. This is a current-memory hypothesis, not a future hit, reward or safety
 promise. Native rollouts retain all carried shots, RNG, HP and lifecycle changes.
@@ -460,7 +468,7 @@ and larger-search profile; its result does not isolate the goal's contribution.
 
 Native `--drop-follow 1` requires `--drop-target 1` and defaults off. It extends
 the same current-enemy proposal to actors below the player when an in-bounds
-shooting position64 pixels below the actor exists. Coordinates use playfield
+shooting position 64 pixels below the actor exists. Coordinates use playfield
 pixels, with Y increasing downward. Ranking becomes
 `count / (HP * (1 + abs(dx)/48 + abs(shooting_y-player_y)/64))` with stable pool
 order on ties. These distance scales are heuristic penalties, not flight times.
@@ -471,14 +479,14 @@ Native execution owns collision, actual shot hits, item production and prices;
 descending to shoot may reduce collection prices. Historical profiles keep the
 original horizontal-only selection when the new control is off.
 
-Native `--parent-chain-bias VALUE` defaults to0 (off), accepts0..10000 and
+Native `--parent-chain-bias VALUE` defaults to 0 (off), accepts 0..10000 and
 requires `--drop-target 1` when positive. The adapter then excludes attached
 children from shooting-lane candidates; it preserves their ordinary impending
 drop totals for precollection. The selected root supplies only a Boolean current
 attachment-link cue. No pointer crosses the adapter, no chain is traversed and
 neither linkedChildCount nor an assumed child payout enters the ranking.
-Revision2 also copies the selected root's signed remaining reduction updates.
-With the chain cue, fewer than24 reduction updates, switchable forms and no
+Revision 2 also copies the selected root's signed remaining reduction updates.
+With the chain cue, fewer than 24 reduction updates, switchable forms and no
 boss/pickup trip or full four-item pending batch, the policy adds the configured
 focused-form bias and suspends the ordinary human bias and competing hit-income
 lane. It aims at the root in youkai form so familiars can survive to the source
@@ -492,7 +500,7 @@ hazards and verification can select another form. This can lose human shot-hit
 income, kill timing or pickup value; complete Native execution decides profit.
 
 Form also affects source instruction selection. `Enemy::UpdateYoukaiAlignment`
-writes the linked child's ECL mask override to32 for human or64 for youkai;
+writes the linked child's ECL mask override to 32 for human or 64 for youkai;
 `EclManager::RunEcl` combines it with the difficulty mask when accepting an
 instruction. A different waiting form can therefore change emitted patterns,
 as well as child hittability and gauge. Each Native candidate must execute its
@@ -500,22 +508,22 @@ own actual program/RNG future. Current links or a death-age observation alone
 cannot predict the later bullet-cancellation reward.
 
 Source stage-clear scoring is separate from point pickup pricing. Before
-difficulty/configuration multipliers, `Gui::UpdateStageElements` adds5000 raw score per
-stage point,100 per time orb and50 per graze, plus its stage/life/bomb/night
-terms. Raw score units display as10 points. PIV does not directly multiply that
+difficulty/configuration multipliers, `Gui::UpdateStageElements` adds 5000 raw score per
+stage point,100 per time orb and 50 per graze, plus its stage/life/bomb/night
+terms. Raw score units display as 10 points. PIV does not directly multiply that
 clear sum. Actual price ceilings, later point income, capture bonuses and final
 clear rewards therefore need separate accounting; an orb-to-PIV conversion is
 not a promise of a fixed final-score gain.
 
-Native `--economic-proposals 0..4` defaults to0. After a complete safe forecast,
-it retains that incumbent and tries up to the requested number of32-update
+Native `--economic-proposals 0..4` defaults to 0. After a complete safe forecast,
+it retains that incumbent and tries up to the requested number of 32-update
 fire/focus alternatives, preserving the immutable lead and incumbent movement
 inputs. Each alternative re-executes the full Native horizon with its own RNG
 and policy continuation. Only strictly higher endpoint cash replaces the
 incumbent; ties and failed/incomplete futures retain it. These are horizon
 proposals: only a higher complete score satisfying the declared miss/bomb/capture
 goal selects a progress file. Current score attack is NMNB with optional captures.
-Extra work shares the declared total search budget, with a2000ms soft comparison
+Extra work shares the declared total search budget, with a 2000 ms soft comparison
 slice checked before each candidate. An in-flight candidate may consume the
 remaining total budget. Reports record attempted/adopted comparisons and include
 their rejected futures and native/proposal costs in the ordinary totals.
@@ -525,7 +533,7 @@ their rejected futures and native/proposal costs in the ordinary totals.
 Native-only `--farm-to-timeout 1` is an optional pacing proposal for capture-
 optional experiments. It leaves the existing damage probe and gauge/income
 sample intact. After a positive sample, it can keep no-fire past the ordinary
-capture reserve; a rolling240-update realized-orb sample restores fire when the
+capture reserve; a rolling 240-update realized-orb sample restores fire when the
 stream becomes unproductive. The unchanged cash+8000 bonus proxy is heuristic:
 bonus caps, lost capture payout and future PIV make it unsuitable as a terminal
 score oracle. Carried shots can still kill the boss, and recovery can still fire.
@@ -545,7 +553,7 @@ controls and verification; strict historical records retain their identities.
 
 Per-spell score audits snapshot collected orbs, point count/value and score after
 the preceding capture payout is settled, then again at the source end hook.
-The frozen story regression checks fast80-update transitions and the unchanged
+The frozen story regression checks fast 80-update transitions and the unchanged
 complete replay-row hash. Spell bonus is reported separately: it is deferred
 until its reward effect or the next start, not necessarily included at end.
 Carried items can still be collected during the new spell; these are temporal
@@ -553,16 +561,16 @@ boundaries, not causal attribution or a reset of field state. Graze audit counts
 also distinguish ordinary extreme-youkai events from extra-item-suppressed
 contacts. A universal three-orb multiplier would overvalue the latter.
 
-The Native experiment tool exposes verification64/128/256 and publication64/128
+The Native experiment tool exposes verification 64/128/256 and publication 64/128
 independently, with publication bounded by the complete certificate. Optional
 held recovery mirrors the live client's family/order: after a failed nominal,
 held directions precede policy prefixes; if none certifies, guided tails use the
 remaining budget. An earlier successful longer certificate can supply another
 checked publication window after a new search fails. Its executed prefix must
 still match; the failed search supplies no inputs. The live `h128` profile uses
-128 verification/64 publication, while historical `h128-held` publishes128.
-Both retain lead8, interval8, total110ms and proposal60ms. Longer verification is
-not uniformly better: the retained4A counterexample fails under128.
+128 verification/64 publication, while historical `h128-held` publishes 128.
+Both retain lead 8, interval 8, total 110 ms and proposal 60 ms. Longer verification is
+not uniformly better: the retained 4A counterexample fails under 128.
 
 Remaining source-based opportunities, including net reduction-window income,
 are kept in [Status](STATUS.md#unresolved-problems-and-proposed-next-work).
@@ -681,7 +689,7 @@ stage transitions. Explicit prefix reconstruction warms bullet velocity, spawn,
 direct-laser and body history without consuming search tie RNG; a continuation is
 a new policy episode, not a bit-identical resumption of an earlier search.
 The shared online/offline half-pixel key remains exactly
-`uint32_t(lround(coordinate * 2)) & 2047`. On the tested glibc/x86-64 binary32
+`uint32_t(lround(coordinate * 2)) & 2047`. On the tested glibc/x86-64 binary 32
 profile, an integer-significand path avoids the per-node library call. It retains
 the original multiplication and signed modulo result; large/special values and
 other layouts use the original library expression. This changes no deduplication
@@ -879,7 +887,7 @@ Exact inverse rotations are prepared once per retained forecast laser after all
 geometry/envelope changes, then shared by immutable queries in that frame. They
 are rebuilt at each observation, preserving the original negative-angle float
 products. Online spatial retention uses the observed movement bounds for a dense
-bin lookup, with packed binary32 score/source-index ranks. Signed zeros share a
+bin lookup, with packed binary 32 score/source-index ranks. Signed zeros share a
 rank; infinities and stable source ties keep their original order and node bits.
 Unsupported layouts, oversized/invalid bounds and out-of-domain nodes delegate to
 the generic selector. No simulated states or exact coordinates are merged.
@@ -1075,7 +1083,7 @@ Teacher corrections are separate offline episodes from immutable student prefixe
 The first diagnosis protocol queries all six remaining failed 4B/Extra trajectories
 at T-128. A later frozen phase selects every unverified correction and quadruples
 the prefix lead to T-512, retaining the earlier failures and costs. It uses the
-same R64/beam384/cell16/commit8/checkpoint120/keep64/attempts4/CEGAR4 planner, with
+same R64/beam 384/cell 16/commit 8/checkpoint 120/keep 64/attempts 4/CEGAR 4 planner, with
 100000 total updates and 900 seconds per episode, including reconstruction.
 Fresh actions, natural replay and byte-identical parent prefixes gate labels.
 An earlier-prefix success labels that earlier state; it does not certify a later
@@ -1114,10 +1122,10 @@ for candidate prediction. The real owner cannot rewind; future planning must not
 change its executed or latched prefix. This does not relax the zero-native-future
 contract of the existing current-memory policy.
 
-The recorded shot1 Lunatic4A→FinalB story and proper Extra already complete
-online; their exact profiles and limits are in Status. Stage4B and new story
+The recorded shot 1 Lunatic 4A→Final B story and proper Extra already complete
+online; their exact profiles and limits are in Status. Stage 4B and new story
 experiments are paused while Extra scoring is the active research scope. Earlier
-practice/shot0 successes remain component evidence: practice initialization resets
+practice/shot 0 successes remain component evidence: practice initialization resets
 state, so isolated clears alone do not certify carried world/RNG at story joins.
 
 The first `th08_shadow_follow` gate implements common-start Native input following
@@ -1129,18 +1137,18 @@ deadlines. Its finite scalar/digest agreement is not full-world or retail proof.
 world/RNG in a branch-owned process and filesystem. A complete horizon or actual
 terminal can certify a plan; death, fault and timeout cannot certify even an early
 surviving prefix. `ActionBuffer` checks late results against every executed input
-and projected state, replacing only the remaining suffix. The complete ID179
+and projected state, replacing only the remaining suffix. The complete ID 179
 regression verifies 1292 updates, rejects a fatal candidate and executes the
 verified queue without divergence. The search/client built on this primitive has
 complete live clears; the primitive test itself is not a deadline result. Live
-score conversion, broad seed reliability and every-frame60Hz remain open in
-[Status](STATUS.md). The synchronous250ms scoring harness is a separate profile.
+score conversion, broad seed reliability and every-frame 60 Hz remain open in
+[Status](STATUS.md). The synchronous 250 ms scoring harness is a separate profile.
 
 `th08_shadow_online` follows a local Wine observation journal and publishes plans
 through a versioned mapped file. The default `h32` profile fixes lead 8, verified horizon 32,
 minimum search interval 4 and replan-remaining threshold 28. A proposal child
 advances the immutable lead first, warming inherited Policy history at each update.
-The H24/beam192/cell16 policy exports at most four 23-input prefixes; its first
+The H24/beam 192/cell 16 policy exports at most four 23-input prefixes; its first
 modeled movement belongs to the existing latch. The client pads the remaining
 update and also considers the 18 held movement/focus candidates. Every complete
 lead-plus-candidate executes with its own full Native world and true RNG. No sampled
@@ -1172,15 +1180,15 @@ certifies, Policy-guided tails use the remaining total budget. Startup keeps the
 Policy-first order. A held tail preserves the final shoot bit as well as movement
 and focus; owned dialogue state may still select the recorded Z cadence. Every
 attempt is charged, including incomplete and fatal branches. `h128-held` applies
-that search at horizon128, replan-remaining120, with the same lead8, interval8,
-110ms total and60ms proposal cap. The bridge holds all128 inputs; greater rollout
+that search at horizon 128, replan-remaining 120, with the same lead 8, interval 8,
+110 ms total and 60 ms proposal cap. The bridge holds all 128 inputs; greater rollout
 work and altered selection order are explicit experiments. `h256-held` verifies
-256 updates while publishing only the first128. The full successful certificate
-is retained and validated; a fatal or incomplete256-update future supplies no
+256 updates while publishing only the first 128. The full successful certificate
+is retained and validated; a fatal or incomplete 256-update future supplies no
 prefix. Nominal extension may reuse the unconsumed unpublished future as a proposal,
-then freshly verifies a new256-update future. Only the queued published inputs
-are declared unchanged to the owner. Its publication threshold remains120 and
-its budget remains110ms. Reports separate verified and publication horizons.
+then freshly verifies a new 256-update future. Only the queued published inputs
+are declared unchanged to the owner. Its publication threshold remains 120 and
+its budget remains 110 ms. Reports separate verified and publication horizons.
 If a new search fails, the remaining successful certificate can extend the
 published window: the actual executed prefix must still match, all queued inputs
 remain unchanged, and the complete original certificate must remain valid. The
@@ -1188,27 +1196,27 @@ wire window rebases to the current actual frontier; the Native certificate keeps
 its original origin and full cost counters. Failed futures never supply this
 extension. Retained-window attempts, accepted windows and newly queued inputs
 are separate counters; reusing a proof does not charge another Native rollout.
-This prevents a128-input transport limit from discarding the safe latter half
-of a256-update forecast. Existing `h32` and
+This prevents a 128-input transport limit from discarding the safe latter half
+of a 256-update forecast. Existing `h32` and
 `h64` keep their prior behavior.
 
-The separately named `h256-pulse` recovery tests a rotating family of66 native
+The separately named `h256-pulse` recovery tests a rotating family of 66 native
 motion proposals before paying for heuristic generation: both focus states,
-nine held directions and16/32/64-update moves followed by a stationary tail for
+nine held directions and 16/32/64-update moves followed by a stationary tail for
 each nonstationary direction. A persistent attempt cursor advances across actual
-search origins so the110ms cap cannot repeatedly starve later directions. Native
-verification includes the unchanged eight-input lead and the complete256-update
-future; only128 inputs publish. Nominal reuse still runs first. Policy proposals
+search origins so the 110 ms cap cannot repeatedly starve later directions. Native
+verification includes the unchanged eight-input lead and the complete 256-update
+future; only 128 inputs publish. Nominal reuse still runs first. Policy proposals
 use only any remaining total budget. Direct/pulse attempt/selection counts and
 the final cursor are reported separately. This changes candidate families and
 ordering explicitly; it does not change collision, game RNG or old profiles.
 
 `h512-buffered` is a separately named scheduling experiment using the original
-H24 guided proposals:512 verified updates,128 published inputs,32 unchanged lead
-inputs,480ms total,60ms proposal cap and minimum interval8. Its512-entry actual
+H24 guided proposals:512 verified updates,128 published inputs, 32 unchanged lead
+inputs,480 ms total, 60 ms proposal cap and minimum interval 8. Its 512-entry actual
 history supports later certificate windows. The longer input lead accommodates
 slower Native search while the original owner keeps running; it is not a claim
-of lower computation time or16.67ms decisions. Once per publication window
+of lower computation time or 16.67 ms decisions. Once per publication window
 (128 actual receipts), a fresh solve takes priority over nominal reuse. A failed
 refresh consumes its interval too, allowing ordinary reuse to resume. Reports
 separate forced refreshes, fresh adoptions, original Native costs and retained
@@ -1216,7 +1224,7 @@ windows. No stage/spell/seed selects this policy; older named profiles retain
 their original budgets, lead and reuse behavior.
 
 `h128-recorded` adds a separate Native-geometry proposal path:128 verified and
-published updates, lead8, minimum interval8 and110ms total. That budget includes
+published updates, lead 8, minimum interval 8 and 110 ms total. That budget includes
 literal nominal verification, recording, proposal search and independent final
 verification. A nominal tail repeats its final held action instead of returning
 to the H24 current-memory Policy. Owned GUI state still advances dialogue after
@@ -1227,9 +1235,9 @@ The recorder forks the actual Native world, including action-dependent RNG and
 lifecycle state. It observes bullet boxes, pooled/direct laser calls and lethal
 regions at their collision phase, stopping at death, terminal or unsupported
 behavior. These are conditional samples, not hazards guaranteed for another path.
-The float32 proposal beam uses width192, cell16 and the original one-update latch.
+The float32 proposal beam uses width 192, cell 16 and the original one-update latch.
 It considers the default spatial alternatives, then fixed field goals spanning
-x48/192/336 and y96/240/400. No stage, spell or seed chooses a goal. Additional
+x48/192/336 and y 96/240/400. No stage, spell or seed chooses a goal. Additional
 goals have independent proposal RNG streams and preserve the primary stream;
 unused groups are never computed. Up to four counterexample recordings refine
 the proposal constraints, within the same total budget. Only a complete independent
@@ -1241,13 +1249,13 @@ separately from all verification attempts. Reports also expose recording/search
 counts, capture/search time and timeouts; Native timing excludes file I/O. The
 ordinary profiles keep their existing algorithms and budgets.
 
-`h64-recorded` keeps the original H64 nominal Policy path and its64-input
-publication window. Revision3 requires a complete128-update Native verification
+`h64-recorded` keeps the original H64 nominal Policy path and its 64-input
+publication window. Revision 3 requires a complete 128-update Native verification
 for a recorded repair. Subsequent literal extensions preserve that longer route
-and verify128 again; publishing64 does not discard the unpublished evidence.
-Lead8, interval8 and the shared110ms total remain explicit. Unused budget may
-still reach ordinary fresh Policy proposals. The earlier fixed64-verification
-portfolio remains a retained failed control, not a128-update safety claim.
+and verify 128 again; publishing 64 does not discard the unpublished evidence.
+Lead 8, interval 8 and the shared 110 ms total remain explicit. Unused budget may
+still reach ordinary fresh Policy proposals. The earlier fixed 64-verification
+portfolio remains a retained failed control, not a 128-update safety claim.
 
 Before requesting fresh candidates, `h64` and its named variants can reuse the unconsumed inputs of the
 previous verified plan. A fresh child re-executes that whole prefix and extends
@@ -1285,7 +1293,7 @@ proposal generation and guided tails; immutable prefixes retain their actual
 inputs. Complete Native rollouts still decide whether a plan can be adopted.
 The retail input hook executes those same queued inputs without separate key
 injection. Spell practice rejects the flag, and this profile requires a verified horizon
-of at least64.
+of at least 64.
 
 `TH08_SHADOW_PRIOR_FINAL_A_CLEAR=1` names a second-clear story checkpoint for
 double teams at standard difficulties. Both worlds load a fresh score history,
@@ -1318,7 +1326,7 @@ their volumes only in the owned recording configuration copy, and record its has
 Deliver the standalone full Final B video by stream-copying the capture video
 when muxing aligned audio. Deliver the full story and a selected Kaguya-spell
 preview with balanced compression; the accepted 4A derivative uses native 640x480,
-libx264 fast CRF26 and AAC128k, preserving capture cadence without interpolation.
+libx 264 fast CRF 26 and AAC 128k, preserving capture cadence without interpolation.
 Keep originals and all videos outside Git. Only the owner's selected matching
 4A/Final-B/story replays are an exception to the generated-artifact ignore rule.
 
@@ -1329,7 +1337,7 @@ and simultaneous separate audio/video capture each yield 720 frames, no repeated
 timestamps and a 17-ms maximum gap. These synthetic controls isolate a recorder
 fault; they do not establish smooth retail rendering or gameplay deadlines.
 
-Use a single libx264 encoder thread and a fast preset, with lossless PCM audio
+Use a single libx 264 encoder thread and a fast preset, with lossless PCM audio
 captured independently. For example, after initializing the owned rectangle and
 private PulseAudio endpoint:
 
@@ -1381,20 +1389,20 @@ check available memory before launch. CPU parallelism does not justify risking O
 or changing unrelated workloads. Keep machine addresses, usernames, private paths
 and raw logs out of public artifacts. Record technical profiles and sanitized results.
 Current scoring permits at most four local owned solver/test/probe drivers and
-separately32 remote Native owners sharing a32-core quota. Each owner has4GiB
+separately 32 remote Native owners sharing a 32-core quota. Each owner has 4 GiB
 address-space and tree-RSS bounds; local/remote host reserves and aggregate limits
 are owned by the [operational contract](STATUS.md#operational-resume-contract).
 The cumulative campaign window is recorded there and in the ledger; do not reset
 it or infer new concurrency from idle capacity. Compilation uses two jobs.
 The following unit sizes are historical campaign profiles, not current launch
-instructions. The earlier offline campaign retained four simultaneous solver jobs, with320 tasks,
+instructions. The earlier offline campaign retained four simultaneous solver jobs, with 320 tasks,
 four CPU cores and 12 GiB memory for the entire batch. The online baseline uses a
 separate low-priority units with at most four independent controllers in total,
 96 tasks per unit,
 6 CPU cores, 6 GiB memory high-water and 8 GiB hard limit. Its historical six-job
 compile setting is superseded by the two-job limit above.
 In that historical campaign, overlapping ablations reserved a solver slot and
-shared a320-task cap; holdout work was gated. Those values are not current limits.
+shared a 320-task cap; holdout work was gated. Those values are not current limits.
 Student-state teacher corrections use two planners at most, a 192-task/four-core
 unit with 8-GiB high/16-GiB hard memory bounds; the serial successor uses 96 tasks,
 two cores and 6-GiB high/8-GiB hard bounds. Both retain low weights and zero swap.
@@ -1469,8 +1477,8 @@ Before publishing a checkpoint:
    file I/O and cross-build/environment comparisons from simulation measurements.
 
 Training seeds are 0, 1, 42 and 65535. Holdouts 7 and 2026 remain untouched until a
-candidate is frozen. The R64/beam384/cell16/shoot1 spell-92 candidate was frozen after
-all four training seeds passed, with checkpoint60/keep12/180-second budgets; both
+candidate is frozen. The R64/beam 384/cell 16/shoot 1 spell-92 candidate was frozen after
+all four training seeds passed, with checkpoint 60/keep 12/180-second budgets; both
 holdouts then completed and freshly replayed without tuning. This evaluates that
 checkpoint/profile, not a continuous story or all-seed robustness.
 
@@ -1478,7 +1486,7 @@ The subsequent [story-seed protocol](../reports/native/archive/planner_seed_prot
 draws eight uint16 seeds once from OS entropy before inspecting outcomes. Training
 seeds 4455/12525/30504/31338 support diagnosis; 24196/35540/1763/2138 are reserved
 for the frozen candidate's holdout evaluation. Both existing seed-zero story
-profiles, R64/beam384/cell16 and cell32, are frozen before these cases. Each attempt
+profiles, R64/beam 384/cell 16 and cell 32, are frozen before these cases. Each attempt
 keeps its 250000-update/2400-second budget and all native retry costs; running two
 profiles costs two attempts, not one. Any tuned successor must be frozen before
 using holdout feedback. Require full-story fresh action and natural replay proofs;

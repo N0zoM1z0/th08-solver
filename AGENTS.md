@@ -1,221 +1,132 @@
 # Engineering rules
 
-Read README.md, docs/STATUS.md and the affected interfaces before changing code.
-Follow the owner's latest scope. The owner authorized a tracked native headless TH08
-import and solver experiments over complete real-data scenes. Keep upstream code in
-this repository, not an ignored checkout, submodule or separate feature branch.
-The October 26 scope is Native-first scoring for Extra and the complete Magic
-Team Lunatic 4A-to-Final-B route. The latest continuation makes bomb permission
-and full-capture requirements independent CLI controls: the latest scope is
-No Miss, No Bomb, captures optional. Bomb experiments are paused. Preserve strict NMNB/all-capture
-defaults and historical records, and record actual bomb use/captures for every
-trial. Require a complete no-miss score above the corresponding human reference
-under its declared constraints before Wine retail replay validation.
-The owner resumed after the3B/5B Native milestones. The final comparison now
-uses the highest published human score across all12 team/solo shots: Extra
-above3,178,460,830 and Lunatic above7,053,332,460 in the October27 snapshot.
-First reach6,500,000,000 on the complete Lunatic route. Preserve historical
-same-shot references separately; use the all-shot reference for the new retail
-replay gate. The current Magic Team episodes remain valid fixed-seed candidates.
-The October27 owner permits all shots and prioritizes Scarlet Team
-(Sakuya/Remilia, shot2). Its complete Lunatic route also uses4A-to-Final-B.
-Preserve Magic Team progress; capture new original retail seeds for each new
-shot/entry episode before Native scoring.
-Before each new scoring episode, launch the owned Wine retail game and capture
-its original RNG seed at the observer's pre-RegisterChain boundary. Record the
-entry configuration, checkpoint and seed provenance before Native exploration.
-Keep that captured seed fixed across the episode's offline candidates; never
-replace it with a Native-selected or hindsight-selected seed. Historical fixed
-benchmarks and regression fixtures keep their original identities. Wine is used
-for seed acquisition and qualified retail replay playback; online MPC and live
-Wine solving remain paused. New scoring replay names use the
-owner-selected eight-byte `ysopwnab`; preserve historical replay bytes.
+Read [README](README.md), [Status](docs/STATUS.md) and affected interfaces before
+changing code. Follow the owner's latest scope. Current maintenance does not
+resume scoring: the owner cleared the persistent goal and requested a batch
+handoff. New scoring needs renewed instruction.
 
-## Solver-first scope
+## Scope and evidence
 
-- The goal is accurate, efficient offline planning over complete spell/scenario
-  segments, eventually genuine continuous stages
-- Explicit reproducible checkpoints are valid starting points. Do not make menu,
-  practice-prelude, camera or rendering reconstruction a prerequisite
-- Controlled visual RNG hooks are allowed when named, seeded and recorded. Never
-  silently substitute gameplay RNG or use one future for action-dependent branches
-- Preserve carried bullets, RNG, actors and lifecycle state across transitions.
-  Reset only where the modeled transition actually resets them
-- Unknown gameplay opcodes/state must stop the affected case. Classify synthetic,
-  DAT-controlled and source-faithful evidence separately. Fixed Native regression
-  cases require no game launch; new scoring episodes follow the seed policy above
+- Maintain a C++17 offline solver and the tracked Native headless TH08 import.
+  Keep upstream production code in this repository, with its third-party notices;
+  do not replace it with a submodule, ignored checkout or separate feature branch.
+- The project targets are Extra 4 billion and complete Lunatic 7 billion. The
+  6.5 billion milestone is achieved. All shots are permitted, with Scarlet Team
+  preferred; preserve Magic Team and solo Sakuya progress. Team story routes use
+  1 → 2 → 3 → 4A → 5 → Final B.
+- Scoring is No Miss / No Bomb, with captures optional. Bomb experiments are
+  paused. Preserve strict NMNB/all-capture CLI defaults and independent bomb and
+  capture controls. Record actual misses, bombs and capture outcomes for every trial.
+- The October 27, 2026 all-shot human references are Extra 3,178,460,830 and
+  Lunatic 7,053,332,460. A complete no-miss result must exceed its corresponding
+  reference under the declared constraints before Wine replay validation.
+  Reaching 7 billion alone does not pass the story gate. Preserve historical
+  same-shot references separately.
+- Before a new scoring episode, launch the owned Wine game and capture its original
+  RNG seed at the observer's pre-RegisterChain boundary. Record entry settings,
+  checkpoint, original receipt and source provenance before Native exploration.
+  Keep that seed fixed; never choose or reroll a seed after viewing Native scores.
+  Existing episodes, historical benchmarks and regression fixtures keep their identities.
+- Wine is for local seed acquisition and qualified retail replay playback. Online
+  MPC and live Wine solving are paused. New scoring replay names use the exact
+  eight-byte `ysopwnab`; preserve historical names and replay bytes.
+- Optimize complete spell/scenario segments and compose strategies from explicit
+  original-entry checkpoints. Carry actual RNG, bullets, actors, items, shots and
+  lifecycle state; reset only what the real transition resets. Reexecute the first
+  N owned inputs, rather than injecting selected state fields or grafting old futures.
+- Do not require menu, camera or practice-prelude reconstruction for a supported
+  checkpoint. Named, seeded and recorded visual RNG hooks are permitted, but never
+  silently replace gameplay RNG or share an action-dependent future across branches.
+- Unknown gameplay opcodes/state must stop the affected case. Distinguish synthetic,
+  DAT-controlled and source-faithful evidence. A failed or incomplete rollout cannot
+  certify a prefix. Only complete-route verification establishes a route score;
+  fresh/index agreement does not independently prove retail physics equivalence.
 
-## Code quality
+## Code quality and verification
 
-- Maintain C++17 code/tools/tests and English code comments/docs. Keep original
-  preparation artifacts unchanged; no Python implementation/dependency
-- Keep responsibilities separate: parsing/immutable programs, owned simulation,
-  planning, replay and CLI/reporting. Case-specific adapters must not spread into
-  generic kernels. Use explicit typed interfaces, not cross-tool globals or main()
-  symbols as dependencies
-- Prefer the smallest complete change. Do not build a general engine/framework for
-  one narrow case, add speculative features, or preserve unused scaffolding
-- Document why, ownership/lifetimes, update order, units, checkpoint assumptions,
-  unsupported behavior and terminal boundaries. Avoid comments that merely restate code
-- Use named structures and small functions; apply .clang-format. Share immutable
-  data, own mutable state, reuse buffers where measurement justifies it
-- No fast-math, approximate collision shortcuts, speculative SIMD or unsafe state
-  merging. Optimize against a measured workload while preserving stated semantics
-- The fork-based planner may approximate proposal search, pruning and cell merging.
-  Native rollouts decide safety; failed or incomplete rollouts cannot certify a prefix
-- Do not silently change budgets, tie-breaking, RNG consumption or failure meaning
-  to improve a benchmark. Record additional retry/target-selection costs
+- Keep code comments and maintained documentation in English. Do not introduce a
+  Python implementation/dependency or alter original preparation artifacts.
+- Separate immutable parsing, owned simulation, planning, replay and CLI/reporting.
+  Use typed interfaces, not cross-tool globals or `main()` symbols. Keep case-specific
+  adapters out of generic kernels. Prefer the smallest complete change and remove
+  genuinely unused scaffolding rather than building a speculative framework.
+- Document ownership/lifetimes, update order, units, checkpoint assumptions,
+  unsupported behavior and terminal boundaries. Use named structures, small functions
+  and `.clang-format`; comments should explain reasons rather than restate code.
+- Share immutable data and own mutable state. Reuse buffers when measurement justifies
+  it. No fast-math, approximate collisions, speculative SIMD or unsafe state merging.
+  Proposal search/pruning/cell merging may be approximate; Native rollouts decide safety.
+- Do not silently alter budgets, tie-breaking, RNG consumption or failure meaning to
+  improve a benchmark. Charge retries, failed branches and target-selection work.
+- Add focused regressions for meaningful contracts. Prefer a few complete-duration,
+  transition, deterministic replay and failure cases over redundant implementation tests.
+  Keep useful independent source checks; do not delete inconvenient failures.
+- Run relevant checks and the normal CTest suite before publication. For changed
+  DAT/runtime behavior, run the affected real-data command when data is available.
+  Retain existing sanitizer coverage without making every edit a sanitizer project.
+- Measure Release builds, excluding I/O from simulation timing. Record seed, profile,
+  outcome, budget and environment. A faster failing solver is not a performance win.
 
-## Proportionate verification
+## Documentation, retention and publication
 
-- Add a focused regression that reproduces the bug or guards a meaningful contract
-- Prefer a small number of end-to-end scenarios covering a complete duration,
-  transitions, deterministic replay and a failure case over many redundant tests
-- Keep useful independent source/differential checks. Delete tests only when unused,
-  duplicated or made obsolete by a replacement; do not delete an inconvenient failure
-- Run relevant tests and the normal CTest suite before publishing. For changed
-  DAT/runtime behavior, run the affected real-data command when data is available
-- Existing CI sanitizer coverage remains useful. Do not create elaborate new
-  ASan/UBSan infrastructure or make every small change a sanitizer project
-- Measure Release builds, exclude file I/O from simulation timing, and record seed,
-  profile, outcome, budget and environment. A faster failing solver is not a win
-- Fresh replay checks execution/index agreement; it is not an independent physics
-  oracle or proof of retail equivalence
+- Keep the compact current document set linked by README. Update the document that
+  owns a fact. Separate current status, proposed work and dated historical evidence.
+  Review all maintained Markdown, including model and evidence indexes. Use normal
+  English spacing, dates such as "October 27, 2026", and spaces before physical units.
+  Preserve code, identifiers, paths, hashes and recorded numeric values when editing prose.
+- Update affected generators and outputs together; run the documentation CTest.
+  Preserve original reports, lifecycle notes, failures and missing measurements.
+  Historical journals may be edited for clarity, but must not be presented as current plans.
+- `preparations/` is local-only and was removed from published history after a verified
+  ZIP download. Never reintroduce it. Raw DAT/EXE/assets, generated reference translation
+  units, new action tapes, experiment JSON and videos remain ignored; do not force-add them.
+- Preserve all selected historical replay bytes and their original seed/prefix lineage.
+  [The progress index](reports/native/replays/progress.tsv),
+  [evidence index](reports/native/README.md) and [Validation](docs/VALIDATION.md)
+  identify the owner's authorized progress replays, including online recordings and
+  later Scarlet/Magic improvements. For future work, retain/publish a new `.rpy` only
+  for a freshly verified improvement of the project's overall Extra or complete-Lunatic
+  record. Other shot results and negative experiments belong in the journal.
+- The selected animated README diagram under `docs/media/` is authorized. Its original
+  `gifs/` bundle, MP4 and Python generator remain local; this exception authorizes no
+  other video commits. Compact learned policy/risk snapshots under `models/` are also
+  authorized with exact weights, schema, hashes, provenance and evaluation limitations.
+- Follow the [storage retention record](docs/experiments/2026-10-28-storage-cleanup.md).
+  Retain the 29 compressed gameplay MP4s, current seed/replay environments, two in-use
+  old Wine prefixes and all selected replay/experiment/source/binary evidence. Deleted
+  MKV/PCM originals and retired recovery archives are not restorable promises. Keep the
+  verified archives, inventories and restore proofs for 45 inactive Wine prefixes and
+  656 private object intermediates; restore them before using retired paths.
+- Publish tested work directly to `main`: fetch first, preserve others' changes, and
+  never force an unrelated update. Use `gpt-6.1-sol-max: <English summary>` for new
+  assistant commits; do not rewrite old commits solely to change their prefix.
+- At a requested handoff, finish the already-running authorized batch, record outcomes
+  and leave no owned experiment queue/test driver running. Unused budget or a proposed
+  next step does not authorize another scoring batch during cleanup.
 
-## Documentation and publication
+## Resource ownership
 
-- All `preparations/` material is local-only. The owner requested a verified ZIP
-  download and removal of that directory from all published Git history; never
-  reintroduce its files through later commits or old branches
-- The owner authorizes the selected animated README diagram in `docs/media/`.
-  Keep its original `gifs/` bundle, MP4 and Python generator local; this does not
-  introduce a Python implementation/dependency or authorize other video commits
-- The October28 maintenance instruction retains only compressed prior gameplay
-  recordings:29 full MP4s remain under `reports/local/`; raw media, redundant
-  encodes and earlier exact-media recovery archives are retired. Do not promise
-  restoration of those deleted MKV/PCM originals. The README animation originals
-  above remain excluded from this cleanup.45 inactive Wine scratch prefixes and
-  656 private object intermediates have separately verified self-contained
-  archives under `reports/local/storage-cleanup-20261028-v2/`; retain their
-  archives, inventories and restore proofs, and restore before using old paths.
-  Current seed/replay environments, two in-use old Wine prefixes, all selected
-  replays and experiment inputs/results/source/binary manifests remain preserved
-- Keep only the compact current document set linked by README. Update the document
-  that owns the fact instead of adding another roadmap, diary or duplicate checklist
-- Keep current status, future work and historical/component evidence distinct.
-  Update report generators and affected outputs together; run the documentation CTest
-- Raw DAT/EXE/assets, generated reference translation units and local experiments
-  remain ignored. Do not force-add them; preserve third-party notices
-- Keep new generated replays, action tapes and experiment JSON under ignored
-  `reports/local/`. Preserve the existing tracked artifacts as historical snapshots;
-  progress commits contain code and maintained prose, not new or refreshed run artifacts
-- The owner explicitly authorizes the selected `.rpy` files corresponding to the
-  recorded Stage 4A, standalone Final B and complete 4A-to-Final-B story. Keep their
-  exact identities/provenance in maintained documentation. This does not authorize
-  committing videos, action tapes or new experiment reports
-- The October 26 handoff also authorizes the selected highest-scoring Native Extra
-  replay `reports/native/replays/magic/extra/extra-native-nmnb-2564311730-seed19732.rpy`.
-  Preserve its exact bytes and provenance; other new experiment artifacts stay local
-- The Native-first continuation also authorizes the selected complete progress
-  replays `extra-native-nmnb-2589417330-seed10025.rpy` and
-  `story-native-nmnb-4a-finalb-3890487560-seed40755.rpy` under
-  `reports/native/replays/`. Preserve exact bytes and provenance; failed tapes,
-  experiment reports and videos remain local
-- The owner's continuing progress-replay authorization also covers the selected
-  story improvement `story-native-nmnb-4a-finalb-3903603650-seed40755.rpy` in the
-  same directory. Preserve earlier selected replays unchanged
-- Continuing progress-replay authorization also covers the selected Native
-  story `story-native-nmnb-4a-finalb-4126102910-seed40755.rpy`; retain its exact
-  checkpoint-continuation provenance and all earlier selected bytes
-- Continuing progress-replay authorization covers the selected retail-seeded
-  Native story `story-native-nmnb-4a-finalb-4160457200-seed1805.rpy`; preserve
-  its seed receipt, full-entry provenance and all earlier selected bytes
-- Continuing progress-replay authorization covers the selected retail-seeded
-  story `story-native-nmnb-4a-finalb-4311260760-seed1805.rpy`; preserve its exact
-  prefix lineage, full-entry verification and earlier selected replays
-- Continuing progress-replay authorization covers the selected retail-seeded
-  Extra `extra-native-nmnb-2504560470-seed46997.rpy`; preserve its exact source,
-  prefix lineage and earlier selected Extra records
-- Continuing progress-replay authorization covers the selected retail-seeded
-  Extra `extra-native-nmnb-2508068110-seed46997.rpy`; preserve its exact bytes,
-  verification and earlier selected progress files
-- Continuing progress-replay authorization covers the selected retail-seeded
-  Extra `extra-native-nmnb-2603278620-seed46997.rpy` and
-  `extra-native-nmnb-2620568090-seed46997.rpy`; preserve their full-entry/prefix
-  lineage, exact verification and all earlier selected bytes
-- The October27 owner explicitly selects the verified milestone replays
-  `extra-native-nmnb-3010040230-seed46997.rpy` and
-  `story-native-nmnb-4a-finalb-5025195380-seed1805.rpy` for publication under
-  `reports/native/replays/`. Preserve exact hashes, original retail receipts,
-  complete input-prefix lineage and all earlier selected bytes. This does not
-  authorize raw tapes, experiment reports, videos or other new replay binaries
-- The owner also authorizes selected compact learned policy/risk snapshots under
-  `models/`. Preserve exact weights/tables with schema, hashes, provenance and
-  training/evaluation limitations. This exception does not include raw datasets,
-  action/replay tapes or experiment reports; those remain under `reports/local/`
-- For authorized assistant changes to this N0zoM1z0 repository, use
-  `gpt-6.1-sol-max: <English summary>`. Do not rewrite older commits solely for their prefix
-- The owner requires low process concurrency on the shared host. The October26
-  continuation authorizes cumulative budget extensions while bounding memory;
-  the active window is1664 total campaign tasks, without resetting the ledger.
-  The October28 extension1280→1344 was recorded at1276 before1281, and1344→1408
-  at1343 before1345,1408→1472 after1404 before1409, and1472→1536 after1466
-  before1473,1536→1600 after1531 before1537, and1600→1664 after1591
-  before1601; all failed regression,
-  canary, selection and composition costs remain charged.
-  The October27 continuation records successive64-task extensions from640,704,768,832 and896
-  before use, under that standing authorization.
-  Record further extensions before using them; this authorization does not raise
-  the four-concurrent-driver limit, including solver, probe, replay-verification
-  and test owners. Native rollout fork children belong to their single owner;
-  do not start four solvers plus an extra test driver. The owner's latest
-  October27 authorization raises the entire phase's former2GiB limits to4GiB.
-  New owners use a4GiB per-process
-  address-space limit,
-  a4GiB summed-RSS limit per owned solver tree, and host-memory admission/abort
-  guards. Preserve12GiB MemAvailable before admission; stop owned work below8GiB.
-  Resource-aborted work remains charged and cannot certify a gameplay result
-- The owner's October27 VPS request authorizes Native-only parallel search on
-  `yann@185.189.44.160`, separately from the local four-driver cap. Use an isolated
-  compute directory and the owned user systemd manager; preserve the old remote
-  checkout and all unrelated workloads. The initial remote cap is32 Native owners,
-  CPU quota32 cores, low priority,4GiB address space/tree RSS per owner,96GiB
-  aggregate owned RSS guard and128GiB hard service memory limit with no service
-  swap. Require128GiB host MemAvailable to admit and abort owned work below96GiB.
-  Keep the same local campaign ledger; reserve remote task IDs before dispatch.
-  Bind source/binary/library/DAT/input/seed-receipt hashes, and pass complete
-  cross-host execution/row-byte canaries before scoring. Acquire seeds locally;
-  return selected outputs for local fresh verification and qualified Wine playback
-- The owner's continuing progress-replay publication authorization includes the
-  selected verified Scarlet3.073B Extra and5.544B complete story improvements and
-  their intermediate record replays. Organize published Native evidence while
-  preserving every historical replay byte and updating all affected references.
-  Raw tapes, experiment JSON and videos remain local
-- The owner's later October27 request authorizes detailed, maintained experiment
-  journals under `docs/experiments/`, including the cumulative lifecycle ledger,
-  per-task parameters/results/costs/provenance and source-backed batch conclusions.
-  Preserve failures, setup errors, retries and missing historical measurements.
-  For future work retain/publish a new `.rpy` only when it improves the project's
-  overall Extra or complete-Lunatic record and passes fresh verification. Record
-  other shot results and negative experiments in the journal; earlier explicitly
-  selected historical replay bytes remain preserved. Raw run JSON/actions/videos
-  still stay local
-- At an owner-requested session handoff, finish the already-running authorized
-  batch, record its outcomes and leave no owned experiment queue/test driver
-  running. A proposed next step or unused budget is not authorization to start
-  another batch during cleanup
-- The owner's later October27 instruction resumes work after clearing the old
-  goal. The current Lunatic milestone is6,500,000,000 using stage/spell strategy
-  composition. Optimize individual phases at explicit original-entry checkpoints,
-  carry the actual gameplay world/RNG across the composition, and accept only
-  complete-route verification as a score result. Preserve the intervening
-  cancellation receipts and costs; new runs require fresh task IDs/output paths
-- The owner requested direct main progress commits, not feature branches/PRs.
-  Fetch first, preserve others' work, never force an unrelated change, and publish
-  only tested scope. Do not infer permission to continue beyond the latest request
-- The October28 continuation raises the next complete Lunatic milestone to7B
-  after the verified6.512B result and explicitly requests issue12 for parallel
-  checkpoint archives, strategy diversity and stage/spell composition. The latest
-  steering tests that method on Extra first, using the existing original9098
-  episode. Preserve NMNB/optional captures, full-route acceptance and the all-shot
-  retail gates;7B alone is below the7,053,332,460 story gate.
+- The last local profile permits at most two owned drivers, in one user systemd service,
+  with a total two-core quota and low CPU/I/O priority. The standing ceiling is four
+  drivers, including solvers, probes, replay verifiers and test owners; fork children
+  belong to one owner. Do not add a test driver beside a full solver allocation.
+- Bound each process to 4 GiB address space and each owned solver tree to 4 GiB summed
+  RSS. The local service uses MemoryHigh 6 GiB, MemoryMax 10 GiB and no swap. Admit
+  with at least 12 GiB host MemAvailable; abort owned work below 8 GiB. Resource-aborted
+  work remains charged and certifies nothing. Compile with at most `--parallel 2`.
+- Keep one cumulative campaign ledger at `reports/local/shadow-runtime-v1/tasks.tsv`.
+  Never reset it, reuse IDs, omit failures or infer IDs from line count. Read the current
+  cap and recorded extensions in [Status](docs/STATUS.md#operational-resume-contract).
+  Standing authorization permits further 64-task extensions, recorded before use;
+  it does not authorize scoring after the owner's stop instruction.
+- Remote Native search on `yann@185.189.44.160` is paused after a host-identity change.
+  Do not reconnect, replace host keys or infer closure of the 19 unresolved owners.
+  If explicitly resumed after identity verification, preserve unrelated workloads and
+  the old checkout, use isolated compute under the owned user systemd manager, and
+  keep local seed acquisition plus local verification of returned selections.
+- The standing remote ceiling is 32 Native owners / 32 cores, low priority, 4 GiB
+  address space/tree RSS per owner, 96 GiB aggregate owned RSS and a 128 GiB hard
+  service limit with no swap. Admit with 128 GiB host MemAvailable; abort below 96 GiB.
+  Reserve IDs from the same ledger before dispatch. Bind source/binary/library/DAT/
+  input/seed-receipt hashes and pass complete cross-host execution/row-byte canaries
+  before scoring. No remote allowance increases the local concurrency ceiling.

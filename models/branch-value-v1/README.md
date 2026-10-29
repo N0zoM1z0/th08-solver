@@ -19,8 +19,8 @@ position/travel/wall distances, final movement/focus, ordinary search score,
 local current bullet/ghost/spawning/actor counts, canonical-motion mismatch,
 current-model forecast cell counts, form and global observed hazard counts.
 They contain no gameplay seed, spell ID, absolute episode time or oracle future.
-Features are clipped to [-32,32]. The file records training-only means/scales;
-standardized inputs are clipped to [-8,8]. Inference is one linear logit/sigmoid
+Features are clipped to [-32, 32]. The file records training-only means/scales;
+standardized inputs are clipped to [-8, 8]. Inference is one linear logit/sigmoid
 per retained endpoint, used only to rank complete H24 beams.
 
 Training uses 16 independently drawn seed/parent episodes and 1584 branch rows
@@ -41,13 +41,14 @@ Data generation uses the pinned native library SHA-256
 and DAT SHA-256
 `9d7edf43b8ddd347cbb641836f6b5050745dd936f688daebbf9382ca557043bb`.
 Producer/compiler details and full manifests are retained in local experiment
-receipts; [Status](../../docs/STATUS.md) owns paired native evaluation evidence.
+receipts. The paired spell-practice evaluation is summarized below; current
+scoring records are maintained separately in [Status](../../docs/STATUS.md).
 The frozen producer archive SHA-256 is
 `332619d8f370b5dffc31c4fb1a14975efb3be021b841fe247ccc5400eb7e6b5a`;
 collector binary SHA-256 is
 `d078b2470ec2362ad78a0a706f4c952057c0d5b4e43fa03714a0604b3666d1b5`.
 Collection used GCC 13.3 Release on an EPYC 9654, policy `-march=native`, explicit
-`-ffp-contract=off`, H24/beam192/cell16/spawn-guard16/reach-filter, hard phantoms
+`-ffp-contract=off`, H24/beam 192/cell 16/spawn-guard 16/reach-filter, hard phantoms
 and the motion envelope. Every 128 updates from update 128, up to 32 checkpoints
 sample four retained score ranks. Each parent has 20000-update/1800-second limits;
 child windows are separately bounded and charged. No legacy-risk tables, lag or
@@ -78,8 +79,7 @@ comparisons against H24 and H64. The tested global penalties 0.25/1/4 each compl
 This does not change the model weights or use independent evaluation outcomes.
 The frozen independent comparison finds an encouraging 202 signal, with retained
 regressions and unresolved paired uncertainty. It does not establish a population
-reliability guarantee; [Status](../../docs/STATUS.md) owns exact native completion,
-timing and whole-stage verification evidence. Future retraining needs a new
+reliability or whole-stage timing guarantee. Future retraining needs a new
 snapshot and split ledger. This experimental model remains explicitly opt-in.
 
 The later frozen 172-trial comparison uses this unchanged snapshot on 24 different
@@ -87,4 +87,5 @@ Extra 202 seeds: v1 completes 9/24, versus baseline 14/24, v2 9/24 and the gener
 no-model profile 23/24. All arms pass the smaller 107/111/103 controls. This second
 bank retains real regressions and does not support a general benefit claim from
 the first bank's encouraging signal. No weights or penalty were changed from
-these evaluation outcomes; [Status](../../docs/STATUS.md) owns the paired results.
+these evaluation outcomes. Original paired-run receipts remain local; the
+comparison above states their measured scope.

@@ -1,133 +1,92 @@
 # Experiment journal
 
-The owner requested a durable record of every experiment and exploration on
-2026-10-27. This directory records hypotheses, evidence, declared parameters,
-costs, failures and conclusions. [Status](../STATUS.md) owns the current bests and
-operating contract; [Native evidence](../../reports/native/README.md) owns the
-published replay index.
+This directory preserves the scoring campaign's hypotheses, parameters, evidence,
+failures, costs and decisions. [Status](../STATUS.md) owns current records and the
+stopped handoff; [Native evidence](../../reports/native/README.md) owns selected
+replay identities. A dated journal entry describes the state at that time and
+is not authorization to resume its proposed work.
 
-| Record | Purpose |
+| Record | Scope |
 | --- | --- |
-| [Current stage/spell search](2026-10-28-stage-spell-search.md) | Extra3.309B/story6.653B, focused47/151/155 complete futures, HP/option-anchor replay checks and actual-world archives, capture movement/intraspell hybrids,13 timing, checkpoint units and delayed rewards |
-| [Campaign lifecycle ledger](campaign-ledger.tsv) | All existing task allocations and original lifecycle notes, including repeated notes for the same ID. IDs are never reset or reused |
-| [Per-task results and provenance](results.tsv) | One row per task: available entry/controls/argv, outcome, actual bombs/captures, costs, resource aborts, binary/source/DAT/input/seed-receipt hashes and evidence location |
-| [October27 phase composition](2026-10-27-phase-composition.md) | All37 exact baseline boundaries, spell strategy experiments, complete combinations and the6.5B milestone |
-| [October27 VPS exploration](2026-10-27-vps.md) | Questions, source/human evidence, parallel-search design, complete canaries, declared variations, failures and resulting decisions |
-| [October28 storage cleanup](2026-10-28-storage-cleanup.md) | Compressed recording retention, verified Wine/object archives, space accounting and historical restore limits |
+| [Stage/spell search, October 28–29](2026-10-28-stage-spell-search.md) | Source/human replay analysis, scene portfolios, complete futures, solo Sakuya, failures, clocks, rewards and owner handoffs |
+| [Campaign lifecycle ledger](campaign-ledger.tsv) | Every allocation and original lifecycle note, including repeated notes for one ID; IDs are never reset or reused |
+| [Per-task results and provenance](results.tsv) | One row per task with available entry, controls, argv, outcome, actual constraints, costs and source/input identities |
+| [October 27 phase composition](2026-10-27-phase-composition.md) | Original phase maps, complete combinations, the 6.5 billion milestone and later Extra-first archives |
+| [October 27 VPS investigation](2026-10-27-vps.md) | Historical remote protocol, source/human evidence, canaries, search portfolios and failures |
+| [Storage maintenance](2026-10-28-storage-cleanup.md) | Retained recordings, verified Wine/object archives, byte accounting and restoration limits |
 
-The TSV files use a header row. Tabs/newlines within values are escaped;
-structured entry, controls, argv, cost and edit fields use compact JSON values. The `retail_observation` field
-keeps actual observer/EXE/replay identities, partial capture/state observations,
-explicit stops and any terminal retail validation separate from Native results.
-`observation_replanned_no_certificate` preserves an explicitly stopped playback;
-its partial zero-miss state is not a complete-route result.
-An empty field means **unrecorded or unavailable**, never zero. The backfill
-preserves every old ledger note. `historical_ledger_only` explicitly marks an
-older task without an available structured owner receipt; it does not invent
-measurements or convert that task into a success. `running_or_unresolved` needs
-a terminal owner receipt before its result can be accepted. A complete report
-from a resource-aborted owner still certifies nothing.
+## Reading the tables
+
+The TSV files have a header row. Tabs and newlines inside values are escaped;
+entry, controls, argv, search costs and other structured fields use compact JSON.
+Original identifiers, machine values and lifecycle notes retain their exact
+spelling. An empty field means **unrecorded or unavailable**, never zero.
+
+| Field group | Interpretation |
+| --- | --- |
+| Entry / controls / argv | Declared original episode, checkpoint, legal actions and measured invocation; requested parameters are not substituted for unavailable actual argv |
+| Score / outcome / constraints | Actual misses, bombs and captures; a phase or road boundary is not a complete route |
+| Costs / exits / resources | Available wall, Native/proposal/branch/I/O work, retries, peak tree RSS and host memory; concurrent wall is not an isolated CPU benchmark |
+| Source / binary / data / receipt / input | Hash-bound producer provenance; a private overlay's declared source base is separate from the workspace head or old deployment bundle |
+| Phase plan / metrics / stage results | Actual component strategy, world lineage and measured outcomes; no scalar comparison implies world equivalence |
+| Replay retention / retail observation | Selected or pruned Native exports and separately scoped original-game observations, including parser failures and partial playback |
+
+A successful wrapper is not a successful child. Read the original owner exit,
+result and score audit. `complete` can be a valid below-target outcome; a failed,
+incomplete or resource-aborted run cannot establish a score record. Fresh/index
+agreement is not an independent physics oracle or retail validation.
 
 ## Coverage and historical evidence gaps
 
-The earlier snapshot1642 preserves177 terminal allocations1466–1642. The
-October28 continuation adds the source/human investigation and new overall
-Extra1740, with solo Sakuya baselines and all failed setup/controller attempts.
-The latest publication closure is recorded in the current journal; the earlier
-[coverage audit](2026-10-28-stage-spell-search.md#outcome-and-coverage-audit)
-separates complete Native reports, partials, tests, failures and the memory abort.
+The original October 27 request authorizes detailed maintained experiment records,
+including failures, setup errors, retries and missing historical measurements.
+The published tables preserve these distinct uncertainty states:
 
-There are231 older `historical_ledger_only` rows and29 older
-`running_or_unresolved` rows whose exporter-selected owner exit receipt is
-missing. The latter label is historical uncertainty, **not a live queue**. Other
-artifacts or prose may record observations, including the separately validated
-seed receipts; they do not justify inventing the missing owner closure or costs.
-All existing fields and allocation notes remain preserved.
+- `historical_ledger_only`: 231 older allocations lack a structured owner receipt.
+- `running_or_unresolved`: 29 older records lack the selected terminal receipt.
+  This historical uncertainty is not a live queue.
+- `unresolved_remote_identity_change`: 19 original remote closures remain unavailable
+  after the host-key change. Neither remote success nor termination is inferred.
+- `setup_failed_no_native_started`: argument/dispatcher failures before simulation;
+  original receipts and costs remain charged, including the final card 74 retry.
+- `resource_aborted`, `owner_cancelled`, `host_restart_interrupted_no_certificate`
+  and `observation_replanned_no_certificate`: their partial observations are not
+  complete gameplay certificates. Missing terminal measurements remain unavailable.
 
-| Historical group | Task IDs awaiting allocation-specific closure evidence |
+| Older group | IDs lacking allocation-specific closure evidence |
 | --- | --- |
-| Reused output names / continuation attempts |176,177,193,194,211,212,213 |
-| Early Native scoring/pacing attempts |219,222,226,227,228,229 |
-| Read-only income/pool/chain probes |205,209,318,319,320,321,329,330,336,353,354 |
-| Earlier seed-acquisition owner receipts |262,263,264,265,266 |
+| Reused output names / continuation attempts | 176, 177, 193, 194, 211, 212, 213 |
+| Early Native scoring/pacing | 219, 222, 226, 227, 228, 229 |
+| Read-only income/pool/chain probes | 205, 209, 318, 319, 320, 321, 329, 330, 336, 353, 354 |
+| Earlier seed acquisitions | 262, 263, 264, 265, 266 |
 
-Do not rerun gameplay or reacquire seeds to fill this metadata, reuse IDs, or
-assign one reused-directory result to several owners. Any later backfill must
-identify the original allocation-specific receipt and retain the old uncertainty
-and correction provenance. Documentation/maintenance checks after1642 receive
-new ledger IDs; storage maintenance receipts have their own inventory and costs.
+Do not rerun gameplay, reacquire a seed, reuse an ID or assign one reused-directory
+result to several owners to fill a metadata gap. A backfill needs the original
+allocation-specific receipt and explicit correction provenance. Later model, seed,
+retail and maintenance evidence keeps its own scope.
 
-For each new batch record the hypothesis and decisive acceptance test before
-launch, reserve IDs centrally, then reconcile each owner after exit. Include
-original-entry seed/checkpoint lineage, changes from the comparison profile,
-wall/search/trial budgets, all additional retries/target-selection costs,
-actual misses/bombs/capture outcomes and the next decision. A high-scoring
-prefix is not a complete-route result. Concurrent wall times are not isolated
-CPU benchmarks. Fresh/index agreement is not an independent physics oracle or
-retail equivalence.
+## Export and publication contracts
 
-Future `.rpy` retention uses the project's **overall Extra and complete-Lunatic
-records**, across shots. Only a verified new overall record is retained and
-published; other outcomes remain in this journal with their necessary local
-input evidence. Previously owner-selected historical replay bytes are preserved.
-Raw manifests, reports, rejected tapes and videos remain under ignored
-`reports/local/`; the public journal is compact experiment metadata and analysis.
-
-The current private metadata exporter is
+The ignored workspace exporter is
 `reports/local/vps-native-20261027/export-experiment-journal.cjs`. It joins the
-original ledger to existing owner/verification receipts and copies only the
-explicit public columns; it does not regenerate or rewrite historical reports.
-Before publishing, reconcile in-flight rows, check TSV identities against their
-receipts and run the documentation CTest. The public journal remains readable
-without that local orchestration helper or proprietary game data.
+original ledger to existing receipts; it does not regenerate historical payloads.
+Receipt selection is deterministic: terminal/result completeness comes first,
+previously published choices for duplicated owners remain fixed, and equally
+complete imports do not erase the original remote receipt or retention evidence.
+Reversing traversal must leave both public TSVs byte-identical.
 
-Receipt selection is deterministic: terminal/result completeness comes first;
-previously published choices for duplicated historical owners stay fixed, and
-new equally complete duplicates prefer the original VPS receipt. Reversing file
-traversal must leave both public TSVs byte-identical. Local imports must not hide
-retention evidence or silently change the recorded evidence directory.
+Export only the explicitly supported public columns. The DAT hash must be bound
+by the immutable worker bundle or an actual local DAT argument; a private build
+must identify its own source base and file hashes. Preserve explicit corrections
+for audit/owner clock offsets, literal-template lineage and setup classifications
+rather than rewriting raw manifests. New continuation rows may expose additional
+search metadata without changing previously published rows.
 
-For continuation tasks1644 onward, the exporter exposes the DAT hash only when
-bound by the immutable worker bundle hash or an actual local DAT argument.
-It uses the private source overlay's declared base head when present, retaining
-exact source-file hashes separately. The original remote bundle base is not the
-source of every later planner overlay. Previously published rows stay unchanged.
-
-The October29 remote identity interruption is represented explicitly.
-`unresolved_remote_identity_change` has no available original terminal receipt
-and certifies no gameplay result; it is not a claim of a live or stopped queue.
-Provisional metadata preserves requested parameters separately from unavailable
-actual argv/source/runtime measurements. Four blocked V96 dispatches are setup
-failures before Native, with unknown transfer wall cost. Owner steering resumes
-local work only; no host-key check is bypassed.
-
-For new local frozen-F4 runs, the exporter verifies the exact ELF/source manifest
-and exposes its actual overlay basec4c798d separately from the raw manifest's
-workspace head91f61a1. Audit calculation timestamps and owner input coordinates
-also remain separate; V104 preserves raw trials and adds correction notes.
-
-The local two-owner/two-core continuation records a host restart explicitly as
-`host_restart_interrupted_no_certificate`: missing final gameplay and resource
-measurements stay empty. Fresh-ID retries do not replace those charged tasks.
-Post-reboot whole replay rows/audit are compared before publication; private
-fast8/stride8 ELF binding exposes source base91f61a1 for new local rows.
-
-The V116–V135 continuation preserves two pre-scoring setup/compile failures and
-four duplicate phase tapes whose requested no-fire intent was overridden.
-Literal execution/index parity does not verify a proposal path. Source reward
-settlement and item request/spawn/collect evidence remain separate from phase
-cash and complete-route acceptance. No new overall replay qualifies in this batch.
-
-V233–V242 records private movement-profile0/1 contracts, whole-route literal
-controls and actual-default47 replanning equality before new scoring. A300-input
-capture handoff gains1507 orbs over the earlier captured47 scene, but both new
-complete futures are lower. Four stale literal-composition fields have explicit
-ledger/supplemental corrections; raw manifests remain unchanged. New rows expose
-the private profile flag alongside existing search metadata. No public C++ or
-model change is claimed.
-
-The final74 handoff retains two pre-Native CLI setup failures and six fresh-ID
-NMNB scene outcomes. One captures74, with a pending award and lower local orb
-income; no complete continuation is claimed. The owner clears the persistent
-goal and requests current-batch closure. Further scoring is unstarted and needs
-renewed instruction; all six input histories remain available for that handoff.
+For an authorized batch, declare the hypothesis, acceptance test, budgets, seed
+and actual checkpoint before launch. Reconcile all owners after exit, charging
+canaries, retries, selection and composition work. Preserve genuine negative
+outcomes. Only a fresh-verified improvement of the overall Extra or complete-
+Lunatic record may retain a new scoring `.rpy`; previously selected historical
+bytes remain unchanged. Raw actions, run JSON, model datasets and videos stay local.
+At an owner-requested handoff, finish only the current batch and close its drivers;
+an unused budget or proposed next experiment does not authorize another batch.
