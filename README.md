@@ -19,6 +19,7 @@ and form control. Bomb permission and capture requirements are independent
 Best published complete runs by route and shot. All are **NMNB** (No Miss,
 No Bomb); captures are optional. Lunatic covers **1 → 2 → 3 → 4A → 5 → Final B**.
 Each score links to its exact replay.
+Our uploaded replays are also available on [Silent Selene](https://www.silentselene.net/replays/user/Kitauji).
 
 | Route | Shot | Score | Captures |
 | --- | --- | ---: | ---: |
