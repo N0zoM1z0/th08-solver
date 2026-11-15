@@ -50,7 +50,8 @@ On November 15, 2026 the owner re-authorized scoring; play is offline Native onl
 - Keep the compact document set linked from README; update the document that owns a
   fact. Use dates such as "October 27, 2026" and spaces before units. The
   `documentation` test checks links, anchors and prose spacing.
-- Raw DAT/EXE/assets, `preparations/`, action tapes, run JSON and videos stay
+- The animated README diagram `docs/media/shadow-mpc-online.gif` is owner-selected
+  and must be kept. Raw DAT/EXE/assets, `preparations/`, action tapes, run JSON and videos stay
   ignored. Never reintroduce `preparations/` into history.
 - Preserve every selected replay's bytes and its seed/prefix lineage
   ([progress.tsv](reports/native/replays/progress.tsv)). Add a new `.rpy` only for a

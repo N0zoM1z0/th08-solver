@@ -5,6 +5,8 @@
 > (Scarlet Team, No Miss / No Bomb, verified exported replays).
 > Targets: 7 B complete Lunatic (above the 7,053,332,460 all-shot human reference) and 4 B Extra.
 
+![Wine and Native shadow planning loop, animated schematic by Claude.](docs/media/shadow-mpc-online.gif)
+
 A C++17 offline score-attack solver for Touhou 08 (Imperishable Night). It runs the
 real game code headlessly, searches input sequences whose every committed step is
 backed by a complete true-RNG Native future, and exports ordinary `.rpy` replays.
