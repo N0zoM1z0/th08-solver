@@ -36,9 +36,13 @@ Wine retail game with the observer at the **pre-RegisterChain** boundary (the sa
 boundary at which a Native `Session` initializes) and with no Native producer:
 
 - `TH08_SHADOW_UPDATES=1`, `TH08_SHADOW_OBSERVE_REPLAY=0`, `TH08_SHADOW_ADVANCE_DIALOGUE=1`
-- `TH08_SHADOW_CHECKPOINT=8,4,1,-1,1` for Extra or `0,3,1,-1,1` for the story;
-  the checkpoint selects the entry and never writes RNG
-- `TH08_SHADOW_PRIOR_FINAL_A_CLEAR=1` for team stories (Final B available), `0` otherwise
+- `TH08_SHADOW_CHECKPOINT=STAGE,DIFFICULTY,SHOT,SPELL,STORY`, for example
+  `8,4,2,-1,1` (Scarlet Extra), `0,3,2,-1,1` (Scarlet story) or `0,3,10,-1,1`
+  (solo Youmu story); the checkpoint selects the entry and never writes RNG.
+  Shots: 0 Reimu/Yukari, 1 Marisa/Alice, 2 Sakuya/Remilia, 3 Youmu/Yuyuko, 4–11 the
+  solo characters in the same order (8 Sakuya, 10 Youmu)
+- `TH08_SHADOW_PRIOR_FINAL_A_CLEAR=1` for team stories (Final B available), `0` for
+  Extra and solo stories (solo shots have Final B naturally)
 
 After menu confirmation the observer writes `start.txt` atomically and exits after
 one observed update. Check its fields, the pinned retail hash, launcher exit 0 and

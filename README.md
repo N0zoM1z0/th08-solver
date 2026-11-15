@@ -47,7 +47,8 @@ Native build also needs SDL2, SDL2_image, SDL2_ttf, Fontconfig and your own `th0
 
 | Document | Purpose |
 | --- | --- |
-| [Status](docs/STATUS.md) | Current results, diagnosis and next work |
+| [Status](docs/STATUS.md) | Current results and workspace state |
+| [Roadmap](docs/ROADMAP.md) | Diagnosis of the score gap and the ordered plan for the next work |
 | [Scoring](docs/SCORING.md) | TH08 score mechanics from source and the whole-run model |
 | [Lessons](docs/LESSONS.md) | What the first campaign tried, what worked and what did not |
 | [Planner](docs/PLANNER.md) | Search loop, proposals, phase plans, goals and checkpoints |

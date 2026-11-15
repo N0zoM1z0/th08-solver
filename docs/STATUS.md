@@ -48,59 +48,17 @@ fresh `th08_shadow_follow` run that reproduces the record's terminal projection
 and score before it is used as a prefix. Until then, new work starts from the
 original episode entry.
 
-## Diagnosis: where the story score is lost
+## Diagnosis and next work
 
-[Scoring](SCORING.md) gives the source mechanics. The record collects almost the
-same point items as the best same-shot human (1,628 versus about 1,661) and more
-time orbs overall (234,573), but **fewer orbs early**: Stages 1–3 have
-12,755/33,391/36,052 versus the human's 21,873/37,662/46,219. Because each orb
-raises the value of every later point item (doubled at extreme human), an early orb
-is worth about 17 k at the end of the run. Under that model, the human's extra
-23,556 Stage 1–3 orbs are worth about 395 M, matching the measured −392 M deficit
-at the Stage 5 exit (the record then gains 290 M back in Final B).
-
-The previous campaign optimized each scene by local evidence: horizon cash in the
-planner's economic re-ranking, and scene cash, orbs or PIV when selecting
-components. Horizon cash credits an early orb with only its pickup value (about
-250 at P ≈ 50), roughly 70× too little, and nothing in the planner values the
-gauge state that produces orbs later. This matches what the lessons record: local
-improvements repeatedly reversed in complete futures, while the large gains came
-from early-card plans that raised orb production (17/25/29, 77, 171: +382 M).
-
-Checked against the existing data: across 175 unique complete NMNB story runs of
-seed 32796, a value that adds the model's future worth of carried points and orbs
-ranks final scores better than raw cash at the Stage 1–3 boundaries (Spearman
-0.49→0.71, 0.80→0.83, 0.83→0.85; 6, 15 and 43 distinct boundary worlds) and equally
-from 4A on. The signal is real but modest, because downstream strategy still differs.
-
-## Next work
-
-In order of expected value per unit of compute:
-
-1. **Rebuild the record tapes** from the two `.rpy` files and prove them with a fresh
-   follow, so continuations can resume from the records.
-2. **Rank with whole-run value instead of horizon cash.** Replace the economic
-   re-ranking criterion with `Δscore + α(t)·ΔT + β(t)·ΔP` (α ≈ 10·(P_final − P(t)),
-   β ≈ 5·(T_final − T(t)), plug-in finals from the incumbent), and use the same
-   value to rank stage-boundary worlds. Earlier constant `cash + K·PIV` ranking
-   (tasks 835–842) lost; the declining α(t) and stage-boundary use are the changes.
-3. **Plan the gauge as a resource in Stages 1–3.** The human's early advantage comes
-   from gauge bootstraps, for example on card 6, where 151 focused orb pickups in 40
-   updates swing the gauge from −8000 to +10000 and graze orbs follow. Capture-reward
-   orbs (935 per fast capture) saturate the gauge toward the focus side, so focus
-   during reward pickup selects the next segment's gauge. This needs a segment-level
-   plan, not a longer MPC horizon.
-4. **Stage-boundary beam.** Keep several stage-end worlds, rank them by the value in
-   item 2, and run complete futures only for the best few. A complete story future
-   costs about 2,600 s on two local cores, so throughput decides how many ideas can
-   be tested.
-5. **Reconsider the shot.** Both all-shot references are solo Youmu, whose gauge
-   reaches both extremes at ±3000 instead of ±8000, with team-rate graze and chain
-   orbs. The best human Scarlet story is 6,755,587,090 even with bombs. A Youmu
-   episode needs a new Wine seed receipt and a solo-Youmu gauge controller.
-
-Extra 4 B is not near: points are close to their ceiling (36 M repricing envelope)
-and the gap is 691 M.
+[Roadmap](ROADMAP.md) owns the plan. In short: the story record matches the best
+same-shot human on point items but collects about 23,556 fewer time orbs in
+Stages 1–3, worth about 395 M under the source score model, which is roughly the
+whole gap to the gate. The previous campaign ranked alternatives by local horizon
+cash, which undervalues early orbs by about 70×, and never planned the gauge
+across segments. Roadmap items, in order: restore the run environment (R0),
+rebuild the record tapes from the replays (R1), rank by whole-run value (R2),
+plan the gauge in Stages 1–3 (R3), select at stage boundaries (R4), evaluate solo
+Youmu (R5) and improve throughput (R6). None has started.
 
 ## Operating limits
 

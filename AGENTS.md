@@ -1,8 +1,8 @@
 # Engineering rules
 
-Read [README](README.md), [Status](docs/STATUS.md) and affected interfaces before
-changing code. Follow the owner's latest scope. On November 15, 2026 the owner
-re-authorized scoring; play is offline Native only.
+Read [README](README.md), [Status](docs/STATUS.md), the [Roadmap](docs/ROADMAP.md)
+and affected interfaces before changing code. Follow the owner's latest scope.
+On November 15, 2026 the owner re-authorized scoring; play is offline Native only.
 
 ## Scope and evidence
 
