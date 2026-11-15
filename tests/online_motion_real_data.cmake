@@ -1,0 +1,51 @@
+cmake_minimum_required(VERSION 3.16)
+include("${CMAKE_CURRENT_LIST_DIR}/headless_report_checks.cmake")
+file(REMOVE_RECURSE "${WORK}")
+file(MAKE_DIRECTORY "${WORK}")
+# This explicit checkpoint previously dies after a ghost restores canonical
+# flight. Native execution decides the outcome; no practice RPY is exported.
+execute_process(COMMAND "${EXECUTABLE}" --dat "${DAT}" --stage 5 --spell 107
+  --difficulty 3 --seed 46445 --shot 0 --horizon 64 --beam 192 --diversity-cell 16
+  --spawn-guard 16 --reach-filter 1 --hard-phantoms 1 --motion-envelope 1
+  --frames 20000 --seconds 300 --out "${WORK}/solve"
+  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 330)
+if(NOT result STREQUAL "0")
+  message(FATAL_ERROR "Motion-envelope native regression failed: ${stdout} ${stderr}")
+endif()
+file(READ "${WORK}/solve/online.json" solved)
+foreach(key IN ITEMS motion_envelope hard_phantoms)
+  field("${solved}" "${key}" value)
+  if(NOT value STREQUAL "1")
+    message(FATAL_ERROR "Motion-envelope option was not exercised")
+  endif()
+endforeach()
+field("${solved}" outcome outcome)
+field("${solved}" motion_envelope_frames envelope_frames)
+if(NOT outcome STREQUAL "\"complete\"" OR NOT envelope_frames GREATER 0)
+  message(FATAL_ERROR "Motion-envelope regression did not complete with active alternatives")
+endif()
+foreach(key IN ITEMS future_native_updates rewinds deaths)
+  field("${solved}" "${key}" value)
+  if(NOT value STREQUAL "0")
+    message(FATAL_ERROR "Unexpected ${key} in motion-envelope regression")
+  endif()
+endforeach()
+execute_process(COMMAND "${VERIFIER}" --dat "${DAT}" --stage 5 --spell 107
+  --difficulty 3 --seed 46445 --shot 0 --out "${WORK}/verify"
+  --verify "${WORK}/solve/online.actions"
+  RESULT_VARIABLE result OUTPUT_VARIABLE stdout ERROR_VARIABLE stderr TIMEOUT 60)
+if(NOT result STREQUAL "0")
+  message(FATAL_ERROR "Fresh motion-envelope verification failed: ${stdout} ${stderr}")
+endif()
+file(READ "${WORK}/verify/verify.json" verified)
+string(REGEX MATCH "\"verified\":[ ]*true([,} \r\n\t]|$)" agreement "${verified}")
+if(NOT agreement)
+  message(FATAL_ERROR "Motion-envelope fresh action agreement failed")
+endif()
+foreach(key IN ITEMS frames score rng_seed rng_draws calculation_updates control_updates actions_sha256)
+  field("${solved}" "${key}" expected)
+  field("${verified}" "${key}" actual)
+  if(NOT actual STREQUAL expected)
+    message(FATAL_ERROR "Motion-envelope fresh verification differs at ${key}")
+  endif()
+endforeach()

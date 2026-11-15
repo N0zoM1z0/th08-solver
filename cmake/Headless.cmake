@@ -83,7 +83,8 @@ target_link_libraries(th08_shadow_follow PRIVATE th08_shadow_native OpenSSL::Cry
 th08_native_options(th08_shadow_follow)
 
 # Proposal generation over Native observations and the offline scoring CLI.
-add_library(th08_shadow_proposals src/shadow_proposal.cpp)
+add_library(th08_shadow_proposals src/shadow_proposal.cpp src/shadow_recorded.cpp)
+set_source_files_properties(src/shadow_recorded.cpp PROPERTIES COMPILE_OPTIONS "-fpermissive")
 target_link_libraries(th08_shadow_proposals PUBLIC th08_shadow_native th08_online_native)
 th08_native_options(th08_shadow_proposals)
 add_executable(th08_shadow_style tools/shadow_style.cpp)
@@ -97,6 +98,34 @@ th08_native_options(th08_score_refinement)
 add_executable(th08_score_refine tools/score_refine.cpp)
 target_link_libraries(th08_score_refine PRIVATE th08_score_refinement)
 th08_native_options(th08_score_refine)
+
+# Online MPC (retained, not the current focus). th08_online is the forward-only
+# current-memory controller, th08_online_live its 60 Hz worker, th08_shadow_online
+# the live Wine true-RNG MPC client and th08_shadow_export its replay exporter.
+# th08_plan is the earlier fork planner; the online regressions use its --verify
+# mode as an independent fresh verifier.
+add_executable(th08_plan tools/plan.cpp)
+target_link_libraries(th08_plan PRIVATE th08_native_headless OpenSSL::Crypto)
+target_include_directories(th08_plan PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_options(th08_plan PRIVATE -fpermissive -Wno-write-strings -Wno-unknown-pragmas)
+th08_native_options(th08_plan)
+add_executable(th08_online tools/online.cpp)
+target_link_libraries(th08_online PRIVATE th08_online_native OpenSSL::Crypto)
+th08_native_options(th08_online)
+add_executable(th08_online_live_cli tools/online_live.cpp)
+set_target_properties(th08_online_live_cli PROPERTIES OUTPUT_NAME th08_online_live)
+target_link_libraries(th08_online_live_cli PRIVATE th08_online_live th08_online_native OpenSSL::Crypto)
+th08_native_options(th08_online_live_cli)
+add_executable(th08_value_collect tools/value_collect.cpp)
+target_link_libraries(th08_value_collect PRIVATE th08_online_native OpenSSL::Crypto)
+th08_native_options(th08_value_collect)
+add_executable(th08_shadow_online tools/shadow_online.cpp)
+target_link_libraries(th08_shadow_online PRIVATE th08_shadow_proposals OpenSSL::Crypto)
+th08_native_options(th08_shadow_online)
+add_executable(th08_shadow_export tools/shadow_export.cpp)
+target_link_libraries(th08_shadow_export PRIVATE th08_shadow_native OpenSSL::Crypto)
+target_compile_options(th08_shadow_export PRIVATE -fpermissive)
+th08_native_options(th08_shadow_export)
 
 if(NOT BUILD_TESTING)
   return()
@@ -164,6 +193,7 @@ set_tests_properties(headless_shadow_capture_goal headless_shadow_capture_handof
 # independent of production search budgets.
 add_test(NAME headless_shadow_style COMMAND ${CMAKE_COMMAND}
   -DSOLVER=$<TARGET_FILE:th08_shadow_style>
+  -DONLINE=$<TARGET_FILE:th08_shadow_online>
   -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
   -DCHECKER=$<TARGET_FILE:th08_replay_check>
   -DDAT=${TH08_HEADLESS_DAT}
@@ -192,3 +222,44 @@ add_test(NAME headless_bomb_scoring COMMAND ${CMAKE_COMMAND}
   -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/bomb_scoring_real_data.cmake)
 set_tests_properties(headless_bomb_scoring PROPERTIES TIMEOUT 900
   FIXTURES_REQUIRED native_score_incumbent)
+
+# Retained online MPC regressions.
+add_test(NAME headless_online_real_data COMMAND ${CMAKE_COMMAND}
+  -DEXECUTABLE=$<TARGET_FILE:th08_online>
+  -DVERIFIER=$<TARGET_FILE:th08_plan>
+  -DCHECKER=$<TARGET_FILE:th08_replay_check>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_real_data.cmake)
+set_tests_properties(headless_online_real_data PROPERTIES TIMEOUT 1100)
+add_test(NAME headless_online_motion_real_data COMMAND ${CMAKE_COMMAND}
+  -DEXECUTABLE=$<TARGET_FILE:th08_online>
+  -DVERIFIER=$<TARGET_FILE:th08_plan>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-motion-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_motion_real_data.cmake)
+set_tests_properties(headless_online_motion_real_data PROPERTIES TIMEOUT 400)
+add_test(NAME headless_value_collection_real_data COMMAND ${CMAKE_COMMAND}
+  -DCOLLECTOR=$<TARGET_FILE:th08_value_collect>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/value-collection-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/value_collection_real_data.cmake)
+set_tests_properties(headless_value_collection_real_data PROPERTIES TIMEOUT 120)
+add_test(NAME headless_online_live_real_data COMMAND ${CMAKE_COMMAND}
+  -DEXECUTABLE=$<TARGET_FILE:th08_online_live_cli>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DMODEL=${CMAKE_CURRENT_SOURCE_DIR}/models/branch-value-v1/weights.tsv
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/online-live-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/online_live_real_data.cmake)
+set_tests_properties(headless_online_live_real_data PROPERTIES TIMEOUT 60)
+# Optional retained live Wine journals (Stage 4B seeds 42386 and 56891).
+set(TH08_SHADOW_FAILURE_TRACE "" CACHE FILEPATH "Optional retained seed42386 Stage4B journal")
+if(TH08_SHADOW_FAILURE_TRACE)
+  add_test(NAME headless_shadow_retained_4b COMMAND th08_shadow_rollout_test
+    "${TH08_HEADLESS_DAT}" "${TH08_SHADOW_FAILURE_TRACE}" retained4b)
+endif()
+set(TH08_SHADOW_PULSE_TRACE "" CACHE FILEPATH "Optional retained seed56891 Stage4B journal")
+if(TH08_SHADOW_PULSE_TRACE)
+  add_test(NAME headless_shadow_retained_pulse COMMAND th08_shadow_rollout_test
+    "${TH08_HEADLESS_DAT}" "${TH08_SHADOW_PULSE_TRACE}" retainedpulse)
+endif()

@@ -1,3 +1,4 @@
+#include "th08/shadow_compare.hpp"
 #include "th08/shadow_dialogue.hpp"
 #include "th08/shadow_plan.hpp"
 #include "th08/shadow_protocol.hpp"
@@ -202,6 +203,31 @@ int main() try {
         check(bounded.confirm(nominal.frames[i]), "retained certificate rewrote pending inputs");
     check(bounded.next() && bounded.next()->sequence == 17 && nominal.completed == 32,
           "retained window did not pass the original publication boundary or changed costs");
+    s::Packet live, native;
+    live.state[s::Field::BulletLow] = 17;
+    check(!s::compare_live(live, native, false).failure &&
+              s::compare_live(live, native, false).numeric_words == 1 &&
+              s::compare_live(live, native, true).failure,
+          "harmless digest drift stopped behavioral play or disappeared from exact diagnostics");
+    live.state[s::Field::RngSeed] = 17;
+    check(std::strcmp(s::compare_live(live, native, false).failure, "rng_seed") == 0,
+          "behavioral play silently substituted actual gameplay RNG");
+    live.state[s::Field::RngSeed] = 0;
+    const float small_error = 1.f / 128.f, large_error = 1.f;
+    std::memcpy(&live.state[s::Field::X], &small_error, sizeof(float));
+    check(!s::compare_live(live, native, false).failure,
+          "subpixel player drift became a behavioral failure");
+    std::memcpy(&live.state[s::Field::X], &large_error, sizeof(float));
+    check(std::strcmp(s::compare_live(live, native, false).failure, "x") == 0,
+          "material player displacement was hidden by numeric tolerance");
+    s::Packet retired, previous_spell;
+    previous_spell.state[s::Field::Spell] = 9;
+    check(!s::compare_live(retired, previous_spell, false).failure &&
+              s::compare_live(retired, previous_spell, false).inactive_words == 1,
+          "inactive spell metadata stopped continuous play");
+    retired.state[s::Field::SpellActive] = previous_spell.state[s::Field::SpellActive] = 1;
+    check(std::strcmp(s::compare_live(retired, previous_spell, false).failure, "spell") == 0,
+          "active gameplay spell mismatch was hidden as stale metadata");
 #if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
     namespace b = s::bridge;
     b::CalculationCursor cursor{0, 123};

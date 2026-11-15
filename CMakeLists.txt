@@ -37,6 +37,32 @@ else()
   target_compile_options(th08_online_policy PRIVATE -ffp-contract=off)
 endif()
 
+# Optional CPU target for the policy, used by the retained online controllers.
+set(TH08_ONLINE_ARCH "" CACHE STRING "Optional online-policy CPU target: native or x86-64-v3")
+set_property(CACHE TH08_ONLINE_ARCH PROPERTY STRINGS "" native x86-64-v3)
+if(NOT TH08_ONLINE_ARCH STREQUAL "")
+  if(MSVC OR NOT TH08_ONLINE_ARCH MATCHES "^(native|x86-64-v3)$")
+    message(FATAL_ERROR "TH08_ONLINE_ARCH requires a supported GCC/Clang native or x86-64-v3 target")
+  endif()
+  include(CheckCXXCompilerFlag)
+  string(MAKE_C_IDENTIFIER "TH08_ARCH_${TH08_ONLINE_ARCH}" arch_check)
+  check_cxx_compiler_flag("-march=${TH08_ONLINE_ARCH}" ${arch_check})
+  if(NOT ${arch_check})
+    message(FATAL_ERROR "Compiler does not support -march=${TH08_ONLINE_ARCH}")
+  endif()
+  target_compile_options(th08_online_policy PRIVATE "-march=${TH08_ONLINE_ARCH}")
+  target_compile_definitions(th08_online_policy PRIVATE TH08_ONLINE_ARCH_NAME="${TH08_ONLINE_ARCH}")
+endif()
+
+# Online MPC (retained, not the current focus): the 60 Hz live worker and the
+# learned branch-value trainer used by the earlier online campaigns.
+add_library(th08_online_live src/online_live.cpp)
+target_link_libraries(th08_online_live PUBLIC th08_online_policy Threads::Threads)
+target_compile_options(th08_online_live PRIVATE -ffp-contract=off)
+add_executable(th08_value_train tools/value_train.cpp)
+target_link_libraries(th08_value_train PRIVATE th08_online_policy OpenSSL::Crypto)
+target_compile_options(th08_value_train PRIVATE -ffp-contract=off)
+
 # Bounded selection over declared completed-segment evidence.
 add_library(th08_phase_search src/phase_archive.cpp)
 target_compile_features(th08_phase_search PUBLIC cxx_std_17)
@@ -63,7 +89,24 @@ if(BUILD_TESTING)
   add_executable(online_policy_tests tests/online_policy_tests.cpp)
   target_link_libraries(online_policy_tests PRIVATE th08_online_policy)
   add_test(NAME online_policy_contract COMMAND online_policy_tests
-    ${CMAKE_CURRENT_BINARY_DIR}/online-policy-test)
+    ${CMAKE_CURRENT_BINARY_DIR}/online-policy-test ${CMAKE_CURRENT_SOURCE_DIR}/models/legacy-risk)
+
+
+  # Retained online MPC contracts and learned-model snapshots.
+  add_executable(online_live_tests tests/online_live_tests.cpp)
+  target_link_libraries(online_live_tests PRIVATE th08_online_live)
+  add_test(NAME online_live_contract COMMAND online_live_tests)
+  add_executable(value_model_tests tests/value_model_tests.cpp)
+  target_link_libraries(value_model_tests PRIVATE th08_online_policy)
+  add_test(NAME value_model_contract COMMAND value_model_tests
+    ${CMAKE_CURRENT_BINARY_DIR}/value-model-contract)
+  add_test(NAME value_training_contract COMMAND ${CMAKE_COMMAND}
+    -DTRAINER=$<TARGET_FILE:th08_value_train>
+    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/value-training-contract
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/value_training_tests.cmake)
+  add_test(NAME model_artifacts COMMAND ${CMAKE_COMMAND}
+    -DROOT=${CMAKE_CURRENT_SOURCE_DIR}
+    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/model_artifacts.cmake)
 
   foreach(test IN ITEMS geometry kinematics bullet_motion direct_laser_policy)
     add_executable(${test}_tests tests/${test}_tests.cpp)

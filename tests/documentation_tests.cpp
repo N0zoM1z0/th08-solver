@@ -228,7 +228,7 @@ std::vector<fs::path> documents(const fs::path &root) {
     std::vector<fs::path> result = {root / "README.md", root / "AGENTS.md",
                                     root / "reports/native/README.md",
                                     root / "third_party/th08/README.md"};
-    for (const auto &directory : {root / "docs"})
+    for (const auto &directory : {root / "docs", root / "models"})
         for (const auto &entry : fs::recursive_directory_iterator(directory))
             if (entry.is_regular_file() && entry.path().extension() == ".md")
                 result.push_back(entry.path());

@@ -1,5 +1,19 @@
 cmake_minimum_required(VERSION 3.16)
 file(REMOVE_RECURSE "${WORK}")
+# Reject schedules that could publish beyond native verification or overwrite
+# their immutable lead. Validation must happen before waiting for a live owner.
+foreach(controls IN ITEMS "--publish-horizon;129" "--lead-updates;128"
+                          "--lead-updates;33"
+                          "--search-budget-ms;0" "--human-bias;nan"
+                          "--recovery-style;unknown" "--recovery-fire;unknown")
+  execute_process(COMMAND "${ONLINE}" "${DAT}" "${WORK}/absent-owner"
+    "${WORK}/invalid.json" mpc 60 behavioral h128-held score-harvest ${controls}
+    RESULT_VARIABLE rejected ERROR_VARIABLE error TIMEOUT 3)
+  if(NOT rejected STREQUAL "1" OR NOT error MATCHES
+      "invalid_shadow_control|incompatible_shadow_controls")
+    message(FATAL_ERROR "Unsafe live controls were not rejected before owner wait: ${rejected} ${error}")
+  endif()
+endforeach()
 # Solo story entry must use its natural Final B availability, rather than the
 # team-only prior-Final-A checkpoint. Execute a literal first update so this
 # contract needs no scoring search, clock budget or new retail seed episode.

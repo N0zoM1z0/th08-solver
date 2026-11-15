@@ -19,8 +19,9 @@ On November 15, 2026 the owner re-authorized scoring; play is offline Native onl
 - Before a new scoring episode, capture the original RNG seed from the owned Wine
   game at the observer's pre-RegisterChain boundary and record entry settings and
   receipt. Keep that seed fixed; never choose or reroll a seed after viewing
-  Native scores. Wine is for seed acquisition and retail replay playback only;
-  online/live Wine solving is retired. Replay names are the eight bytes `ysopwnab`.
+  Native scores. Scoring uses Wine only for seed acquisition and retail replay
+  playback; online/live Wine MPC is paused, but keep its code and tests working.
+  Replay names are the eight bytes `ysopwnab`.
 - Compose strategies from explicit original-entry checkpoints: re-execute the first
   N owner inputs and carry the actual RNG, bullets, actors, items and lifecycle
   state. Never inject state fields or graft an old future onto a changed world.

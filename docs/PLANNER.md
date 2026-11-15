@@ -116,3 +116,29 @@ is not a certificate.
 - `th08_phase_frontier INPUT_TSV WIDTH GENERATION OUTPUT_TSV` selects up to 64
   completed segment worlds by score with family diversity. Its keys are
   owner-supplied hashes, not world equivalence.
+
+## Online MPC (retained, paused)
+
+The earlier campaigns also played the real retail game live. That code is kept and
+built (`TH08_HEADLESS=ON`) with its regressions, but it is not the current focus; the
+full historical protocol text is in Git at tag `pre-cleanup-20261115`
+(`docs/PLANNER.md`, sections "Current-memory online policy" and "True-RNG shadow runtime").
+
+| Tool | Role |
+| --- | --- |
+| `th08_online` | Forward-only current-memory controller over one Native session: the same Policy, no forked futures or rewinds |
+| `th08_online_live` | 60 Hz variant with a policy worker thread (`online_live.*`); optional branch-value model (`models/branch-value-*`) |
+| `th08_shadow_online` | Live Wine MPC: follows the observer's journal, verifies lead + candidate futures in forked Native children with the true RNG, and publishes plans through the shared action file (`shadow_bridge.hpp`) to the observer's input hook |
+| `th08_shadow_export` | Exports a `.rpy` from a verified live Wine recording |
+| `th08_value_collect`, `th08_value_train` | Branch labels from Native forks and logistic branch-value training |
+| `th08_plan` | Earlier fork planner; its `--verify` mode is the independent verifier in the online regressions |
+
+`th08_shadow_online` profiles are named bundles: `h32` (lead 8, horizon 32, 80 ms
+search), `h64`, `h64-held`, `h128-held`, `h256-held` (verify 256, publish 128),
+`h256-pulse` (66 fixed motion proposals from `motion_recovery_proposals`),
+`h512-buffered` (480 ms, lead 32) and `h128-recorded` / `h64-recorded` (Native
+geometry recording and repair, `shadow_recorded.*`). Live comparison uses
+`shadow_compare.hpp`: RNG, clock, lifecycle and material player divergence stop
+play; digest drift is telemetry. The 228-byte journal row is the 204-byte
+projection plus three clocks. Online records: Magic Extra 1,166,969,620 and complete
+Lunatic 2,189,965,070, both NMNB.

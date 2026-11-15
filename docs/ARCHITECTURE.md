@@ -40,7 +40,9 @@ Wine retail game ──(pre-RegisterChain seed receipt)──► fixed episode (
 | Tape parsing, route input, rollout contracts | `plan_prefix.hpp`, `plan_route.hpp`, `plan_contracts.hpp`, `plan_beam.hpp` |
 | Shared float kernels used by the policy | `kinematics.hpp`, `bullet_motion.hpp`, `timing.hpp`, `geometry.hpp` |
 | Replay corpus gate | `tools/replay_suite.cpp`, `tools/headless_report.hpp` |
-| Wine seed observer and owned launcher | `tools/wine-shadow/`, `shadow_bridge.hpp`, `shadow_start.hpp`, `render_timing.hpp` |
+| Wine observer, owned launcher and live input hook | `tools/wine-shadow/`, `shadow_bridge.hpp`, `shadow_start.hpp`, `render_timing.hpp` |
+| Online MPC (retained, paused) | `tools/shadow_online.cpp`, `shadow_recorded.*`, `shadow_compare.hpp`, `tools/shadow_export.cpp`, `tools/online.cpp`, `online_live.*`, `tools/online_live.cpp`, `tools/value_collect.cpp`, `tools/value_train.cpp`, `models/`; see [Planner](PLANNER.md#online-mpc-retained-paused) |
+| Earlier fork planner (online verifier) | `tools/plan.cpp`, `plan_observation.hpp`, `plan_matrix.hpp` |
 
 Paths are under `include/th08/` or `src/` unless qualified. The imported game is
 built only with `TH08_HEADLESS=ON` ([Headless.cmake](../cmake/Headless.cmake)); the

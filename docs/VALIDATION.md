@@ -19,14 +19,16 @@ Native execution needs SDL2, SDL2_image, SDL2_ttf and Fontconfig development
 packages plus OpenSSL. The Wine observer needs `i686-w64-mingw32-g++` and
 `-DTH08_WINE_SHADOW=ON`.
 
-The Native suite has 24 tests and takes about 160 s with two jobs (November 15,
+The Native suite has 32 tests and takes about 5 minutes with two jobs (November 15,
 2026). The real-data tests cover: a complete small scoring run with fresh and
 natural checks (`headless_shadow_style`), refinement and bomb-permission variants
 that reuse it, the source capture audit on a complete story replay, true-RNG
 branch/queue contracts and the common-start follower on a fixed spell 179 tape
 (`tests/data/`), the capture-goal rejection fixture, and route/laser-item session
-checks. Asset-free tests cover the policy, phase plans, frontier selection, wire
-protocol, rollout/child contracts, replay-suite contract and this documentation
+checks, plus the retained online controllers (`th08_online` with `th08_plan --verify`,
+`th08_online_live`, value collection). Asset-free tests cover the policy, phase plans, frontier selection, wire
+protocol, rollout/child contracts, replay-suite contract, the retained online MPC
+contracts and model snapshots, and this documentation
 (links, anchors and prose spacing).
 
 ## Seed acquisition (Wine)

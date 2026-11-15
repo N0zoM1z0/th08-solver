@@ -22,12 +22,14 @@ Extra 3,000,284,220 (ASL), Magic story 6,168,365,790 (Alan), Magic Extra
 
 ## Repository state
 
-The November 15 cleanup reduced the repository to the offline Native pipeline
-([Architecture](ARCHITECTURE.md)). Removed subsystems (the pre-import
-reimplementation, synthetic and controlled-DAT worlds, source probes, the old fork
-planner `th08_plan`, live Wine/online controllers, value models, repair/probe
-diagnostics and the legacy report archive) remain in Git at tag
-`pre-cleanup-20261115`. The dated journals are condensed into [Lessons](LESSONS.md).
+The November 15 cleanup centred the repository on the offline Native pipeline
+([Architecture](ARCHITECTURE.md)). The online MPC code (live Wine client,
+current-memory and 60 Hz controllers, value models and the `th08_plan` verifier)
+is **kept and tested** but paused ([Planner](PLANNER.md#online-mpc-retained-paused)).
+Removed subsystems (the pre-import reimplementation, synthetic and controlled-DAT
+worlds, source probes, repair/probe/hazard diagnostics, the legacy replay-target
+tool and the legacy report archive) remain in Git at tag `pre-cleanup-20261115`.
+The dated journals are condensed into [Lessons](LESSONS.md).
 
 ## Local workspace
 
