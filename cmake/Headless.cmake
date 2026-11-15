@@ -1,5 +1,5 @@
-# The imported game remains a separate target; existing solver kernels keep their
-# own numerical and ownership contracts. This build needs no Python or OpenGL.
+# Imported upstream TH08 runtime (headless) plus the offline Native scoring tools.
+# This build needs no Python or OpenGL.
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(TH08_SDL REQUIRED IMPORTED_TARGET sdl2 SDL2_image SDL2_ttf fontconfig)
 find_package(Threads REQUIRED)
@@ -55,211 +55,140 @@ target_compile_options(th08_native_headless PRIVATE -O${TH08_HEADLESS_OPTIMIZATI
   -ffp-contract=off -Wno-write-strings -Wno-multichar -Wno-unknown-pragmas
   "-include${th08_native}/src/modern/linux/linux_compat.hpp")
 target_link_libraries(th08_native_headless PUBLIC PkgConfig::TH08_SDL Threads::Threads dl)
-add_executable(th08_headless tools/headless.cpp)
-target_link_libraries(th08_headless PRIVATE th08_native_headless)
-target_include_directories(th08_headless PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(th08_headless PRIVATE OpenSSL::Crypto)
-target_compile_options(th08_headless PRIVATE -ffp-contract=off)
-add_executable(th08_headless_repair tools/headless_repair.cpp)
-target_compile_features(th08_headless_repair PRIVATE cxx_std_17)
-target_link_libraries(th08_headless_repair PRIVATE OpenSSL::Crypto)
 
-add_executable(th08_headless_probe tools/headless_probe.cpp)
-target_compile_features(th08_headless_probe PRIVATE cxx_std_17)
-add_executable(th08_headless_laser_items tests/headless_laser_items.cpp)
-target_link_libraries(th08_headless_laser_items PRIVATE th08_native_headless)
-target_compile_options(th08_headless_laser_items PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-
-add_executable(th08_headless_bullet_bounds tests/headless_bullet_bounds.cpp)
-target_include_directories(th08_headless_bullet_bounds PRIVATE include)
-target_link_libraries(th08_headless_bullet_bounds PRIVATE th08_native_headless)
-target_compile_options(th08_headless_bullet_bounds PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-
-add_executable(th08_headless_body_forecast tests/headless_body_forecast.cpp)
-target_link_libraries(th08_headless_body_forecast PRIVATE th08_native_headless)
-target_compile_options(th08_headless_body_forecast PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-
-set(TH08_HEADLESS_DAT "" CACHE FILEPATH "Private DAT for the optional full-scene regression")
-set(TH08_HEADLESS_COMPARE_EXECUTABLE "" CACHE FILEPATH
-  "Optional native executable built at another optimization level")
-
-if(BUILD_TESTING AND TH08_HEADLESS_DAT)
-  add_executable(th08_headless_routes tests/headless_routes.cpp)
-  target_include_directories(th08_headless_routes PRIVATE include)
-  target_link_libraries(th08_headless_routes PRIVATE th08_native_headless)
-  target_compile_options(th08_headless_routes PRIVATE -ffp-contract=off
+# Project code that includes reconstructed game headers shares their compat
+# prelude and keeps float contraction disabled.
+function(th08_native_options target)
+  target_compile_options(${target} PRIVATE -ffp-contract=off
     "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-  add_test(NAME headless_routes COMMAND th08_headless_routes "${TH08_HEADLESS_DAT}")
-endif()
+endfunction()
 
-if(BUILD_TESTING)
-  add_executable(th08_headless_surface_copy tests/headless_surface_copy.cpp)
-  target_link_libraries(th08_headless_surface_copy PRIVATE th08_native_headless)
-  target_compile_options(th08_headless_surface_copy PRIVATE -ffp-contract=off
-    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-  add_test(NAME headless_surface_copy COMMAND th08_headless_surface_copy)
-  add_executable(th08_headless_cancel_regions tests/headless_cancel_regions.cpp)
-  target_link_libraries(th08_headless_cancel_regions PRIVATE th08_native_headless)
-  target_compile_options(th08_headless_cancel_regions PRIVATE -ffp-contract=off
-    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-  add_test(NAME headless_cancel_regions COMMAND th08_headless_cancel_regions)
-  add_executable(th08_headless_opcode_guards tests/headless_opcode_guards.cpp)
-  target_link_libraries(th08_headless_opcode_guards PRIVATE th08_native_headless)
-  target_compile_options(th08_headless_opcode_guards PRIVATE -ffp-contract=off
-    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-  add_test(NAME headless_opcode_guards COMMAND th08_headless_opcode_guards)
-  add_test(NAME headless_report_contract COMMAND ${CMAKE_COMMAND}
-    -DROOT=${CMAKE_CURRENT_SOURCE_DIR}
-    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_stage6b_contract_tests.cmake)
-  add_executable(th08_headless_repair_child tests/headless_repair_child.cpp)
-  target_compile_features(th08_headless_repair_child PRIVATE cxx_std_17)
-  add_test(NAME headless_repair_protocol COMMAND ${CMAKE_COMMAND}
-    -DREPAIR=$<TARGET_FILE:th08_headless_repair>
-    -DCHILD=$<TARGET_FILE:th08_headless_repair_child>
-    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/repair-protocol
-    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/headless_repair_protocol.cmake)
-endif()
-
+# Natural replay playback, row streaming and the source capture audit.
 add_executable(th08_replay_check tools/replay_check.cpp)
 target_link_libraries(th08_replay_check PRIVATE th08_native_headless OpenSSL::Crypto)
-target_include_directories(th08_replay_check PRIVATE "${th08_native}/src")
-target_compile_options(th08_replay_check PRIVATE -ffp-contract=off "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-if(BUILD_TESTING AND TH08_HEADLESS_DAT)
-  add_test(NAME headless_score_audit COMMAND ${CMAKE_COMMAND}
-    -DCHECKER=$<TARGET_FILE:th08_replay_check>
-    -DDAT=${TH08_HEADLESS_DAT}
-    -DREPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy
-    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/score-audit-regression
-    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_audit_real_data.cmake)
-  set_tests_properties(headless_score_audit PROPERTIES TIMEOUT 75)
-endif()
-add_executable(th08_plan tools/plan.cpp)
-target_link_libraries(th08_plan PRIVATE th08_native_headless OpenSSL::Crypto)
-target_include_directories(th08_plan PRIVATE "${th08_native}/src" "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_compile_options(th08_plan PRIVATE -O3 -ffp-contract=off -fpermissive -Wno-write-strings
-  -Wno-unknown-pragmas "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+th08_native_options(th08_replay_check)
 
+# Native observation adapter for the proposal policy (no native futures).
 add_library(th08_online_native src/online_native.cpp)
 target_link_libraries(th08_online_native PUBLIC th08_online_policy th08_native_headless)
-target_compile_options(th08_online_native PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+th08_native_options(th08_online_native)
+
+# Fork-owned true-RNG futures, wire projection and common-start following.
 add_library(th08_shadow_native src/shadow_native.cpp src/shadow_process.cpp src/shadow_rollout.cpp)
-target_include_directories(th08_shadow_native PUBLIC include)
+target_include_directories(th08_shadow_native PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(th08_shadow_native PUBLIC th08_native_headless)
-target_compile_options(th08_shadow_native PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+th08_native_options(th08_shadow_native)
 add_executable(th08_shadow_follow tools/shadow_follow.cpp)
 target_link_libraries(th08_shadow_follow PRIVATE th08_shadow_native OpenSSL::Crypto)
-target_compile_options(th08_shadow_follow PRIVATE -ffp-contract=off)
-add_library(th08_shadow_proposals src/shadow_proposal.cpp src/shadow_recorded.cpp)
+th08_native_options(th08_shadow_follow)
+
+# Proposal generation over Native observations and the offline scoring CLI.
+add_library(th08_shadow_proposals src/shadow_proposal.cpp)
+target_link_libraries(th08_shadow_proposals PUBLIC th08_shadow_native th08_online_native)
+th08_native_options(th08_shadow_proposals)
 add_executable(th08_shadow_style tools/shadow_style.cpp)
 target_link_libraries(th08_shadow_style PRIVATE th08_shadow_proposals)
-target_compile_options(th08_shadow_style PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+th08_native_options(th08_shadow_style)
+
+# Complete-tape terminal-score refinement.
 add_library(th08_score_refinement src/score_refine.cpp)
 target_link_libraries(th08_score_refinement PUBLIC th08_shadow_native)
-target_compile_options(th08_score_refinement PRIVATE -ffp-contract=off)
+th08_native_options(th08_score_refinement)
 add_executable(th08_score_refine tools/score_refine.cpp)
 target_link_libraries(th08_score_refine PRIVATE th08_score_refinement)
-target_compile_options(th08_score_refine PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-if(BUILD_TESTING AND TH08_HEADLESS_DAT)
-  add_test(NAME headless_shadow_style COMMAND ${CMAKE_COMMAND}
-    -DSOLVER=$<TARGET_FILE:th08_shadow_style>
-    -DONLINE=$<TARGET_FILE:th08_shadow_online>
-    -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
-    -DCHECKER=$<TARGET_FILE:th08_replay_check>
-    -DDAT=${TH08_HEADLESS_DAT}
-    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
-    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_style_real_data.cmake)
-  # Complete offline fixture plus phase/profile continuations; this is a
-  # correctness budget, independent of the production 110ms search default.
-  set_tests_properties(headless_shadow_style PROPERTIES TIMEOUT 900)
-  set_tests_properties(headless_shadow_style PROPERTIES FIXTURES_SETUP native_score_incumbent)
-  add_test(NAME headless_score_refine COMMAND ${CMAKE_COMMAND}
-    -DREFINER=$<TARGET_FILE:th08_score_refine>
-    -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
-    -DCHECKER=$<TARGET_FILE:th08_replay_check>
-    -DDAT=${TH08_HEADLESS_DAT}
-    -DINCUMBENT=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
-    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/score-refine-regression
-    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_refine_real_data.cmake)
-  set_tests_properties(headless_score_refine PROPERTIES TIMEOUT 120
-    FIXTURES_REQUIRED native_score_incumbent)
-  add_test(NAME headless_bomb_scoring COMMAND ${CMAKE_COMMAND}
-    -DSOLVER=$<TARGET_FILE:th08_shadow_style>
-    -DREFINER=$<TARGET_FILE:th08_score_refine>
-    -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
-    -DCHECKER=$<TARGET_FILE:th08_replay_check>
-    -DDAT=${TH08_HEADLESS_DAT}
-    -DINCUMBENT=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
-    -DWORK=${CMAKE_CURRENT_BINARY_DIR}/bomb-scoring-regression
-    -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/bomb_scoring_real_data.cmake)
-  set_tests_properties(headless_bomb_scoring PROPERTIES TIMEOUT 900
-    FIXTURES_REQUIRED native_score_incumbent)
-endif()
-set_source_files_properties(src/shadow_recorded.cpp PROPERTIES
-  COMPILE_OPTIONS "-fpermissive;-include${th08_native}/src/modern/linux/linux_compat.hpp")
-target_link_libraries(th08_shadow_proposals PUBLIC th08_shadow_native th08_online_native)
-target_compile_options(th08_shadow_proposals PRIVATE -ffp-contract=off)
-add_executable(th08_shadow_online tools/shadow_online.cpp)
-target_link_libraries(th08_shadow_online PRIVATE th08_shadow_proposals OpenSSL::Crypto)
-target_compile_options(th08_shadow_online PRIVATE -ffp-contract=off)
-add_executable(th08_shadow_export tools/shadow_export.cpp)
-target_link_libraries(th08_shadow_export PRIVATE th08_shadow_native OpenSSL::Crypto)
-target_compile_options(th08_shadow_export PRIVATE -ffp-contract=off -fpermissive
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-if(BUILD_TESTING AND TH08_HEADLESS_DAT)
-  add_executable(th08_shadow_rollout_test tests/shadow_rollout_real_data.cpp)
-  target_link_libraries(th08_shadow_rollout_test PRIVATE th08_shadow_proposals)
-  target_compile_options(th08_shadow_rollout_test PRIVATE -ffp-contract=off)
-  add_executable(th08_shadow_capture_goal_test tests/shadow_capture_goal_real_data.cpp)
-  target_link_libraries(th08_shadow_capture_goal_test PRIVATE th08_shadow_native)
-  target_compile_options(th08_shadow_capture_goal_test PRIVATE -ffp-contract=off
-    "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-  add_test(NAME headless_shadow_capture_goal COMMAND th08_shadow_capture_goal_test
-    "${TH08_HEADLESS_DAT}")
-  set_tests_properties(headless_shadow_capture_goal PROPERTIES TIMEOUT 45)
-  add_test(NAME headless_shadow_capture_handoff COMMAND th08_shadow_capture_goal_test
-    "${TH08_HEADLESS_DAT}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy")
-  set_tests_properties(headless_shadow_capture_handoff PROPERTIES TIMEOUT 45)
-endif()
-add_executable(th08_online tools/online.cpp)
-target_link_libraries(th08_online PRIVATE th08_online_native OpenSSL::Crypto)
-target_compile_options(th08_online PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-add_executable(th08_value_collect tools/value_collect.cpp)
-add_executable(th08_online_live_cli tools/online_live.cpp)
-set_target_properties(th08_online_live_cli PROPERTIES OUTPUT_NAME th08_online_live)
-target_link_libraries(th08_online_live_cli PRIVATE th08_online_live th08_online_native OpenSSL::Crypto)
-target_compile_options(th08_online_live_cli PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-target_link_libraries(th08_value_collect PRIVATE th08_online_native OpenSSL::Crypto)
-target_compile_options(th08_value_collect PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
+th08_native_options(th08_score_refine)
 
-add_executable(th08_replay_target tools/replay_target.cpp)
-target_link_libraries(th08_replay_target PRIVATE th08_native_headless th08_resources)
-target_include_directories(th08_replay_target PRIVATE "${th08_native}/src")
-target_compile_options(th08_replay_target PRIVATE -ffp-contract=off
-  "-include${th08_native}/src/modern/linux/linux_compat.hpp")
-
-add_executable(th08_hazard_probe tools/hazard_probe.cpp)
-target_link_libraries(th08_hazard_probe PRIVATE th08_native_headless OpenSSL::Crypto)
-target_include_directories(th08_hazard_probe PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-target_compile_options(th08_hazard_probe PRIVATE -ffp-contract=off)
-if(BUILD_TESTING)
-  add_executable(online_policy_tests tests/online_policy_tests.cpp)
-  target_link_libraries(online_policy_tests PRIVATE th08_online_policy)
-  add_test(NAME headless_online_policy_contract COMMAND online_policy_tests
-    ${CMAKE_CURRENT_BINARY_DIR}/online-policy-test
-    ${CMAKE_CURRENT_SOURCE_DIR}/models/legacy-risk)
-  add_executable(hazard_probe_tests tests/hazard_probe_tests.cpp)
-  target_include_directories(hazard_probe_tests PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include")
-  target_compile_features(hazard_probe_tests PRIVATE cxx_std_17)
-  add_test(NAME headless_hazard_probe_contract COMMAND hazard_probe_tests)
+if(NOT BUILD_TESTING)
+  return()
 endif()
+
+# Session-level contracts that need no game data.
+foreach(test IN ITEMS surface_copy cancel_regions opcode_guards)
+  add_executable(th08_headless_${test} tests/headless_${test}.cpp)
+  target_link_libraries(th08_headless_${test} PRIVATE th08_native_headless)
+  th08_native_options(th08_headless_${test})
+  add_test(NAME headless_${test} COMMAND th08_headless_${test})
+endforeach()
+
+set(TH08_HEADLESS_DAT "" CACHE FILEPATH "Private th08.dat for the real-data regressions")
+if(NOT TH08_HEADLESS_DAT)
+  return()
+endif()
+if(NOT EXISTS "${TH08_HEADLESS_DAT}")
+  message(FATAL_ERROR "TH08_HEADLESS_DAT does not exist")
+endif()
+
+# Real-DAT route transitions and laser-to-item conversion.
+foreach(test IN ITEMS routes laser_items)
+  add_executable(th08_headless_${test} tests/headless_${test}.cpp)
+  target_include_directories(th08_headless_${test} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_link_libraries(th08_headless_${test} PRIVATE th08_native_headless)
+  th08_native_options(th08_headless_${test})
+  add_test(NAME headless_${test} COMMAND th08_headless_${test} "${TH08_HEADLESS_DAT}")
+endforeach()
+
+add_test(NAME headless_score_audit COMMAND ${CMAKE_COMMAND}
+  -DCHECKER=$<TARGET_FILE:th08_replay_check>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DREPLAY=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online/shadow-recording-v3--story-4a-finalb-d3-s1-seed40755.rpy
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/score-audit-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_audit_real_data.cmake)
+set_tests_properties(headless_score_audit PROPERTIES TIMEOUT 75)
+
+add_executable(th08_shadow_rollout_test tests/shadow_rollout_real_data.cpp)
+target_link_libraries(th08_shadow_rollout_test PRIVATE th08_shadow_proposals)
+th08_native_options(th08_shadow_rollout_test)
+add_test(NAME headless_shadow_follow COMMAND ${CMAKE_COMMAND}
+  -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+  -DROLLOUT=$<TARGET_FILE:th08_shadow_rollout_test>
+  -DID179_ACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/tests/data/id179-stage6b-d0-s0.actions
+  -DSTORY_ACTIONS=${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/online/online-story-4a-v1--s0.actions
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-follow-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_follow_real_data.cmake)
+set_tests_properties(headless_shadow_follow PROPERTIES TIMEOUT 100)
+
+add_executable(th08_shadow_capture_goal_test tests/shadow_capture_goal_real_data.cpp)
+target_link_libraries(th08_shadow_capture_goal_test PRIVATE th08_shadow_native)
+th08_native_options(th08_shadow_capture_goal_test)
+add_test(NAME headless_shadow_capture_goal COMMAND th08_shadow_capture_goal_test
+  "${TH08_HEADLESS_DAT}")
+add_test(NAME headless_shadow_capture_handoff COMMAND th08_shadow_capture_goal_test
+  "${TH08_HEADLESS_DAT}"
+  "${CMAKE_CURRENT_SOURCE_DIR}/reports/native/replays/magic/lunatic/story-native-nmnb-4a-finalb-3903603650-seed40755.rpy")
+set_tests_properties(headless_shadow_capture_goal headless_shadow_capture_handoff
+  PROPERTIES TIMEOUT 45)
+
+# Complete offline scoring fixture, then refinement and bomb-permission
+# variants that reuse its incumbent tape. These are correctness budgets,
+# independent of production search budgets.
+add_test(NAME headless_shadow_style COMMAND ${CMAKE_COMMAND}
+  -DSOLVER=$<TARGET_FILE:th08_shadow_style>
+  -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+  -DCHECKER=$<TARGET_FILE:th08_replay_check>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/shadow_style_real_data.cmake)
+set_tests_properties(headless_shadow_style PROPERTIES TIMEOUT 900
+  FIXTURES_SETUP native_score_incumbent)
+add_test(NAME headless_score_refine COMMAND ${CMAKE_COMMAND}
+  -DREFINER=$<TARGET_FILE:th08_score_refine>
+  -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+  -DCHECKER=$<TARGET_FILE:th08_replay_check>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DINCUMBENT=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/score-refine-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/score_refine_real_data.cmake)
+set_tests_properties(headless_score_refine PROPERTIES TIMEOUT 120
+  FIXTURES_REQUIRED native_score_incumbent)
+add_test(NAME headless_bomb_scoring COMMAND ${CMAKE_COMMAND}
+  -DSOLVER=$<TARGET_FILE:th08_shadow_style>
+  -DREFINER=$<TARGET_FILE:th08_score_refine>
+  -DFOLLOWER=$<TARGET_FILE:th08_shadow_follow>
+  -DCHECKER=$<TARGET_FILE:th08_replay_check>
+  -DDAT=${TH08_HEADLESS_DAT}
+  -DINCUMBENT=${CMAKE_CURRENT_BINARY_DIR}/shadow-style-regression
+  -DWORK=${CMAKE_CURRENT_BINARY_DIR}/bomb-scoring-regression
+  -P ${CMAKE_CURRENT_SOURCE_DIR}/tests/bomb_scoring_real_data.cmake)
+set_tests_properties(headless_bomb_scoring PROPERTIES TIMEOUT 900
+  FIXTURES_REQUIRED native_score_incumbent)

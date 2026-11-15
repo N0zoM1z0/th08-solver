@@ -1,11 +1,11 @@
-# Native evidence and replays
+# Native replays
 
-Current score-attack replays are grouped by **shot and route**. Frozen component,
-planner and runtime evidence lives in [archive/](archive/README.md), including its
-historical replay/action pairs and failed prefixes. New experiments, raw action
-tapes, run JSON and videos stay under ignored `reports/local/`.
+Selected replays grouped by shot and route. All are complete No Miss / No Bomb runs
+exported by the original replay writer with player name `ysopwnab`, verified by
+fresh Native re-execution and natural playback ([Validation](../../docs/VALIDATION.md#verification-gate)).
+New experiments, tapes and run JSON stay in ignored `reports/local/`.
 
-| Shot / route | Best published Native NMNB score | Captures |
+| Shot / route | Best Native NMNB score | Captures |
 | --- | ---: | ---: |
 | Scarlet Extra | [3,308,826,050](replays/scarlet/extra/extra-scarlet-native-nmnb-3308826050-seed9098.rpy) | 14/14 |
 | Scarlet Lunatic 1→2→3→4A→5→Final B | [6,653,194,550](replays/scarlet/lunatic/story-scarlet-native-nmnb-4a-finalb-6653194550-seed32796.rpy) | 36/37 |
@@ -13,28 +13,13 @@ tapes, run JSON and videos stay under ignored `reports/local/`.
 | Magic Lunatic 1→2→3→4A→5→Final B | [5,550,599,270](replays/magic/lunatic/story-native-nmnb-4a-finalb-5550599270-seed1805.rpy) | 36/37 |
 | Magic Lunatic, all captures | [5,107,553,670](replays/magic/lunatic/story-native-nmnb-4a-finalb-5107553670-seed1805.rpy) | 37/37 |
 
-All five have original-entry fresh Native terminal agreement and natural replay
-score, zero-miss/bomb, capture-outcome and name checks. These are Native execution
-checks. New Extra exceeds the all-shot 3,178,460,830 reference by 130,365,220 in
-Native. The earlier 3,179,193,860 replay passes original Wine validation at the
-exact score, NMNB 14/14 (1343/1367), with its bytes preserved. The new Extra and
-the story remain Native-only; the story reference remains higher.
+The Scarlet Extra [3,179,193,860](replays/scarlet/extra/extra-scarlet-native-nmnb-3179193860-seed9098.rpy)
+replay also passed complete retail playback in Wine (October 27, 2026). Newer
+replays are Native-verified only.
 
-| Location | Contents and provenance |
+| Location | Contents |
 | --- | --- |
-| [replays/scarlet/extra/](replays/scarlet/extra/) · [lunatic/](replays/scarlet/lunatic/) | Selected verified Scarlet progress, original retail seeds 9098/32796 |
-| [replays/magic/extra/](replays/magic/extra/) · [lunatic/](replays/magic/lunatic/) | Selected Magic progress, preserving each historical seed and exact bytes |
-| [replays/progress.tsv](replays/progress.tsv) | The 51 selected progress replays: score, shot, route, seed, actual misses/bombs, capture outcomes, producer task, source, receipt and replay/action SHA-256 |
-| [replays/online/](replays/online/) | Selected original online stories and split-capture recording replays; separate from Native score attack |
-| [archive/README.md](archive/README.md) | Historical producer/input/scope index; original machine reports and tapes are unchanged |
-| [archive/relocations.tsv](archive/relocations.tsv) | Old→new paths and unchanged SHA-256 for all 272 relocated historical payloads |
-
-[Status](../../docs/STATUS.md) summarizes current records and the stopped handoff;
-the [experiment journals](../../docs/experiments/README.md) own costs, failures and
-per-task history. [Validation](../../docs/VALIDATION.md#scarlet-team-verified-native-baselines)
-owns full-entry lineage and checks; earlier Magic provenance remains in its
-[selected progress section](../../docs/VALIDATION.md#selected-native-progress-replays).
-New scoring replays use the exact eight-byte name `ysopwnab`; historical bytes
-and names are preserved. The owner authorized these selected progress uploads
-and this organization on October 27. Archived JSON may record its original paths;
-use the relocation table without rewriting the frozen evidence.
+| [replays/scarlet/](replays/scarlet/) | Scarlet Team progress, original retail seeds 9098 (Extra) and 32796 (story) |
+| [replays/magic/](replays/magic/) | Magic Team progress; seeds 46997/1805 and earlier fixed-seed runs |
+| [replays/progress.tsv](replays/progress.tsv) | The 51 selected progress replays with score, seed, misses, bombs, captures, producer task, source revision and replay/action SHA-256 |
+| [replays/online/](replays/online/) | Earlier live Wine online runs (Magic Team), kept as regression fixtures and history |

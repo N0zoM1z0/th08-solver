@@ -1,10 +1,10 @@
-# TH08 reconstruction
+# Third-party notices
 
-The maintained resource formats and collision predicates are informed by
-N0zoM1z0/th08 and the user's preparation artifacts. The optional source oracle
-extracts hash-checked functions from a configured pinned source tree. The native
-runtime is an adapted ordinary source import under `third_party/th08`, retaining
-the upstream [MIT license](../third_party/th08/LICENSE) and a recorded source revision.
+The Native runtime is an adapted ordinary source import of the TH08 reconstruction
+(N0zoM1z0/th08) under `third_party/th08`, with its recorded source revision in
+[its README](../third_party/th08/README.md) and the upstream
+[MIT license](../third_party/th08/LICENSE). Original game data are never
+distributed; supply your own `th08.dat`.
 
 MIT License
 

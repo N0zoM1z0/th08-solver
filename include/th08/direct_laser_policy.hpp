@@ -1,11 +1,7 @@
 #pragma once
 
-#include "native_policy.hpp"
-#include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstdint>
-#include <limits>
 #include <vector>
 
 namespace th08::policy {
@@ -65,15 +61,6 @@ bool make_direct_laser_warning(const Context &context, int ex_index, unsigned fi
     return true;
 }
 
-inline float direct_laser_clearance(float x, float y, float half_x, float half_y,
-                                    const DirectLaserWarning &warning) {
-    const float sine = std::sin(-warning.angle), cosine = std::cos(-warning.angle);
-    const float relative_x = x - warning.origin_x, relative_y = y - warning.origin_y;
-    const float local_x = cosine * relative_x - sine * relative_y + warning.origin_x;
-    const float local_y = sine * relative_x + cosine * relative_y + warning.origin_y;
-    return box_clearance(local_x, local_y, half_x, half_y, warning.center_x, warning.center_y,
-                         warning.full_width, warning.full_height);
-}
 } // namespace detail
 
 // Only the current instruction is inspected. This deliberately does not scan
@@ -123,65 +110,4 @@ void collect_direct_laser_warnings(const Contexts &contexts, unsigned horizon,
     }
 }
 
-// Return one bit per dy-major direction in [-1, 1]^2. The generic hazard
-// scorer can then rank bullets and pooled lasers without selecting a path that
-// re-enters a source-derived direct hitbox interval.
-inline std::uint16_t direct_laser_candidate_mask(float player_x, float player_y, float half_x,
-                                                 float half_y, float axis, float diagonal,
-                                                 std::uint16_t latched_input,
-                                                 const std::vector<DirectLaserWarning> &warnings,
-                                                 DirectLaserStats &stats) {
-    ++stats.decisions;
-    if (warnings.empty())
-        return 0x1ff;
-
-    struct Score {
-        unsigned overlaps = 0;
-        float minimum_clearance = std::numeric_limits<float>::infinity();
-    };
-    auto score = [&](detail::Direction candidate) {
-        Score result;
-        const auto pending = detail::direction(latched_input);
-        for (const auto &warning : warnings) {
-            float x = player_x, y = player_y;
-            for (unsigned step = 1; step <= warning.last_update; ++step) {
-                detail::advance(x, y, step == 1 ? pending : candidate, axis, diagonal);
-                if (step < warning.first_update)
-                    continue;
-                const float clearance =
-                    detail::direct_laser_clearance(x, y, half_x, half_y, warning);
-                result.minimum_clearance = std::min(result.minimum_clearance, clearance);
-                result.overlaps += clearance <= 0;
-            }
-        }
-        return result;
-    };
-
-    std::array<Score, 9> scores;
-    unsigned best_overlaps = std::numeric_limits<unsigned>::max();
-    float best_clearance = -std::numeric_limits<float>::infinity();
-    unsigned index = 0;
-    for (int dy = -1; dy <= 1; ++dy)
-        for (int dx = -1; dx <= 1; ++dx) {
-            scores[index] = score({dx, dy});
-            stats.candidate_overlaps += scores[index].overlaps;
-            if (scores[index].overlaps < best_overlaps) {
-                best_overlaps = scores[index].overlaps;
-                best_clearance = scores[index].minimum_clearance;
-            } else if (scores[index].overlaps == best_overlaps) {
-                best_clearance = std::max(best_clearance, scores[index].minimum_clearance);
-            }
-            ++index;
-        }
-    std::uint16_t mask = 0;
-    for (index = 0; index < scores.size(); ++index)
-        if (scores[index].overlaps == best_overlaps &&
-            (!best_overlaps || scores[index].minimum_clearance == best_clearance)) {
-            mask |= std::uint16_t(1u << index);
-            ++stats.allowed_candidates;
-        }
-    if (mask != 0x1ff)
-        ++stats.constrained_decisions;
-    return mask;
-}
 } // namespace th08::policy

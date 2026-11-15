@@ -7,7 +7,7 @@
 #include "Spellcard.hpp"
 #include "Supervisor.hpp"
 #include "modern/headless/session.hpp"
-#include "th08/animation.hpp"
+#include "th08/anm_terminal_clock.hpp"
 #include "th08/direct_laser_policy.hpp"
 #include "th08/ecl_turn_hint.hpp"
 #include "th08/online_child_birth.hpp"

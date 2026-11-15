@@ -1,12 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 file(MAKE_DIRECTORY "${WORK}")
+# ID179_ACTIONS is a tracked 1292-update spell-practice tape (stage 6B card 179,
+# difficulty 0, seed 0). It was produced on November 15, 2026 by the retired
+# per-update spell-portfolio CLI and is now a fixed follower/rollout fixture.
 set(profile --dat "${DAT}" --stage 6b --difficulty 0 --seed 0)
-execute_process(COMMAND "${PRODUCER}" ${profile} --spell-id 179 --strategy spell-portfolio
-  --frames 2000 --actions "${WORK}/id179.actions" --output "${WORK}/control.json"
-  RESULT_VARIABLE result ERROR_VARIABLE error TIMEOUT 30)
-if(NOT result STREQUAL "0")
-  message(FATAL_ERROR "Full-scene control failed: ${result} ${error}")
-endif()
+configure_file("${ID179_ACTIONS}" "${WORK}/id179.actions" COPYONLY)
 function(expect content key value)
   string(REGEX MATCH "\"${key}\":[ ]*${value}([,} \r\n\t]|$)" matched "${content}")
   if(NOT matched)

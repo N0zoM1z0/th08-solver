@@ -1,11 +1,10 @@
 #include "test_support.hpp"
 #include "th08/plan_beam.hpp"
 #include "th08/plan_contracts.hpp"
-#include "th08/plan_matrix.hpp"
-#include "th08/plan_observation.hpp"
 #include "th08/plan_prefix.hpp"
 #include "th08/plan_route.hpp"
 
+#include <array>
 #include <cerrno>
 #include <cfenv>
 #include <csignal>
@@ -23,82 +22,12 @@ using th08::plan::RolloutStatus;
 using th08::plan::RolloutSummary;
 using th08::test::check;
 
-th08::plan::Options options(std::initializer_list<const char *> extra) {
-    std::vector<const char *> args{"th08_plan", "--dat", "private.dat", "--out", "output"};
-    args.insert(args.end(), extra);
-    return th08::plan::parse_options(int(args.size()), args.data());
-}
-
-void rejected(std::initializer_list<const char *> args) {
-    try {
-        options(args);
-    } catch (const std::invalid_argument &) {
-        return;
-    }
-    check(false, "invalid planner option was accepted");
-}
-
-void cli_contract() {
-    const auto large = options({"--rollout", "240", "--commit", "240", "--cegar", "0"});
-    check(large.rollout == 240 && large.commit == 240 && large.cegar == 0,
-          "explicit large horizon or zero retry budget changed");
-    check(options({"--stage", "extra", "--difficulty", "4", "--seed", "65535"}).stage == 8,
-          "valid native checkpoint rejected");
-    check(options({"--stage", "extra", "--difficulty", "4", "--story", "1"}).story,
-          "a full Extra run was rejected");
-    check(options({"--story", "1", "--final-route", "b"}).final_route == th08::plan::FinalRoute::B,
-          "explicit Final B target was lost");
-    rejected({"--final-route", "b"});
-    rejected({"--story", "1", "--final-route", "unknown"});
-    rejected({"--story", "1", "--stage", "extra", "--difficulty", "3"});
-    rejected({"--story", "1", "--difficulty", "4"});
-    rejected({"--story", "1", "--stage", "extra", "--difficulty", "4", "--final-route", "a"});
-    rejected({"--rollout", "241"});
-    rejected({"--rollout", "0"});
-    rejected({"--beam", "-1"});
-    rejected({"--commit", "65"});
-    rejected({"--frames", "100junk"});
-    rejected({"--seed", "65536"});
-    rejected({"--seed", "999999999999999999999999"});
-    rejected({"--seconds", "nan"});
-    rejected({"--seconds", "inf"});
-    rejected({"--seconds", "0"});
-    rejected({"--boss-follow", "-0.1"});
-    rejected({"--story", "2"});
-    check(options({}).quiet_retries &&
-              !options({"--quiet-retries", "0", "--shoot", "1"}).quiet_retries &&
-              options({"--quiet-retries", "1"}).quiet_retries,
-          "teacher shooting constraints changed the legacy default or lost the opt-in");
-    rejected({"--quiet-retries", "2"});
-    rejected({"--story", "1", "--spell", "92", "--stage", "4b"});
-    rejected({"--spell", "92"});
-    const auto spell = options({"--stage", "4b", "--spell", "92"});
-    check(spell.stage == 4 && spell.spell == 92,
-          "explicit spell stage was not preserved in the checkpoint");
-    rejected({"--stage", "bogus"});
-    rejected({"--unknown", "1"});
-    rejected({"--unknown"});
-    rejected({"--seconds"});
-    rejected({"--prefix", ""});
-    rejected({"--prefix", "prefix.actions"});
-    rejected({"--prefix", "prefix.actions", "--frames", "100"});
-    rejected({"--prefix", "prefix.actions", "--seconds", "10"});
-    rejected({"--prefix", "prefix.actions", "--frames", "100", "--seconds", "10", "--verify",
-              "verify.actions"});
-    check(options({"--prefix", "prefix.actions", "--frames", "100", "--seconds", "10"}).prefix ==
-              "prefix.actions",
-          "explicit bounded prefix option was rejected");
-    check(options({}).diversity_cell == 0 &&
-              options({"--diversity-cell", "48"}).diversity_cell == 48,
-          "spatial diversity is not an explicit opt-in");
-    rejected({"--diversity-cell", "-1"});
-    rejected({"--diversity-cell", "1025"});
-    check(th08::plan::nmnb_input("4101") == 4101, "valid movement/focus/dialogue input rejected");
-    try {
-        th08::plan::nmnb_input("2");
-        check(false, "a bomb action could verify an NMNB route");
-    } catch (const std::invalid_argument &) {
-    }
+// Bitwise float equality: spatial bins must not merge distinct float bits.
+bool same_float(float a, float b) {
+    std::uint32_t x, y;
+    std::memcpy(&x, &a, sizeof(x));
+    std::memcpy(&y, &b, sizeof(y));
+    return x == y;
 }
 
 void tape_contract() {
@@ -159,44 +88,6 @@ void child_contract() {
     munmap(storage, sizeof(RolloutSummary));
 }
 
-void observation_contract() {
-    th08::headless::State expected;
-    expected.frame = 64;
-    expected.rng_seed = 123;
-    expected.rng_draws = 40;
-    expected.graze = 10;
-    auto committed = expected;
-    check(th08::plan::same_observation(expected, committed), "identical observation rejected");
-    ++committed.rng_draws;
-    check(!th08::plan::same_observation(expected, committed),
-          "same-position commit hid a gameplay RNG consumption change");
-    committed = expected;
-    committed.stage_complete = true;
-    check(!th08::plan::same_observation(expected, committed),
-          "same-position commit hid a lifecycle transition");
-    committed = expected;
-    ++committed.graze;
-    check(!th08::plan::same_observation(expected, committed),
-          "same-position commit hid feedback divergence");
-    committed = expected;
-    committed.youkai = !expected.youkai;
-    check(!th08::plan::same_observation(expected, committed),
-          "same-input commit hid a source-owned player form change");
-    committed = expected;
-    ++committed.calculation_updates;
-    check(!th08::plan::same_observation(expected, committed),
-          "same-position commit hid a native calculation boundary change");
-    committed = expected;
-    committed.final_route_selection = true;
-    check(!th08::plan::same_observation(expected, committed),
-          "a dialogue controller boundary was omitted from commit agreement");
-    check(th08::plan::supported_recording_step(1, false) &&
-              th08::plan::supported_recording_step(0, true) &&
-              !th08::plan::supported_recording_step(0, false) &&
-              !th08::plan::supported_recording_step(2, true),
-          "unexplained skipped or batched recording calculations were accepted");
-}
-
 void route_contract() {
     using th08::plan::FinalRoute;
     th08::headless::State state;
@@ -212,32 +103,6 @@ void route_contract() {
     check(th08::plan::story_terminal(8, true, 8) && !th08::plan::story_terminal(8, false, 8) &&
               !th08::plan::story_terminal(5, true, 8) && th08::plan::story_terminal(7, true, 8),
           "Extra or regular full-run terminal boundary is incorrect");
-}
-
-void matrix_contract() {
-    int counts[12][5]{};
-    int final_counts[12][2]{};
-    int fourth_counts[2]{};
-    for (const auto &entry : th08::plan::full_run_matrix()) {
-        ++counts[entry.shot][entry.difficulty];
-        if (entry.difficulty == 4) {
-            check(entry.stage() == 8 && entry.final_stage() == 8 &&
-                      entry.route == th08::plan::FinalRoute::Natural,
-                  "Extra must be one independent full run per shot");
-        } else {
-            ++final_counts[entry.shot][entry.final_stage() - 6];
-            ++fourth_counts[entry.fourth_stage() - 3];
-        }
-    }
-    for (int shot = 0; shot < 12; ++shot) {
-        for (int difficulty = 0; difficulty < 5; ++difficulty)
-            check(counts[shot][difficulty] == (difficulty == 4 ? 1 : 2),
-                  "full-run matrix omitted or duplicated a shot/difficulty/route");
-        check(final_counts[shot][0] == 4 && final_counts[shot][1] == 4,
-              "both final routes must exist at all four standard difficulties");
-    }
-    check(fourth_counts[0] == 48 && fourth_counts[1] == 48,
-          "native character-dependent Stage 4 partition changed");
 }
 
 void spatial_beam_contract() {
@@ -262,9 +127,8 @@ void spatial_beam_contract() {
     check(exit != diverse.end() && selected.candidates == 5 && selected.bins == 2 &&
               selected.retained_bins == 2 && diverse.size() == 3,
           "spatial pruning discarded a reachable exit or misstated its work");
-    check(th08::plan::same_float(exit->x, input.back().x) &&
-              th08::plan::same_float(exit->y, input.back().y) && exit->parent == 77 &&
-              exit->act == 68 && exit->viol == 2 && exit->score == 100,
+    check(same_float(exit->x, input.back().x) && same_float(exit->y, input.back().y) &&
+              exit->parent == 77 && exit->act == 68 && exit->viol == 2 && exit->score == 100,
           "spatial pruning invented a state or changed its parent chain");
     check(diverse[0].parent == 11 && diverse[1].parent == 12,
           "remaining spatial beam slots do not follow the existing score rank");
@@ -416,13 +280,10 @@ void spatial_beam_rank_agreement() {
                           "partial spatial rank changed membership counts");
                     for (std::size_t i = 0; i < actual.size(); ++i) {
                         const auto &a = actual[i], &e = expected[i], &r = reused[i];
-                        check(th08::plan::same_float(a.x, e.x) &&
-                                  th08::plan::same_float(a.y, e.y) &&
-                                  th08::plan::same_float(a.score, e.score) &&
-                                  a.parent == e.parent && a.act == e.act && a.viol == e.viol &&
-                                  th08::plan::same_float(r.x, e.x) &&
-                                  th08::plan::same_float(r.y, e.y) &&
-                                  th08::plan::same_float(r.score, e.score) &&
+                        check(same_float(a.x, e.x) && same_float(a.y, e.y) &&
+                                  same_float(a.score, e.score) && a.parent == e.parent &&
+                                  a.act == e.act && a.viol == e.viol && same_float(r.x, e.x) &&
+                                  same_float(r.y, e.y) && same_float(r.score, e.score) &&
                                   r.parent == e.parent && r.act == e.act && r.viol == e.viol,
                               "partial spatial rank changed a node, stable tie or parent chain");
                     }
@@ -446,10 +307,9 @@ void spatial_beam_rank_agreement() {
                         for (std::size_t i = 0; i < bounded.size(); ++i) {
                             const auto &a = bounded[i], &e = expected[i];
                             check(
-                                th08::plan::same_float(a.x, e.x) &&
-                                    th08::plan::same_float(a.y, e.y) &&
-                                    th08::plan::same_float(a.score, e.score) &&
-                                    a.parent == e.parent && a.act == e.act && a.viol == e.viol,
+                                same_float(a.x, e.x) && same_float(a.y, e.y) &&
+                                    same_float(a.score, e.score) && a.parent == e.parent &&
+                                    a.act == e.act && a.viol == e.viol,
                                 "bounded spatial rank changed a node, stable tie or parent chain");
                         }
                     }
@@ -508,12 +368,9 @@ void prefix_contract() {
 } // namespace
 
 int main() {
-    cli_contract();
     tape_contract();
     child_contract();
-    observation_contract();
     route_contract();
-    matrix_contract();
     spatial_beam_contract();
     half_pixel_quantization_contract();
     spatial_beam_rank_agreement();

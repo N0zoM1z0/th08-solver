@@ -196,18 +196,6 @@ std::vector<std::string> inspect(const std::string &text, const fs::path &docume
         errors.push_back("empty leaf heading: " + heading);
     return errors;
 }
-// Read named integer fields without rounding digests or rewriting frozen data.
-std::string count(const fs::path &path, const std::string &key) {
-    const auto text = read(path);
-    const std::regex field("\"" + key + "\"\\s*:\\s*([0-9]+)(?=[,}\\s])");
-    std::smatch match;
-    require(std::regex_search(text, match, field), "missing count " + key + " in " + path.string());
-    return match[1];
-}
-void contains(const std::string &text, const std::string &expected, const char *document) {
-    require(text.find(expected) != std::string::npos,
-            std::string(document) + " needs current declaration: " + expected);
-}
 void check_self(const fs::path &root) {
     const auto document = root / "README.md";
     require(inspect("# Parent\n## Child\nText\n", document).empty(),
@@ -220,7 +208,7 @@ void check_self(const fs::path &root) {
             "checker interpreted a fenced example or a different closer as prose");
     require(inspect("An inline `example\nOctober27 is130` is code.\n", document).empty(),
             "checker interpreted wrapped inline code as prose");
-    require(inspect("[local](docs/STATUS.md#verified-results) "
+    require(inspect("[local](docs/STATUS.md#targets-and-records) "
                     "[remote](https://example.invalid/October27)\nTH08 SDL2 x86-64 L2 4 GiB\n",
                     document)
                 .empty(),
@@ -237,10 +225,10 @@ void check_self(const fs::path &root) {
             "checker missed the reported prose regressions");
 }
 std::vector<fs::path> documents(const fs::path &root) {
-    std::vector<fs::path> result = {
-        root / "README.md", root / "AGENTS.md", root / "reports/native/README.md",
-        root / "reports/native/archive/README.md", root / "third_party/th08/README.md"};
-    for (const auto &directory : {root / "docs", root / "models"})
+    std::vector<fs::path> result = {root / "README.md", root / "AGENTS.md",
+                                    root / "reports/native/README.md",
+                                    root / "third_party/th08/README.md"};
+    for (const auto &directory : {root / "docs"})
         for (const auto &entry : fs::recursive_directory_iterator(directory))
             if (entry.is_regular_file() && entry.path().extension() == ".md")
                 result.push_back(entry.path());
@@ -251,7 +239,7 @@ std::vector<fs::path> documents(const fs::path &root) {
 } // namespace
 
 int main(int argc, char **argv) try {
-    require(argc == 3, "usage: documentation_tests source-root core-test-count");
+    require(argc == 2, "usage: documentation_tests source-root");
     const fs::path root = argv[1];
     check_self(root);
     const auto maintained = documents(root);
@@ -262,28 +250,8 @@ int main(int argc, char **argv) try {
             ++failures;
         }
     require(failures == 0, "maintained documentation links/headings/spacing failed");
-    const auto archive = read(root / "reports/native/archive/README.md");
-    const auto summary = root / "reports/native/archive/summary.json";
-    const auto solutions = count(summary, "offline_full_spell_solutions_verified");
-    contains(archive, "| Indexed original spell IDs | " + count(summary, "unique_spell_ids") + " |",
-             "archive/README.md");
-    contains(archive, "| Indexed spell-start occurrences | " + count(summary, "spell_sites") + " |",
-             "archive/README.md");
-    contains(archive, "| Complete offline spell solutions | " + solutions + " |",
-             "archive/README.md");
-    require(solutions == count(root / "reports/native/archive/motion_summary.json",
-                               "complete_spell_solutions"),
-            "audit and particle reports disagree on complete spell solutions");
-    require(
-        count(root / "reports/native/archive/first_spell_summary.json",
-              "acceptance_gates_passed") == "0" &&
-            count(root / "reports/native/archive/first_spell_summary.json",
-                  "complete_spell_solutions") == "0",
-        "first entry-prefix evidence changed; review its completion contract and documentation");
-    contains(read(root / "docs/VALIDATION.md"),
-             "\nCore CTest cases: " + std::string(argv[2]) + "\n", "VALIDATION.md");
     std::cout << "maintained Markdown files=" << maintained.size()
-              << " links/anchors/headings/prose spacing and catalog counts: passed\n";
+              << " links/anchors/headings/prose spacing: passed\n";
 } catch (const std::exception &error) {
     std::cerr << error.what() << '\n';
     return 1;

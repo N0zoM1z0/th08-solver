@@ -1,173 +1,113 @@
-# Current handoff status
+# Status
 
-Updated October 29, 2026. Scoring is paused after the owner's batch handoff.
-The current task is documentation/code maintenance, with no new scoring episode
-or automatic continuation. Project targets remain **4 billion Extra** and
-**7 billion complete Lunatic**; both are unmet. The 6.5 billion milestone is achieved.
+Updated November 15, 2026. **Scoring is authorized again** (owner instruction of
+November 15, 2026). Play is offline Native only; Wine is used for seed acquisition
+and final retail replay playback.
 
-All shots are permitted, with Scarlet Team preferred. The complete team story
-route is **1 → 2 → 3 → 4A → 5 → Final B**. Current scoring constraints are No Miss /
-No Bomb (NMNB), with captures optional. Strict all-capture CLI defaults remain
-available. Wine online solving and remote search remain paused.
+## Targets and records
 
-## Verified results
+| Route | Shot | Record | Captures | Target | Dated all-shot human reference |
+| --- | --- | ---: | --- | ---: | ---: |
+| Complete Lunatic 1→2→3→4A→5→Final B | Scarlet Team | **6,653,194,550** | 36/37 (card 10 timeout) | 7,000,000,000 | 7,053,332,460 (IwanaM, solo Youmu, July 14, 2026) |
+| Extra | Scarlet Team | **3,308,826,050** | 14/14 | 4,000,000,000 | 3,178,460,830 (Sakurei, solo Youmu, June 21, 2022) |
 
-| Route | Shot | Best Native score | Captures | Producer / fresh / natural tasks |
-| --- | --- | ---: | --- | --- |
-| Extra | Scarlet — Sakuya/Remilia | **3,308,826,050** | 14/14 | 2047 / 2096 / 2097 |
-| Complete Lunatic | Scarlet — Sakuya/Remilia | **6,653,194,550** | 36/37; card 10 times out | 2113 / 2115 / 2116 |
-| Extra | Magic — Marisa/Alice | 3,013,913,970 | 14/14 | 597; full lineage in Validation |
-| Complete Lunatic | Magic — Marisa/Alice | 5,550,599,270 | 36/37; card 47 times out | 620; full lineage in Validation |
-| Complete Lunatic, all captures | Magic — Marisa/Alice | 5,107,553,670 | 37/37 | 575; full lineage in Validation |
+Constraints are No Miss / No Bomb; captures are optional. The story record is
+400,137,910 below its retail gate (a complete NMNB score must exceed the
+reference before Wine replay validation). Extra already exceeds its reference.
+Other shots: Magic Team Extra 3,013,913,970 and story 5,550,599,270 (all-capture
+5,107,553,670); solo Sakuya Extra 2,182,761,340 and story 4,417,570,020. Same-shot
+human references: Scarlet story 6,755,587,090 (Levea, 1 miss / 9 bombs), Scarlet
+Extra 3,000,284,220 (ASL), Magic story 6,168,365,790 (Alan), Magic Extra
+3,021,639,920 (ASL, one bomb).
 
-All are complete NMNB runs with original-entry fresh execution and natural replay
-agreement. The [51 selected progress replays](../reports/native/README.md) retain
-exact bytes, original seeds and input lineage. Their
-[progress index](../reports/native/replays/progress.tsv) owns replay/action hashes,
-constraints and producer identities. [Validation](VALIDATION.md) owns reproduction
-and verification scope. These checks do not independently prove retail equivalence.
+## Repository state
 
-The verified Scarlet Extra uses the original retail seed 9098, preserves task
-2035's first 70,754 inputs and changes the card 205 search to beam 64. The verified
-story uses the original retail seed 32796, preserves task 2095's first 156,833
-inputs and changes only card 191 to beam 64. Maps 2100 and 2117 verify their actual
-owner-input boundaries and complete audits. Some successful scene profiles remain
-frozen local experiments; public-main search is not claimed to regenerate them.
+The November 15 cleanup reduced the repository to the offline Native pipeline
+([Architecture](ARCHITECTURE.md)). Removed subsystems (the pre-import
+reimplementation, synthetic and controlled-DAT worlds, source probes, the old fork
+planner `th08_plan`, live Wine/online controllers, value models, repair/probe
+diagnostics and the legacy report archive) remain in Git at tag
+`pre-cleanup-20261115`. The dated journals are condensed into [Lessons](LESSONS.md).
 
-Original Wine playback has a separate scope: Scarlet Extra **3,179,193,860**,
-NMNB 14/14, passes original-game observation 1343 and corrected typed analysis
-1367. The earlier decoder failure remains recorded. Newer Native results do not
-inherit this validation. Earlier Magic online clears are Extra 1,166,969,620
-(14/14) and complete Lunatic 2,189,965,070 (33/37), both NMNB. See the
-[recording provenance](VALIDATION.md#selected-online-recordings-and-replay-provenance).
+## Local workspace
 
-### Score targets and historical references
+Most of the ignored `reports/local/` was deleted before November 15, 2026,
+including the working ledger, run launchers, memory guard, journal exporter,
+private policy overlays and **every producer tape (`plan.actions`) of the
+records**. Retained: the Wine seed episodes under
+`reports/local/retail-seed-episodes-20261026/`, `…-20261027/` and `…-20261028/`.
+The published [ledger](experiments/campaign-ledger.tsv) ends at task 2209; the
+next task ID is 2210.
 
-The **October 27, 2026 snapshot** records all-shot human references of
-Extra **3,178,460,830** (Sakurei, solo Youmu, June 21, 2022) and Lunatic
-**7,053,332,460** (IwanaM, solo Youmu, July 14, 2026). These are dated references,
-not a claim about today's live leaderboard. [Validation](VALIDATION.md#october-27-verified-native-progress)
-retains the source and declared comparison rules.
+## Resuming from the records
 
-Native Extra is 130,365,220 above that reference and 691,173,950 below its
-4 billion target. Complete Lunatic is 346,805,450 below 7 billion and 400,137,910
-below the retail replay gate. A score of 7 billion alone does not pass that gate.
+A continuation needs the record's owner input tape. Natural replay rows contain
+the input of each calculation row, but owner inputs and calculation rows differ at
+stage-control boundaries, so a tape rebuilt from the `.rpy` must be proven by a
+fresh `th08_shadow_follow` run that reproduces the record's terminal projection
+and score before it is used as a prefix. Until then, new work starts from the
+original episode entry.
 
-Earlier same-shot references remain distinct: Magic ASL Extra 3,021,639,920
-(one bomb), Alan Lunatic 6,168,365,790, Scarlet ASL Extra 3,000,284,220 and Levea
-Lunatic 6,755,587,090. They have their own constraints and are not NMNB upper bounds.
+## Diagnosis: where the story score is lost
 
-## What has been explored
+[Scoring](SCORING.md) gives the source mechanics. The record collects almost the
+same point items as the best same-shot human (1,628 versus about 1,661) and more
+time orbs overall (234,573), but **fewer orbs early**: Stages 1–3 have
+12,755/33,391/36,052 versus the human's 21,873/37,662/46,219. Because each orb
+raises the value of every later point item (doubled at extreme human), an early orb
+is worth about 17 k at the end of the run. Under that model, the human's extra
+23,556 Stage 1–3 orbs are worth about 395 M, matching the measured −392 M deficit
+at the Stage 5 exit (the record then gains 290 M back in Final B).
 
-The [experiment index](experiments/README.md) links hypotheses, source/human evidence,
-parameters, failures, costs and decisions. The [lifecycle ledger](experiments/campaign-ledger.tsv)
-preserves every allocation and correction; [per-task results](experiments/results.tsv)
-preserve available measurements and provenance. Empty fields mean unrecorded or
-unavailable, never zero. Historical missing closures are not a live queue.
+The previous campaign optimized each scene by local evidence: horizon cash in the
+planner's economic re-ranking, and scene cash, orbs or PIV when selecting
+components. Horizon cash credits an early orb with only its pickup value (about
+250 at P ≈ 50), roughly 70× too little, and nothing in the planner values the
+gauge state that produces orbs later. This matches what the lessons record: local
+improvements repeatedly reversed in complete futures, while the large gains came
+from early-card plans that raised orb production (17/25/29, 77, 171: +382 M).
 
-The latest closed scoring batch adds six NMNB card 74 scenes after two charged
-pre-Native CLI setup failures. Task 2201 captures with 489 updates remaining and
-3,255 collected orbs, carrying a pending 21,381,650 award and 216 time orbs. Its
-local income is lower than the ordinary control. Its complete continuation has
-not run, so it establishes no new route record.
+Checked against the existing data: across 175 unique complete NMNB story runs of
+seed 32796, a value that adds the model's future worth of carried points and orbs
+ranks final scores better than raw cash at the Stage 1–3 boundaries (Spearman
+0.49→0.71, 0.80→0.83, 0.83→0.85; 6, 15 and 43 distinct boundary worlds) and equally
+from 4A on. The signal is real but modest, because downstream strategy still differs.
 
-Earlier card 47 composition yields 9,656 orbs with capture, versus 8,149 in the
-previous captured profile; full movement-profile retention yields 11,319 with a
-timeout. Complete futures end at 6,534,027,080 and 6,554,033,050, below the record.
-Whole replay rows/audits, 16 prefix edges and two Native maps agree. The successful
-local strategy remains archived alongside these negative complete outcomes.
+## Next work
 
-Historical stage/spell composition, early-road point production, solo Sakuya,
-option anchors, reward settlement, pool limits and private proposal experiments
-remain in the existing [October 27](experiments/2026-10-27-phase-composition.md)
-and [October 28–29](experiments/2026-10-28-stage-spell-search.md) journals.
-Those dated records describe their original run states, not current launch plans.
+In order of expected value per unit of compute:
 
-## Operational resume contract
+1. **Rebuild the record tapes** from the two `.rpy` files and prove them with a fresh
+   follow, so continuations can resume from the records.
+2. **Rank with whole-run value instead of horizon cash.** Replace the economic
+   re-ranking criterion with `Δscore + α(t)·ΔT + β(t)·ΔP` (α ≈ 10·(P_final − P(t)),
+   β ≈ 5·(T_final − T(t)), plug-in finals from the incumbent), and use the same
+   value to rank stage-boundary worlds. Earlier constant `cash + K·PIV` ranking
+   (tasks 835–842) lost; the declining α(t) and stage-boundary use are the changes.
+3. **Plan the gauge as a resource in Stages 1–3.** The human's early advantage comes
+   from gauge bootstraps, for example on card 6, where 151 focused orb pickups in 40
+   updates swing the gauge from −8000 to +10000 and graze orbs follow. Capture-reward
+   orbs (935 per fast capture) saturate the gauge toward the focus side, so focus
+   during reward pickup selects the next segment's gauge. This needs a segment-level
+   plan, not a longer MPC horizon.
+4. **Stage-boundary beam.** Keep several stage-end worlds, rank them by the value in
+   item 2, and run complete futures only for the best few. A complete story future
+   costs about 2,600 s on two local cores, so throughput decides how many ideas can
+   be tested.
+5. **Reconsider the shot.** Both all-shot references are solo Youmu, whose gauge
+   reaches both extremes at ±3000 instead of ±8000, with team-rate graze and chain
+   orbs. The best human Scarlet story is 6,755,587,090 even with bombs. A Youmu
+   episode needs a new Wine seed receipt and a solo-Youmu gauge controller.
 
-These rules constrain authorized work; they do not authorize resuming scoring.
+Extra 4 B is not near: points are close to their ceiling (36 M repricing envelope)
+and the gap is 691 M.
 
-| Requirement | Current contract |
-| --- | --- |
-| Publication | Direct `main`; fetch first, preserve others' work, use `gpt-6.1-sol-max: <English summary>` and push tested changes |
-| Local owners | Last profile: at most two drivers in one user service, aggregate two-core quota, low CPU/I/O priority. Standing ceiling: four drivers including solvers, probes, replay verifiers and test owners. Fork children belong to one owner |
-| Local memory | 4 GiB address space per process and 4 GiB summed RSS per owned tree; service MemoryHigh 6 GiB / MemoryMax 10 GiB, no swap. Admit at 12 GiB host MemAvailable; abort below 8 GiB. Aborted work is charged and certifies nothing |
-| Campaign | One ledger at `reports/local/shadow-runtime-v1/tasks.tsv`; current cap 2240. Extension 2176 → 2240 was recorded at 2168 before 2169. Read the maximum first-column ID, not line count. Record further authorized 64-task extensions before use; never reset IDs or omit failures |
-| Constraints | `--allow-bombs 0 --require-all-captures 0 --verify-captures 0`; record actual outcomes. Use both capture flags at 1 for strict all-capture work |
-| Episodes | Reuse original episode seeds below. A new shot/entry episode needs a new original Wine pre-RegisterChain receipt before Native scoring; no Native-selected or hindsight-selected seed |
-| Checkpoints | Reexecute the literal first N owned inputs from the same entry; N is not spell age, replay row count or an audit calculation counter. Carry the actual world/RNG and lifecycle state |
-| Acceptance | Inspect owner exit, result and audit. Wrapper exit 0 is insufficient. Exit 5 can mean a valid complete below-target run; partial/failed/resource-aborted futures cannot establish a route record |
-| Replay retention | A new `.rpy` needs a strict overall Extra or complete-Lunatic improvement plus all fresh/natural gates. Preserve earlier selected bytes |
-| Wine gate | Seed acquisition and qualified replay playback only. A complete NMNB score must strictly exceed its dated all-shot reference under the declared constraints |
-| Resource/test ownership | No test driver beside a full solver allocation. Compile with at most two jobs; run relevant checks and normal CTest before publication |
-| Remote work | Paused after a host-key identity change. No reconnect or key replacement without verified identity. Nineteen original terminal receipts remain unresolved; no remote closure or success is inferred |
+## Operating limits
 
-The last local launcher is `reports/local/global-score-20261027/run-local-two-v232.cjs`,
-using `run-scarlet-guarded-2240.cjs`. Its memory guard is
-`reports/local/retail-score-offline-20261026/memory-guard.cjs`; the relaxed verifier
-is `reports/local/score-continue-20261027/verify-no-bomb-2240.cjs`. These ignored
-workspace tools are not supplied by a fresh clone. Old launchers and stopped
-queues are historical evidence, not supported resume commands.
-
-If remote work is explicitly resumed, its standing limits are 32 Native owners /
-32 cores, 4 GiB address space/tree RSS per owner, 96 GiB aggregate owned RSS and
-128 GiB hard service memory with no swap. Host admission/abort reserves are
-128/96 GiB. Use the same ledger and isolated owned user service; preserve unrelated
-workloads. Bind every source/binary/library/DAT/input/receipt identity and pass
-complete cross-host execution/row-byte canaries before scoring.
-
-### Fixed original episodes
-
-| Shot | Extra seed / acquisition task | Story seed / acquisition task | Story entry |
-| --- | --- | --- | --- |
-| Scarlet Team (2) | 9098 / 665 | 32796 / 666 | Stage 1, Lunatic, prior Final A clear |
-| Magic Team (1) | 46997 / 265 | 1805 / 266 | Stage 1, Lunatic, prior Final A clear |
-| Solo Sakuya (8) | 53346 / 1659 | 24238 / 1676 | Stage 1, Lunatic, no team-history flag |
-
-[Validation](VALIDATION.md#native-score-first-workflow) owns receipt hashes,
-failed acquisitions and configuration details. Historical fixed-seed benchmarks
-are separate episodes and retain their original identities.
-
-## Verification and current public code
-
-Normal CTest results depend on configured assets and retained fixtures. The current
-maintenance configuration passes 62/62 in task 2208 (911.20 s), including the
-real-DAT and replay-export regressions. [Validation](VALIDATION.md#local-build-and-core-checks)
-owns build commands and the data-free test count. Private scoring prototypes have
-separate frozen contracts and real-data gates; they are not public-main features.
-
-The public phase plan is immutable and keyed by actual stage/card. The optional
-capture-form recovery prior is disabled by default, needs a nonempty plan and
-enabled baseline recovery, and supplies no farm geometry or future world state.
-Native rollouts determine safety and actual damage/capture/reward behavior.
-
-## Unresolved problems and proposed next work
-
-Scoring remains paused. These proposals require renewed owner instruction:
-
-- Continue toward 4 billion Extra and 7 billion Lunatic, then the story all-shot gate.
-  Current maps 2100/2117 locate verified record boundaries; changed worlds need new maps.
-- If resumed, task 2201's captured card 74 scene closes at owned input 82780. Recompute
-  card 77, Stage 5 and Final B before claiming any gain. The same policy times out
-  on parent 2189, so the reserve is not portable across incoming worlds.
-- Card 13 enters at input 13817 in the verified story. Existing HP/anchor traces
-  support testing a damaged prefix followed by a bounded fire pause; no trial has run.
-- Study earlier point/orb production and actual capture timing. Local PIV, score,
-  or orb dominance does not establish world equivalence or the best complete future.
-- Keep newer Native Extra evidence separate from the original Wine validation of
-  task 1314's replay. Retail validation remains a distinct qualified step.
-
-## Documentation and local retention
-
-The [storage journal](experiments/2026-10-28-storage-cleanup.md) owns retained
-recordings, Wine/object archives and restoration limits. Deleted MKV/PCM originals
-are not recoverable promises. Current code contracts belong in Architecture,
-mechanisms in Planner, commands/provenance in Validation, and per-case history
-in the existing journals. The [pre-maintenance snapshot](https://github.com/N0zoM1z0/th08-solver/blob/5929ced/docs/STATUS.md)
-is historical evidence rather than another current launch plan.
-
-## Legacy component evidence
-
-The separate [legacy subset catalog](../reports/native/archive/README.md#legacy-subset-catalog)
-has no verified source-faithful full-spell solution. This count does not describe
-Native game scoring, controlled DAT scenarios or synthetic worlds.
+- Local: at most two owned drivers, two cores total, low CPU/I/O priority; 4 GiB
+  address space per process and 4 GiB RSS per owner tree; admit at 12 GiB host
+  `MemAvailable`, abort below 8 GiB. Builds use at most `--parallel 2`.
+- Remote Native search (`yann@185.189.44.160`) stays paused after its host-key
+  change; do not reconnect until the owner verifies the host identity.
+- Reuse the fixed seed episodes in [Validation](VALIDATION.md#seed-acquisition-wine).
+  A new shot or entry needs a new Wine receipt before any Native scoring.
